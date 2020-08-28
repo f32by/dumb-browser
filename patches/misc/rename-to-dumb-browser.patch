@@ -1,0 +1,161 @@
+--- a/chrome/app/app-Info.plist
++++ b/chrome/app/app-Info.plist
+@@ -385,6 +385,8 @@
+ 	<string>banner</string>
+ 	<key>NSRequiresAquaSystemAppearance</key>
+ 	<false/>
++	<key>CrProductDirName</key>
++	<string>Dumb Browser</string>
+ 	<key>GPUEjectPolicy</key>
+ 	<string>wait</string>
+ </dict>
+--- a/chrome/app/theme/chromium/BRANDING
++++ b/chrome/app/theme/chromium/BRANDING
+@@ -1,10 +1,10 @@
+-COMPANY_FULLNAME=The Chromium Authors
+-COMPANY_SHORTNAME=The Chromium Authors
+-PRODUCT_FULLNAME=Chromium
+-PRODUCT_SHORTNAME=Chromium
+-PRODUCT_INSTALLER_FULLNAME=Chromium Installer
+-PRODUCT_INSTALLER_SHORTNAME=Chromium Installer
+-COPYRIGHT=Copyright 2020 The Chromium Authors. All rights reserved.
+-MAC_BUNDLE_ID=org.chromium.Chromium
++COMPANY_FULLNAME=The Dumb Browser Authors
++COMPANY_SHORTNAME=The Dumb Browser Authors
++PRODUCT_FULLNAME=Dumb Browser
++PRODUCT_SHORTNAME=Dumb
++PRODUCT_INSTALLER_FULLNAME=Dumb Browser Installer
++PRODUCT_INSTALLER_SHORTNAME=Dumb Installer
++COPYRIGHT=Copyright 2020 The Dumb Browser Authors. All rights reserved.
++MAC_BUNDLE_ID=com.example.dumb-browser
+ MAC_CREATOR_CODE=Cr24
+ MAC_TEAM_ID=
+--- a/chrome/common/chrome_constants.cc
++++ b/chrome/common/chrome_constants.cc
+@@ -11,14 +11,8 @@
+ #define FPL FILE_PATH_LITERAL
+ 
+ #if defined(OS_MACOSX)
+-#define CHROMIUM_PRODUCT_STRING "Chromium"
+-#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+-#define PRODUCT_STRING "Google Chrome"
+-#elif BUILDFLAG(CHROMIUM_BRANDING)
+-#define PRODUCT_STRING "Chromium"
+-#else
+-#error Unknown branding
+-#endif
++#define CHROMIUM_PRODUCT_STRING PRODUCT_FULLNAME_STRING
++#define PRODUCT_STRING          PRODUCT_FULLNAME_STRING
+ #endif  // defined(OS_MACOSX)
+ 
+ namespace chrome {
+@@ -44,13 +38,13 @@ const char kChromeVersion[] = CHROME_VER
+ 
+ #if defined(OS_WIN)
+ const base::FilePath::CharType kBrowserProcessExecutableNameChromium[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ const base::FilePath::CharType kBrowserProcessExecutableName[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ const base::FilePath::CharType kHelperProcessExecutableNameChromium[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ const base::FilePath::CharType kHelperProcessExecutableName[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ #elif defined(OS_MACOSX)
+ const base::FilePath::CharType kBrowserProcessExecutableNameChromium[] =
+     FPL(CHROMIUM_PRODUCT_STRING);
+@@ -62,7 +56,7 @@ const base::FilePath::CharType kHelperPr
+     FPL(PRODUCT_STRING " Helper");
+ #elif defined(OS_ANDROID)
+ // NOTE: Keep it synced with the process names defined in AndroidManifest.xml.
+-const base::FilePath::CharType kBrowserProcessExecutableName[] = FPL("chrome");
++const base::FilePath::CharType kBrowserProcessExecutableName[] = FPL("dumb");
+ const base::FilePath::CharType kBrowserProcessExecutableNameChromium[] =
+     FPL("");
+ const base::FilePath::CharType kHelperProcessExecutableName[] =
+@@ -70,8 +64,8 @@ const base::FilePath::CharType kHelperPr
+ const base::FilePath::CharType kHelperProcessExecutableNameChromium[] = FPL("");
+ #elif defined(OS_POSIX)
+ const base::FilePath::CharType kBrowserProcessExecutableNameChromium[] =
+-    FPL("chrome");
+-const base::FilePath::CharType kBrowserProcessExecutableName[] = FPL("chrome");
++    FPL("dumb");
++const base::FilePath::CharType kBrowserProcessExecutableName[] = FPL("dumb");
+ // Helper processes end up with a name of "exe" due to execing via
+ // /proc/self/exe.  See bug 22703.
+ const base::FilePath::CharType kHelperProcessExecutableNameChromium[] =
+@@ -81,13 +75,13 @@ const base::FilePath::CharType kHelperPr
+ 
+ #if defined(OS_WIN)
+ const base::FilePath::CharType kBrowserProcessExecutablePathChromium[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ const base::FilePath::CharType kBrowserProcessExecutablePath[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ const base::FilePath::CharType kHelperProcessExecutablePathChromium[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ const base::FilePath::CharType kHelperProcessExecutablePath[] =
+-    FPL("chrome.exe");
++    FPL("dumb.exe");
+ #elif defined(OS_MACOSX)
+ const base::FilePath::CharType kBrowserProcessExecutablePathChromium[] =
+     FPL(CHROMIUM_PRODUCT_STRING ".app/Contents/MacOS/" CHROMIUM_PRODUCT_STRING);
+@@ -99,19 +93,19 @@ const base::FilePath::CharType kHelperPr
+ const base::FilePath::CharType kHelperProcessExecutablePath[] =
+     FPL(PRODUCT_STRING " Helper.app/Contents/MacOS/" PRODUCT_STRING " Helper");
+ #elif defined(OS_ANDROID)
+-const base::FilePath::CharType kBrowserProcessExecutablePath[] = FPL("chrome");
+-const base::FilePath::CharType kHelperProcessExecutablePath[] = FPL("chrome");
++const base::FilePath::CharType kBrowserProcessExecutablePath[] = FPL("dumb");
++const base::FilePath::CharType kHelperProcessExecutablePath[] = FPL("dumb");
+ const base::FilePath::CharType kBrowserProcessExecutablePathChromium[] =
+-    FPL("chrome");
++    FPL("dumb");
+ const base::FilePath::CharType kHelperProcessExecutablePathChromium[] =
+-    FPL("chrome");
++    FPL("dumb");
+ #elif defined(OS_POSIX)
+ const base::FilePath::CharType kBrowserProcessExecutablePathChromium[] =
+-    FPL("chrome");
+-const base::FilePath::CharType kBrowserProcessExecutablePath[] = FPL("chrome");
++    FPL("dumb");
++const base::FilePath::CharType kBrowserProcessExecutablePath[] = FPL("dumb");
+ const base::FilePath::CharType kHelperProcessExecutablePathChromium[] =
+-    FPL("chrome");
+-const base::FilePath::CharType kHelperProcessExecutablePath[] = FPL("chrome");
++    FPL("dumb");
++const base::FilePath::CharType kHelperProcessExecutablePath[] = FPL("dumb");
+ #endif  // OS_*
+ 
+ #if defined(OS_MACOSX)
+@@ -122,7 +116,7 @@ const base::FilePath::CharType kFramewor
+ #endif  // OS_MACOSX
+ 
+ #if defined(OS_WIN)
+-const base::FilePath::CharType kBrowserResourcesDll[] = FPL("chrome.dll");
++const base::FilePath::CharType kBrowserResourcesDll[] = FPL("dumb.dll");
+ const base::FilePath::CharType kElfDll[] = FPL("chrome_elf.dll");
+ const base::FilePath::CharType kStatusTrayWindowClass[] =
+     FPL("Chrome_StatusTrayWindow");
+diff --git a/chrome/app/chromium_strings.grd b/chrome/app/chromium_strings.grd
+index de6c12332bb6..a6ada9b83e38 100644
+--- a/chrome/app/chromium_strings.grd
++++ b/chrome/app/chromium_strings.grd
+@@ -185,10 +185,10 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+       </if>
+ 
+       <message name="IDS_PRODUCT_NAME" desc="The Chrome application name">
+-        Chromium
++        Dumb Browser
+       </message>
+       <message name="IDS_SHORT_PRODUCT_NAME" desc="The Chrome application short name.">
+-        Chromium
++        Dumb Browser
+       </message>
+       <if expr="is_win">
+         <message name="IDS_SXS_SHORTCUT_NAME" desc="Unused in Chromium builds" translateable="false">

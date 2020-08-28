@@ -1,0 +1,750 @@
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -724,7 +724,6 @@ group("gn_all") {
+       "//chrome/tools/convert_dict",
+       "//components/constrained_window:unit_tests",
+       "//components/metrics:serialization",
+-      "//components/rappor:unit_tests",
+       "//components/services/filesystem:filesystem_service_unittests",
+       "//components/sessions:unit_tests",
+       "//media/blink:media_blink_unittests",
+--- a/chrome/android/BUILD.gn
++++ b/chrome/android/BUILD.gn
+@@ -3073,7 +3073,6 @@ generate_jni("chrome_jni_headers") {
+     "java/src/org/chromium/chrome/browser/provider/ChromeBrowserProvider.java",
+     "java/src/org/chromium/chrome/browser/push_messaging/PushMessagingServiceObserver.java",
+     "java/src/org/chromium/chrome/browser/query_tiles/TileProviderFactory.java",
+-    "java/src/org/chromium/chrome/browser/rappor/RapporServiceBridge.java",
+     "java/src/org/chromium/chrome/browser/resources/ResourceMapper.java",
+     "java/src/org/chromium/chrome/browser/rlz/RevenueStats.java",
+     "java/src/org/chromium/chrome/browser/rlz/RlzPingHandler.java",
+--- a/chrome/android/chrome_java_sources.gni
++++ b/chrome/android/chrome_java_sources.gni
+@@ -1352,7 +1352,6 @@ chrome_java_sources = [
+   "java/src/org/chromium/chrome/browser/query_tiles/QueryTileSection.java",
+   "java/src/org/chromium/chrome/browser/query_tiles/QueryTileUtils.java",
+   "java/src/org/chromium/chrome/browser/query_tiles/TileProviderFactory.java",
+-  "java/src/org/chromium/chrome/browser/rappor/RapporServiceBridge.java",
+   "java/src/org/chromium/chrome/browser/reengagement/ReengagementNotificationController.java",
+   "java/src/org/chromium/chrome/browser/resources/ResourceMapper.java",
+   "java/src/org/chromium/chrome/browser/rlz/RevenueStats.java",
+--- a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabActivityLifecycleUmaTracker.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabActivityLifecycleUmaTracker.java
+@@ -19,7 +19,6 @@ import org.chromium.chrome.browser.lifec
+ import org.chromium.chrome.browser.lifecycle.PauseResumeWithNativeObserver;
+ import org.chromium.chrome.browser.preferences.ChromePreferenceKeys;
+ import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
+-import org.chromium.chrome.browser.rappor.RapporServiceBridge;
+ import org.chromium.chrome.browser.webapps.WebappCustomTabTimeSpentLogger;
+ import org.chromium.content_public.browser.UiThreadTaskTraits;
+ 
+@@ -105,12 +104,5 @@ public class CustomTabActivityLifecycleU
+         if (TextUtils.isEmpty(packageName) || packageName.contains(mActivity.getPackageName())) {
+             return;
+         }
+-
+-        PostTask.postTask(UiThreadTaskTraits.DEFAULT, () -> {
+-            RapporServiceBridge.sampleString("CustomTabs.ServiceClient.PackageName", packageName);
+-            if (GSAState.isGsaPackageName(packageName)) return;
+-            RapporServiceBridge.sampleString(
+-                    "CustomTabs.ServiceClient.PackageNameThirdParty", packageName);
+-        });
+     }
+ }
+--- a/chrome/app/DEPS
++++ b/chrome/app/DEPS
+@@ -55,7 +55,6 @@ specific_include_rules = {
+     "+components/contextual_search/content/common",
+     "+components/data_reduction_proxy/core/common",
+     "+components/metrics/public",
+-    "+components/rappor/public",
+     "+components/services/app_service",
+     "+components/translate/content/common",
+     "+extensions/buildflags",
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -1985,7 +1985,6 @@ static_library("browser") {
+     "//components/proxy_config",
+     "//components/query_parser",
+     "//components/query_tiles",
+-    "//components/rappor",
+     "//components/renderer_context_menu",
+     "//components/resources",
+     "//components/safe_search_api",
+@@ -2514,7 +2513,6 @@ static_library("browser") {
+       "android/provider/chrome_browser_provider.cc",
+       "android/provider/chrome_browser_provider.h",
+       "android/provider/run_on_ui_thread_blocking.h",
+-      "android/rappor/rappor_service_bridge.cc",
+       "android/recently_closed_tabs_bridge.cc",
+       "android/recently_closed_tabs_bridge.h",
+       "android/reparenting_task.cc",
+--- a/chrome/browser/DEPS
++++ b/chrome/browser/DEPS
+@@ -214,7 +214,6 @@ include_rules = [
+   "+components/query_parser",
+   "+components/query_tiles",
+   "+components/quirks",
+-  "+components/rappor",
+   "+components/reading_list/core",
+   "+components/remote_cocoa/app_shim",
+   "+components/remote_cocoa/browser",
+--- a/chrome/browser/android/vr/BUILD.gn
++++ b/chrome/browser/android/vr/BUILD.gn
+@@ -117,7 +117,6 @@ static_library("vr_android") {
+     "//components/omnibox/browser",
+     "//components/page_info",
+     "//components/permissions",
+-    "//components/rappor",
+     "//components/search_engines:search_engines",
+     "//content/public/browser",
+     "//content/public/common",
+--- a/chrome/browser/browser_process.h
++++ b/chrome/browser/browser_process.h
+@@ -98,10 +98,6 @@ class PrintJobManager;
+ class PrintPreviewDialogController;
+ }
+ 
+-namespace rappor {
+-class RapporServiceImpl;
+-}
+-
+ namespace resource_coordinator {
+ class ResourceCoordinatorParts;
+ class TabManager;
+@@ -131,7 +127,6 @@ class BrowserProcess {
+ 
+   // Services: any of these getters may return NULL
+   virtual metrics::MetricsService* metrics_service() = 0;
+-  virtual rappor::RapporServiceImpl* rappor_service() = 0;
+   virtual ProfileManager* profile_manager() = 0;
+   virtual PrefService* local_state() = 0;
+   virtual scoped_refptr<network::SharedURLLoaderFactory>
+--- a/chrome/browser/browser_process_impl.cc
++++ b/chrome/browser/browser_process_impl.cc
+@@ -106,8 +106,6 @@
+ #include "components/prefs/json_pref_store.h"
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/rappor/public/rappor_utils.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "components/sessions/core/session_id_generator.h"
+ #include "components/subresource_filter/content/browser/ruleset_service.h"
+ #include "components/subresource_filter/core/browser/subresource_filter_constants.h"
+@@ -217,12 +215,6 @@ static constexpr base::TimeDelta kEndSes
+ using content::BrowserThread;
+ using content::ChildProcessSecurityPolicy;
+ 
+-rappor::RapporService* GetBrowserRapporService() {
+-  if (g_browser_process != nullptr)
+-    return g_browser_process->rappor_service();
+-  return nullptr;
+-}
+-
+ BrowserProcessImpl::BrowserProcessImpl(StartupData* startup_data) {
+   g_browser_process = this;
+ 
+@@ -257,8 +249,6 @@ void BrowserProcessImpl::Init() {
+ 
+   download_status_updater_ = std::make_unique<DownloadStatusUpdater>();
+ 
+-  rappor::SetDefaultServiceAccessor(&GetBrowserRapporService);
+-
+ #if BUILDFLAG(ENABLE_PRINTING)
+   // Must be created after the NotificationService.
+   print_job_manager_ = std::make_unique<printing::PrintJobManager>();
+@@ -650,11 +640,6 @@ metrics::MetricsService* BrowserProcessI
+   return GetMetricsServicesManager()->GetMetricsService();
+ }
+ 
+-rappor::RapporServiceImpl* BrowserProcessImpl::rappor_service() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  return GetMetricsServicesManager()->GetRapporServiceImpl();
+-}
+-
+ SystemNetworkContextManager*
+ BrowserProcessImpl::system_network_context_manager() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+--- a/chrome/browser/browser_process_impl.h
++++ b/chrome/browser/browser_process_impl.h
+@@ -132,7 +132,6 @@ class BrowserProcessImpl : public Browse
+   metrics_services_manager::MetricsServicesManager* GetMetricsServicesManager()
+       override;
+   metrics::MetricsService* metrics_service() override;
+-  rappor::RapporServiceImpl* rappor_service() override;
+   // TODO(qinmin): Remove this method as callers can retrieve the global
+   // instance from SystemNetworkContextManager directly.
+   SystemNetworkContextManager* system_network_context_manager() override;
+--- a/chrome/browser/chrome_browser_main.cc
++++ b/chrome/browser/chrome_browser_main.cc
+@@ -133,7 +133,6 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/prefs/pref_value_store.h"
+ #include "components/prefs/scoped_user_pref_update.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "components/site_isolation/site_isolation_policy.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/startup_metric_utils/browser/startup_metric_utils.h"
+--- a/chrome/browser/chromeos/BUILD.gn
++++ b/chrome/browser/chromeos/BUILD.gn
+@@ -242,7 +242,6 @@ source_set("chromeos") {
+     "//components/printing/common:mojo_interfaces",
+     "//components/proxy_config",
+     "//components/quirks",
+-    "//components/rappor",
+     "//components/renderer_context_menu",
+     "//components/rlz",
+     "//components/safe_browsing/core:csd_proto",
+--- a/chrome/browser/extensions/BUILD.gn
++++ b/chrome/browser/extensions/BUILD.gn
+@@ -835,7 +835,6 @@ static_library("extensions") {
+     "//components/policy/core/browser",
+     "//components/pref_registry",
+     "//components/proxy_config",
+-    "//components/rappor",
+     "//components/resources",
+     "//components/search_engines",
+     "//components/services/app_service/public/mojom",
+--- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
++++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
+@@ -28,7 +28,6 @@
+ #include "components/metrics/enabled_state_provider.h"
+ #include "components/metrics/metrics_state_manager.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "components/variations/service/variations_service.h"
+ #include "components/variations/variations_associated_data.h"
+ #include "components/version_info/version_info.h"
+@@ -255,13 +254,6 @@ ChromeMetricsServicesManagerClient::GetE
+   return *enabled_state_provider_;
+ }
+ 
+-std::unique_ptr<rappor::RapporServiceImpl>
+-ChromeMetricsServicesManagerClient::CreateRapporServiceImpl() {
+-  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+-  return std::make_unique<rappor::RapporServiceImpl>(
+-      local_state_, base::Bind(&chrome::IsOffTheRecordSessionActive));
+-}
+-
+ std::unique_ptr<variations::VariationsService>
+ ChromeMetricsServicesManagerClient::CreateVariationsService() {
+   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+--- a/chrome/browser/metrics/chrome_metrics_services_manager_client.h
++++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.h
+@@ -75,7 +75,6 @@ class ChromeMetricsServicesManagerClient
+   class ChromeEnabledStateProvider;
+ 
+   // metrics_services_manager::MetricsServicesManagerClient:
+-  std::unique_ptr<rappor::RapporServiceImpl> CreateRapporServiceImpl() override;
+   std::unique_ptr<variations::VariationsService> CreateVariationsService()
+       override;
+   std::unique_ptr<metrics::MetricsServiceClient> CreateMetricsServiceClient()
+--- a/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
++++ b/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
+@@ -46,7 +46,6 @@
+ #include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
+ #include "components/page_load_metrics/browser/page_load_metrics_embedder_base.h"
+ #include "components/page_load_metrics/browser/page_load_tracker.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "content/public/browser/web_contents.h"
+ #include "extensions/buildflags/buildflags.h"
+ #include "url/gurl.h"
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -135,7 +135,6 @@
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/proxy_config/pref_proxy_config_tracker_impl.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "components/search_engines/template_url_prepopulate_data.h"
+ #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
+ #include "components/sessions/core/session_id_generator.h"
+@@ -694,7 +693,6 @@ void RegisterLocalState(PrefRegistrySimp
+   ProfileInfoCache::RegisterPrefs(registry);
+   ProfileNetworkContextService::RegisterLocalStatePrefs(registry);
+   profiles::RegisterPrefs(registry);
+-  rappor::RapporServiceImpl::RegisterPrefs(registry);
+   RegisterScreenshotPrefs(registry);
+   secure_origin_allowlist::RegisterPrefs(registry);
+   sessions::SessionIdGenerator::RegisterPrefs(registry);
+--- a/chrome/browser/ui/BUILD.gn
++++ b/chrome/browser/ui/BUILD.gn
+@@ -467,7 +467,6 @@ static_library("ui") {
+     "//components/previews/core",
+     "//components/proxy_config",
+     "//components/query_parser",
+-    "//components/rappor",
+     "//components/renderer_context_menu",
+     "//components/resources",
+     "//components/schema_org/common:improved_mojom",
+--- a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
++++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
+@@ -357,7 +357,6 @@ void ContentSettingMixedScriptBubbleMode
+ }
+ 
+ void ContentSettingMixedScriptBubbleModel::OnCustomLinkClicked() {
+-  DCHECK(rappor_service());
+   MixedContentSettingsTabHelper* mixed_content_settings =
+       MixedContentSettingsTabHelper::FromWebContents(web_contents());
+   if (mixed_content_settings) {
+@@ -1833,8 +1832,7 @@ ContentSettingBubbleModel::ContentSettin
+                                                      WebContents* web_contents)
+     : web_contents_(web_contents),
+       owner_(nullptr),
+-      delegate_(delegate),
+-      rappor_service_(g_browser_process->rappor_service()) {
++      delegate_(delegate) {
+   DCHECK(web_contents_);
+ }
+ 
+--- a/chrome/browser/ui/content_settings/content_setting_bubble_model.h
++++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.h
+@@ -37,10 +37,6 @@ namespace content {
+ class WebContents;
+ }
+ 
+-namespace rappor {
+-class RapporServiceImpl;
+-}
+-
+ // The hierarchy of bubble models:
+ //
+ // ContentSettingBubbleModel                  - base class
+@@ -221,12 +217,6 @@ class ContentSettingBubbleModel {
+   // Cast this bubble into ContentSettingNotificationsBubbleModel if possible.
+   virtual ContentSettingNotificationsBubbleModel* AsNotificationsBubbleModel();
+ 
+-  // Sets the Rappor service used for testing.
+-  void SetRapporServiceImplForTesting(
+-      rappor::RapporServiceImpl* rappor_service) {
+-    rappor_service_ = rappor_service;
+-  }
+-
+  protected:
+   // |web_contents| must outlive this.
+   ContentSettingBubbleModel(Delegate* delegate,
+@@ -278,15 +268,12 @@ class ContentSettingBubbleModel {
+   void set_cancel_button_text(const base::string16& cancel_button_text) {
+     bubble_content_.cancel_button_text = cancel_button_text;
+   }
+-  rappor::RapporServiceImpl* rappor_service() const { return rappor_service_; }
+ 
+  private:
+   content::WebContents* web_contents_;
+   Owner* owner_;
+   Delegate* delegate_;
+   BubbleContent bubble_content_;
+-  // The service used to record Rappor metrics. Can be set for testing.
+-  rappor::RapporServiceImpl* rappor_service_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(ContentSettingBubbleModel);
+ };
+--- a/chrome/browser/vr/BUILD.gn
++++ b/chrome/browser/vr/BUILD.gn
+@@ -271,7 +271,6 @@ component("vr_common") {
+     "//chrome/common:constants",
+     "//components/omnibox/browser",
+     "//components/omnibox/browser",
+-    "//components/rappor/public:public",
+     "//components/ukm/content",
+     "//content/public/browser",
+     "//device/base",
+@@ -401,7 +400,6 @@ component("vr_base") {
+   deps = [
+     "//base",
+     "//chrome/app:generated_resources",
+-    "//components/rappor:rappor",
+     "//components/security_state/core",
+     "//components/ukm/content",
+     "//components/url_formatter",
+--- a/chrome/common/search/instant_mojom_traits.h
++++ b/chrome/common/search/instant_mojom_traits.h
+@@ -43,7 +43,6 @@ IPC_STRUCT_TRAITS_BEGIN(ntp_tiles::NTPTi
+   IPC_STRUCT_TRAITS_MEMBER(visual_type)
+   IPC_STRUCT_TRAITS_MEMBER(icon_type)
+   IPC_STRUCT_TRAITS_MEMBER(data_generation_time)
+-  IPC_STRUCT_TRAITS_MEMBER(url_for_rappor)
+ IPC_STRUCT_TRAITS_END()
+ 
+ IPC_STRUCT_TRAITS_BEGIN(InstantMostVisitedItem)
+--- a/chrome/renderer/DEPS
++++ b/chrome/renderer/DEPS
+@@ -37,7 +37,6 @@ include_rules = [
+   "+components/prerender",
+   "+components/printing/common",
+   "+components/printing/renderer",
+-  "+components/rappor/public/mojom",
+   "+components/safe_browsing/buildflags.h",
+   "+components/safe_browsing/content/renderer",
+   "+components/safe_browsing/content/common",
+--- a/chrome/tools/build/win/FILES.cfg
++++ b/chrome/tools/build/win/FILES.cfg
+@@ -808,12 +808,6 @@ FILES = [
+     'optional': ['dev', 'official'],
+   },
+   {
+-    'filename': 'rappor.xml',
+-    'buildtype': ['dev', 'official'],
+-    'archive': 'metrics-metadata.zip',
+-    'optional': ['dev', 'official'],
+-  },
+-  {
+     'filename': 'ukm.xml',
+     'buildtype': ['dev', 'official'],
+     'archive': 'metrics-metadata.zip',
+--- a/components/BUILD.gn
++++ b/components/BUILD.gn
+@@ -124,7 +124,6 @@ test("components_unittests") {
+     "//components/previews/core:unit_tests",
+     "//components/proxy_config:unit_tests",
+     "//components/query_parser:unit_tests",
+-    "//components/rappor:unit_tests",
+     "//components/reading_list/core:unit_tests",
+     "//components/safe_search_api:unit_tests",
+     "//components/scheduling_metrics:unit_tests",
+--- a/components/metrics_services_manager/BUILD.gn
++++ b/components/metrics_services_manager/BUILD.gn
+@@ -12,7 +12,6 @@ static_library("metrics_services_manager
+   deps = [
+     "//base",
+     "//components/metrics",
+-    "//components/rappor",
+     "//components/ukm",
+     "//components/variations",
+     "//components/variations/service",
+--- a/components/metrics_services_manager/DEPS
++++ b/components/metrics_services_manager/DEPS
+@@ -2,7 +2,6 @@ include_rules = [
+   "-components",
+   "+components/metrics",
+   "+components/metrics_services_manager",
+-  "+components/rappor",
+   "+components/ukm",
+   "+components/variations",
+   "+services/network",
+--- a/components/metrics_services_manager/metrics_services_manager.cc
++++ b/components/metrics_services_manager/metrics_services_manager.cc
+@@ -15,7 +15,6 @@
+ #include "components/metrics/metrics_state_manager.h"
+ #include "components/metrics/metrics_switches.h"
+ #include "components/metrics_services_manager/metrics_services_manager_client.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "components/ukm/ukm_service.h"
+ #include "components/variations/service/variations_service.h"
+ #include "services/network/public/cpp/shared_url_loader_factory.h"
+@@ -43,15 +42,6 @@ metrics::MetricsService* MetricsServices
+   return GetMetricsServiceClient()->GetMetricsService();
+ }
+ 
+-rappor::RapporServiceImpl* MetricsServicesManager::GetRapporServiceImpl() {
+-  DCHECK(thread_checker_.CalledOnValidThread());
+-  if (!rappor_service_) {
+-    rappor_service_ = client_->CreateRapporServiceImpl();
+-    rappor_service_->Initialize(client_->GetURLLoaderFactory());
+-  }
+-  return rappor_service_.get();
+-}
+-
+ ukm::UkmService* MetricsServicesManager::GetUkmService() {
+   DCHECK(thread_checker_.CalledOnValidThread());
+   return GetMetricsServiceClient()->GetUkmService();
+@@ -115,7 +105,6 @@ void MetricsServicesManager::UpdateRunni
+   const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
+   if (cmdline->HasSwitch(metrics::switches::kMetricsRecordingOnly)) {
+     metrics->StartRecordingForTests();
+-    GetRapporServiceImpl()->Update(true, false);
+     return;
+   }
+ 
+@@ -133,8 +122,6 @@ void MetricsServicesManager::UpdateRunni
+   }
+ 
+   UpdateUkmService();
+-
+-  GetRapporServiceImpl()->Update(may_record_, may_upload_);
+ }
+ 
+ void MetricsServicesManager::UpdateUkmService() {
+--- a/components/metrics_services_manager/metrics_services_manager.h
++++ b/components/metrics_services_manager/metrics_services_manager.h
+@@ -19,11 +19,6 @@ namespace metrics {
+ class MetricsService;
+ class MetricsServiceClient;
+ }
+-
+-namespace rappor {
+-class RapporServiceImpl;
+-}
+-
+ namespace ukm {
+ class UkmService;
+ }
+@@ -60,9 +55,6 @@ class MetricsServicesManager {
+   // additionally creating the MetricsServiceClient in that case).
+   metrics::MetricsService* GetMetricsService();
+ 
+-  // Returns the RapporServiceImpl, creating it if it hasn't been created yet.
+-  rappor::RapporServiceImpl* GetRapporServiceImpl();
+-
+   // Returns the UkmService, creating it if it hasn't been created yet.
+   ukm::UkmService* GetUkmService();
+ 
+@@ -86,9 +78,6 @@ class MetricsServicesManager {
+   bool IsMetricsConsentGiven() const;
+ 
+  private:
+-  // Update the managed services when permissions for recording/uploading
+-  // metrics change.
+-  void UpdateRapporServiceImpl();
+ 
+   // Returns the MetricsServiceClient, creating it if it hasn't been
+   // created yet (and additionally creating the MetricsService in that case).
+@@ -124,9 +113,6 @@ class MetricsServicesManager {
+   // The MetricsServiceClient. Owns the MetricsService.
+   std::unique_ptr<metrics::MetricsServiceClient> metrics_service_client_;
+ 
+-  // The RapporServiceImpl, for RAPPOR metric uploads.
+-  std::unique_ptr<rappor::RapporServiceImpl> rappor_service_;
+-
+   // The VariationsService, for server-side experiments infrastructure.
+   std::unique_ptr<variations::VariationsService> variations_service_;
+ 
+--- a/components/metrics_services_manager/metrics_services_manager_client.h
++++ b/components/metrics_services_manager/metrics_services_manager_client.h
+@@ -19,10 +19,6 @@ namespace network {
+ class SharedURLLoaderFactory;
+ }
+ 
+-namespace rappor {
+-class RapporServiceImpl;
+-}
+-
+ namespace variations {
+ class VariationsService;
+ }
+@@ -36,8 +32,6 @@ class MetricsServicesManagerClient {
+   virtual ~MetricsServicesManagerClient() {}
+ 
+   // Methods that create the various services in the context of the embedder.
+-  virtual std::unique_ptr<rappor::RapporServiceImpl>
+-  CreateRapporServiceImpl() = 0;
+   virtual std::unique_ptr<variations::VariationsService>
+   CreateVariationsService() = 0;
+   virtual std::unique_ptr<metrics::MetricsServiceClient>
+--- a/components/ntp_tiles/BUILD.gn
++++ b/components/ntp_tiles/BUILD.gn
+@@ -60,7 +60,6 @@ static_library("ntp_tiles") {
+     "//components/image_fetcher/core",
+     "//components/pref_registry",
+     "//components/prefs",
+-    "//components/rappor/public",
+     "//components/resources",
+     "//components/search_engines",
+     "//components/strings",
+@@ -94,7 +93,6 @@ source_set("unit_tests") {
+     "//components/image_fetcher/core",
+     "//components/image_fetcher/core:test_support",
+     "//components/pref_registry:pref_registry",
+-    "//components/rappor:test_support",
+     "//components/sync_preferences:test_support",
+     "//net:test_support",
+     "//services/data_decoder/public/cpp:test_support",
+--- a/components/ntp_tiles/DEPS
++++ b/components/ntp_tiles/DEPS
+@@ -8,7 +8,6 @@ include_rules = [
+   "+components/history/core/test",
+   "+components/pref_registry",
+   "+components/prefs",
+-  "+components/rappor",
+   "+components/search_engines",
+   "+components/strings/grit/components_strings.h",
+   "+components/suggestions",
+--- a/components/security_interstitials/DEPS
++++ b/components/security_interstitials/DEPS
+@@ -3,7 +3,6 @@ include_rules = [
+   "+components/history/core/browser",
+   "+components/metrics",
+   "+components/prefs",
+-  "+components/rappor",
+   "+components/safe_browsing/core/common",
+   "+components/safe_browsing/core/db",
+   "+components/ssl_errors",
+--- a/content/browser/BUILD.gn
++++ b/content/browser/BUILD.gn
+@@ -70,7 +70,6 @@ jumbo_source_set("browser") {
+     "//components/payments/core",
+     "//components/payments/core:error_strings",
+     "//components/payments/mojom",
+-    "//components/rappor",
+     "//components/services/filesystem:lib",
+     "//components/services/quarantine:quarantine",
+     "//components/services/storage",
+--- a/content/browser/DEPS
++++ b/content/browser/DEPS
+@@ -27,7 +27,6 @@ include_rules = [
+   "+components/offline_pages/buildflags/buildflags.h",
+   "+components/offline_pages/core/request_header",
+   "+components/payments",
+-  "+components/rappor/public",
+   "+components/services/heap_profiling/public",
+   "+components/system_media_controls",
+   "+components/tracing",
+--- a/content/browser/renderer_host/DEPS
++++ b/content/browser/renderer_host/DEPS
+@@ -19,7 +19,6 @@ include_rules = [
+ 
+ specific_include_rules = {
+   ".*_(unit|browser)test\.(cc|mm)": [
+-    "+components/rappor/test_rappor_service.h",
+     "+content/browser/web_contents",
+     "+content/public/browser/web_contents.h",
+     "+content/public/browser/web_contents_delegate.h",
+--- a/content/browser/renderer_host/render_widget_host_delegate.cc
++++ b/content/browser/renderer_host/render_widget_host_delegate.cc
+@@ -5,7 +5,6 @@
+ #include "content/browser/renderer_host/render_widget_host_delegate.h"
+ 
+ #include "build/build_config.h"
+-#include "components/rappor/public/sample.h"
+ #include "content/browser/renderer_host/render_view_host_delegate_view.h"
+ #include "content/public/browser/keyboard_event_processing_result.h"
+ #include "services/metrics/public/cpp/ukm_source_id.h"
+@@ -135,12 +134,6 @@ bool RenderWidgetHostDelegate::IsWidgetF
+   return false;
+ }
+ 
+-bool RenderWidgetHostDelegate::AddDomainInfoToRapporSample(
+-    rappor::Sample* sample) {
+-  sample->SetStringField("Domain", "Unknown");
+-  return false;
+-}
+-
+ ukm::SourceId RenderWidgetHostDelegate::GetCurrentPageUkmSourceId() {
+   return ukm::kInvalidSourceId;
+ }
+--- a/content/browser/renderer_host/render_widget_host_delegate.h
++++ b/content/browser/renderer_host/render_widget_host_delegate.h
+@@ -35,10 +35,6 @@ class Point;
+ class Size;
+ }
+ 
+-namespace rappor {
+-class Sample;
+-}
+-
+ namespace content {
+ 
+ class BrowserAccessibilityManager;
+@@ -303,11 +299,6 @@ class CONTENT_EXPORT RenderWidgetHostDel
+   virtual void FocusOwningWebContents(
+       RenderWidgetHostImpl* render_widget_host) {}
+ 
+-  // Augment a Rappor sample with eTLD+1 context. The caller is still
+-  // responsible for logging the sample to the RapporService. Returns false
+-  // if the eTLD+1 is not known for |render_widget_host|.
+-  virtual bool AddDomainInfoToRapporSample(rappor::Sample* sample);
+-
+   // Return this object cast to a WebContents, if it is one. If the object is
+   // not a WebContents, returns nullptr.
+   virtual WebContents* GetAsWebContents();
+--- a/content/browser/web_contents/web_contents_impl.cc
++++ b/content/browser/web_contents/web_contents_impl.cc
+@@ -40,7 +40,6 @@
+ #include "base/trace_event/trace_event.h"
+ #include "build/build_config.h"
+ #include "components/download/public/common/download_stats.h"
+-#include "components/rappor/public/rappor_utils.h"
+ #include "components/url_formatter/url_formatter.h"
+ #include "content/browser/accessibility/accessibility_event_recorder.h"
+ #include "content/browser/accessibility/accessibility_tree_formatter_blink.h"
+@@ -7415,14 +7414,6 @@ void WebContentsImpl::RemoveReceiverSet(
+     receiver_sets_.erase(it);
+ }
+ 
+-bool WebContentsImpl::AddDomainInfoToRapporSample(rappor::Sample* sample) {
+-  // Here we associate this metric to the main frame URL regardless of what
+-  // caused it.
+-  sample->SetStringField("Domain", ::rappor::GetDomainAndRegistrySampleFromGURL(
+-                                       GetLastCommittedURL()));
+-  return true;
+-}
+-
+ void WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded() {
+   bool allow_localhost = base::CommandLine::ForCurrentProcess()->HasSwitch(
+       switches::kAllowInsecureLocalhost);
+--- a/content/browser/web_contents/web_contents_impl.h
++++ b/content/browser/web_contents/web_contents_impl.h
+@@ -922,7 +922,6 @@ class CONTENT_EXPORT WebContentsImpl : p
+   TextInputManager* GetTextInputManager() override;
+   bool OnUpdateDragCursor() override;
+   bool IsWidgetForMainFrame(RenderWidgetHostImpl* render_widget_host) override;
+-  bool AddDomainInfoToRapporSample(rappor::Sample* sample) override;
+   bool IsShowingContextMenuOnPage() const override;
+   void DidChangeScreenOrientation() override;
+   // The following function is already listed under RenderViewHostDelegate
+--- a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h
++++ b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h
+@@ -562,8 +562,6 @@ class MODULES_EXPORT RTCPeerConnection f
+ 
+   void CloseInternal();
+ 
+-  void RecordRapporMetrics();
+-
+   DOMException* checkSdpForStateErrors(ExecutionContext*,
+                                        const RTCSessionDescriptionInit*,
+                                        String* sdp);
+--- a/tools/metrics/BUILD.gn
++++ b/tools/metrics/BUILD.gn
+@@ -22,11 +22,6 @@ copy("actions_xml") {
+   outputs = [ "$root_out_dir/actions.xml" ]
+ }
+ 
+-copy("rappor_xml") {
+-  sources = [ "rappor/rappor.xml" ]
+-  outputs = [ "$root_out_dir/rappor.xml" ]
+-}
+-
+ copy("ukm_xml") {
+   sources = [ "ukm/ukm.xml" ]
+   outputs = [ "$root_out_dir/ukm.xml" ]
+@@ -36,7 +31,6 @@ group("metrics_metadata") {
+   deps = [
+     ":actions_xml",
+     ":histograms_xml",
+-    ":rappor_xml",
+     ":ukm_xml",
+   ]
+ }
+@@ -105,9 +99,6 @@ group("metrics_python_tests") {
+     "//tools/metrics/histograms/pretty_print.py",
+     "//tools/metrics/histograms/pretty_print_test.py",
+ 
+-    "//tools/metrics/rappor/rappor_model.py",
+-    "//tools/metrics/rappor/rappor_model_test.py",
+-
+     "//tools/metrics/ukm/ukm.xml",
+     "//tools/metrics/ukm/codegen.py",
+     "//tools/metrics/ukm/codegen_test.py",
+--- a/chrome/browser/prefs/pref_service_incognito_allowlist.cc
++++ b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
+@@ -12,7 +12,6 @@
+ #include "components/bookmarks/common/bookmark_pref_names.h"
+ #include "components/content_settings/core/common/pref_names.h"
+ #include "components/metrics/metrics_pref_names.h"
+-#include "components/rappor/rappor_pref_names.h"
+ #include "components/reading_list/core/reading_list_pref_names.h"
+ #include "components/ukm/ukm_pref_names.h"
+ 
+@@ -141,12 +140,6 @@ const char* const kPersistentPrefNames[]
+     prefs::kUseCustomChromeFrame,
+ #endif
+ 
+-    // Rappor preferences are not used in incognito mode, but they are written
+-    // in startup if they don't exist. So if the startup would be in incognito,
+-    // they need to be persisted.
+-    rappor::prefs::kRapporCohortSeed,
+-    rappor::prefs::kRapporSecret,
+-
+     // Reading list preferences are common between incognito and regular mode.
+     reading_list::prefs::kReadingListHasUnseenEntries,
+ 

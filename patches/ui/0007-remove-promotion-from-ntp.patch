@@ -1,0 +1,971 @@
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -3500,13 +3500,6 @@ static_library("browser") {
+       "search/one_google_bar/one_google_bar_service_factory.cc",
+       "search/one_google_bar/one_google_bar_service_factory.h",
+       "search/one_google_bar/one_google_bar_service_observer.h",
+-      "search/promos/promo_data.cc",
+-      "search/promos/promo_data.h",
+-      "search/promos/promo_service.cc",
+-      "search/promos/promo_service.h",
+-      "search/promos/promo_service_factory.cc",
+-      "search/promos/promo_service_factory.h",
+-      "search/promos/promo_service_observer.h",
+       "search/search_engine_base_url_tracker.cc",
+       "search/search_engine_base_url_tracker.h",
+       "search/search_provider_observer.cc",
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -242,7 +242,6 @@
+ #include "chrome/browser/metrics/tab_stats_tracker.h"
+ #include "chrome/browser/nearby_sharing/nearby_sharing_prefs.h"
+ #include "chrome/browser/search/instant_service.h"
+-#include "chrome/browser/search/promos/promo_service.h"
+ #include "chrome/browser/search/search_suggest/search_suggest_service.h"
+ #include "chrome/browser/signin/signin_promo.h"
+ #include "chrome/browser/ui/startup/startup_browser_creator.h"
+@@ -1009,7 +1008,6 @@ void RegisterProfilePrefs(user_prefs::Pr
+   NewTabUI::RegisterProfilePrefs(registry);
+   ntp_tiles::CustomLinksManagerImpl::RegisterProfilePrefs(registry);
+   PinnedTabCodec::RegisterProfilePrefs(registry);
+-  PromoService::RegisterProfilePrefs(registry);
+   SearchSuggestService::RegisterProfilePrefs(registry);
+   settings::SettingsUI::RegisterProfilePrefs(registry);
+   send_tab_to_self::SendTabToSelfBubbleController::RegisterProfilePrefs(
+--- a/chrome/browser/resources/local_ntp/externs.js
++++ b/chrome/browser/resources/local_ntp/externs.js
+@@ -105,17 +105,6 @@ let ddl;
+ let og;
+ 
+ /**
+- * The type of the middle-slot promo data object. The definition is based on
+- * chrome/browser/search/local_ntp_source.cc:
+- *     ConvertPromoDataToDict()
+- * @typedef {{promoHtml: (string|undefined),
+- *            promoLogUrl: (string|undefined),
+- *            promoId: (string|undefined),
+- *            canOpenExtensionsPage: boolean}}
+- */
+-let promo;
+-
+-/**
+  * The type of the search suggestions data object. The definition is based on
+  * chrome/browser/search/local_ntp_source.cc:
+  *     ConvertSearchSuggestDataToDict()
+@@ -392,9 +381,6 @@ window.chrome.embeddedSearch.newTabPage.
+  */
+ window.chrome.embeddedSearch.newTabPage.updateCustomLink;
+ 
+-/** @param {string} promoId */
+-window.chrome.embeddedSearch.newTabPage.blocklistPromo;
+-
+ /**
+  * @param {number} button
+  * @param {boolean} altKey
+@@ -510,7 +496,6 @@ configData.translatedStrings.copyLink;
+ configData.translatedStrings.customizeThisPage;
+ configData.translatedStrings.defaultWallpapers;
+ configData.translatedStrings.details;
+-configData.translatedStrings.dismissPromo;
+ configData.translatedStrings.editLinkTitle;
+ configData.translatedStrings.editLinkTooltip;
+ configData.translatedStrings.fakeboxMicrophoneTooltip;
+--- a/chrome/browser/resources/local_ntp/local_ntp.js
++++ b/chrome/browser/resources/local_ntp/local_ntp.js
+@@ -70,7 +70,6 @@ const CLASSES = {
+   DIM: 'dim',
+   DISMISSABLE: 'dismissable',
+   DISMISS_ICON: 'dismiss-icon',
+-  DISMISS_PROMO: 'dismiss-promo',
+   // Extended and elevated style for customization entry point.
+   ENTRY_POINT_ENHANCED: 'ep-enhanced',
+   FAKEBOX_FOCUS: 'fakebox-focused',  // Applies focus styles to the fakebox
+@@ -141,7 +140,6 @@ const IDS = {
+   NOTIFICATION_MESSAGE: 'mv-msg',
+   NTP_CONTENTS: 'ntp-contents',
+   OGB: 'one-google',
+-  PROMO: 'promo',
+   REALBOX: 'realbox',
+   REALBOX_ICON: 'realbox-icon',
+   REALBOX_INPUT_WRAPPER: 'realbox-input-wrapper',
+@@ -171,11 +169,6 @@ const LOG_TYPE = {
+   NTP_CUSTOMIZE_SHORTCUT_CANCEL: 54,
+   // 'Done' was clicked in the 'Edit shortcut' dialog.
+   NTP_CUSTOMIZE_SHORTCUT_DONE: 55,
+-
+-  // A middle slot promo was shown.
+-  NTP_MIDDLE_SLOT_PROMO_SHOWN: 60,
+-  // A promo link was clicked.
+-  NTP_MIDDLE_SLOT_PROMO_LINK_CLICKED: 61,
+ };
+ 
+ /**
+@@ -664,20 +657,6 @@ function floatDownNotification(notificat
+     currNotification = null;
+   }
+ 
+-  if (showPromo) {
+-    // Show middle-slot promo if one is present.
+-    const promo = $(IDS.PROMO);
+-    if (promo) {
+-      promo.classList.remove(CLASSES.HIDE_NOTIFICATION);
+-      // Timeout is required for the "float" transition to work. Modifying the
+-      // "display" property prevents transitions from activating for a brief
+-      // period of time.
+-      window.setTimeout(() => {
+-        promo.classList.remove(CLASSES.FLOAT_DOWN);
+-      }, DISPLAY_TIMEOUT);
+-    }
+-  }
+-
+   // Reset notification visibility once the animation is complete.
+   notificationContainer.addEventListener('transitionend', (event) => {
+     // Blur the hidden items.
+@@ -720,19 +699,6 @@ function floatUpNotification(notificatio
+     delayedHideNotification = null;
+   }
+ 
+-  // Hide middle-slot promo if one is present.
+-  const promo = $(IDS.PROMO);
+-  if (promo) {
+-    promo.classList.add(CLASSES.FLOAT_DOWN);
+-    // Prevent keyboard focus once the promo is hidden.
+-    promo.addEventListener('transitionend', (event) => {
+-      if (event.propertyName === 'bottom' &&
+-          promo.classList.contains(CLASSES.FLOAT_DOWN)) {
+-        promo.classList.add(CLASSES.HIDE_NOTIFICATION);
+-      }
+-    }, {once: true});
+-  }
+-
+   notification.classList.remove(CLASSES.HIDE_NOTIFICATION);
+   // Timeout is required for the "float" transition to work. Modifying the
+   // "display" property prevents transitions from activating for a brief period
+@@ -802,9 +768,6 @@ function handlePostMessage(event) {
+       if ($(IDS.SUGGESTIONS)) {
+         $(IDS.SUGGESTIONS).style.visibility = 'visible';
+       }
+-      if ($(IDS.PROMO)) {
+-        showPromoIfNotOverlappingAndTrackResizes();
+-      }
+       if (customLinksEnabled()) {
+         $(customize.IDS.CUSTOM_LINKS_RESTORE_DEFAULT)
+             .classList.toggle(
+@@ -848,7 +811,7 @@ function handlePostMessage(event) {
+ /** Hides the Most Visited pop-up notification. */
+ function hideNotification() {
+   floatDownNotification(
+-      $(IDS.NOTIFICATION), $(IDS.NOTIFICATION_CONTAINER), /*showPromo=*/ true);
++      $(IDS.NOTIFICATION), $(IDS.NOTIFICATION_CONTAINER), /*showPromo=*/ false);
+ }
+ 
+ /**
+@@ -1058,67 +1021,6 @@ function injectOneGoogleBar(ogb) {
+ }
+ 
+ /**
+- * Injects a middle-slot promo into the page. Called asynchronously, so that it
+- * doesn't block the main page load.
+- */
+-function injectPromo(promo) {
+-  if (!promo.promoHtml) {
+-    if ($(IDS.PROMO)) {
+-      $(IDS.PROMO).remove();
+-    }
+-    return;
+-  }
+-
+-  const promoContainer = document.createElement('div');
+-  promoContainer.id = IDS.PROMO;
+-  promoContainer.innerHTML += promo.promoHtml;
+-  $(IDS.NTP_CONTENTS).appendChild(promoContainer);
+-
+-  if (promo.promoLogUrl) {
+-    navigator.sendBeacon(promo.promoLogUrl);
+-  }
+-
+-  ntpApiHandle.logEvent(LOG_TYPE.NTP_MIDDLE_SLOT_PROMO_SHOWN);
+-
+-  const link = promoContainer.querySelector('a');
+-  if (link) {
+-    link.onclick = e => {
+-      const url = new URL(link.href);
+-      if (promo.canOpenExtensionsPage && url.origin == 'chrome://extensions') {
+-        ntpApiHandle.openExtensionsPage(
+-            e.button, e.altKey, e.ctrlKey, e.metaKey, e.shiftKey);
+-        e.preventDefault();
+-      }
+-      ntpApiHandle.logEvent(LOG_TYPE.NTP_MIDDLE_SLOT_PROMO_LINK_CLICKED);
+-    };
+-  }
+-
+-  if (promo.promoId) {
+-    const icon = document.createElement('button');
+-    icon.classList.add(CLASSES.DISMISS_ICON);
+-
+-    icon.title = configData.translatedStrings.dismissPromo;
+-    icon.onclick = e => {
+-      ntpApiHandle.blocklistPromo(promo.promoId);
+-      promoContainer.remove();
+-      window.removeEventListener('resize', showPromoIfNotOverlapping);
+-    };
+-
+-    const dismiss = document.createElement('div');
+-    dismiss.classList.add(CLASSES.DISMISS_PROMO);
+-    dismiss.appendChild(icon);
+-
+-    promoContainer.querySelector('div').appendChild(dismiss);
+-    promoContainer.classList.add(CLASSES.DISMISSABLE);
+-  }
+-
+-  // The the MV tiles are already loaded show the promo immediately.
+-  if (tilesAreLoaded) {
+-    showPromoIfNotOverlappingAndTrackResizes();
+-  }
+-}
+-
+-/**
+  * Injects search suggestions into the page. Called *synchronously* with cached
+  * data as not to cause shifting of the most visited tiles.
+  */
+@@ -1156,71 +1058,6 @@ function isFakeboxFocused() {
+       document.body.classList.contains(CLASSES.FAKEBOX_DRAG_FOCUS);
+ }
+ 
+-/** @return {boolean} */
+-function isPromoOverlapping() {
+-  const MARGIN = 10;
+-
+-  /**
+-   * @param {string} id
+-   * @return {DOMRect}
+-   */
+-  const rect = id => $(id).getBoundingClientRect();
+-
+-  const promoRect = $(IDS.PROMO).querySelector('div').getBoundingClientRect();
+-
+-  if (promoRect.top - MARGIN <= rect(IDS.USER_CONTENT).bottom) {
+-    return true;
+-  }
+-
+-  if (window.chrome.embeddedSearch.searchBox.rtl) {
+-    const attributionRect = rect(IDS.ATTRIBUTION);
+-    if (attributionRect.width > 0 &&
+-        promoRect.left - MARGIN <= attributionRect.right) {
+-      return true;
+-    }
+-
+-    const editBgRect = rect(customize.IDS.EDIT_BG);
+-    assert(editBgRect.width > 0);
+-    if (promoRect.left - 2 * MARGIN <= editBgRect.right) {
+-      return true;
+-    }
+-
+-    const customAttributionsRect = rect(customize.IDS.ATTRIBUTIONS);
+-    if (customAttributionsRect.width > 0 &&
+-        promoRect.right + MARGIN >= customAttributionsRect.left) {
+-      return true;
+-    }
+-  } else {
+-    const customAttributionsRect = rect(customize.IDS.ATTRIBUTIONS);
+-    if (customAttributionsRect.width > 0 &&
+-        promoRect.left - MARGIN <= customAttributionsRect.right) {
+-      return true;
+-    }
+-
+-    const editBgRect = rect(customize.IDS.EDIT_BG);
+-    assert(editBgRect.width > 0);
+-    if (promoRect.right + 2 * MARGIN >= editBgRect.left) {
+-      return true;
+-    }
+-
+-    const attributionEl = $(IDS.ATTRIBUTION);
+-    const attributionRect = attributionEl.getBoundingClientRect();
+-    if (attributionRect.width > 0) {
+-      const attributionOnLeft =
+-          attributionEl.classList.contains(CLASSES.LEFT_ALIGN_ATTRIBUTION);
+-      if (attributionOnLeft) {
+-        if (promoRect.left - MARGIN <= attributionRect.right) {
+-          return true;
+-        }
+-      } else if (promoRect.right + MARGIN >= attributionRect.left) {
+-        return true;
+-      }
+-    }
+-  }
+-
+-  return false;
+-}
+-
+ /** Binds event listeners. */
+ function listen() {
+   document.addEventListener('DOMContentLoaded', init);
+@@ -1571,9 +1408,6 @@ function onThemeChange() {
+   renderTheme();
+   renderOneGoogleBarTheme();
+   sendNtpThemeToMostVisitedIframe();
+-  if ($(IDS.PROMO)) {
+-    showPromoIfNotOverlapping();
+-  }
+ }
+ 
+ /**
+@@ -2097,15 +1931,6 @@ function requestAndInsertGoogleResources
+       injectOneGoogleBar(og);
+     };
+   }
+-  if (!$('promo-loader')) {
+-    const promoScript = document.createElement('script');
+-    promoScript.id = 'promo-loader';
+-    promoScript.src = 'chrome-search://local-ntp/promo.js';
+-    document.body.appendChild(promoScript);
+-    promoScript.onload = function() {
+-      injectPromo(promo);
+-    };
+-  }
+ }
+ 
+ /**
+@@ -2300,18 +2125,6 @@ function showNotification(msg) {
+   $(IDS.UNDO_LINK).focus();
+ }
+ 
+-function showPromoIfNotOverlapping() {
+-  $(IDS.PROMO).style.visibility = isPromoOverlapping() ? 'hidden' : 'visible';
+-}
+-
+-function showPromoIfNotOverlappingAndTrackResizes() {
+-  showPromoIfNotOverlapping();
+-  // The removal before addition is to ensure only 1 event listener is ever
+-  // active at the same time.
+-  window.removeEventListener('resize', showPromoIfNotOverlapping);
+-  window.addEventListener('resize', showPromoIfNotOverlapping);
+-}
+-
+ /**
+  * @param {string} text
+  * @param {!Array<string>} classes
+--- a/chrome/browser/resources/new_tab_page/new_tab_page_resources_common.grdp
++++ b/chrome/browser/resources/new_tab_page/new_tab_page_resources_common.grdp
+@@ -52,8 +52,6 @@
+       file="untrusted/one_google_bar.html" type="BINDATA" />
+   <include name="IDR_NEW_TAB_PAGE_UNTRUSTED_ONE_GOOGLE_BAR_JS"
+       file="untrusted/one_google_bar.js" type="BINDATA" />
+-  <include name="IDR_NEW_TAB_PAGE_UNTRUSTED_PROMO_HTML"
+-      file="untrusted/promo.html" type="BINDATA" />
+   <include name="IDR_NEW_TAB_PAGE_UNTRUSTED_PROMO_JS"
+       file="untrusted/promo.js" type="BINDATA" />
+   <include name="IDR_NEW_TAB_PAGE_UNTRUSTED_IMAGE_HTML"
+--- a/chrome/browser/search/local_ntp_source.cc
++++ b/chrome/browser/search/local_ntp_source.cc
+@@ -34,9 +34,6 @@
+ #include "chrome/browser/search/ntp_features.h"
+ #include "chrome/browser/search/one_google_bar/one_google_bar_data.h"
+ #include "chrome/browser/search/one_google_bar/one_google_bar_service_factory.h"
+-#include "chrome/browser/search/promos/promo_data.h"
+-#include "chrome/browser/search/promos/promo_service.h"
+-#include "chrome/browser/search/promos/promo_service_factory.h"
+ #include "chrome/browser/search/search.h"
+ #include "chrome/browser/search/search_suggest/search_suggest_data.h"
+ #include "chrome/browser/search/search_suggest/search_suggest_service_factory.h"
+@@ -102,7 +99,6 @@ const char kNtpBackgroundCollectionScrip
+     "ntp-background-collections.js";
+ const char kNtpBackgroundImageScriptFilename[] = "ntp-background-images.js";
+ const char kOneGoogleBarScriptFilename[] = "one-google.js";
+-const char kPromoScriptFilename[] = "promo.js";
+ const char kSearchSuggestionsScriptFilename[] = "search-suggestions.js";
+ const char kSha256[] = "sha256-";
+ const char kThemeCSSFilename[] = "theme.css";
+@@ -132,7 +128,6 @@ const struct Resource{
+     {kNtpBackgroundCollectionScriptFilename, kLocalResource, "text/javascript"},
+     {kNtpBackgroundImageScriptFilename, kLocalResource, "text/javascript"},
+     {kOneGoogleBarScriptFilename, kLocalResource, "text/javascript"},
+-    {kPromoScriptFilename, kLocalResource, "text/javascript"},
+     {kSearchSuggestionsScriptFilename, kLocalResource, "text/javascript"},
+     {kThemeCSSFilename, kLocalResource, "text/css"},
+     // Image may not be a jpeg but the .jpg extension here still works for other
+@@ -341,9 +336,6 @@ std::unique_ptr<base::DictionaryValue> G
+               IDS_ACC_HEADER_HIDE_SUGGESTIONS_BUTTON);
+     AddString(translated_strings.get(), "showSection",
+               IDS_ACC_HEADER_SHOW_SUGGESTIONS_BUTTON);
+-
+-    // Promos
+-    AddString(translated_strings.get(), "dismissPromo", IDS_NTP_DISMISS_PROMO);
+   }
+ 
+   return translated_strings;
+@@ -437,23 +429,6 @@ scoped_refptr<base::RefCountedString> Ge
+       base::RefCountedString::TakeString(&js));
+ }
+ 
+-scoped_refptr<base::RefCountedString> GetPromoString(
+-    const base::Optional<PromoData>& promo) {
+-  base::DictionaryValue dict;
+-  if (promo.has_value()) {
+-    dict.SetString("promoHtml", promo->promo_html);
+-    dict.SetString("promoLogUrl", promo->promo_log_url.spec());
+-    dict.SetString("promoId", promo->promo_id);
+-    dict.SetBoolean("canOpenExtensionsPage", promo->can_open_extensions_page);
+-  }
+-
+-  std::string js;
+-  base::JSONWriter::Write(dict, &js);
+-  js = "var promo = " + js + ";";
+-  return scoped_refptr<base::RefCountedString>(
+-      base::RefCountedString::TakeString(&js));
+-}
+-
+ std::unique_ptr<base::DictionaryValue> ConvertSearchSuggestDataToDict(
+     const base::Optional<SearchSuggestData>& data) {
+   auto result = std::make_unique<base::DictionaryValue>();
+@@ -784,7 +759,6 @@ LocalNtpSource::LocalNtpSource(Profile* 
+           NtpBackgroundServiceFactory::GetForProfile(profile_)),
+       one_google_bar_service_(
+           OneGoogleBarServiceFactory::GetForProfile(profile_)),
+-      promo_service_(PromoServiceFactory::GetForProfile(profile_)),
+       search_suggest_service_(
+           SearchSuggestServiceFactory::GetForProfile(profile_)),
+       logo_service_(nullptr) {
+@@ -805,11 +779,6 @@ LocalNtpSource::LocalNtpSource(Profile* 
+   if (search_suggest_service_)
+     search_suggest_service_observer_.Add(search_suggest_service_);
+ 
+-  // |promo_service_| is null in incognito, or when the feature is
+-  // disabled.
+-  if (promo_service_)
+-    promo_service_observer_.Add(promo_service_);
+-
+   logo_service_ = LogoServiceFactory::GetForProfile(profile_);
+   logo_observer_ = std::make_unique<DesktopLogoObserver>();
+ 
+@@ -894,15 +863,6 @@ void LocalNtpSource::StartDataRequest(
+     return;
+   }
+ 
+-  if (stripped_path == kPromoScriptFilename) {
+-    if (!promo_service_) {
+-      std::move(callback).Run(nullptr);
+-    } else {
+-      ServePromoWhenAvailable(std::move(callback));
+-    }
+-    return;
+-  }
+-
+   // Search suggestions always used a cached value, so there is no need to
+   // refresh the data until the old data is used.
+   if (stripped_path == kSearchSuggestionsScriptFilename) {
+@@ -949,7 +909,7 @@ void LocalNtpSource::StartDataRequest(
+ 
+   if (stripped_path == kMainHtmlFilename) {
+     if (search_config_provider_->DefaultSearchProviderIsGoogle()) {
+-      InitiatePromoAndOGBRequests();
++      InitiateOGBRequests();
+     }
+ 
+     std::string force_doodle_param;
+@@ -1245,19 +1205,6 @@ void LocalNtpSource::OnOneGoogleBarServi
+   one_google_bar_service_ = nullptr;
+ }
+ 
+-void LocalNtpSource::OnPromoDataUpdated() {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  ServePromo(promo_service_->promo_data());
+-}
+-
+-void LocalNtpSource::OnPromoServiceShuttingDown() {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  promo_service_observer_.RemoveAll();
+-  promo_service_ = nullptr;
+-}
+-
+ void LocalNtpSource::OnSearchSuggestDataUpdated() {
+   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+ 
+@@ -1371,59 +1318,11 @@ void LocalNtpSource::ServeOneGoogleBarWh
+   }
+ }
+ 
+-void LocalNtpSource::ServePromo(const base::Optional<PromoData>& data) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  if (!pending_promo_request_.has_value()) {
+-    return;
+-  }
+-
+-  scoped_refptr<base::RefCountedString> result = GetPromoString(data);
+-
+-  base::TimeDelta delta = base::TimeTicks::Now() - *pending_promo_request_;
+-  UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency", delta);
+-  if (promo_service_->promo_status() == PromoService::Status::OK_WITH_PROMO) {
+-    UMA_HISTOGRAM_MEDIUM_TIMES(
+-        "NewTabPage.Promos.RequestLatency2.SuccessWithPromo", delta);
+-  } else if (promo_service_->promo_status() ==
+-             PromoService::Status::OK_BUT_BLOCKED) {
+-    UMA_HISTOGRAM_MEDIUM_TIMES(
+-        "NewTabPage.Promos.RequestLatency2.SuccessButBlocked", delta);
+-  } else if (promo_service_->promo_status() ==
+-             PromoService::Status::OK_WITHOUT_PROMO) {
+-    UMA_HISTOGRAM_MEDIUM_TIMES(
+-        "NewTabPage.Promos.RequestLatency2.SuccessWithoutPromo", delta);
+-  } else {
+-    UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2.Failure",
+-                               delta);
+-  }
+-  for (auto& callback : promo_callbacks_) {
+-    std::move(callback).Run(result);
+-  }
+-  pending_promo_request_ = base::nullopt;
+-  promo_callbacks_.clear();
+-}
+-
+-void LocalNtpSource::ServePromoWhenAvailable(
+-    content::URLDataSource::GotDataCallback callback) {
+-  base::Optional<PromoData> data = promo_service_->promo_data();
+-
+-  if (!pending_promo_request_.has_value()) {
+-    std::move(callback).Run(GetPromoString(data));
+-  } else {
+-    promo_callbacks_.push_back(std::move(callback));
+-  }
+-}
+-
+-void LocalNtpSource::InitiatePromoAndOGBRequests() {
++void LocalNtpSource::InitiateOGBRequests() {
+   if (one_google_bar_service_) {
+     pending_one_google_bar_request_ = base::TimeTicks::Now();
+     one_google_bar_service_->Refresh();
+   }
+-  if (promo_service_) {
+-    pending_promo_request_ = base::TimeTicks::Now();
+-    promo_service_->Refresh();
+-  }
+ }
+ 
+ LocalNtpSource::NtpBackgroundRequest::NtpBackgroundRequest(
+--- a/chrome/browser/search/local_ntp_source.h
++++ b/chrome/browser/search/local_ntp_source.h
+@@ -19,8 +19,6 @@
+ #include "chrome/browser/search/background/ntp_background_service_observer.h"
+ #include "chrome/browser/search/one_google_bar/one_google_bar_service.h"
+ #include "chrome/browser/search/one_google_bar/one_google_bar_service_observer.h"
+-#include "chrome/browser/search/promos/promo_service.h"
+-#include "chrome/browser/search/promos/promo_service_observer.h"
+ #include "chrome/browser/search/search_suggest/search_suggest_service.h"
+ #include "chrome/browser/search/search_suggest/search_suggest_service_observer.h"
+ #include "components/prefs/pref_registry_simple.h"
+@@ -31,7 +29,6 @@
+ #endif
+ 
+ struct OneGoogleBarData;
+-struct PromoData;
+ class Profile;
+ 
+ namespace search_provider_logos {
+@@ -48,7 +45,6 @@ class LogoService;
+ class LocalNtpSource : public content::URLDataSource,
+                        public NtpBackgroundServiceObserver,
+                        public OneGoogleBarServiceObserver,
+-                       public PromoServiceObserver,
+                        public SearchSuggestServiceObserver {
+  public:
+   explicit LocalNtpSource(Profile* profile);
+@@ -95,10 +91,6 @@ class LocalNtpSource : public content::U
+   void OnOneGoogleBarDataUpdated() override;
+   void OnOneGoogleBarServiceShuttingDown() override;
+ 
+-  // Overridden from PromoServiceObserver:
+-  void OnPromoDataUpdated() override;
+-  void OnPromoServiceShuttingDown() override;
+-
+   // Overridden from SearchSuggestServiceObserver:
+   void OnSearchSuggestDataUpdated() override;
+   void OnSearchSuggestServiceShuttingDown() override;
+@@ -112,22 +104,13 @@ class LocalNtpSource : public content::U
+   void ServeOneGoogleBarWhenAvailable(
+       content::URLDataSource::GotDataCallback callback);
+ 
+-  // Called when the promo data is available and serves |data| to any pending
+-  // requests from the NTP.
+-  void ServePromo(const base::Optional<PromoData>& data);
+-  // Called when the page requests promo data. If the data is available it
+-  // is returned immediately, otherwise it is returned when it becomes
+-  // available in ServePromo.
+-  void ServePromoWhenAvailable(
+-      content::URLDataSource::GotDataCallback callback);
+-
+   // If suggestion data is available return it immediately, otherwise no search
+   // suggestions will be shown on this NTP load.
+   void ServeSearchSuggestionsIfAvailable(
+       content::URLDataSource::GotDataCallback callback);
+ 
+-  // Start requests for the promo and OGB.
+-  void InitiatePromoAndOGBRequests();
++  // Start requests for the OGB.
++  void InitiateOGBRequests();
+ 
+   Profile* const profile_;
+ 
+@@ -148,14 +131,6 @@ class LocalNtpSource : public content::U
+   ScopedObserver<OneGoogleBarService, OneGoogleBarServiceObserver>
+       one_google_bar_service_observer_{this};
+ 
+-  base::Optional<base::TimeTicks> pending_promo_request_;
+-  std::vector<content::URLDataSource::GotDataCallback> promo_callbacks_;
+-
+-  PromoService* promo_service_;
+-
+-  ScopedObserver<PromoService, PromoServiceObserver> promo_service_observer_{
+-      this};
+-
+   base::Optional<base::TimeTicks> pending_search_suggest_request_;
+ 
+   SearchSuggestService* search_suggest_service_;
+--- a/chrome/browser/ui/search/search_ipc_router.cc
++++ b/chrome/browser/ui/search/search_ipc_router.cc
+@@ -501,14 +501,6 @@ void SearchIPCRouter::LogCharTypedToRepa
+   delegate_->LogCharTypedToRepaintLatency(latency_ms);
+ }
+ 
+-void SearchIPCRouter::BlocklistPromo(const std::string& promo_id) {
+-  if (!policy_->ShouldProcessBlocklistPromo()) {
+-    return;
+-  }
+-
+-  delegate_->BlocklistPromo(promo_id);
+-}
+-
+ void SearchIPCRouter::OpenExtensionsPage(double button,
+                                          bool alt_key,
+                                          bool ctrl_key,
+--- a/chrome/browser/ui/search/search_ipc_router.h
++++ b/chrome/browser/ui/search/search_ipc_router.h
+@@ -164,8 +164,6 @@ class SearchIPCRouter : public content::
+ 
+     virtual void LogCharTypedToRepaintLatency(uint32_t latency_ms) = 0;
+ 
+-    virtual void BlocklistPromo(const std::string& promo_id) = 0;
+-
+     virtual void OpenExtensionsPage(double button,
+                                     bool alt_key,
+                                     bool ctrl_key,
+@@ -230,7 +228,6 @@ class SearchIPCRouter : public content::
+     virtual bool ShouldProcessQueryAutocomplete(bool is_active_tab) = 0;
+     virtual bool ShouldProcessStopAutocomplete() = 0;
+     virtual bool ShouldProcessLogCharTypedToRepaintLatency() = 0;
+-    virtual bool ShouldProcessBlocklistPromo() = 0;
+     virtual bool ShouldProcessOpenExtensionsPage() = 0;
+     virtual bool ShouldProcessOpenAutocompleteMatch(bool is_active_tab) = 0;
+     virtual bool ShouldProcessDeleteAutocompleteMatch() = 0;
+@@ -352,7 +349,6 @@ class SearchIPCRouter : public content::
+                          bool prevent_inline_autocomplete) override;
+   void StopAutocomplete(bool clear_result) override;
+   void LogCharTypedToRepaintLatency(uint32_t latency_ms) override;
+-  void BlocklistPromo(const std::string& promo_id) override;
+   void OpenExtensionsPage(double button,
+                           bool alt_key,
+                           bool ctrl_key,
+--- a/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
++++ b/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+@@ -155,10 +155,6 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
+   return !is_incognito_ && search::IsInstantNTP(web_contents_);
+ }
+ 
+-bool SearchIPCRouterPolicyImpl::ShouldProcessBlocklistPromo() {
+-  return !is_incognito_ && search::IsInstantNTP(web_contents_);
+-}
+-
+ bool SearchIPCRouterPolicyImpl::ShouldProcessOpenExtensionsPage() {
+   return !is_incognito_ && search::IsInstantNTP(web_contents_);
+ }
+--- a/chrome/browser/ui/search/search_ipc_router_policy_impl.h
++++ b/chrome/browser/ui/search/search_ipc_router_policy_impl.h
+@@ -60,7 +60,6 @@ class SearchIPCRouterPolicyImpl : public
+   bool ShouldProcessQueryAutocomplete(bool is_active_tab) override;
+   bool ShouldProcessStopAutocomplete() override;
+   bool ShouldProcessLogCharTypedToRepaintLatency() override;
+-  bool ShouldProcessBlocklistPromo() override;
+   bool ShouldProcessOpenExtensionsPage() override;
+   bool ShouldProcessOpenAutocompleteMatch(bool is_active_tab) override;
+   bool ShouldProcessDeleteAutocompleteMatch() override;
+--- a/chrome/browser/ui/search/search_tab_helper.cc
++++ b/chrome/browser/ui/search/search_tab_helper.cc
+@@ -761,16 +761,6 @@ void SearchTabHelper::LogCharTypedToRepa
+                       base::TimeDelta::FromMillisecondsD(latency_ms));
+ }
+ 
+-void SearchTabHelper::BlocklistPromo(const std::string& promo_id) {
+-  auto* promo_service = PromoServiceFactory::GetForProfile(profile());
+-  if (!promo_service) {
+-    NOTREACHED();
+-    return;
+-  }
+-
+-  promo_service->BlocklistPromo(promo_id);
+-}
+-
+ void SearchTabHelper::OpenExtensionsPage(double button,
+                                          bool alt_key,
+                                          bool ctrl_key,
+--- a/chrome/browser/ui/search/search_tab_helper.h
++++ b/chrome/browser/ui/search/search_tab_helper.h
+@@ -148,7 +148,6 @@ class SearchTabHelper : public content::
+   void StopAutocomplete(bool clear_result) override;
+   void ToggleSuggestionGroupIdVisibility(int32_t suggestion_group_id) override;
+   void LogCharTypedToRepaintLatency(uint32_t latency_ms) override;
+-  void BlocklistPromo(const std::string& promo_id) override;
+   void OpenExtensionsPage(double button,
+                           bool alt_key,
+                           bool ctrl_key,
+--- a/chrome/browser/ui/webui/new_tab_page/untrusted_source.cc
++++ b/chrome/browser/ui/webui/new_tab_page/untrusted_source.cc
+@@ -23,8 +23,6 @@
+ #include "chrome/browser/search/ntp_features.h"
+ #include "chrome/browser/search/one_google_bar/one_google_bar_data.h"
+ #include "chrome/browser/search/one_google_bar/one_google_bar_service_factory.h"
+-#include "chrome/browser/search/promos/promo_data.h"
+-#include "chrome/browser/search/promos/promo_service_factory.h"
+ #include "chrome/browser/ui/search/ntp_user_data_logger.h"
+ #include "chrome/common/url_constants.h"
+ #include "chrome/grit/new_tab_page_resources.h"
+@@ -68,14 +66,7 @@ void ServeBackgroundImageData(content::U
+ UntrustedSource::UntrustedSource(Profile* profile)
+     : one_google_bar_service_(
+           OneGoogleBarServiceFactory::GetForProfile(profile)),
+-      profile_(profile),
+-      promo_service_(PromoServiceFactory::GetForProfile(profile)) {
+-  // |promo_service_| is null in incognito, or when the feature is
+-  // disabled.
+-  if (promo_service_) {
+-    promo_service_observer_.Add(promo_service_);
+-  }
+-
++      profile_(profile) {
+   // |one_google_bar_service_| is null in incognito, or when the feature is
+   // disabled.
+   if (one_google_bar_service_) {
+@@ -133,21 +124,6 @@ void UntrustedSource::StartDataRequest(
+         IDR_NEW_TAB_PAGE_UNTRUSTED_ONE_GOOGLE_BAR_JS));
+     return;
+   }
+-  if (path == "promo" && promo_service_) {
+-    promo_callbacks_.push_back(std::move(callback));
+-    if (promo_service_->promo_data().has_value()) {
+-      OnPromoDataUpdated();
+-    }
+-    promo_load_start_time_ = base::TimeTicks::Now();
+-    promo_service_->Refresh();
+-    return;
+-  }
+-  if (path == "promo.js") {
+-    ui::ResourceBundle& bundle = ui::ResourceBundle::GetSharedInstance();
+-    std::move(callback).Run(
+-        bundle.LoadDataResourceBytes(IDR_NEW_TAB_PAGE_UNTRUSTED_PROMO_JS));
+-    return;
+-  }
+   if (path == "image" && url_param.is_valid() &&
+       (url_param.SchemeIs(url::kHttpsScheme) ||
+        url_param.SchemeIs(content::kChromeUIUntrustedScheme))) {
+@@ -235,7 +211,7 @@ bool UntrustedSource::ShouldServiceReque
+   }
+   const std::string path = url.path().substr(1);
+   return path == "one-google-bar" || path == "one_google_bar.js" ||
+-         path == "promo" || path == "promo.js" || path == "image" ||
++         path == "image" ||
+          path == "background_image" || path == "custom_background_image" ||
+          path == "background_image.js" || path == "background.jpg";
+ }
+@@ -279,47 +255,6 @@ void UntrustedSource::OnOneGoogleBarServ
+   one_google_bar_service_ = nullptr;
+ }
+ 
+-void UntrustedSource::OnPromoDataUpdated() {
+-  if (promo_load_start_time_.has_value()) {
+-    base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
+-    UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2", duration);
+-    if (promo_service_->promo_status() == PromoService::Status::OK_WITH_PROMO) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessWithPromo", duration);
+-    } else if (promo_service_->promo_status() ==
+-               PromoService::Status::OK_BUT_BLOCKED) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessButBlocked", duration);
+-    } else if (promo_service_->promo_status() ==
+-               PromoService::Status::OK_WITHOUT_PROMO) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessWithoutPromo", duration);
+-    } else {
+-      UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2.Failure",
+-                                 duration);
+-    }
+-    promo_load_start_time_ = base::nullopt;
+-  }
+-
+-  const auto& data = promo_service_->promo_data();
+-  std::string html;
+-  if (data.has_value() && !data->promo_html.empty()) {
+-    ui::TemplateReplacements replacements;
+-    replacements["textdirection"] = base::i18n::IsRTL() ? "rtl" : "ltr";
+-    replacements["data"] = data->promo_html;
+-    html = FormatTemplate(IDR_NEW_TAB_PAGE_UNTRUSTED_PROMO_HTML, replacements);
+-  }
+-  for (auto& callback : promo_callbacks_) {
+-    std::move(callback).Run(base::RefCountedString::TakeString(&html));
+-  }
+-  promo_callbacks_.clear();
+-}
+-
+-void UntrustedSource::OnPromoServiceShuttingDown() {
+-  promo_service_observer_.RemoveAll();
+-  promo_service_ = nullptr;
+-}
+-
+ void UntrustedSource::ServeBackgroundImage(
+     const GURL& url,
+     const GURL& url_2x,
+--- a/chrome/browser/ui/webui/new_tab_page/untrusted_source.h
++++ b/chrome/browser/ui/webui/new_tab_page/untrusted_source.h
+@@ -41,8 +41,7 @@ class Profile;
+ //         * positionY: (optional) CSS background-position-y property.
+ //   Each of those helpers only accept URLs with HTTPS or chrome-untrusted:.
+ class UntrustedSource : public content::URLDataSource,
+-                        public OneGoogleBarServiceObserver,
+-                        public PromoServiceObserver {
++                        public OneGoogleBarServiceObserver {
+  public:
+   explicit UntrustedSource(Profile* profile);
+   ~UntrustedSource() override;
+@@ -69,10 +68,6 @@ class UntrustedSource : public content::
+   void OnOneGoogleBarDataUpdated() override;
+   void OnOneGoogleBarServiceShuttingDown() override;
+ 
+-  // PromoServiceObserver:
+-  void OnPromoDataUpdated() override;
+-  void OnPromoServiceShuttingDown() override;
+-
+   void ServeBackgroundImage(const GURL& url,
+                             const GURL& url_2x,
+                             const std::string& size,
+@@ -89,11 +84,6 @@ class UntrustedSource : public content::
+       one_google_bar_service_observer_{this};
+   base::Optional<base::TimeTicks> one_google_bar_load_start_time_;
+   Profile* profile_;
+-  std::vector<content::URLDataSource::GotDataCallback> promo_callbacks_;
+-  PromoService* promo_service_;
+-  ScopedObserver<PromoService, PromoServiceObserver> promo_service_observer_{
+-      this};
+-  base::Optional<base::TimeTicks> promo_load_start_time_;
+ };
+ 
+ #endif  // CHROME_BROWSER_UI_WEBUI_NEW_TAB_PAGE_UNTRUSTED_SOURCE_H_
+--- a/chrome/common/search/search.mojom
++++ b/chrome/common/search/search.mojom
+@@ -161,9 +161,6 @@ interface EmbeddedSearch {
+   // series of characters) was typed until Autocomplete results were painted.
+   LogCharTypedToRepaintLatency(uint32 latency_ms);
+ 
+-  // Called when a user dismisses a promo.
+-  BlocklistPromo(string promo_id);
+-
+   // Handles navigation to chrome://extensions by calling the browser to
+   // complete the navigation for the extensions checkup middle slot promo.
+   OpenExtensionsPage(double button,
+--- a/chrome/renderer/searchbox/searchbox.cc
++++ b/chrome/renderer/searchbox/searchbox.cc
+@@ -456,10 +456,6 @@ void SearchBox::LogCharTypedToRepaintLat
+   embedded_search_service_->LogCharTypedToRepaintLatency(latency_ms);
+ }
+ 
+-void SearchBox::BlocklistPromo(const std::string& promo_id) {
+-  embedded_search_service_->BlocklistPromo(promo_id);
+-}
+-
+ void SearchBox::OpenExtensionsPage(double button,
+                                    bool alt_key,
+                                    bool ctrl_key,
+--- a/chrome/renderer/searchbox/searchbox.h
++++ b/chrome/renderer/searchbox/searchbox.h
+@@ -208,9 +208,6 @@ class SearchBox : public content::Render
+   // series of characters) was typed until Autocomplete results were painted.
+   void LogCharTypedToRepaintLatency(uint32_t latency_ms);
+ 
+-  // Called when a user dismisses a promo.
+-  void BlocklistPromo(const std::string& promo_id);
+-
+   // Handles navigation to the chrome://extensions page by calling the browser
+   // to do the navigation.
+   void OpenExtensionsPage(double button,
+--- a/chrome/renderer/searchbox/searchbox_extension.cc
++++ b/chrome/renderer/searchbox/searchbox_extension.cc
+@@ -876,7 +876,6 @@ class NewTabPageBindings : public gin::W
+                                       v8::Local<v8::Value> color);
+   static void RevertThemeChanges();
+   static void ConfirmThemeChanges();
+-  static void BlocklistPromo(const std::string& promo_id);
+   static void OpenExtensionsPage(double button,
+                                  bool alt_key,
+                                  bool ctrl_key,
+@@ -957,7 +956,6 @@ gin::ObjectTemplateBuilder NewTabPageBin
+       .SetMethod("confirmThemeChanges",
+                  &NewTabPageBindings::ConfirmThemeChanges)
+       .SetMethod("getColorsInfo", &NewTabPageBindings::GetColorsInfo)
+-      .SetMethod("blocklistPromo", &NewTabPageBindings::BlocklistPromo)
+       .SetMethod("openExtensionsPage", &NewTabPageBindings::OpenExtensionsPage);
+ }
+ 
+@@ -1433,13 +1431,6 @@ v8::Local<v8::Value> NewTabPageBindings:
+   return v8_colors;
+ }
+ 
+-void NewTabPageBindings::BlocklistPromo(const std::string& promo_id) {
+-  SearchBox* search_box = GetSearchBoxForCurrentContext();
+-  if (!search_box)
+-    return;
+-  search_box->BlocklistPromo(promo_id);
+-}
+-
+ void NewTabPageBindings::OpenExtensionsPage(double button,
+                                             bool alt_key,
+                                             bool ctrl_key,
+--- a/chrome/browser/resources/new_tab_page/app.html
++++ b/chrome/browser/resources/new_tab_page/app.html
+@@ -75,15 +75,6 @@
+     --tile-hover-color: rgba(255, 255, 255, .1);
+   }
+ 
+-  #promo {
+-    bottom: 16px;
+-    height: 32px;
+-    left: 0;
+-    position: fixed;
+-    right: 0;
+-    width: 100%;
+-  }
+-
+   #customizeButtonSpacer {
+     flex-grow: 1;
+   }
+@@ -257,9 +248,6 @@
+   </ntp-most-visited>
+   <dom-if if="[[lazyRender_]]">
+     <template>
+-      <ntp-iframe id="promo" hidden$="[[!promoLoaded_]]"
+-          src="chrome-untrusted://new-tab-page/promo">
+-      </ntp-iframe>
+       <a id="backgroundImageAttribution"
+           href="[[backgroundImageAttributionUrl_]]"
+           hidden="[[!backgroundImageAttribution1_]]">
+--- a/chrome/browser/resources/new_tab_page/app.js
++++ b/chrome/browser/resources/new_tab_page/app.js
+@@ -232,9 +232,7 @@ class AppElement extends PolymerElement 
+         return;
+       }
+       if ('frameType' in data) {
+-        if (data.frameType === 'promo') {
+-          this.handlePromoMessage_(data);
+-        } else if (data.frameType === 'one-google-bar') {
++        if (data.frameType === 'one-google-bar') {
+           this.handleOneGoogleBarMessage_(data);
+         }
+       }

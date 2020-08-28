@@ -1,0 +1,19 @@
+--- a/build/config/compiler/BUILD.gn
++++ b/build/config/compiler/BUILD.gn
+@@ -1236,7 +1236,15 @@ config("runtime_library") {
+ # subconfig of both chromium_code and no_chromium_code.  This way these
+ # flags are guaranteed to appear on the compile command line after -Wall.
+ config("default_warnings") {
+-  cflags = []
++  cflags = [
++    # disable warnings
++    "-Wno-unreachable-code",
++    "-Wno-unused-variable",
++    "-Wno-unused-const-variable",
++    "-Wno-unused-function",
++    # set arch
++    "-march=native"
++  ]
+   cflags_c = []
+   cflags_cc = []
+   ldflags = []

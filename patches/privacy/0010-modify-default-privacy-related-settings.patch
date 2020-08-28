@@ -1,0 +1,42 @@
+--- a/chrome/browser/ui/browser_ui_prefs.cc
++++ b/chrome/browser/ui/browser_ui_prefs.cc
+@@ -80,7 +80,7 @@ void RegisterBrowserUserPrefs(user_prefs
+   registry->RegisterDictionaryPref(prefs::kBrowserWindowPlacementPopup);
+   registry->RegisterDictionaryPref(prefs::kAppWindowPlacement);
+   registry->RegisterBooleanPref(
+-      prefs::kEnableDoNotTrack, false,
++      prefs::kEnableDoNotTrack, true,
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+ #if !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
+   registry->RegisterBooleanPref(prefs::kPrintPreviewUseSystemDefaultPrinter,
+@@ -122,7 +122,7 @@ void RegisterBrowserUserPrefs(user_prefs
+   // late: we need the pref to be already initialized. Doing it here also saves
+   // us from having to hard-code pref registration in the several unit tests
+   // that use this preference.
+-  registry->RegisterBooleanPref(prefs::kShowUpdatePromotionInfoBar, true);
++  registry->RegisterBooleanPref(prefs::kShowUpdatePromotionInfoBar, false);
+   registry->RegisterBooleanPref(
+       prefs::kShowFullscreenToolbar, true,
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+--- a/chrome/browser/ui/navigation_correction_tab_observer.cc
++++ b/chrome/browser/ui/navigation_correction_tab_observer.cc
+@@ -59,7 +59,7 @@ void NavigationCorrectionTabObserver::Se
+ void NavigationCorrectionTabObserver::RegisterProfilePrefs(
+     user_prefs::PrefRegistrySyncable* prefs) {
+   prefs->RegisterBooleanPref(embedder_support::kAlternateErrorPagesEnabled,
+-                             true,
++                             false,
+                              user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+ }
+ 
+--- a/chrome/browser/ui/webui/local_discovery/local_discovery_ui.cc
++++ b/chrome/browser/ui/webui/local_discovery/local_discovery_ui.cc
+@@ -106,7 +106,7 @@ LocalDiscoveryUI::LocalDiscoveryUI(conte
+ 
+ void LocalDiscoveryUI::RegisterProfilePrefs(
+     user_prefs::PrefRegistrySyncable* registry) {
+-  registry->RegisterBooleanPref(prefs::kLocalDiscoveryEnabled, true);
++  registry->RegisterBooleanPref(prefs::kLocalDiscoveryEnabled, false);
+   registry->RegisterBooleanPref(
+       prefs::kLocalDiscoveryNotificationsEnabled,
+ #if defined(OS_WIN)

@@ -1,0 +1,257 @@
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -831,12 +831,6 @@ jumbo_static_library("browser") {
+     "metrics/tab_footprint_aggregator.h",
+     "metrics/testing/metrics_reporting_pref_helper.cc",
+     "metrics/testing/metrics_reporting_pref_helper.h",
+-    "metrics/thread_watcher.cc",
+-    "metrics/thread_watcher.h",
+-    "metrics/thread_watcher_android.cc",
+-    "metrics/thread_watcher_android.h",
+-    "metrics/thread_watcher_report_hang.cc",
+-    "metrics/thread_watcher_report_hang.h",
+     "metrics/ukm_background_recorder_service.cc",
+     "metrics/ukm_background_recorder_service.h",
+     "metrics/variations/chrome_variations_service_client.cc",
+--- a/chrome/browser/browser_process.h
++++ b/chrome/browser/browser_process.h
+@@ -36,7 +36,6 @@ class PrefService;
+ class ProfileManager;
+ class StatusTray;
+ class SystemNetworkContextManager;
+-class WatchDogThread;
+ class WebRtcLogUploader;
+ class StartupData;
+ 
+@@ -162,9 +161,6 @@ class BrowserProcess {
+   // network quality change events.
+   virtual network::NetworkQualityTracker* network_quality_tracker() = 0;
+ 
+-  // Returns the thread that is used for health check of all browser threads.
+-  virtual WatchDogThread* watchdog_thread() = 0;
+-
+   // Starts and manages the policy system.
+   virtual policy::ChromeBrowserPolicyConnector* browser_policy_connector() = 0;
+ 
+--- a/chrome/browser/browser_process_impl.cc
++++ b/chrome/browser/browser_process_impl.cc
+@@ -55,7 +55,6 @@
+ #include "chrome/browser/metrics/chrome_feature_list_creator.h"
+ #include "chrome/browser/metrics/chrome_metrics_services_manager_client.h"
+ #include "chrome/browser/metrics/metrics_reporting_state.h"
+-#include "chrome/browser/metrics/thread_watcher.h"
+ #include "chrome/browser/net/system_network_context_manager.h"
+ #include "chrome/browser/notifications/notification_platform_bridge.h"
+ #include "chrome/browser/notifications/system_notification_helper.h"
+@@ -428,9 +427,6 @@ void BrowserProcessImpl::StartTearDown()
+   if (gcm_driver_)
+     gcm_driver_->Shutdown();
+ 
+-  // Stop the watchdog thread before stopping other threads.
+-  watchdog_thread_.reset();
+-
+   platform_part()->StartTearDown();
+ 
+   // Cancel any uploads to release the system url request context references.
+@@ -660,14 +656,6 @@ network::NetworkQualityTracker* BrowserP
+   return network_quality_tracker_.get();
+ }
+ 
+-WatchDogThread* BrowserProcessImpl::watchdog_thread() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  if (!created_watchdog_thread_)
+-    CreateWatchdogThread();
+-  DCHECK(watchdog_thread_.get() != NULL);
+-  return watchdog_thread_.get();
+-}
+-
+ ProfileManager* BrowserProcessImpl::profile_manager() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   if (!created_profile_manager_)
+@@ -1057,18 +1045,6 @@ void BrowserProcessImpl::CreateNetworkQu
+ 
+ void BrowserProcessImpl::OnKeepAliveRestartStateChanged(bool can_restart) {}
+ 
+-void BrowserProcessImpl::CreateWatchdogThread() {
+-  DCHECK(!created_watchdog_thread_ && !watchdog_thread_);
+-  created_watchdog_thread_ = true;
+-
+-  auto thread = std::make_unique<WatchDogThread>();
+-  base::Thread::Options options;
+-  options.timer_slack = base::TIMER_SLACK_MAXIMUM;
+-  if (!thread->StartWithOptions(options))
+-    return;
+-  watchdog_thread_.swap(thread);
+-}
+-
+ void BrowserProcessImpl::CreateProfileManager() {
+   DCHECK(!created_profile_manager_ && !profile_manager_);
+   created_profile_manager_ = true;
+--- a/chrome/browser/browser_process_impl.h
++++ b/chrome/browser/browser_process_impl.h
+@@ -137,7 +137,6 @@ class BrowserProcessImpl : public Browse
+   scoped_refptr<network::SharedURLLoaderFactory> shared_url_loader_factory()
+       override;
+   network::NetworkQualityTracker* network_quality_tracker() override;
+-  WatchDogThread* watchdog_thread() override;
+   ProfileManager* profile_manager() override;
+   PrefService* local_state() override;
+   variations::VariationsService* variations_service() override;
+@@ -205,7 +204,6 @@ class BrowserProcessImpl : public Browse
+   // changes to the render process.
+   void CreateNetworkQualityObserver();
+ 
+-  void CreateWatchdogThread();
+   void CreateProfileManager();
+   void CreateLocalState();
+   void CreateIconManager();
+@@ -236,9 +234,6 @@ class BrowserProcessImpl : public Browse
+   std::unique_ptr<metrics_services_manager::MetricsServicesManager>
+       metrics_services_manager_;
+ 
+-  bool created_watchdog_thread_ = false;
+-  std::unique_ptr<WatchDogThread> watchdog_thread_;
+-
+   bool created_browser_policy_connector_ = false;
+   // Must be destroyed after |local_state_|.
+   std::unique_ptr<policy::ChromeBrowserPolicyConnector>
+--- a/chrome/browser/chrome_browser_main.cc
++++ b/chrome/browser/chrome_browser_main.cc
+@@ -76,7 +76,6 @@
+ #include "chrome/browser/metrics/expired_histograms_array.h"
+ #include "chrome/browser/metrics/field_trial_synchronizer.h"
+ #include "chrome/browser/metrics/renderer_uptime_tracker.h"
+-#include "chrome/browser/metrics/thread_watcher.h"
+ #include "chrome/browser/nacl_host/nacl_browser_delegate_impl.h"
+ #include "chrome/browser/net/system_network_context_manager.h"
+ #include "chrome/browser/performance_monitor/process_monitor.h"
+@@ -196,7 +195,6 @@
+ #if defined(OS_ANDROID)
+ #include "chrome/browser/android/chrome_feature_list.h"
+ #include "chrome/browser/android/metrics/uma_session_stats.h"
+-#include "chrome/browser/metrics/thread_watcher_android.h"
+ #include "ui/base/resource/resource_bundle_android.h"
+ #else
+ #include "chrome/browser/resource_coordinator/tab_activity_watcher.h"
+@@ -644,10 +642,6 @@ ChromeBrowserMainParts::ChromeBrowserMai
+   if (parameters.ui_task)
+     browser_defaults::enable_help_app = false;
+ 
+-#if !defined(OS_ANDROID)
+-  startup_watcher_ = std::make_unique<StartupTimeBomb>();
+-  shutdown_watcher_ = std::make_unique<ShutdownWatcherHelper>();
+-#endif  // !defined(OS_ANDROID)
+ }
+ 
+ ChromeBrowserMainParts::~ChromeBrowserMainParts() {
+@@ -1294,12 +1288,6 @@ int ChromeBrowserMainParts::PreMainMessa
+   // Now that the file thread has been started, start metrics.
+   StartMetricsRecording();
+ 
+-  if (!base::debug::BeingDebugged()) {
+-    // Create watchdog thread after creating all other threads because it will
+-    // watch the other threads and they must be running.
+-    browser_process_->watchdog_thread();
+-  }
+-
+   // Do any initializating in the browser process that requires all threads
+   // running.
+   browser_process_->PreMainMessageLoopRun();
+@@ -1648,14 +1636,6 @@ int ChromeBrowserMainParts::PreMainMessa
+   language_usage_metrics::LanguageUsageMetrics::RecordApplicationLanguage(
+       browser_process_->GetApplicationLocale());
+ 
+-// StartupTimeBomb is disabled on Android, see https://crbug.com/366699.
+-#if !defined(OS_ANDROID)
+-  // Start watching for hangs during startup. We disarm this hang detector when
+-  // ThreadWatcher takes over or when browser is shutdown or when
+-  // startup_watcher_ is deleted.
+-  startup_watcher_->Arm(base::TimeDelta::FromSeconds(600));
+-#endif  // !defined(OS_ANDROID)
+-
+ // On mobile, need for clean shutdown arises only when the application comes
+ // to foreground (i.e. MetricsService::OnAppEnterForeground is called).
+ // http://crbug.com/179143
+@@ -1674,9 +1654,6 @@ int ChromeBrowserMainParts::PreMainMessa
+   CloudPrintProxyServiceFactory::GetForProfile(profile_);
+ #endif
+ 
+-  // Start watching all browser threads for responsiveness.
+-  ThreadWatcherList::StartWatchingAll(parsed_command_line());
+-
+   // This has to come before the first GetInstance() call. PreBrowserStart()
+   // seems like a reasonable place to put this, except on Android,
+   // OfflinePageInfoHandler::Register() below calls GetInstance().
+@@ -1684,10 +1661,6 @@ int ChromeBrowserMainParts::PreMainMessa
+   sessions::ContentSerializedNavigationDriver::SetInstance(
+       ChromeSerializedNavigationDriver::GetInstance());
+ 
+-#if defined(OS_ANDROID)
+-  ThreadWatcherAndroid::RegisterApplicationStatusListener();
+-#endif  // defined(OS_ANDROID)
+-
+ #if BUILDFLAG(ENABLE_OFFLINE_PAGES)
+   offline_pages::OfflinePageInfoHandler::Register();
+ #endif
+@@ -1844,12 +1817,6 @@ void ChromeBrowserMainParts::PostMainMes
+   // Android specific MessageLoop
+   NOTREACHED();
+ #else
+-  // Start watching for jank during shutdown. It gets disarmed when
+-  // |shutdown_watcher_| object is destructed.
+-  shutdown_watcher_->Arm(base::TimeDelta::FromSeconds(300));
+-
+-  // Disarm the startup hang detector time bomb if it is still Arm'ed.
+-  startup_watcher_->Disarm();
+ 
+   for (size_t i = 0; i < chrome_extra_parts_.size(); ++i)
+     chrome_extra_parts_[i]->PostMainMessageLoopRun();
+@@ -1862,9 +1829,6 @@ void ChromeBrowserMainParts::PostMainMes
+   if (notify_result_ == ProcessSingleton::PROCESS_NONE)
+     process_singleton_->Cleanup();
+ 
+-  // Stop all tasks that might run on WatchDogThread.
+-  ThreadWatcherList::StopWatchingAll();
+-
+   browser_process_->metrics_service()->Stop();
+ 
+   restart_last_session_ = browser_shutdown::ShutdownPreThreadsStop();
+--- a/chrome/browser/chrome_browser_main.h
++++ b/chrome/browser/chrome_browser_main.h
+@@ -143,13 +143,6 @@ class ChromeBrowserMainParts : public co
+   int result_code_;
+ 
+ #if !defined(OS_ANDROID)
+-  // Create StartupTimeBomb object for watching jank during startup.
+-  std::unique_ptr<StartupTimeBomb> startup_watcher_;
+-
+-  // Create ShutdownWatcherHelper object for watching jank during shutdown.
+-  // Please keep |shutdown_watcher| as the first object constructed, and hence
+-  // it is destroyed last.
+-  std::unique_ptr<ShutdownWatcherHelper> shutdown_watcher_;
+ 
+ #endif  // !defined(OS_ANDROID)
+ 
+--- a/chrome/browser/lifetime/application_lifetime.cc
++++ b/chrome/browser/lifetime/application_lifetime.cc
+@@ -23,7 +23,6 @@
+ #include "chrome/browser/download/download_core_service.h"
+ #include "chrome/browser/lifetime/browser_close_manager.h"
+ #include "chrome/browser/lifetime/browser_shutdown.h"
+-#include "chrome/browser/metrics/thread_watcher.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+ #include "chrome/common/buildflags.h"
+@@ -340,12 +339,6 @@ void SessionEnding() {
+   // to kill us soon. Either way we don't care about that here.
+   base::ThreadRestrictions::ScopedAllowIO allow_io;
+ 
+-  // Start watching for hang during shutdown, and crash it if takes too long.
+-  // We disarm when |shutdown_watcher| object is destroyed, which is when we
+-  // exit this function.
+-  ShutdownWatcherHelper shutdown_watcher;
+-  shutdown_watcher.Arm(base::TimeDelta::FromSeconds(90));
+-
+   browser_shutdown::OnShutdownStarting(browser_shutdown::END_SESSION);
+ 
+   // In a clean shutdown, browser_shutdown::OnShutdownStarting sets

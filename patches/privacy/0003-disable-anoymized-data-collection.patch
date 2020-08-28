@@ -1,0 +1,11 @@
+--- a/components/unified_consent/unified_consent_service.cc
++++ b/components/unified_consent/unified_consent_service.cc
+@@ -57,7 +57,7 @@ void UnifiedConsentService::SetUrlKeyedA
+     SetMigrationState(MigrationState::kCompleted);
+ 
+   pref_service_->SetBoolean(prefs::kUrlKeyedAnonymizedDataCollectionEnabled,
+-                            enabled);
++                            false);
+ }
+ 
+ void UnifiedConsentService::Shutdown() {

@@ -1,0 +1,18 @@
+--- a/chrome/browser/ui/extensions/extension_action_view_controller.cc
++++ b/chrome/browser/ui/extensions/extension_action_view_controller.cc
+@@ -429,15 +429,6 @@ ExtensionActionViewController::GetIconIm
+ 
+   image_source->SetIcon(icon_factory_.GetIcon(tab_id));
+ 
+-  std::unique_ptr<IconWithBadgeImageSource::Badge> badge;
+-  std::string badge_text = extension_action_->GetDisplayBadgeText(tab_id);
+-  if (!badge_text.empty()) {
+-    badge = std::make_unique<IconWithBadgeImageSource::Badge>(
+-        badge_text, extension_action_->GetBadgeTextColor(tab_id),
+-        extension_action_->GetBadgeBackgroundColor(tab_id));
+-  }
+-  image_source->SetBadge(std::move(badge));
+-
+   bool grayscale = false;
+   bool was_blocked = false;
+   bool action_is_visible = extension_action_->GetIsVisible(tab_id);

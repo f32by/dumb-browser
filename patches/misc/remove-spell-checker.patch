@@ -1,0 +1,1421 @@
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -3390,10 +3390,6 @@ static_library("browser") {
+       "renderer_context_menu/accessibility_labels_menu_observer.h",
+       "renderer_context_menu/render_view_context_menu.cc",
+       "renderer_context_menu/render_view_context_menu.h",
+-      "renderer_context_menu/spelling_bubble_model.cc",
+-      "renderer_context_menu/spelling_bubble_model.h",
+-      "renderer_context_menu/spelling_menu_observer.cc",
+-      "renderer_context_menu/spelling_menu_observer.h",
+       "repost_form_warning_controller.cc",
+       "repost_form_warning_controller.h",
+       "resource_coordinator/background_tab_navigation_throttle.cc",
+--- a/chrome/browser/extensions/BUILD.gn
++++ b/chrome/browser/extensions/BUILD.gn
+@@ -843,7 +843,6 @@ static_library("extensions") {
+     "//components/services/unzip/public/cpp",
+     "//components/sessions",
+     "//components/signin/public/identity_manager",
+-    "//components/spellcheck/browser",
+     "//components/storage_monitor",
+     "//components/strings",
+     "//components/sync",
+--- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.cc
++++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.cc
+@@ -15,10 +15,7 @@
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/chrome_notification_types.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+-#include "chrome/browser/spellchecker/spellcheck_service.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/spellcheck/browser/pref_names.h"
+ #include "content/public/browser/browser_context.h"
+ #include "content/public/browser/notification_source.h"
+ #include "content/public/browser/storage_partition.h"
+@@ -29,9 +26,7 @@ namespace language_settings_private = ap
+ 
+ LanguageSettingsPrivateDelegate::LanguageSettingsPrivateDelegate(
+     content::BrowserContext* context)
+-    : custom_dictionary_(nullptr),
+-      context_(context),
+-      listening_spellcheck_(false),
++    : context_(context),
+       listening_input_method_(false),
+       profile_added_(false) {
+   // Register with the event router so we know when renderers are listening to
+@@ -42,17 +37,6 @@ LanguageSettingsPrivateDelegate::Languag
+   if (!event_router)
+     return;
+ 
+-  event_router->RegisterObserver(this,
+-      language_settings_private::OnSpellcheckDictionariesChanged::kEventName);
+-  event_router->RegisterObserver(this,
+-      language_settings_private::OnCustomDictionaryChanged::kEventName);
+-  event_router->RegisterObserver(
+-      this, language_settings_private::OnInputMethodAdded::kEventName);
+-  event_router->RegisterObserver(
+-      this, language_settings_private::OnInputMethodRemoved::kEventName);
+-
+-  // SpellcheckService cannot be created until Profile::DoFinalInit() has been
+-  // called. http://crbug.com/171406
+   notification_registrar_.Add(this,
+       chrome::NOTIFICATION_PROFILE_ADDED,
+       content::Source<Profile>(Profile::FromBrowserContext(context_)));
+@@ -60,14 +44,12 @@ LanguageSettingsPrivateDelegate::Languag
+   pref_change_registrar_.Init(Profile::FromBrowserContext(context_)->
+       GetPrefs());
+ 
+-  StartOrStopListeningForSpellcheckChanges();
+ #if defined(OS_CHROMEOS)
+   StartOrStopListeningForInputMethodChanges();
+ #endif  // defined(OS_CHROMEOS)
+ }
+ 
+ LanguageSettingsPrivateDelegate::~LanguageSettingsPrivateDelegate() {
+-  DCHECK(!listening_spellcheck_);
+   DCHECK(!listening_input_method_);
+   pref_change_registrar_.RemoveAll();
+   notification_registrar_.RemoveAll();
+@@ -78,26 +60,6 @@ LanguageSettingsPrivateDelegate* Languag
+   return new LanguageSettingsPrivateDelegate(context);
+ }
+ 
+-std::vector<language_settings_private::SpellcheckDictionaryStatus>
+-LanguageSettingsPrivateDelegate::GetHunspellDictionaryStatuses() {
+-  std::vector<language_settings_private::SpellcheckDictionaryStatus> statuses;
+-  for (const auto& dictionary : GetHunspellDictionaries()) {
+-    if (!dictionary)
+-      continue;
+-    language_settings_private::SpellcheckDictionaryStatus status;
+-    status.language_code = dictionary->GetLanguage();
+-    status.is_ready = dictionary->IsReady();
+-    if (!status.is_ready) {
+-      if (dictionary->IsDownloadInProgress())
+-        status.is_downloading.reset(new bool(true));
+-      if (dictionary->IsDownloadFailure())
+-        status.download_failed.reset(new bool(true));
+-    }
+-    statuses.push_back(std::move(status));
+-  }
+-  return statuses;
+-}
+-
+ void LanguageSettingsPrivateDelegate::Shutdown() {
+   // Unregister with the event router. We first check and see if there *is* an
+   // event router, because some unit tests try to shutdown all context services,
+@@ -106,11 +68,6 @@ void LanguageSettingsPrivateDelegate::Sh
+   if (event_router)
+     event_router->UnregisterObserver(this);
+ 
+-  if (listening_spellcheck_) {
+-    RemoveDictionaryObservers();
+-    listening_spellcheck_ = false;
+-  }
+-
+ #if defined(OS_CHROMEOS)
+   if (listening_input_method_) {
+     auto* input_method_manager =
+@@ -124,14 +81,6 @@ void LanguageSettingsPrivateDelegate::Sh
+ 
+ void LanguageSettingsPrivateDelegate::OnListenerAdded(
+     const EventListenerInfo& details) {
+-  // Start listening to spellcheck change events.
+-  if (details.event_name ==
+-      language_settings_private::OnSpellcheckDictionariesChanged::kEventName ||
+-      details.event_name ==
+-      language_settings_private::OnCustomDictionaryChanged::kEventName) {
+-    StartOrStopListeningForSpellcheckChanges();
+-    return;
+-  }
+ #if defined(OS_CHROMEOS)
+   if (details.event_name ==
+           language_settings_private::OnInputMethodAdded::kEventName ||
+@@ -146,7 +95,6 @@ void LanguageSettingsPrivateDelegate::On
+ void LanguageSettingsPrivateDelegate::OnListenerRemoved(
+     const EventListenerInfo& details) {
+   // Stop listening to events if there are no more listeners.
+-  StartOrStopListeningForSpellcheckChanges();
+ #if defined(OS_CHROMEOS)
+   StartOrStopListeningForInputMethodChanges();
+ #endif  // defined(OS_CHROMEOS)
+@@ -157,7 +105,6 @@ void LanguageSettingsPrivateDelegate::Ob
+     const content::NotificationSource& source,
+     const content::NotificationDetails& details) {
+   profile_added_ = true;
+-  StartOrStopListeningForSpellcheckChanges();
+ }
+ 
+ #if defined(OS_CHROMEOS)
+@@ -191,107 +138,6 @@ void LanguageSettingsPrivateDelegate::On
+ }
+ #endif  // defined(OS_CHROMEOS)
+ 
+-void LanguageSettingsPrivateDelegate::OnHunspellDictionaryInitialized(
+-    const std::string& language) {
+-  BroadcastDictionariesChangedEvent();
+-}
+-
+-void LanguageSettingsPrivateDelegate::OnHunspellDictionaryDownloadBegin(
+-    const std::string& language) {
+-  BroadcastDictionariesChangedEvent();
+-}
+-
+-void LanguageSettingsPrivateDelegate::OnHunspellDictionaryDownloadSuccess(
+-    const std::string& language) {
+-  BroadcastDictionariesChangedEvent();
+-}
+-
+-void LanguageSettingsPrivateDelegate::OnHunspellDictionaryDownloadFailure(
+-    const std::string& language) {
+-  BroadcastDictionariesChangedEvent();
+-}
+-
+-void LanguageSettingsPrivateDelegate::OnCustomDictionaryLoaded() {
+-}
+-
+-void LanguageSettingsPrivateDelegate::OnCustomDictionaryChanged(
+-    const SpellcheckCustomDictionary::Change& change) {
+-  std::vector<std::string> to_add(change.to_add().begin(),
+-                                  change.to_add().end());
+-  std::vector<std::string> to_remove(change.to_remove().begin(),
+-                                     change.to_remove().end());
+-  std::unique_ptr<base::ListValue> args(
+-      language_settings_private::OnCustomDictionaryChanged::Create(to_add,
+-                                                                   to_remove));
+-  std::unique_ptr<Event> extension_event(new Event(
+-      events::LANGUAGE_SETTINGS_PRIVATE_ON_CUSTOM_DICTIONARY_CHANGED,
+-      language_settings_private::OnCustomDictionaryChanged::kEventName,
+-      std::move(args)));
+-  EventRouter::Get(context_)->BroadcastEvent(std::move(extension_event));
+-}
+-
+-void LanguageSettingsPrivateDelegate::RefreshDictionaries(
+-    bool was_listening, bool should_listen) {
+-  if (!profile_added_)
+-    return;
+-  if (was_listening)
+-    RemoveDictionaryObservers();
+-  hunspell_dictionaries_.clear();
+-  SpellcheckService* service = SpellcheckServiceFactory::GetForContext(
+-      context_);
+-  if (!custom_dictionary_)
+-    custom_dictionary_ = service->GetCustomDictionary();
+-
+-  const std::vector<std::unique_ptr<SpellcheckHunspellDictionary>>&
+-      dictionaries(service->GetHunspellDictionaries());
+-  for (const auto& dictionary : dictionaries) {
+-    hunspell_dictionaries_.push_back(dictionary->AsWeakPtr());
+-    if (should_listen)
+-      dictionary->AddObserver(this);
+-  }
+-}
+-
+-const LanguageSettingsPrivateDelegate::WeakDictionaries&
+-LanguageSettingsPrivateDelegate::GetHunspellDictionaries() {
+-  // If there are no hunspell dictionaries, or the first is invalid, refresh.
+-  if (hunspell_dictionaries_.empty() || !hunspell_dictionaries_.front())
+-    RefreshDictionaries(listening_spellcheck_, listening_spellcheck_);
+-  return hunspell_dictionaries_;
+-}
+-
+-void LanguageSettingsPrivateDelegate::
+-    StartOrStopListeningForSpellcheckChanges() {
+-  EventRouter* event_router = EventRouter::Get(context_);
+-  bool should_listen =
+-      event_router->HasEventListener(language_settings_private::
+-          OnSpellcheckDictionariesChanged::kEventName) ||
+-      event_router->HasEventListener(language_settings_private::
+-          OnCustomDictionaryChanged::kEventName);
+-
+-  if (should_listen && !listening_spellcheck_) {
+-    // Update and observe the hunspell dictionaries.
+-    RefreshDictionaries(listening_spellcheck_, should_listen);
+-    // Observe the dictionaries preference.
+-    pref_change_registrar_.Add(
+-        spellcheck::prefs::kSpellCheckDictionaries,
+-        base::Bind(
+-            &LanguageSettingsPrivateDelegate::OnSpellcheckDictionariesChanged,
+-            base::Unretained(this)));
+-    // Observe the dictionary of custom words.
+-    if (custom_dictionary_)
+-      custom_dictionary_->AddObserver(this);
+-  } else if (!should_listen && listening_spellcheck_) {
+-    // Stop observing any dictionaries that still exist.
+-    RemoveDictionaryObservers();
+-    hunspell_dictionaries_.clear();
+-    pref_change_registrar_.Remove(spellcheck::prefs::kSpellCheckDictionaries);
+-    if (custom_dictionary_)
+-      custom_dictionary_->RemoveObserver(this);
+-  }
+-
+-  listening_spellcheck_ = should_listen;
+-}
+-
+ #if defined(OS_CHROMEOS)
+ void LanguageSettingsPrivateDelegate::
+     StartOrStopListeningForInputMethodChanges() {
+@@ -315,41 +161,4 @@ void LanguageSettingsPrivateDelegate::
+ }
+ #endif  // defined(OS_CHROMEOS)
+ 
+-void LanguageSettingsPrivateDelegate::RetryDownloadHunspellDictionary(
+-    const std::string& language) {
+-  for (const base::WeakPtr<SpellcheckHunspellDictionary>& dictionary :
+-       GetHunspellDictionaries()) {
+-    if (dictionary && dictionary->GetLanguage() == language) {
+-      dictionary->RetryDownloadDictionary(context_);
+-      return;
+-    }
+-  }
+-}
+-
+-void LanguageSettingsPrivateDelegate::OnSpellcheckDictionariesChanged() {
+-  RefreshDictionaries(listening_spellcheck_, listening_spellcheck_);
+-  BroadcastDictionariesChangedEvent();
+-}
+-
+-void LanguageSettingsPrivateDelegate::BroadcastDictionariesChangedEvent() {
+-  std::vector<language_settings_private::SpellcheckDictionaryStatus> statuses =
+-      GetHunspellDictionaryStatuses();
+-
+-  std::unique_ptr<base::ListValue> args(
+-      language_settings_private::OnSpellcheckDictionariesChanged::Create(
+-          statuses));
+-  std::unique_ptr<extensions::Event> extension_event(new extensions::Event(
+-      events::LANGUAGE_SETTINGS_PRIVATE_ON_SPELLCHECK_DICTIONARIES_CHANGED,
+-      language_settings_private::OnSpellcheckDictionariesChanged::kEventName,
+-      std::move(args)));
+-  EventRouter::Get(context_)->BroadcastEvent(std::move(extension_event));
+-}
+-
+-void LanguageSettingsPrivateDelegate::RemoveDictionaryObservers() {
+-  for (const auto& dictionary : hunspell_dictionaries_) {
+-    if (dictionary)
+-      dictionary->RemoveObserver(this);
+-  }
+-}
+-
+ }  // namespace extensions
+--- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.h
++++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.h
+@@ -10,8 +10,6 @@
+ 
+ #include "base/macros.h"
+ #include "base/memory/weak_ptr.h"
+-#include "chrome/browser/spellchecker/spellcheck_custom_dictionary.h"
+-#include "chrome/browser/spellchecker/spellcheck_hunspell_dictionary.h"
+ #include "chrome/common/extensions/api/language_settings_private.h"
+ #include "components/keyed_service/core/keyed_service.h"
+ #include "components/prefs/pref_change_registrar.h"
+@@ -34,25 +32,16 @@ namespace extensions {
+ class LanguageSettingsPrivateDelegate
+     : public KeyedService,
+       public EventRouter::Observer,
+-      public content::NotificationObserver,
++      public content::NotificationObserver
+ #if defined(OS_CHROMEOS)
+-      public chromeos::input_method::InputMethodManager::Observer,
++      ,public chromeos::input_method::InputMethodManager::Observer
+ #endif  // defined(OS_CHROMEOS)
+-      public SpellcheckHunspellDictionary::Observer,
+-      public SpellcheckCustomDictionary::Observer {
++      {
+  public:
+   static LanguageSettingsPrivateDelegate* Create(
+       content::BrowserContext* browser_context);
+   ~LanguageSettingsPrivateDelegate() override;
+ 
+-  // Returns the languages and statuses of the enabled spellcheck dictionaries.
+-  virtual std::vector<
+-      api::language_settings_private::SpellcheckDictionaryStatus>
+-  GetHunspellDictionaryStatuses();
+-
+-  // Retry downloading the spellcheck dictionary.
+-  virtual void RetryDownloadHunspellDictionary(const std::string& language);
+-
+   // content::NotificationObserver implementation.
+   void Observe(int type,
+                const content::NotificationSource& source,
+@@ -77,33 +66,7 @@ class LanguageSettingsPrivateDelegate
+   void OnInputMethodExtensionRemoved(const std::string& extension_id) override;
+ #endif  // defined(OS_CHROMEOS)
+ 
+-  // SpellcheckHunspellDictionary::Observer implementation.
+-  void OnHunspellDictionaryInitialized(const std::string& language) override;
+-  void OnHunspellDictionaryDownloadBegin(const std::string& language) override;
+-  void OnHunspellDictionaryDownloadSuccess(
+-      const std::string& language) override;
+-  void OnHunspellDictionaryDownloadFailure(
+-      const std::string& language) override;
+-
+-  // SpellcheckCustomDictionary::Observer implementation.
+-  void OnCustomDictionaryLoaded() override;
+-  void OnCustomDictionaryChanged(
+-      const SpellcheckCustomDictionary::Change& dictionary_change) override;
+-
+  private:
+-  typedef std::vector<base::WeakPtr<SpellcheckHunspellDictionary>>
+-      WeakDictionaries;
+-
+-  // Updates the dictionaries that are used for spellchecking.
+-  void RefreshDictionaries(bool was_listening, bool should_listen);
+-
+-  // Returns the hunspell dictionaries that are used for spellchecking.
+-  const WeakDictionaries& GetHunspellDictionaries();
+-
+-  // If there are any JavaScript listeners registered for spellcheck events,
+-  // ensures we are registered for change notifications. Otherwise, unregisters
+-  // any observers.
+-  void StartOrStopListeningForSpellcheckChanges();
+ 
+ #if defined(OS_CHROMEOS)
+   // If there are any JavaScript listeners registered for input method events,
+@@ -112,28 +75,8 @@ class LanguageSettingsPrivateDelegate
+   void StartOrStopListeningForInputMethodChanges();
+ #endif  // defined(OS_CHROMEOS)
+ 
+-  // Handles the preference for which languages should be used for spellcheck
+-  // by resetting the dictionaries and broadcasting an event.
+-  void OnSpellcheckDictionariesChanged();
+-
+-  // Broadcasts an event with the list of spellcheck dictionary statuses.
+-  void BroadcastDictionariesChangedEvent();
+-
+-  // Removes observers from hunspell_dictionaries_.
+-  void RemoveDictionaryObservers();
+-
+-  // The hunspell dictionaries that are used for spellchecking.
+-  // TODO(aee): Consider replacing with
+-  // |SpellcheckService::GetHunspellDictionaries()|.
+-  WeakDictionaries hunspell_dictionaries_;
+-
+-  // The custom dictionary that is used for spellchecking.
+-  SpellcheckCustomDictionary* custom_dictionary_;
+-
+   content::BrowserContext* context_;
+ 
+-  // True if there are observers listening for spellcheck events.
+-  bool listening_spellcheck_;
+   // True if there are observers listening for input method events.
+   bool listening_input_method_;
+ 
+--- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc
++++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc
+@@ -5,7 +5,6 @@
+ #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.h"
+ 
+ #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "content/public/browser/browser_context.h"
+ #include "extensions/browser/extension_system_provider.h"
+@@ -32,7 +31,6 @@ LanguageSettingsPrivateDelegateFactory::
+           "LanguageSettingsPrivateDelegate",
+           BrowserContextDependencyManager::GetInstance()) {
+   DependsOn(ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
+-  DependsOn(SpellcheckServiceFactory::GetInstance());
+ }
+ 
+ LanguageSettingsPrivateDelegateFactory::
+--- a/chrome/browser/extensions/api/preference/preference_api.cc
++++ b/chrome/browser/extensions/api/preference/preference_api.cc
+@@ -32,7 +32,6 @@
+ #include "components/password_manager/core/common/password_manager_pref_names.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/proxy_config/proxy_config_pref_names.h"
+-#include "components/spellcheck/browser/pref_names.h"
+ #include "components/translate/core/browser/translate_pref_names.h"
+ #include "extensions/browser/extension_pref_value_map.h"
+ #include "extensions/browser/extension_pref_value_map_factory.h"
+@@ -116,8 +115,6 @@ const PrefMappingEntry kPrefMapping[] = 
+      APIPermission::kPrivacy},
+     {"searchSuggestEnabled", prefs::kSearchSuggestEnabled,
+      APIPermission::kPrivacy, APIPermission::kPrivacy},
+-    {"spellingServiceEnabled", spellcheck::prefs::kSpellCheckUseSpellingService,
+-     APIPermission::kPrivacy, APIPermission::kPrivacy},
+     {"thirdPartyCookiesAllowed", prefs::kBlockThirdPartyCookies,
+      APIPermission::kPrivacy, APIPermission::kPrivacy},
+     {"translationServiceEnabled", prefs::kOfferTranslateEnabled,
+--- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
++++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
+@@ -32,7 +32,6 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/proxy_config/proxy_config_pref_names.h"
+ #include "components/search_engines/default_search_manager.h"
+-#include "components/spellcheck/browser/pref_names.h"
+ #include "components/translate/core/browser/translate_pref_names.h"
+ #include "components/translate/core/browser/translate_prefs.h"
+ #include "components/unified_consent/pref_names.h"
+@@ -262,16 +261,6 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+ 
+   // Languages page
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckEnable] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckDictionaries] =
+-      settings_api::PrefType::PREF_TYPE_LIST;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckForcedDictionaries] =
+-      settings_api::PrefType::PREF_TYPE_LIST;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckBlacklistedDictionaries] =
+-      settings_api::PrefType::PREF_TYPE_LIST;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckUseSpellingService] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+   (*s_whitelist)[::prefs::kOfferTranslateEnabled] =
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+   (*s_whitelist)[language::prefs::kFluentLanguages] =
+--- a/chrome/browser/policy/configuration_policy_handler_list_factory.cc
++++ b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
+@@ -376,9 +376,11 @@ const PolicyToPreferenceMapEntry kSimple
+   { key::kPromptForDownloadLocation,
+     prefs::kPromptForDownload,
+     base::Value::Type::BOOLEAN },
++#if BUILDFLAG(ENABLE_SPELLCHECK)
+   { key::kSpellcheckEnabled,
+     spellcheck::prefs::kSpellCheckEnable,
+     base::Value::Type::BOOLEAN },
++#endif
+   { key::kSharedClipboardEnabled,
+     prefs::kSharedClipboardEnabled,
+     base::Value::Type::BOOLEAN },
+--- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
++++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
+@@ -55,7 +55,6 @@
+ #include "chrome/browser/profiles/profile_window.h"
+ #include "chrome/browser/renderer_context_menu/accessibility_labels_menu_observer.h"
+ #include "chrome/browser/renderer_context_menu/context_menu_content_type_factory.h"
+-#include "chrome/browser/renderer_context_menu/spelling_menu_observer.h"
+ #include "chrome/browser/search/search.h"
+ #include "chrome/browser/search_engines/template_url_service_factory.h"
+ #include "chrome/browser/send_tab_to_self/send_tab_to_self_desktop_util.h"
+@@ -65,7 +64,6 @@
+ #include "chrome/browser/sharing/click_to_call/click_to_call_utils.h"
+ #include "chrome/browser/sharing/shared_clipboard/shared_clipboard_context_menu_observer.h"
+ #include "chrome/browser/sharing/shared_clipboard/shared_clipboard_utils.h"
+-#include "chrome/browser/spellchecker/spellcheck_service.h"
+ #include "chrome/browser/translate/chrome_translate_client.h"
+ #include "chrome/browser/translate/translate_service.h"
+ #include "chrome/browser/ui/autofill/chrome_autofill_client.h"
+@@ -114,9 +112,6 @@
+ #include "components/search_engines/search_engines_pref_names.h"
+ #include "components/search_engines/template_url.h"
+ #include "components/search_engines/template_url_service.h"
+-#include "components/spellcheck/browser/pref_names.h"
+-#include "components/spellcheck/browser/spellcheck_host_metrics.h"
+-#include "components/spellcheck/common/spellcheck_common.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/strings/grit/components_strings.h"
+ #include "components/translate/core/browser/translate_download_manager.h"
+@@ -299,14 +294,7 @@ const std::map<int, int>& GetIdcToUmaMap
+        {IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS, 46},
+        {IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS, 47},
+        {IDC_CONTENT_CONTEXT_OPENLINKWITH, 52},
+-       {IDC_CHECK_SPELLING_WHILE_TYPING, 53},
+-       {IDC_SPELLCHECK_MENU, 54},
+-       {IDC_CONTENT_CONTEXT_SPELLING_TOGGLE, 55},
+-       {IDC_SPELLCHECK_LANGUAGES_FIRST, 56},
+        {IDC_CONTENT_CONTEXT_SEARCHWEBFORIMAGE, 57},
+-       {IDC_SPELLCHECK_SUGGESTION_0, 58},
+-       {IDC_SPELLCHECK_ADD_TO_DICTIONARY, 59},
+-       {IDC_SPELLPANEL_TOGGLE, 60},
+        {IDC_CONTENT_CONTEXT_OPEN_ORIGINAL_IMAGE_NEW_TAB, 61},
+        {IDC_WRITING_DIRECTION_MENU, 62},
+        {IDC_WRITING_DIRECTION_DEFAULT, 63},
+@@ -318,7 +306,6 @@ const std::map<int, int>& GetIdcToUmaMap
+        {IDC_CONTENT_CONTEXT_OPENLINKINPROFILE, 70},
+        {IDC_OPEN_LINK_IN_PROFILE_FIRST, 71},
+        {IDC_CONTENT_CONTEXT_GENERATEPASSWORD, 72},
+-       {IDC_SPELLCHECK_MULTI_LINGUAL, 73},
+        {IDC_CONTENT_CONTEXT_OPEN_WITH1, 74},
+        {IDC_CONTENT_CONTEXT_OPEN_WITH2, 75},
+        {IDC_CONTENT_CONTEXT_OPEN_WITH3, 76},
+@@ -381,9 +368,6 @@ const std::map<int, int>& GetIdcToUmaMap
+        {IDC_PRINT, 11},
+        {IDC_CONTENT_CONTEXT_SEARCHWEBFOR, 12},
+        {IDC_CONTENT_CONTEXT_SAVEAVAS, 13},
+-       {IDC_SPELLCHECK_SUGGESTION_0, 14},
+-       {IDC_SPELLCHECK_ADD_TO_DICTIONARY, 15},
+-       {IDC_CONTENT_CONTEXT_SPELLING_TOGGLE, 16},
+        {IDC_CONTENT_CONTEXT_CUT, 17},
+        {IDC_CONTENT_CONTEXT_PASTE, 18},
+        {IDC_CONTENT_CONTEXT_GOTOURL, 19},
+@@ -414,16 +398,6 @@ int CollapseCommandsForUMA(int id) {
+     return IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_FIRST;
+   }
+ 
+-  if (id >= IDC_SPELLCHECK_LANGUAGES_FIRST &&
+-      id <= IDC_SPELLCHECK_LANGUAGES_LAST) {
+-    return IDC_SPELLCHECK_LANGUAGES_FIRST;
+-  }
+-
+-  if (id >= IDC_SPELLCHECK_SUGGESTION_0 &&
+-      id <= IDC_SPELLCHECK_SUGGESTION_LAST) {
+-    return IDC_SPELLCHECK_SUGGESTION_0;
+-  }
+-
+   if (id >= IDC_OPEN_LINK_IN_PROFILE_FIRST &&
+       id <= IDC_OPEN_LINK_IN_PROFILE_LAST) {
+     return IDC_OPEN_LINK_IN_PROFILE_FIRST;
+@@ -554,18 +528,6 @@ bool RenderViewContextMenu::IsDevToolsUR
+   return url.SchemeIs(content::kChromeDevToolsScheme);
+ }
+ 
+-// static
+-void RenderViewContextMenu::AddSpellCheckServiceItem(ui::SimpleMenuModel* menu,
+-                                                     bool is_checked) {
+-  if (is_checked) {
+-    menu->AddCheckItemWithStringId(IDC_CONTENT_CONTEXT_SPELLING_TOGGLE,
+-                                   IDS_CONTENT_CONTEXT_SPELLING_ASK_GOOGLE);
+-  } else {
+-    menu->AddItemWithStringId(IDC_CONTENT_CONTEXT_SPELLING_TOGGLE,
+-                              IDS_CONTENT_CONTEXT_SPELLING_ASK_GOOGLE);
+-  }
+-}
+-
+ RenderViewContextMenu::RenderViewContextMenu(
+     content::RenderFrameHost* render_frame_host,
+     const content::ContextMenuParams& params)
+@@ -1637,10 +1599,6 @@ void RenderViewContextMenu::AppendSearch
+ }
+ 
+ void RenderViewContextMenu::AppendEditableItems() {
+-  const bool use_spelling = !chrome::IsRunningInForcedAppMode();
+-  if (use_spelling)
+-    AppendSpellingSuggestionItems();
+-
+   if (!params_.misspelled_word.empty()) {
+     AppendSearchProvider();
+     menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+@@ -1714,15 +1672,6 @@ void RenderViewContextMenu::AppendLangua
+ #endif
+ }
+ 
+-void RenderViewContextMenu::AppendSpellingSuggestionItems() {
+-  if (!spelling_suggestions_menu_observer_) {
+-    spelling_suggestions_menu_observer_ =
+-        std::make_unique<SpellingMenuObserver>(this);
+-  }
+-  observers_.AddObserver(spelling_suggestions_menu_observer_.get());
+-  spelling_suggestions_menu_observer_->InitMenu(params_);
+-}
+-
+ bool RenderViewContextMenu::AppendAccessibilityLabelsItems() {
+   menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+   if (!accessibility_labels_menu_observer_) {
+@@ -1874,12 +1823,6 @@ bool RenderViewContextMenu::IsCommandIdE
+ 
+   PrefService* prefs = GetPrefs(browser_context_);
+ 
+-  // Allow Spell Check language items on sub menu for text area context menu.
+-  if ((id >= IDC_SPELLCHECK_LANGUAGES_FIRST) &&
+-      (id < IDC_SPELLCHECK_LANGUAGES_LAST)) {
+-    return prefs->GetBoolean(spellcheck::prefs::kSpellCheckEnable);
+-  }
+-
+   // Extension items.
+   if (ContextMenuMatcher::IsExtensionsCustomCommandId(id))
+     return extension_items_.IsCommandIdEnabled(id);
+@@ -2022,7 +1965,6 @@ bool RenderViewContextMenu::IsCommandIdE
+ 
+     case IDC_CONTENT_CONTEXT_SEARCHWEBFOR:
+     case IDC_CONTENT_CONTEXT_GOTOURL:
+-    case IDC_SPELLPANEL_TOGGLE:
+     case IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS:
+     case IDC_SEND_TAB_TO_SELF:
+     case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
+@@ -2036,16 +1978,12 @@ bool RenderViewContextMenu::IsCommandIdE
+       return send_tab_to_self::AreContentRequirementsMet(
+           params_.link_url, GetBrowser()->profile());
+ 
+-    case IDC_CHECK_SPELLING_WHILE_TYPING:
+-      return prefs->GetBoolean(spellcheck::prefs::kSpellCheckEnable);
+-
+ #if !defined(OS_MACOSX) && defined(OS_POSIX)
+     // TODO(suzhe): this should not be enabled for password fields.
+     case IDC_INPUT_METHODS_MENU:
+       return true;
+ #endif
+ 
+-    case IDC_SPELLCHECK_MENU:
+     case IDC_CONTENT_CONTEXT_OPENLINKWITH:
+     case IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS:
+     case IDC_CONTENT_CONTEXT_GENERATEPASSWORD:
+@@ -2406,10 +2344,6 @@ void RenderViewContextMenu::ExecuteComma
+   }
+ }
+ 
+-void RenderViewContextMenu::AddSpellCheckServiceItem(bool is_checked) {
+-  AddSpellCheckServiceItem(&menu_model_, is_checked);
+-}
+-
+ void RenderViewContextMenu::AddAccessibilityLabelsServiceItem(bool is_checked) {
+   if (is_checked) {
+     menu_model_.AddCheckItemWithStringId(
+--- a/chrome/browser/renderer_context_menu/render_view_context_menu.h
++++ b/chrome/browser/renderer_context_menu/render_view_context_menu.h
+@@ -39,8 +39,6 @@ class PrintPreviewContextMenuObserver;
+ class Profile;
+ class QuickAnswersMenuObserver;
+ class SharedClipboardContextMenuObserver;
+-class SpellingMenuObserver;
+-class SpellingOptionsSubMenuObserver;
+ 
+ namespace content {
+ class RenderFrameHost;
+@@ -69,10 +67,6 @@ class RenderViewContextMenu : public Ren
+ 
+   ~RenderViewContextMenu() override;
+ 
+-  // Adds the spell check service item to the context menu.
+-  static void AddSpellCheckServiceItem(ui::SimpleMenuModel* menu,
+-                                       bool is_checked);
+-
+   // Range of command IDs to use for the items in the send tab to self submenu.
+   static const int kMaxSendTabToSelfSubMenuCommandId =
+       send_tab_to_self::SendTabToSelfSubMenuModel::kMaxCommandId;
+@@ -82,7 +76,6 @@ class RenderViewContextMenu : public Ren
+   bool IsCommandIdVisible(int command_id) const override;
+   bool IsCommandIdEnabled(int command_id) const override;
+   void ExecuteCommand(int command_id, int event_flags) override;
+-  void AddSpellCheckServiceItem(bool is_checked) override;
+   void AddAccessibilityLabelsServiceItem(bool is_checked) override;
+ 
+   // Registers a one-time callback that will be called the next time a context
+@@ -176,7 +169,6 @@ class RenderViewContextMenu : public Ren
+   void AppendRotationItems();
+   void AppendEditableItems();
+   void AppendLanguageSettings();
+-  void AppendSpellingSuggestionItems();
+   // Returns true if the items were appended. This might not happen in all
+   // cases, e.g. these are only appended if a screen reader is enabled.
+   bool AppendAccessibilityLabelsItems();
+@@ -257,22 +249,11 @@ class RenderViewContextMenu : public Ren
+   ui::SimpleMenuModel protocol_handler_submenu_model_;
+   ProtocolHandlerRegistry* protocol_handler_registry_;
+ 
+-  // An observer that handles spelling suggestions, "Add to dictionary", and
+-  // "Use enhanced spell check" items.
+-  std::unique_ptr<SpellingMenuObserver> spelling_suggestions_menu_observer_;
+-
+   // An observer that handles accessibility labels items.
+   std::unique_ptr<AccessibilityLabelsMenuObserver>
+       accessibility_labels_menu_observer_;
+   ui::SimpleMenuModel accessibility_labels_submenu_model_;
+ 
+-#if !defined(OS_MACOSX)
+-  // An observer that handles the submenu for showing spelling options. This
+-  // submenu lets users select the spelling language, for example.
+-  std::unique_ptr<SpellingOptionsSubMenuObserver>
+-      spelling_options_submenu_observer_;
+-#endif
+-
+ #if defined(OS_CHROMEOS)
+   // An observer that handles "Open with <app>" items.
+   std::unique_ptr<RenderViewContextMenuObserver> open_with_menu_observer_;
+--- a/chrome/browser/resources/settings/languages_page/BUILD.gn
++++ b/chrome/browser/resources/settings/languages_page/BUILD.gn
+@@ -58,7 +58,6 @@ js_type_check("closure_compile_module") 
+   closure_flags = settings_closure_flags
+   deps = [
+     ":add_languages_dialog",
+-    ":edit_dictionary_page",
+     ":languages.m",
+     ":languages_browser_proxy.m",
+     ":languages_page",
+@@ -159,7 +158,6 @@ group("polymer3_elements") {
+ html_to_js("web_components") {
+   js_files = [
+     "add_languages_dialog.js",
+-    "edit_dictionary_page.js",
+     "languages_page.js",
+   ]
+ }
+--- a/chrome/browser/resources/settings/languages_page/languages.js
++++ b/chrome/browser/resources/settings/languages_page/languages.js
+@@ -140,10 +140,6 @@ Polymer({
+     'prospectiveUILanguageChanged_(prefs.intl.app_locale.value, languages)',
+     'preferredLanguagesPrefChanged_(' +
+         'prefs.' + preferredLanguagesPrefName + '.value, languages)',
+-    'spellCheckDictionariesPrefChanged_(' +
+-        'prefs.spellcheck.dictionaries.value.*, ' +
+-        'prefs.spellcheck.forced_dictionaries.value.*, ' +
+-        'prefs.spellcheck.blacklisted_dictionaries.value.*, languages)',
+     'translateLanguagesPrefChanged_(' +
+         'prefs.translate_blocked_languages.value.*, languages)',
+     'updateRemovableLanguages_(' +
+@@ -160,11 +156,6 @@ Polymer({
+   /** @private {?Function} */
+   boundOnInputMethodChanged_: null,
+ 
+-  // <if expr="not is_macosx">
+-  /** @private {?Function} */
+-  boundOnSpellcheckDictionariesChanged_: null,
+-  // </if>
+-
+   /** @private {?settings.LanguagesBrowserProxy} */
+   browserProxy_: null,
+ 
+@@ -241,15 +232,6 @@ Polymer({
+       // which only exist for ChromeOS.
+       this.createModel_(results[1], results[2], results[3], results[4]);
+ 
+-      // <if expr="not is_macosx">
+-      this.boundOnSpellcheckDictionariesChanged_ =
+-          this.onSpellcheckDictionariesChanged_.bind(this);
+-      this.languageSettingsPrivate_.onSpellcheckDictionariesChanged.addListener(
+-          this.boundOnSpellcheckDictionariesChanged_);
+-      this.languageSettingsPrivate_.getSpellcheckDictionaryStatuses(
+-          this.boundOnSpellcheckDictionariesChanged_);
+-      // </if>
+-
+       this.resolver_.resolve();
+     });
+ 
+@@ -279,14 +261,6 @@ Polymer({
+           assert(this.boundOnInputMethodRemoved_));
+       this.boundOnInputMethodRemoved_ = null;
+     }
+-
+-    // <if expr="not is_macosx">
+-    if (this.boundOnSpellcheckDictionariesChanged_) {
+-      this.languageSettingsPrivate_.onSpellcheckDictionariesChanged
+-          .removeListener(this.boundOnSpellcheckDictionariesChanged_);
+-      this.boundOnSpellcheckDictionariesChanged_ = null;
+-    }
+-    // </if>
+   },
+ 
+   /**
+@@ -320,19 +294,6 @@ Polymer({
+ 
+     this.set('languages.enabled', enabledLanguageStates);
+ 
+-    // <if expr="not is_macosx">
+-    if (this.boundOnSpellcheckDictionariesChanged_) {
+-      this.languageSettingsPrivate_.getSpellcheckDictionaryStatuses(
+-          this.boundOnSpellcheckDictionariesChanged_);
+-    }
+-
+-    // Recreate the set of spellcheck forced languages in case a forced
+-    // spellcheck language was removed from the languages list.
+-    this.set(
+-        'languages.forcedSpellCheckLanguages',
+-        this.getForcedSpellCheckLanguages_(this.languages.enabled));
+-    // </if>
+-
+     // Update translate target language.
+     new Promise(resolve => {
+       this.languageSettingsPrivate_.getTranslateTargetLanguage(resolve);
+@@ -445,7 +406,6 @@ Polymer({
+       const language = supportedLanguages[i];
+       language.supportsUI = !!language.supportsUI;
+       language.supportsTranslate = !!language.supportsTranslate;
+-      language.supportsSpellcheck = !!language.supportsSpellcheck;
+       language.isProhibitedLanguage = !!language.isProhibitedLanguage;
+       this.supportedLanguageMap_.set(language.code, language);
+     }
+@@ -469,14 +429,10 @@ Polymer({
+       this.enabledLanguageSet_.add(enabledLanguageStates[l].language.code);
+     }
+ 
+-    const forcedSpellCheckLanguages =
+-        this.getForcedSpellCheckLanguages_(enabledLanguageStates);
+-
+     const model = /** @type {!LanguagesModel} */ ({
+       supported: supportedLanguages,
+       enabled: enabledLanguageStates,
+       translateTarget: translateTarget,
+-      forcedSpellCheckLanguages: forcedSpellCheckLanguages,
+     });
+ 
+     if (cr.isChromeOS || cr.isWindows) {
+@@ -543,17 +499,6 @@ Polymer({
+ 
+     const pref = this.getPref(preferredLanguagesPrefName);
+     const enabledLanguageCodes = pref.value.split(',');
+-    const spellCheckPref = this.getPref('spellcheck.dictionaries');
+-    const spellCheckForcedPref = this.getPref('spellcheck.forced_dictionaries');
+-    const spellCheckBlacklistedPref =
+-        this.getPref('spellcheck.blacklisted_dictionaries');
+-    const spellCheckSet = this.makeSetFromArray_(
+-        /** @type {!Array<string>} */ (
+-            spellCheckPref.value.concat(spellCheckForcedPref.value)));
+-    const spellCheckForcedSet = this.makeSetFromArray_(
+-        /** @type {!Array<string>} */ (spellCheckForcedPref.value));
+-    const spellCheckBlacklistedSet = this.makeSetFromArray_(
+-        /** @type {!Array<string>} */ (spellCheckBlacklistedPref.value));
+ 
+     const translateBlockedPref = this.getPref('translate_blocked_languages');
+     const translateBlockedSet = this.makeSetFromArray_(
+@@ -569,14 +514,9 @@ Polymer({
+       }
+       const languageState = /** @type {LanguageState} */ ({});
+       languageState.language = language;
+-      languageState.spellCheckEnabled =
+-          spellCheckSet.has(code) && !spellCheckBlacklistedSet.has(code) ||
+-          spellCheckForcedSet.has(code);
+       languageState.translateEnabled = this.isTranslateEnabled_(
+           code, !!language.supportsTranslate, translateBlockedSet,
+           translateTarget, prospectiveUILanguage);
+-      languageState.isManaged =
+-          spellCheckForcedSet.has(code) || spellCheckBlacklistedSet.has(code);
+       languageState.downloadDictionaryFailureCount = 0;
+       enabledLanguageStates.push(languageState);
+     }
+@@ -606,47 +546,6 @@ Polymer({
+         (!prospectiveUILanguage || code !== prospectiveUILanguage);
+   },
+ 
+-  // <if expr="not is_macosx">
+-  /**
+-   * Updates the dictionary download status for languages in
+-   * |this.languages.enabled| and |this.languages.forcedSpellCheckLanguages| in
+-   * order to track the number of times a spell check dictionary download has
+-   * failed.
+-   * @param {!Array<!chrome.languageSettingsPrivate.SpellcheckDictionaryStatus>}
+-   *     statuses
+-   * @private
+-   */
+-  onSpellcheckDictionariesChanged_(statuses) {
+-    const statusMap = new Map();
+-    statuses.forEach(status => {
+-      statusMap.set(status.languageCode, status);
+-    });
+-
+-    ['enabled', 'forcedSpellCheckLanguages'].forEach(collectionName => {
+-      this.languages[collectionName].forEach((languageState, index) => {
+-        const status = statusMap.get(languageState.language.code);
+-        if (!status) {
+-          return;
+-        }
+-
+-        const previousStatus = languageState.downloadDictionaryStatus;
+-        const keyPrefix = `languages.${collectionName}.${index}`;
+-        this.set(`${keyPrefix}.downloadDictionaryStatus`, status);
+-
+-        const failureCountKey = `${keyPrefix}.downloadDictionaryFailureCount`;
+-        if (status.downloadFailed &&
+-            !(previousStatus && previousStatus.downloadFailed)) {
+-          const failureCount = languageState.downloadDictionaryFailureCount + 1;
+-          this.set(failureCountKey, failureCount);
+-        } else if (
+-            status.isReady && !(previousStatus && previousStatus.isReady)) {
+-          this.set(failureCountKey, 0);
+-        }
+-      });
+-    });
+-  },
+-  // </if>
+-
+   /**
+    * Returns a list of enabled input methods.
+    * @return {!Array<!chrome.languageSettingsPrivate.InputMethod>}
+@@ -790,7 +689,7 @@ Polymer({
+   },
+ 
+   /**
+-   * Enables the language, making it available for spell check and input.
++   * Enables the language, making it available for input.
+    * @param {string} languageCode
+    */
+   enableLanguage(languageCode) {
+@@ -810,9 +709,6 @@ Polymer({
+       return;
+     }
+ 
+-    // Remove the language from spell check.
+-    this.deletePrefListItem('spellcheck.dictionaries', languageCode);
+-
+     if (cr.isChromeOS) {
+       // Remove input methods that don't support any other enabled language.
+       const inputMethods = this.languageInputMethods_.get(languageCode) || [];
+@@ -946,24 +842,6 @@ Polymer({
+   },
+ 
+   /**
+-   * Enables or disables spell check for the given language.
+-   * @param {string} languageCode
+-   * @param {boolean} enable
+-   */
+-  toggleSpellCheck(languageCode, enable) {
+-    if (!this.languages) {
+-      return;
+-    }
+-
+-    if (enable) {
+-      const spellCheckPref = this.getPref('spellcheck.dictionaries');
+-      this.appendPrefListItem('spellcheck.dictionaries', languageCode);
+-    } else {
+-      this.deletePrefListItem('spellcheck.dictionaries', languageCode);
+-    }
+-  },
+-
+-  /**
+    * Converts the language code for translate. There are some differences
+    * between the language set the Translate server uses and that for
+    * Accept-Language.
+--- a/chrome/browser/resources/settings/languages_page/languages_page.html
++++ b/chrome/browser/resources/settings/languages_page/languages_page.html
+@@ -213,14 +213,6 @@
+               label="$i18n{offerToEnableTranslate}">
+           </settings-toggle-button>
+         </iron-collapse>
+-        <settings-toggle-button
+-            id="enableSpellcheckingToggle"
+-            class="hr"
+-            label="$i18n{spellCheckTitle}"
+-            sub-label="[[getSpellCheckSubLabel_(spellCheckLanguages_)]]"
+-            pref="{{prefs.browser.enable_spellchecking}}"
+-            disabled="[[!spellCheckLanguages_.length]]">
+-        </settings-toggle-button>
+ <if expr="_google_chrome or not is_macosx">
+         <iron-collapse id="spellCheckCollapse"
+             opened="[[prefs.browser.enable_spellchecking.value]]">
+--- a/chrome/browser/resources/settings/languages_page/languages_types.js
++++ b/chrome/browser/resources/settings/languages_page/languages_types.js
+@@ -174,13 +174,6 @@ class LanguageHelper {
+   disableTranslateLanguage(languageCode) {}
+ 
+   /**
+-   * Enables or disables spell check for the given language.
+-   * @param {string} languageCode
+-   * @param {boolean} enable
+-   */
+-  toggleSpellCheck(languageCode, enable) {}
+-
+-  /**
+    * Converts the language code for translate. There are some differences
+    * between the language set the Translate server uses and that for
+    * Accept-Language.
+@@ -203,9 +196,6 @@ class LanguageHelper {
+    */
+   getLanguage(languageCode) {}
+ 
+-  /** @param {string} languageCode */
+-  retryDownloadDictionary(languageCode) {}
+-
+   // <if expr="chromeos">
+   /** @param {string} id */
+   addInputMethod(id) {}
+--- a/chrome/browser/resources/settings/privacy_page/personalization_options.html
++++ b/chrome/browser/resources/settings/privacy_page/personalization_options.html
+@@ -89,16 +89,6 @@
+         label="$i18n{urlKeyedAnonymizedDataCollection}"
+         sub-label="$i18n{urlKeyedAnonymizedDataCollectionDesc}">
+     </settings-toggle-button>
+-<if expr="_google_chrome">
+-    <settings-toggle-button id="spellCheckControl"
+-        class="hr"
+-        pref="{{prefs.spellcheck.use_spelling_service}}"
+-        on-settings-boolean-control-change="onUseSpellingServiceToggle_"
+-        label="$i18n{spellingPref}"
+-        sub-label="$i18n{spellingDescription}"
+-        hidden="[[!showSpellCheckControl_(prefs.spellcheck.dictionaries)]]">
+-    </settings-toggle-button>
+-</if><!-- _google_chrome -->
+     <template is="dom-if" if="[[shouldShowDriveSuggest_(
+         syncStatus, syncStatus.signedIn, syncStatus.statusAction)]]" restamp>
+       <settings-toggle-button id="driveSuggestControl" class="hr"
+--- a/chrome/browser/resources/settings/privacy_page/personalization_options.js
++++ b/chrome/browser/resources/settings/privacy_page/personalization_options.js
+@@ -149,17 +149,6 @@ Polymer({
+    * @return {boolean}
+    * @private
+    */
+-  showSpellCheckControl_() {
+-    return (
+-        !!this.prefs.spellcheck &&
+-        /** @type {!Array<string>} */
+-        (this.prefs.spellcheck.dictionaries.value).length > 0);
+-  },
+-
+-  /**
+-   * @return {boolean}
+-   * @private
+-   */
+   shouldShowDriveSuggest_() {
+     return loadTimeData.getBoolean('driveSuggestAvailable') &&
+         !!this.syncStatus && !!this.syncStatus.signedIn &&
+--- a/chrome/browser/sync/profile_sync_service_factory.cc
++++ b/chrome/browser/sync/profile_sync_service_factory.cc
+@@ -31,7 +31,6 @@
+ #include "chrome/browser/sharing/sharing_message_bridge_factory.h"
+ #include "chrome/browser/signin/about_signin_internals_factory.h"
+ #include "chrome/browser/signin/identity_manager_factory.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+ #include "chrome/browser/sync/bookmark_sync_service_factory.h"
+ #include "chrome/browser/sync/chrome_sync_client.h"
+ #include "chrome/browser/sync/device_info_sync_service_factory.h"
+@@ -155,7 +154,6 @@ ProfileSyncServiceFactory::ProfileSyncSe
+   DependsOn(SecurityEventRecorderFactory::GetInstance());
+   DependsOn(SendTabToSelfSyncServiceFactory::GetInstance());
+   DependsOn(SharingMessageBridgeFactory::GetInstance());
+-  DependsOn(SpellcheckServiceFactory::GetInstance());
+ #if BUILDFLAG(ENABLE_SUPERVISED_USERS)
+   DependsOn(SupervisedUserServiceFactory::GetInstance());
+   DependsOn(SupervisedUserSettingsServiceFactory::GetInstance());
+--- a/chrome/browser/ui/BUILD.gn
++++ b/chrome/browser/ui/BUILD.gn
+@@ -482,7 +482,6 @@ static_library("ui") {
+     "//components/signin/core/browser",
+     "//components/signin/public/base:signin_buildflags",
+     "//components/signin/public/identity_manager",
+-    "//components/spellcheck/browser",
+     "//components/ssl_errors",
+     "//components/startup_metric_utils/browser",
+     "//components/strings",
+--- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
++++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
+@@ -652,12 +652,6 @@ void AddLanguagesStrings(content::WebUID
+     {"offerToEnableTranslate",
+      IDS_SETTINGS_LANGUAGES_OFFER_TO_ENABLE_TRANSLATE},
+     {"translateTargetLabel", IDS_SETTINGS_LANGUAGES_TRANSLATE_TARGET},
+-    {"spellCheckTitle", IDS_SETTINGS_LANGUAGES_SPELL_CHECK_TITLE},
+-    {"spellCheckBasicLabel", IDS_SETTINGS_LANGUAGES_SPELL_CHECK_BASIC_LABEL},
+-    {"spellCheckEnhancedLabel",
+-     IDS_SETTINGS_LANGUAGES_SPELL_CHECK_ENHANCED_LABEL},
+-    {"spellCheckEnhancedDescription",
+-     IDS_SETTINGS_LANGUAGES_SPELL_CHECK_ENHANCED_DESCRIPTION},
+ #if !defined(OS_MACOSX)
+     {"spellCheckDisabledReason",
+      IDS_SETTING_LANGUAGES_SPELL_CHECK_DISABLED_REASON},
+--- a/components/renderer_context_menu/render_view_context_menu_proxy.h
++++ b/components/renderer_context_menu/render_view_context_menu_proxy.h
+@@ -119,9 +119,6 @@ class RenderViewContextMenuProxy {
+   // Removes separators so that any adjacent duplicates are reduced to only 1.
+   virtual void RemoveAdjacentSeparators() = 0;
+ 
+-  // Add spell check service item to the context menu.
+-  virtual void AddSpellCheckServiceItem(bool is_checked) = 0;
+-
+   // Add accessibility labels service item to the context menu.
+   virtual void AddAccessibilityLabelsServiceItem(bool is_checked) = 0;
+ 
+--- a/chrome/test/BUILD.gn
++++ b/chrome/test/BUILD.gn
+@@ -5233,14 +5233,6 @@ test("unit_tests") {
+     ldflags = [ "-Wl,--strip-debug" ]
+   }
+   if (is_mac) {
+-    sources -= [
+-      # This tests the function GetSpellCheckLanguages which is not used on
+-      # Mac.
+-      "../browser/spellchecker/spellcheck_service_unittest.cc",
+-
+-      # This tests Chrome's spellchecker which Mac doesn't use.
+-      "../tools/convert_dict/convert_dict_unittest.cc",
+-    ]
+ 
+     # The test fetches resources which means Mac need the app bundle to exist
+     # on disk so it can pull from it.
+diff --git a/chrome/browser/unified_consent/unified_consent_service_factory.cc b/chrome/browser/unified_consent/unified_consent_service_factory.cc
+index afe9c6d228d0..d57cd617ddb7 100644
+--- a/chrome/browser/unified_consent/unified_consent_service_factory.cc
++++ b/chrome/browser/unified_consent/unified_consent_service_factory.cc
+@@ -13,7 +13,6 @@
+ #include "components/embedder_support/pref_names.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "components/prefs/pref_registry_simple.h"
+-#include "components/spellcheck/browser/pref_names.h"
+ #include "components/sync_preferences/pref_service_syncable.h"
+ #include "components/unified_consent/unified_consent_metrics.h"
+ #include "components/unified_consent/unified_consent_service.h"
+@@ -34,7 +33,6 @@ namespace {
+ std::vector<std::string> GetSyncedServicePrefNames() {
+   return {
+     prefs::kSearchSuggestEnabled, embedder_support::kAlternateErrorPagesEnabled,
+-        spellcheck::prefs::kSpellCheckUseSpellingService,
+ #if defined(OS_ANDROID)
+         prefs::kContextualSearchEnabled
+ #endif
+diff --git a/components/spellcheck/spellcheck_build_features.gni b/components/spellcheck/spellcheck_build_features.gni
+index 7e23676bfd77..10fc4bdde10a 100644
+--- a/components/spellcheck/spellcheck_build_features.gni
++++ b/components/spellcheck/spellcheck_build_features.gni
+@@ -3,20 +3,20 @@
+ # found in the LICENSE file.
+ 
+ # Enable the spell checker.
+-enable_spellcheck = !is_ios
++enable_spellcheck = false
+ 
+ # Use the operating system's spellchecker rather than hunspell. This does
+ # not affect the "red underline" spellchecker which can consult Google's
+ # server-based spellcheck service.
+-use_browser_spellchecker = is_android || is_mac || is_win
++use_browser_spellchecker = false
+ 
+ # Use Hunspell. Windows can use both the OS's spellchecker and Hunspell.
+ # Therefore, include Windows in both build flags.
+-use_renderer_spellchecker = !use_browser_spellchecker || is_win
++use_renderer_spellchecker = false
+ 
+ # Whether the enhanced spellcheck service is available on the platform. This is
+ # effectively equal to all desktop platforms.
+-enable_spelling_service = use_renderer_spellchecker || is_mac
++enable_spelling_service = false
+ 
+ # Only Mac has a spellcheck panel.
+-has_spellcheck_panel = is_mac
++has_spellcheck_panel = false
+diff --git a/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm b/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
+index f54c77051fdf..79ea77c5a834 100644
+--- a/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
++++ b/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
+@@ -16,9 +16,7 @@
+ #include "chrome/browser/ui/browser_finder.h"
+ #include "chrome/common/url_constants.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/spellcheck/browser/pref_names.h"
+-#include "components/spellcheck/browser/spellcheck_platform.h"
+-#include "components/spellcheck/common/spellcheck_panel.mojom.h"
++#include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/web_modal/web_contents_modal_dialog_manager.h"
+ #include "content/public/browser/render_frame_host.h"
+ #include "content/public/browser/render_process_host.h"
+@@ -117,6 +115,8 @@ - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item
+       _renderWidgetHost->GetProcess()->GetBrowserContext());
+   DCHECK(profile);
+   PrefService* pref = profile->GetPrefs();
++
++#if BUILDFLAG(ENABLE_SPELLCHECK)
+   const PrefService::Preference* spellCheckEnablePreference =
+       pref->FindPreference(spellcheck::prefs::kSpellCheckEnable);
+   DCHECK(spellCheckEnablePreference);
+@@ -150,6 +150,7 @@ - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item
+     *valid = spellCheckUserModifiable;
+     return YES;
+   }
++#endif
+ 
+   return NO;
+ }
+@@ -168,6 +169,7 @@ - (void)rendererHandledOverscrollEvent:(const ui::DidOverscrollParams&)params {
+   [_historySwiper onOverscrolled:params];
+ }
+ 
++#if BUILDFLAG(ENABLE_SPELLCHECK)
+ // Spellchecking methods
+ // The next five methods are implemented here since this class is the first
+ // responder for anything in the browser.
+@@ -241,6 +243,7 @@ - (void)toggleContinuousSpellChecking:(id)sender {
+ }
+ 
+ // END Spellchecking methods
++#endif
+ 
+ // If a dialog is visible, make its window key. See becomeFirstResponder.
+ - (void)makeAnyDialogKey {
+diff --git a/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc b/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
+index 5cc290e45f8b..1bba5e5e69f6 100644
+--- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
++++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
+@@ -25,8 +25,6 @@
+ #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.h"
+ #include "chrome/browser/language/language_model_manager_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+-#include "chrome/browser/spellchecker/spellcheck_service.h"
+ #include "chrome/browser/translate/chrome_translate_client.h"
+ #include "chrome/browser/translate/translate_service.h"
+ #include "chrome/common/extensions/api/language_settings_private.h"
+@@ -35,9 +33,6 @@
+ #include "components/language/core/browser/pref_names.h"
+ #include "components/language/core/common/language_util.h"
+ #include "components/language/core/common/locale_util.h"
+-#include "components/spellcheck/browser/spellcheck_platform.h"
+-#include "components/spellcheck/common/spellcheck_common.h"
+-#include "components/spellcheck/common/spellcheck_features.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/translate/core/browser/translate_download_manager.h"
+ #include "components/translate/core/browser/translate_prefs.h"
+@@ -206,12 +201,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+   translate::TranslatePrefs::GetLanguageInfoList(
+       app_locale, translate_prefs->IsTranslateAllowedByPolicy(), &languages);
+ 
+-  // Get the list of spell check languages and convert to a set.
+-  std::vector<std::string> spellcheck_languages =
+-      spellcheck::SpellCheckLanguages();
+-  const base::flat_set<std::string> spellcheck_language_set(
+-      std::move(spellcheck_languages));
+-
+   // Build the language list.
+   language_list_->Clear();
+ #if defined(OS_CHROMEOS)
+@@ -226,9 +215,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+     language.native_display_name = entry.native_display_name;
+ 
+     // Set optional fields only if they differ from the default.
+-    if (base::Contains(spellcheck_language_set, entry.code)) {
+-      language.supports_spellcheck.reset(new bool(true));
+-    }
+     if (entry.supports_translate) {
+       language.supports_translate.reset(new bool(true));
+     }
+@@ -260,26 +246,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+   }
+ #endif  // defined(OS_CHROMEOS)
+ 
+-#if defined(OS_WIN)
+-  if (spellcheck::UseBrowserSpellChecker()) {
+-    if (!base::FeatureList::IsEnabled(
+-            spellcheck::kWinDelaySpellcheckServiceInit)) {
+-      // Platform dictionary support already determined at browser startup.
+-      UpdateSupportedPlatformDictionaries();
+-    } else {
+-      // Asynchronously load the dictionaries to determine platform support.
+-      SpellcheckService* service =
+-          SpellcheckServiceFactory::GetForContext(browser_context());
+-      AddRef();  // Balanced in OnDictionariesInitialized
+-      service->InitializeDictionaries(
+-          base::BindOnce(&LanguageSettingsPrivateGetLanguageListFunction::
+-                             OnDictionariesInitialized,
+-                         base::Unretained(this)));
+-      return RespondLater();
+-    }
+-  }
+-#endif  // defined(OS_WIN)
+-
+   return RespondNow(OneArgument(std::move(language_list_)));
+ }
+ 
+@@ -294,13 +260,6 @@ void LanguageSettingsPrivateGetLanguageListFunction::
+ 
+ void LanguageSettingsPrivateGetLanguageListFunction::
+     UpdateSupportedPlatformDictionaries() {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  for (auto& language_val : language_list_->GetList()) {
+-    if (service->UsesWindowsDictionary(*language_val.FindStringKey("code"))) {
+-      language_val.SetBoolKey("supportsSpellcheck", new bool(true));
+-    }
+-  }
+ }
+ #endif  // defined(OS_WIN)
+ 
+@@ -462,13 +421,7 @@ LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::Run() {
+-  LanguageSettingsPrivateDelegate* delegate =
+-      LanguageSettingsPrivateDelegateFactory::GetForBrowserContext(
+-          browser_context());
+-
+-  return RespondNow(ArgumentList(
+-      language_settings_private::GetSpellcheckDictionaryStatuses::Results::
+-          Create(delegate->GetHunspellDictionaryStatuses())));
++  return RespondNow(NoArguments());
+ }
+ 
+ LanguageSettingsPrivateGetSpellcheckWordsFunction::
+@@ -479,24 +432,12 @@ LanguageSettingsPrivateGetSpellcheckWordsFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateGetSpellcheckWordsFunction::Run() {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  SpellcheckCustomDictionary* dictionary = service->GetCustomDictionary();
+-
+-  if (dictionary->IsLoaded())
+-    return RespondNow(OneArgument(GetSpellcheckWords()));
+-
+-  dictionary->AddObserver(this);
+-  AddRef();  // Balanced in OnCustomDictionaryLoaded().
+-  return RespondLater();
++  return RespondNow(NoArguments());
+ }
+ 
+ void LanguageSettingsPrivateGetSpellcheckWordsFunction::
+     OnCustomDictionaryLoaded() {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  service->GetCustomDictionary()->RemoveObserver(this);
+-  Respond(OneArgument(GetSpellcheckWords()));
++  auto _ = RespondNow(NoArguments());
+   Release();
+ }
+ 
+@@ -510,17 +451,7 @@ void LanguageSettingsPrivateGetSpellcheckWordsFunction::
+ 
+ std::unique_ptr<base::ListValue>
+ LanguageSettingsPrivateGetSpellcheckWordsFunction::GetSpellcheckWords() const {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  SpellcheckCustomDictionary* dictionary = service->GetCustomDictionary();
+-  DCHECK(dictionary->IsLoaded());
+-
+-  // TODO(michaelpg): Sort using app locale.
+-  std::unique_ptr<base::ListValue> word_list(new base::ListValue());
+-  const std::set<std::string>& words = dictionary->GetWords();
+-  for (const std::string& word : words)
+-    word_list->AppendString(word);
+-  return word_list;
++  return nullptr;
+ }
+ 
+ LanguageSettingsPrivateAddSpellcheckWordFunction::
+@@ -531,22 +462,7 @@ LanguageSettingsPrivateAddSpellcheckWordFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateAddSpellcheckWordFunction::Run() {
+-  const auto params =
+-      language_settings_private::AddSpellcheckWord::Params::Create(*args_);
+-  EXTENSION_FUNCTION_VALIDATE(params.get());
+-
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  bool success = service->GetCustomDictionary()->AddWord(params->word);
+-
+-#if BUILDFLAG(USE_BROWSER_SPELLCHECKER)
+-  if (spellcheck::UseBrowserSpellChecker()) {
+-    spellcheck_platform::AddWord(service->platform_spell_checker(),
+-                                 base::UTF8ToUTF16(params->word));
+-  }
+-#endif
+-
+-  return RespondNow(OneArgument(std::make_unique<base::Value>(success)));
++  return RespondNow(NoArguments());
+ }
+ 
+ LanguageSettingsPrivateRemoveSpellcheckWordFunction::
+@@ -557,22 +473,7 @@ LanguageSettingsPrivateRemoveSpellcheckWordFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateRemoveSpellcheckWordFunction::Run() {
+-  const auto params =
+-      language_settings_private::RemoveSpellcheckWord::Params::Create(*args_);
+-  EXTENSION_FUNCTION_VALIDATE(params.get());
+-
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  bool success = service->GetCustomDictionary()->RemoveWord(params->word);
+-
+-#if BUILDFLAG(USE_BROWSER_SPELLCHECKER)
+-  if (spellcheck::UseBrowserSpellChecker()) {
+-    spellcheck_platform::RemoveWord(service->platform_spell_checker(),
+-                                    base::UTF8ToUTF16(params->word));
+-  }
+-#endif
+-
+-  return RespondNow(OneArgument(std::make_unique<base::Value>(success)));
++  return RespondNow(NoArguments());
+ }
+ 
+ LanguageSettingsPrivateGetTranslateTargetLanguageFunction::
+@@ -772,15 +673,6 @@ LanguageSettingsPrivateRetryDownloadDictionaryFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateRetryDownloadDictionaryFunction::Run() {
+-  const auto parameters =
+-      language_settings_private::RetryDownloadDictionary::Params::Create(
+-          *args_);
+-  EXTENSION_FUNCTION_VALIDATE(parameters.get());
+-
+-  LanguageSettingsPrivateDelegate* delegate =
+-      LanguageSettingsPrivateDelegateFactory::GetForBrowserContext(
+-          browser_context());
+-  delegate->RetryDownloadHunspellDictionary(parameters->language_code);
+   return RespondNow(NoArguments());
+ }
+ 

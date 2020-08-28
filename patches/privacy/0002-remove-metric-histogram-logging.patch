@@ -1,0 +1,1238 @@
+--- a/base/metrics/histogram.cc
++++ b/base/metrics/histogram.cc
+@@ -513,10 +513,10 @@ bool Histogram::HasConstructionArguments
+ }
+ 
+ void Histogram::Add(int value) {
+-  AddCount(value, 1);
+ }
+ 
+ void Histogram::AddCount(int value, int count) {
++  return;
+   DCHECK_EQ(0, ranges(0));
+   DCHECK_EQ(kSampleType_MAX, ranges(bucket_count()));
+ 
+--- a/base/metrics/histogram_base.cc
++++ b/base/metrics/histogram_base.cc
+@@ -91,6 +91,7 @@ void HistogramBase::ClearFlags(int32_t f
+ }
+ 
+ void HistogramBase::AddScaled(Sample value, int count, int scale) {
++  return;
+   DCHECK_LT(0, scale);
+ 
+   // Convert raw count and probabilistically round up/down if the remainder
+--- a/base/metrics/histogram_functions.cc
++++ b/base/metrics/histogram_functions.cc
+@@ -12,31 +12,17 @@
+ namespace base {
+ 
+ void UmaHistogramBoolean(const std::string& name, bool sample) {
+-  HistogramBase* histogram = BooleanHistogram::FactoryGet(
+-      name, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramBoolean(const char* name, bool sample) {
+-  HistogramBase* histogram = BooleanHistogram::FactoryGet(
+-      name, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramExactLinear(const std::string& name,
+                              int sample,
+                              int value_max) {
+-  HistogramBase* histogram =
+-      LinearHistogram::FactoryGet(name, 1, value_max, value_max + 1,
+-                                  HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramExactLinear(const char* name, int sample, int value_max) {
+-  HistogramBase* histogram =
+-      LinearHistogram::FactoryGet(name, 1, value_max, value_max + 1,
+-                                  HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramPercentage(const std::string& name, int percent) {
+@@ -52,9 +38,6 @@ void UmaHistogramCustomCounts(const std:
+                               int min,
+                               int max,
+                               int buckets) {
+-  HistogramBase* histogram = Histogram::FactoryGet(
+-      name, min, max, buckets, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramCustomCounts(const char* name,
+@@ -62,9 +45,6 @@ void UmaHistogramCustomCounts(const char
+                               int min,
+                               int max,
+                               int buckets) {
+-  HistogramBase* histogram = Histogram::FactoryGet(
+-      name, min, max, buckets, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramCounts100(const std::string& name, int sample) {
+@@ -120,9 +100,6 @@ void UmaHistogramCustomTimes(const std::
+                              TimeDelta min,
+                              TimeDelta max,
+                              int buckets) {
+-  HistogramBase* histogram = Histogram::FactoryTimeGet(
+-      name, min, max, buckets, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->AddTimeMillisecondsGranularity(sample);
+ }
+ 
+ void UmaHistogramCustomTimes(const char* name,
+@@ -130,9 +107,6 @@ void UmaHistogramCustomTimes(const char*
+                              TimeDelta min,
+                              TimeDelta max,
+                              int buckets) {
+-  HistogramBase* histogram = Histogram::FactoryTimeGet(
+-      name, min, max, buckets, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->AddTimeMillisecondsGranularity(sample);
+ }
+ 
+ void UmaHistogramTimes(const std::string& name, TimeDelta sample) {
+@@ -180,9 +154,6 @@ void UmaHistogramCustomMicrosecondsTimes
+                                          TimeDelta min,
+                                          TimeDelta max,
+                                          int buckets) {
+-  HistogramBase* histogram = Histogram::FactoryMicrosecondsTimeGet(
+-      name, min, max, buckets, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->AddTimeMicrosecondsGranularity(sample);
+ }
+ 
+ void UmaHistogramCustomMicrosecondsTimes(const char* name,
+@@ -190,9 +161,6 @@ void UmaHistogramCustomMicrosecondsTimes
+                                          TimeDelta min,
+                                          TimeDelta max,
+                                          int buckets) {
+-  HistogramBase* histogram = Histogram::FactoryMicrosecondsTimeGet(
+-      name, min, max, buckets, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->AddTimeMicrosecondsGranularity(sample);
+ }
+ 
+ void UmaHistogramMicrosecondsTimes(const std::string& name, TimeDelta sample) {
+@@ -250,15 +218,9 @@ void UmaHistogramMemoryLargeMB(const cha
+ }
+ 
+ void UmaHistogramSparse(const std::string& name, int sample) {
+-  HistogramBase* histogram = SparseHistogram::FactoryGet(
+-      name, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ void UmaHistogramSparse(const char* name, int sample) {
+-  HistogramBase* histogram = SparseHistogram::FactoryGet(
+-      name, HistogramBase::kUmaTargetedHistogramFlag);
+-  histogram->Add(sample);
+ }
+ 
+ }  // namespace base
+--- a/base/metrics/histogram_macros.h
++++ b/base/metrics/histogram_macros.h
+@@ -75,11 +75,7 @@
+ // example). For scoped enums, this is awkward since it requires casting the
+ // enum to an arithmetic type and adding one. Instead, prefer the two argument
+ // version of the macro which automatically deduces the boundary from kMaxValue.
+-#define UMA_HISTOGRAM_ENUMERATION(name, ...)                            \
+-  INTERNAL_UMA_HISTOGRAM_ENUMERATION_GET_MACRO(                         \
+-      __VA_ARGS__, INTERNAL_UMA_HISTOGRAM_ENUMERATION_SPECIFY_BOUNDARY, \
+-      INTERNAL_UMA_HISTOGRAM_ENUMERATION_DEDUCE_BOUNDARY)               \
+-  (name, __VA_ARGS__, base::HistogramBase::kUmaTargetedHistogramFlag)
++#define UMA_HISTOGRAM_ENUMERATION(name, ...)
+ 
+ // As above but "scaled" count to avoid overflows caused by increments of
+ // large amounts. See UMA_HISTOGRAM_SCALED_EXACT_LINEAR for more information.
+@@ -92,19 +88,13 @@
+ 
+ // Sample usage:
+ //    UMA_HISTOGRAM_SCALED_ENUMERATION("FooKiB", kEnumValue, byte_count, 1024)
+-#define UMA_HISTOGRAM_SCALED_ENUMERATION(name, sample, count, scale) \
+-  INTERNAL_HISTOGRAM_SCALED_ENUMERATION_WITH_FLAG(                   \
+-      name, sample, count, scale,                                    \
+-      base::HistogramBase::kUmaTargetedHistogramFlag)
++#define UMA_HISTOGRAM_SCALED_ENUMERATION(name, sample, count, scale)
+ 
+ // Histogram for boolean values.
+ 
+ // Sample usage:
+ //   UMA_HISTOGRAM_BOOLEAN("Histogram.Boolean", bool);
+-#define UMA_HISTOGRAM_BOOLEAN(name, sample)                                    \
+-    STATIC_HISTOGRAM_POINTER_BLOCK(name, AddBoolean(sample),                   \
+-        base::BooleanHistogram::FactoryGet(name,                               \
+-            base::HistogramBase::kUmaTargetedHistogramFlag))
++#define UMA_HISTOGRAM_BOOLEAN(name, sample)
+ 
+ //------------------------------------------------------------------------------
+ // Linear histograms.
+@@ -118,9 +108,7 @@
+ 
+ // Sample usage:
+ //   UMA_HISTOGRAM_EXACT_LINEAR("Histogram.Linear", count, 10);
+-#define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, value_max) \
+-  INTERNAL_HISTOGRAM_EXACT_LINEAR_WITH_FLAG(                \
+-      name, sample, value_max, base::HistogramBase::kUmaTargetedHistogramFlag)
++#define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, value_max)
+ 
+ // Used for capturing basic percentages. This will be 100 buckets of size 1.
+ 
+@@ -148,10 +136,7 @@
+ //    UMA_HISTOGRAM_SCALED_EXACT_LINER("FooKiB", bucket_no, byte_count,
+ //                                     kBucketsMax+1, 1024)
+ #define UMA_HISTOGRAM_SCALED_EXACT_LINEAR(name, sample, count, sample_max, \
+-                                          scale)                           \
+-  INTERNAL_HISTOGRAM_SCALED_EXACT_LINEAR_WITH_FLAG(                        \
+-      name, sample, count, sample_max, scale,                              \
+-      base::HistogramBase::kUmaTargetedHistogramFlag)
++                                          scale)
+ 
+ //------------------------------------------------------------------------------
+ // Count histograms. These are used for collecting numeric data. Note that we
+@@ -200,10 +185,7 @@
+ 
+ // Sample usage:
+ //   UMA_HISTOGRAM_CUSTOM_COUNTS("My.Histogram", sample, 1, 100000000, 50);
+-#define UMA_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count)      \
+-    INTERNAL_HISTOGRAM_CUSTOM_COUNTS_WITH_FLAG(                                \
+-        name, sample, min, max, bucket_count,                                  \
+-        base::HistogramBase::kUmaTargetedHistogramFlag)
++#define UMA_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count)
+ 
+ //------------------------------------------------------------------------------
+ // Timing histograms. These are used for collecting timing data (generally
+@@ -219,9 +201,7 @@
+ 
+ // Short timings - up to 10 seconds. For high-resolution (microseconds) timings,
+ // see UMA_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES.
+-#define UMA_HISTOGRAM_TIMES(name, sample) UMA_HISTOGRAM_CUSTOM_TIMES(          \
+-    name, sample, base::TimeDelta::FromMilliseconds(1),                        \
+-    base::TimeDelta::FromSeconds(10), 50)
++#define UMA_HISTOGRAM_TIMES(name, sample)
+ 
+ // Medium timings - up to 3 minutes. Note this starts at 10ms (no good reason,
+ // but not worth changing).
+@@ -246,12 +226,7 @@
+ // Sample usage:
+ //   UMA_HISTOGRAM_CUSTOM_TIMES("Very.Long.Timing.Histogram", time_delta,
+ //       base::TimeDelta::FromSeconds(1), base::TimeDelta::FromDays(1), 100);
+-#define UMA_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count) \
+-  STATIC_HISTOGRAM_POINTER_BLOCK(                                        \
+-      name, AddTimeMillisecondsGranularity(sample),                      \
+-      base::Histogram::FactoryTimeGet(                                   \
+-          name, min, max, bucket_count,                                  \
+-          base::HistogramBase::kUmaTargetedHistogramFlag))
++#define UMA_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count)
+ 
+ // Same as UMA_HISTOGRAM_CUSTOM_TIMES but reports |sample| in microseconds,
+ // dropping the report if this client doesn't have a high-resolution clock.
+@@ -266,12 +241,7 @@
+ //      base::TimeDelta::FromMicroseconds(1),
+ //      base::TimeDelta::FromMilliseconds(10), 100);
+ #define UMA_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES(name, sample, min, max, \
+-                                                bucket_count)           \
+-  STATIC_HISTOGRAM_POINTER_BLOCK(                                       \
+-      name, AddTimeMicrosecondsGranularity(sample),                     \
+-      base::Histogram::FactoryMicrosecondsTimeGet(                      \
+-          name, min, max, bucket_count,                                 \
+-          base::HistogramBase::kUmaTargetedHistogramFlag))
++                                                bucket_count)
+ 
+ // Scoped class which logs its time on this earth in milliseconds as a UMA
+ // statistic. This is recommended for when you want a histogram which measures
+@@ -324,11 +294,7 @@
+ 
+ // For details on usage, see the documentation on the non-stability equivalents.
+ 
+-#define UMA_STABILITY_HISTOGRAM_BOOLEAN(name, sample) \
+-  STATIC_HISTOGRAM_POINTER_BLOCK(                     \
+-      name, AddBoolean(sample),                       \
+-      base::BooleanHistogram::FactoryGet(             \
+-          name, base::HistogramBase::kUmaStabilityHistogramFlag))
++#define UMA_STABILITY_HISTOGRAM_BOOLEAN(name, sample)
+ 
+ #define UMA_STABILITY_HISTOGRAM_COUNTS_100(name, sample)                       \
+     UMA_STABILITY_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 100, 50)
+@@ -339,24 +305,11 @@
+         name, sample, min, max, bucket_count,                                  \
+         base::HistogramBase::kUmaStabilityHistogramFlag)
+ 
+-#define UMA_STABILITY_HISTOGRAM_ENUMERATION(name, ...)                  \
+-  INTERNAL_UMA_HISTOGRAM_ENUMERATION_GET_MACRO(                         \
+-      __VA_ARGS__, INTERNAL_UMA_HISTOGRAM_ENUMERATION_SPECIFY_BOUNDARY, \
+-      INTERNAL_UMA_HISTOGRAM_ENUMERATION_DEDUCE_BOUNDARY)               \
+-  (name, __VA_ARGS__, base::HistogramBase::kUmaStabilityHistogramFlag)
+-
+-#define UMA_STABILITY_HISTOGRAM_LONG_TIMES(name, sample) \
+-  STATIC_HISTOGRAM_POINTER_BLOCK(                        \
+-      name, AddTimeMillisecondsGranularity(sample),      \
+-      base::Histogram::FactoryTimeGet(                   \
+-          name, base::TimeDelta::FromMilliseconds(1),    \
+-          base::TimeDelta::FromHours(1), 50,             \
+-          base::HistogramBase::kUmaStabilityHistogramFlag))
+-
+-#define UMA_STABILITY_HISTOGRAM_PERCENTAGE(name, percent_as_int) \
+-  INTERNAL_HISTOGRAM_EXACT_LINEAR_WITH_FLAG(                     \
+-      name, percent_as_int, 101,                                 \
+-      base::HistogramBase::kUmaStabilityHistogramFlag)
++#define UMA_STABILITY_HISTOGRAM_ENUMERATION(name, ...)
++
++#define UMA_STABILITY_HISTOGRAM_LONG_TIMES(name, sample)
++
++#define UMA_STABILITY_HISTOGRAM_PERCENTAGE(name, percent_as_int)
+ 
+ //------------------------------------------------------------------------------
+ // Histogram instantiation helpers.
+@@ -409,9 +362,6 @@
+ // requirement of |custom_ranges|. You can use the helper function
+ // CustomHistogram::ArrayToCustomEnumRanges to transform a C-style array of
+ // valid sample values to a std::vector<int>.
+-#define UMA_HISTOGRAM_CUSTOM_ENUMERATION(name, sample, custom_ranges)          \
+-    STATIC_HISTOGRAM_POINTER_BLOCK(name, Add(sample),                          \
+-        base::CustomHistogram::FactoryGet(name, custom_ranges,                 \
+-            base::HistogramBase::kUmaTargetedHistogramFlag))
++#define UMA_HISTOGRAM_CUSTOM_ENUMERATION(name, sample, custom_ranges)
+ 
+ #endif  // BASE_METRICS_HISTOGRAM_MACROS_H_
+--- a/base/metrics/histogram_macros_local.h
++++ b/base/metrics/histogram_macros_local.h
+@@ -17,23 +17,16 @@
+ //
+ // For usage details, see the equivalents in histogram_macros.h.
+ 
+-#define LOCAL_HISTOGRAM_ENUMERATION(name, ...)                          \
+-  INTERNAL_UMA_HISTOGRAM_ENUMERATION_GET_MACRO(                         \
+-      __VA_ARGS__, INTERNAL_UMA_HISTOGRAM_ENUMERATION_SPECIFY_BOUNDARY, \
+-      INTERNAL_UMA_HISTOGRAM_ENUMERATION_DEDUCE_BOUNDARY)               \
+-  (name, __VA_ARGS__, base::HistogramBase::kNoFlags)
+-
+-#define LOCAL_HISTOGRAM_BOOLEAN(name, sample)                                  \
+-    STATIC_HISTOGRAM_POINTER_BLOCK(name, AddBoolean(sample),                   \
+-        base::BooleanHistogram::FactoryGet(name, base::Histogram::kNoFlags))
++#define LOCAL_HISTOGRAM_ENUMERATION(name, ...)
++
++#define LOCAL_HISTOGRAM_BOOLEAN(name, sample)
+ 
+ //------------------------------------------------------------------------------
+ // Percentage histograms.
+ //
+ // For usage details, see the equivalents in histogram_macros.h
+ 
+-#define LOCAL_HISTOGRAM_PERCENTAGE(name, under_one_hundred)                    \
+-    LOCAL_HISTOGRAM_ENUMERATION(name, under_one_hundred, 101)
++#define LOCAL_HISTOGRAM_PERCENTAGE(name, under_one_hundred)
+ 
+ //------------------------------------------------------------------------------
+ // Count histograms. These are used for collecting numeric data. Note that we
+@@ -49,9 +42,7 @@
+ #define LOCAL_HISTOGRAM_COUNTS_1000000(name, sample)                           \
+     LOCAL_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 1000000, 50)
+ 
+-#define LOCAL_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count)    \
+-    INTERNAL_HISTOGRAM_CUSTOM_COUNTS_WITH_FLAG(                                \
+-        name, sample, min, max, bucket_count, base::HistogramBase::kNoFlags)
++#define LOCAL_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count)
+ 
+ //------------------------------------------------------------------------------
+ // Timing histograms. These are used for collecting timing data (generally
+@@ -59,15 +50,9 @@
+ //
+ // For usage details, see the equivalents in histogram_macros.h.
+ 
+-#define LOCAL_HISTOGRAM_TIMES(name, sample) LOCAL_HISTOGRAM_CUSTOM_TIMES(      \
+-    name, sample, base::TimeDelta::FromMilliseconds(1),                        \
+-    base::TimeDelta::FromSeconds(10), 50)
+-
+-#define LOCAL_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count) \
+-  STATIC_HISTOGRAM_POINTER_BLOCK(                                          \
+-      name, AddTimeMillisecondsGranularity(sample),                        \
+-      base::Histogram::FactoryTimeGet(name, min, max, bucket_count,        \
+-                                      base::HistogramBase::kNoFlags))
++#define LOCAL_HISTOGRAM_TIMES(name, sample)
++
++#define LOCAL_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count)
+ 
+ //------------------------------------------------------------------------------
+ // Memory histograms.
+--- a/base/metrics/sparse_histogram.cc
++++ b/base/metrics/sparse_histogram.cc
+@@ -115,6 +115,7 @@ void SparseHistogram::Add(Sample value) 
+ }
+ 
+ void SparseHistogram::AddCount(Sample value, int count) {
++  return;
+   if (count <= 0) {
+     NOTREACHED();
+     return;
+--- a/base/metrics/user_metrics.cc
++++ b/base/metrics/user_metrics.cc
+@@ -40,6 +40,7 @@ void RecordComputedActionSince(const std
+ }
+ 
+ void RecordComputedActionAt(const std::string& action, TimeTicks action_time) {
++  return;
+   TRACE_EVENT_INSTANT1("ui", "UserEvent", TRACE_EVENT_SCOPE_GLOBAL, "action",
+                        action);
+   if (!g_task_runner.Get()) {
+@@ -59,6 +60,7 @@ void RecordComputedActionAt(const std::s
+ }
+ 
+ void AddActionCallback(const ActionCallback& callback) {
++  return;
+   // Only allow adding a callback if the task runner is set.
+   DCHECK(g_task_runner.Get());
+   DCHECK(g_task_runner.Get()->BelongsToCurrentThread());
+@@ -66,6 +68,7 @@ void AddActionCallback(const ActionCallb
+ }
+ 
+ void RemoveActionCallback(const ActionCallback& callback) {
++  return;
+   DCHECK(g_task_runner.Get());
+   DCHECK(g_task_runner.Get()->BelongsToCurrentThread());
+   std::vector<ActionCallback>* callbacks = g_callbacks.Pointer();
+--- a/cc/trees/layer_tree_host_impl.cc
++++ b/cc/trees/layer_tree_host_impl.cc
+@@ -389,7 +389,7 @@ LayerTreeHostImpl::LayerTreeHostImpl(
+       frame_trackers_(settings.single_thread_proxy_scheduler,
+                       compositor_frame_reporting_controller_.get()),
+       scroll_gesture_did_end_(false),
+-      lcd_text_metrics_reporter_(LCDTextMetricsReporter::CreateIfNeeded(this)),
++      lcd_text_metrics_reporter_(nullptr),
+       frame_rate_estimator_(GetTaskRunner()) {
+   DCHECK(mutator_host_);
+   mutator_host_->SetMutatorHostClient(this);
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -173,8 +173,6 @@ static_library("browser") {
+     "banners/app_banner_metrics.h",
+     "banners/app_banner_settings_helper.cc",
+     "banners/app_banner_settings_helper.h",
+-    "battery/battery_metrics.cc",
+-    "battery/battery_metrics.h",
+     "bitmap_fetcher/bitmap_fetcher.cc",
+     "bitmap_fetcher/bitmap_fetcher.h",
+     "bitmap_fetcher/bitmap_fetcher_delegate.h",
+--- a/chrome/browser/android/metrics/uma_session_stats.cc
++++ b/chrome/browser/android/metrics/uma_session_stats.cc
+@@ -55,17 +55,6 @@ void UmaSessionStats::UmaResumeSession(J
+     const bool had_background_session =
+         session_time_tracker_.BeginForegroundSession();
+ 
+-    // Tell the metrics services that the application resumes.
+-    metrics::MetricsService* metrics = g_browser_process->metrics_service();
+-    if (metrics) {
+-      // Forcing a new log allows foreground and background metrics can be
+-      // separated in analysis.
+-      const bool force_new_log = base::FeatureList::IsEnabled(
+-                                     chrome::android::kUmaBackgroundSessions) &&
+-                                 had_background_session;
+-
+-      metrics->OnAppEnterForeground(force_new_log);
+-    }
+     // Report background session time if it wasn't already reported by
+     // OnAppEnterForeground() -> ProvideCurrentSessionData().
+     session_time_tracker_.ReportBackgroundSessionTime();
+@@ -94,13 +83,7 @@ void UmaSessionStats::UmaEndSession(JNIE
+         session_time_tracker_.EndForegroundSession();
+ 
+     DCHECK(g_browser_process);
+-    // Tell the metrics services they were cleanly shutdown.
+-    metrics::MetricsService* metrics = g_browser_process->metrics_service();
+-    if (metrics) {
+-      const bool keep_reporting =
+-          base::FeatureList::IsEnabled(chrome::android::kUmaBackgroundSessions);
+-      metrics->OnAppEnterBackground(keep_reporting);
+-    }
++
+     ukm::UkmService* ukm_service =
+         g_browser_process->GetMetricsServicesManager()->GetUkmService();
+     if (ukm_service)
+--- a/chrome/browser/browser_process_impl.cc
++++ b/chrome/browser/browser_process_impl.cc
+@@ -34,7 +34,6 @@
+ #include "base/time/default_tick_clock.h"
+ #include "base/trace_event/trace_event.h"
+ #include "build/build_config.h"
+-#include "chrome/browser/battery/battery_metrics.h"
+ #include "chrome/browser/browser_process_platform_part.h"
+ #include "chrome/browser/chrome_browser_main.h"
+ #include "chrome/browser/chrome_content_browser_client.h"
+@@ -408,8 +407,6 @@ void BrowserProcessImpl::StartTearDown()
+   remote_debugging_server_.reset();
+   devtools_auto_opener_.reset();
+ 
+-  battery_metrics_.reset();
+-
+   // Need to clear profiles (download managers) before the IO thread.
+   {
+     TRACE_EVENT0("shutdown",
+@@ -1111,8 +1108,6 @@ void BrowserProcessImpl::PreCreateThread
+       extensions::kExtensionScheme, true);
+ #endif
+ 
+-  battery_metrics_ = std::make_unique<BatteryMetrics>();
+-
+   secure_origin_prefs_observer_ =
+       std::make_unique<SecureOriginPrefsObserver>(local_state());
+   site_isolation_prefs_observer_ =
+--- a/chrome/browser/browser_process_impl.h
++++ b/chrome/browser/browser_process_impl.h
+@@ -38,7 +38,6 @@
+ #include "chrome/browser/upgrade_detector/build_state.h"
+ #endif
+ 
+-class BatteryMetrics;
+ class ChromeFeatureListCreator;
+ class ChromeMetricsServicesManagerClient;
+ class DevToolsAutoOpener;
+@@ -346,8 +345,6 @@ class BrowserProcessImpl : public Browse
+   // notifications are properly added and removed.
+   PrefChangeRegistrar pref_change_registrar_;
+ 
+-  std::unique_ptr<BatteryMetrics> battery_metrics_;
+-
+ #if defined(OS_WIN) || (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+   base::RepeatingTimer autoupdate_timer_;
+ 
+--- a/chrome/browser/chrome_browser_main.cc
++++ b/chrome/browser/chrome_browser_main.cc
+@@ -775,7 +775,7 @@ int ChromeBrowserMainParts::OnLocalState
+ #if defined(OS_WIN)
+   if (first_run::IsChromeFirstRun()) {
+     bool stats_default;
+-    if (GoogleUpdateSettings::GetCollectStatsConsentDefault(&stats_default)) {
++    if (false && GoogleUpdateSettings::GetCollectStatsConsentDefault(&stats_default)) {
+       // |stats_default| == true means that the default state of consent for the
+       // product at the time of install was to report usage statistics, meaning
+       // "opt-out".
+@@ -801,9 +801,6 @@ int ChromeBrowserMainParts::OnLocalState
+ 
+   SetupOriginTrialsCommandLine(browser_process_->local_state());
+ 
+-  metrics::EnableExpiryChecker(chrome_metrics::kExpiredHistogramsHashes,
+-                               chrome_metrics::kNumExpiredHistograms);
+-
+   return service_manager::RESULT_CODE_NORMAL_EXIT;
+ }
+ 
+@@ -954,16 +951,6 @@ int ChromeBrowserMainParts::PreCreateThr
+   SecKeychainAddCallback(&KeychainCallback, 0, nullptr);
+ #endif  // defined(OS_MACOSX)
+ 
+-#if defined(OS_WIN) || defined(OS_MACOSX) || \
+-    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-  metrics::DesktopSessionDurationTracker::Initialize();
+-  ProfileActivityMetricsRecorder::Initialize();
+-  TouchModeStatsTracker::Initialize(
+-      metrics::DesktopSessionDurationTracker::Get(),
+-      ui::TouchUiController::Get());
+-#endif
+-  metrics::RendererUptimeTracker::Initialize();
+-
+   // Add Site Isolation switches as dictated by policy.
+   auto* command_line = base::CommandLine::ForCurrentProcess();
+   if (local_state->GetBoolean(prefs::kSitePerProcess) &&
+@@ -992,12 +979,6 @@ int ChromeBrowserMainParts::PreCreateThr
+   // this.
+   browser_process_->PreCreateThreads(parsed_command_line());
+ 
+-  // This must occur in PreCreateThreads() because it initializes global state
+-  // which is then read by all threads without synchronization. It must be after
+-  // browser_process_->PreCreateThreads() as that instantiates the IOThread
+-  // which is used in SetupMetrics().
+-  SetupMetrics();
+-
+   return service_manager::RESULT_CODE_NORMAL_EXIT;
+ }
+ 
+@@ -1112,10 +1093,6 @@ void ChromeBrowserMainParts::PostBrowser
+                    base::BindOnce(&WebUsbDetector::Initialize,
+                                   base::Unretained(web_usb_detector_.get())));
+   }
+-  if (base::FeatureList::IsEnabled(features::kTabMetricsLogging)) {
+-    // Initialize the TabActivityWatcher to begin logging tab activity events.
+-    resource_coordinator::TabActivityWatcher::GetInstance();
+-  }
+ #endif
+ 
+   // At this point, StartupBrowserCreator::Start has run creating initial
+@@ -1141,9 +1118,6 @@ int ChromeBrowserMainParts::PreMainMessa
+   InitializeWinParentalControls();
+ #endif
+ 
+-  // Now that the file thread has been started, start metrics.
+-  StartMetricsRecording();
+-
+   if (!base::debug::BeingDebugged()) {
+     // Create watchdog thread after creating all other threads because it will
+     // watch the other threads and they must be running.
+@@ -1503,21 +1477,6 @@ int ChromeBrowserMainParts::PreMainMessa
+ #endif
+ 
+   HandleTestParameters(parsed_command_line());
+-  browser_process_->metrics_service()->RecordBreakpadHasDebugger(
+-      base::debug::BeingDebugged());
+-
+-  language_usage_metrics::LanguageUsageMetrics::RecordAcceptLanguages(
+-      profile_->GetPrefs()->GetString(language::prefs::kAcceptLanguages));
+-  language_usage_metrics::LanguageUsageMetrics::RecordApplicationLanguage(
+-      browser_process_->GetApplicationLocale());
+-
+-// On mobile, need for clean shutdown arises only when the application comes
+-// to foreground (i.e. MetricsService::OnAppEnterForeground is called).
+-// http://crbug.com/179143
+-#if !defined(OS_ANDROID)
+-  // Start watching for a hang.
+-  browser_process_->metrics_service()->LogNeedForCleanShutdown();
+-#endif  // !defined(OS_ANDROID)
+ 
+ #if BUILDFLAG(ENABLE_PRINT_PREVIEW) && !defined(OS_CHROMEOS)
+   // Create the instance of the cloud print proxy service so that it can launch
+@@ -1556,9 +1515,6 @@ int ChromeBrowserMainParts::PreMainMessa
+       FROM_HERE, base::BindOnce(nacl::NaClProcessHost::EarlyStartup));
+ #endif  // BUILDFLAG(ENABLE_NACL)
+ 
+-  // Make sure initial prefs are recorded
+-  PrefMetricsService::Factory::GetForProfile(profile_);
+-
+   PreBrowserStart();
+ 
+   if (!parsed_command_line().HasSwitch(switches::kDisableComponentUpdate)) {
+@@ -1647,15 +1603,6 @@ int ChromeBrowserMainParts::PreMainMessa
+   downgrade_manager_.DeleteMovedUserDataSoon(user_data_dir_);
+ #endif
+ 
+-#if defined(OS_ANDROID)
+-  // We never run the C++ main loop on Android, since the UI thread message
+-  // loop is controlled by the OS, so this is as close as we can get to
+-  // the start of the main loop.
+-  if (result_code_ <= 0) {
+-    RecordBrowserStartupTime();
+-  }
+-#endif  // defined(OS_ANDROID)
+-
+   return result_code_;
+ }
+ 
+--- a/chrome/browser/chrome_browser_main_linux.cc
++++ b/chrome/browser/chrome_browser_main_linux.cc
+@@ -96,8 +96,6 @@ void ChromeBrowserMainPartsLinux::PostPr
+   } else {
+     breakpad_registered = breakpad::IsCrashReporterEnabled();
+   }
+-  g_browser_process->metrics_service()->RecordBreakpadRegistration(
+-      breakpad_registered);
+ }
+ 
+ void ChromeBrowserMainPartsLinux::PostMainMessageLoopStart() {
+--- a/chrome/browser/chrome_browser_main_mac.mm
++++ b/chrome/browser/chrome_browser_main_mac.mm
+@@ -334,9 +334,6 @@ void ChromeBrowserMainPartsMac::PostProf
+       MacStartupProfiler::POST_PROFILE_INIT);
+   ChromeBrowserMainPartsPosix::PostProfileInit();
+ 
+-  g_browser_process->metrics_service()->RecordBreakpadRegistration(
+-      crash_reporter::GetUploadsEnabled());
+-
+   // Activation of Keystone is not automatic but done in response to the
+   // counting and reporting of profiles.
+   KeystoneGlue* glue = [KeystoneGlue defaultKeystoneGlue];
+--- a/chrome/browser/chromeos/extensions/info_private_api.cc
++++ b/chrome/browser/chromeos/extensions/info_private_api.cc
+@@ -248,9 +248,7 @@ bool IsEnterpriseKiosk() {
+ }
+ 
+ std::string GetClientId() {
+-  return IsEnterpriseKiosk()
+-             ? g_browser_process->metrics_service()->GetClientId()
+-             : std::string();
++  return std::string();
+ }
+ 
+ }  // namespace
+--- a/chrome/browser/lifetime/browser_shutdown.cc
++++ b/chrome/browser/lifetime/browser_shutdown.cc
+@@ -213,10 +213,6 @@ bool ShutdownPreThreadsStop() {
+   // consider putting it in BrowserProcessImpl::EndSession.
+   PrefService* prefs = g_browser_process->local_state();
+ 
+-  metrics::MetricsService* metrics = g_browser_process->metrics_service();
+-  if (metrics)
+-    metrics->RecordCompletedSessionEnd();
+-
+   bool restart_last_session = RecordShutdownInfoPrefs();
+ 
+   prefs->CommitPendingWrite();
+--- a/chrome/browser/mac/mac_startup_profiler.cc
++++ b/chrome/browser/mac/mac_startup_profiler.cc
+@@ -24,6 +24,7 @@ void MacStartupProfiler::Profile(Locatio
+ }
+ 
+ void MacStartupProfiler::RecordMetrics() {
++  return;
+   const base::TimeTicks main_entry_ticks =
+       startup_metric_utils::MainEntryPointTicks();
+   DCHECK(!main_entry_ticks.is_null());
+--- a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
++++ b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
+@@ -524,6 +524,7 @@ void ChromeBrowserMainExtraPartsMetrics:
+ }
+ 
+ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
++  return;
+   flags_ui::PrefServiceFlagsStorage flags_storage(
+       g_browser_process->local_state());
+   about_flags::RecordUMAStatistics(&flags_storage);
+@@ -543,6 +544,7 @@ void ChromeBrowserMainExtraPartsMetrics:
+ }
+ 
+ void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
++  return;
+   RecordMemoryMetricsAfterDelay();
+   RecordLinuxGlibcVersion();
+ #if defined(USE_X11)
+--- a/chrome/browser/metrics/chrome_metrics_service_accessor.cc
++++ b/chrome/browser/metrics/chrome_metrics_service_accessor.cc
+@@ -33,12 +33,13 @@ void ChromeMetricsServiceAccessor::SetMe
+ 
+ // static
+ bool ChromeMetricsServiceAccessor::IsMetricsAndCrashReportingEnabled() {
+-  return IsMetricsAndCrashReportingEnabled(g_browser_process->local_state());
++  return false;
+ }
+ 
+ // static
+ bool ChromeMetricsServiceAccessor::IsMetricsAndCrashReportingEnabled(
+     PrefService* local_state) {
++  return false;
+   if (g_metrics_consent_for_testing)
+     return *g_metrics_consent_for_testing;
+ 
+@@ -63,14 +64,11 @@ bool ChromeMetricsServiceAccessor::IsMet
+ bool ChromeMetricsServiceAccessor::RegisterSyntheticFieldTrial(
+     base::StringPiece trial_name,
+     base::StringPiece group_name) {
+-  return metrics::MetricsServiceAccessor::RegisterSyntheticFieldTrial(
+-      g_browser_process->metrics_service(), trial_name, group_name);
++  return true;
+ }
+ 
+ void ChromeMetricsServiceAccessor::SetForceIsMetricsReportingEnabledPrefLookup(
+     bool value) {
+-  metrics::MetricsServiceAccessor::SetForceIsMetricsReportingEnabledPrefLookup(
+-      value);
+ }
+ 
+ #if BUILDFLAG(ENABLE_PLUGINS)
+--- a/chrome/browser/metrics/chrome_metrics_service_client.cc
++++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
+@@ -576,7 +576,10 @@ void ChromeMetricsServiceClient::Initial
+ 
+   metrics_service_ = std::make_unique<metrics::MetricsService>(
+       metrics_state_manager_, this, local_state);
++  
++  notification_listeners_active_ = false;
+ 
++#if 0
+   notification_listeners_active_ = RegisterForNotifications();
+   RegisterMetricsServiceProviders();
+ 
+@@ -596,6 +599,7 @@ void ChromeMetricsServiceClient::Initial
+ 
+     RegisterUKMProviders();
+   }
++#endif
+ 
+ #if defined(OS_CHROMEOS)
+   metrics::structured::Recorder::GetInstance()->SetUiTaskRunner(
+@@ -604,6 +608,7 @@ void ChromeMetricsServiceClient::Initial
+ }
+ 
+ void ChromeMetricsServiceClient::RegisterMetricsServiceProviders() {
++  return;
+   PrefService* local_state = g_browser_process->local_state();
+ 
+   // Gets access to persistent metrics shared by sub-processes.
+--- a/chrome/browser/metrics/chromeos_metrics_provider.cc
++++ b/chrome/browser/metrics/chromeos_metrics_provider.cc
+@@ -121,10 +121,6 @@ void ChromeOSMetricsProvider::LogCrash(c
+     IncrementPrefValue(prefs::kStabilitySystemUncleanShutdownCount);
+   else
+     NOTREACHED() << "Unexpected Chrome OS crash type " << crash_type;
+-
+-  // Wake up metrics logs sending if necessary now that new
+-  // log data is available.
+-  g_browser_process->metrics_service()->OnApplicationNotIdle();
+ }
+ 
+ ChromeOSMetricsProvider::EnrollmentStatus
+--- a/chrome/browser/metrics/metrics_reporting_state.cc
++++ b/chrome/browser/metrics/metrics_reporting_state.cc
+@@ -31,6 +31,7 @@ enum MetricsReportingChangeHistogramValu
+ 
+ void RecordMetricsReportingHistogramValue(
+     MetricsReportingChangeHistogramValue value) {
++  return;
+   UMA_HISTOGRAM_ENUMERATION(
+       "UMA.MetricsReporting.Toggle", value, METRICS_REPORTING_MAX);
+ }
+@@ -38,7 +39,7 @@ void RecordMetricsReportingHistogramValu
+ // Tries to set metrics reporting status to |enabled| and returns whatever is
+ // the result of the update.
+ bool SetGoogleUpdateSettings(bool enabled) {
+-  GoogleUpdateSettings::SetCollectStatsConsent(enabled);
++  GoogleUpdateSettings::SetCollectStatsConsent(false);
+   bool updated_pref = GoogleUpdateSettings::GetCollectStatsConsent();
+   if (enabled != updated_pref)
+     DVLOG(1) << "Unable to set metrics reporting status to " << enabled;
+@@ -58,7 +59,7 @@ void SetMetricsReporting(bool to_update_
+                          const OnMetricsReportingCallbackType& callback_fn,
+                          bool updated_pref) {
+   g_browser_process->local_state()->SetBoolean(
+-      metrics::prefs::kMetricsReportingEnabled, updated_pref);
++      metrics::prefs::kMetricsReportingEnabled, false);
+ 
+   UpdateMetricsPrefsOnPermissionChange(updated_pref);
+ 
+@@ -103,12 +104,6 @@ void ChangeMetricsReportingStateWithRepl
+ }
+ 
+ void UpdateMetricsPrefsOnPermissionChange(bool metrics_enabled) {
+-  if (metrics_enabled) {
+-    // When a user opts in to the metrics reporting service, the previously
+-    // collected data should be cleared to ensure that nothing is reported
+-    // before a user opts in and all reported data is accurate.
+-    g_browser_process->metrics_service()->ClearSavedStabilityMetrics();
+-  } else {
+     // Clear the client id pref when opting out.
+     // Note: Clearing client id will not affect the running state (e.g. field
+     // trial randomization), as the pref is only read on startup.
+@@ -117,7 +112,6 @@ void UpdateMetricsPrefsOnPermissionChang
+     g_browser_process->local_state()->ClearPref(
+         metrics::prefs::kMetricsReportingEnabledTimestamp);
+     crash_keys::ClearMetricsClientId();
+-  }
+ }
+ 
+ #if !defined(OS_ANDROID)
+--- a/chrome/browser/notifications/notification_platform_bridge_mac.mm
++++ b/chrome/browser/notifications/notification_platform_bridge_mac.mm
+@@ -651,6 +651,7 @@ getDisplayedAlertsForProfileId:(NSString
+ - (id<NotificationDelivery>)serviceProxy {
+   id<NotificationDelivery> proxy = [_xpcConnection remoteObjectProxy];
+ 
++#if 0
+   if (!_setExceptionPort) {
+     base::mac::ScopedMachSendRight exceptionPort(
+         crash_reporter::GetCrashpadClient().GetHandlerMachPort());
+@@ -659,6 +660,7 @@ getDisplayedAlertsForProfileId:(NSString
+     [proxy setMachExceptionPort:xpcPort];
+     _setExceptionPort = YES;
+   }
++#endif
+ 
+   return proxy;
+ }
+--- a/chrome/browser/profiles/profiles_state.cc
++++ b/chrome/browser/profiles/profiles_state.cc
+@@ -64,7 +64,7 @@ void RegisterPrefs(PrefRegistrySimple* r
+   registry->RegisterListPref(prefs::kProfilesDeleted);
+ 
+   // Preferences about the user manager.
+-  registry->RegisterBooleanPref(prefs::kBrowserGuestModeEnabled, true);
++  registry->RegisterBooleanPref(prefs::kBrowserGuestModeEnabled, false);
+   registry->RegisterBooleanPref(prefs::kBrowserGuestModeEnforced, false);
+   registry->RegisterBooleanPref(prefs::kBrowserAddPersonEnabled, true);
+   registry->RegisterBooleanPref(prefs::kForceBrowserSignin, false);
+--- a/chrome/browser/ui/hats/hats_service.cc
++++ b/chrome/browser/ui/hats/hats_service.cc
+@@ -318,6 +318,7 @@ void HatsService::LaunchSurveyForBrowser
+ }
+ 
+ bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
++  return false;
+   // Survey should not be loaded if the corresponding survey config is
+   // unavailable.
+   if (survey_configs_by_triggers_.find(trigger) ==
+@@ -341,11 +342,6 @@ bool HatsService::ShouldShowSurvey(const
+     return false;
+   }
+ 
+-  bool consent_given =
+-      g_browser_process->GetMetricsServicesManager()->IsMetricsConsentGiven();
+-  if (!consent_given)
+-    return false;
+-
+   if (profile_->GetLastSessionExitType() == Profile::EXIT_CRASHED) {
+     UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
+                               ShouldShowSurveyReasons::kNoLastSessionCrashed);
+--- a/chrome/common/chrome_features.cc
++++ b/chrome/common/chrome_features.cc
+@@ -81,7 +81,7 @@ const base::Feature kBackgroundModeAllow
+ #if !defined(OS_ANDROID)
+ // Enables logging UKMs for background tab activity by TabActivityWatcher.
+ const base::Feature kTabMetricsLogging{"TabMetricsLogging",
+-                                       base::FEATURE_ENABLED_BY_DEFAULT};
++                                       base::FEATURE_DISABLED_BY_DEFAULT};
+ #endif
+ 
+ #if defined(OS_WIN)
+--- a/chromecast/browser/metrics/cast_browser_metrics.cc
++++ b/chromecast/browser/metrics/cast_browser_metrics.cc
+@@ -55,6 +55,7 @@ CastBrowserMetrics::~CastBrowserMetrics(
+ }
+ 
+ void CastBrowserMetrics::Initialize() {
++  return;
+   metrics_service_client_->InitializeMetricsService();
+ 
+   auto* metrics_service = metrics_service_client_->GetMetricsService();
+--- a/components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc
++++ b/components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc
+@@ -215,9 +215,6 @@ base::Time DataReductionProxySettings::G
+ }
+ 
+ void DataReductionProxySettings::RegisterDataReductionProxyFieldTrial() {
+-  register_synthetic_field_trial_.Run(
+-      "SyntheticDataReductionProxySetting",
+-      IsDataReductionProxyEnabled() ? "Enabled" : "Disabled");
+ }
+ 
+ void DataReductionProxySettings::OnProxyEnabledPrefChange() {
+--- a/components/embedder_support/android/metrics/android_metrics_service_client.cc
++++ b/components/embedder_support/android/metrics/android_metrics_service_client.cc
+@@ -215,6 +215,7 @@ void AndroidMetricsServiceClient::Initia
+ }
+ 
+ void AndroidMetricsServiceClient::MaybeStartMetrics() {
++  return;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   // Treat the debugging flag the same as user consent because the user set it,
+   // but keep app_consent_ separate so we never persist data from an opted-out
+--- a/components/metrics/metrics_service.cc
++++ b/components/metrics/metrics_service.cc
+@@ -222,6 +222,7 @@ MetricsService::MetricsService(MetricsSt
+       session_id_(-1),
+       synthetic_trial_registry_(
+           client->IsExternalExperimentAllowlistEnabled()) {
++  return;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   DCHECK(state_manager_);
+   DCHECK(client_);
+@@ -238,6 +239,7 @@ MetricsService::~MetricsService() {
+ }
+ 
+ void MetricsService::InitializeMetricsRecordingState() {
++  return;
+   // The FieldTrialsProvider should be registered last. This ensures that
+   // studies whose features are checked when providers add their information to
+   // the log appear in the active field trials.
+@@ -264,13 +266,13 @@ void MetricsService::InitializeMetricsRe
+ 
+ void MetricsService::Start() {
+   HandleIdleSinceLastTransmission(false);
+-  EnableRecording();
+-  EnableReporting();
++  DisableRecording();
++  DisableReporting();
+ }
+ 
+ void MetricsService::StartRecordingForTests() {
+   test_mode_active_ = true;
+-  EnableRecording();
++  DisableRecording();
+   DisableReporting();
+ }
+ 
+@@ -289,6 +291,7 @@ void MetricsService::Stop() {
+ }
+ 
+ void MetricsService::EnableReporting() {
++  return;
+   if (reporting_service_.reporting_active())
+     return;
+   reporting_service_.EnableReporting();
+@@ -312,6 +315,7 @@ bool MetricsService::WasLastShutdownClea
+ }
+ 
+ void MetricsService::EnableRecording() {
++  return;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+ 
+   if (recording_state_ == ACTIVE)
+--- a/components/metrics/metrics_service_accessor.cc
++++ b/components/metrics/metrics_service_accessor.cc
+@@ -18,7 +18,7 @@ namespace {
+ bool g_force_official_enabled_test = false;
+ 
+ bool IsMetricsReportingEnabledForOfficialBuild(PrefService* pref_service) {
+-  return pref_service->GetBoolean(prefs::kMetricsReportingEnabled);
++  return false;
+ }
+ 
+ }  // namespace
+@@ -26,6 +26,7 @@ bool IsMetricsReportingEnabledForOfficia
+ // static
+ bool MetricsServiceAccessor::IsMetricsReportingEnabled(
+     PrefService* pref_service) {
++  return false;
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+   return IsMetricsReportingEnabledForOfficialBuild(pref_service);
+ #else
+--- a/components/metrics/url_constants.cc
++++ b/components/metrics/url_constants.cc
+@@ -7,12 +7,12 @@
+ namespace metrics {
+ 
+ const char kNewMetricsServerUrl[] =
+-    "https://clientservices.googleapis.com/uma/v2";
++    "http://no-thanks.invalid";
+ 
+ const char kNewMetricsServerUrlInsecure[] =
+-    "http://clientservices.googleapis.com/uma/v2";
++    "http://no-thanks.invalid";
+ 
+-const char kOldMetricsServerUrl[] = "https://clients4.google.com/uma/v2";
++const char kOldMetricsServerUrl[] = "http://no-thanks.invalid";
+ 
+ const char kDefaultMetricsMimeType[] = "application/vnd.chrome.uma";
+ 
+--- a/components/metrics_services_manager/metrics_services_manager.cc
++++ b/components/metrics_services_manager/metrics_services_manager.cc
+@@ -121,7 +121,7 @@ void MetricsServicesManager::UpdateRunni
+ 
+   client_->UpdateRunningServices(may_record_, may_upload_);
+ 
+-  if (may_record_) {
++  if (false) {
+     if (!metrics->recording_active())
+       metrics->Start();
+     if (may_upload_)
+@@ -138,6 +138,7 @@ void MetricsServicesManager::UpdateRunni
+ }
+ 
+ void MetricsServicesManager::UpdateUkmService() {
++  return;
+   ukm::UkmService* ukm = GetUkmService();
+   if (!ukm)
+     return;
+@@ -164,13 +165,7 @@ void MetricsServicesManager::UpdateUkmSe
+ }
+ 
+ void MetricsServicesManager::UpdateUploadPermissions(bool may_upload) {
+-  if (metrics_service_client_->IsMetricsReportingForceEnabled()) {
+-    UpdatePermissions(true, true, true);
+-    return;
+-  }
+-
+-  UpdatePermissions(client_->IsMetricsReportingEnabled(),
+-                    client_->IsMetricsConsentGiven(), may_upload);
++  UpdatePermissions(false, false, false);
+ }
+ 
+ bool MetricsServicesManager::IsMetricsReportingEnabled() const {
+--- a/components/rappor/rappor_service_impl.cc
++++ b/components/rappor/rappor_service_impl.cc
+@@ -32,7 +32,7 @@ const char kMimeType[] = "application/vn
+ const char kRapporDailyEventHistogram[] = "Rappor.DailyEvent.IntervalType";
+ 
+ // The rappor server's URL.
+-const char kDefaultServerUrl[] = "https://clients4.google.com/rappor";
++const char kDefaultServerUrl[] = "https://no-thanks.invalid";
+ 
+ }  // namespace
+ 
+--- a/components/ukm/ukm_reporting_service.cc
++++ b/components/ukm/ukm_reporting_service.cc
+@@ -41,7 +41,7 @@ constexpr int kMinUnsentLogBytes = 30000
+ constexpr size_t kMaxLogRetransmitSize = 100 * 1024;
+ 
+ GURL GetServerUrl() {
+-  constexpr char kDefaultServerUrl[] = "https://clients4.google.com/ukm";
++  constexpr char kDefaultServerUrl[] = "http://no-thanks.invalid";
+   std::string server_url =
+       base::GetFieldTrialParamValueByFeature(kUkmFeature, "ServerUrl");
+   if (!server_url.empty())
+--- a/content/renderer/render_thread_impl.cc
++++ b/content/renderer/render_thread_impl.cc
+@@ -2180,24 +2180,6 @@ bool RenderThreadImpl::RendererIsBackgro
+ void RenderThreadImpl::OnRendererBackgrounded() {
+   main_thread_scheduler_->SetRendererBackgrounded(true);
+   needs_to_record_first_active_paint_ = false;
+-  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
+-      FROM_HERE,
+-      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,
+-                     base::Unretained(this), "5min",
+-                     process_foregrounded_count_),
+-      base::TimeDelta::FromMinutes(5));
+-  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
+-      FROM_HERE,
+-      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,
+-                     base::Unretained(this), "10min",
+-                     process_foregrounded_count_),
+-      base::TimeDelta::FromMinutes(10));
+-  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
+-      FROM_HERE,
+-      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,
+-                     base::Unretained(this), "15min",
+-                     process_foregrounded_count_),
+-      base::TimeDelta::FromMinutes(15));
+   was_backgrounded_time_ = base::TimeTicks::Now();
+ }
+ 
+--- a/net/http/http_cache_transaction.cc
++++ b/net/http/http_cache_transaction.cc
+@@ -3599,6 +3599,7 @@ void HttpCache::Transaction::TransitionT
+ 
+ bool HttpCache::Transaction::ShouldDisableCaching(
+     const HttpResponseHeaders* headers) const {
++  return true;
+   bool disable_caching = false;
+   if (base::FeatureList::IsEnabled(features::kTurnOffStreamingMediaCaching) &&
+       IsOnBatteryPower()) {
+--- a/third_party/blink/renderer/bindings/core/v8/v8_gc_for_context_dispose.cc
++++ b/third_party/blink/renderer/bindings/core/v8/v8_gc_for_context_dispose.cc
+@@ -77,16 +77,8 @@ void V8GCForContextDispose::NotifyContex
+       ((MemoryPressureListenerRegistry::IsLowEndDevice() &&
+         MemoryPressureListenerRegistry::IsCurrentlyLowMemory()) ||
+        force_page_navigation_gc_)) {
+-    size_t pre_gc_memory_usage = GetMemoryUsage();
+     V8PerIsolateData::MainThreadIsolate()->MemoryPressureNotification(
+         v8::MemoryPressureLevel::kCritical);
+-    size_t post_gc_memory_usage = GetMemoryUsage();
+-    int reduction = static_cast<int>(pre_gc_memory_usage) -
+-                    static_cast<int>(post_gc_memory_usage);
+-    DEFINE_STATIC_LOCAL(
+-        CustomCountHistogram, reduction_histogram,
+-        ("BlinkGC.LowMemoryPageNavigationGC.Reduction", 1, 512, 50));
+-    reduction_histogram.Count(reduction / 1024 / 1024);
+ 
+     force_page_navigation_gc_ = false;
+   }
+--- a/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
++++ b/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
+@@ -228,9 +228,6 @@ void VideoFrameSubmitter::OnBeginFrame(
+   }
+   frame_trackers_.NotifyBeginImplFrame(args);
+ 
+-  base::ScopedClosureRunner end_frame(
+-      base::BindOnce(&cc::FrameSequenceTrackerCollection::NotifyFrameEnd,
+-                     base::Unretained(&frame_trackers_), args, args));
+   base::ScopedClosureRunner roughness_processing(
+       base::BindOnce(&cc::VideoPlaybackRoughnessReporter::ProcessFrameWindow,
+                      base::Unretained(roughness_reporter_.get())));
+--- a/third_party/blink/renderer/platform/instrumentation/histogram.cc
++++ b/third_party/blink/renderer/platform/instrumentation/histogram.cc
+@@ -23,12 +23,10 @@ CustomCountHistogram::CustomCountHistogr
+     : histogram_(histogram) {}
+ 
+ void CustomCountHistogram::Count(base::HistogramBase::Sample sample) {
+-  histogram_->Add(sample);
+ }
+ 
+ void CustomCountHistogram::CountMany(base::HistogramBase::Sample sample,
+                                      int count) {
+-  histogram_->AddCount(sample, count);
+ }
+ 
+ void CustomCountHistogram::CountMicroseconds(base::TimeDelta delta) {
+@@ -62,7 +60,6 @@ SparseHistogram::SparseHistogram(const c
+ }
+ 
+ void SparseHistogram::Sample(base::HistogramBase::Sample sample) {
+-  histogram_->Add(sample);
+ }
+ 
+ LinearHistogram::LinearHistogram(const char* name,
+--- a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
++++ b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
+@@ -648,7 +648,6 @@ void MainThreadSchedulerImpl::Shutdown()
+     return;
+ 
+   base::TimeTicks now = tick_clock()->NowTicks();
+-  main_thread_only().metrics_helper.OnRendererShutdown(now);
+   main_thread_only()
+       .compositor_priority_experiments.OnMainThreadSchedulerShutdown();
+ 
+@@ -991,13 +990,6 @@ void MainThreadSchedulerImpl::SetRendere
+ 
+   UpdatePolicy();
+ 
+-  base::TimeTicks now = tick_clock()->NowTicks();
+-  if (backgrounded) {
+-    main_thread_only().metrics_helper.OnRendererBackgrounded(now);
+-  } else {
+-    main_thread_only().metrics_helper.OnRendererForegrounded(now);
+-  }
+-
+   ParkableStringManager::Instance().SetRendererBackgrounded(backgrounded);
+   memory_purge_manager_.SetRendererBackgrounded(backgrounded);
+ }
+@@ -1854,10 +1846,6 @@ void MainThreadSchedulerImpl::DisableVir
+ 
+   main_thread_only().initial_virtual_time = base::Time();
+   main_thread_only().initial_virtual_time_ticks = base::TimeTicks();
+-
+-  // Reset the MetricsHelper because it gets confused by time going backwards.
+-  base::TimeTicks now = tick_clock()->NowTicks();
+-  main_thread_only().metrics_helper.ResetForTest(now);
+ }
+ 
+ void MainThreadSchedulerImpl::SetVirtualTimeStopped(bool virtual_time_stopped) {
+@@ -2244,11 +2232,6 @@ void MainThreadSchedulerImpl::DidCommitP
+   // Initialize |max_queueing_time_metric| lazily so that
+   // |SingleSampleMetricsFactory::SetFactory()| is called before
+   // |SingleSampleMetricsFactory::Get()|
+-  if (!main_thread_only().max_queueing_time_metric) {
+-    main_thread_only().max_queueing_time_metric = CreateMaxQueueingTimeMetric();
+-  }
+-  main_thread_only().max_queueing_time_metric.reset();
+-  main_thread_only().max_queueing_time = base::TimeDelta();
+   main_thread_only().has_navigated = true;
+ 
+   // If this either isn't a history inert commit or it's a reload then we must
+@@ -2585,8 +2568,6 @@ void MainThreadSchedulerImpl::OnTaskComp
+   }
+ 
+   // TODO(altimin): Per-page metrics should also be considered.
+-  main_thread_only().metrics_helper.RecordTaskMetrics(queue.get(), task,
+-                                                      *task_timing);
+   main_thread_only().task_description_for_tracing = base::nullopt;
+ 
+   // Unset the state of |task_priority_for_tracing|.
+@@ -2764,18 +2745,6 @@ bool MainThreadSchedulerImpl::ContainsLo
+ void MainThreadSchedulerImpl::OnQueueingTimeForWindowEstimated(
+     base::TimeDelta queueing_time,
+     bool is_disjoint_window) {
+-  if (main_thread_only().has_navigated) {
+-    if (main_thread_only().max_queueing_time < queueing_time) {
+-      if (!main_thread_only().max_queueing_time_metric) {
+-        main_thread_only().max_queueing_time_metric =
+-            CreateMaxQueueingTimeMetric();
+-      }
+-      main_thread_only().max_queueing_time_metric->SetSample(
+-          base::saturated_cast<base::HistogramBase::Sample>(
+-              queueing_time.InMilliseconds()));
+-      main_thread_only().max_queueing_time = queueing_time;
+-    }
+-  }
+ 
+   if (!is_disjoint_window || !ContainsLocalMainFrame())
+     return;
+@@ -2898,13 +2867,11 @@ MainThreadSchedulerImpl::ComputeComposit
+ void MainThreadSchedulerImpl::OnSafepointEntered() {
+   DCHECK(WTF::IsMainThread());
+   DCHECK(!main_thread_only().nested_runloop);
+-  main_thread_only().metrics_helper.OnSafepointEntered(helper_.NowTicks());
+ }
+ 
+ void MainThreadSchedulerImpl::OnSafepointExited() {
+   DCHECK(WTF::IsMainThread());
+   DCHECK(!main_thread_only().nested_runloop);
+-  main_thread_only().metrics_helper.OnSafepointExited(helper_.NowTicks());
+ }
+ 
+ void MainThreadSchedulerImpl::ExecuteAfterCurrentTask(
