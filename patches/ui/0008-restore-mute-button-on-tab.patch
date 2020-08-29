@@ -129,18 +129,10 @@ index 1fc92a9660c3..72078f3d8ca3 100644
        "views/tabs/browser_tab_strip_controller.h",
        "views/tabs/color_picker_view.cc",
 diff --git a/chrome/browser/ui/tabs/tab_utils.h b/chrome/browser/ui/tabs/tab_utils.h
-index 166a4851daa0..f278ed7d6227 100644
+index 166a4851daa0..eb7b8b8c1018 100644
 --- a/chrome/browser/ui/tabs/tab_utils.h
 +++ b/chrome/browser/ui/tabs/tab_utils.h
-@@ -20,6 +20,7 @@ class WebContents;
- 
- // Alert states for a tab. Any number of these (or none) may apply at once.
- enum class TabAlertState {
-+  NONE,
-   MEDIA_RECORDING,      // Audio/Video being recorded, consumed by tab.
-   TAB_CAPTURING,        // Tab contents being captured.
-   AUDIO_PLAYING,        // Audible audio is playing from the tab.
-@@ -35,6 +36,7 @@ enum class TabAlertState {
+@@ -35,6 +35,7 @@ enum class TabAlertState {
  
  enum class TabMutedReason {
    NONE,                    // The tab has never been muted or unmuted.
