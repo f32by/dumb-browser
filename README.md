@@ -28,15 +28,17 @@ Following components are removed/disabled:
 Other changes / optimizations:
 1. [UI] Change web controls' color to gray (edge style)
 2. [UI] Reduce location bar corner radius
-3. [UI] Remove extension items from context menu
-4. [UI] Disable Chromium's missing key warning
-5. [UI] Restore mute button on tab
-6. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
-7. [UI] Remove "Your Internet connection is being controlled" bubble
+3. [UI] Disable Chromium's missing key warning
+4. [UI] Restore mute button on tab
+5. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
+6. [UI] Remove "Your Internet connection is being controlled" bubble
 
 # Installation
 
 ## 1. [Recommended] Build from Sources
+
+It's impossible to build Dumb Browser via GitHub Actions due to GitHub's free account resource limitations.
+Please build on your own or wait for official binaries.
 
 ### Build on macOS
 Tested on macOS 10.15.6.
@@ -60,14 +62,17 @@ Tested on macOS 10.15.6.
 7. Output binary will be found in `out/Default`
 
 ## 2. Official Binaries
-*Not available currently.*
+*Unavailable. Binaries will be provided in the future.*
+
+> Note: Provided binaries do not contain any Google API keys thus you can't use Chrome Sync by default.
+> To solve this, follow [Chromium's Official How-Tos](https://www.chromium.org/developers/how-tos/api-keys)
+> and add your own API keys to environment variables.
 
 # Known Issues
 
 1. If you use existing profiles from `ungoogled-chromium`, you may encounter password sync failure. To solve this, create a new profile in dumb browser.
 
-2. `1Password` is unavailable since it forces allowlist-based browser signature check. Instead you can use
-`1Password X` which requires a valid 1Password subscription.
+2. [1Password extension (desktop app required)](https://chrome.google.com/webstore/detail/1password-extension-deskt/aomjjhallfgjeglblehebfpbcfeobpgk) is unavailable since it forces allowlist-based browser signature check. Instead you can use `1Password X` which requires a valid 1Password subscription.
 
 # Credits
 
