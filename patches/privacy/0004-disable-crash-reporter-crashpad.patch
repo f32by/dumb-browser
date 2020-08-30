@@ -1,5 +1,3 @@
-diff --git a/services/network/cors/cors_url_loader_factory.cc b/services/network/cors/cors_url_loader_factory.cc
-index 9c73e4467787..f7dd4a4a8906 100644
 --- a/services/network/cors/cors_url_loader_factory.cc
 +++ b/services/network/cors/cors_url_loader_factory.cc
 @@ -15,7 +15,6 @@
@@ -10,7 +8,7 @@ index 9c73e4467787..f7dd4a4a8906 100644
  #include "services/network/cross_origin_read_blocking.h"
  #include "services/network/network_context.h"
  #include "services/network/network_service.h"
-@@ -236,7 +235,6 @@ void CorsURLLoaderFactory::CreateLoaderAndStart(
+@@ -236,7 +235,6 @@ void CorsURLLoaderFactory::CreateLoaderA
      const ResourceRequest& resource_request,
      mojo::PendingRemote<mojom::URLLoaderClient> client,
      const net::MutableNetworkTrafficAnnotationTag& traffic_annotation) {
@@ -18,7 +16,7 @@ index 9c73e4467787..f7dd4a4a8906 100644
  
    if (!IsValidRequest(resource_request, options)) {
      mojo::Remote<mojom::URLLoaderClient>(std::move(client))
-@@ -407,9 +405,6 @@ bool CorsURLLoaderFactory::IsValidRequest(const ResourceRequest& request,
+@@ -407,9 +405,6 @@ bool CorsURLLoaderFactory::IsValidReques
        NOTREACHED();
        if (base::FeatureList::IsEnabled(
                features::kRequestInitiatorSiteLockEnfocement)) {
@@ -28,8 +26,6 @@ index 9c73e4467787..f7dd4a4a8906 100644
          mojo::ReportBadMessage(
              "CorsURLLoaderFactory: lock VS initiator mismatch");
          return false;
-diff --git a/chrome/browser/ui/BUILD.gn b/chrome/browser/ui/BUILD.gn
-index ed3ef556d832..1fc92a9660c3 100644
 --- a/chrome/browser/ui/BUILD.gn
 +++ b/chrome/browser/ui/BUILD.gn
 @@ -205,8 +205,6 @@ static_library("ui") {
@@ -41,7 +37,7 @@ index ed3ef556d832..1fc92a9660c3 100644
      "webui/device_log_ui.cc",
      "webui/device_log_ui.h",
      "webui/domain_reliability_internals_ui.cc",
-@@ -603,8 +601,6 @@ static_library("ui") {
+@@ -605,8 +603,6 @@ static_library("ui") {
    if (!is_fuchsia) {
      # TODO(crbug.com/753619): Enable crash reporting on Fuchsia.
      deps += [
@@ -50,11 +46,9 @@ index ed3ef556d832..1fc92a9660c3 100644
      ]
    }
  
-diff --git a/chrome/browser/chrome_browser_application_mac.mm b/chrome/browser/chrome_browser_application_mac.mm
-index 739554cabb30..aaa5a5503f49 100644
 --- a/chrome/browser/chrome_browser_application_mac.mm
 +++ b/chrome/browser/chrome_browser_application_mac.mm
-@@ -108,10 +108,6 @@ @interface BrowserCrApplication ()<NativeEventProcessor> {
+@@ -108,10 +108,6 @@ std::string DescriptionForNSEvent(NSEven
  @implementation BrowserCrApplication
  
  + (void)initialize {
@@ -65,11 +59,9 @@ index 739554cabb30..aaa5a5503f49 100644
    chrome::InstallObjcExceptionPreprocessor();
  
    cocoa_l10n_util::ApplyForcedRTL();
-diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index 945cee14368b..eb3592f66660 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
-@@ -676,29 +676,12 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -676,29 +676,12 @@ bool ChromeMainDelegate::BasicStartupCom
    }
  #endif
  
@@ -99,8 +91,6 @@ index 945cee14368b..eb3592f66660 100644
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
      *exit_code = 0;
-diff --git a/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc b/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
-index 8fcda2c7b1c2..c96353693cbb 100644
 --- a/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
 +++ b/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
 @@ -35,7 +35,6 @@
@@ -111,7 +101,7 @@ index 8fcda2c7b1c2..c96353693cbb 100644
  #include "chrome/browser/ui/webui/device_log_ui.h"
  #include "chrome/browser/ui/webui/domain_reliability_internals_ui.h"
  #include "chrome/browser/ui/webui/download_internals/download_internals_ui.h"
-@@ -429,8 +428,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+@@ -429,8 +428,6 @@ WebUIFactoryFunction GetWebUIFactoryFunc
      return &NewWebUI<ComponentsUI>;
    if (url.spec() == chrome::kChromeUIConstrainedHTMLTestURL)
      return &NewWebUI<ConstrainedWebDialogUI>;
@@ -120,7 +110,7 @@ index 8fcda2c7b1c2..c96353693cbb 100644
    if (url.host_piece() == chrome::kChromeUIDeviceLogHost)
      return &NewWebUI<chromeos::DeviceLogUI>;
    if (url.host_piece() == chrome::kChromeUIDomainReliabilityInternalsHost)
-@@ -1007,9 +1004,6 @@ base::RefCountedMemory* ChromeWebUIControllerFactory::GetFaviconResourceBytes(
+@@ -1007,9 +1004,6 @@ base::RefCountedMemory* ChromeWebUIContr
      return ConflictsUI::GetFaviconResourceBytes(scale_factor);
  #endif
  
@@ -130,8 +120,6 @@ index 8fcda2c7b1c2..c96353693cbb 100644
    if (page_url.host_piece() == chrome::kChromeUIFlagsHost)
      return FlagsUI::GetFaviconResourceBytes(scale_factor);
  
-diff --git a/chrome/browser/notifications/notification_platform_bridge_mac.mm b/chrome/browser/notifications/notification_platform_bridge_mac.mm
-index ad52e63ed83a..36e8b38640b5 100644
 --- a/chrome/browser/notifications/notification_platform_bridge_mac.mm
 +++ b/chrome/browser/notifications/notification_platform_bridge_mac.mm
 @@ -42,7 +42,6 @@
@@ -142,7 +130,7 @@ index ad52e63ed83a..36e8b38640b5 100644
  #include "ui/base/l10n/l10n_util_mac.h"
  #include "ui/message_center/public/cpp/notification.h"
  #include "ui/message_center/public/cpp/notification_types.h"
-@@ -650,16 +649,6 @@ - (void)notificationClick:(NSDictionary*)notificationResponseData {
+@@ -650,16 +649,6 @@ getDisplayedAlertsForProfileId:(NSString
  // service has its exception port configured for crash reporting.
  - (id<NotificationDelivery>)serviceProxy {
    id<NotificationDelivery> proxy = [_xpcConnection remoteObjectProxy];
@@ -159,8 +147,6 @@ index ad52e63ed83a..36e8b38640b5 100644
    return proxy;
  }
  
-diff --git a/chrome/browser/metrics/chrome_metrics_service_client.cc b/chrome/browser/metrics/chrome_metrics_service_client.cc
-index d64ad5321262..81eb0e149d42 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
 @@ -161,10 +161,6 @@
@@ -174,7 +160,7 @@ index d64ad5321262..81eb0e149d42 100644
  #if !defined(OS_CHROMEOS)
  #include "chrome/browser/signin/chrome_signin_status_metrics_provider_delegate.h"
  #include "components/signin/core/browser/signin_status_metrics_provider.h"
-@@ -512,12 +508,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
+@@ -512,12 +508,6 @@ void ChromeMetricsServiceClient::OnEnvir
      return;
  
    g_environment_for_crash_reporter.Get() = std::move(*environment);
@@ -187,17 +173,6 @@ index d64ad5321262..81eb0e149d42 100644
  #endif  // OS_WIN || OS_MACOSX || OS_ANDROID
  }
  
-@@ -576,7 +566,7 @@ void ChromeMetricsServiceClient::Initialize() {
- 
-   metrics_service_ = std::make_unique<metrics::MetricsService>(
-       metrics_state_manager_, this, local_state);
--  
-+
-   notification_listeners_active_ = false;
- 
- #if 0
-diff --git a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
-index 3df0614a53d6..a8607a773ded 100644
 --- a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
 +++ b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
 @@ -12,26 +12,9 @@
@@ -227,7 +202,7 @@ index 3df0614a53d6..a8607a773ded 100644
  @implementation AlertNotificationService {
    XPCTransactionHandler* _transactionHandler;
  
-@@ -51,29 +34,9 @@ - (instancetype)initWithTransactionHandler:(XPCTransactionHandler*)handler {
+@@ -51,29 +34,9 @@ crashpad::SimpleStringDictionary* GetCra
  }
  
  - (void)setMachExceptionPort:(CrXPCMachPort*)port {
@@ -257,7 +232,7 @@ index 3df0614a53d6..a8607a773ded 100644
    base::scoped_nsobject<NotificationBuilder> builder(
        [[NotificationBuilder alloc] initWithDictionary:notificationData]);
  
-@@ -85,8 +48,6 @@ - (void)deliverNotification:(NSDictionary*)notificationData {
+@@ -85,8 +48,6 @@ crashpad::SimpleStringDictionary* GetCra
  
  - (void)closeNotificationWithId:(NSString*)notificationId
                    withProfileId:(NSString*)profileId {
@@ -266,7 +241,7 @@ index 3df0614a53d6..a8607a773ded 100644
    NSUserNotificationCenter* notificationCenter =
        [NSUserNotificationCenter defaultUserNotificationCenter];
    for (NSUserNotification* candidate in
-@@ -107,8 +68,6 @@ - (void)closeNotificationWithId:(NSString*)notificationId
+@@ -107,8 +68,6 @@ crashpad::SimpleStringDictionary* GetCra
  }
  
  - (void)closeAllNotifications {
@@ -275,8 +250,6 @@ index 3df0614a53d6..a8607a773ded 100644
    [[NSUserNotificationCenter defaultUserNotificationCenter]
        removeAllDeliveredNotifications];
    [_transactionHandler closeTransactionIfNeeded];
-diff --git a/chrome/app/BUILD.gn b/chrome/app/BUILD.gn
-index 355edd3a69d2..c578c8ef2274 100644
 --- a/chrome/app/BUILD.gn
 +++ b/chrome/app/BUILD.gn
 @@ -139,7 +139,6 @@ static_library("test_support") {
@@ -287,8 +260,6 @@ index 355edd3a69d2..c578c8ef2274 100644
        "//components/crash/core/app:test_support",
      ]
    }
-diff --git a/components/browser_watcher/BUILD.gn b/components/browser_watcher/BUILD.gn
-index 2c673d73311e..706ed07349bd 100644
 --- a/components/browser_watcher/BUILD.gn
 +++ b/components/browser_watcher/BUILD.gn
 @@ -20,7 +20,6 @@ if (is_win) {
@@ -342,11 +313,9 @@ index 2c673d73311e..706ed07349bd 100644
      ]
    }
  
-diff --git a/chrome/browser/BUILD.gn b/chrome/browser/BUILD.gn
-index 0c78f1747889..9730cd6e33e0 100644
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -2952,7 +2946,6 @@ static_library("browser") {
+@@ -2948,7 +2948,6 @@ static_library("browser") {
        "//third_party/android_ndk:cpu_features",
        "//third_party/android_opengl/etc1",
        "//third_party/blink/public/common",
@@ -354,7 +323,7 @@ index 0c78f1747889..9730cd6e33e0 100644
        "//third_party/libaddressinput:util",
        "//third_party/libphonenumber",
        "//third_party/smhasher:murmurhash2",
-@@ -4159,7 +4141,6 @@ static_library("browser") {
+@@ -4155,7 +4154,6 @@ static_library("browser") {
        "//components/browser_watcher:stability_client",
        "//components/chrome_cleaner/public/constants",
        "//components/download/quarantine",
@@ -362,7 +331,7 @@ index 0c78f1747889..9730cd6e33e0 100644
        "//third_party/iaccessible2",
        "//third_party/isimpledom",
        "//third_party/wtl",
-@@ -4316,7 +4297,6 @@ static_library("browser") {
+@@ -4312,7 +4310,6 @@ static_library("browser") {
        "//chrome/browser/ui/cocoa/notifications:common",
        "//components/metal_util",
        "//services/video_capture/public/mojom:constants",
@@ -455,7 +424,7 @@ index 0c78f1747889..9730cd6e33e0 100644
  #endif
 --- a/third_party/crashpad/crashpad/client/crashpad_client_mac.cc
 +++ b/third_party/crashpad/crashpad/client/crashpad_client_mac.cc
-@@ -420,6 +420,7 @@ bool CrashpadClient::SetHandlerMachPort(
+@@ -490,6 +490,7 @@ bool CrashpadClient::SetHandlerMachPort(
  }
  
  base::mac::ScopedMachSendRight CrashpadClient::GetHandlerMachPort() const {
@@ -463,57 +432,6 @@ index 0c78f1747889..9730cd6e33e0 100644
    DCHECK(exception_port_.is_valid());
  
    // For the purposes of this method, only return a port set by
---- a/chrome/BUILD.gn
-+++ b/chrome/BUILD.gn
-@@ -697,14 +697,12 @@ if (is_win) {
-   bundle_data("chrome_framework_helpers") {
-     sources = [
-       "$root_out_dir/app_mode_loader",
--      "$root_out_dir/chrome_crashpad_handler",
-     ]
- 
-     outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
- 
-     public_deps = [
-       "//chrome/app_shim:app_mode_loader",
--      "//components/crash/core/app:chrome_crashpad_handler",
-     ]
- 
-     foreach(helper_params, content_mac_helpers) {
-@@ -1069,7 +1067,6 @@ if (is_win) {
-     _chrome_symbols_sources = [
-       "$root_out_dir/$chrome_product_full_name.app/Contents/MacOS/$chrome_product_full_name",
-       "$root_out_dir/AlertNotificationService.xpc/Contents/MacOS/AlertNotificationService",
--      "$root_out_dir/chrome_crashpad_handler",
-       "$root_out_dir/libswiftshader_libEGL.dylib",
-       "$root_out_dir/libswiftshader_libGLESv2.dylib",
-       _framework_binary_path,
-@@ -1101,7 +1098,6 @@ if (is_win) {
-         ":chrome_app",
-         ":chrome_framework",
-         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
--        "//components/crash/core/app:chrome_crashpad_handler",
-         "//third_party/breakpad:dump_syms",
-         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-         "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
-@@ -1123,7 +1119,6 @@ if (is_win) {
-         "$root_out_dir/AlertNotificationService.dSYM",
-         "$root_out_dir/$chrome_framework_name.dSYM",
-         "$root_out_dir/$chrome_product_full_name.dSYM",
--        "$root_out_dir/chrome_crashpad_handler.dSYM",
-         "$root_out_dir/libswiftshader_libEGL.dylib.dSYM",
-         "$root_out_dir/libswiftshader_libGLESv2.dylib.dSYM",
-       ]
-@@ -1132,7 +1127,6 @@ if (is_win) {
-         ":chrome_app",
-         ":chrome_framework",
-         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
--        "//components/crash/core/app:chrome_crashpad_handler",
-         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-         "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
-       ]
-diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index f06eeeee05c8..8f8e7de1f48f 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
 @@ -143,8 +143,6 @@ if (!is_android && !is_mac) {
@@ -550,22 +468,7 @@ index f06eeeee05c8..8f8e7de1f48f 100644
        "//components/policy:generated",
        "//content/app/resources",
        "//content/public/common:service_names",
-@@ -697,14 +691,12 @@ if (is_win) {
-   bundle_data("chrome_framework_helpers") {
-     sources = [
-       "$root_out_dir/app_mode_loader",
--      "$root_out_dir/chrome_crashpad_handler",
-     ]
- 
-     outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
- 
-     public_deps = [
-       "//chrome/app_shim:app_mode_loader",
--      "//components/crash/core/app:chrome_crashpad_handler",
-     ]
- 
-     foreach(helper_params, content_mac_helpers) {
-@@ -935,7 +927,6 @@ if (is_win) {
+@@ -933,7 +927,6 @@ if (is_win) {
        "//chrome/app:command_ids",
        "//chrome/common:buildflags",
        "//chrome/common/profiler",
@@ -573,38 +476,6 @@ index f06eeeee05c8..8f8e7de1f48f 100644
        "//components/policy:generated",
        "//content/public/app",
        "//content/public/common:service_names",
-@@ -1069,7 +1060,6 @@ if (is_win) {
-     _chrome_symbols_sources = [
-       "$root_out_dir/$chrome_product_full_name.app/Contents/MacOS/$chrome_product_full_name",
-       "$root_out_dir/AlertNotificationService.xpc/Contents/MacOS/AlertNotificationService",
--      "$root_out_dir/chrome_crashpad_handler",
-       "$root_out_dir/libswiftshader_libEGL.dylib",
-       "$root_out_dir/libswiftshader_libGLESv2.dylib",
-       _framework_binary_path,
-@@ -1101,7 +1091,6 @@ if (is_win) {
-         ":chrome_app",
-         ":chrome_framework",
-         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
--        "//components/crash/core/app:chrome_crashpad_handler",
-         "//third_party/breakpad:dump_syms",
-         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-         "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
-@@ -1123,7 +1112,6 @@ if (is_win) {
-         "$root_out_dir/AlertNotificationService.dSYM",
-         "$root_out_dir/$chrome_framework_name.dSYM",
-         "$root_out_dir/$chrome_product_full_name.dSYM",
--        "$root_out_dir/chrome_crashpad_handler.dSYM",
-         "$root_out_dir/libswiftshader_libEGL.dylib.dSYM",
-         "$root_out_dir/libswiftshader_libGLESv2.dylib.dSYM",
-       ]
-@@ -1132,7 +1120,6 @@ if (is_win) {
-         ":chrome_app",
-         ":chrome_framework",
-         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
--        "//components/crash/core/app:chrome_crashpad_handler",
-         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-         "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
-       ]
 --- a/content/shell/BUILD.gn
 +++ b/content/shell/BUILD.gn
 @@ -846,9 +846,9 @@ if (is_mac) {

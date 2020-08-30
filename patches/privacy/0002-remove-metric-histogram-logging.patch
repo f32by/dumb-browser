@@ -729,13 +729,12 @@
  #if BUILDFLAG(ENABLE_PLUGINS)
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
-@@ -576,7 +576,10 @@ void ChromeMetricsServiceClient::Initial
- 
+@@ -577,6 +577,9 @@ void ChromeMetricsServiceClient::Initial
    metrics_service_ = std::make_unique<metrics::MetricsService>(
        metrics_state_manager_, this, local_state);
-+  
-+  notification_listeners_active_ = false;
  
++  notification_listeners_active_ = false;
++
 +#if 0
    notification_listeners_active_ = RegisterForNotifications();
    RegisterMetricsServiceProviders();
@@ -818,35 +817,6 @@
  }
  
  #if !defined(OS_ANDROID)
---- a/chrome/browser/notifications/notification_platform_bridge_mac.mm
-+++ b/chrome/browser/notifications/notification_platform_bridge_mac.mm
-@@ -651,6 +651,7 @@ getDisplayedAlertsForProfileId:(NSString
- - (id<NotificationDelivery>)serviceProxy {
-   id<NotificationDelivery> proxy = [_xpcConnection remoteObjectProxy];
- 
-+#if 0
-   if (!_setExceptionPort) {
-     base::mac::ScopedMachSendRight exceptionPort(
-         crash_reporter::GetCrashpadClient().GetHandlerMachPort());
-@@ -659,6 +660,7 @@ getDisplayedAlertsForProfileId:(NSString
-     [proxy setMachExceptionPort:xpcPort];
-     _setExceptionPort = YES;
-   }
-+#endif
- 
-   return proxy;
- }
---- a/chrome/browser/profiles/profiles_state.cc
-+++ b/chrome/browser/profiles/profiles_state.cc
-@@ -64,7 +64,7 @@ void RegisterPrefs(PrefRegistrySimple* r
-   registry->RegisterListPref(prefs::kProfilesDeleted);
- 
-   // Preferences about the user manager.
--  registry->RegisterBooleanPref(prefs::kBrowserGuestModeEnabled, true);
-+  registry->RegisterBooleanPref(prefs::kBrowserGuestModeEnabled, false);
-   registry->RegisterBooleanPref(prefs::kBrowserGuestModeEnforced, false);
-   registry->RegisterBooleanPref(prefs::kBrowserAddPersonEnabled, true);
-   registry->RegisterBooleanPref(prefs::kForceBrowserSignin, false);
 --- a/chrome/browser/ui/hats/hats_service.cc
 +++ b/chrome/browser/ui/hats/hats_service.cc
 @@ -318,6 +318,7 @@ void HatsService::LaunchSurveyForBrowser
