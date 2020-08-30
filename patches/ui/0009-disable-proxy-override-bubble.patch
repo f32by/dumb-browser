@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/extensions/extension_message_bubble_factory.cc b/chrome/browser/ui/extensions/extension_message_bubble_factory.cc
+index f1a603dc6636..1ea0e1ee1e2c 100644
+--- a/chrome/browser/ui/extensions/extension_message_bubble_factory.cc
++++ b/chrome/browser/ui/extensions/extension_message_bubble_factory.cc
+@@ -55,6 +55,7 @@ bool EnableSettingsApiBubble() {
+ }
+ 
+ bool EnableProxyOverrideBubble() {
++  return false;
+ #if defined(OS_WIN) || defined(OS_MACOSX)
+   return true;
+ #else
