@@ -31,6 +31,7 @@ Other changes / optimizations:
 3. [UI] Remove extension items from context menu
 4. [UI] Disable Chromium's missing key warning
 5. [UI] Restore mute button on tab
+6. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
 
 # Installation
 
