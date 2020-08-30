@@ -74,3 +74,5 @@ Tested on macOS 10.15.6.
 [ungoogled-chromium](https://github.com/Eloston/ungoogled-chromium)
 
 [Brave](https://github.com/brave/brave-browser)
+
+[CleanURLs](https://github.com/GlowPuff/CleanURLs)
