@@ -13,7 +13,7 @@
      mojo::PendingRemote<mojom::URLLoaderClient> client,
      const net::MutableNetworkTrafficAnnotationTag& traffic_annotation) {
 -  debug::ScopedRequestCrashKeys request_crash_keys(resource_request);
- 
+
    if (!IsValidRequest(resource_request, options)) {
      mojo::Remote<mojom::URLLoaderClient>(std::move(client))
 @@ -407,9 +405,6 @@ bool CorsURLLoaderFactory::IsValidReques
@@ -45,26 +45,26 @@
 -      "//components/crash/core/browser",
      ]
    }
- 
+
 --- a/chrome/browser/chrome_browser_application_mac.mm
 +++ b/chrome/browser/chrome_browser_application_mac.mm
 @@ -108,10 +108,6 @@ std::string DescriptionForNSEvent(NSEven
  @implementation BrowserCrApplication
- 
+
  + (void)initialize {
 -  // Turn all deallocated Objective-C objects into zombies, keeping
 -  // the most recent 10,000 of them on the treadmill.
 -  ObjcEvilDoers::ZombieEnable(true, 10000);
 -
    chrome::InstallObjcExceptionPreprocessor();
- 
+
    cocoa_l10n_util::ApplyForcedRTL();
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
 @@ -676,29 +676,12 @@ bool ChromeMainDelegate::BasicStartupCom
    }
  #endif
- 
+
 -#if defined(OS_MACOSX)
 -  // Give the browser process a longer treadmill, since crashes
 -  // there have more impact.
@@ -73,11 +73,11 @@
 -#endif
 -
    content::Profiling::ProcessStarted();
- 
+
    // Setup tracing sampler profiler as early as possible at startup if needed.
    tracing_sampler_profiler_ =
        tracing::TracingSamplerProfiler::CreateOnMainThread();
- 
+
 -#if defined(OS_WIN)
 -  v8_crashpad_support::SetUp();
 -#endif
@@ -113,13 +113,13 @@
 @@ -1007,9 +1004,6 @@ base::RefCountedMemory* ChromeWebUIContr
      return ConflictsUI::GetFaviconResourceBytes(scale_factor);
  #endif
- 
+
 -  if (page_url.host_piece() == chrome::kChromeUICrashesHost)
 -    return CrashesUI::GetFaviconResourceBytes(scale_factor);
 -
    if (page_url.host_piece() == chrome::kChromeUIFlagsHost)
      return FlagsUI::GetFaviconResourceBytes(scale_factor);
- 
+
 --- a/chrome/browser/notifications/notification_platform_bridge_mac.mm
 +++ b/chrome/browser/notifications/notification_platform_bridge_mac.mm
 @@ -42,7 +42,6 @@
@@ -146,13 +146,13 @@
 -
    return proxy;
  }
- 
+
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
 @@ -161,10 +161,6 @@
  #include "content/public/browser/system_connector.h"
  #endif
- 
+
 -#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_ANDROID)
 -#include "third_party/crashpad/crashpad/client/crashpad_info.h"
 -#endif
@@ -162,7 +162,7 @@
  #include "components/signin/core/browser/signin_status_metrics_provider.h"
 @@ -512,12 +508,6 @@ void ChromeMetricsServiceClient::OnEnvir
      return;
- 
+
    g_environment_for_crash_reporter.Get() = std::move(*environment);
 -
 -  crashpad::CrashpadInfo::GetCrashpadInfo()->AddUserDataMinidumpStream(
@@ -172,7 +172,7 @@
 -      g_environment_for_crash_reporter.Get().size());
  #endif  // OS_WIN || OS_MACOSX || OS_ANDROID
  }
- 
+
 --- a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
 +++ b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
 @@ -12,26 +12,9 @@
@@ -182,9 +182,9 @@
 -#include "third_party/crashpad/crashpad/client/crashpad_client.h"
 -#include "third_party/crashpad/crashpad/client/crashpad_info.h"
 -#include "third_party/crashpad/crashpad/client/simple_string_dictionary.h"
- 
+
  @class NSUserNotificationCenter;
- 
+
 -namespace {
 -
 -crashpad::SimpleStringDictionary* GetCrashpadAnnotations() {
@@ -201,10 +201,10 @@
 -
  @implementation AlertNotificationService {
    XPCTransactionHandler* _transactionHandler;
- 
+
 @@ -51,29 +34,9 @@ crashpad::SimpleStringDictionary* GetCra
  }
- 
+
  - (void)setMachExceptionPort:(CrXPCMachPort*)port {
 -  base::mac::ScopedMachSendRight sendRight([port takeRight]);
 -  if (!sendRight.is_valid()) {
@@ -225,15 +225,15 @@
 -        GetCrashpadAnnotations());
 -  }
  }
- 
+
  - (void)deliverNotification:(NSDictionary*)notificationData {
 -  DCHECK(_didSetExceptionPort);
 -
    base::scoped_nsobject<NotificationBuilder> builder(
        [[NotificationBuilder alloc] initWithDictionary:notificationData]);
- 
+
 @@ -85,8 +48,6 @@ crashpad::SimpleStringDictionary* GetCra
- 
+
  - (void)closeNotificationWithId:(NSString*)notificationId
                    withProfileId:(NSString*)profileId {
 -  DCHECK(_didSetExceptionPort);
@@ -243,7 +243,7 @@
    for (NSUserNotification* candidate in
 @@ -107,8 +68,6 @@ crashpad::SimpleStringDictionary* GetCra
  }
- 
+
  - (void)closeAllNotifications {
 -  DCHECK(_didSetExceptionPort);
 -
@@ -269,7 +269,7 @@
 -      "//third_party/crashpad/crashpad/client",
      ]
    }
- 
+
 @@ -36,11 +35,6 @@ if (is_win) {
        ":stability_client",
        ":stability_common",
@@ -281,7 +281,7 @@
 -      "//third_party/crashpad/crashpad/snapshot",
      ]
    }
- 
+
 @@ -55,8 +49,6 @@ if (is_win) {
        ":stability_client",
        "//base",
@@ -290,7 +290,7 @@
 -      "//third_party/crashpad/crashpad/util",
      ]
    }
- 
+
 @@ -76,8 +68,6 @@ if (is_win) {
      deps = [
        ":activity_report_proto",
@@ -298,7 +298,7 @@
 -      "//third_party/crashpad/crashpad/client",
 -      "//third_party/crashpad/crashpad/util",
      ]
- 
+
      # This needs to be a public dep because of base::win::PEImage.
 @@ -104,12 +94,6 @@ if (is_win) {
        "//components/metrics:metrics",
@@ -312,7 +312,7 @@
 -      "//third_party/crashpad/crashpad/util",
      ]
    }
- 
+
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
 @@ -2948,7 +2948,6 @@ static_library("browser") {
@@ -343,7 +343,7 @@
 +++ b/third_party/breakpad/breakpad/src/client/linux/sender/google_crash_report_sender.cc
 @@ -85,6 +85,7 @@ bool CheckForRequiredFlagsOrDie() {
  }
- 
+
  int main(int argc, char* argv[]) {
 +  return 0;
    google::InitGoogleLogging(argv[0]);
@@ -352,9 +352,9 @@
 --- a/chrome/browser/tracing/crash_service_uploader.cc
 +++ b/chrome/browser/tracing/crash_service_uploader.cc
 @@ -40,7 +40,7 @@ using std::string;
- 
+
  namespace {
- 
+
 -const char kUploadURL[] = "https://clients2.google.com/cr/report";
 +const char kUploadURL[] = "http://no-thanks.invalid";
  const char kCrashUploadContentType[] = "multipart/form-data";
@@ -363,7 +363,7 @@
 @@ -129,11 +129,16 @@ void TraceCrashServiceUploader::DoUpload
    progress_callback_ = progress_callback;
    done_callback_ = std::move(done_callback);
- 
+
 -  base::ThreadPool::PostTask(
 +  if (!progress_callback_.is_null()) {
 +    base::ThreadPool::PostTask(
@@ -379,7 +379,7 @@
 +      base::BindOnce(std::move(done_callback_), true, "Upload skipped."));
 +  }
  }
- 
+
  void TraceCrashServiceUploader::DoCompressOnBackgroundThread(
 @@ -306,6 +311,7 @@ bool TraceCrashServiceUploader::Compress
  void TraceCrashServiceUploader::CreateAndStartURLLoader(
@@ -388,34 +388,34 @@
 +  return;
    DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
    DCHECK(!simple_url_loader_);
- 
+
 --- a/chrome/chrome_cleaner/crash/crashpad_crash_reporter.cc
 +++ b/chrome/chrome_cleaner/crash/crashpad_crash_reporter.cc
 @@ -28,7 +28,7 @@
  namespace {
- 
+
  // The URL where crash reports are uploaded.
 -const char kReportUploadURL[] = "https://clients2.google.com/cr/report";
 +const char kReportUploadURL[] = "http://no-thanks.invalid";
- 
+
  // Whether the current process is connected to a crash handler process.
  bool g_is_connected_to_crash_handler = false;
 --- a/components/crash/core/app/crash_reporter_client.cc
 +++ b/components/crash/core/app/crash_reporter_client.cc
 @@ -24,7 +24,7 @@ namespace {
  CrashReporterClient* g_client = nullptr;
- 
+
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING) && defined(OFFICIAL_BUILD)
 -const char kDefaultUploadURL[] = "https://clients2.google.com/cr/report";
 +const char kDefaultUploadURL[] = "http://no-thanks.invalid";
  #endif
- 
+
  }  // namespace
 --- a/extensions/browser/api/crash_report_private/crash_report_private_api.cc
 +++ b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
 @@ -30,7 +30,7 @@ base::Time g_last_called_time;
  base::Clock* g_clock = base::DefaultClock::GetInstance();
- 
+
  #if defined(GOOGLE_CHROME_BUILD)
 -constexpr char kCrashEndpointUrl[] = "https://clients2.google.com/cr/report";
 +constexpr char kCrashEndpointUrl[] = "http://no-thanks.invalid";
@@ -426,12 +426,49 @@
 +++ b/third_party/crashpad/crashpad/client/crashpad_client_mac.cc
 @@ -490,6 +490,7 @@ bool CrashpadClient::SetHandlerMachPort(
  }
- 
+
  base::mac::ScopedMachSendRight CrashpadClient::GetHandlerMachPort() const {
 +  return base::mac::ScopedMachSendRight(MACH_PORT_NULL);
    DCHECK(exception_port_.is_valid());
- 
+
    // For the purposes of this method, only return a port set by
+--- a/content/shell/BUILD.gn
++++ b/content/shell/BUILD.gn
+@@ -846,9 +846,9 @@ if (is_mac) {
+
+   bundle_data("content_shell_framework_helpers") {
+     testonly = true
+-    sources = [ "$root_out_dir/chrome_crashpad_handler" ]
++    sources = []
+     outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
+-    public_deps = [ "//components/crash/core/app:chrome_crashpad_handler" ]
++    public_deps = []
+     foreach(helper_params, content_mac_helpers) {
+       sources += [
+         "$root_out_dir/${content_shell_helper_name}${helper_params[2]}.app",
+--- a/headless/BUILD.gn
++++ b/headless/BUILD.gn
+@@ -473,7 +473,6 @@ component("headless_non_renderer") {
+   }
+
+   if (is_mac) {
+-    deps += [ ":mac_helpers" ]
+     libs = [
+       "AppKit.framework",
+       "CoreFoundation.framework",
+@@ -634,10 +633,6 @@ test("headless_browsertests") {
+     "test/data/",
+   ]
+
+-  if (is_mac) {
+-    data_deps = [ ":mac_helpers" ]
+-  }
+-
+   defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+
+   deps = [
+diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
+index f06eeeee05c8..215ead28b2bd 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
 @@ -143,8 +143,6 @@ if (!is_android && !is_mac) {
@@ -441,7 +478,7 @@
 -        "common/crash_keys.cc",
 -        "common/crash_keys.h",
        ]
- 
+
        deps += [
 @@ -163,8 +161,6 @@ if (!is_android && !is_mac) {
          "//chrome/installer/util:constants",
@@ -468,7 +505,22 @@
        "//components/policy:generated",
        "//content/app/resources",
        "//content/public/common:service_names",
-@@ -933,7 +927,6 @@ if (is_win) {
+@@ -697,14 +691,12 @@ if (is_win) {
+   bundle_data("chrome_framework_helpers") {
+     sources = [
+       "$root_out_dir/app_mode_loader",
+-      "$root_out_dir/chrome_crashpad_handler",
+     ]
+
+     outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
+
+     public_deps = [
+       "//chrome/app_shim:app_mode_loader",
+-      "//components/crash/core/app:chrome_crashpad_handler",
+     ]
+
+     foreach(helper_params, content_mac_helpers) {
+@@ -935,7 +927,6 @@ if (is_win) {
        "//chrome/app:command_ids",
        "//chrome/common:buildflags",
        "//chrome/common/profiler",
@@ -476,38 +528,3 @@
        "//components/policy:generated",
        "//content/public/app",
        "//content/public/common:service_names",
---- a/content/shell/BUILD.gn
-+++ b/content/shell/BUILD.gn
-@@ -846,9 +846,9 @@ if (is_mac) {
- 
-   bundle_data("content_shell_framework_helpers") {
-     testonly = true
--    sources = [ "$root_out_dir/chrome_crashpad_handler" ]
-+    sources = []
-     outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
--    public_deps = [ "//components/crash/core/app:chrome_crashpad_handler" ]
-+    public_deps = []
-     foreach(helper_params, content_mac_helpers) {
-       sources += [
-         "$root_out_dir/${content_shell_helper_name}${helper_params[2]}.app",
---- a/headless/BUILD.gn
-+++ b/headless/BUILD.gn
-@@ -473,7 +473,6 @@ component("headless_non_renderer") {
-   }
- 
-   if (is_mac) {
--    deps += [ ":mac_helpers" ]
-     libs = [
-       "AppKit.framework",
-       "CoreFoundation.framework",
-@@ -634,10 +633,6 @@ test("headless_browsertests") {
-     "test/data/",
-   ]
- 
--  if (is_mac) {
--    data_deps = [ ":mac_helpers" ]
--  }
--
-   defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
- 
-   deps = [
