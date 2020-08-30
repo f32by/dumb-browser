@@ -1,10 +1,24 @@
+diff --git a/net/http/http_cache_transaction.cc b/net/http/http_cache_transaction.cc
+index a4afd4bc42a5..c1bb9a22a8d1 100644
 --- a/net/http/http_cache_transaction.cc
 +++ b/net/http/http_cache_transaction.cc
-@@ -3599,6 +3599,7 @@ void HttpCache::Transaction::TransitionT
-
+@@ -3600,8 +3600,7 @@ void HttpCache::Transaction::TransitionToState(State state) {
  bool HttpCache::Transaction::ShouldDisableCaching(
      const HttpResponseHeaders* headers) const {
-+  return true;
    bool disable_caching = false;
-   if (base::FeatureList::IsEnabled(features::kTurnOffStreamingMediaCaching) &&
-       IsOnBatteryPower()) {
+-  if (base::FeatureList::IsEnabled(features::kTurnOffStreamingMediaCaching) &&
+-      IsOnBatteryPower()) {
++  if (true) {
+     // If we're running on battery, and the acquired content is 'large' and
+     // not already cached, and we have a MIME type of audio or video, then
+     // disable the cache for this response. We based our initial definition of
+@@ -3610,8 +3609,7 @@ bool HttpCache::Transaction::ShouldDisableCaching(
+     static constexpr int kMaxContentSize = 4096 * 4;
+     std::string mime_type;
+     base::CompareCase insensitive_ascii = base::CompareCase::INSENSITIVE_ASCII;
+-    if (headers->GetContentLength() > kMaxContentSize &&
+-        headers->response_code() != 304 && headers->GetMimeType(&mime_type) &&
++    if (headers->response_code() != 304 && headers->GetMimeType(&mime_type) &&
+         (base::StartsWith(mime_type, "video", insensitive_ascii) ||
+          base::StartsWith(mime_type, "audio", insensitive_ascii))) {
+       disable_caching = true;
