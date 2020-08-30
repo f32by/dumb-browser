@@ -1,0 +1,10 @@
+--- a/net/http/http_cache_transaction.cc
++++ b/net/http/http_cache_transaction.cc
+@@ -3599,6 +3599,7 @@ void HttpCache::Transaction::TransitionT
+
+ bool HttpCache::Transaction::ShouldDisableCaching(
+     const HttpResponseHeaders* headers) const {
++  return true;
+   bool disable_caching = false;
+   if (base::FeatureList::IsEnabled(features::kTurnOffStreamingMediaCaching) &&
+       IsOnBatteryPower()) {
