@@ -236,7 +236,8 @@ static std::vector<MatcherRule> kMatcherRules = {
      "cpp", "shareurl", "short_name", "app", "scm[_a-z-]*", "pvid",
      "algo_expid", "algo_pvid", "ns", "abbucket", "ali_refid", "ali_trackid",
      "acm", "utparam", "pos", "abtest", "trackInfo", "utkn", "scene",
-     "mytmenu", "turing_bucket", "lygClk", "impid", "bftTag", "bftRwd", "spm"},
+     "mytmenu", "turing_bucket", "lygClk", "impid", "bftTag", "bftRwd", "spm",
+     "initiative_id", "sourceId", "ssid", "commend"},
     base::nullopt
   },
   // Tmall
@@ -247,7 +248,8 @@ static std::vector<MatcherRule> kMatcherRules = {
      "algo_expid", "algo_pvid", "ns", "abbucket", "ali_refid", "ali_trackid",
      "acm", "utparam", "pos", "abtest", "trackInfo", "user_number_id",
      "utkn", "scene", "mytmenu", "turing_bucket", "lygClk", "impid", "bftTag",
-     "bftRwd", "activity_id"},
+     "bftRwd", "activity_id", "from", "areaId", "user_id", "cat_id", "is_b",
+     "rn"},
     base::nullopt
   },
   // tb.cn
