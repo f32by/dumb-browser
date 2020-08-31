@@ -1,6 +1,6 @@
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -3495,13 +3495,6 @@ static_library("browser") {
+@@ -3508,13 +3508,6 @@ static_library("browser") {
        "search/one_google_bar/one_google_bar_service_factory.cc",
        "search/one_google_bar/one_google_bar_service_factory.h",
        "search/one_google_bar/one_google_bar_service_observer.h",
@@ -16,7 +16,7 @@
        "search/search_provider_observer.cc",
 --- a/chrome/browser/prefs/browser_prefs.cc
 +++ b/chrome/browser/prefs/browser_prefs.cc
-@@ -242,7 +242,6 @@
+@@ -245,7 +245,6 @@
  #include "chrome/browser/metrics/tab_stats_tracker.h"
  #include "chrome/browser/nearby_sharing/nearby_sharing_prefs.h"
  #include "chrome/browser/search/instant_service.h"
@@ -24,7 +24,7 @@
  #include "chrome/browser/search/search_suggest/search_suggest_service.h"
  #include "chrome/browser/signin/signin_promo.h"
  #include "chrome/browser/ui/startup/startup_browser_creator.h"
-@@ -1009,7 +1008,6 @@ void RegisterProfilePrefs(user_prefs::Pr
+@@ -1021,7 +1020,6 @@ void RegisterProfilePrefs(user_prefs::Pr
    NewTabUI::RegisterProfilePrefs(registry);
    ntp_tiles::CustomLinksManagerImpl::RegisterProfilePrefs(registry);
    PinnedTabCodec::RegisterProfilePrefs(registry);

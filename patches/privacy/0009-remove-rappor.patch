@@ -1,6 +1,8 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 690f2fe84711..40d4c5be7ff4 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -724,7 +724,6 @@ group("gn_all") {
+@@ -722,7 +722,6 @@ group("gn_all") {
        "//chrome/tools/convert_dict",
        "//components/constrained_window:unit_tests",
        "//components/metrics:serialization",
@@ -8,6 +10,8 @@
        "//components/services/filesystem:filesystem_service_unittests",
        "//components/sessions:unit_tests",
        "//media/blink:media_blink_unittests",
+diff --git a/chrome/android/BUILD.gn b/chrome/android/BUILD.gn
+index 363ef7af63be..d2a13c6bbb64 100644
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
 @@ -3073,7 +3073,6 @@ generate_jni("chrome_jni_headers") {
@@ -18,6 +22,8 @@
      "java/src/org/chromium/chrome/browser/resources/ResourceMapper.java",
      "java/src/org/chromium/chrome/browser/rlz/RevenueStats.java",
      "java/src/org/chromium/chrome/browser/rlz/RlzPingHandler.java",
+diff --git a/chrome/android/chrome_java_sources.gni b/chrome/android/chrome_java_sources.gni
+index 27d29dc46ff9..11dbcc3fb57d 100644
 --- a/chrome/android/chrome_java_sources.gni
 +++ b/chrome/android/chrome_java_sources.gni
 @@ -1352,7 +1352,6 @@ chrome_java_sources = [
@@ -28,9 +34,11 @@
    "java/src/org/chromium/chrome/browser/reengagement/ReengagementNotificationController.java",
    "java/src/org/chromium/chrome/browser/resources/ResourceMapper.java",
    "java/src/org/chromium/chrome/browser/rlz/RevenueStats.java",
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabActivityLifecycleUmaTracker.java b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabActivityLifecycleUmaTracker.java
+index 7f7d27d58ec0..2209a58a2eb9 100644
 --- a/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabActivityLifecycleUmaTracker.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/customtabs/CustomTabActivityLifecycleUmaTracker.java
-@@ -19,7 +19,6 @@ import org.chromium.chrome.browser.lifec
+@@ -19,7 +19,6 @@ import org.chromium.chrome.browser.lifecycle.NativeInitObserver;
  import org.chromium.chrome.browser.lifecycle.PauseResumeWithNativeObserver;
  import org.chromium.chrome.browser.preferences.ChromePreferenceKeys;
  import org.chromium.chrome.browser.preferences.SharedPreferencesManager;
@@ -38,7 +46,7 @@
  import org.chromium.chrome.browser.webapps.WebappCustomTabTimeSpentLogger;
  import org.chromium.content_public.browser.UiThreadTaskTraits;
  
-@@ -105,12 +104,5 @@ public class CustomTabActivityLifecycleU
+@@ -105,12 +104,5 @@ public class CustomTabActivityLifecycleUmaTracker implements PauseResumeWithNati
          if (TextUtils.isEmpty(packageName) || packageName.contains(mActivity.getPackageName())) {
              return;
          }
@@ -51,6 +59,8 @@
 -        });
      }
  }
+diff --git a/chrome/app/DEPS b/chrome/app/DEPS
+index a5b1c301fa60..7857178e7252 100644
 --- a/chrome/app/DEPS
 +++ b/chrome/app/DEPS
 @@ -55,7 +55,6 @@ specific_include_rules = {
@@ -61,9 +71,11 @@
      "+components/services/app_service",
      "+components/translate/content/common",
      "+extensions/buildflags",
+diff --git a/chrome/browser/BUILD.gn b/chrome/browser/BUILD.gn
+index 98333c847696..068d6a13223b 100644
 --- a/chrome/browser/BUILD.gn
 +++ b/chrome/browser/BUILD.gn
-@@ -1983,7 +1983,6 @@ static_library("browser") {
+@@ -1973,7 +1973,6 @@ static_library("browser") {
      "//components/proxy_config",
      "//components/query_parser",
      "//components/query_tiles",
@@ -71,7 +83,7 @@
      "//components/renderer_context_menu",
      "//components/resources",
      "//components/safe_search_api",
-@@ -2512,7 +2511,6 @@ static_library("browser") {
+@@ -2500,7 +2499,6 @@ static_library("browser") {
        "android/provider/chrome_browser_provider.cc",
        "android/provider/chrome_browser_provider.h",
        "android/provider/run_on_ui_thread_blocking.h",
@@ -79,6 +91,8 @@
        "android/recently_closed_tabs_bridge.cc",
        "android/recently_closed_tabs_bridge.h",
        "android/reparenting_task.cc",
+diff --git a/chrome/browser/DEPS b/chrome/browser/DEPS
+index 41406410e219..7513aa406119 100644
 --- a/chrome/browser/DEPS
 +++ b/chrome/browser/DEPS
 @@ -214,7 +214,6 @@ include_rules = [
@@ -89,6 +103,8 @@
    "+components/reading_list/core",
    "+components/remote_cocoa/app_shim",
    "+components/remote_cocoa/browser",
+diff --git a/chrome/browser/android/vr/BUILD.gn b/chrome/browser/android/vr/BUILD.gn
+index bfdfd76eaf27..8bff6e2ab6ca 100644
 --- a/chrome/browser/android/vr/BUILD.gn
 +++ b/chrome/browser/android/vr/BUILD.gn
 @@ -117,7 +117,6 @@ static_library("vr_android") {
@@ -99,6 +115,8 @@
      "//components/search_engines:search_engines",
      "//content/public/browser",
      "//content/public/common",
+diff --git a/chrome/browser/browser_process.h b/chrome/browser/browser_process.h
+index 262cbd4c08cb..28d3687b4179 100644
 --- a/chrome/browser/browser_process.h
 +++ b/chrome/browser/browser_process.h
 @@ -98,10 +98,6 @@ class PrintJobManager;
@@ -120,6 +138,8 @@
    virtual ProfileManager* profile_manager() = 0;
    virtual PrefService* local_state() = 0;
    virtual scoped_refptr<network::SharedURLLoaderFactory>
+diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
+index 7600bcc9f1a6..086f7d121a65 100644
 --- a/chrome/browser/browser_process_impl.cc
 +++ b/chrome/browser/browser_process_impl.cc
 @@ -106,8 +106,6 @@
@@ -131,7 +151,7 @@
  #include "components/sessions/core/session_id_generator.h"
  #include "components/subresource_filter/content/browser/ruleset_service.h"
  #include "components/subresource_filter/core/browser/subresource_filter_constants.h"
-@@ -217,12 +215,6 @@ static constexpr base::TimeDelta kEndSes
+@@ -217,12 +215,6 @@ static constexpr base::TimeDelta kEndSessionTimeout =
  using content::BrowserThread;
  using content::ChildProcessSecurityPolicy;
  
@@ -153,7 +173,7 @@
  #if BUILDFLAG(ENABLE_PRINTING)
    // Must be created after the NotificationService.
    print_job_manager_ = std::make_unique<printing::PrintJobManager>();
-@@ -650,11 +640,6 @@ metrics::MetricsService* BrowserProcessI
+@@ -650,11 +640,6 @@ metrics::MetricsService* BrowserProcessImpl::metrics_service() {
    return GetMetricsServicesManager()->GetMetricsService();
  }
  
@@ -165,9 +185,11 @@
  SystemNetworkContextManager*
  BrowserProcessImpl::system_network_context_manager() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+diff --git a/chrome/browser/browser_process_impl.h b/chrome/browser/browser_process_impl.h
+index 520d1927c7b1..7790bf04d963 100644
 --- a/chrome/browser/browser_process_impl.h
 +++ b/chrome/browser/browser_process_impl.h
-@@ -132,7 +132,6 @@ class BrowserProcessImpl : public Browse
+@@ -132,7 +132,6 @@ class BrowserProcessImpl : public BrowserProcess,
    metrics_services_manager::MetricsServicesManager* GetMetricsServicesManager()
        override;
    metrics::MetricsService* metrics_service() override;
@@ -175,6 +197,8 @@
    // TODO(qinmin): Remove this method as callers can retrieve the global
    // instance from SystemNetworkContextManager directly.
    SystemNetworkContextManager* system_network_context_manager() override;
+diff --git a/chrome/browser/chrome_browser_main.cc b/chrome/browser/chrome_browser_main.cc
+index b176928d8b76..ef1148627e32 100644
 --- a/chrome/browser/chrome_browser_main.cc
 +++ b/chrome/browser/chrome_browser_main.cc
 @@ -133,7 +133,6 @@
@@ -185,6 +209,8 @@
  #include "components/site_isolation/site_isolation_policy.h"
  #include "components/spellcheck/spellcheck_buildflags.h"
  #include "components/startup_metric_utils/browser/startup_metric_utils.h"
+diff --git a/chrome/browser/chromeos/BUILD.gn b/chrome/browser/chromeos/BUILD.gn
+index 44a1ea38a224..0b9f9c0b9e76 100644
 --- a/chrome/browser/chromeos/BUILD.gn
 +++ b/chrome/browser/chromeos/BUILD.gn
 @@ -242,7 +242,6 @@ source_set("chromeos") {
@@ -195,6 +221,8 @@
      "//components/renderer_context_menu",
      "//components/rlz",
      "//components/safe_browsing/core:csd_proto",
+diff --git a/chrome/browser/extensions/BUILD.gn b/chrome/browser/extensions/BUILD.gn
+index db248ad671a7..8adc70d063b1 100644
 --- a/chrome/browser/extensions/BUILD.gn
 +++ b/chrome/browser/extensions/BUILD.gn
 @@ -834,7 +834,6 @@ static_library("extensions") {
@@ -205,6 +233,8 @@
      "//components/resources",
      "//components/search_engines",
      "//components/services/app_service/public/mojom",
+diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
+index 36396922a5cc..11e284636dad 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 @@ -28,7 +28,6 @@
@@ -215,7 +245,7 @@
  #include "components/variations/service/variations_service.h"
  #include "components/variations/variations_associated_data.h"
  #include "components/version_info/version_info.h"
-@@ -255,13 +254,6 @@ ChromeMetricsServicesManagerClient::GetE
+@@ -255,13 +254,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
    return *enabled_state_provider_;
  }
  
@@ -229,6 +259,8 @@
  std::unique_ptr<variations::VariationsService>
  ChromeMetricsServicesManagerClient::CreateVariationsService() {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.h b/chrome/browser/metrics/chrome_metrics_services_manager_client.h
+index d827ef814890..a51e08dabd98 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.h
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.h
 @@ -75,7 +75,6 @@ class ChromeMetricsServicesManagerClient
@@ -239,9 +271,11 @@
    std::unique_ptr<variations::VariationsService> CreateVariationsService()
        override;
    std::unique_ptr<metrics::MetricsServiceClient> CreateMetricsServiceClient()
+diff --git a/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc b/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
+index caa91dc2eddf..1f6a62bb6abc 100644
 --- a/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
 +++ b/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
-@@ -46,7 +46,6 @@
+@@ -45,7 +45,6 @@
  #include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
  #include "components/page_load_metrics/browser/page_load_metrics_embedder_base.h"
  #include "components/page_load_metrics/browser/page_load_tracker.h"
@@ -249,6 +283,8 @@
  #include "content/public/browser/web_contents.h"
  #include "extensions/buildflags/buildflags.h"
  #include "url/gurl.h"
+diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
+index 8c2beec12c60..87632d713a3d 100644
 --- a/chrome/browser/prefs/browser_prefs.cc
 +++ b/chrome/browser/prefs/browser_prefs.cc
 @@ -135,7 +135,6 @@
@@ -259,7 +295,7 @@
  #include "components/search_engines/template_url_prepopulate_data.h"
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/sessions/core/session_id_generator.h"
-@@ -694,7 +693,6 @@ void RegisterLocalState(PrefRegistrySimp
+@@ -692,7 +691,6 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
    ProfileInfoCache::RegisterPrefs(registry);
    ProfileNetworkContextService::RegisterLocalStatePrefs(registry);
    profiles::RegisterPrefs(registry);
@@ -267,6 +303,33 @@
    RegisterScreenshotPrefs(registry);
    secure_origin_allowlist::RegisterPrefs(registry);
    sessions::SessionIdGenerator::RegisterPrefs(registry);
+diff --git a/chrome/browser/prefs/pref_service_incognito_allowlist.cc b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
+index 34a671cf0b3e..cc99cba51308 100644
+--- a/chrome/browser/prefs/pref_service_incognito_allowlist.cc
++++ b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
+@@ -12,7 +12,6 @@
+ #include "components/bookmarks/common/bookmark_pref_names.h"
+ #include "components/content_settings/core/common/pref_names.h"
+ #include "components/metrics/metrics_pref_names.h"
+-#include "components/rappor/rappor_pref_names.h"
+ #include "components/reading_list/core/reading_list_pref_names.h"
+ #include "components/ukm/ukm_pref_names.h"
+ 
+@@ -141,12 +140,6 @@ const char* const kPersistentPrefNames[] = {
+     prefs::kUseCustomChromeFrame,
+ #endif
+ 
+-    // Rappor preferences are not used in incognito mode, but they are written
+-    // in startup if they don't exist. So if the startup would be in incognito,
+-    // they need to be persisted.
+-    rappor::prefs::kRapporCohortSeed,
+-    rappor::prefs::kRapporSecret,
+-
+     // Reading list preferences are common between incognito and regular mode.
+     reading_list::prefs::kReadingListHasUnseenEntries,
+ 
+diff --git a/chrome/browser/ui/BUILD.gn b/chrome/browser/ui/BUILD.gn
+index c3c909d95e09..ec5a5025487d 100644
 --- a/chrome/browser/ui/BUILD.gn
 +++ b/chrome/browser/ui/BUILD.gn
 @@ -465,7 +465,6 @@ static_library("ui") {
@@ -277,9 +340,11 @@
      "//components/renderer_context_menu",
      "//components/resources",
      "//components/schema_org/common:improved_mojom",
+diff --git a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
+index c0b0627f00c8..84a3bd45ab55 100644
 --- a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
 +++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
-@@ -357,7 +357,6 @@ void ContentSettingMixedScriptBubbleMode
+@@ -354,7 +354,6 @@ void ContentSettingMixedScriptBubbleModel::OnLearnMoreClicked() {
  }
  
  void ContentSettingMixedScriptBubbleModel::OnCustomLinkClicked() {
@@ -287,7 +352,7 @@
    MixedContentSettingsTabHelper* mixed_content_settings =
        MixedContentSettingsTabHelper::FromWebContents(web_contents());
    if (mixed_content_settings) {
-@@ -1833,8 +1832,7 @@ ContentSettingBubbleModel::ContentSettin
+@@ -1822,8 +1821,7 @@ ContentSettingBubbleModel::ContentSettingBubbleModel(Delegate* delegate,
                                                       WebContents* web_contents)
      : web_contents_(web_contents),
        owner_(nullptr),
@@ -297,6 +362,8 @@
    DCHECK(web_contents_);
  }
  
+diff --git a/chrome/browser/ui/content_settings/content_setting_bubble_model.h b/chrome/browser/ui/content_settings/content_setting_bubble_model.h
+index b271e1aea082..9235681413ac 100644
 --- a/chrome/browser/ui/content_settings/content_setting_bubble_model.h
 +++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.h
 @@ -37,10 +37,6 @@ namespace content {
@@ -339,6 +406,8 @@
  
    DISALLOW_COPY_AND_ASSIGN(ContentSettingBubbleModel);
  };
+diff --git a/chrome/browser/vr/BUILD.gn b/chrome/browser/vr/BUILD.gn
+index fa8a80897475..1d8a7591eea6 100644
 --- a/chrome/browser/vr/BUILD.gn
 +++ b/chrome/browser/vr/BUILD.gn
 @@ -271,7 +271,6 @@ component("vr_common") {
@@ -357,9 +426,11 @@
      "//components/security_state/core",
      "//components/ukm/content",
      "//components/url_formatter",
+diff --git a/chrome/common/search/instant_mojom_traits.h b/chrome/common/search/instant_mojom_traits.h
+index 46126ceb4a9d..dafc132dba20 100644
 --- a/chrome/common/search/instant_mojom_traits.h
 +++ b/chrome/common/search/instant_mojom_traits.h
-@@ -43,7 +43,6 @@ IPC_STRUCT_TRAITS_BEGIN(ntp_tiles::NTPTi
+@@ -43,7 +43,6 @@ IPC_STRUCT_TRAITS_BEGIN(ntp_tiles::NTPTileImpression)
    IPC_STRUCT_TRAITS_MEMBER(visual_type)
    IPC_STRUCT_TRAITS_MEMBER(icon_type)
    IPC_STRUCT_TRAITS_MEMBER(data_generation_time)
@@ -367,6 +438,8 @@
  IPC_STRUCT_TRAITS_END()
  
  IPC_STRUCT_TRAITS_BEGIN(InstantMostVisitedItem)
+diff --git a/chrome/renderer/DEPS b/chrome/renderer/DEPS
+index 76e46eb27a0d..2a1d2e3241b8 100644
 --- a/chrome/renderer/DEPS
 +++ b/chrome/renderer/DEPS
 @@ -37,7 +37,6 @@ include_rules = [
@@ -377,21 +450,25 @@
    "+components/safe_browsing/buildflags.h",
    "+components/safe_browsing/content/renderer",
    "+components/safe_browsing/content/common",
+diff --git a/chrome/tools/build/win/FILES.cfg b/chrome/tools/build/win/FILES.cfg
+index 2b0be5ec45ca..7a7d303d0bc2 100644
 --- a/chrome/tools/build/win/FILES.cfg
 +++ b/chrome/tools/build/win/FILES.cfg
-@@ -808,12 +808,6 @@ FILES = [
+@@ -807,12 +807,6 @@ FILES = [
+     'archive': 'metrics-metadata.zip',
      'optional': ['dev', 'official'],
    },
-   {
+-  {
 -    'filename': 'rappor.xml',
 -    'buildtype': ['dev', 'official'],
 -    'archive': 'metrics-metadata.zip',
 -    'optional': ['dev', 'official'],
 -  },
--  {
+   {
      'filename': 'ukm.xml',
      'buildtype': ['dev', 'official'],
-     'archive': 'metrics-metadata.zip',
+diff --git a/components/BUILD.gn b/components/BUILD.gn
+index 21add9fa1f4c..038ef58823d8 100644
 --- a/components/BUILD.gn
 +++ b/components/BUILD.gn
 @@ -124,7 +124,6 @@ test("components_unittests") {
@@ -402,9 +479,11 @@
      "//components/reading_list/core:unit_tests",
      "//components/safe_search_api:unit_tests",
      "//components/scheduling_metrics:unit_tests",
+diff --git a/components/metrics_services_manager/BUILD.gn b/components/metrics_services_manager/BUILD.gn
+index 286abdc3ad7f..0fdc175850bc 100644
 --- a/components/metrics_services_manager/BUILD.gn
 +++ b/components/metrics_services_manager/BUILD.gn
-@@ -12,7 +12,6 @@ static_library("metrics_services_manager
+@@ -12,7 +12,6 @@ static_library("metrics_services_manager") {
    deps = [
      "//base",
      "//components/metrics",
@@ -412,6 +491,8 @@
      "//components/ukm",
      "//components/variations",
      "//components/variations/service",
+diff --git a/components/metrics_services_manager/DEPS b/components/metrics_services_manager/DEPS
+index d90fc81dc778..365cfc4ab2cc 100644
 --- a/components/metrics_services_manager/DEPS
 +++ b/components/metrics_services_manager/DEPS
 @@ -2,7 +2,6 @@ include_rules = [
@@ -422,6 +503,8 @@
    "+components/ukm",
    "+components/variations",
    "+services/network",
+diff --git a/components/metrics_services_manager/metrics_services_manager.cc b/components/metrics_services_manager/metrics_services_manager.cc
+index 5cd3344bc5b8..112621e4ad6e 100644
 --- a/components/metrics_services_manager/metrics_services_manager.cc
 +++ b/components/metrics_services_manager/metrics_services_manager.cc
 @@ -15,7 +15,6 @@
@@ -432,7 +515,7 @@
  #include "components/ukm/ukm_service.h"
  #include "components/variations/service/variations_service.h"
  #include "services/network/public/cpp/shared_url_loader_factory.h"
-@@ -43,15 +42,6 @@ metrics::MetricsService* MetricsServices
+@@ -43,15 +42,6 @@ metrics::MetricsService* MetricsServicesManager::GetMetricsService() {
    return GetMetricsServiceClient()->GetMetricsService();
  }
  
@@ -448,7 +531,7 @@
  ukm::UkmService* MetricsServicesManager::GetUkmService() {
    DCHECK(thread_checker_.CalledOnValidThread());
    return GetMetricsServiceClient()->GetUkmService();
-@@ -115,7 +105,6 @@ void MetricsServicesManager::UpdateRunni
+@@ -115,7 +105,6 @@ void MetricsServicesManager::UpdateRunningServices() {
    const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
    if (cmdline->HasSwitch(metrics::switches::kMetricsRecordingOnly)) {
      metrics->StartRecordingForTests();
@@ -456,7 +539,7 @@
      return;
    }
  
-@@ -133,8 +122,6 @@ void MetricsServicesManager::UpdateRunni
+@@ -133,8 +122,6 @@ void MetricsServicesManager::UpdateRunningServices() {
    }
  
    UpdateUkmService();
@@ -465,6 +548,8 @@
  }
  
  void MetricsServicesManager::UpdateUkmService() {
+diff --git a/components/metrics_services_manager/metrics_services_manager.h b/components/metrics_services_manager/metrics_services_manager.h
+index 38c955cfde54..b671c1983715 100644
 --- a/components/metrics_services_manager/metrics_services_manager.h
 +++ b/components/metrics_services_manager/metrics_services_manager.h
 @@ -19,11 +19,6 @@ namespace metrics {
@@ -509,6 +594,8 @@
    // The VariationsService, for server-side experiments infrastructure.
    std::unique_ptr<variations::VariationsService> variations_service_;
  
+diff --git a/components/metrics_services_manager/metrics_services_manager_client.h b/components/metrics_services_manager/metrics_services_manager_client.h
+index 43a52f604567..31e004c16f7a 100644
 --- a/components/metrics_services_manager/metrics_services_manager_client.h
 +++ b/components/metrics_services_manager/metrics_services_manager_client.h
 @@ -19,10 +19,6 @@ namespace network {
@@ -531,6 +618,8 @@
    virtual std::unique_ptr<variations::VariationsService>
    CreateVariationsService() = 0;
    virtual std::unique_ptr<metrics::MetricsServiceClient>
+diff --git a/components/ntp_tiles/BUILD.gn b/components/ntp_tiles/BUILD.gn
+index cd47631d8f8a..0dee9d35864c 100644
 --- a/components/ntp_tiles/BUILD.gn
 +++ b/components/ntp_tiles/BUILD.gn
 @@ -60,7 +60,6 @@ static_library("ntp_tiles") {
@@ -549,6 +638,8 @@
      "//components/sync_preferences:test_support",
      "//net:test_support",
      "//services/data_decoder/public/cpp:test_support",
+diff --git a/components/ntp_tiles/DEPS b/components/ntp_tiles/DEPS
+index 3742e149693c..674274de7798 100644
 --- a/components/ntp_tiles/DEPS
 +++ b/components/ntp_tiles/DEPS
 @@ -8,7 +8,6 @@ include_rules = [
@@ -559,6 +650,21 @@
    "+components/search_engines",
    "+components/strings/grit/components_strings.h",
    "+components/suggestions",
+diff --git a/components/rappor/rappor_service_impl.cc b/components/rappor/rappor_service_impl.cc
+index ac223ff2d3d5..b0ae96d5a817 100644
+--- a/components/rappor/rappor_service_impl.cc
++++ b/components/rappor/rappor_service_impl.cc
+@@ -32,7 +32,7 @@ const char kMimeType[] = "application/vnd.chrome.rappor";
+ const char kRapporDailyEventHistogram[] = "Rappor.DailyEvent.IntervalType";
+ 
+ // The rappor server's URL.
+-const char kDefaultServerUrl[] = "https://clients4.google.com/rappor";
++const char kDefaultServerUrl[] = "https://no-thanks.invalid";
+ 
+ }  // namespace
+ 
+diff --git a/components/security_interstitials/DEPS b/components/security_interstitials/DEPS
+index 71b130792b0c..fcbe74070e85 100644
 --- a/components/security_interstitials/DEPS
 +++ b/components/security_interstitials/DEPS
 @@ -3,7 +3,6 @@ include_rules = [
@@ -569,9 +675,11 @@
    "+components/safe_browsing/core/common",
    "+components/safe_browsing/core/db",
    "+components/ssl_errors",
+diff --git a/content/browser/BUILD.gn b/content/browser/BUILD.gn
+index a4d7be873e65..6662a70df0ec 100644
 --- a/content/browser/BUILD.gn
 +++ b/content/browser/BUILD.gn
-@@ -70,7 +70,6 @@ jumbo_source_set("browser") {
+@@ -69,7 +69,6 @@ jumbo_source_set("browser") {
      "//components/payments/core",
      "//components/payments/core:error_strings",
      "//components/payments/mojom",
@@ -579,6 +687,8 @@
      "//components/services/filesystem:lib",
      "//components/services/quarantine:quarantine",
      "//components/services/storage",
+diff --git a/content/browser/DEPS b/content/browser/DEPS
+index 761a111ac587..eaade3d31d64 100644
 --- a/content/browser/DEPS
 +++ b/content/browser/DEPS
 @@ -27,7 +27,6 @@ include_rules = [
@@ -589,6 +699,8 @@
    "+components/services/heap_profiling/public",
    "+components/system_media_controls",
    "+components/tracing",
+diff --git a/content/browser/renderer_host/DEPS b/content/browser/renderer_host/DEPS
+index ad7f91b632b6..9012b52a9594 100644
 --- a/content/browser/renderer_host/DEPS
 +++ b/content/browser/renderer_host/DEPS
 @@ -19,7 +19,6 @@ include_rules = [
@@ -599,6 +711,8 @@
      "+content/browser/web_contents",
      "+content/public/browser/web_contents.h",
      "+content/public/browser/web_contents_delegate.h",
+diff --git a/content/browser/renderer_host/render_widget_host_delegate.cc b/content/browser/renderer_host/render_widget_host_delegate.cc
+index a8998ff6713a..3a0c130af08a 100644
 --- a/content/browser/renderer_host/render_widget_host_delegate.cc
 +++ b/content/browser/renderer_host/render_widget_host_delegate.cc
 @@ -5,7 +5,6 @@
@@ -609,7 +723,7 @@
  #include "content/browser/renderer_host/render_view_host_delegate_view.h"
  #include "content/public/browser/keyboard_event_processing_result.h"
  #include "services/metrics/public/cpp/ukm_source_id.h"
-@@ -135,12 +134,6 @@ bool RenderWidgetHostDelegate::IsWidgetF
+@@ -135,12 +134,6 @@ bool RenderWidgetHostDelegate::IsWidgetForMainFrame(RenderWidgetHostImpl*) {
    return false;
  }
  
@@ -622,6 +736,8 @@
  ukm::SourceId RenderWidgetHostDelegate::GetCurrentPageUkmSourceId() {
    return ukm::kInvalidSourceId;
  }
+diff --git a/content/browser/renderer_host/render_widget_host_delegate.h b/content/browser/renderer_host/render_widget_host_delegate.h
+index 2cf28550517c..55181cdc8675 100644
 --- a/content/browser/renderer_host/render_widget_host_delegate.h
 +++ b/content/browser/renderer_host/render_widget_host_delegate.h
 @@ -35,10 +35,6 @@ class Point;
@@ -635,7 +751,7 @@
  namespace content {
  
  class BrowserAccessibilityManager;
-@@ -303,11 +299,6 @@ class CONTENT_EXPORT RenderWidgetHostDel
+@@ -303,11 +299,6 @@ class CONTENT_EXPORT RenderWidgetHostDelegate {
    virtual void FocusOwningWebContents(
        RenderWidgetHostImpl* render_widget_host) {}
  
@@ -647,6 +763,8 @@
    // Return this object cast to a WebContents, if it is one. If the object is
    // not a WebContents, returns nullptr.
    virtual WebContents* GetAsWebContents();
+diff --git a/content/browser/web_contents/web_contents_impl.cc b/content/browser/web_contents/web_contents_impl.cc
+index 1db46cd9bee4..c5f37d98ca23 100644
 --- a/content/browser/web_contents/web_contents_impl.cc
 +++ b/content/browser/web_contents/web_contents_impl.cc
 @@ -40,7 +40,6 @@
@@ -657,7 +775,7 @@
  #include "components/url_formatter/url_formatter.h"
  #include "content/browser/accessibility/accessibility_event_recorder.h"
  #include "content/browser/accessibility/accessibility_tree_formatter_blink.h"
-@@ -7415,14 +7414,6 @@ void WebContentsImpl::RemoveReceiverSet(
+@@ -7415,14 +7414,6 @@ void WebContentsImpl::RemoveReceiverSet(const std::string& interface_name) {
      receiver_sets_.erase(it);
  }
  
@@ -672,9 +790,11 @@
  void WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded() {
    bool allow_localhost = base::CommandLine::ForCurrentProcess()->HasSwitch(
        switches::kAllowInsecureLocalhost);
+diff --git a/content/browser/web_contents/web_contents_impl.h b/content/browser/web_contents/web_contents_impl.h
+index a52e45b40c8e..827397b7a81f 100644
 --- a/content/browser/web_contents/web_contents_impl.h
 +++ b/content/browser/web_contents/web_contents_impl.h
-@@ -922,7 +922,6 @@ class CONTENT_EXPORT WebContentsImpl : p
+@@ -922,7 +922,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
    TextInputManager* GetTextInputManager() override;
    bool OnUpdateDragCursor() override;
    bool IsWidgetForMainFrame(RenderWidgetHostImpl* render_widget_host) override;
@@ -682,9 +802,11 @@
    bool IsShowingContextMenuOnPage() const override;
    void DidChangeScreenOrientation() override;
    // The following function is already listed under RenderViewHostDelegate
+diff --git a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h
+index 88326302a648..11901d1ed7ab 100644
 --- a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h
 +++ b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h
-@@ -562,8 +562,6 @@ class MODULES_EXPORT RTCPeerConnection f
+@@ -562,8 +562,6 @@ class MODULES_EXPORT RTCPeerConnection final
  
    void CloseInternal();
  
@@ -693,6 +815,8 @@
    DOMException* checkSdpForStateErrors(ExecutionContext*,
                                         const RTCSessionDescriptionInit*,
                                         String* sdp);
+diff --git a/tools/metrics/BUILD.gn b/tools/metrics/BUILD.gn
+index e5a8e38bfbbb..12319cc536da 100644
 --- a/tools/metrics/BUILD.gn
 +++ b/tools/metrics/BUILD.gn
 @@ -22,11 +22,6 @@ copy("actions_xml") {
@@ -725,26 +849,3 @@
      "//tools/metrics/ukm/ukm.xml",
      "//tools/metrics/ukm/codegen.py",
      "//tools/metrics/ukm/codegen_test.py",
---- a/chrome/browser/prefs/pref_service_incognito_allowlist.cc
-+++ b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
-@@ -12,7 +12,6 @@
- #include "components/bookmarks/common/bookmark_pref_names.h"
- #include "components/content_settings/core/common/pref_names.h"
- #include "components/metrics/metrics_pref_names.h"
--#include "components/rappor/rappor_pref_names.h"
- #include "components/reading_list/core/reading_list_pref_names.h"
- #include "components/ukm/ukm_pref_names.h"
- 
-@@ -141,12 +140,6 @@ const char* const kPersistentPrefNames[]
-     prefs::kUseCustomChromeFrame,
- #endif
- 
--    // Rappor preferences are not used in incognito mode, but they are written
--    // in startup if they don't exist. So if the startup would be in incognito,
--    // they need to be persisted.
--    rappor::prefs::kRapporCohortSeed,
--    rappor::prefs::kRapporSecret,
--
-     // Reading list preferences are common between incognito and regular mode.
-     reading_list::prefs::kReadingListHasUnseenEntries,
- 

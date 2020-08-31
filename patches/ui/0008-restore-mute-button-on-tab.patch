@@ -1,6 +1,6 @@
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -2599,6 +2599,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2600,6 +2600,9 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kLockScreenNotificationDescription, kOsCrOS,
       FEATURE_VALUE_TYPE(ash::features::kLockScreenNotifications)},
  #endif  // OS_CHROMEOS
@@ -13,9 +13,9 @@
 --- a/chrome/browser/content_settings/sound_content_setting_observer.cc
 +++ b/chrome/browser/content_settings/sound_content_setting_observer.cc
 @@ -132,6 +132,10 @@ void SoundContentSettingObserver::MuteOr
-
+ 
    TabMutedReason reason = chrome::GetTabAudioMutedReason(web_contents());
-
+ 
 +  // Do not unmute if we're muted due to audio indicator.
 +  if (!mute && reason == TabMutedReason::AUDIO_INDICATOR)
 +    return;
@@ -75,7 +75,7 @@
 @@ -2067,6 +2067,12 @@ const char kSystemKeyboardLockDescriptio
      "keyboard shortcuts and have the events routed directly to the website "
      "when in fullscreen mode.";
-
+ 
 +const char kTabAudioMutingName[] = "Tab audio muting UI control";
 +const char kTabAudioMutingDescription[] =
 +    "When enabled, the audio indicators in the tab strip double as tab audio "
@@ -90,16 +90,16 @@
 @@ -1182,6 +1182,9 @@ extern const char kStrictOriginIsolation
  extern const char kSystemKeyboardLockName[];
  extern const char kSystemKeyboardLockDescription[];
-
+ 
 +extern const char kTabAudioMutingName[];
 +extern const char kTabAudioMutingDescription[];
 +
  extern const char kSuggestedContentToggleName[];
  extern const char kSuggestedContentToggleDescription[];
-
+ 
 --- a/chrome/browser/ui/BUILD.gn
 +++ b/chrome/browser/ui/BUILD.gn
-@@ -3677,8 +3677,8 @@ static_library("ui") {
+@@ -3724,8 +3724,8 @@ static_library("ui") {
        "views/tab_search/tab_search_bubble_view.h",
        "views/tab_sharing/tab_sharing_ui_views.cc",
        "views/tab_sharing/tab_sharing_ui_views.h",
@@ -113,7 +113,7 @@
 --- a/chrome/browser/ui/tabs/tab_utils.h
 +++ b/chrome/browser/ui/tabs/tab_utils.h
 @@ -35,6 +35,7 @@ enum class TabAlertState {
-
+ 
  enum class TabMutedReason {
    NONE,                    // The tab has never been muted or unmuted.
 +  AUDIO_INDICATOR,         // Mute toggled via tab-strip audio icon.
@@ -134,7 +134,7 @@
 @@ -347,6 +347,12 @@ void BrowserTabStripController::CloseTab
                               TabStripModel::CLOSE_CREATE_HISTORICAL_TAB);
  }
-
+ 
 +void BrowserTabStripController::ToggleTabAudioMute(int model_index) {
 +  content::WebContents* const contents = model_->GetWebContentsAt(model_index);
 +  chrome::SetTabAudioMuted(contents, !contents->IsAudioMuted(),
@@ -159,7 +159,7 @@
 @@ -205,6 +205,9 @@ void FakeBaseTabStripController::CloseTa
    RemoveTab(index);
  }
-
+ 
 +void FakeBaseTabStripController::ToggleTabAudioMute(int index) {
 +}
 +
@@ -190,17 +190,17 @@
 @@ -212,8 +212,8 @@ Tab::Tab(TabController* controller)
    icon_ = new TabIcon;
    AddChildView(icon_);
-
+ 
 -  alert_indicator_ = new AlertIndicator(this);
 -  AddChildView(alert_indicator_);
 +  alert_indicator_button_ = new AlertIndicatorButton(this);
 +  AddChildView(alert_indicator_button_);
-
+ 
    // Unretained is safe here because this class outlives its close button, and
    // the controller outlives this Tab.
 @@ -256,14 +256,6 @@ void Tab::AnimationProgressed(const gfx:
  }
-
+ 
  void Tab::ButtonPressed(views::Button* sender, const ui::Event& event) {
 -  if (!alert_indicator_ || !alert_indicator_->GetVisible())
 -    base::RecordAction(UserMetricsAction("CloseTab_NoAlertIndicator"));
@@ -231,7 +231,7 @@
    }
 -  alert_indicator_->SetVisible(showing_alert_indicator_);
 +  alert_indicator_button_->SetVisible(showing_alert_indicator_);
-
+ 
    // Size the title to fill the remaining width and use all available height.
    bool show_title = ShouldRenderAsNormalTab();
 @@ -394,7 +386,7 @@ void Tab::Layout() {
@@ -246,7 +246,7 @@
 @@ -791,10 +783,23 @@ bool Tab::IsActive() const {
    return controller_->IsActiveTab(this);
  }
-
+ 
 +int Tab::GetWidthOfLargestSelectableRegion() const {
 +  // Assume the entire region to the left of the alert indicator and/or close
 +  // buttons is available for click-to-select.  If neither are visible, the
@@ -266,8 +266,8 @@
 +  alert_indicator_button_->UpdateEnabledForMuteToggle();
    Layout();
  }
-
-@@ -842,7 +847,7 @@ void Tab::SetData(TabRendererData data)
+ 
+@@ -842,7 +847,7 @@ void Tab::SetData(TabRendererData data) 
    const auto new_alert_state = GetAlertStateToShow(data_.alert_state);
    const auto old_alert_state = GetAlertStateToShow(old.alert_state);
    if (new_alert_state != old_alert_state)
@@ -275,18 +275,18 @@
 +    alert_indicator_button_->TransitionToAlertState(new_alert_state);
    if (old.pinned != data_.pinned)
      showing_alert_indicator_ = false;
-
+ 
 @@ -933,7 +938,7 @@ void Tab::UpdateIconVisibility() {
-
+ 
    const bool has_favicon = data().show_icon;
    const bool has_alert_icon =
 -      (alert_indicator_ ? alert_indicator_->showing_alert_state()
 +      (alert_indicator_button_ ? alert_indicator_button_->showing_alert_state()
                          : GetAlertStateToShow(data().alert_state))
            .has_value();
-
+ 
 @@ -950,7 +955,7 @@ void Tab::UpdateIconVisibility() {
-
+ 
    const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
    const int favicon_width = gfx::kFaviconSize;
 -  const int alert_icon_width = alert_indicator_->GetPreferredSize().width();
@@ -295,20 +295,20 @@
    // left that needs to be considered.
    const int close_button_width =
 @@ -1044,7 +1049,7 @@ void Tab::UpdateForegroundColors() {
-
+ 
    if (foreground_color_ != colors.foreground_color) {
      foreground_color_ = colors.foreground_color;
 -    alert_indicator_->OnParentTabButtonColorChanged();
 +    alert_indicator_button_->OnParentTabButtonColorChanged();
    }
-
+ 
    SchedulePaint();
 --- a/chrome/browser/ui/views/tabs/tab.h
 +++ b/chrome/browser/ui/views/tabs/tab.h
 @@ -27,7 +27,7 @@
  #include "ui/views/masked_targeter_delegate.h"
  #include "ui/views/view_observer.h"
-
+ 
 -class AlertIndicator;
 +class AlertIndicatorButton;
  class TabCloseButton;
@@ -317,7 +317,7 @@
 @@ -120,6 +120,10 @@ class Tab : public gfx::AnimationDelegat
    // Returns true if this tab is the active tab.
    bool IsActive() const;
-
+ 
 +  // Returns the width of the largest part of the tab that is available for the
 +  // user to click to select/activate the tab.
 +  int GetWidthOfLargestSelectableRegion() const;
@@ -327,31 +327,31 @@
    void ActiveStateChanged();
 @@ -225,7 +229,7 @@ class Tab : public gfx::AnimationDelegat
    bool closing_ = false;
-
+ 
    TabIcon* icon_ = nullptr;
 -  AlertIndicator* alert_indicator_ = nullptr;
 +  AlertIndicatorButton* alert_indicator_button_ = nullptr;
    TabCloseButton* close_button_ = nullptr;
-
+ 
    views::Label* title_;
 --- a/chrome/browser/ui/views/tabs/tab_controller.h
 +++ b/chrome/browser/ui/views/tabs/tab_controller.h
 @@ -58,6 +58,9 @@ class TabController {
    // Closes the tab.
    virtual void CloseTab(Tab* tab, CloseTabSource source) = 0;
-
+ 
 +  // Toggles whether tab-wide audio muting is active.
 +  virtual void ToggleTabAudioMute(Tab* tab) = 0;
 +
    // Attempts to shift the specified tab to the right by one index.
    virtual void ShiftTabRight(Tab* tab) = 0;
-
+ 
 --- a/chrome/browser/ui/views/tabs/tab_strip.cc
 +++ b/chrome/browser/ui/views/tabs/tab_strip.cc
 @@ -2815,6 +2815,12 @@ void TabStrip::CloseTabInternal(int mode
    controller_->CloseTab(model_index);
  }
-
+ 
 +void TabStrip::ToggleTabAudioMute(Tab* tab) {
 +  int model_index = GetModelIndexOf(tab);
 +  if (IsValidModelIndex(model_index))
@@ -376,7 +376,7 @@
 @@ -82,6 +82,9 @@ class TabStripController {
    // Closes the tab at the specified index in the model.
    virtual void CloseTab(int index) = 0;
-
+ 
 +  // Toggles audio muting for the tab at the specified index in the model.
 +  virtual void ToggleTabAudioMute(int index) = 0;
 +
@@ -385,10 +385,10 @@
                               const tab_groups::TabGroupId& group) = 0;
 --- a/chrome/common/chrome_switches.cc
 +++ b/chrome/common/chrome_switches.cc
-@@ -301,6 +301,9 @@ const char kEnableNetBenchmarking[]
+@@ -301,6 +301,9 @@ const char kEnableNetBenchmarking[]     
  const char kEnablePotentiallyAnnoyingSecurityFeatures[] =
      "enable-potentially-annoying-security-features";
-
+ 
 +// Enables user control over muting tab audio from the tab strip.
 +const char kEnableTabAudioMuting[]  = "enable-tab-audio-muting";
 +
