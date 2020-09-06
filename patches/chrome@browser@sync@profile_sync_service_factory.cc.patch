@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/sync/profile_sync_service_factory.cc b/chrome/browser/sync/profile_sync_service_factory.cc
+index 8b3b7aad21bf..b2bc10020b7a 100644
+--- a/chrome/browser/sync/profile_sync_service_factory.cc
++++ b/chrome/browser/sync/profile_sync_service_factory.cc
+@@ -31,7 +31,6 @@
+ #include "chrome/browser/sharing/sharing_message_bridge_factory.h"
+ #include "chrome/browser/signin/about_signin_internals_factory.h"
+ #include "chrome/browser/signin/identity_manager_factory.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+ #include "chrome/browser/sync/bookmark_sync_service_factory.h"
+ #include "chrome/browser/sync/chrome_sync_client.h"
+ #include "chrome/browser/sync/device_info_sync_service_factory.h"
+@@ -153,7 +152,6 @@ ProfileSyncServiceFactory::ProfileSyncServiceFactory()
+   DependsOn(SecurityEventRecorderFactory::GetInstance());
+   DependsOn(SendTabToSelfSyncServiceFactory::GetInstance());
+   DependsOn(SharingMessageBridgeFactory::GetInstance());
+-  DependsOn(SpellcheckServiceFactory::GetInstance());
+ #if BUILDFLAG(ENABLE_SUPERVISED_USERS)
+   DependsOn(SupervisedUserServiceFactory::GetInstance());
+   DependsOn(SupervisedUserSettingsServiceFactory::GetInstance());

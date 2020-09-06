@@ -1,0 +1,19 @@
+diff --git a/chrome/browser/ui/search/search_ipc_router.cc b/chrome/browser/ui/search/search_ipc_router.cc
+index 7c4eab2cefd8..6db8b655e59e 100644
+--- a/chrome/browser/ui/search/search_ipc_router.cc
++++ b/chrome/browser/ui/search/search_ipc_router.cc
+@@ -501,14 +501,6 @@ void SearchIPCRouter::LogCharTypedToRepaintLatency(uint32_t latency_ms) {
+   delegate_->LogCharTypedToRepaintLatency(latency_ms);
+ }
+ 
+-void SearchIPCRouter::BlocklistPromo(const std::string& promo_id) {
+-  if (!policy_->ShouldProcessBlocklistPromo()) {
+-    return;
+-  }
+-
+-  delegate_->BlocklistPromo(promo_id);
+-}
+-
+ void SearchIPCRouter::OpenExtensionsPage(double button,
+                                          bool alt_key,
+                                          bool ctrl_key,

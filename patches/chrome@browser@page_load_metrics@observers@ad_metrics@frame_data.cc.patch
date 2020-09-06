@@ -1,0 +1,32 @@
+diff --git a/chrome/browser/page_load_metrics/observers/ad_metrics/frame_data.cc b/chrome/browser/page_load_metrics/observers/ad_metrics/frame_data.cc
+index 80c3f352fb31..d3c5f7f15fbe 100644
+--- a/chrome/browser/page_load_metrics/observers/ad_metrics/frame_data.cc
++++ b/chrome/browser/page_load_metrics/observers/ad_metrics/frame_data.cc
+@@ -10,7 +10,6 @@
+ 
+ #include "base/feature_list.h"
+ #include "base/metrics/field_trial_params.h"
+-#include "chrome/browser/page_load_metrics/observers/ad_metrics/ads_page_load_metrics_observer.h"
+ #include "chrome/common/chrome_features.h"
+ #include "content/public/browser/render_frame_host.h"
+ #include "content/public/browser/web_contents.h"
+@@ -94,9 +93,17 @@ void FrameData::UpdateForNavigation(content::RenderFrameHost* render_frame_host,
+     SetFrameSize(*(render_frame_host->GetFrameSize()));
+ 
+   // For frames triggered on render, their origin is their parent's origin.
++  auto* sub_host = render_frame_host;
++  content::RenderFrameHost* main_host =
++    content::WebContents::FromRenderFrameHost(sub_host)->GetMainFrame();
++  if (!frame_navigated)
++    sub_host = sub_host->GetParent();
++
++  url::Origin subframe_origin = sub_host->GetLastCommittedOrigin();
++  url::Origin mainframe_origin = main_host->GetLastCommittedOrigin();
++
+   origin_status_ =
+-      AdsPageLoadMetricsObserver::IsSubframeSameOriginToMainFrame(
+-          render_frame_host, !frame_navigated /* use_parent_origin */)
++      subframe_origin.IsSameOriginWith(mainframe_origin)
+           ? OriginStatus::kSame
+           : OriginStatus::kCross;
+ 

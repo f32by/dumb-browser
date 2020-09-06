@@ -1,0 +1,17 @@
+diff --git a/sandbox/linux/BUILD.gn b/sandbox/linux/BUILD.gn
+index d1f3f14d44a9..4fa383b8701d 100644
+--- a/sandbox/linux/BUILD.gn
++++ b/sandbox/linux/BUILD.gn
+@@ -315,6 +315,12 @@ if (is_linux || is_chromeos) {
+       # These files have a suspicious comparison.
+       # TODO fix this and re-enable this warning.
+       "-Wno-sign-compare",
++
++      "-fPIE",
++    ]
++
++    ldflags = [
++      "-pie",
+     ]
+   }
+ }

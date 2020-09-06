@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc b/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc
+index dd00dbc5a475..440aeeaa2218 100644
+--- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc
++++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc
+@@ -5,7 +5,6 @@
+ #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.h"
+ 
+ #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "content/public/browser/browser_context.h"
+ #include "extensions/browser/extension_system_provider.h"
+@@ -32,7 +31,6 @@ LanguageSettingsPrivateDelegateFactory::LanguageSettingsPrivateDelegateFactory()
+           "LanguageSettingsPrivateDelegate",
+           BrowserContextDependencyManager::GetInstance()) {
+   DependsOn(ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
+-  DependsOn(SpellcheckServiceFactory::GetInstance());
+ }
+ 
+ LanguageSettingsPrivateDelegateFactory::

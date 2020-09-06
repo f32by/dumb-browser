@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
+index 2c07ff8c5677..73b83ed1f110 100644
+--- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
++++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
+@@ -60,7 +60,6 @@
+ #include "chrome/browser/prerender/prerender_manager_factory.h"
+ #include "chrome/browser/profiles/gaia_info_update_service_factory.h"
+ #include "chrome/browser/profiles/renderer_updater_factory.h"
+-#include "chrome/browser/safe_browsing/certificate_reporting_service_factory.h"
+ #include "chrome/browser/search/suggestions/suggestions_service_factory.h"
+ #include "chrome/browser/search_engines/template_url_fetcher_factory.h"
+ #include "chrome/browser/search_engines/template_url_service_factory.h"
+@@ -242,7 +241,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+ #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
+   CaptivePortalServiceFactory::GetInstance();
+ #endif
+-  CertificateReportingServiceFactory::GetInstance();
+   ChromeBrowsingDataRemoverDelegateFactory::GetInstance();
+   ChromeSigninClientFactory::GetInstance();
+   ClientHintsFactory::GetInstance();

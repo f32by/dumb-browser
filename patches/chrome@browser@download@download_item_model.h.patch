@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/download/download_item_model.h b/chrome/browser/download/download_item_model.h
+index 94d47afee871..0488cca8ba02 100644
+--- a/chrome/browser/download/download_item_model.h
++++ b/chrome/browser/download/download_item_model.h
+@@ -13,7 +13,6 @@
+ #include "chrome/browser/download/download_ui_model.h"
+ #include "components/download/public/common/download_item.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/core/proto/download_file_types.pb.h"
+ 
+ // Implementation of DownloadUIModel that wrappers around a |DownloadItem*|. As
+ // such, the caller is expected to ensure that the |download| passed into the
+@@ -50,9 +49,6 @@ class DownloadItemModel : public DownloadUIModel,
+   void SetWasUINotified(bool should_notify) override;
+   bool ShouldPreferOpeningInBrowser() const override;
+   void SetShouldPreferOpeningInBrowser(bool preference) override;
+-  safe_browsing::DownloadFileType::DangerLevel GetDangerLevel() const override;
+-  void SetDangerLevel(
+-      safe_browsing::DownloadFileType::DangerLevel danger_level) override;
+   download::DownloadItem::MixedContentStatus GetMixedContentStatus()
+       const override;
+   void OpenUsingPlatformHandler() override;

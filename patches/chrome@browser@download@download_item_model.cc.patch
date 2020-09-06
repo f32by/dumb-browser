@@ -1,0 +1,107 @@
+diff --git a/chrome/browser/download/download_item_model.cc b/chrome/browser/download/download_item_model.cc
+index 9f509889ba6f..6ddc97f97116 100644
+--- a/chrome/browser/download/download_item_model.cc
++++ b/chrome/browser/download/download_item_model.cc
+@@ -27,16 +27,12 @@
+ #include "chrome/browser/enterprise/connectors/common.h"
+ #include "chrome/browser/enterprise/connectors/connectors_manager.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/download_protection/deep_scanning_request.h"
+-#include "chrome/browser/safe_browsing/download_protection/download_feedback_service.h"
+ #include "chrome/grit/chromium_strings.h"
+ #include "chrome/grit/generated_resources.h"
+ #include "components/download/public/common/download_danger_type.h"
+ #include "components/download/public/common/download_interrupt_reasons.h"
+ #include "components/download/public/common/download_item.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/core/file_type_policies.h"
+-#include "components/safe_browsing/core/proto/download_file_types.pb.h"
+ #include "content/public/browser/download_item_utils.h"
+ #include "ui/base/l10n/l10n_util.h"
+ #include "ui/base/l10n/time_format.h"
+@@ -49,7 +45,6 @@
+ using base::TimeDelta;
+ using download::DownloadItem;
+ using MixedContentStatus = download::DownloadItem::MixedContentStatus;
+-using safe_browsing::DownloadFileType;
+ 
+ namespace {
+ 
+@@ -79,10 +74,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
+   // for the file type.
+   bool should_prefer_opening_in_browser_;
+ 
+-  // Danger level of the file determined based on the file type and whether
+-  // there was a user action associated with the download.
+-  DownloadFileType::DangerLevel danger_level_;
+-
+   // Whether the download is currently being revived.
+   bool is_being_revived_;
+ 
+@@ -118,7 +109,6 @@ DownloadItemModelData::DownloadItemModelData()
+     : should_show_in_shelf_(true),
+       was_ui_notified_(false),
+       should_prefer_opening_in_browser_(false),
+-      danger_level_(DownloadFileType::NOT_DANGEROUS),
+       is_being_revived_(false) {}
+ 
+ } // namespace
+@@ -268,14 +258,7 @@ bool DownloadItemModel::IsMixedContent() const {
+ }
+ 
+ bool DownloadItemModel::ShouldAllowDownloadFeedback() const {
+-#if BUILDFLAG(FULL_SAFE_BROWSING)
+-  if (!IsDangerous())
+-    return false;
+-  return safe_browsing::DownloadFeedbackService::IsEnabledForDownload(
+-      *download_);
+-#else
+   return false;
+-#endif
+ }
+ 
+ bool DownloadItemModel::ShouldRemoveFromShelfWhenComplete() const {
+@@ -372,17 +355,6 @@ void DownloadItemModel::SetShouldPreferOpeningInBrowser(bool preference) {
+   data->should_prefer_opening_in_browser_ = preference;
+ }
+ 
+-DownloadFileType::DangerLevel DownloadItemModel::GetDangerLevel() const {
+-  const DownloadItemModelData* data = DownloadItemModelData::Get(download_);
+-  return data ? data->danger_level_ : DownloadFileType::NOT_DANGEROUS;
+-}
+-
+-void DownloadItemModel::SetDangerLevel(
+-    DownloadFileType::DangerLevel danger_level) {
+-  DownloadItemModelData* data = DownloadItemModelData::GetOrCreate(download_);
+-  data->danger_level_ = danger_level;
+-}
+-
+ download::DownloadItem::MixedContentStatus
+ DownloadItemModel::GetMixedContentStatus() const {
+   return download_->GetMixedContentStatus();
+@@ -539,9 +511,6 @@ bool DownloadItemModel::IsCommandEnabled(
+       // filename. Don't base an "Always open" decision based on it. Also
+       // exclude extensions.
+       return download_->CanOpenDownload() &&
+-             safe_browsing::FileTypePolicies::GetInstance()
+-                 ->IsAllowedToOpenAutomatically(
+-                     download_->GetTargetFilePath()) &&
+              !download_crx_util::IsExtensionDownload(*download_);
+     case DownloadCommands::PAUSE:
+       return !download_->IsSavePackageDownload() &&
+@@ -702,6 +671,7 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
+       DownloadUIModel::ExecuteCommand(download_commands, command);
+       break;
+     case DownloadCommands::DEEP_SCAN:
++#if BUILDFLAG(FULL_SAFE_BROWSING)
+       safe_browsing::SafeBrowsingService* sb_service =
+           g_browser_process->safe_browsing_service();
+       if (!sb_service)
+@@ -727,6 +697,7 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
+           safe_browsing::DeepScanningRequest::DeepScanTrigger::
+               TRIGGER_APP_PROMPT,
+           std::move(settings));
++#endif
+       break;
+   }
+ }

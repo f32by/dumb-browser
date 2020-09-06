@@ -1,0 +1,117 @@
+diff --git a/chrome/browser/lifetime/browser_shutdown.cc b/chrome/browser/lifetime/browser_shutdown.cc
+index 2f499282b3ef..4f1081490f13 100644
+--- a/chrome/browser/lifetime/browser_shutdown.cc
++++ b/chrome/browser/lifetime/browser_shutdown.cc
+@@ -127,9 +127,6 @@ void OnShutdownStarting(ShutdownType type) {
+   if (g_shutdown_type != ShutdownType::kNotValid)
+     return;
+ 
+-  static crash_reporter::CrashKeyString<8> shutdown_type_key("shutdown-type");
+-  shutdown_type_key.Set(ToShutdownTypeString(type));
+-
+   g_shutdown_type = type;
+   // For now, we're only counting the number of renderer processes
+   // since we can't safely count the number of plugin processes from this
+@@ -313,102 +310,12 @@ void ShutdownPostThreadsStop(RestartMode restart_mode) {
+ #endif  // defined(OS_CHROMEOS)
+   }
+ 
+-  if (g_shutdown_type != ShutdownType::kNotValid &&
+-      g_shutdown_num_processes > 0) {
+-    // Measure total shutdown time as late in the process as possible
+-    // and then write it to a file to be read at startup.
+-    // We can't use prefs since all services are shutdown at this point.
+-    TimeDelta shutdown_delta = base::Time::Now() - *g_shutdown_started;
+-    std::string shutdown_ms =
+-        base::NumberToString(shutdown_delta.InMilliseconds());
+-    int len = static_cast<int>(shutdown_ms.length()) + 1;
+-    base::FilePath shutdown_ms_file = GetShutdownMsPath();
+-    // Note: ReadLastShutdownFile() is done as a BLOCK_SHUTDOWN task so there's
+-    // an implicit sequencing between it and this write which happens after
+-    // threads have been stopped (and thus ThreadPoolInstance::Shutdown() is
+-    // complete).
+-    base::WriteFile(shutdown_ms_file, shutdown_ms.c_str(), len);
+-  }
+-
+ #if defined(OS_CHROMEOS)
+   NotifyAndTerminate(false /* fast_path */);
+ #endif
+ }
+ #endif  // !defined(OS_ANDROID)
+ 
+-void ReadLastShutdownFile(ShutdownType type,
+-                          int num_procs,
+-                          int num_procs_slow) {
+-  base::ScopedBlockingCall scoped_blocking_call(FROM_HERE,
+-                                                base::BlockingType::MAY_BLOCK);
+-
+-  base::FilePath shutdown_ms_file = GetShutdownMsPath();
+-  std::string shutdown_ms_str;
+-  int64_t shutdown_ms = 0;
+-  if (base::ReadFileToString(shutdown_ms_file, &shutdown_ms_str))
+-    base::StringToInt64(shutdown_ms_str, &shutdown_ms);
+-  base::DeleteFile(shutdown_ms_file);
+-
+-  if (shutdown_ms == 0 || num_procs == 0)
+-    return;
+-
+-  const char* time2_metric_name = nullptr;
+-  const char* per_proc_metric_name = nullptr;
+-
+-  switch (type) {
+-    case ShutdownType::kNotValid:
+-    case ShutdownType::kSilentExit:
+-      // The histograms below have expired, so do not record metrics for silent
+-      // exits; see https://crbug.com/975118.
+-      break;
+-
+-    case ShutdownType::kWindowClose:
+-      time2_metric_name = "Shutdown.window_close.time2";
+-      per_proc_metric_name = "Shutdown.window_close.time_per_process";
+-      break;
+-
+-    case ShutdownType::kBrowserExit:
+-      time2_metric_name = "Shutdown.browser_exit.time2";
+-      per_proc_metric_name = "Shutdown.browser_exit.time_per_process";
+-      break;
+-
+-    case ShutdownType::kEndSession:
+-      time2_metric_name = "Shutdown.end_session.time2";
+-      per_proc_metric_name = "Shutdown.end_session.time_per_process";
+-      break;
+-  }
+-  if (!time2_metric_name)
+-    return;
+-
+-  base::UmaHistogramMediumTimes(time2_metric_name,
+-                                TimeDelta::FromMilliseconds(shutdown_ms));
+-  base::UmaHistogramTimes(per_proc_metric_name,
+-                          TimeDelta::FromMilliseconds(shutdown_ms / num_procs));
+-  base::UmaHistogramCounts100("Shutdown.renderers.total", num_procs);
+-  base::UmaHistogramCounts100("Shutdown.renderers.slow", num_procs_slow);
+-}
+-
+-void ReadLastShutdownInfo() {
+-  PrefService* prefs = g_browser_process->local_state();
+-  ShutdownType type =
+-      static_cast<ShutdownType>(prefs->GetInteger(prefs::kShutdownType));
+-  int num_procs = prefs->GetInteger(prefs::kShutdownNumProcesses);
+-  int num_procs_slow = prefs->GetInteger(prefs::kShutdownNumProcessesSlow);
+-  // clear the prefs immediately so we don't pick them up on a future run
+-  prefs->SetInteger(prefs::kShutdownType,
+-                    static_cast<int>(ShutdownType::kNotValid));
+-  prefs->SetInteger(prefs::kShutdownNumProcesses, 0);
+-  prefs->SetInteger(prefs::kShutdownNumProcessesSlow, 0);
+-
+-  base::UmaHistogramEnumeration("Shutdown.ShutdownType", type);
+-
+-  base::ThreadPool::PostTask(
+-      FROM_HERE,
+-      {base::MayBlock(), base::TaskPriority::BEST_EFFORT,
+-       base::TaskShutdownBehavior::BLOCK_SHUTDOWN},
+-      base::BindOnce(&ReadLastShutdownFile, type, num_procs, num_procs_slow));
+-}
+-
+ void SetTryingToQuit(bool quitting) {
+   g_trying_to_quit = quitting;
+ 

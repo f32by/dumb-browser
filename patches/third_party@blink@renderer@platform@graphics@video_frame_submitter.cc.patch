@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc b/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
+index 309323009dfd..d343d3be01dd 100644
+--- a/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
++++ b/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
+@@ -228,9 +228,6 @@ void VideoFrameSubmitter::OnBeginFrame(
+   }
+   frame_trackers_.NotifyBeginImplFrame(args);
+ 
+-  base::ScopedClosureRunner end_frame(
+-      base::BindOnce(&cc::FrameSequenceTrackerCollection::NotifyFrameEnd,
+-                     base::Unretained(&frame_trackers_), args, args));
+   base::ScopedClosureRunner roughness_processing(
+       base::BindOnce(&cc::VideoPlaybackRoughnessReporter::ProcessFrameWindow,
+                      base::Unretained(roughness_reporter_.get())));

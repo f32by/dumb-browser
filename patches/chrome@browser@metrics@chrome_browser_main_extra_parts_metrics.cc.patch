@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
+index b57a994cf996..fcd5e03f3b83 100644
+--- a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
++++ b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
+@@ -451,6 +451,7 @@ void ChromeBrowserMainExtraPartsMetrics::PreProfileInit() {
+ }
+ 
+ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
++  return;
+   flags_ui::PrefServiceFlagsStorage flags_storage(
+       g_browser_process->local_state());
+   about_flags::RecordUMAStatistics(&flags_storage);
+@@ -496,6 +497,7 @@ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
+ }
+ 
+ void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
++  return;
+   RecordMemoryMetricsAfterDelay();
+   RecordLinuxGlibcVersion();
+ #if defined(USE_X11)

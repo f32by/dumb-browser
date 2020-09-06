@@ -1,0 +1,29 @@
+diff --git a/content/renderer/render_thread_impl.cc b/content/renderer/render_thread_impl.cc
+index 164c1cf64f62..55f480cb7fd6 100644
+--- a/content/renderer/render_thread_impl.cc
++++ b/content/renderer/render_thread_impl.cc
+@@ -2139,24 +2139,6 @@ bool RenderThreadImpl::RendererIsBackgrounded() const {
+ void RenderThreadImpl::OnRendererBackgrounded() {
+   main_thread_scheduler_->SetRendererBackgrounded(true);
+   needs_to_record_first_active_paint_ = false;
+-  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
+-      FROM_HERE,
+-      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,
+-                     base::Unretained(this), "5min",
+-                     process_foregrounded_count_),
+-      base::TimeDelta::FromMinutes(5));
+-  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
+-      FROM_HERE,
+-      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,
+-                     base::Unretained(this), "10min",
+-                     process_foregrounded_count_),
+-      base::TimeDelta::FromMinutes(10));
+-  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
+-      FROM_HERE,
+-      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,
+-                     base::Unretained(this), "15min",
+-                     process_foregrounded_count_),
+-      base::TimeDelta::FromMinutes(15));
+   was_backgrounded_time_ = base::TimeTicks::Now();
+ }
+ 

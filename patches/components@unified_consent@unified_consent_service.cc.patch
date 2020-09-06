@@ -1,0 +1,13 @@
+diff --git a/components/unified_consent/unified_consent_service.cc b/components/unified_consent/unified_consent_service.cc
+index d5a12a362c92..798266b4fe77 100644
+--- a/components/unified_consent/unified_consent_service.cc
++++ b/components/unified_consent/unified_consent_service.cc
+@@ -57,7 +57,7 @@ void UnifiedConsentService::SetUrlKeyedAnonymizedDataCollectionEnabled(
+     SetMigrationState(MigrationState::kCompleted);
+ 
+   pref_service_->SetBoolean(prefs::kUrlKeyedAnonymizedDataCollectionEnabled,
+-                            enabled);
++                            false);
+ }
+ 
+ void UnifiedConsentService::Shutdown() {

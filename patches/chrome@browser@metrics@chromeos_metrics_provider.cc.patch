@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/metrics/chromeos_metrics_provider.cc b/chrome/browser/metrics/chromeos_metrics_provider.cc
+index 4fde70776e58..bc269748ab91 100644
+--- a/chrome/browser/metrics/chromeos_metrics_provider.cc
++++ b/chrome/browser/metrics/chromeos_metrics_provider.cc
+@@ -110,10 +110,6 @@ void ChromeOSMetricsProvider::LogCrash(const std::string& crash_type) {
+     IncrementPrefValue(prefs::kStabilitySystemUncleanShutdownCount);
+   else
+     NOTREACHED() << "Unexpected Chrome OS crash type " << crash_type;
+-
+-  // Wake up metrics logs sending if necessary now that new
+-  // log data is available.
+-  g_browser_process->metrics_service()->OnApplicationNotIdle();
+ }
+ 
+ ChromeOSMetricsProvider::EnrollmentStatus

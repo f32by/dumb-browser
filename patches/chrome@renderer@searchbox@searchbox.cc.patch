@@ -1,0 +1,15 @@
+diff --git a/chrome/renderer/searchbox/searchbox.cc b/chrome/renderer/searchbox/searchbox.cc
+index 7439d1f0d1ec..e26395cbfd8d 100644
+--- a/chrome/renderer/searchbox/searchbox.cc
++++ b/chrome/renderer/searchbox/searchbox.cc
+@@ -456,10 +456,6 @@ void SearchBox::LogCharTypedToRepaintLatency(uint32_t latency_ms) {
+   embedded_search_service_->LogCharTypedToRepaintLatency(latency_ms);
+ }
+ 
+-void SearchBox::BlocklistPromo(const std::string& promo_id) {
+-  embedded_search_service_->BlocklistPromo(promo_id);
+-}
+-
+ void SearchBox::OpenExtensionsPage(double button,
+                                    bool alt_key,
+                                    bool ctrl_key,

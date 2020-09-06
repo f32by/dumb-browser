@@ -1,0 +1,179 @@
+diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
+index f030459f5012..979eedf6445b 100644
+--- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
++++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
+@@ -292,73 +292,7 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
+ }
+ 
+ new_tab_page::mojom::PromoPtr MakePromo(const PromoData& data) {
+-  // |data.middle_slot_json| is safe to be decoded here. The JSON string is part
+-  // of a larger JSON initially decoded using the data decoder utility in the
+-  // PromoService to base::Value. The middle-slot promo part is then reencoded
+-  // from base::Value to a JSON string stored in |data.middle_slot_json|.
+-  auto middle_slot = base::JSONReader::Read(data.middle_slot_json);
+-  if (!middle_slot.has_value() ||
+-      middle_slot.value().FindBoolPath("hidden").value_or(false)) {
+-    return nullptr;
+-  }
+-  auto promo = new_tab_page::mojom::Promo::New();
+-  promo->id = data.promo_id;
+-  if (middle_slot.has_value()) {
+-    auto* parts = middle_slot.value().FindListPath("part");
+-    if (parts) {
+-      std::vector<new_tab_page::mojom::PromoPartPtr> mojom_parts;
+-      for (const base::Value& part : parts->GetList()) {
+-        if (part.FindKey("image")) {
+-          auto mojom_image = new_tab_page::mojom::PromoImagePart::New();
+-          auto* image_url = part.FindStringPath("image.image_url");
+-          if (!image_url || image_url->empty()) {
+-            continue;
+-          }
+-          mojom_image->image_url = GURL(*image_url);
+-          auto* target = part.FindStringPath("image.target");
+-          if (target && !target->empty()) {
+-            mojom_image->target = GURL(*target);
+-          }
+-          mojom_parts.push_back(
+-              new_tab_page::mojom::PromoPart::NewImage(std::move(mojom_image)));
+-        } else if (part.FindKey("link")) {
+-          auto mojom_link = new_tab_page::mojom::PromoLinkPart::New();
+-          auto* url = part.FindStringPath("link.url");
+-          if (!url || url->empty()) {
+-            continue;
+-          }
+-          mojom_link->url = GURL(*url);
+-          auto* text = part.FindStringPath("link.text");
+-          if (!text || text->empty()) {
+-            continue;
+-          }
+-          mojom_link->text = *text;
+-          auto* color = part.FindStringPath("link.color");
+-          if (color && !color->empty()) {
+-            mojom_link->color = *color;
+-          }
+-          mojom_parts.push_back(
+-              new_tab_page::mojom::PromoPart::NewLink(std::move(mojom_link)));
+-        } else if (part.FindKey("text")) {
+-          auto mojom_text = new_tab_page::mojom::PromoTextPart::New();
+-          auto* text = part.FindStringPath("text.text");
+-          if (!text || text->empty()) {
+-            continue;
+-          }
+-          mojom_text->text = *text;
+-          auto* color = part.FindStringPath("text.color");
+-          if (color && !color->empty()) {
+-            mojom_text->color = *color;
+-          }
+-          mojom_parts.push_back(
+-              new_tab_page::mojom::PromoPart::NewText(std::move(mojom_text)));
+-        }
+-      }
+-      promo->middle_slot_parts = std::move(mojom_parts);
+-    }
+-  }
+-  promo->log_url = data.promo_log_url;
+-  return promo;
++  return nullptr;
+ }
+ 
+ }  // namespace
+@@ -392,14 +326,12 @@ NewTabPageHandler::NewTabPageHandler(
+       web_contents_(web_contents),
+       ntp_navigation_start_time_(ntp_navigation_start_time),
+       logger_(logger),
+-      promo_service_(PromoServiceFactory::GetForProfile(profile)),
+       page_{std::move(pending_page)},
+       receiver_{this, std::move(pending_page_handler)} {
+   CHECK(instant_service_);
+   CHECK(ntp_background_service_);
+   CHECK(logo_service_);
+   CHECK(one_google_bar_service_);
+-  CHECK(promo_service_);
+   CHECK(web_contents_);
+   CHECK(logger_);
+   instant_service_->AddObserver(this);
+@@ -407,7 +339,6 @@ NewTabPageHandler::NewTabPageHandler(
+   instant_service_->UpdateNtpTheme();
+   OmniboxTabHelper::CreateForWebContents(web_contents);
+   OmniboxTabHelper::FromWebContents(web_contents_)->AddObserver(this);
+-  promo_service_observer_.Add(promo_service_);
+   one_google_bar_service_observer_.Add(one_google_bar_service_);
+ }
+ 
+@@ -688,76 +619,12 @@ void NewTabPageHandler::GetOneGoogleBarParts(
+ }
+ 
+ void NewTabPageHandler::GetPromo(GetPromoCallback callback) {
+-  // Replace the promo URL with "command:<id>" if such a command ID is set
+-  // via the feature params.
+-  const std::string command_id = base::GetFieldTrialParamValueByFeature(
+-      features::kPromoBrowserCommands, features::kPromoBrowserCommandIdParam);
+-  if (!command_id.empty()) {
+-    auto promo = new_tab_page::mojom::Promo::New();
+-    std::vector<new_tab_page::mojom::PromoPartPtr> parts;
+-    auto image = new_tab_page::mojom::PromoImagePart::New();
+-    // Warning symbol used as the test image.
+-    image->image_url = GURL(
+-        "data:image/"
+-        "svg+xml;base64,"
+-        "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01IC"
+-        "01IDU4IDU4IiBmaWxsPSIjZmRkNjMzIj48cGF0aCBkPSJNMiA0Mmg0NEwyNCA0IDIgNDJ6"
+-        "bTI0LTZoLTR2LTRoNHY0em0wLThoLTR2LThoNHY4eiIvPjwvc3ZnPg==");
+-    image->target = GURL("command:" + command_id);
+-    parts.push_back(new_tab_page::mojom::PromoPart::NewImage(std::move(image)));
+-    auto link = new_tab_page::mojom::PromoLinkPart::New();
+-    link->url = GURL("command:" + command_id);
+-    link->text = "Test command: " + command_id;
+-    parts.push_back(new_tab_page::mojom::PromoPart::NewLink(std::move(link)));
+-    promo->middle_slot_parts = std::move(parts);
+-    std::move(callback).Run(std::move(promo));
+-    return;
+-  }
+-
+-  promo_callbacks_.push_back(std::move(callback));
+-  if (promo_service_->promo_data().has_value()) {
+-    OnPromoDataUpdated();
+-  }
+-  promo_load_start_time_ = base::TimeTicks::Now();
+-  promo_service_->Refresh();
+ }
+ 
+ void NewTabPageHandler::OnPromoDataUpdated() {
+-  if (promo_load_start_time_.has_value()) {
+-    base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
+-    UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2", duration);
+-    if (promo_service_->promo_status() == PromoService::Status::OK_WITH_PROMO) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessWithPromo", duration);
+-    } else if (promo_service_->promo_status() ==
+-               PromoService::Status::OK_BUT_BLOCKED) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessButBlocked", duration);
+-    } else if (promo_service_->promo_status() ==
+-               PromoService::Status::OK_WITHOUT_PROMO) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessWithoutPromo", duration);
+-    } else {
+-      UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2.Failure",
+-                                 duration);
+-    }
+-    promo_load_start_time_ = base::nullopt;
+-  }
+-
+-  const auto& data = promo_service_->promo_data();
+-  for (auto& callback : promo_callbacks_) {
+-    if (data.has_value() && !data->promo_html.empty()) {
+-      std::move(callback).Run(MakePromo(data.value()));
+-    } else {
+-      std::move(callback).Run(nullptr);
+-    }
+-  }
+-  promo_callbacks_.clear();
+ }
+ 
+ void NewTabPageHandler::OnPromoServiceShuttingDown() {
+-  promo_service_observer_.RemoveAll();
+-  promo_service_ = nullptr;
+ }
+ 
+ void NewTabPageHandler::OnMostVisitedTilesRendered(

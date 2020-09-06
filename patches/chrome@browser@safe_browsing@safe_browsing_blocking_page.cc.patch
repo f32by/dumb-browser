@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/safe_browsing/safe_browsing_blocking_page.cc b/chrome/browser/safe_browsing/safe_browsing_blocking_page.cc
+index 350cdb315320..aed9e324b42e 100644
+--- a/chrome/browser/safe_browsing/safe_browsing_blocking_page.cc
++++ b/chrome/browser/safe_browsing/safe_browsing_blocking_page.cc
+@@ -21,7 +21,6 @@
+ #include "chrome/common/pref_names.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/safe_browsing/content/browser/threat_details.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/safe_browsing/core/features.h"
+ #include "components/safe_browsing/core/triggers/trigger_manager.h"
+ #include "components/security_interstitials/content/content_metrics_helper.h"
+@@ -63,8 +62,7 @@ class SafeBrowsingBlockingPageFactoryImpl
+     PrefService* prefs =
+         Profile::FromBrowserContext(web_contents->GetBrowserContext())
+             ->GetPrefs();
+-    bool is_extended_reporting_opt_in_allowed =
+-        IsExtendedReportingOptInAllowed(*prefs);
++    bool is_extended_reporting_opt_in_allowed = false;
+     bool is_proceed_anyway_disabled =
+         prefs->GetBoolean(prefs::kSafeBrowsingProceedAnywayDisabled);
+ 

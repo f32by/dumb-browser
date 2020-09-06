@@ -1,0 +1,13 @@
+diff --git a/extensions/browser/api/crash_report_private/crash_report_private_api.cc b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
+index a9658eb82953..59eaada5bb82 100644
+--- a/extensions/browser/api/crash_report_private/crash_report_private_api.cc
++++ b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
+@@ -31,7 +31,7 @@ base::Time g_last_called_time;
+ base::Clock* g_clock = base::DefaultClock::GetInstance();
+ 
+ #if defined(GOOGLE_CHROME_BUILD)
+-constexpr char kCrashEndpointUrl[] = "https://clients2.google.com/cr/report";
++constexpr char kCrashEndpointUrl[] = "http://no-thanks.invalid";
+ #else
+ constexpr char kCrashEndpointUrl[] = "";
+ #endif

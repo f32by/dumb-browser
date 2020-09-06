@@ -1,0 +1,67 @@
+diff --git a/chrome/browser/extensions/api/preference/preference_api.cc b/chrome/browser/extensions/api/preference/preference_api.cc
+index 17f9efb2d270..451b68f144d0 100644
+--- a/chrome/browser/extensions/api/preference/preference_api.cc
++++ b/chrome/browser/extensions/api/preference/preference_api.cc
+@@ -33,8 +33,6 @@
+ #include "components/password_manager/core/common/password_manager_pref_names.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/proxy_config/proxy_config_pref_names.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+-#include "components/spellcheck/browser/pref_names.h"
+ #include "components/translate/core/browser/translate_pref_names.h"
+ #include "extensions/browser/extension_pref_value_map.h"
+ #include "extensions/browser/extension_pref_value_map_factory.h"
+@@ -116,15 +114,8 @@ const PrefMappingEntry kPrefMapping[] = {
+      APIPermission::kPrivacy},
+     {"doNotTrackEnabled", prefs::kEnableDoNotTrack, APIPermission::kPrivacy,
+      APIPermission::kPrivacy},
+-    {"safeBrowsingEnabled", prefs::kSafeBrowsingEnabled,
+-     APIPermission::kPrivacy, APIPermission::kPrivacy},
+-    {"safeBrowsingExtendedReportingEnabled",
+-     prefs::kSafeBrowsingScoutReportingEnabled, APIPermission::kPrivacy,
+-     APIPermission::kPrivacy},
+     {"searchSuggestEnabled", prefs::kSearchSuggestEnabled,
+      APIPermission::kPrivacy, APIPermission::kPrivacy},
+-    {"spellingServiceEnabled", spellcheck::prefs::kSpellCheckUseSpellingService,
+-     APIPermission::kPrivacy, APIPermission::kPrivacy},
+     {"thirdPartyCookiesAllowed", prefs::kCookieControlsMode,
+      APIPermission::kPrivacy, APIPermission::kPrivacy},
+     {"translationServiceEnabled", prefs::kOfferTranslateEnabled,
+@@ -814,18 +805,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
+         base::Value(browser_pref_value->GetBool()));
+   }
+ 
+-  // Whenever an extension takes control of the |kSafeBrowsingEnabled|
+-  // preference, it must also set |kSafeBrowsingEnhanced| to false.
+-  // See crbug.com/1064722 for more background.
+-  //
+-  // TODO(crbug.com/1064722): Consider extending
+-  // chrome.privacy.services.safeBrowsingEnabled to a three-state enum.
+-  if (prefs::kSafeBrowsingEnabled == browser_pref) {
+-    preference_api->SetExtensionControlledPref(extension_id(),
+-                                               prefs::kSafeBrowsingEnhanced,
+-                                               scope, base::Value(false));
+-  }
+-
+   preference_api->SetExtensionControlledPref(
+       extension_id(), browser_pref, scope,
+       base::Value::FromUniquePtrValue(std::move(browser_pref_value)));
+@@ -879,18 +858,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
+   PreferenceAPI::Get(browser_context())
+       ->RemoveExtensionControlledPref(extension_id(), browser_pref, scope);
+ 
+-  // Whenever an extension clears the |kSafeBrowsingEnabled| preference,
+-  // it must also clear |kSafeBrowsingEnhanced|. See crbug.com/1064722 for
+-  // more background.
+-  //
+-  // TODO(crbug.com/1064722): Consider extending
+-  // chrome.privacy.services.safeBrowsingEnabled to a three-state enum.
+-  if (prefs::kSafeBrowsingEnabled == browser_pref) {
+-    PreferenceAPI::Get(browser_context())
+-        ->RemoveExtensionControlledPref(extension_id(),
+-                                        prefs::kSafeBrowsingEnhanced, scope);
+-  }
+-
+   return RespondNow(NoArguments());
+ }
+ 

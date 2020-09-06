@@ -1,0 +1,12 @@
+diff --git a/base/metrics/histogram_base.cc b/base/metrics/histogram_base.cc
+index 2b006d0216a1..2363d0583d89 100644
+--- a/base/metrics/histogram_base.cc
++++ b/base/metrics/histogram_base.cc
+@@ -91,6 +91,7 @@ void HistogramBase::ClearFlags(int32_t flags) {
+ }
+ 
+ void HistogramBase::AddScaled(Sample value, int count, int scale) {
++  return;
+   DCHECK_LT(0, scale);
+ 
+   // Convert raw count and probabilistically round up/down if the remainder

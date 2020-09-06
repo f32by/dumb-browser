@@ -1,0 +1,36 @@
+diff --git a/chrome/browser/download/chrome_download_manager_delegate.h b/chrome/browser/download/chrome_download_manager_delegate.h
+index 709aad679cc5..1bb22d228e38 100644
+--- a/chrome/browser/download/chrome_download_manager_delegate.h
++++ b/chrome/browser/download/chrome_download_manager_delegate.h
+@@ -22,11 +22,10 @@
+ #include "chrome/browser/download/download_completion_blocker.h"
+ #include "chrome/browser/download/download_target_determiner_delegate.h"
+ #include "chrome/browser/download/download_target_info.h"
+-#include "chrome/browser/safe_browsing/download_protection/download_protection_service.h"
+-#include "chrome/browser/safe_browsing/download_protection/download_protection_util.h"
+ #include "components/download/public/common/download_danger_type.h"
+ #include "components/download/public/common/download_item.h"
+ #include "components/download/public/common/download_path_reservation_tracker.h"
++#include "components/safe_browsing/buildflags.h"
+ #include "content/public/browser/download_manager_delegate.h"
+ #include "content/public/browser/notification_observer.h"
+ #include "content/public/browser/notification_registrar.h"
+@@ -155,8 +154,7 @@ class ChromeDownloadManagerDelegate
+ #endif  // FULL_SAFE_BROWSING
+ 
+   // Callback function after the DownloadProtectionService completes.
+-  void CheckClientDownloadDone(uint32_t download_id,
+-                               safe_browsing::DownloadCheckResult result);
++  void CheckClientDownloadDone(uint32_t download_id);
+ 
+   base::WeakPtr<ChromeDownloadManagerDelegate> GetWeakPtr();
+ 
+@@ -164,8 +162,6 @@ class ChromeDownloadManagerDelegate
+       mojo::PendingReceiver<quarantine::mojom::Quarantine> receiver);
+ 
+  protected:
+-  virtual safe_browsing::DownloadProtectionService*
+-      GetDownloadProtectionService();
+ 
+   // Show file picker for |download|.
+   virtual void ShowFilePickerForDownload(

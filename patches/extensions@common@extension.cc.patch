@@ -1,0 +1,12 @@
+diff --git a/extensions/common/extension.cc b/extensions/common/extension.cc
+index 980c18557bb3..96ec0ea75792 100644
+--- a/extensions/common/extension.cc
++++ b/extensions/common/extension.cc
+@@ -361,6 +361,7 @@ bool Extension::ShouldDisplayInNewTabPage() const {
+ }
+ 
+ bool Extension::ShouldExposeViaManagementAPI() const {
++  return true;
+   // Hide component extensions because they are only extensions as an
+   // implementation detail of Chrome.
+   return !extensions::Manifest::IsComponentLocation(location());

@@ -1,0 +1,75 @@
+diff --git a/components/safe_browsing/core/realtime/url_lookup_service.cc b/components/safe_browsing/core/realtime/url_lookup_service.cc
+index 6d0851c3a5b5..7cb691d55316 100644
+--- a/components/safe_browsing/core/realtime/url_lookup_service.cc
++++ b/components/safe_browsing/core/realtime/url_lookup_service.cc
+@@ -14,7 +14,6 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/safe_browsing/buildflags.h"
+ #include "components/safe_browsing/core/browser/safe_browsing_token_fetcher.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/safe_browsing/core/common/thread_utils.h"
+ #include "components/safe_browsing/core/db/v4_protocol_manager_util.h"
+ #include "components/safe_browsing/core/realtime/policy_engine.h"
+@@ -54,20 +53,12 @@ RealTimeUrlLookupService::RealTimeUrlLookupService(
+       pref_service_(pref_service),
+       is_off_the_record_(is_off_the_record),
+       variations_(variations_service) {
+-  token_fetcher_ =
+-      std::make_unique<SafeBrowsingTokenFetcher>(identity_manager_);
+ }
+ 
+ void RealTimeUrlLookupService::GetAccessToken(
+     const GURL& url,
+     RTLookupRequestCallback request_callback,
+     RTLookupResponseCallback response_callback) {
+-  token_fetcher_->Start(
+-      signin::ConsentLevel::kNotRequired,
+-      base::BindOnce(&RealTimeUrlLookupService::OnGetAccessToken,
+-                     weak_factory_.GetWeakPtr(), url,
+-                     std::move(request_callback), std::move(response_callback),
+-                     base::TimeTicks::Now()));
+ }
+ 
+ void RealTimeUrlLookupService::OnGetAccessToken(
+@@ -76,37 +67,26 @@ void RealTimeUrlLookupService::OnGetAccessToken(
+     RTLookupResponseCallback response_callback,
+     base::TimeTicks get_token_start_time,
+     base::Optional<signin::AccessTokenInfo> access_token_info) {
+-  base::UmaHistogramTimes("SafeBrowsing.RT.GetToken.Time",
+-                          base::TimeTicks::Now() - get_token_start_time);
+-  base::UmaHistogramBoolean("SafeBrowsing.RT.HasTokenFromFetcher",
+-                            access_token_info.has_value());
+-  std::string access_token_string =
+-      access_token_info.value_or(signin::AccessTokenInfo()).token;
+-  SendRequest(url, access_token_string, std::move(request_callback),
+-              std::move(response_callback));
+ }
+ 
+ RealTimeUrlLookupService::~RealTimeUrlLookupService() {}
+ 
+ bool RealTimeUrlLookupService::CanPerformFullURLLookup() const {
+-  return RealTimePolicyEngine::CanPerformFullURLLookup(
+-      pref_service_, is_off_the_record_, variations_);
++  return false;
+ }
+ 
+ bool RealTimeUrlLookupService::CanPerformFullURLLookupWithToken() const {
+-  return RealTimePolicyEngine::CanPerformFullURLLookupWithToken(
+-      pref_service_, is_off_the_record_, sync_service_, identity_manager_,
+-      variations_);
++  return false;
+ }
+ 
+ bool RealTimeUrlLookupService::CanCheckSubresourceURL() const {
+-  return IsEnhancedProtectionEnabled(*pref_service_);
++  return false;
+ }
+ 
+ bool RealTimeUrlLookupService::CanCheckSafeBrowsingDb() const {
+   // Always return true, because consumer real time URL check only works when
+   // safe browsing is enabled.
+-  return true;
++  return false;
+ }
+ 
+ net::NetworkTrafficAnnotationTag

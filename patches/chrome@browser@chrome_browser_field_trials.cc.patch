@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/chrome_browser_field_trials.cc b/chrome/browser/chrome_browser_field_trials.cc
+index 63a2aeadf005..b94b4507ac8a 100644
+--- a/chrome/browser/chrome_browser_field_trials.cc
++++ b/chrome/browser/chrome_browser_field_trials.cc
+@@ -114,6 +114,7 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
+ }
+ 
+ void ChromeBrowserFieldTrials::InstantiateDynamicTrials() {
++  return;
+   // Persistent histograms must be enabled as soon as possible.
+   base::FilePath metrics_dir;
+   if (base::PathService::Get(chrome::DIR_USER_DATA, &metrics_dir)) {

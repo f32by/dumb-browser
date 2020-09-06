@@ -1,0 +1,79 @@
+diff --git a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
+index 3df0614a53d6..a8607a773ded 100644
+--- a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
++++ b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
+@@ -12,26 +12,9 @@
+ #import "chrome/browser/ui/cocoa/notifications/notification_builder_mac.h"
+ #include "chrome/browser/ui/cocoa/notifications/notification_constants_mac.h"
+ #import "chrome/browser/ui/cocoa/notifications/xpc_transaction_handler.h"
+-#include "third_party/crashpad/crashpad/client/crashpad_client.h"
+-#include "third_party/crashpad/crashpad/client/crashpad_info.h"
+-#include "third_party/crashpad/crashpad/client/simple_string_dictionary.h"
+ 
+ @class NSUserNotificationCenter;
+ 
+-namespace {
+-
+-crashpad::SimpleStringDictionary* GetCrashpadAnnotations() {
+-  static crashpad::SimpleStringDictionary* annotations = []() {
+-    auto* annotations = new crashpad::SimpleStringDictionary();
+-    annotations->SetKeyValue("ptype", "AlertNotificationService.xpc");
+-    annotations->SetKeyValue("pid", base::NumberToString(getpid()).c_str());
+-    return annotations;
+-  }();
+-  return annotations;
+-}
+-
+-}  // namespace
+-
+ @implementation AlertNotificationService {
+   XPCTransactionHandler* _transactionHandler;
+ 
+@@ -51,29 +34,9 @@ - (instancetype)initWithTransactionHandler:(XPCTransactionHandler*)handler {
+ }
+ 
+ - (void)setMachExceptionPort:(CrXPCMachPort*)port {
+-  base::mac::ScopedMachSendRight sendRight([port takeRight]);
+-  if (!sendRight.is_valid()) {
+-    NOTREACHED();
+-    return;
+-  }
+-
+-  @synchronized(self) {
+-    if (_didSetExceptionPort) {
+-      return;
+-    }
+-
+-    crashpad::CrashpadClient client;
+-    _didSetExceptionPort = client.SetHandlerMachPort(std::move(sendRight));
+-    DCHECK(_didSetExceptionPort);
+-
+-    crashpad::CrashpadInfo::GetCrashpadInfo()->set_simple_annotations(
+-        GetCrashpadAnnotations());
+-  }
+ }
+ 
+ - (void)deliverNotification:(NSDictionary*)notificationData {
+-  DCHECK(_didSetExceptionPort);
+-
+   base::scoped_nsobject<NotificationBuilder> builder(
+       [[NotificationBuilder alloc] initWithDictionary:notificationData]);
+ 
+@@ -85,8 +48,6 @@ - (void)deliverNotification:(NSDictionary*)notificationData {
+ 
+ - (void)closeNotificationWithId:(NSString*)notificationId
+                   withProfileId:(NSString*)profileId {
+-  DCHECK(_didSetExceptionPort);
+-
+   NSUserNotificationCenter* notificationCenter =
+       [NSUserNotificationCenter defaultUserNotificationCenter];
+   for (NSUserNotification* candidate in
+@@ -107,8 +68,6 @@ - (void)closeNotificationWithId:(NSString*)notificationId
+ }
+ 
+ - (void)closeAllNotifications {
+-  DCHECK(_didSetExceptionPort);
+-
+   [[NSUserNotificationCenter defaultUserNotificationCenter]
+       removeAllDeliveredNotifications];
+   [_transactionHandler closeTransactionIfNeeded];

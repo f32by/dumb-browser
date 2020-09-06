@@ -1,0 +1,111 @@
+diff --git a/chrome/browser/resources/settings/privacy_page/security_page.html b/chrome/browser/resources/settings/privacy_page/security_page.html
+index 4354d3fa0cbd..7ddb3f23a30d 100644
+--- a/chrome/browser/resources/settings/privacy_page/security_page.html
++++ b/chrome/browser/resources/settings/privacy_page/security_page.html
+@@ -59,97 +59,6 @@
+       <img id="banner" alt=""
+           src="chrome://settings/images/safe_browsing_banner.svg">
+     </picture>
+-    <div id="safeBrowsingSection">
+-      <h2>$i18n{safeBrowsingSectionLabel}</h2>
+-      <settings-radio-group id="safeBrowsingRadioGroup" no-set-pref
+-          pref="{{prefs.generated.safe_browsing}}"
+-          selectable-elements="cr-radio-button, settings-collapse-radio-button"
+-          on-change="onSafeBrowsingRadioChange_">
+-        <settings-collapse-radio-button id="safeBrowsingEnhanced"
+-            name="[[safeBrowsingSettingEnum_.ENHANCED]]"
+-            pref="[[prefs.generated.safe_browsing]]"
+-            label="$i18n{safeBrowsingEnhanced}"
+-            sub-label="$i18n{safeBrowsingEnhancedDesc}"
+-            hidden="[[!safeBrowsingEnhancedEnabled_]]"
+-            no-automatic-collapse>
+-          <div slot="collapse">
+-            <div class="bullet-line">
+-              <iron-icon icon="cr:security"></iron-icon>
+-              <div class="secondary">
+-                $i18n{safeBrowsingEnhancedBulOne}
+-              </div>
+-            </div>
+-            <div class="bullet-line">
+-              <iron-icon icon="settings20:googleg"></iron-icon>
+-              <div class="secondary">
+-                $i18n{safeBrowsingEnhancedBulTwo}
+-              </div>
+-            </div>
+-            <div class="bullet-line">
+-              <iron-icon icon="settings:public"></iron-icon>
+-              <div class="secondary">
+-                $i18n{safeBrowsingEnhancedBulThree}
+-              </div>
+-            </div>
+-            <div class="bullet-line">
+-              <iron-icon icon="settings20:vpn-key"></iron-icon>
+-              <div class="secondary">
+-                $i18n{safeBrowsingEnhancedBulFour}
+-              </div>
+-            </div>
+-            <div class="bullet-line three-line last-collapse-item">
+-              <iron-icon icon="settings20:data"></iron-icon>
+-              <div class="secondary">
+-                $i18n{safeBrowsingEnhancedBulFive}
+-              </div>
+-            </div>
+-          </div>
+-        </settings-collapse-radio-button>
+-        <settings-collapse-radio-button id="safeBrowsingStandard"
+-            name="[[safeBrowsingSettingEnum_.STANDARD]]"
+-            pref="[[prefs.generated.safe_browsing]]"
+-            label="$i18n{safeBrowsingStandard}"
+-            sub-label="$i18n{safeBrowsingStandardDesc}"
+-            info-opened="{{infoOpened_}}"
+-            no-automatic-collapse>
+-          <div slot="collapse">
+-            <div class="bullet-line">
+-              <iron-icon icon="cr:security"></iron-icon>
+-              <div class="secondary">
+-                  $i18n{safeBrowsingStandardBulOne}
+-              </div>
+-            </div>
+-            <div class="bullet-line three-line">
+-              <iron-icon icon="settings20:data"></iron-icon>
+-              <div class="secondary">
+-                  $i18n{safeBrowsingStandardBulTwo}
+-              </div>
+-            </div>
+-          </div>
+-          <div slot="noSelectionCollapse">
+-            <settings-toggle-button id="safeBrowsingReportingToggle"
+-                pref="{{prefs.safebrowsing.scout_reporting_enabled}}"
+-                label="$i18n{safeBrowsingStandardReportingLabel}"
+-                sub-label="$i18n{safeBrowsingEnableExtendedReportingDesc}"
+-                on-change="onSafeBrowsingExtendedReportingChange_"
+-                disabled="[[getDisabledExtendedSafeBrowsing_(
+-                              prefs.generated.safe_browsing.*)]]">
+-            </settings-toggle-button>
+-            <settings-passwords-leak-detection-toggle id="passwordsLeakToggle"
+-                class="collapsable"
+-                prefs="{{prefs}}"
+-                sync-status="[[syncStatus]]">
+-            </settings-passwords-leak-detection-toggle>
+-          </div>
+-        </settings-collapse-radio-button>
+-        <settings-collapse-radio-button id="safeBrowsingDisabled" no-collapse
+-            name="[[safeBrowsingSettingEnum_.DISABLED]]"
+-            pref="[[prefs.generated.safe_browsing]]"
+-            label="$i18n{safeBrowsingNone}"
+-            sub-label="$i18n{safeBrowsingNoneDesc}">
+-        </settings-collapse-radio-button>
+-      </settings-radio-group>
+-    </div>
+     <div class="cr-row first">
+       <h2>$i18n{advancedPageTitle}</h2>
+     </div>
+@@ -180,8 +89,3 @@
+         on-click="onAdvancedProtectionProgramLinkClick_"
+         external>
+     </cr-link-row>
+-    <template is="dom-if" if="[[showDisableSafebrowsingDialog_]]" restamp>
+-      <settings-disable-safebrowsing-dialog prefs="{{prefs}}"
+-          on-close="onDisableSafebrowsingDialogClose_">
+-      </settings-disable-safebrowsing-dialog>
+-    </template>

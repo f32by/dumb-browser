@@ -1,0 +1,14 @@
+diff --git a/components/security_interstitials/core/controller_client.h b/components/security_interstitials/core/controller_client.h
+index f060ec7f2832..72e97646a3f0 100644
+--- a/components/security_interstitials/core/controller_client.h
++++ b/components/security_interstitials/core/controller_client.h
+@@ -112,9 +112,6 @@ class ControllerClient {
+ 
+   void SetBaseHelpCenterUrlForTesting(const GURL& test_url);
+ 
+- protected:
+-  virtual const std::string GetExtendedReportingPrefName() const = 0;
+-
+  private:
+   std::unique_ptr<MetricsHelper> metrics_helper_;
+   // Link to the help center.

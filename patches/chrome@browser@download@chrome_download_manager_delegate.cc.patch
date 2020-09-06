@@ -1,0 +1,95 @@
+diff --git a/chrome/browser/download/chrome_download_manager_delegate.cc b/chrome/browser/download/chrome_download_manager_delegate.cc
+index e2e91477927e..ec1917bfa5ff 100644
+--- a/chrome/browser/download/chrome_download_manager_delegate.cc
++++ b/chrome/browser/download/chrome_download_manager_delegate.cc
+@@ -39,13 +39,8 @@
+ #include "chrome/browser/download/download_target_determiner.h"
+ #include "chrome/browser/download/mixed_content_download_blocking.h"
+ #include "chrome/browser/download/save_package_file_picker.h"
+-#include "chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.h"
+-#include "chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router_factory.h"
+ #include "chrome/browser/platform_util.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/cloud_content_scanning/binary_upload_service.h"
+-#include "chrome/browser/safe_browsing/download_protection/download_protection_util.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
+ #include "chrome/browser/ui/chrome_pages.h"
+ #include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
+ #include "chrome/common/buildflags.h"
+@@ -65,7 +60,6 @@
+ #include "components/prefs/pref_member.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/core/file_type_policies.h"
+ #include "components/services/quarantine/public/mojom/quarantine.mojom.h"
+ #include "components/services/quarantine/quarantine_impl.h"
+ #include "content/public/browser/browser_task_traits.h"
+@@ -124,8 +118,6 @@ using content::DownloadManager;
+ using download::DownloadItem;
+ using download::DownloadPathReservationTracker;
+ using download::PathValidationResult;
+-using safe_browsing::DownloadFileType;
+-using safe_browsing::DownloadProtectionService;
+ 
+ namespace {
+ 
+@@ -372,13 +364,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
+ 
+ void ChromeDownloadManagerDelegate::SetDownloadManager(DownloadManager* dm) {
+   download_manager_ = dm;
+-
+-  safe_browsing::SafeBrowsingService* sb_service =
+-      g_browser_process->safe_browsing_service();
+-  if (sb_service && !profile_->IsOffTheRecord()) {
+-    // Include this download manager in the set monitored by safe browsing.
+-    sb_service->AddDownloadManager(dm);
+-  }
+ }
+ 
+ #if defined(OS_ANDROID)
+@@ -715,16 +700,6 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
+ 
+ void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
+     base::FilePath* filename) {
+-  safe_browsing::FileTypePolicies* file_type_policies =
+-      safe_browsing::FileTypePolicies::GetInstance();
+-
+-  if (file_type_policies->GetFileDangerLevel(*filename) ==
+-      safe_browsing::DownloadFileType::NOT_DANGEROUS)
+-    return;
+-
+-  base::FilePath default_filename = base::FilePath::FromUTF8Unsafe(
+-      l10n_util::GetStringUTF8(IDS_DEFAULT_DOWNLOAD_FILENAME));
+-  *filename = filename->AddExtension(default_filename.BaseName().value());
+ }
+ 
+ void ChromeDownloadManagerDelegate::SanitizeDownloadParameters(
+@@ -837,19 +812,6 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
+   return std::string(chrome::kApplicationClientIDStringForAVScanning);
+ }
+ 
+-DownloadProtectionService*
+-    ChromeDownloadManagerDelegate::GetDownloadProtectionService() {
+-  DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-#if BUILDFLAG(FULL_SAFE_BROWSING)
+-  safe_browsing::SafeBrowsingService* sb_service =
+-      g_browser_process->safe_browsing_service();
+-  if (sb_service && sb_service->download_protection_service()) {
+-    return sb_service->download_protection_service();
+-  }
+-#endif
+-  return nullptr;
+-}
+-
+ void ChromeDownloadManagerDelegate::GetMixedContentStatus(
+     download::DownloadItem* download,
+     const base::FilePath& virtual_path,
+@@ -1364,8 +1326,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
+     if (item->GetOriginalMimeType() == "application/x-x509-user-cert")
+       DownloadItemModel(item).SetShouldPreferOpeningInBrowser(true);
+ #endif
+-
+-    DownloadItemModel(item).SetDangerLevel(target_info->danger_level);
+   }
+   if (ShouldBlockFile(target_info->danger_type, item)) {
+     MaybeReportDangerousDownloadBlocked(

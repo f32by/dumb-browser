@@ -1,0 +1,131 @@
+diff --git a/chrome/browser/enterprise/connectors/connectors_manager.cc b/chrome/browser/enterprise/connectors/connectors_manager.cc
+index d4f762dc1311..74f0f9093589 100644
+--- a/chrome/browser/enterprise/connectors/connectors_manager.cc
++++ b/chrome/browser/enterprise/connectors/connectors_manager.cc
+@@ -6,6 +6,7 @@
+ 
+ #include <memory>
+ 
++#include "base/bind.h"
+ #include "base/feature_list.h"
+ #include "base/no_destructor.h"
+ #include "base/values.h"
+@@ -13,7 +14,6 @@
+ #include "chrome/browser/enterprise/connectors/connectors_prefs.h"
+ #include "components/policy/core/browser/url_util.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/url_matcher/url_matcher.h"
+ #include "url/gurl.h"
+ 
+@@ -276,49 +276,19 @@ ConnectorsManager::GetAnalysisSettingsFromLegacyPolicies(
+ 
+ BlockUntilVerdict ConnectorsManager::LegacyBlockUntilVerdict(
+     bool upload) const {
+-  int pref = g_browser_process->local_state()->GetInteger(
+-      prefs::kDelayDeliveryUntilVerdict);
+-  if (pref == safe_browsing::DELAY_NONE)
+-    return BlockUntilVerdict::NO_BLOCK;
+-  if (pref == safe_browsing::DELAY_UPLOADS_AND_DOWNLOADS)
+-    return BlockUntilVerdict::BLOCK;
+-  return ((upload && pref == safe_browsing::DELAY_UPLOADS) ||
+-          (!upload && pref == safe_browsing::DELAY_DOWNLOADS))
+-             ? BlockUntilVerdict::BLOCK
+-             : BlockUntilVerdict::NO_BLOCK;
++  return BlockUntilVerdict::NO_BLOCK;
+ }
+ 
+ bool ConnectorsManager::LegacyBlockPasswordProtectedFiles(bool upload) const {
+-  int pref = g_browser_process->local_state()->GetInteger(
+-      prefs::kAllowPasswordProtectedFiles);
+-  if (pref == safe_browsing::ALLOW_NONE)
+-    return true;
+-  if (pref == safe_browsing::ALLOW_UPLOADS_AND_DOWNLOADS)
+-    return false;
+-  return upload ? pref != safe_browsing::ALLOW_UPLOADS
+-                : pref != safe_browsing::ALLOW_DOWNLOADS;
++  return false;
+ }
+ 
+ bool ConnectorsManager::LegacyBlockLargeFiles(bool upload) const {
+-  int pref = g_browser_process->local_state()->GetInteger(
+-      prefs::kBlockLargeFileTransfer);
+-  if (pref == safe_browsing::BLOCK_NONE)
+-    return false;
+-  if (pref == safe_browsing::BLOCK_LARGE_UPLOADS_AND_DOWNLOADS)
+-    return true;
+-  return upload ? pref == safe_browsing::BLOCK_LARGE_UPLOADS
+-                : pref == safe_browsing::BLOCK_LARGE_DOWNLOADS;
++  return false;
+ }
+ 
+ bool ConnectorsManager::LegacyBlockUnsupportedFileTypes(bool upload) const {
+-  int pref = g_browser_process->local_state()->GetInteger(
+-      prefs::kBlockUnsupportedFiletypes);
+-  if (pref == safe_browsing::BLOCK_UNSUPPORTED_FILETYPES_NONE)
+-    return false;
+-  if (pref == safe_browsing::BLOCK_UNSUPPORTED_FILETYPES_UPLOADS_AND_DOWNLOADS)
+-    return true;
+-  return upload ? pref == safe_browsing::BLOCK_UNSUPPORTED_FILETYPES_UPLOADS
+-                : pref == safe_browsing::BLOCK_UNSUPPORTED_FILETYPES_DOWNLOADS;
++  return false;
+ }
+ 
+ bool ConnectorsManager::MatchURLAgainstLegacyDlpPolicies(const GURL& url,
+@@ -326,17 +296,9 @@ bool ConnectorsManager::MatchURLAgainstLegacyDlpPolicies(const GURL& url,
+   const base::ListValue all_patterns = AllPatterns();
+   const base::ListValue no_patterns = base::ListValue();
+ 
+-  const base::ListValue* patterns_to_scan;
+-  const base::ListValue* patterns_to_exempt;
+-  if (upload) {
+-    patterns_to_scan = &all_patterns;
+-    patterns_to_exempt = g_browser_process->local_state()->GetList(
+-        prefs::kURLsToNotCheckComplianceOfUploadedContent);
+-  } else {
+-    patterns_to_scan = g_browser_process->local_state()->GetList(
+-        prefs::kURLsToCheckComplianceOfDownloadedContent);
+-    patterns_to_exempt = &no_patterns;
+-  }
++  // these may need to be swapped
++  const base::ListValue* patterns_to_scan = &all_patterns;
++  const base::ListValue* patterns_to_exempt = &no_patterns;
+ 
+   return MatchURLAgainstPatterns(url, patterns_to_scan, patterns_to_exempt);
+ }
+@@ -347,17 +309,9 @@ bool ConnectorsManager::MatchURLAgainstLegacyMalwarePolicies(
+   const base::ListValue all_patterns = AllPatterns();
+   const base::ListValue no_patterns = base::ListValue();
+ 
+-  const base::ListValue* patterns_to_scan;
+-  const base::ListValue* patterns_to_exempt;
+-  if (upload) {
+-    patterns_to_scan = g_browser_process->local_state()->GetList(
+-        prefs::kURLsToCheckForMalwareOfUploadedContent);
+-    patterns_to_exempt = &no_patterns;
+-  } else {
+-    patterns_to_scan = &all_patterns;
+-    patterns_to_exempt = g_browser_process->local_state()->GetList(
+-        prefs::kURLsToNotCheckForMalwareOfDownloadedContent);
+-  }
++  // these may need to be swapped
++  const base::ListValue* patterns_to_scan = &all_patterns;
++  const base::ListValue* patterns_to_exempt = &no_patterns;
+ 
+   return MatchURLAgainstPatterns(url, patterns_to_scan, patterns_to_exempt);
+ }
+@@ -395,14 +349,7 @@ ConnectorsManager::GetReportingSettingsFromConnectorPolicy(
+ base::Optional<ReportingSettings>
+ ConnectorsManager::GetReportingSettingsFromLegacyPolicies(
+     ReportingConnector connector) const {
+-  if (!g_browser_process || !g_browser_process->local_state() ||
+-      !g_browser_process->local_state()->GetBoolean(
+-          prefs::kUnsafeEventsReportingEnabled)) {
+     return base::nullopt;
+-  }
+-
+-  return ReportingSettings(
+-      GURL("https://chromereporting-pa.googleapis.com/v1/events"));
+ }
+ 
+ void ConnectorsManager::StartObservingPrefs() {

@@ -1,0 +1,34 @@
+diff --git a/chrome/renderer/searchbox/searchbox_extension.cc b/chrome/renderer/searchbox/searchbox_extension.cc
+index 70193e0d44c7..91d4b94de391 100644
+--- a/chrome/renderer/searchbox/searchbox_extension.cc
++++ b/chrome/renderer/searchbox/searchbox_extension.cc
+@@ -876,7 +876,6 @@ class NewTabPageBindings : public gin::Wrappable<NewTabPageBindings> {
+                                       v8::Local<v8::Value> color);
+   static void RevertThemeChanges();
+   static void ConfirmThemeChanges();
+-  static void BlocklistPromo(const std::string& promo_id);
+   static void OpenExtensionsPage(double button,
+                                  bool alt_key,
+                                  bool ctrl_key,
+@@ -957,7 +956,6 @@ gin::ObjectTemplateBuilder NewTabPageBindings::GetObjectTemplateBuilder(
+       .SetMethod("confirmThemeChanges",
+                  &NewTabPageBindings::ConfirmThemeChanges)
+       .SetMethod("getColorsInfo", &NewTabPageBindings::GetColorsInfo)
+-      .SetMethod("blocklistPromo", &NewTabPageBindings::BlocklistPromo)
+       .SetMethod("openExtensionsPage", &NewTabPageBindings::OpenExtensionsPage);
+ }
+ 
+@@ -1433,13 +1431,6 @@ v8::Local<v8::Value> NewTabPageBindings::GetColorsInfo(v8::Isolate* isolate) {
+   return v8_colors;
+ }
+ 
+-void NewTabPageBindings::BlocklistPromo(const std::string& promo_id) {
+-  SearchBox* search_box = GetSearchBoxForCurrentContext();
+-  if (!search_box)
+-    return;
+-  search_box->BlocklistPromo(promo_id);
+-}
+-
+ void NewTabPageBindings::OpenExtensionsPage(double button,
+                                             bool alt_key,
+                                             bool ctrl_key,

@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/resources/settings/languages_page/languages_page.html b/chrome/browser/resources/settings/languages_page/languages_page.html
+index 2b15dcb9423a..00608a53a6cb 100644
+--- a/chrome/browser/resources/settings/languages_page/languages_page.html
++++ b/chrome/browser/resources/settings/languages_page/languages_page.html
+@@ -217,18 +217,6 @@
+           >
+           </settings-toggle-button>
+         </iron-collapse>
+-        <settings-toggle-button
+-            id="enableSpellcheckingToggle"
+-            class="hr"
+-            label="$i18n{spellCheckTitle}"
+-            sub-label="[[getSpellCheckSubLabel_(spellCheckLanguages_)]]"
+-            pref="{{prefs.browser.enable_spellchecking}}"
+-            disabled="[[!spellCheckLanguages_.length]]"
+-        <if expr="chromeos">
+-            on-settings-boolean-control-change="onSpellcheckToggleChange_"
+-        </if>
+-        >
+-        </settings-toggle-button>
+ <if expr="_google_chrome or not is_macosx">
+         <iron-collapse id="spellCheckCollapse"
+             opened="[[prefs.browser.enable_spellchecking.value]]">

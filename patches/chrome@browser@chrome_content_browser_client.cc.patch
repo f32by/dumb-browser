@@ -1,0 +1,237 @@
+diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
+index 24f13de1d9d3..9364500a506a 100644
+--- a/chrome/browser/chrome_content_browser_client.cc
++++ b/chrome/browser/chrome_content_browser_client.cc
+@@ -113,17 +113,6 @@
+ #include "chrome/browser/renderer_host/pepper/chrome_browser_pepper_host_factory.h"
+ #include "chrome/browser/renderer_preferences_util.h"
+ #include "chrome/browser/resource_coordinator/background_tab_navigation_throttle.h"
+-#include "chrome/browser/safe_browsing/certificate_reporting_service.h"
+-#include "chrome/browser/safe_browsing/certificate_reporting_service_factory.h"
+-#include "chrome/browser/safe_browsing/chrome_enterprise_url_lookup_service.h"
+-#include "chrome/browser/safe_browsing/chrome_enterprise_url_lookup_service_factory.h"
+-#include "chrome/browser/safe_browsing/cloud_content_scanning/deep_scanning_utils.h"
+-#include "chrome/browser/safe_browsing/delayed_warning_navigation_throttle.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_navigation_throttle.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
+-#include "chrome/browser/safe_browsing/ui_manager.h"
+-#include "chrome/browser/safe_browsing/url_checker_delegate_impl.h"
+-#include "chrome/browser/safe_browsing/url_lookup_service_factory.h"
+ #include "chrome/browser/search/search.h"
+ #include "chrome/browser/sharing/sms/sms_remote_fetcher.h"
+ #include "chrome/browser/signin/chrome_signin_proxying_url_loader_factory.h"
+@@ -136,7 +125,6 @@
+ #include "chrome/browser/ssl/sct_reporting_service_factory.h"
+ #include "chrome/browser/ssl/ssl_client_auth_metrics.h"
+ #include "chrome/browser/ssl/ssl_client_certificate_selector.h"
+-#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
+ #include "chrome/browser/sync_file_system/local/sync_file_system_backend.h"
+ #include "chrome/browser/tab_contents/tab_util.h"
+ #include "chrome/browser/tracing/chrome_tracing_delegate.h"
+@@ -245,14 +233,6 @@
+ #include "components/previews/core/previews_features.h"
+ #include "components/previews/core/previews_switches.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/content/browser/browser_url_loader_throttle.h"
+-#include "components/safe_browsing/content/password_protection/password_protection_navigation_throttle.h"
+-#include "components/safe_browsing/core/browser/url_checker_delegate.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+-#include "components/safe_browsing/core/db/database_manager.h"
+-#include "components/safe_browsing/core/features.h"
+-#include "components/safe_browsing/core/realtime/policy_engine.h"
+-#include "components/safe_browsing/core/realtime/url_lookup_service.h"
+ #include "components/security_interstitials/content/insecure_form_navigation_throttle.h"
+ #include "components/security_interstitials/content/origin_policy_ui.h"
+ #include "components/security_interstitials/content/ssl_cert_reporter.h"
+@@ -262,7 +242,6 @@
+ #include "components/site_isolation/pref_names.h"
+ #include "components/site_isolation/preloaded_isolated_origins.h"
+ #include "components/site_isolation/site_isolation_policy.h"
+-#include "components/subresource_filter/content/browser/content_subresource_filter_throttle_manager.h"
+ #include "components/translate/core/common/translate_switches.h"
+ #include "components/ukm/app_source_url_recorder.h"
+ #include "components/ukm/content/source_url_recorder.h"
+@@ -315,6 +294,7 @@
+ #include "content/public/common/web_preferences.h"
+ #include "content/public/common/window_container_type.mojom-shared.h"
+ #include "device/vr/buildflags/buildflags.h"
++#include "dumb/browser/net/dumb_proxying_url_loader_factory.h"
+ #include "extensions/browser/process_map.h"
+ #include "extensions/buildflags/buildflags.h"
+ #include "google_apis/gaia/gaia_urls.h"
+@@ -872,30 +852,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
+   GetIOThreadApplicationLocale() = locale;
+ }
+ 
+-// An implementation of the SSLCertReporter interface used by
+-// SSLErrorHandler. Uses CertificateReportingService to send reports. The
+-// service handles queueing and re-sending of failed reports. Each certificate
+-// error creates a new instance of this class.
+-class CertificateReportingServiceCertReporter : public SSLCertReporter {
+- public:
+-  explicit CertificateReportingServiceCertReporter(
+-      content::WebContents* web_contents)
+-      : service_(CertificateReportingServiceFactory::GetForBrowserContext(
+-            web_contents->GetBrowserContext())) {}
+-  ~CertificateReportingServiceCertReporter() override {}
+-
+-  // SSLCertReporter implementation
+-  void ReportInvalidCertificateChain(
+-      const std::string& serialized_report) override {
+-    service_->Send(serialized_report);
+-  }
+-
+- private:
+-  CertificateReportingService* service_;
+-
+-  DISALLOW_COPY_AND_ASSIGN(CertificateReportingServiceCertReporter);
+-};
+-
+ #if BUILDFLAG(ENABLE_EXTENSIONS)
+ 
+ AppLoadedInTabSource ClassifyAppLoadedInTabSource(
+@@ -1409,7 +1365,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
+   InitNetworkContextsParentDirectory();
+ 
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-  safe_browsing_service_ = g_browser_process->safe_browsing_service();
+ }
+ 
+ bool ChromeContentBrowserClient::IsBrowserStartupComplete() {
+@@ -2231,7 +2186,7 @@ void ChromeContentBrowserClient::AppendExtraCommandLineSwitches(
+       // Disable client-side phishing detection in the renderer if it is
+       // disabled in the Profile preferences, or by command line flag, or by not
+       // being enabled on Android.
+-      if (!client_side_detection_enabled) {
++      if (true) {
+         command_line->AppendSwitch(
+             switches::kDisableClientSidePhishingDetection);
+       }
+@@ -4024,11 +3979,6 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+ #endif
+ 
+   content::WebContents* web_contents = handle->GetWebContents();
+-  if (auto* subresource_filter_client =
+-          ChromeSubresourceFilterClient::FromWebContents(web_contents)) {
+-    subresource_filter_client->MaybeAppendNavigationThrottles(handle,
+-                                                              &throttles);
+-  }
+ 
+ #if !defined(OS_ANDROID)
+   // BackgroundTabNavigationThrottle is used by TabManager, which is only
+@@ -4065,7 +4015,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+       base::BindRepeating(&MaybeTriggerSecurityInterstitialShownEvent));
+   throttles.push_back(std::make_unique<SSLErrorNavigationThrottle>(
+       handle,
+-      std::make_unique<CertificateReportingServiceCertReporter>(web_contents),
++      nullptr,
+       base::BindOnce(&HandleSSLErrorWrapper), base::BindOnce(&IsInHostedApp)));
+ 
+   throttles.push_back(std::make_unique<LoginNavigationThrottle>(handle));
+@@ -4083,14 +4033,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+ 
+ #endif
+ 
+-  throttles.push_back(
+-      std::make_unique<safe_browsing::SafeBrowsingNavigationThrottle>(handle));
+-
++#if BUILDFLAG(FULL_SAFE_BROWSING)
+   if (base::FeatureList::IsEnabled(safe_browsing::kDelayedWarnings)) {
+     throttles.push_back(
+         std::make_unique<safe_browsing::DelayedWarningNavigationThrottle>(
+             handle));
+   }
++#endif
+ 
+ #if defined(OS_WIN) || defined(OS_MAC) || \
+     (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+@@ -4723,6 +4672,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
+     network::mojom::URLLoaderFactoryOverridePtr* factory_override) {
+   bool use_proxy = false;
+ 
++  use_proxy = DumbProxyingURLLoaderFactory::MaybeProxyRequest(
++      browser_context, frame,
++      type == URLLoaderFactoryType::kNavigation ? -1 : render_process_id,
++      factory_receiver);
++
+ #if BUILDFLAG(ENABLE_EXTENSIONS)
+   auto* web_request_api =
+       extensions::BrowserContextKeyedAPIFactory<extensions::WebRequestAPI>::Get(
+@@ -5165,54 +5119,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
+   return ui::NativeTheme::GetInstanceForWeb();
+ }
+ 
+-scoped_refptr<safe_browsing::UrlCheckerDelegate>
+-ChromeContentBrowserClient::GetSafeBrowsingUrlCheckerDelegate(
+-    bool safe_browsing_enabled_for_profile,
+-    bool should_check_on_sb_disabled) {
+-  DCHECK_CURRENTLY_ON(BrowserThread::IO);
+-
+-  // Should not bypass safe browsing check if the check is for enterprise
+-  // lookup.
+-  if (!safe_browsing_enabled_for_profile && !should_check_on_sb_disabled)
+-    return nullptr;
+-
+-  // |safe_browsing_service_| may be unavailable in tests.
+-  if (safe_browsing_service_ && !safe_browsing_url_checker_delegate_) {
+-    safe_browsing_url_checker_delegate_ =
+-        base::MakeRefCounted<safe_browsing::UrlCheckerDelegateImpl>(
+-            safe_browsing_service_->database_manager(),
+-            safe_browsing_service_->ui_manager());
+-  }
+-
+-  return safe_browsing_url_checker_delegate_;
+-}
+-
+-safe_browsing::RealTimeUrlLookupServiceBase*
+-ChromeContentBrowserClient::GetUrlLookupService(
+-    content::BrowserContext* browser_context,
+-    bool is_enterprise_lookup_enabled,
+-    bool is_consumer_lookup_enabled) {
+-  // |safe_browsing_service_| may be unavailable in tests.
+-  if (!safe_browsing_service_) {
+-    return nullptr;
+-  }
+-
+-  Profile* profile = Profile::FromBrowserContext(browser_context);
+-
+-#if BUILDFLAG(SAFE_BROWSING_DB_LOCAL)
+-  if (is_enterprise_lookup_enabled) {
+-    return safe_browsing::ChromeEnterpriseRealTimeUrlLookupServiceFactory::
+-        GetForProfile(profile);
+-  }
+-#endif
+-
+-  if (is_consumer_lookup_enabled) {
+-    return safe_browsing::RealTimeUrlLookupServiceFactory::GetForProfile(
+-        profile);
+-  }
+-  return nullptr;
+-}
+-
+ base::Optional<std::string>
+ ChromeContentBrowserClient::GetOriginPolicyErrorPage(
+     network::OriginPolicyState error_reason,
+@@ -5612,22 +5518,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
+     const content::RenderFrameHost* frame_host,
+     bool user_gesture,
+     content::NavigationDownloadPolicy* download_policy) {
+-  const ChromeSubresourceFilterClient* client =
+-      ChromeSubresourceFilterClient::FromWebContents(web_contents);
+-  if (client && client->GetThrottleManager()->IsFrameTaggedAsAd(frame_host)) {
+-    download_policy->SetAllowed(content::NavigationDownloadType::kAdFrame);
+-    if (!user_gesture) {
+-      if (base::FeatureList::IsEnabled(
+-              blink::features::
+-                  kBlockingDownloadsInAdFrameWithoutUserActivation)) {
+-        download_policy->SetDisallowed(
+-            content::NavigationDownloadType::kAdFrameNoGesture);
+-      } else {
+-        download_policy->SetAllowed(
+-            content::NavigationDownloadType::kAdFrameNoGesture);
+-      }
+-    }
+-  }
+ }
+ 
+ bool ChromeContentBrowserClient::IsBluetoothScanningBlocked(

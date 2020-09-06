@@ -1,0 +1,29 @@
+diff --git a/chrome/browser/ui/search/search_ipc_router.h b/chrome/browser/ui/search/search_ipc_router.h
+index c356a3c04e50..2d18a290eb45 100644
+--- a/chrome/browser/ui/search/search_ipc_router.h
++++ b/chrome/browser/ui/search/search_ipc_router.h
+@@ -164,8 +164,6 @@ class SearchIPCRouter : public content::WebContentsObserver,
+ 
+     virtual void LogCharTypedToRepaintLatency(uint32_t latency_ms) = 0;
+ 
+-    virtual void BlocklistPromo(const std::string& promo_id) = 0;
+-
+     virtual void OpenExtensionsPage(double button,
+                                     bool alt_key,
+                                     bool ctrl_key,
+@@ -230,7 +228,6 @@ class SearchIPCRouter : public content::WebContentsObserver,
+     virtual bool ShouldProcessQueryAutocomplete(bool is_active_tab) = 0;
+     virtual bool ShouldProcessStopAutocomplete() = 0;
+     virtual bool ShouldProcessLogCharTypedToRepaintLatency() = 0;
+-    virtual bool ShouldProcessBlocklistPromo() = 0;
+     virtual bool ShouldProcessOpenExtensionsPage() = 0;
+     virtual bool ShouldProcessOpenAutocompleteMatch(bool is_active_tab) = 0;
+     virtual bool ShouldProcessDeleteAutocompleteMatch() = 0;
+@@ -352,7 +349,6 @@ class SearchIPCRouter : public content::WebContentsObserver,
+                          bool prevent_inline_autocomplete) override;
+   void StopAutocomplete(bool clear_result) override;
+   void LogCharTypedToRepaintLatency(uint32_t latency_ms) override;
+-  void BlocklistPromo(const std::string& promo_id) override;
+   void OpenExtensionsPage(double button,
+                           bool alt_key,
+                           bool ctrl_key,

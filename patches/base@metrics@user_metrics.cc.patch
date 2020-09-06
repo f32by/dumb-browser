@@ -1,0 +1,28 @@
+diff --git a/base/metrics/user_metrics.cc b/base/metrics/user_metrics.cc
+index 24a44515e605..60bed214c430 100644
+--- a/base/metrics/user_metrics.cc
++++ b/base/metrics/user_metrics.cc
+@@ -40,6 +40,7 @@ void RecordComputedActionSince(const std::string& action,
+ }
+ 
+ void RecordComputedActionAt(const std::string& action, TimeTicks action_time) {
++  return;
+   TRACE_EVENT_INSTANT1("ui", "UserEvent", TRACE_EVENT_SCOPE_GLOBAL, "action",
+                        action);
+   if (!g_task_runner.Get()) {
+@@ -59,6 +60,7 @@ void RecordComputedActionAt(const std::string& action, TimeTicks action_time) {
+ }
+ 
+ void AddActionCallback(const ActionCallback& callback) {
++  return;
+   // Only allow adding a callback if the task runner is set.
+   DCHECK(g_task_runner.Get());
+   DCHECK(g_task_runner.Get()->BelongsToCurrentThread());
+@@ -66,6 +68,7 @@ void AddActionCallback(const ActionCallback& callback) {
+ }
+ 
+ void RemoveActionCallback(const ActionCallback& callback) {
++  return;
+   DCHECK(g_task_runner.Get());
+   DCHECK(g_task_runner.Get()->BelongsToCurrentThread());
+   std::vector<ActionCallback>* callbacks = g_callbacks.Pointer();

@@ -1,0 +1,65 @@
+diff --git a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
+index c66ba99a789d..03f78817be00 100644
+--- a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
++++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
+@@ -34,7 +34,6 @@
+ #include "chrome/browser/plugins/chrome_plugin_service_filter.h"
+ #include "chrome/browser/plugins/plugin_utils.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
+ #include "chrome/browser/ui/collected_cookies_infobar_delegate.h"
+ #include "chrome/browser/ui/content_settings/content_setting_bubble_model_delegate.h"
+ #include "chrome/common/chrome_features.h"
+@@ -59,8 +58,6 @@
+ #include "components/permissions/permissions_client.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/strings/grit/components_strings.h"
+-#include "components/subresource_filter/core/browser/subresource_filter_constants.h"
+-#include "components/subresource_filter/core/browser/subresource_filter_features.h"
+ #include "components/url_formatter/elide_url.h"
+ #include "components/vector_icons/vector_icons.h"
+ #include "content/public/browser/notification_service.h"
+@@ -374,7 +371,6 @@ void ContentSettingMixedScriptBubbleModel::OnLearnMoreClicked() {
+ }
+ 
+ void ContentSettingMixedScriptBubbleModel::OnCustomLinkClicked() {
+-  DCHECK(rappor_service());
+   MixedContentSettingsTabHelper* mixed_content_settings =
+       MixedContentSettingsTabHelper::FromWebContents(web_contents());
+   if (mixed_content_settings) {
+@@ -1385,8 +1381,6 @@ ContentSettingSubresourceFilterBubbleModel::
+   SetManageText();
+   set_done_button_text(l10n_util::GetStringUTF16(IDS_OK));
+   set_show_learn_more(true);
+-  ChromeSubresourceFilterClient::LogAction(
+-      SubresourceFilterAction::kDetailsShown);
+ }
+ 
+ ContentSettingSubresourceFilterBubbleModel::
+@@ -1414,16 +1408,10 @@ void ContentSettingSubresourceFilterBubbleModel::OnManageCheckboxChecked(
+ 
+ void ContentSettingSubresourceFilterBubbleModel::OnLearnMoreClicked() {
+   DCHECK(delegate());
+-  ChromeSubresourceFilterClient::LogAction(
+-      SubresourceFilterAction::kClickedLearnMore);
+   delegate()->ShowLearnMorePage(ContentSettingsType::ADS);
+ }
+ 
+ void ContentSettingSubresourceFilterBubbleModel::CommitChanges() {
+-  if (is_checked_) {
+-    ChromeSubresourceFilterClient::FromWebContents(web_contents())
+-        ->OnReloadRequested();
+-  }
+ }
+ 
+ ContentSettingSubresourceFilterBubbleModel*
+@@ -1742,8 +1730,7 @@ ContentSettingBubbleModel::ContentSettingBubbleModel(Delegate* delegate,
+                                                      WebContents* web_contents)
+     : web_contents_(web_contents),
+       owner_(nullptr),
+-      delegate_(delegate),
+-      rappor_service_(g_browser_process->rappor_service()) {
++      delegate_(delegate) {
+   DCHECK(web_contents_);
+ }
+ 

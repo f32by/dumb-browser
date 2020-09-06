@@ -1,0 +1,12 @@
+diff --git a/components/metrics/persistent_histograms.cc b/components/metrics/persistent_histograms.cc
+index e77f48b06ee5..e792d9046b61 100644
+--- a/components/metrics/persistent_histograms.cc
++++ b/components/metrics/persistent_histograms.cc
+@@ -85,6 +85,7 @@ const char kBrowserMetricsName[] = "BrowserMetrics";
+ // Check for feature enabling the use of persistent histogram storage and
+ // enable the global allocator if so.
+ void InstantiatePersistentHistograms(const base::FilePath& metrics_dir) {
++  return;
+   // Create a directory for storing completed metrics files. Files in this
+   // directory must have embedded system profiles. If the directory can't be
+   // created, the file will just be deleted below.

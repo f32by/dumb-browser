@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/mac/mac_startup_profiler.cc b/chrome/browser/mac/mac_startup_profiler.cc
+index 2ae7fe610155..8d5205350168 100644
+--- a/chrome/browser/mac/mac_startup_profiler.cc
++++ b/chrome/browser/mac/mac_startup_profiler.cc
+@@ -24,6 +24,7 @@ void MacStartupProfiler::Profile(Location location) {
+ }
+ 
+ void MacStartupProfiler::RecordMetrics() {
++  return;
+   const base::TimeTicks main_entry_ticks =
+       startup_metric_utils::MainEntryPointTicks();
+   DCHECK(!main_entry_ticks.is_null());

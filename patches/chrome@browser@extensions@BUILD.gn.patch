@@ -1,0 +1,86 @@
+diff --git a/chrome/browser/extensions/BUILD.gn b/chrome/browser/extensions/BUILD.gn
+index e0cc4ef2067e..6ffe8c1d8ca4 100644
+--- a/chrome/browser/extensions/BUILD.gn
++++ b/chrome/browser/extensions/BUILD.gn
+@@ -302,14 +302,6 @@ static_library("extensions") {
+     "api/resources_private/resources_private_api.h",
+     "api/runtime/chrome_runtime_api_delegate.cc",
+     "api/runtime/chrome_runtime_api_delegate.h",
+-    "api/safe_browsing_private/safe_browsing_private_api.cc",
+-    "api/safe_browsing_private/safe_browsing_private_api.h",
+-    "api/safe_browsing_private/safe_browsing_private_event_router.cc",
+-    "api/safe_browsing_private/safe_browsing_private_event_router.h",
+-    "api/safe_browsing_private/safe_browsing_private_event_router_factory.cc",
+-    "api/safe_browsing_private/safe_browsing_private_event_router_factory.h",
+-    "api/safe_browsing_private/safe_browsing_util.cc",
+-    "api/safe_browsing_private/safe_browsing_util.h",
+     "api/search/search_api.cc",
+     "api/search/search_api.h",
+     "api/sessions/session_id.cc",
+@@ -342,8 +334,6 @@ static_library("extensions") {
+     "api/signed_in_devices/signed_in_devices_api.h",
+     "api/signed_in_devices/signed_in_devices_manager.cc",
+     "api/signed_in_devices/signed_in_devices_manager.h",
+-    "api/spellcheck/spellcheck_api.cc",
+-    "api/spellcheck/spellcheck_api.h",
+     "api/storage/managed_value_store_cache.cc",
+     "api/storage/managed_value_store_cache.h",
+     "api/storage/policy_value_store.cc",
+@@ -729,9 +719,6 @@ static_library("extensions") {
+ 
+     # TODO(crbug.com/1065748): Remove this circular dependency.
+     "//chrome/browser/web_applications/extensions",
+-
+-    # TODO(crbug/925153): Remove this circular dependency.
+-    "//chrome/browser/safe_browsing",
+   ]
+ 
+   # Since browser and browser_extensions actually depend on each other,
+@@ -743,9 +730,6 @@ static_library("extensions") {
+     "//chrome/browser/extensions/api:api_registration",
+     "//chrome/common",
+     "//chrome/common/extensions/api",
+-    "//components/safe_browsing/core:csd_proto",
+-    "//components/safe_browsing/core:webprotect_proto",
+-    "//components/safe_browsing/core/db:util",
+     "//components/signin/core/browser",
+     "//content/public/browser",
+     "//mojo/public/cpp/bindings",
+@@ -773,14 +757,12 @@ static_library("extensions") {
+     "//chrome/browser/nearby_sharing/common",
+     "//chrome/browser/resource_coordinator:intervention_policy_database_proto",
+     "//chrome/browser/resource_coordinator:mojo_bindings",
+-    "//chrome/browser/safe_browsing",
+     "//chrome/browser/web_applications",
+     "//chrome/browser/web_applications/components",
+ 
+     # TODO(crbug.com/1065748): Remove this dependency:
+     "//chrome/browser/web_applications/extensions",
+     "//chrome/common/extensions/api:extensions_features",
+-    "//chrome/common/safe_browsing:proto",
+     "//chrome/services/removable_storage_writer/public/mojom",
+     "//components/autofill/content/browser",
+     "//components/bookmarks/browser",
+@@ -826,14 +808,7 @@ static_library("extensions") {
+     "//components/pref_registry",
+     "//components/prerender/browser",
+     "//components/proxy_config",
+-    "//components/rappor",
+     "//components/resources",
+-    "//components/safe_browsing:buildflags",
+-    "//components/safe_browsing/content/web_ui:web_ui",
+-    "//components/safe_browsing/core:csd_proto",
+-    "//components/safe_browsing/core:features",
+-    "//components/safe_browsing/core/common:safe_browsing_prefs",
+-    "//components/safe_browsing/core/db:database_manager",
+     "//components/search_engines",
+     "//components/services/app_service/public/mojom",
+     "//components/services/patch/content",
+@@ -841,7 +816,6 @@ static_library("extensions") {
+     "//components/services/unzip/public/cpp",
+     "//components/sessions",
+     "//components/signin/public/identity_manager",
+-    "//components/spellcheck/browser",
+     "//components/storage_monitor",
+     "//components/strings",
+     "//components/sync",

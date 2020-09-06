@@ -1,0 +1,14 @@
+diff --git a/net/http/http_cache_transaction.cc b/net/http/http_cache_transaction.cc
+index b89b3d79f925..63796adbca90 100644
+--- a/net/http/http_cache_transaction.cc
++++ b/net/http/http_cache_transaction.cc
+@@ -3615,8 +3615,7 @@ bool HttpCache::Transaction::ShouldDisableCaching(
+     static constexpr int kMaxContentSize = 4096 * 4;
+     std::string mime_type;
+     base::CompareCase insensitive_ascii = base::CompareCase::INSENSITIVE_ASCII;
+-    if (headers->GetContentLength() > kMaxContentSize &&
+-        headers->response_code() != 304 && headers->GetMimeType(&mime_type) &&
++    if (headers->response_code() != 304 && headers->GetMimeType(&mime_type) &&
+         (base::StartsWith(mime_type, "video", insensitive_ascii) ||
+          base::StartsWith(mime_type, "audio", insensitive_ascii))) {
+       disable_caching = true;

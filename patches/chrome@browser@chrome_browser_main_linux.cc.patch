@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/chrome_browser_main_linux.cc b/chrome/browser/chrome_browser_main_linux.cc
+index f6ce26c76930..f27ea4daf3ed 100644
+--- a/chrome/browser/chrome_browser_main_linux.cc
++++ b/chrome/browser/chrome_browser_main_linux.cc
+@@ -96,8 +96,6 @@ void ChromeBrowserMainPartsLinux::PostProfileInit() {
+   } else {
+     breakpad_registered = breakpad::IsCrashReporterEnabled();
+   }
+-  g_browser_process->metrics_service()->RecordBreakpadRegistration(
+-      breakpad_registered);
+ }
+ 
+ void ChromeBrowserMainPartsLinux::PostMainMessageLoopStart() {

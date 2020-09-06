@@ -1,0 +1,55 @@
+diff --git a/chrome/renderer/url_loader_throttle_provider_impl.cc b/chrome/renderer/url_loader_throttle_provider_impl.cc
+index d179bc04f0b5..c4a1f46467e8 100644
+--- a/chrome/renderer/url_loader_throttle_provider_impl.cc
++++ b/chrome/renderer/url_loader_throttle_provider_impl.cc
+@@ -20,8 +20,6 @@
+ #include "chrome/renderer/subresource_redirect/subresource_redirect_params.h"
+ #include "chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.h"
+ #include "components/prerender/renderer/prerender_helper.h"
+-#include "components/safe_browsing/content/renderer/renderer_url_loader_throttle.h"
+-#include "components/safe_browsing/core/features.h"
+ #include "content/public/common/content_features.h"
+ #include "content/public/renderer/render_frame.h"
+ #include "content/public/renderer/render_thread.h"
+@@ -95,7 +93,6 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
+     : type_(type),
+       chrome_content_renderer_client_(chrome_content_renderer_client) {
+   DETACH_FROM_THREAD(thread_checker_);
+-  broker->GetInterface(safe_browsing_remote_.InitWithNewPipeAndPassReceiver());
+ }
+ 
+ URLLoaderThrottleProviderImpl::~URLLoaderThrottleProviderImpl() {
+@@ -107,18 +104,12 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
+     : type_(other.type_),
+       chrome_content_renderer_client_(other.chrome_content_renderer_client_) {
+   DETACH_FROM_THREAD(thread_checker_);
+-  if (other.safe_browsing_) {
+-    other.safe_browsing_->Clone(
+-        safe_browsing_remote_.InitWithNewPipeAndPassReceiver());
+-  }
+   // An ad_delay_factory_ is created, rather than cloning the existing one.
+ }
+ 
+ std::unique_ptr<content::URLLoaderThrottleProvider>
+ URLLoaderThrottleProviderImpl::Clone() {
+   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+-  if (safe_browsing_remote_)
+-    safe_browsing_.Bind(std::move(safe_browsing_remote_));
+   return base::WrapUnique(new URLLoaderThrottleProviderImpl(*this));
+ }
+ 
+@@ -141,14 +132,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+   DCHECK(!is_frame_resource ||
+          type_ == content::URLLoaderThrottleProviderType::kFrame);
+ 
+-  if (!is_frame_resource) {
+-    if (safe_browsing_remote_)
+-      safe_browsing_.Bind(std::move(safe_browsing_remote_));
+-    throttles.push_back(
+-        std::make_unique<safe_browsing::RendererURLLoaderThrottle>(
+-            safe_browsing_.get(), render_frame_id));
+-  }
+-
+   if (type_ == content::URLLoaderThrottleProviderType::kFrame &&
+       !is_frame_resource) {
+     auto throttle =

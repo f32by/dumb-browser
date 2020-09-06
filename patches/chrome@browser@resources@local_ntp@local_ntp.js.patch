@@ -1,0 +1,277 @@
+diff --git a/chrome/browser/resources/local_ntp/local_ntp.js b/chrome/browser/resources/local_ntp/local_ntp.js
+index d9d58e1ddef9..ac740d390488 100644
+--- a/chrome/browser/resources/local_ntp/local_ntp.js
++++ b/chrome/browser/resources/local_ntp/local_ntp.js
+@@ -70,7 +70,6 @@ const CLASSES = {
+   DIM: 'dim',
+   DISMISSABLE: 'dismissable',
+   DISMISS_ICON: 'dismiss-icon',
+-  DISMISS_PROMO: 'dismiss-promo',
+   // Extended and elevated style for customization entry point.
+   ENTRY_POINT_ENHANCED: 'ep-enhanced',
+   FAKEBOX_FOCUS: 'fakebox-focused',  // Applies focus styles to the fakebox
+@@ -141,7 +140,6 @@ const IDS = {
+   NOTIFICATION_MESSAGE: 'mv-msg',
+   NTP_CONTENTS: 'ntp-contents',
+   OGB: 'one-google',
+-  PROMO: 'promo',
+   REALBOX: 'realbox',
+   REALBOX_ICON: 'realbox-icon',
+   REALBOX_INPUT_WRAPPER: 'realbox-input-wrapper',
+@@ -171,11 +169,6 @@ const LOG_TYPE = {
+   NTP_CUSTOMIZE_SHORTCUT_CANCEL: 54,
+   // 'Done' was clicked in the 'Edit shortcut' dialog.
+   NTP_CUSTOMIZE_SHORTCUT_DONE: 55,
+-
+-  // A middle slot promo was shown.
+-  NTP_MIDDLE_SLOT_PROMO_SHOWN: 60,
+-  // A promo link was clicked.
+-  NTP_MIDDLE_SLOT_PROMO_LINK_CLICKED: 61,
+ };
+ 
+ /**
+@@ -664,20 +657,6 @@ function floatDownNotification(notification, notificationContainer, showPromo) {
+     currNotification = null;
+   }
+ 
+-  if (showPromo) {
+-    // Show middle-slot promo if one is present.
+-    const promo = $(IDS.PROMO);
+-    if (promo) {
+-      promo.classList.remove(CLASSES.HIDE_NOTIFICATION);
+-      // Timeout is required for the "float" transition to work. Modifying the
+-      // "display" property prevents transitions from activating for a brief
+-      // period of time.
+-      window.setTimeout(() => {
+-        promo.classList.remove(CLASSES.FLOAT_DOWN);
+-      }, DISPLAY_TIMEOUT);
+-    }
+-  }
+-
+   // Reset notification visibility once the animation is complete.
+   notificationContainer.addEventListener('transitionend', (event) => {
+     // Blur the hidden items.
+@@ -720,19 +699,6 @@ function floatUpNotification(notification, notificationContainer) {
+     delayedHideNotification = null;
+   }
+ 
+-  // Hide middle-slot promo if one is present.
+-  const promo = $(IDS.PROMO);
+-  if (promo) {
+-    promo.classList.add(CLASSES.FLOAT_DOWN);
+-    // Prevent keyboard focus once the promo is hidden.
+-    promo.addEventListener('transitionend', (event) => {
+-      if (event.propertyName === 'bottom' &&
+-          promo.classList.contains(CLASSES.FLOAT_DOWN)) {
+-        promo.classList.add(CLASSES.HIDE_NOTIFICATION);
+-      }
+-    }, {once: true});
+-  }
+-
+   notification.classList.remove(CLASSES.HIDE_NOTIFICATION);
+   // Timeout is required for the "float" transition to work. Modifying the
+   // "display" property prevents transitions from activating for a brief period
+@@ -802,9 +768,6 @@ function handlePostMessage(event) {
+       if ($(IDS.SUGGESTIONS)) {
+         $(IDS.SUGGESTIONS).style.visibility = 'visible';
+       }
+-      if ($(IDS.PROMO)) {
+-        showPromoIfNotOverlappingAndTrackResizes();
+-      }
+       if (customLinksEnabled()) {
+         $(customize.IDS.CUSTOM_LINKS_RESTORE_DEFAULT)
+             .classList.toggle(
+@@ -848,7 +811,7 @@ function handlePostMessage(event) {
+ /** Hides the Most Visited pop-up notification. */
+ function hideNotification() {
+   floatDownNotification(
+-      $(IDS.NOTIFICATION), $(IDS.NOTIFICATION_CONTAINER), /*showPromo=*/ true);
++      $(IDS.NOTIFICATION), $(IDS.NOTIFICATION_CONTAINER), /*showPromo=*/ false);
+ }
+ 
+ /**
+@@ -1057,67 +1020,6 @@ function injectOneGoogleBar(ogb) {
+   ntpApiHandle.logEvent(LOG_TYPE.NTP_ONE_GOOGLE_BAR_SHOWN);
+ }
+ 
+-/**
+- * Injects a middle-slot promo into the page. Called asynchronously, so that it
+- * doesn't block the main page load.
+- */
+-function injectPromo(promo) {
+-  if (!promo.promoHtml) {
+-    if ($(IDS.PROMO)) {
+-      $(IDS.PROMO).remove();
+-    }
+-    return;
+-  }
+-
+-  const promoContainer = document.createElement('div');
+-  promoContainer.id = IDS.PROMO;
+-  promoContainer.innerHTML += promo.promoHtml;
+-  $(IDS.NTP_CONTENTS).appendChild(promoContainer);
+-
+-  if (promo.promoLogUrl) {
+-    navigator.sendBeacon(promo.promoLogUrl);
+-  }
+-
+-  ntpApiHandle.logEvent(LOG_TYPE.NTP_MIDDLE_SLOT_PROMO_SHOWN);
+-
+-  const link = promoContainer.querySelector('a');
+-  if (link) {
+-    link.onclick = e => {
+-      const url = new URL(link.href);
+-      if (promo.canOpenExtensionsPage && url.origin == 'chrome://extensions') {
+-        ntpApiHandle.openExtensionsPage(
+-            e.button, e.altKey, e.ctrlKey, e.metaKey, e.shiftKey);
+-        e.preventDefault();
+-      }
+-      ntpApiHandle.logEvent(LOG_TYPE.NTP_MIDDLE_SLOT_PROMO_LINK_CLICKED);
+-    };
+-  }
+-
+-  if (promo.promoId) {
+-    const icon = document.createElement('button');
+-    icon.classList.add(CLASSES.DISMISS_ICON);
+-
+-    icon.title = configData.translatedStrings.dismissPromo;
+-    icon.onclick = e => {
+-      ntpApiHandle.blocklistPromo(promo.promoId);
+-      promoContainer.remove();
+-      window.removeEventListener('resize', showPromoIfNotOverlapping);
+-    };
+-
+-    const dismiss = document.createElement('div');
+-    dismiss.classList.add(CLASSES.DISMISS_PROMO);
+-    dismiss.appendChild(icon);
+-
+-    promoContainer.querySelector('div').appendChild(dismiss);
+-    promoContainer.classList.add(CLASSES.DISMISSABLE);
+-  }
+-
+-  // The the MV tiles are already loaded show the promo immediately.
+-  if (tilesAreLoaded) {
+-    showPromoIfNotOverlappingAndTrackResizes();
+-  }
+-}
+-
+ /**
+  * Injects search suggestions into the page. Called *synchronously* with cached
+  * data as not to cause shifting of the most visited tiles.
+@@ -1156,71 +1058,6 @@ function isFakeboxFocused() {
+       document.body.classList.contains(CLASSES.FAKEBOX_DRAG_FOCUS);
+ }
+ 
+-/** @return {boolean} */
+-function isPromoOverlapping() {
+-  const MARGIN = 10;
+-
+-  /**
+-   * @param {string} id
+-   * @return {DOMRect}
+-   */
+-  const rect = id => $(id).getBoundingClientRect();
+-
+-  const promoRect = $(IDS.PROMO).querySelector('div').getBoundingClientRect();
+-
+-  if (promoRect.top - MARGIN <= rect(IDS.USER_CONTENT).bottom) {
+-    return true;
+-  }
+-
+-  if (window.chrome.embeddedSearch.searchBox.rtl) {
+-    const attributionRect = rect(IDS.ATTRIBUTION);
+-    if (attributionRect.width > 0 &&
+-        promoRect.left - MARGIN <= attributionRect.right) {
+-      return true;
+-    }
+-
+-    const editBgRect = rect(customize.IDS.EDIT_BG);
+-    assert(editBgRect.width > 0);
+-    if (promoRect.left - 2 * MARGIN <= editBgRect.right) {
+-      return true;
+-    }
+-
+-    const customAttributionsRect = rect(customize.IDS.ATTRIBUTIONS);
+-    if (customAttributionsRect.width > 0 &&
+-        promoRect.right + MARGIN >= customAttributionsRect.left) {
+-      return true;
+-    }
+-  } else {
+-    const customAttributionsRect = rect(customize.IDS.ATTRIBUTIONS);
+-    if (customAttributionsRect.width > 0 &&
+-        promoRect.left - MARGIN <= customAttributionsRect.right) {
+-      return true;
+-    }
+-
+-    const editBgRect = rect(customize.IDS.EDIT_BG);
+-    assert(editBgRect.width > 0);
+-    if (promoRect.right + 2 * MARGIN >= editBgRect.left) {
+-      return true;
+-    }
+-
+-    const attributionEl = $(IDS.ATTRIBUTION);
+-    const attributionRect = attributionEl.getBoundingClientRect();
+-    if (attributionRect.width > 0) {
+-      const attributionOnLeft =
+-          attributionEl.classList.contains(CLASSES.LEFT_ALIGN_ATTRIBUTION);
+-      if (attributionOnLeft) {
+-        if (promoRect.left - MARGIN <= attributionRect.right) {
+-          return true;
+-        }
+-      } else if (promoRect.right + MARGIN >= attributionRect.left) {
+-        return true;
+-      }
+-    }
+-  }
+-
+-  return false;
+-}
+-
+ /** Binds event listeners. */
+ function listen() {
+   document.addEventListener('DOMContentLoaded', init);
+@@ -1571,9 +1408,6 @@ function onThemeChange() {
+   renderTheme();
+   renderOneGoogleBarTheme();
+   sendNtpThemeToMostVisitedIframe();
+-  if ($(IDS.PROMO)) {
+-    showPromoIfNotOverlapping();
+-  }
+ }
+ 
+ /**
+@@ -2097,15 +1931,6 @@ function requestAndInsertGoogleResources() {
+       injectOneGoogleBar(og);
+     };
+   }
+-  if (!$('promo-loader')) {
+-    const promoScript = document.createElement('script');
+-    promoScript.id = 'promo-loader';
+-    promoScript.src = 'chrome-search://local-ntp/promo.js';
+-    document.body.appendChild(promoScript);
+-    promoScript.onload = function() {
+-      injectPromo(promo);
+-    };
+-  }
+ }
+ 
+ /**
+@@ -2300,18 +2125,6 @@ function showNotification(msg) {
+   $(IDS.UNDO_LINK).focus();
+ }
+ 
+-function showPromoIfNotOverlapping() {
+-  $(IDS.PROMO).style.visibility = isPromoOverlapping() ? 'hidden' : 'visible';
+-}
+-
+-function showPromoIfNotOverlappingAndTrackResizes() {
+-  showPromoIfNotOverlapping();
+-  // The removal before addition is to ensure only 1 event listener is ever
+-  // active at the same time.
+-  window.removeEventListener('resize', showPromoIfNotOverlapping);
+-  window.addEventListener('resize', showPromoIfNotOverlapping);
+-}
+-
+ /**
+  * @param {string} text
+  * @param {!Array<string>} classes

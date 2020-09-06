@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/search/search_tab_helper.cc b/chrome/browser/ui/search/search_tab_helper.cc
+index a8985d166eaf..9fd0172f3ccd 100644
+--- a/chrome/browser/ui/search/search_tab_helper.cc
++++ b/chrome/browser/ui/search/search_tab_helper.cc
+@@ -770,16 +770,6 @@ void SearchTabHelper::LogCharTypedToRepaintLatency(uint32_t latency_ms) {
+                       base::TimeDelta::FromMillisecondsD(latency_ms));
+ }
+ 
+-void SearchTabHelper::BlocklistPromo(const std::string& promo_id) {
+-  auto* promo_service = PromoServiceFactory::GetForProfile(profile());
+-  if (!promo_service) {
+-    NOTREACHED();
+-    return;
+-  }
+-
+-  promo_service->BlocklistPromo(promo_id);
+-}
+-
+ void SearchTabHelper::OpenExtensionsPage(double button,
+                                          bool alt_key,
+                                          bool ctrl_key,

@@ -1,0 +1,35 @@
+diff --git a/components/page_load_metrics/renderer/metrics_render_frame_observer.cc b/components/page_load_metrics/renderer/metrics_render_frame_observer.cc
+index 6b143f2c557c..50a36d810078 100644
+--- a/components/page_load_metrics/renderer/metrics_render_frame_observer.cc
++++ b/components/page_load_metrics/renderer/metrics_render_frame_observer.cc
+@@ -96,8 +96,7 @@ class MojoPageTimingSender : public PageTimingSender {
+ 
+ MetricsRenderFrameObserver::MetricsRenderFrameObserver(
+     content::RenderFrame* render_frame)
+-    : content::RenderFrameObserver(render_frame),
+-      scoped_ad_resource_observer_(this) {}
++    : content::RenderFrameObserver(render_frame) {}
+ 
+ MetricsRenderFrameObserver::~MetricsRenderFrameObserver() {
+   if (page_timing_metrics_sender_)
+@@ -337,20 +336,6 @@ void MetricsRenderFrameObserver::DidCommitProvisionalLoad(
+       std::move(provisional_frame_resource_data_use_));
+ }
+ 
+-void MetricsRenderFrameObserver::SetAdResourceTracker(
+-    subresource_filter::AdResourceTracker* ad_resource_tracker) {
+-  // Remove all sources and set a new source for the observer.
+-  scoped_ad_resource_observer_.RemoveAll();
+-  scoped_ad_resource_observer_.Add(ad_resource_tracker);
+-}
+-
+-void MetricsRenderFrameObserver::OnAdResourceTrackerGoingAway() {
+-  scoped_ad_resource_observer_.RemoveAll();
+-}
+-
+-void MetricsRenderFrameObserver::OnAdResourceObserved(int request_id) {
+-  ad_request_ids_.insert(request_id);
+-}
+ 
+ void MetricsRenderFrameObserver::OnMainFrameIntersectionChanged(
+     const blink::WebRect& main_frame_intersection) {

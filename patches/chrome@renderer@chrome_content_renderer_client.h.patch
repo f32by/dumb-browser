@@ -1,0 +1,24 @@
+diff --git a/chrome/renderer/chrome_content_renderer_client.h b/chrome/renderer/chrome_content_renderer_client.h
+index 066a1a0690c0..c2b32278db73 100644
+--- a/chrome/renderer/chrome_content_renderer_client.h
++++ b/chrome/renderer/chrome_content_renderer_client.h
+@@ -70,10 +70,6 @@ namespace extensions {
+ class Extension;
+ }
+ 
+-namespace subresource_filter {
+-class UnverifiedRulesetDealer;
+-}
+-
+ namespace web_cache {
+ class WebCacheImpl;
+ }
+@@ -276,8 +272,6 @@ class ChromeContentRendererClient
+ #if BUILDFLAG(ENABLE_SPELLCHECK)
+   std::unique_ptr<SpellCheck> spellcheck_;
+ #endif
+-  std::unique_ptr<subresource_filter::UnverifiedRulesetDealer>
+-      subresource_filter_ruleset_dealer_;
+ #if BUILDFLAG(ENABLE_PRINT_PREVIEW)
+   std::unique_ptr<ChromePDFPrintClient> pdf_print_client_;
+ #endif

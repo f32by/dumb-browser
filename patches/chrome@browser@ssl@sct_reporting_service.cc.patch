@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/ssl/sct_reporting_service.cc b/chrome/browser/ssl/sct_reporting_service.cc
+index 88e0b18ea28c..367a5a7dff22 100644
+--- a/chrome/browser/ssl/sct_reporting_service.cc
++++ b/chrome/browser/ssl/sct_reporting_service.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/safe_browsing/safe_browsing_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "content/public/browser/network_service_instance.h"
+ #include "content/public/browser/storage_partition.h"
+ #include "services/network/public/mojom/network_context.mojom.h"
+@@ -49,9 +48,7 @@ void SCTReportingService::SetReportingEnabled(bool enabled) {
+ }
+ 
+ void SCTReportingService::OnPreferenceChanged() {
+-  const bool enabled = safe_browsing_service_ &&
+-                       safe_browsing_service_->enabled_by_prefs() &&
+-                       safe_browsing::IsExtendedReportingEnabled(pref_service_);
++  const bool enabled = false;
+   SetReportingEnabled(enabled);
+ }
+ 

@@ -1,0 +1,26 @@
+diff --git a/components/safe_browsing/core/common/BUILD.gn b/components/safe_browsing/core/common/BUILD.gn
+index 29d870173079..7445b0f71719 100644
+--- a/components/safe_browsing/core/common/BUILD.gn
++++ b/components/safe_browsing/core/common/BUILD.gn
+@@ -6,20 +6,7 @@ import("//build/config/features.gni")
+ import("//components/safe_browsing/buildflags.gni")
+ import("//mojo/public/tools/bindings/mojom.gni")
+ 
+-static_library("safe_browsing_prefs") {
+-  sources = [
+-    "safe_browsing_prefs.cc",
+-    "safe_browsing_prefs.h",
+-  ]
+-
+-  deps = [
+-    "//components/pref_registry:pref_registry",
+-    "//components/prefs",
+-    "//components/safe_browsing/core:features",
+-    "//components/safe_browsing/core/common:thread_utils",
+-    "//net:net",
+-  ]
+-
++group("safe_browsing_prefs") {
+   public_deps = [ "//base" ]
+ }
+ 

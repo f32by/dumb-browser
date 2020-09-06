@@ -1,0 +1,21 @@
+diff --git a/components/metrics/metrics_service_accessor.cc b/components/metrics/metrics_service_accessor.cc
+index ca1fb8ca159d..ef66274331a1 100644
+--- a/components/metrics/metrics_service_accessor.cc
++++ b/components/metrics/metrics_service_accessor.cc
+@@ -18,7 +18,7 @@ namespace {
+ bool g_force_official_enabled_test = false;
+ 
+ bool IsMetricsReportingEnabledForOfficialBuild(PrefService* pref_service) {
+-  return pref_service->GetBoolean(prefs::kMetricsReportingEnabled);
++  return false;
+ }
+ 
+ }  // namespace
+@@ -26,6 +26,7 @@ bool IsMetricsReportingEnabledForOfficialBuild(PrefService* pref_service) {
+ // static
+ bool MetricsServiceAccessor::IsMetricsReportingEnabled(
+     PrefService* pref_service) {
++  return false;
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+   return IsMetricsReportingEnabledForOfficialBuild(pref_service);
+ #else

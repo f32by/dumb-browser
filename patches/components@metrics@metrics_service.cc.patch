@@ -1,0 +1,53 @@
+diff --git a/components/metrics/metrics_service.cc b/components/metrics/metrics_service.cc
+index a63c847d5deb..02fbf961f527 100644
+--- a/components/metrics/metrics_service.cc
++++ b/components/metrics/metrics_service.cc
+@@ -222,6 +222,7 @@ MetricsService::MetricsService(MetricsStateManager* state_manager,
+       session_id_(-1),
+       synthetic_trial_registry_(
+           client->IsExternalExperimentAllowlistEnabled()) {
++  return;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   DCHECK(state_manager_);
+   DCHECK(client_);
+@@ -238,6 +239,7 @@ MetricsService::~MetricsService() {
+ }
+ 
+ void MetricsService::InitializeMetricsRecordingState() {
++  return;
+   // The FieldTrialsProvider should be registered last. This ensures that
+   // studies whose features are checked when providers add their information to
+   // the log appear in the active field trials.
+@@ -264,13 +266,13 @@ void MetricsService::InitializeMetricsRecordingState() {
+ 
+ void MetricsService::Start() {
+   HandleIdleSinceLastTransmission(false);
+-  EnableRecording();
+-  EnableReporting();
++  DisableRecording();
++  DisableReporting();
+ }
+ 
+ void MetricsService::StartRecordingForTests() {
+   test_mode_active_ = true;
+-  EnableRecording();
++  DisableRecording();
+   DisableReporting();
+ }
+ 
+@@ -289,6 +291,7 @@ void MetricsService::Stop() {
+ }
+ 
+ void MetricsService::EnableReporting() {
++  return;
+   if (reporting_service_.reporting_active())
+     return;
+   reporting_service_.EnableReporting();
+@@ -312,6 +315,7 @@ bool MetricsService::WasLastShutdownClean() const {
+ }
+ 
+ void MetricsService::EnableRecording() {
++  return;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+ 
+   if (recording_state_ == ACTIVE)

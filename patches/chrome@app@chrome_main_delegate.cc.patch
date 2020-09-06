@@ -1,0 +1,98 @@
+diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
+index e81210859bd3..49418fb9f678 100644
+--- a/chrome/app/chrome_main_delegate.cc
++++ b/chrome/app/chrome_main_delegate.cc
+@@ -636,7 +636,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+   }
+ 
+ #if defined(OS_WIN)
+-  SetUpExtendedCrashReporting(is_browser_process);
+   base::sequence_manager::internal::ThreadControllerPowerMonitor::
+       InitializeOnMainThread();
+ #endif
+@@ -697,15 +696,7 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+   tracing_sampler_profiler_ =
+       tracing::TracingSamplerProfiler::CreateOnMainThread();
+ 
+-#if defined(OS_WIN)
+-  v8_crashpad_support::SetUp();
+-#endif
+ 
+-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+-  if (!crash_reporter::IsCrashpadEnabled()) {
+-    breakpad::SetFirstChanceExceptionHandler(v8::TryHandleWebAssemblyTrapPosix);
+-  }
+-#endif
+ 
+ #if defined(OS_POSIX)
+   if (HandleVersionSwitches(command_line)) {
+@@ -918,16 +909,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+   std::string process_type =
+       command_line.GetSwitchValueASCII(switches::kProcessType);
+ 
+-  crash_reporter::InitializeCrashKeys();
+-
+-#if defined(OS_POSIX)
+-  ChromeCrashReporterClient::Create();
+-#endif
+-
+-#if defined(OS_MAC)
+-  InitMacCrashReporter(command_line, process_type);
+-  SetUpInstallerPreferences(command_line);
+-#endif
+ 
+ #if defined(OS_WIN)
+   child_process_logging::Init();
+@@ -1052,28 +1033,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+         locale;
+   }
+ 
+-#if defined(OS_POSIX) && !defined(OS_MAC)
+-  // Zygote needs to call InitCrashReporter() in RunZygote().
+-  if (process_type != service_manager::switches::kZygoteProcess) {
+-#if defined(OS_ANDROID)
+-    crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
+-    if (process_type.empty()) {
+-      base::android::InitJavaExceptionReporter();
+-      UninstallPureJavaExceptionHandler();
+-    } else {
+-      base::android::InitJavaExceptionReporterForChildProcess();
+-    }
+-#else  // !defined(OS_ANDROID)
+-    if (crash_reporter::IsCrashpadEnabled()) {
+-      crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
+-      crash_reporter::SetFirstChanceExceptionHandler(
+-          v8::TryHandleWebAssemblyTrapPosix);
+-    } else {
+-      breakpad::InitCrashReporter(process_type);
+-    }
+-#endif  // defined(OS_ANDROID)
+-  }
+-#endif  // defined(OS_POSIX) && !defined(OS_MAC)
+ 
+ #if defined(OS_ANDROID)
+   CHECK_EQ(base::android::GetLibraryProcessType(),
+@@ -1181,23 +1140,6 @@ void ChromeMainDelegate::ZygoteForked() {
+     base::debug::RestartProfilingAfterFork();
+     SetUpProfilingShutdownHandler();
+   }
+-
+-  // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
+-  // this up for the browser process in a different manner.
+-  const base::CommandLine* command_line =
+-      base::CommandLine::ForCurrentProcess();
+-  std::string process_type =
+-      command_line->GetSwitchValueASCII(switches::kProcessType);
+-  if (crash_reporter::IsCrashpadEnabled()) {
+-    crash_reporter::InitializeCrashpad(false, process_type);
+-    crash_reporter::SetFirstChanceExceptionHandler(
+-        v8::TryHandleWebAssemblyTrapPosix);
+-  } else {
+-    breakpad::InitCrashReporter(process_type);
+-  }
+-
+-  // Reset the command line for the newly spawned process.
+-  crash_keys::SetCrashKeysFromCommandLine(*command_line);
+ }
+ 
+ #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)

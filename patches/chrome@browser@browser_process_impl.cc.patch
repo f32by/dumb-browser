@@ -1,0 +1,199 @@
+diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
+index 1d94d9154140..2016ba334a38 100644
+--- a/chrome/browser/browser_process_impl.cc
++++ b/chrome/browser/browser_process_impl.cc
+@@ -34,7 +34,6 @@
+ #include "base/time/default_tick_clock.h"
+ #include "base/trace_event/trace_event.h"
+ #include "build/build_config.h"
+-#include "chrome/browser/battery/battery_metrics.h"
+ #include "chrome/browser/browser_process_platform_part.h"
+ #include "chrome/browser/chrome_browser_main.h"
+ #include "chrome/browser/chrome_content_browser_client.h"
+@@ -69,7 +68,6 @@
+ #include "chrome/browser/printing/print_preview_dialog_controller.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+ #include "chrome/browser/resource_coordinator/resource_coordinator_parts.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
+ #include "chrome/browser/shell_integration.h"
+ #include "chrome/browser/site_isolation/prefs_observer.h"
+ #include "chrome/browser/ssl/secure_origin_prefs_observer.h"
+@@ -92,8 +90,6 @@
+ #include "components/component_updater/component_updater_service.h"
+ #include "components/component_updater/timer_update_scheduler.h"
+ #include "components/crash/core/common/crash_key.h"
+-#include "components/federated_learning/floc_blocklist_service.h"
+-#include "components/federated_learning/floc_constants.h"
+ #include "components/gcm_driver/gcm_driver.h"
+ #include "components/language/core/browser/pref_names.h"
+ #include "components/metrics/metrics_pref_names.h"
+@@ -108,13 +104,7 @@
+ #include "components/prefs/json_pref_store.h"
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/rappor/public/rappor_utils.h"
+-#include "components/rappor/rappor_service_impl.h"
+-#include "components/safe_browsing/core/safe_browsing_service_interface.h"
+ #include "components/sessions/core/session_id_generator.h"
+-#include "components/subresource_filter/content/browser/ruleset_service.h"
+-#include "components/subresource_filter/core/browser/subresource_filter_constants.h"
+-#include "components/subresource_filter/core/browser/subresource_filter_features.h"
+ #include "components/translate/core/browser/translate_download_manager.h"
+ #include "components/ukm/ukm_service.h"
+ #include "components/update_client/update_query_params.h"
+@@ -220,11 +210,6 @@ static constexpr base::TimeDelta kEndSessionTimeout =
+ using content::BrowserThread;
+ using content::ChildProcessSecurityPolicy;
+ 
+-rappor::RapporService* GetBrowserRapporService() {
+-  if (g_browser_process != nullptr)
+-    return g_browser_process->rappor_service();
+-  return nullptr;
+-}
+ 
+ BrowserProcessImpl::BrowserProcessImpl(StartupData* startup_data)
+     : startup_data_(startup_data),
+@@ -258,8 +243,6 @@ void BrowserProcessImpl::Init() {
+ 
+   download_status_updater_ = std::make_unique<DownloadStatusUpdater>();
+ 
+-  rappor::SetDefaultServiceAccessor(&GetBrowserRapporService);
+-
+ #if BUILDFLAG(ENABLE_PRINTING)
+   // Must be created after the NotificationService.
+   print_job_manager_ = std::make_unique<printing::PrintJobManager>();
+@@ -373,8 +356,6 @@ void BrowserProcessImpl::StartTearDown() {
+ 
+   metrics_services_manager_.reset();
+   intranet_redirect_detector_.reset();
+-  if (safe_browsing_service_.get())
+-    safe_browsing_service()->ShutDown();
+   network_time_tracker_.reset();
+ #if BUILDFLAG(ENABLE_PLUGINS)
+   plugins_resource_service_.reset();
+@@ -410,8 +391,6 @@ void BrowserProcessImpl::StartTearDown() {
+   remote_debugging_server_.reset();
+   devtools_auto_opener_.reset();
+ 
+-  battery_metrics_.reset();
+-
+   // Need to clear profiles (download managers) before the IO thread.
+   {
+     TRACE_EVENT0("shutdown",
+@@ -655,11 +634,6 @@ metrics::MetricsService* BrowserProcessImpl::metrics_service() {
+   return GetMetricsServicesManager()->GetMetricsService();
+ }
+ 
+-rappor::RapporServiceImpl* BrowserProcessImpl::rappor_service() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  return GetMetricsServicesManager()->GetRapporServiceImpl();
+-}
+-
+ SystemNetworkContextManager*
+ BrowserProcessImpl::system_network_context_manager() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+@@ -983,30 +957,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
+   return status_tray_.get();
+ }
+ 
+-safe_browsing::SafeBrowsingService*
+-BrowserProcessImpl::safe_browsing_service() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  if (!created_safe_browsing_service_)
+-    CreateSafeBrowsingService();
+-  return safe_browsing_service_.get();
+-}
+-
+-subresource_filter::RulesetService*
+-BrowserProcessImpl::subresource_filter_ruleset_service() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  if (!created_subresource_filter_ruleset_service_)
+-    CreateSubresourceFilterRulesetService();
+-  return subresource_filter_ruleset_service_.get();
+-}
+-
+-federated_learning::FlocBlocklistService*
+-BrowserProcessImpl::floc_blocklist_service() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  if (!floc_blocklist_service_)
+-    CreateFlocBlocklistService();
+-  return floc_blocklist_service_.get();
+-}
+-
+ optimization_guide::OptimizationGuideService*
+ BrowserProcessImpl::optimization_guide_service() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+@@ -1117,8 +1067,6 @@ void BrowserProcessImpl::PreCreateThreads(
+       extensions::kExtensionScheme, true);
+ #endif
+ 
+-  battery_metrics_ = std::make_unique<BatteryMetrics>();
+-
+   secure_origin_prefs_observer_ =
+       std::make_unique<SecureOriginPrefsObserver>(local_state());
+   site_isolation_prefs_observer_ =
+@@ -1250,64 +1198,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
+ #endif
+ }
+ 
+-void BrowserProcessImpl::CreateSafeBrowsingService() {
+-  DCHECK(!safe_browsing_service_);
+-  // Set this flag to true so that we don't retry indefinitely to
+-  // create the service class if there was an error.
+-  created_safe_browsing_service_ = true;
+-
+-  // The factory can be overridden in tests.
+-  if (!safe_browsing::SafeBrowsingServiceInterface::HasFactory()) {
+-    safe_browsing::SafeBrowsingServiceInterface::RegisterFactory(
+-        safe_browsing::GetSafeBrowsingServiceFactory());
+-  }
+-
+-  // TODO(crbug/925153): Port consumers of the |safe_browsing_service_| to use
+-  // the interface in components/safe_browsing, and remove this cast.
+-  safe_browsing_service_ = static_cast<safe_browsing::SafeBrowsingService*>(
+-      safe_browsing::SafeBrowsingServiceInterface::CreateSafeBrowsingService());
+-  if (safe_browsing_service_)
+-    safe_browsing_service_->Initialize();
+-}
+-
+-void BrowserProcessImpl::CreateSubresourceFilterRulesetService() {
+-  DCHECK(!subresource_filter_ruleset_service_);
+-  created_subresource_filter_ruleset_service_ = true;
+-
+-  if (!base::FeatureList::IsEnabled(
+-          subresource_filter::kSafeBrowsingSubresourceFilter)) {
+-    return;
+-  }
+-
+-  // Runner for tasks critical for user experience.
+-  scoped_refptr<base::SequencedTaskRunner> blocking_task_runner(
+-      base::ThreadPool::CreateSequencedTaskRunner(
+-          {base::MayBlock(), base::TaskPriority::USER_BLOCKING,
+-           base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN}));
+-
+-  // Runner for tasks that do not influence user experience.
+-  scoped_refptr<base::SequencedTaskRunner> background_task_runner(
+-      base::ThreadPool::CreateSequencedTaskRunner(
+-          {base::MayBlock(), base::TaskPriority::BEST_EFFORT,
+-           base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN}));
+-
+-  base::FilePath user_data_dir;
+-  base::PathService::Get(chrome::DIR_USER_DATA, &user_data_dir);
+-  base::FilePath indexed_ruleset_base_dir =
+-      user_data_dir.Append(subresource_filter::kTopLevelDirectoryName)
+-          .Append(subresource_filter::kIndexedRulesetBaseDirectoryName);
+-  subresource_filter_ruleset_service_ =
+-      std::make_unique<subresource_filter::RulesetService>(
+-          local_state(), background_task_runner, indexed_ruleset_base_dir,
+-          blocking_task_runner);
+-}
+-
+-void BrowserProcessImpl::CreateFlocBlocklistService() {
+-  DCHECK(!floc_blocklist_service_);
+-  floc_blocklist_service_ =
+-      std::make_unique<federated_learning::FlocBlocklistService>();
+-}
+-
+ void BrowserProcessImpl::CreateOptimizationGuideService() {
+   DCHECK(!created_optimization_guide_service_);
+   DCHECK(!optimization_guide_service_);

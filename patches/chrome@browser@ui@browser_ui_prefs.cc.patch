@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/ui/browser_ui_prefs.cc b/chrome/browser/ui/browser_ui_prefs.cc
+index 887bfc86e7d9..ec1bf3ff1544 100644
+--- a/chrome/browser/ui/browser_ui_prefs.cc
++++ b/chrome/browser/ui/browser_ui_prefs.cc
+@@ -80,7 +80,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+   registry->RegisterDictionaryPref(prefs::kBrowserWindowPlacementPopup);
+   registry->RegisterDictionaryPref(prefs::kAppWindowPlacement);
+   registry->RegisterBooleanPref(
+-      prefs::kEnableDoNotTrack, false,
++      prefs::kEnableDoNotTrack, true,
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+ #if !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
+   registry->RegisterBooleanPref(prefs::kPrintPreviewUseSystemDefaultPrinter,
+@@ -122,7 +122,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+   // late: we need the pref to be already initialized. Doing it here also saves
+   // us from having to hard-code pref registration in the several unit tests
+   // that use this preference.
+-  registry->RegisterBooleanPref(prefs::kShowUpdatePromotionInfoBar, true);
++  registry->RegisterBooleanPref(prefs::kShowUpdatePromotionInfoBar, false);
+   registry->RegisterBooleanPref(
+       prefs::kShowFullscreenToolbar, true,
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);

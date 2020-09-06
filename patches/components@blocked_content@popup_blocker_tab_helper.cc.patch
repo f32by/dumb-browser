@@ -1,0 +1,20 @@
+diff --git a/components/blocked_content/popup_blocker_tab_helper.cc b/components/blocked_content/popup_blocker_tab_helper.cc
+index ef6f2e78fb27..c7abd81868a1 100644
+--- a/components/blocked_content/popup_blocker_tab_helper.cc
++++ b/components/blocked_content/popup_blocker_tab_helper.cc
+@@ -12,7 +12,6 @@
+ #include "components/blocked_content/list_item_position.h"
+ #include "components/blocked_content/popup_navigation_delegate.h"
+ #include "components/blocked_content/popup_tracker.h"
+-#include "components/blocked_content/safe_browsing_triggered_popup_blocker.h"
+ #include "components/content_settings/browser/page_specific_content_settings.h"
+ #include "content/public/browser/back_forward_cache.h"
+ #include "content/public/browser/navigation_controller.h"
+@@ -41,7 +40,6 @@ struct PopupBlockerTabHelper::BlockedRequest {
+ 
+ PopupBlockerTabHelper::PopupBlockerTabHelper(content::WebContents* web_contents)
+     : content::WebContentsObserver(web_contents) {
+-  blocked_content::SafeBrowsingTriggeredPopupBlocker::MaybeCreate(web_contents);
+ }
+ 
+ PopupBlockerTabHelper::~PopupBlockerTabHelper() = default;

@@ -1,0 +1,46 @@
+diff --git a/chrome/browser/safe_browsing/advanced_protection_status_manager.cc b/chrome/browser/safe_browsing/advanced_protection_status_manager.cc
+index dd6097a49102..609d2f17061a 100644
+--- a/chrome/browser/safe_browsing/advanced_protection_status_manager.cc
++++ b/chrome/browser/safe_browsing/advanced_protection_status_manager.cc
+@@ -12,7 +12,6 @@
+ #include "chrome/browser/safe_browsing/advanced_protection_status_manager_factory.h"
+ #include "chrome/browser/signin/identity_manager_factory.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/safe_browsing/core/features.h"
+ #include "components/signin/public/identity_manager/accounts_mutator.h"
+ #include "components/signin/public/identity_manager/consent_level.h"
+@@ -62,10 +61,7 @@ void AdvancedProtectionStatusManager::MaybeRefreshOnStartUp() {
+ 
+   is_under_advanced_protection_ = core_info.is_under_advanced_protection;
+ 
+-  if (pref_service_->HasPrefPath(prefs::kAdvancedProtectionLastRefreshInUs)) {
+-    last_refreshed_ = base::Time::FromDeltaSinceWindowsEpoch(
+-        base::TimeDelta::FromMicroseconds(pref_service_->GetInt64(
+-            prefs::kAdvancedProtectionLastRefreshInUs)));
++  if (false) {
+     if (is_under_advanced_protection_)
+       ScheduleNextRefresh();
+   } else {
+@@ -221,20 +217,10 @@ void AdvancedProtectionStatusManager::CancelFutureRefresh() {
+ 
+ void AdvancedProtectionStatusManager::UpdateLastRefreshTime() {
+   last_refreshed_ = base::Time::Now();
+-  pref_service_->SetInt64(
+-      prefs::kAdvancedProtectionLastRefreshInUs,
+-      last_refreshed_.ToDeltaSinceWindowsEpoch().InMicroseconds());
+ }
+ 
+ bool AdvancedProtectionStatusManager::IsUnderAdvancedProtection() const {
+-  if (!pref_service_->GetBoolean(prefs::kAdvancedProtectionAllowed))
+-    return false;
+-
+-  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+-          kForceTreatUserAsAdvancedProtection))
+-    return true;
+-
+-  return is_under_advanced_protection_;
++  return false;
+ }
+ 
+ bool AdvancedProtectionStatusManager::IsUnconsentedPrimaryAccount(

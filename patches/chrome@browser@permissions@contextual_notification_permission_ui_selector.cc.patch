@@ -1,0 +1,78 @@
+diff --git a/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc b/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc
+index 036fdb458dd3..0b4183436da7 100644
+--- a/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc
++++ b/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc
+@@ -19,12 +19,10 @@
+ #include "chrome/browser/permissions/quiet_notification_permission_ui_config.h"
+ #include "chrome/browser/permissions/quiet_notification_permission_ui_state.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
+ #include "chrome/common/chrome_features.h"
+ #include "components/content_settings/core/common/pref_names.h"
+ #include "components/permissions/permission_request.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/db/database_manager.h"
+ 
+ namespace {
+ 
+@@ -155,9 +153,6 @@ void ContextualNotificationPermissionUiSelector::SelectUiToUse(
+ }
+ 
+ void ContextualNotificationPermissionUiSelector::Cancel() {
+-  // The computation either finishes synchronously above, or is waiting on the
+-  // Safe Browsing check.
+-  safe_browsing_request_.reset();
+ }
+ 
+ ContextualNotificationPermissionUiSelector::
+@@ -168,45 +163,13 @@ void ContextualNotificationPermissionUiSelector::EvaluatePerSiteTriggers(
+   base::Optional<Decision> decision = GetDecisionBasedOnSiteReputation(
+       CrowdDenyPreloadData::GetInstance()->GetReputationDataForSite(origin));
+ 
+-  // If the PreloadData suggests this is an unacceptable site, ping Safe
+-  // Browsing to verify; but do not ping if it is not warranted.
++  // If the PreloadData suggests this is an unacceptable site, assume it is
++  // correct, since we can't access safe browsing.
+   if (!decision || (!decision->quiet_ui_reason && !decision->warning_reason)) {
+     OnPerSiteTriggersEvaluated(Decision::UseNormalUiAndShowNoWarning());
+-    return;
+-  }
+-
+-  DCHECK(!safe_browsing_request_);
+-  DCHECK(g_browser_process->safe_browsing_service());
+-
+-  // It is fine to use base::Unretained() here, as |safe_browsing_request_|
+-  // guarantees not to fire the callback after its destruction.
+-  safe_browsing_request_.emplace(
+-      g_browser_process->safe_browsing_service()->database_manager(),
+-      base::DefaultClock::GetInstance(), origin,
+-      base::BindOnce(&ContextualNotificationPermissionUiSelector::
+-                         OnSafeBrowsingVerdictReceived,
+-                     base::Unretained(this), *decision));
+-}
+-
+-void ContextualNotificationPermissionUiSelector::OnSafeBrowsingVerdictReceived(
+-    Decision candidate_decision,
+-    CrowdDenySafeBrowsingRequest::Verdict verdict) {
+-  DCHECK(safe_browsing_request_);
+-  DCHECK(callback_);
+-
+-  safe_browsing_request_.reset();
+-
+-  switch (verdict) {
+-    case CrowdDenySafeBrowsingRequest::Verdict::kAcceptable:
+-      OnPerSiteTriggersEvaluated(Decision::UseNormalUiAndShowNoWarning());
+-      break;
+-    case CrowdDenySafeBrowsingRequest::Verdict::kUnacceptable:
+-      if (candidate_decision.quiet_ui_reason &&
+-          ShouldHoldBackQuietUI(*(candidate_decision.quiet_ui_reason))) {
+-        candidate_decision.quiet_ui_reason.reset();
+-      }
+-      OnPerSiteTriggersEvaluated(candidate_decision);
+-      break;
++  } else {
++    // decision has a value, unwrap with .value()
++    OnPerSiteTriggersEvaluated(decision.value());
+   }
+ }
+ 

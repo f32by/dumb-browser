@@ -1,0 +1,18 @@
+diff --git a/chrome/utility/BUILD.gn b/chrome/utility/BUILD.gn
+index 591753657beb..7bfd74da1ae5 100644
+--- a/chrome/utility/BUILD.gn
++++ b/chrome/utility/BUILD.gn
+@@ -209,13 +209,6 @@ static_library("utility") {
+     }
+   }
+ 
+-  if (safe_browsing_mode == 1) {
+-    deps += [ "//chrome/services/file_util" ]
+-    if (is_mac) {
+-      deps += [ "//chrome/utility/safe_browsing/mac" ]
+-    }
+-  }
+-
+   if (is_android || enable_extensions) {
+     deps += [ "//chrome/services/media_gallery_util:lib" ]
+   }

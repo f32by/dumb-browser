@@ -1,0 +1,18 @@
+diff --git a/components/security_interstitials/core/safe_browsing_loud_error_ui.cc b/components/security_interstitials/core/safe_browsing_loud_error_ui.cc
+index 717e8ef7c238..5ef691d44810 100644
+--- a/components/security_interstitials/core/safe_browsing_loud_error_ui.cc
++++ b/components/security_interstitials/core/safe_browsing_loud_error_ui.cc
+@@ -23,11 +23,11 @@ namespace {
+ // For malware interstitial pages, we link the problematic URL to Google's
+ // diagnostic page.
+ const char kSbDiagnosticUrl[] =
+-    "https://transparencyreport.google.com/safe-browsing/search?url=%s";
++    "https://no-thanks.invalid/?=%s";
+ 
+ // Constants for the V4 phishing string upgrades.
+ const char kReportPhishingErrorUrl[] =
+-    "https://safebrowsing.google.com/safebrowsing/report_error/?url=%s";
++    "https://no-thanks.invalid/?=%s";
+ 
+ void RecordExtendedReportingPrefChanged(bool report) {
+   UMA_HISTOGRAM_BOOLEAN("SafeBrowsing.Pref.Extended.SecurityInterstitial",

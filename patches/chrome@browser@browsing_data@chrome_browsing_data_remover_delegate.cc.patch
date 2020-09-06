@@ -1,0 +1,49 @@
+diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
+index 59a1243defb4..ab04b8bbb00b 100644
+--- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
++++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
+@@ -65,7 +65,6 @@
+ #include "chrome/browser/previews/previews_service.h"
+ #include "chrome/browser/previews/previews_service_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
+ #include "chrome/browser/translate/chrome_translate_client.h"
+ #include "chrome/browser/ui/find_bar/find_bar_state.h"
+ #include "chrome/browser/ui/find_bar/find_bar_state_factory.h"
+@@ -701,36 +700,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+         ContentSettingsType::CLIENT_HINTS, base::Time(), base::Time::Max(),
+         website_settings_filter);
+ 
+-    // Clear the safebrowsing cookies only if time period is for "all time".  It
+-    // doesn't make sense to apply the time period of deleting in the last X
+-    // hours/days to the safebrowsing cookies since they aren't the result of
+-    // any user action.
+-    if (IsForAllTime()) {
+-      safe_browsing::SafeBrowsingService* sb_service =
+-          g_browser_process->safe_browsing_service();
+-      if (sb_service) {
+-        mojo::Remote<network::mojom::CookieManager> cookie_manager;
+-        sb_service->GetNetworkContext(profile_)->GetCookieManager(
+-            cookie_manager.BindNewPipeAndPassReceiver());
+-
+-        network::mojom::CookieManager* manager_ptr = cookie_manager.get();
+-
+-        network::mojom::CookieDeletionFilterPtr deletion_filter =
+-            filter_builder->BuildCookieDeletionFilter();
+-        if (!delete_begin_.is_null())
+-          deletion_filter->created_after_time = delete_begin_;
+-        if (!delete_end_.is_null())
+-          deletion_filter->created_before_time = delete_end_;
+-
+-        manager_ptr->DeleteCookies(
+-            std::move(deletion_filter),
+-            base::BindOnce(
+-                &OnClearedCookies,
+-                CreateTaskCompletionClosure(TracingDataType::kCookies),
+-                std::move(cookie_manager)));
+-      }
+-    }
+-
+     if (filter_builder->GetMode() ==
+         BrowsingDataFilterBuilder::Mode::kPreserve) {
+       MediaDeviceIDSalt::Reset(profile_->GetPrefs());

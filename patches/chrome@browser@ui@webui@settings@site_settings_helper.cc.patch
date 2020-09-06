@@ -1,0 +1,30 @@
+diff --git a/chrome/browser/ui/webui/settings/site_settings_helper.cc b/chrome/browser/ui/webui/settings/site_settings_helper.cc
+index 54e1de7f3f86..bbe4160eb24e 100644
+--- a/chrome/browser/ui/webui/settings/site_settings_helper.cc
++++ b/chrome/browser/ui/webui/settings/site_settings_helper.cc
+@@ -40,7 +40,6 @@
+ #include "components/permissions/permission_util.h"
+ #include "components/permissions/permissions_client.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/subresource_filter/core/browser/subresource_filter_features.h"
+ #include "components/url_formatter/url_formatter.h"
+ #include "content/public/common/content_features.h"
+ #include "content/public/common/url_utils.h"
+@@ -236,17 +235,6 @@ SiteSettingSource CalculateSiteSettingSource(
+   if (info.source == content_settings::SETTING_SOURCE_EXTENSION)
+     return SiteSettingSource::kExtension;  // Source #5.
+ 
+-  if (content_type == ContentSettingsType::ADS &&
+-      base::FeatureList::IsEnabled(
+-          subresource_filter::kSafeBrowsingSubresourceFilter)) {
+-    SubresourceFilterContentSettingsManager* settings_manager =
+-        SubresourceFilterProfileContextFactory::GetForProfile(profile)
+-            ->settings_manager();
+-
+-    if (settings_manager->GetSiteActivationFromMetadata(origin)) {
+-      return SiteSettingSource::kAdsFilterBlocklist;  // Source #6.
+-    }
+-  }
+ 
+   // Protected Content will be blocked if the |kEnableDRM| pref is off.
+   if (content_type == ContentSettingsType::PROTECTED_MEDIA_IDENTIFIER &&

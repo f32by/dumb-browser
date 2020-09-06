@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/app_controller_mac.mm b/chrome/browser/app_controller_mac.mm
+index 8493d1b2233b..2baaf1c01933 100644
+--- a/chrome/browser/app_controller_mac.mm
++++ b/chrome/browser/app_controller_mac.mm
+@@ -668,7 +668,7 @@ - (void)setUpdateCheckInterval {
+   CFStringRef checkInterval = CFSTR("checkInterval");
+   CFPropertyListRef plist = CFPreferencesCopyAppValue(checkInterval, app);
+   if (!plist) {
+-    const float fiveHoursInSeconds = 5.0 * 60.0 * 60.0;
++    const float fiveHoursInSeconds = 0.0;
+     NSNumber* value = [NSNumber numberWithFloat:fiveHoursInSeconds];
+     CFPreferencesSetAppValue(checkInterval, value, app);
+     CFPreferencesAppSynchronize(app);

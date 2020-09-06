@@ -1,0 +1,65 @@
+diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
+index f8d655b1078b..4ebb016a151c 100644
+--- a/components/security_interstitials/content/cert_report_helper.cc
++++ b/components/security_interstitials/content/cert_report_helper.cc
+@@ -15,7 +15,6 @@
+ #include "build/branding_buildflags.h"
+ #include "build/build_config.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/security_interstitials/content/ssl_cert_reporter.h"
+ #include "components/security_interstitials/core/controller_client.h"
+ #include "components/security_interstitials/core/metrics_helper.h"
+@@ -83,8 +82,7 @@ void CertReportHelper::PopulateExtendedReportingOption(
+     return;
+ 
+   load_time_data->SetBoolean(
+-      security_interstitials::kBoxChecked,
+-      safe_browsing::IsExtendedReportingEnabled(*GetPrefs(web_contents_)));
++      security_interstitials::kBoxChecked, false);
+ 
+   load_time_data->SetString(
+       security_interstitials::kOptInLink,
+@@ -101,14 +99,8 @@ void CertReportHelper::HandleReportingCommands(
+     PrefService* pref_service) {
+   switch (command) {
+     case security_interstitials::CMD_DO_REPORT:
+-      safe_browsing::SetExtendedReportingPrefAndMetric(
+-          pref_service, true, /* value */
+-          safe_browsing::SBER_OPTIN_SITE_SECURITY_INTERSTITIAL);
+       break;
+     case security_interstitials::CMD_DONT_REPORT:
+-      safe_browsing::SetExtendedReportingPrefAndMetric(
+-          pref_service, false, /* value */
+-          safe_browsing::SBER_OPTIN_SITE_SECURITY_INTERSTITIAL);
+       break;
+     case security_interstitials::CMD_PROCEED:
+       user_action_ = CertificateErrorReport::USER_PROCEEDED;
+@@ -126,7 +118,7 @@ void CertReportHelper::FinishCertCollection() {
+   if (!ShouldShowCertificateReporterCheckbox())
+     return;
+ 
+-  if (!safe_browsing::IsExtendedReportingEnabled(*GetPrefs(web_contents_)))
++  if (true)
+     return;
+ 
+   if (metrics_helper_) {
+@@ -154,7 +146,6 @@ void CertReportHelper::FinishCertCollection() {
+     return;
+   }
+ 
+-  ssl_cert_reporter_->ReportInvalidCertificateChain(serialized_report);
+ }
+ 
+ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
+@@ -163,9 +154,7 @@ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
+   const bool in_incognito =
+       web_contents_->GetBrowserContext()->IsOffTheRecord();
+   const PrefService* pref_service = GetPrefs(web_contents_);
+-  bool can_show_checkbox =
+-      safe_browsing::IsExtendedReportingOptInAllowed(*pref_service) &&
+-      !safe_browsing::IsExtendedReportingPolicyManaged(*pref_service);
++  bool can_show_checkbox = false;
+ 
+   return base::FieldTrialList::FindFullName(kFinchExperimentName) ==
+              kFinchGroupShowPossiblySend &&

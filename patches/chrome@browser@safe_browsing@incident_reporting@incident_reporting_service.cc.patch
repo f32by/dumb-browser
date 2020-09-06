@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/safe_browsing/incident_reporting/incident_reporting_service.cc b/chrome/browser/safe_browsing/incident_reporting/incident_reporting_service.cc
+index e6277e89cdb6..c11c218ab58e 100644
+--- a/chrome/browser/safe_browsing/incident_reporting/incident_reporting_service.cc
++++ b/chrome/browser/safe_browsing/incident_reporting/incident_reporting_service.cc
+@@ -39,7 +39,6 @@
+ #include "chrome/browser/safe_browsing/safe_browsing_service.h"
+ #include "chrome/common/pref_names.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/safe_browsing/core/features.h"
+ #include "components/safe_browsing/core/proto/csd.pb.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -303,11 +302,7 @@ IncidentReportingService::UploadContext::~UploadContext() {
+ 
+ // static
+ bool IncidentReportingService::IsEnabledForProfile(Profile* profile) {
+-  if (profile->IsOffTheRecord())
+-    return false;
+-  if (!IsSafeBrowsingEnabled(*profile->GetPrefs()))
+-    return false;
+-  return IsExtendedReportingEnabled(*profile->GetPrefs());
++  return false;
+ }
+ 
+ IncidentReportingService::IncidentReportingService(

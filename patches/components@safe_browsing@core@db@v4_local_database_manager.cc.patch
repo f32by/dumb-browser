@@ -1,0 +1,38 @@
+diff --git a/components/safe_browsing/core/db/v4_local_database_manager.cc b/components/safe_browsing/core/db/v4_local_database_manager.cc
+index 31e13d56b584..27520576ed69 100644
+--- a/components/safe_browsing/core/db/v4_local_database_manager.cc
++++ b/components/safe_browsing/core/db/v4_local_database_manager.cc
+@@ -249,10 +249,9 @@ const V4LocalDatabaseManager*
+ 
+ // static
+ scoped_refptr<V4LocalDatabaseManager> V4LocalDatabaseManager::Create(
+-    const base::FilePath& base_path,
+-    ExtendedReportingLevelCallback extended_reporting_level_callback) {
++    const base::FilePath& base_path) {
+   return base::WrapRefCounted(new V4LocalDatabaseManager(
+-      base_path, extended_reporting_level_callback, nullptr));
++      base_path, nullptr));
+ }
+ 
+ void V4LocalDatabaseManager::CollectDatabaseManagerInfo(
+@@ -274,10 +273,8 @@ void V4LocalDatabaseManager::CollectDatabaseManagerInfo(
+ 
+ V4LocalDatabaseManager::V4LocalDatabaseManager(
+     const base::FilePath& base_path,
+-    ExtendedReportingLevelCallback extended_reporting_level_callback,
+     scoped_refptr<base::SequencedTaskRunner> task_runner_for_tests)
+     : base_path_(base_path),
+-      extended_reporting_level_callback_(extended_reporting_level_callback),
+       list_infos_(GetListInfos()),
+       task_runner_(task_runner_for_tests
+                        ? task_runner_for_tests
+@@ -1002,8 +999,7 @@ void V4LocalDatabaseManager::SetupUpdateProtocolManager(
+                           weak_factory_.GetWeakPtr());
+ 
+   v4_update_protocol_manager_ = V4UpdateProtocolManager::Create(
+-      url_loader_factory, config, update_callback,
+-      extended_reporting_level_callback_);
++      url_loader_factory, config, update_callback);
+ }
+ 
+ void V4LocalDatabaseManager::UpdateRequestCompleted(

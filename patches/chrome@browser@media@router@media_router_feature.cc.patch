@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/media/router/media_router_feature.cc b/chrome/browser/media/router/media_router_feature.cc
+index 843b8d4ef78e..299b0e5c5c65 100644
+--- a/chrome/browser/media/router/media_router_feature.cc
++++ b/chrome/browser/media/router/media_router_feature.cc
+@@ -61,6 +61,7 @@ const PrefService::Preference* GetMediaRouterPref(
+ #endif  // defined(OS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)
+ 
+ bool MediaRouterEnabled(content::BrowserContext* context) {
++  return false;
+ #if !defined(OFFICIAL_BUILD) && !defined(OS_ANDROID)
+   if (!base::FeatureList::IsEnabled(kMediaRouter))
+     return false;

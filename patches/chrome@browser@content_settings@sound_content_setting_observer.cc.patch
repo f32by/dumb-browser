@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/content_settings/sound_content_setting_observer.cc b/chrome/browser/content_settings/sound_content_setting_observer.cc
+index 13ad04ccfb6e..f769afba5b44 100644
+--- a/chrome/browser/content_settings/sound_content_setting_observer.cc
++++ b/chrome/browser/content_settings/sound_content_setting_observer.cc
+@@ -132,6 +132,10 @@ void SoundContentSettingObserver::MuteOrUnmuteIfNecessary() {
+ 
+   TabMutedReason reason = chrome::GetTabAudioMutedReason(web_contents());
+ 
++  // Do not unmute if we're muted due to audio indicator.
++  if (!mute && reason == TabMutedReason::AUDIO_INDICATOR)
++    return;
++
+   // Do not override the decisions of an extension.
+   if (reason == TabMutedReason::EXTENSION)
+     return;

@@ -1,0 +1,23 @@
+diff --git a/headless/BUILD.gn b/headless/BUILD.gn
+index 2e59c319fa35..30269302701a 100644
+--- a/headless/BUILD.gn
++++ b/headless/BUILD.gn
+@@ -473,7 +473,6 @@ component("headless_non_renderer") {
+   }
+ 
+   if (is_mac) {
+-    deps += [ ":mac_helpers" ]
+     frameworks = [
+       "AppKit.framework",
+       "CoreFoundation.framework",
+@@ -638,10 +637,6 @@ test("headless_browsertests") {
+     "test/data/",
+   ]
+ 
+-  if (is_mac) {
+-    data_deps = [ ":mac_helpers" ]
+-  }
+-
+   defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+ 
+   deps = [

@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/prefs/chrome_pref_service_factory.cc b/chrome/browser/prefs/chrome_pref_service_factory.cc
+index 105e7ffa6224..3a0d4fa1d624 100644
+--- a/chrome/browser/prefs/chrome_pref_service_factory.cc
++++ b/chrome/browser/prefs/chrome_pref_service_factory.cc
+@@ -47,7 +47,6 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/prefs/pref_store.h"
+ #include "components/prefs/pref_value_store.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/search_engines/default_search_manager.h"
+ #include "components/search_engines/search_engines_pref_names.h"
+ #include "components/signin/public/base/signin_pref_names.h"
+@@ -145,8 +144,6 @@ const prefs::TrackedPreferenceMetadata kTrackedPrefs[] = {
+      PrefTrackingStrategy::ATOMIC, ValueType::IMPERSONAL},
+     // kSyncRemainingRollbackTries is deprecated and will be removed a few
+     // releases after M50.
+-    {18, prefs::kSafeBrowsingIncidentsSent, EnforcementLevel::ENFORCE_ON_LOAD,
+-     PrefTrackingStrategy::ATOMIC, ValueType::IMPERSONAL},
+ #if defined(OS_WIN)
+     {19, prefs::kSwReporterPromptVersion, EnforcementLevel::ENFORCE_ON_LOAD,
+      PrefTrackingStrategy::ATOMIC, ValueType::IMPERSONAL},

@@ -1,0 +1,14 @@
+diff --git a/components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc b/components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc
+index 72977ebe9ddf..901db8c0a63e 100644
+--- a/components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc
++++ b/components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc
+@@ -215,9 +215,6 @@ base::Time DataReductionProxySettings::GetLastEnabledTime() const {
+ }
+ 
+ void DataReductionProxySettings::RegisterDataReductionProxyFieldTrial() {
+-  register_synthetic_field_trial_.Run(
+-      "SyntheticDataReductionProxySetting",
+-      IsDataReductionProxyEnabled() ? "Enabled" : "Disabled");
+ }
+ 
+ void DataReductionProxySettings::OnProxyEnabledPrefChange() {

@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/ui/views/tabs/tab_strip.cc b/chrome/browser/ui/views/tabs/tab_strip.cc
+index 2e3fa3245253..fd871c15b5a0 100644
+--- a/chrome/browser/ui/views/tabs/tab_strip.cc
++++ b/chrome/browser/ui/views/tabs/tab_strip.cc
+@@ -2890,6 +2890,12 @@ void TabStrip::CloseTabInternal(int model_index, CloseTabSource source) {
+   controller_->CloseTab(model_index);
+ }
+ 
++void TabStrip::ToggleTabAudioMute(Tab* tab) {
++  int model_index = GetModelIndexOf(tab);
++  if (IsValidModelIndex(model_index))
++    controller_->ToggleTabAudioMute(model_index);
++}
++
+ void TabStrip::RemoveTabFromViewModel(int index) {
+   Tab* closing_tab = tab_at(index);
+   bool closing_tab_was_active = closing_tab->IsActive();

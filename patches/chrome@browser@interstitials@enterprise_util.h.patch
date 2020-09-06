@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/interstitials/enterprise_util.h b/chrome/browser/interstitials/enterprise_util.h
+index 731f697803f9..eeee135a56c2 100644
+--- a/chrome/browser/interstitials/enterprise_util.h
++++ b/chrome/browser/interstitials/enterprise_util.h
+@@ -5,7 +5,9 @@
+ #ifndef CHROME_BROWSER_INTERSTITIALS_ENTERPRISE_UTIL_H_
+ #define CHROME_BROWSER_INTERSTITIALS_ENTERPRISE_UTIL_H_
+ 
+-#include "components/safe_browsing/core/db/v4_protocol_manager_util.h"
++#include <string>
++
++#include "url/gurl.h"
+ 
+ namespace content {
+ class WebContents;
+@@ -27,7 +29,4 @@ void MaybeTriggerSecurityInterstitialProceededEvent(
+     const std::string& reason,
+     int net_error_code);
+ 
+-std::string GetThreatTypeStringForInterstitial(
+-    safe_browsing::SBThreatType threat_type);
+-
+ #endif  // CHROME_BROWSER_INTERSTITIALS_ENTERPRISE_UTIL_H_

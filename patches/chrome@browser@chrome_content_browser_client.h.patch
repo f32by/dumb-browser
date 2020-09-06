@@ -1,0 +1,52 @@
+diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
+index c8fec14e4e05..30ed3dcd1f2d 100644
+--- a/chrome/browser/chrome_content_browser_client.h
++++ b/chrome/browser/chrome_content_browser_client.h
+@@ -59,12 +59,6 @@ class PreviewsDecider;
+ class PreviewsUserData;
+ }  // namespace previews
+ 
+-namespace safe_browsing {
+-class RealTimeUrlLookupServiceBase;
+-class SafeBrowsingService;
+-class UrlCheckerDelegate;
+-}  // namespace safe_browsing
+-
+ namespace ui {
+ class NativeTheme;
+ }
+@@ -730,34 +724,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+       bool allow);
+ #endif
+ 
+-  // Returns the existing UrlCheckerDelegate object if it is already created.
+-  // Otherwise, creates a new one and returns it. It returns nullptr if
+-  // |safe_browsing_enabled_for_profile| is false, because it should bypass safe
+-  // browsing check when safe browsing is disabled. Set
+-  // |should_check_on_sb_disabled| to true if you still want to perform safe
+-  // browsing check when safe browsing is disabled(e.g. for enterprise real time
+-  // URL check).
+-  scoped_refptr<safe_browsing::UrlCheckerDelegate>
+-  GetSafeBrowsingUrlCheckerDelegate(bool safe_browsing_enabled_for_profile,
+-                                    bool should_check_on_sb_disabled);
+-
+-  // Returns a RealTimeUrlLookupServiceBase object used for real time URL check.
+-  // Returns an enterprise version if |is_enterprise_lookup_enabled| is true.
+-  // Returns a consumer version if |is_enterprise_lookup_enabled| is false and
+-  // |is_consumer_lookup_enabled| is true. Returns nullptr if both are false.
+-  safe_browsing::RealTimeUrlLookupServiceBase* GetUrlLookupService(
+-      content::BrowserContext* browser_context,
+-      bool is_enterprise_lookup_enabled,
+-      bool is_consumer_lookup_enabled);
+-
+   // Vector of additional ChromeContentBrowserClientParts.
+   // Parts are deleted in the reverse order they are added.
+   std::vector<ChromeContentBrowserClientParts*> extra_parts_;
+ 
+-  scoped_refptr<safe_browsing::SafeBrowsingService> safe_browsing_service_;
+-  scoped_refptr<safe_browsing::UrlCheckerDelegate>
+-      safe_browsing_url_checker_delegate_;
+-
+   StartupData* startup_data_;
+ 
+ #if !defined(OS_ANDROID)

@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/webui/local_discovery/local_discovery_ui.cc b/chrome/browser/ui/webui/local_discovery/local_discovery_ui.cc
+index b7f6f227a9de..50596f10db56 100644
+--- a/chrome/browser/ui/webui/local_discovery/local_discovery_ui.cc
++++ b/chrome/browser/ui/webui/local_discovery/local_discovery_ui.cc
+@@ -144,7 +144,7 @@ LocalDiscoveryUI::LocalDiscoveryUI(content::WebUI* web_ui)
+ 
+ void LocalDiscoveryUI::RegisterProfilePrefs(
+     user_prefs::PrefRegistrySyncable* registry) {
+-  registry->RegisterBooleanPref(prefs::kLocalDiscoveryEnabled, true);
++  registry->RegisterBooleanPref(prefs::kLocalDiscoveryEnabled, false);
+   registry->RegisterBooleanPref(
+       prefs::kLocalDiscoveryNotificationsEnabled,
+       false,

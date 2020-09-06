@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/safe_browsing/download_protection/download_protection_service.cc b/chrome/browser/safe_browsing/download_protection/download_protection_service.cc
+index 32b21dc9fb32..532c8ff90f60 100644
+--- a/chrome/browser/safe_browsing/download_protection/download_protection_service.cc
++++ b/chrome/browser/safe_browsing/download_protection/download_protection_service.cc
+@@ -349,8 +349,12 @@ void DownloadProtectionService::ShowDetailsForDownload(
+   Profile* profile = Profile::FromBrowserContext(
+       content::DownloadItemUtils::GetBrowserContext(item));
+   if (profile &&
++#if BUILDFLAG(FULL_SAFE_BROWSING)
+       AdvancedProtectionStatusManagerFactory::GetForProfile(profile)
+           ->IsUnderAdvancedProtection() &&
++#else
++      false &&
++#endif
+       item->GetDangerType() ==
+           download::DOWNLOAD_DANGER_TYPE_UNCOMMON_CONTENT) {
+     learn_more_url = GURL(chrome::kAdvancedProtectionDownloadLearnMoreURL);

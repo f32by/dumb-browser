@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/chrome_browser_interface_binders.cc b/chrome/browser/chrome_browser_interface_binders.cc
+index 0105acbf11da..ce3562976fc7 100644
+--- a/chrome/browser/chrome_browser_interface_binders.cc
++++ b/chrome/browser/chrome_browser_interface_binders.cc
+@@ -111,7 +111,6 @@
+ #include "chrome/browser/media/kaleidoscope/mojom/kaleidoscope.mojom.h"
+ #include "chrome/browser/payments/payment_credential_factory.h"
+ #include "chrome/browser/payments/payment_request_factory.h"
+-#include "chrome/browser/promo_browser_command/promo_browser_command.mojom.h"
+ #include "chrome/browser/speech/speech_recognition_service.h"
+ #include "chrome/browser/speech/speech_recognition_service_factory.h"
+ #include "chrome/browser/ui/webui/downloads/downloads.mojom.h"
+@@ -547,8 +546,6 @@ void PopulateChromeWebUIFrameBinders(
+     RegisterWebUIControllerInterfaceBinder<
+       new_tab_page::mojom::PageHandlerFactory, NewTabPageUI>(map);
+ 
+-  RegisterWebUIControllerInterfaceBinder<
+-      promo_browser_command::mojom::CommandHandler, NewTabPageUI>(map);
+ 
+   RegisterWebUIControllerInterfaceBinder<media_feeds::mojom::MediaFeedsStore,
+                                          MediaFeedsUI>(map);

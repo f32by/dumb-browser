@@ -1,0 +1,66 @@
+diff --git a/components/safe_browsing/core/file_type_policies.h b/components/safe_browsing/core/file_type_policies.h
+index 45f0c0922604..14d7209ac48a 100644
+--- a/components/safe_browsing/core/file_type_policies.h
++++ b/components/safe_browsing/core/file_type_policies.h
+@@ -11,7 +11,6 @@
+ #include "base/files/file_path.h"
+ #include "base/gtest_prod_util.h"
+ #include "base/synchronization/lock.h"
+-#include "components/safe_browsing/core/proto/download_file_types.pb.h"
+ 
+ namespace safe_browsing {
+ 
+@@ -64,20 +63,8 @@ class FileTypePolicies {
+   // True if the user can select this file type to be opened automatically.
+   bool IsAllowedToOpenAutomatically(const base::FilePath& file) const;
+ 
+-  // Return the danger level of this file type.
+-  DownloadFileType::DangerLevel GetFileDangerLevel(
+-      const base::FilePath& file) const;
+-
+-  // Return the type of ping we should send for this file
+-  DownloadFileType::PingSetting PingSettingForFile(
+-      const base::FilePath& file) const;
+-
+   float SampledPingProbability() const;
+ 
+-  DownloadFileType PolicyForFile(const base::FilePath& file) const;
+-  DownloadFileType::PlatformSettings SettingsForFile(
+-      const base::FilePath& file) const;
+-
+   // Return max size for which unpacking and/or binary feature extration is
+   // supported for the given file extension.
+   uint64_t GetMaxFileSizeToAnalyze(const std::string& ascii_ext) const;
+@@ -115,32 +102,12 @@ class FileTypePolicies {
+   // Return the ASCII lowercase extension w/o leading dot, or empty.
+   static std::string CanonicalizedExtension(const base::FilePath& file);
+ 
+-  // Look up the policy for a given ASCII ext.
+-  virtual const DownloadFileType& PolicyForExtension(
+-      const std::string& ext) const;
+-
+  private:
+-  // Swap in a different config. This will rebuild file_type_by_ext_ index.
+-  void SwapConfig(std::unique_ptr<DownloadFileTypeConfig>& new_config);
+-  void SwapConfigLocked(std::unique_ptr<DownloadFileTypeConfig>& new_config);
+-
+   // Read data from the main ResourceBundle. This updates the internal list
+   // only if the data passes integrity checks. This is normally called once
+   // after construction.
+   void PopulateFromResourceBundle();
+ 
+-  // The latest config we've committed. Starts out null.
+-  // Protected by lock_.
+-  std::unique_ptr<DownloadFileTypeConfig> config_;
+-
+-  // This references entries in config_.
+-  // Protected by lock_.
+-  std::map<std::string, const DownloadFileType*> file_type_by_ext_;
+-
+-  // Type used if we can't load from disk.
+-  // Written only in the constructor.
+-  DownloadFileType last_resort_default_;
+-
+   mutable base::Lock lock_;
+ 
+   FRIEND_TEST_ALL_PREFIXES(FileTypePoliciesTest, UnpackResourceBundle);

@@ -1,0 +1,212 @@
+diff --git a/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc b/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
+index 5cc290e45f8b..1bba5e5e69f6 100644
+--- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
++++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
+@@ -25,8 +25,6 @@
+ #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.h"
+ #include "chrome/browser/language/language_model_manager_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/spellchecker/spellcheck_factory.h"
+-#include "chrome/browser/spellchecker/spellcheck_service.h"
+ #include "chrome/browser/translate/chrome_translate_client.h"
+ #include "chrome/browser/translate/translate_service.h"
+ #include "chrome/common/extensions/api/language_settings_private.h"
+@@ -35,9 +33,6 @@
+ #include "components/language/core/browser/pref_names.h"
+ #include "components/language/core/common/language_util.h"
+ #include "components/language/core/common/locale_util.h"
+-#include "components/spellcheck/browser/spellcheck_platform.h"
+-#include "components/spellcheck/common/spellcheck_common.h"
+-#include "components/spellcheck/common/spellcheck_features.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/translate/core/browser/translate_download_manager.h"
+ #include "components/translate/core/browser/translate_prefs.h"
+@@ -206,12 +201,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+   translate::TranslatePrefs::GetLanguageInfoList(
+       app_locale, translate_prefs->IsTranslateAllowedByPolicy(), &languages);
+ 
+-  // Get the list of spell check languages and convert to a set.
+-  std::vector<std::string> spellcheck_languages =
+-      spellcheck::SpellCheckLanguages();
+-  const base::flat_set<std::string> spellcheck_language_set(
+-      std::move(spellcheck_languages));
+-
+   // Build the language list.
+   language_list_->Clear();
+ #if defined(OS_CHROMEOS)
+@@ -226,9 +215,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+     language.native_display_name = entry.native_display_name;
+ 
+     // Set optional fields only if they differ from the default.
+-    if (base::Contains(spellcheck_language_set, entry.code)) {
+-      language.supports_spellcheck.reset(new bool(true));
+-    }
+     if (entry.supports_translate) {
+       language.supports_translate.reset(new bool(true));
+     }
+@@ -260,26 +246,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+   }
+ #endif  // defined(OS_CHROMEOS)
+ 
+-#if defined(OS_WIN)
+-  if (spellcheck::UseBrowserSpellChecker()) {
+-    if (!base::FeatureList::IsEnabled(
+-            spellcheck::kWinDelaySpellcheckServiceInit)) {
+-      // Platform dictionary support already determined at browser startup.
+-      UpdateSupportedPlatformDictionaries();
+-    } else {
+-      // Asynchronously load the dictionaries to determine platform support.
+-      SpellcheckService* service =
+-          SpellcheckServiceFactory::GetForContext(browser_context());
+-      AddRef();  // Balanced in OnDictionariesInitialized
+-      service->InitializeDictionaries(
+-          base::BindOnce(&LanguageSettingsPrivateGetLanguageListFunction::
+-                             OnDictionariesInitialized,
+-                         base::Unretained(this)));
+-      return RespondLater();
+-    }
+-  }
+-#endif  // defined(OS_WIN)
+-
+   return RespondNow(OneArgument(std::move(language_list_)));
+ }
+ 
+@@ -294,13 +260,6 @@ void LanguageSettingsPrivateGetLanguageListFunction::
+ 
+ void LanguageSettingsPrivateGetLanguageListFunction::
+     UpdateSupportedPlatformDictionaries() {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  for (auto& language_val : language_list_->GetList()) {
+-    if (service->UsesWindowsDictionary(*language_val.FindStringKey("code"))) {
+-      language_val.SetBoolKey("supportsSpellcheck", new bool(true));
+-    }
+-  }
+ }
+ #endif  // defined(OS_WIN)
+ 
+@@ -462,13 +421,7 @@ LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::Run() {
+-  LanguageSettingsPrivateDelegate* delegate =
+-      LanguageSettingsPrivateDelegateFactory::GetForBrowserContext(
+-          browser_context());
+-
+-  return RespondNow(ArgumentList(
+-      language_settings_private::GetSpellcheckDictionaryStatuses::Results::
+-          Create(delegate->GetHunspellDictionaryStatuses())));
++  return RespondNow(NoArguments());
+ }
+ 
+ LanguageSettingsPrivateGetSpellcheckWordsFunction::
+@@ -479,24 +432,12 @@ LanguageSettingsPrivateGetSpellcheckWordsFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateGetSpellcheckWordsFunction::Run() {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  SpellcheckCustomDictionary* dictionary = service->GetCustomDictionary();
+-
+-  if (dictionary->IsLoaded())
+-    return RespondNow(OneArgument(GetSpellcheckWords()));
+-
+-  dictionary->AddObserver(this);
+-  AddRef();  // Balanced in OnCustomDictionaryLoaded().
+-  return RespondLater();
++  return RespondNow(NoArguments());
+ }
+ 
+ void LanguageSettingsPrivateGetSpellcheckWordsFunction::
+     OnCustomDictionaryLoaded() {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  service->GetCustomDictionary()->RemoveObserver(this);
+-  Respond(OneArgument(GetSpellcheckWords()));
++  auto _ = RespondNow(NoArguments());
+   Release();
+ }
+ 
+@@ -510,17 +451,7 @@ void LanguageSettingsPrivateGetSpellcheckWordsFunction::
+ 
+ std::unique_ptr<base::ListValue>
+ LanguageSettingsPrivateGetSpellcheckWordsFunction::GetSpellcheckWords() const {
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  SpellcheckCustomDictionary* dictionary = service->GetCustomDictionary();
+-  DCHECK(dictionary->IsLoaded());
+-
+-  // TODO(michaelpg): Sort using app locale.
+-  std::unique_ptr<base::ListValue> word_list(new base::ListValue());
+-  const std::set<std::string>& words = dictionary->GetWords();
+-  for (const std::string& word : words)
+-    word_list->AppendString(word);
+-  return word_list;
++  return nullptr;
+ }
+ 
+ LanguageSettingsPrivateAddSpellcheckWordFunction::
+@@ -531,22 +462,7 @@ LanguageSettingsPrivateAddSpellcheckWordFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateAddSpellcheckWordFunction::Run() {
+-  const auto params =
+-      language_settings_private::AddSpellcheckWord::Params::Create(*args_);
+-  EXTENSION_FUNCTION_VALIDATE(params.get());
+-
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  bool success = service->GetCustomDictionary()->AddWord(params->word);
+-
+-#if BUILDFLAG(USE_BROWSER_SPELLCHECKER)
+-  if (spellcheck::UseBrowserSpellChecker()) {
+-    spellcheck_platform::AddWord(service->platform_spell_checker(),
+-                                 base::UTF8ToUTF16(params->word));
+-  }
+-#endif
+-
+-  return RespondNow(OneArgument(std::make_unique<base::Value>(success)));
++  return RespondNow(NoArguments());
+ }
+ 
+ LanguageSettingsPrivateRemoveSpellcheckWordFunction::
+@@ -557,22 +473,7 @@ LanguageSettingsPrivateRemoveSpellcheckWordFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateRemoveSpellcheckWordFunction::Run() {
+-  const auto params =
+-      language_settings_private::RemoveSpellcheckWord::Params::Create(*args_);
+-  EXTENSION_FUNCTION_VALIDATE(params.get());
+-
+-  SpellcheckService* service =
+-      SpellcheckServiceFactory::GetForContext(browser_context());
+-  bool success = service->GetCustomDictionary()->RemoveWord(params->word);
+-
+-#if BUILDFLAG(USE_BROWSER_SPELLCHECKER)
+-  if (spellcheck::UseBrowserSpellChecker()) {
+-    spellcheck_platform::RemoveWord(service->platform_spell_checker(),
+-                                    base::UTF8ToUTF16(params->word));
+-  }
+-#endif
+-
+-  return RespondNow(OneArgument(std::make_unique<base::Value>(success)));
++  return RespondNow(NoArguments());
+ }
+ 
+ LanguageSettingsPrivateGetTranslateTargetLanguageFunction::
+@@ -772,15 +673,6 @@ LanguageSettingsPrivateRetryDownloadDictionaryFunction::
+ 
+ ExtensionFunction::ResponseAction
+ LanguageSettingsPrivateRetryDownloadDictionaryFunction::Run() {
+-  const auto parameters =
+-      language_settings_private::RetryDownloadDictionary::Params::Create(
+-          *args_);
+-  EXTENSION_FUNCTION_VALIDATE(parameters.get());
+-
+-  LanguageSettingsPrivateDelegate* delegate =
+-      LanguageSettingsPrivateDelegateFactory::GetForBrowserContext(
+-          browser_context());
+-  delegate->RetryDownloadHunspellDictionary(parameters->language_code);
+   return RespondNow(NoArguments());
+ }
+ 

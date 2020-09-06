@@ -1,0 +1,175 @@
+diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.cc b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
+index 9e827b4ea6f8..923a43a56c17 100644
+--- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
++++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
+@@ -56,7 +56,6 @@
+ #include "chrome/browser/profiles/profile_window.h"
+ #include "chrome/browser/renderer_context_menu/accessibility_labels_menu_observer.h"
+ #include "chrome/browser/renderer_context_menu/context_menu_content_type_factory.h"
+-#include "chrome/browser/renderer_context_menu/spelling_menu_observer.h"
+ #include "chrome/browser/search/search.h"
+ #include "chrome/browser/search_engines/template_url_service_factory.h"
+ #include "chrome/browser/send_tab_to_self/send_tab_to_self_desktop_util.h"
+@@ -66,7 +65,6 @@
+ #include "chrome/browser/sharing/click_to_call/click_to_call_utils.h"
+ #include "chrome/browser/sharing/shared_clipboard/shared_clipboard_context_menu_observer.h"
+ #include "chrome/browser/sharing/shared_clipboard/shared_clipboard_utils.h"
+-#include "chrome/browser/spellchecker/spellcheck_service.h"
+ #include "chrome/browser/translate/chrome_translate_client.h"
+ #include "chrome/browser/translate/translate_service.h"
+ #include "chrome/browser/ui/autofill/chrome_autofill_client.h"
+@@ -115,9 +113,6 @@
+ #include "components/search_engines/search_engines_pref_names.h"
+ #include "components/search_engines/template_url.h"
+ #include "components/search_engines/template_url_service.h"
+-#include "components/spellcheck/browser/pref_names.h"
+-#include "components/spellcheck/browser/spellcheck_host_metrics.h"
+-#include "components/spellcheck/common/spellcheck_common.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/strings/grit/components_strings.h"
+ #include "components/translate/core/browser/translate_download_manager.h"
+@@ -307,14 +302,7 @@ const std::map<int, int>& GetIdcToUmaMap(UmaEnumIdLookupType type) {
+        {IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS, 46},
+        {IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS, 47},
+        {IDC_CONTENT_CONTEXT_OPENLINKWITH, 52},
+-       {IDC_CHECK_SPELLING_WHILE_TYPING, 53},
+-       {IDC_SPELLCHECK_MENU, 54},
+-       {IDC_CONTENT_CONTEXT_SPELLING_TOGGLE, 55},
+-       {IDC_SPELLCHECK_LANGUAGES_FIRST, 56},
+        {IDC_CONTENT_CONTEXT_SEARCHWEBFORIMAGE, 57},
+-       {IDC_SPELLCHECK_SUGGESTION_0, 58},
+-       {IDC_SPELLCHECK_ADD_TO_DICTIONARY, 59},
+-       {IDC_SPELLPANEL_TOGGLE, 60},
+        {IDC_CONTENT_CONTEXT_OPEN_ORIGINAL_IMAGE_NEW_TAB, 61},
+        {IDC_WRITING_DIRECTION_MENU, 62},
+        {IDC_WRITING_DIRECTION_DEFAULT, 63},
+@@ -326,7 +314,6 @@ const std::map<int, int>& GetIdcToUmaMap(UmaEnumIdLookupType type) {
+        {IDC_CONTENT_CONTEXT_OPENLINKINPROFILE, 70},
+        {IDC_OPEN_LINK_IN_PROFILE_FIRST, 71},
+        {IDC_CONTENT_CONTEXT_GENERATEPASSWORD, 72},
+-       {IDC_SPELLCHECK_MULTI_LINGUAL, 73},
+        {IDC_CONTENT_CONTEXT_OPEN_WITH1, 74},
+        {IDC_CONTENT_CONTEXT_OPEN_WITH2, 75},
+        {IDC_CONTENT_CONTEXT_OPEN_WITH3, 76},
+@@ -389,9 +376,6 @@ const std::map<int, int>& GetIdcToUmaMap(UmaEnumIdLookupType type) {
+        {IDC_PRINT, 11},
+        {IDC_CONTENT_CONTEXT_SEARCHWEBFOR, 12},
+        {IDC_CONTENT_CONTEXT_SAVEAVAS, 13},
+-       {IDC_SPELLCHECK_SUGGESTION_0, 14},
+-       {IDC_SPELLCHECK_ADD_TO_DICTIONARY, 15},
+-       {IDC_CONTENT_CONTEXT_SPELLING_TOGGLE, 16},
+        {IDC_CONTENT_CONTEXT_CUT, 17},
+        {IDC_CONTENT_CONTEXT_PASTE, 18},
+        {IDC_CONTENT_CONTEXT_GOTOURL, 19},
+@@ -422,16 +406,6 @@ int CollapseCommandsForUMA(int id) {
+     return IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_FIRST;
+   }
+ 
+-  if (id >= IDC_SPELLCHECK_LANGUAGES_FIRST &&
+-      id <= IDC_SPELLCHECK_LANGUAGES_LAST) {
+-    return IDC_SPELLCHECK_LANGUAGES_FIRST;
+-  }
+-
+-  if (id >= IDC_SPELLCHECK_SUGGESTION_0 &&
+-      id <= IDC_SPELLCHECK_SUGGESTION_LAST) {
+-    return IDC_SPELLCHECK_SUGGESTION_0;
+-  }
+-
+   if (id >= IDC_OPEN_LINK_IN_PROFILE_FIRST &&
+       id <= IDC_OPEN_LINK_IN_PROFILE_LAST) {
+     return IDC_OPEN_LINK_IN_PROFILE_FIRST;
+@@ -562,18 +536,6 @@ bool RenderViewContextMenu::IsDevToolsURL(const GURL& url) {
+   return url.SchemeIs(content::kChromeDevToolsScheme);
+ }
+ 
+-// static
+-void RenderViewContextMenu::AddSpellCheckServiceItem(ui::SimpleMenuModel* menu,
+-                                                     bool is_checked) {
+-  if (is_checked) {
+-    menu->AddCheckItemWithStringId(IDC_CONTENT_CONTEXT_SPELLING_TOGGLE,
+-                                   IDS_CONTENT_CONTEXT_SPELLING_ASK_GOOGLE);
+-  } else {
+-    menu->AddItemWithStringId(IDC_CONTENT_CONTEXT_SPELLING_TOGGLE,
+-                              IDS_CONTENT_CONTEXT_SPELLING_ASK_GOOGLE);
+-  }
+-}
+-
+ RenderViewContextMenu::RenderViewContextMenu(
+     content::RenderFrameHost* render_frame_host,
+     const content::ContextMenuParams& params)
+@@ -1643,10 +1605,6 @@ void RenderViewContextMenu::AppendSearchProvider() {
+ }
+ 
+ void RenderViewContextMenu::AppendEditableItems() {
+-  const bool use_spelling = !chrome::IsRunningInForcedAppMode();
+-  if (use_spelling)
+-    AppendSpellingSuggestionItems();
+-
+   if (!params_.misspelled_word.empty()) {
+     AppendSearchProvider();
+     menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+@@ -1720,15 +1678,6 @@ void RenderViewContextMenu::AppendLanguageSettings() {
+ #endif
+ }
+ 
+-void RenderViewContextMenu::AppendSpellingSuggestionItems() {
+-  if (!spelling_suggestions_menu_observer_) {
+-    spelling_suggestions_menu_observer_ =
+-        std::make_unique<SpellingMenuObserver>(this);
+-  }
+-  observers_.AddObserver(spelling_suggestions_menu_observer_.get());
+-  spelling_suggestions_menu_observer_->InitMenu(params_);
+-}
+-
+ bool RenderViewContextMenu::AppendAccessibilityLabelsItems() {
+   menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+   if (!accessibility_labels_menu_observer_) {
+@@ -1880,12 +1829,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+ 
+   PrefService* prefs = GetPrefs(browser_context_);
+ 
+-  // Allow Spell Check language items on sub menu for text area context menu.
+-  if ((id >= IDC_SPELLCHECK_LANGUAGES_FIRST) &&
+-      (id < IDC_SPELLCHECK_LANGUAGES_LAST)) {
+-    return prefs->GetBoolean(spellcheck::prefs::kSpellCheckEnable);
+-  }
+-
+   // Extension items.
+   if (ContextMenuMatcher::IsExtensionsCustomCommandId(id))
+     return extension_items_.IsCommandIdEnabled(id);
+@@ -2028,7 +1971,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+ 
+     case IDC_CONTENT_CONTEXT_SEARCHWEBFOR:
+     case IDC_CONTENT_CONTEXT_GOTOURL:
+-    case IDC_SPELLPANEL_TOGGLE:
+     case IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS:
+     case IDC_SEND_TAB_TO_SELF:
+     case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
+@@ -2042,16 +1984,12 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+       return send_tab_to_self::AreContentRequirementsMet(
+           params_.link_url, GetBrowser()->profile());
+ 
+-    case IDC_CHECK_SPELLING_WHILE_TYPING:
+-      return prefs->GetBoolean(spellcheck::prefs::kSpellCheckEnable);
+-
+ #if !defined(OS_MAC) && defined(OS_POSIX)
+     // TODO(suzhe): this should not be enabled for password fields.
+     case IDC_INPUT_METHODS_MENU:
+       return true;
+ #endif
+ 
+-    case IDC_SPELLCHECK_MENU:
+     case IDC_CONTENT_CONTEXT_OPENLINKWITH:
+     case IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS:
+     case IDC_CONTENT_CONTEXT_GENERATEPASSWORD:
+@@ -2417,10 +2355,6 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
+   }
+ }
+ 
+-void RenderViewContextMenu::AddSpellCheckServiceItem(bool is_checked) {
+-  AddSpellCheckServiceItem(&menu_model_, is_checked);
+-}
+-
+ void RenderViewContextMenu::AddAccessibilityLabelsServiceItem(bool is_checked) {
+   if (is_checked) {
+     menu_model_.AddCheckItemWithStringId(

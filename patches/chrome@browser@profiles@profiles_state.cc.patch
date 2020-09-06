@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/profiles/profiles_state.cc b/chrome/browser/profiles/profiles_state.cc
+index b338e9fd7cc9..825bb004f3d9 100644
+--- a/chrome/browser/profiles/profiles_state.cc
++++ b/chrome/browser/profiles/profiles_state.cc
+@@ -219,9 +219,6 @@ void RemoveBrowsingDataForProfile(const base::FilePath& profile_path) {
+   // The BrowsingDataRemover relies on many objects that aren't created in unit
+   // tests. Previously this code would depend on content::ResourceDispatcherHost
+   // but that's gone, so do a similar hack for now.
+-  if (!g_browser_process->safe_browsing_service())
+-    return;
+-
+   Profile* profile = g_browser_process->profile_manager()->GetProfileByPath(
+       profile_path);
+   if (!profile)

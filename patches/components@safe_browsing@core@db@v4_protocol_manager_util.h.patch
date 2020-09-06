@@ -1,0 +1,24 @@
+diff --git a/components/safe_browsing/core/db/v4_protocol_manager_util.h b/components/safe_browsing/core/db/v4_protocol_manager_util.h
+index b81ab05594b3..30271bc2d8e0 100644
+--- a/components/safe_browsing/core/db/v4_protocol_manager_util.h
++++ b/components/safe_browsing/core/db/v4_protocol_manager_util.h
+@@ -18,9 +18,10 @@
+ #include <vector>
+ 
+ #include "base/containers/flat_set.h"
++#include "base/files/file_path.h"
+ #include "base/gtest_prod_util.h"
+ #include "base/strings/string_piece.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
++#include "base/time/time.h"
+ #include "components/safe_browsing/core/db/safebrowsing.pb.h"
+ #include "url/gurl.h"
+ 
+@@ -89,7 +90,6 @@ V4ProtocolConfig GetV4ProtocolConfig(const std::string& client_name,
+ std::string GetReportUrl(
+     const V4ProtocolConfig& config,
+     const std::string& method,
+-    const ExtendedReportingLevel* reporting_level = nullptr,
+     const bool is_enhanced_protection = false);
+ 
+ // Different types of threats that SafeBrowsing protects against. This is the

@@ -1,0 +1,66 @@
+diff --git a/chrome/browser/browser_process_impl.h b/chrome/browser/browser_process_impl.h
+index f22581ef5d5c..497db411b320 100644
+--- a/chrome/browser/browser_process_impl.h
++++ b/chrome/browser/browser_process_impl.h
+@@ -38,7 +38,6 @@
+ #include "chrome/browser/upgrade_detector/build_state.h"
+ #endif
+ 
+-class BatteryMetrics;
+ class ChromeMetricsServicesManagerClient;
+ class DevToolsAutoOpener;
+ class RemoteDebuggingServer;
+@@ -132,7 +131,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   metrics_services_manager::MetricsServicesManager* GetMetricsServicesManager()
+       override;
+   metrics::MetricsService* metrics_service() override;
+-  rappor::RapporServiceImpl* rappor_service() override;
+   // TODO(qinmin): Remove this method as callers can retrieve the global
+   // instance from SystemNetworkContextManager directly.
+   SystemNetworkContextManager* system_network_context_manager() override;
+@@ -167,10 +165,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   void set_background_mode_manager_for_test(
+       std::unique_ptr<BackgroundModeManager> manager) override;
+   StatusTray* status_tray() override;
+-  safe_browsing::SafeBrowsingService* safe_browsing_service() override;
+-  subresource_filter::RulesetService* subresource_filter_ruleset_service()
+-      override;
+-  federated_learning::FlocBlocklistService* floc_blocklist_service() override;
+   optimization_guide::OptimizationGuideService* optimization_guide_service()
+       override;
+ 
+@@ -218,9 +212,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   void CreateNotificationUIManager();
+   void CreatePrintPreviewDialogController();
+   void CreateBackgroundPrintingManager();
+-  void CreateSafeBrowsingService();
+-  void CreateSubresourceFilterRulesetService();
+-  void CreateFlocBlocklistService();
+   void CreateOptimizationGuideService();
+   void CreateStatusTray();
+   void CreateBackgroundModeManager();
+@@ -314,15 +305,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   std::unique_ptr<BackgroundModeManager> background_mode_manager_;
+ #endif
+ 
+-  bool created_safe_browsing_service_ = false;
+-  scoped_refptr<safe_browsing::SafeBrowsingService> safe_browsing_service_;
+-
+-  bool created_subresource_filter_ruleset_service_ = false;
+-  std::unique_ptr<subresource_filter::RulesetService>
+-      subresource_filter_ruleset_service_;
+-
+-  std::unique_ptr<federated_learning::FlocBlocklistService>
+-      floc_blocklist_service_;
+ 
+   bool created_optimization_guide_service_ = false;
+   std::unique_ptr<optimization_guide::OptimizationGuideService>
+@@ -348,8 +330,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   // notifications are properly added and removed.
+   PrefChangeRegistrar pref_change_registrar_;
+ 
+-  std::unique_ptr<BatteryMetrics> battery_metrics_;
+-
+ #if defined(OS_WIN) || (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+   base::RepeatingTimer autoupdate_timer_;
+ 

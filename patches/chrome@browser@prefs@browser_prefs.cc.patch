@@ -1,0 +1,102 @@
+diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
+index d171043a5604..371d47660cba 100644
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -92,7 +92,6 @@
+ #include "chrome/common/pref_names.h"
+ #include "chrome/common/secure_origin_allowlist.h"
+ #include "components/autofill/core/common/autofill_prefs.h"
+-#include "components/blocked_content/safe_browsing_triggered_popup_blocker.h"
+ #include "components/browsing_data/core/pref_names.h"
+ #include "components/certificate_transparency/pref_names.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+@@ -135,14 +134,11 @@
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/proxy_config/pref_proxy_config_tracker_impl.h"
+-#include "components/rappor/rappor_service_impl.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/search_engines/template_url_prepopulate_data.h"
+ #include "components/security_interstitials/content/insecure_form_blocking_page.h"
+ #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
+ #include "components/sessions/core/session_id_generator.h"
+ #include "components/signin/public/identity_manager/identity_manager.h"
+-#include "components/subresource_filter/content/browser/ruleset_service.h"
+ #include "components/sync/base/sync_prefs.h"
+ #include "components/sync_device_info/device_info_prefs.h"
+ #include "components/sync_preferences/pref_service_syncable.h"
+@@ -243,7 +239,6 @@
+ #include "chrome/browser/metrics/tab_stats_tracker.h"
+ #include "chrome/browser/nearby_sharing/common/nearby_share_prefs.h"
+ #include "chrome/browser/search/instant_service.h"
+-#include "chrome/browser/search/promos/promo_service.h"
+ #include "chrome/browser/search/search_suggest/search_suggest_service.h"
+ #include "chrome/browser/signin/signin_promo.h"
+ #include "chrome/browser/ui/startup/startup_browser_creator.h"
+@@ -369,14 +364,11 @@
+ #endif
+ 
+ #if defined(OS_WIN)
+-#include "chrome/browser/component_updater/sw_reporter_installer_win.h"
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+ #include "chrome/browser/win/conflicts/incompatible_applications_updater.h"
+ #include "chrome/browser/win/conflicts/module_database.h"
+ #include "chrome/browser/win/conflicts/third_party_conflicts_manager.h"
+ #endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
+-#include "chrome/browser/safe_browsing/chrome_cleaner/settings_resetter_win.h"
+-#include "chrome/browser/safe_browsing/settings_reset_prompt/settings_reset_prompt_prefs_manager.h"
+ #endif
+ 
+ #if defined(OS_WIN) || defined(OS_MAC)
+@@ -709,13 +701,10 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
+   ProfileInfoCache::RegisterPrefs(registry);
+   ProfileNetworkContextService::RegisterLocalStatePrefs(registry);
+   profiles::RegisterPrefs(registry);
+-  rappor::RapporServiceImpl::RegisterPrefs(registry);
+   RegisterScreenshotPrefs(registry);
+-  safe_browsing::RegisterLocalStatePrefs(registry);
+   secure_origin_allowlist::RegisterPrefs(registry);
+   sessions::SessionIdGenerator::RegisterPrefs(registry);
+   SSLConfigServiceManager::RegisterPrefs(registry);
+-  subresource_filter::IndexedRulesetVersion::RegisterPrefs(registry);
+   syncer::InvalidatorRegistrarWithMemory::RegisterPrefs(registry);
+   syncer::PerUserTopicSubscriptionManager::RegisterPrefs(registry);
+   SystemNetworkContextManager::RegisterPrefs(registry);
+@@ -851,7 +840,6 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
+   registry->RegisterBooleanPref(prefs::kRendererCodeIntegrityEnabled, true);
+   registry->RegisterBooleanPref(
+       policy::policy_prefs::kNativeWindowOcclusionEnabled, true);
+-  component_updater::RegisterPrefsForSwReporter(registry);
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+   IncompatibleApplicationsUpdater::RegisterLocalStatePrefs(registry);
+   ModuleDatabase::RegisterLocalStatePrefs(registry);
+@@ -934,9 +922,6 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+   PushMessagingAppIdentifier::RegisterProfilePrefs(registry);
+   QuietNotificationPermissionUiState::RegisterProfilePrefs(registry);
+   RegisterBrowserUserPrefs(registry);
+-  safe_browsing::RegisterProfilePrefs(registry);
+-  blocked_content::SafeBrowsingTriggeredPopupBlocker::RegisterProfilePrefs(
+-      registry);
+   security_interstitials::InsecureFormBlockingPage::RegisterProfilePrefs(
+       registry);
+   SessionStartupPref::RegisterProfilePrefs(registry);
+@@ -1036,7 +1021,6 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+   NewTabUI::RegisterProfilePrefs(registry);
+   ntp_tiles::CustomLinksManagerImpl::RegisterProfilePrefs(registry);
+   PinnedTabCodec::RegisterProfilePrefs(registry);
+-  PromoService::RegisterProfilePrefs(registry);
+   SearchSuggestService::RegisterProfilePrefs(registry);
+   settings::SettingsUI::RegisterProfilePrefs(registry);
+   send_tab_to_self::SendTabToSelfBubbleController::RegisterProfilePrefs(
+@@ -1109,11 +1093,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+ #endif  // defined(OS_CHROMEOS)
+ 
+ #if defined(OS_WIN)
+-  component_updater::RegisterProfilePrefsForSwReporter(registry);
+   NetworkProfileBubble::RegisterProfilePrefs(registry);
+-  safe_browsing::SettingsResetPromptPrefsManager::RegisterProfilePrefs(
+-      registry);
+-  safe_browsing::PostCleanupSettingsResetter::RegisterProfilePrefs(registry);
+ #endif
+ 
+ #if defined(OS_WIN) || defined(OS_MAC) || \

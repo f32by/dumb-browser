@@ -1,0 +1,44 @@
+diff --git a/chrome/browser/resources/settings/privacy_page/security_page.js b/chrome/browser/resources/settings/privacy_page/security_page.js
+index b0c4fe2465fb..5a1b162597a7 100644
+--- a/chrome/browser/resources/settings/privacy_page/security_page.js
++++ b/chrome/browser/resources/settings/privacy_page/security_page.js
+@@ -82,14 +82,6 @@ Polymer({
+       value: SafeBrowsingSetting,
+     },
+ 
+-    /** @private */
+-    safeBrowsingEnhancedEnabled_: {
+-      type: Boolean,
+-      readOnly: true,
+-      value: function() {
+-        return loadTimeData.getBoolean('safeBrowsingEnhancedEnabled');
+-      },
+-    },
+ 
+     /** @private */
+     enableSecurityKeysSubpage_: {
+@@ -140,14 +132,6 @@ Polymer({
+ 
+   /** @override */
+   ready() {
+-    // Expand initial pref value manually because automatic
+-    // expanding is disabled.
+-    const prefValue = this.getPref('generated.safe_browsing').value;
+-    if (prefValue === SafeBrowsingSetting.ENHANCED) {
+-      this.$.safeBrowsingEnhanced.expanded = true;
+-    } else if (prefValue === SafeBrowsingSetting.STANDARD) {
+-      this.$.safeBrowsingStandard.expanded = true;
+-    }
+     this.browserProxy_ = PrivacyPageBrowserProxyImpl.getInstance();
+ 
+     this.metricsBrowserProxy_ = MetricsBrowserProxyImpl.getInstance();
+@@ -184,8 +168,7 @@ Polymer({
+    * @private
+    */
+   getDisabledExtendedSafeBrowsing_() {
+-    return this.getPref('generated.safe_browsing').value !==
+-        SafeBrowsingSetting.STANDARD;
++    return true;
+   },
+ 
+   /** @private */

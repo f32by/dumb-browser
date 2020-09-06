@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/download/download_target_info.h b/chrome/browser/download/download_target_info.h
+index 87a5cf3b8de4..c99631011a5b 100644
+--- a/chrome/browser/download/download_target_info.h
++++ b/chrome/browser/download/download_target_info.h
+@@ -13,7 +13,6 @@
+ #include "components/download/public/common/download_interrupt_reasons.h"
+ #include "components/download/public/common/download_item.h"
+ #include "components/download/public/common/download_schedule.h"
+-#include "components/safe_browsing/core/proto/download_file_types.pb.h"
+ 
+ struct DownloadTargetInfo {
+   DownloadTargetInfo();
+@@ -58,7 +57,6 @@ struct DownloadTargetInfo {
+   //       UNKONWN, the file will still be conisdered a DANGEROUS_FILE. However,
+   //       SafeBrowsing may flag the file as being malicious, in which case the
+   //       malicious classification should take precedence.
+-  safe_browsing::DownloadFileType::DangerLevel danger_level;
+ 
+   // Suggested intermediate path. The downloaded bytes should be written to this
+   // path until all the bytes are available and the user has accepted a

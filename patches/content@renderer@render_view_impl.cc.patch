@@ -1,0 +1,13 @@
+diff --git a/content/renderer/render_view_impl.cc b/content/renderer/render_view_impl.cc
+index 8d1b62918d68..b8bf5759761e 100644
+--- a/content/renderer/render_view_impl.cc
++++ b/content/renderer/render_view_impl.cc
+@@ -252,7 +252,7 @@ WindowOpenDisposition RenderViewImpl::NavigationPolicyToDisposition(
+     case blink::kWebNavigationPolicyNewWindow:
+       return WindowOpenDisposition::NEW_WINDOW;
+     case blink::kWebNavigationPolicyNewPopup:
+-      return WindowOpenDisposition::NEW_POPUP;
++      return WindowOpenDisposition::NEW_FOREGROUND_TAB;
+   default:
+     NOTREACHED() << "Unexpected WebNavigationPolicy";
+     return WindowOpenDisposition::IGNORE_ACTION;

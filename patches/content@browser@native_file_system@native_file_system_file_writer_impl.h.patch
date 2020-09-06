@@ -1,0 +1,30 @@
+diff --git a/content/browser/native_file_system/native_file_system_file_writer_impl.h b/content/browser/native_file_system/native_file_system_file_writer_impl.h
+index c7289110482c..bee15b9f098c 100644
+--- a/content/browser/native_file_system/native_file_system_file_writer_impl.h
++++ b/content/browser/native_file_system/native_file_system_file_writer_impl.h
+@@ -83,14 +83,6 @@ class CONTENT_EXPORT NativeFileSystemFileWriterImpl
+   void CloseImpl(CloseCallback callback);
+   // The following two methods are static, because they need to be invoked to
+   // perform cleanup even if the writer was deleted before they were invoked.
+-  static void DoAfterWriteCheck(
+-      base::WeakPtr<NativeFileSystemFileWriterImpl> file_writer,
+-      scoped_refptr<NativeFileSystemManagerImpl> manager,
+-      const storage::FileSystemURL& swap_url,
+-      NativeFileSystemFileWriterImpl::CloseCallback callback,
+-      base::File::Error hash_result,
+-      const std::string& hash,
+-      int64_t size);
+   static void DidAfterWriteCheck(
+       base::WeakPtr<NativeFileSystemFileWriterImpl> file_writer,
+       scoped_refptr<NativeFileSystemManagerImpl> manager,
+@@ -150,10 +142,6 @@ class CONTENT_EXPORT NativeFileSystemFileWriterImpl
+ 
+   download::QuarantineConnectionCallback quarantine_connection_callback_;
+ 
+-  // Keeps track of user activation state at creation time for after write
+-  // checks.
+-  bool has_transient_user_activation_ = false;
+-
+   base::WeakPtr<NativeFileSystemHandleBase> AsWeakPtr() override;
+ 
+   base::WeakPtrFactory<NativeFileSystemFileWriterImpl> weak_factory_{this};

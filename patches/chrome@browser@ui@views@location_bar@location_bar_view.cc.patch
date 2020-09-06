@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/views/location_bar/location_bar_view.cc b/chrome/browser/ui/views/location_bar/location_bar_view.cc
+index 2576da658078..0acdac008999 100644
+--- a/chrome/browser/ui/views/location_bar/location_bar_view.cc
++++ b/chrome/browser/ui/views/location_bar/location_bar_view.cc
+@@ -334,8 +334,7 @@ SkColor LocationBarView::GetOpaqueBorderColor() const {
+ }
+ 
+ int LocationBarView::GetBorderRadius() const {
+-  return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
+-      views::EMPHASIS_MAXIMUM, size());
++  return 8;
+ }
+ 
+ std::unique_ptr<views::Background> LocationBarView::CreateRoundRectBackground(

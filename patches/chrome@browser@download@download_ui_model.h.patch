@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/download/download_ui_model.h b/chrome/browser/download/download_ui_model.h
+index 039511f565c0..e3f89c7ae676 100644
+--- a/chrome/browser/download/download_ui_model.h
++++ b/chrome/browser/download/download_ui_model.h
+@@ -17,7 +17,6 @@
+ #include "components/download/public/common/download_item.h"
+ #include "components/offline_items_collection/core/offline_item.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/core/proto/download_file_types.pb.h"
+ 
+ #if !defined(OS_ANDROID)
+ #include "chrome/browser/download/download_commands.h"
+@@ -168,15 +167,6 @@ class DownloadUIModel {
+   // Change what's returned by ShouldPreferOpeningInBrowser to |preference|.
+   virtual void SetShouldPreferOpeningInBrowser(bool preference);
+ 
+-  // Return the danger level determined during download target determination.
+-  // The value returned here is independent of the danger level as determined by
+-  // the Safe Browsing.
+-  virtual safe_browsing::DownloadFileType::DangerLevel GetDangerLevel() const;
+-
+-  // Change what's returned by GetDangerLevel().
+-  virtual void SetDangerLevel(
+-      safe_browsing::DownloadFileType::DangerLevel danger_level);
+-
+   // Return the mixed content status determined during download target
+   // determination.
+   virtual download::DownloadItem::MixedContentStatus GetMixedContentStatus()

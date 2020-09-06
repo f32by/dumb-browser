@@ -1,0 +1,33 @@
+diff --git a/components/safe_browsing/core/db/v4_local_database_manager.h b/components/safe_browsing/core/db/v4_local_database_manager.h
+index 0a37f20b1aab..590fb9a5f033 100644
+--- a/components/safe_browsing/core/db/v4_local_database_manager.h
++++ b/components/safe_browsing/core/db/v4_local_database_manager.h
+@@ -33,8 +33,7 @@ class V4LocalDatabaseManager : public SafeBrowsingDatabaseManager {
+   // Create and return an instance of V4LocalDatabaseManager, if Finch trial
+   // allows it; nullptr otherwise.
+   static scoped_refptr<V4LocalDatabaseManager> Create(
+-      const base::FilePath& base_path,
+-      ExtendedReportingLevelCallback extended_reporting_level_callback);
++      const base::FilePath& base_path);
+ 
+   // Populates the protobuf with the database data.
+   void CollectDatabaseManagerInfo(
+@@ -100,7 +99,6 @@ class V4LocalDatabaseManager : public SafeBrowsingDatabaseManager {
+   // Must be initialized by calling StartOnIOThread() before using.
+   V4LocalDatabaseManager(
+       const base::FilePath& base_path,
+-      ExtendedReportingLevelCallback extended_reporting_level_callback,
+       scoped_refptr<base::SequencedTaskRunner> task_runner_for_tests);
+ 
+   ~V4LocalDatabaseManager() override;
+@@ -346,10 +344,6 @@ class V4LocalDatabaseManager : public SafeBrowsingDatabaseManager {
+   // ready to process next update.
+   DatabaseUpdatedCallback db_updated_callback_;
+ 
+-  // Callback to get the current extended reporting level. Needed by the update
+-  // manager.
+-  ExtendedReportingLevelCallback extended_reporting_level_callback_;
+-
+   // The client_state of each list currently being synced. This is updated each
+   // time a database update completes, and used to send list client_state
+   // information in the full hash request.

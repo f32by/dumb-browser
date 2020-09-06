@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `85.0.4183.83`.
+Current version: `87.0.4252.0`.
 
 **Some patches are experimental and build may fail.**
 
@@ -37,32 +37,36 @@ Other changes / optimizations:
 
 ## 1. [Recommended] Build from Sources
 
-It's impossible to build Dumb Browser via GitHub Actions due to GitHub's free account resource limitations.
+It's impossible to build Dumb Browser via GitHub Actions due to GitHub free account's resource limitations.
 Please build on your own or wait for official binaries.
 
-### Build on macOS
-Tested on macOS 10.15.6.
+Tested on **Windows 10**, **macOS 10.15.6** and **macOS 11.0 Beta 6**.
 
-*Build script is coming soon.*
+### Prerequisites
 
-1. Install `Xcode 11` or higher version
+Windows: [Building Dumb Browser for Windows](docs/windows.md)
 
-2. Clone this project
+macOS: [Building Dumb Browser for macOS](docs/windows.md)
 
-3. Follow [official build instruction](https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md) until `Setting up the build`
+### Build Instruction
 
-4. Create build dir in chromium src folder: `mkdir -p <PATH_TO_CHROMIUM_SRC>/out/Default`
-
-5. Copy `gn_args/args_release.gn` to `mkdir -p <PATH_TO_CHROMIUM_SRC>/out/Default` and rename it to `args.gn`
-
-5. Apply patches: `dumb-browser/scripts/patches.py apply <PATH_TO_DUMB_BROWSER_PATCHES> <PATH_TO_CHROMIUM_SRC>`
-
-6. Build Chromium: `autoninja -C out/Default chrome`
-
-7. Output binary will be found in `out/Default`
+```shell
+git clone https://github.com/bytanuky/dumb-browser
+cd dumb-browser
+# install dependencies
+./build/prepare.py
+# fetch chromium src and apply dumb browser's patches
+# depend on your network connection, this may take 30-60 minutes.
+./build/sync.py
+# get a release build
+# you may also use `./build/build.py debug` to get a debug build
+# show available options: ./build/build.py -h
+./build/build.py release
+# wait patiently :)
+```
 
 ## 2. Official Binaries
-*Unavailable. Binaries will be provided in the future.*
+*Coming soon*
 
 > Note: Provided binaries do not contain any Google API keys thus you can't use Chrome Sync by default.
 > To solve this, follow [Chromium's Official How-Tos](https://www.chromium.org/developers/how-tos/api-keys)
@@ -72,7 +76,7 @@ Tested on macOS 10.15.6.
 
 1. If you use existing profiles from `ungoogled-chromium`, you may encounter password sync failure. To solve this, create a new profile in dumb browser.
 
-2. [1Password extension (desktop app required)](https://chrome.google.com/webstore/detail/1password-extension-deskt/aomjjhallfgjeglblehebfpbcfeobpgk) is unavailable since it forces allowlist-based browser signature check. Instead you can use `1Password X` which requires a valid 1Password subscription.
+2. [1Password extension (desktop app required)](https://chrome.google.com/webstore/detail/1password-extension-deskt/aomjjhallfgjeglblehebfpbcfeobpgk) is unavailable since it forces an allowlist-based browser signature check. Instead you can use `1Password X` which requires a valid 1Password subscription.
 
 # Credits
 

@@ -1,0 +1,16 @@
+diff --git a/base/metrics/histogram.cc b/base/metrics/histogram.cc
+index e28233b77060..7b1bd70a900e 100644
+--- a/base/metrics/histogram.cc
++++ b/base/metrics/histogram.cc
+@@ -513,10 +513,10 @@ bool Histogram::HasConstructionArguments(Sample expected_minimum,
+ }
+ 
+ void Histogram::Add(int value) {
+-  AddCount(value, 1);
+ }
+ 
+ void Histogram::AddCount(int value, int count) {
++  return;
+   DCHECK_EQ(0, ranges(0));
+   DCHECK_EQ(kSampleType_MAX, ranges(bucket_count()));
+ 

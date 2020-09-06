@@ -1,0 +1,60 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
+index ddec847c5b78..9d02885d42f5 100644
+--- a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
++++ b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
+@@ -612,7 +612,6 @@ void MainThreadSchedulerImpl::Shutdown() {
+     return;
+ 
+   base::TimeTicks now = tick_clock()->NowTicks();
+-  main_thread_only().metrics_helper.OnRendererShutdown(now);
+   main_thread_only()
+       .compositor_priority_experiments.OnMainThreadSchedulerShutdown();
+ 
+@@ -941,13 +940,6 @@ void MainThreadSchedulerImpl::SetRendererBackgrounded(bool backgrounded) {
+ 
+   UpdatePolicy();
+ 
+-  base::TimeTicks now = tick_clock()->NowTicks();
+-  if (backgrounded) {
+-    main_thread_only().metrics_helper.OnRendererBackgrounded(now);
+-  } else {
+-    main_thread_only().metrics_helper.OnRendererForegrounded(now);
+-  }
+-
+   ParkableStringManager::Instance().SetRendererBackgrounded(backgrounded);
+   memory_purge_manager_.SetRendererBackgrounded(backgrounded);
+ }
+@@ -1796,10 +1788,6 @@ void MainThreadSchedulerImpl::DisableVirtualTimeForTesting() {
+ 
+   main_thread_only().initial_virtual_time = base::Time();
+   main_thread_only().initial_virtual_time_ticks = base::TimeTicks();
+-
+-  // Reset the MetricsHelper because it gets confused by time going backwards.
+-  base::TimeTicks now = tick_clock()->NowTicks();
+-  main_thread_only().metrics_helper.ResetForTest(now);
+ }
+ 
+ void MainThreadSchedulerImpl::SetVirtualTimeStopped(bool virtual_time_stopped) {
+@@ -2541,8 +2529,6 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
+   }
+ 
+   // TODO(altimin): Per-page metrics should also be considered.
+-  main_thread_only().metrics_helper.RecordTaskMetrics(queue.get(), task,
+-                                                      *task_timing);
+   main_thread_only().task_description_for_tracing = base::nullopt;
+ 
+   // Unset the state of |task_priority_for_tracing|.
+@@ -2835,13 +2821,11 @@ MainThreadSchedulerImpl::ComputeCompositorPriorityFromUseCase() const {
+ void MainThreadSchedulerImpl::OnSafepointEntered() {
+   DCHECK(WTF::IsMainThread());
+   DCHECK(!main_thread_only().nested_runloop);
+-  main_thread_only().metrics_helper.OnSafepointEntered(helper_.NowTicks());
+ }
+ 
+ void MainThreadSchedulerImpl::OnSafepointExited() {
+   DCHECK(WTF::IsMainThread());
+   DCHECK(!main_thread_only().nested_runloop);
+-  main_thread_only().metrics_helper.OnSafepointExited(helper_.NowTicks());
+ }
+ 
+ void MainThreadSchedulerImpl::ExecuteAfterCurrentTask(

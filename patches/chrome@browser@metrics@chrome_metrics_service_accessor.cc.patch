@@ -1,0 +1,35 @@
+diff --git a/chrome/browser/metrics/chrome_metrics_service_accessor.cc b/chrome/browser/metrics/chrome_metrics_service_accessor.cc
+index f2f306546521..1f0bc0c5bd88 100644
+--- a/chrome/browser/metrics/chrome_metrics_service_accessor.cc
++++ b/chrome/browser/metrics/chrome_metrics_service_accessor.cc
+@@ -33,12 +33,13 @@ void ChromeMetricsServiceAccessor::SetMetricsAndCrashReportingForTesting(
+ 
+ // static
+ bool ChromeMetricsServiceAccessor::IsMetricsAndCrashReportingEnabled() {
+-  return IsMetricsAndCrashReportingEnabled(g_browser_process->local_state());
++  return false;
+ }
+ 
+ // static
+ bool ChromeMetricsServiceAccessor::IsMetricsAndCrashReportingEnabled(
+     PrefService* local_state) {
++  return false;
+   if (g_metrics_consent_for_testing)
+     return *g_metrics_consent_for_testing;
+ 
+@@ -63,14 +64,11 @@ bool ChromeMetricsServiceAccessor::IsMetricsAndCrashReportingEnabled(
+ bool ChromeMetricsServiceAccessor::RegisterSyntheticFieldTrial(
+     base::StringPiece trial_name,
+     base::StringPiece group_name) {
+-  return metrics::MetricsServiceAccessor::RegisterSyntheticFieldTrial(
+-      g_browser_process->metrics_service(), trial_name, group_name);
++  return true;
+ }
+ 
+ void ChromeMetricsServiceAccessor::SetForceIsMetricsReportingEnabledPrefLookup(
+     bool value) {
+-  metrics::MetricsServiceAccessor::SetForceIsMetricsReportingEnabledPrefLookup(
+-      value);
+ }
+ 
+ #if BUILDFLAG(ENABLE_PLUGINS)

@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/views/tabs/tab_controller.h b/chrome/browser/ui/views/tabs/tab_controller.h
+index 1f10049c1d7c..7de9c6b1dffc 100644
+--- a/chrome/browser/ui/views/tabs/tab_controller.h
++++ b/chrome/browser/ui/views/tabs/tab_controller.h
+@@ -58,6 +58,9 @@ class TabController {
+   // Closes the tab.
+   virtual void CloseTab(Tab* tab, CloseTabSource source) = 0;
+ 
++  // Toggles whether tab-wide audio muting is active.
++  virtual void ToggleTabAudioMute(Tab* tab) = 0;
++
+   // Attempts to shift the specified tab to the right by one index.
+   virtual void ShiftTabRight(Tab* tab) = 0;
+ 

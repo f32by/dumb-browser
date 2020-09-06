@@ -1,0 +1,23 @@
+diff --git a/components/safe_browsing/content/web_ui/safe_browsing_ui.cc b/components/safe_browsing/content/web_ui/safe_browsing_ui.cc
+index 68db04feb804..205be74d22d7 100644
+--- a/components/safe_browsing/content/web_ui/safe_browsing_ui.cc
++++ b/components/safe_browsing/content/web_ui/safe_browsing_ui.cc
+@@ -29,7 +29,6 @@
+ #include "components/password_manager/core/browser/hash_password_manager.h"
+ #include "components/safe_browsing/buildflags.h"
+ #include "components/safe_browsing/core/browser/referrer_chain_provider.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/safe_browsing/core/features.h"
+ #include "components/safe_browsing/core/proto/csd.pb.h"
+ #include "services/network/public/mojom/cookie_manager.mojom.h"
+@@ -1747,9 +1746,7 @@ void SafeBrowsingUIHandler::GetPrefs(const base::ListValue* args) {
+   AllowJavascript();
+   std::string callback_id;
+   args->GetString(0, &callback_id);
+-  ResolveJavascriptCallback(base::Value(callback_id),
+-                            safe_browsing::GetSafeBrowsingPreferencesList(
+-                                user_prefs::UserPrefs::Get(browser_context_)));
++  ResolveJavascriptCallback(base::Value(callback_id), base::ListValue());
+ }
+ 
+ void SafeBrowsingUIHandler::GetCookie(const base::ListValue* args) {

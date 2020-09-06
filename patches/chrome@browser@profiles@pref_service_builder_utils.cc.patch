@@ -1,0 +1,19 @@
+diff --git a/chrome/browser/profiles/pref_service_builder_utils.cc b/chrome/browser/profiles/pref_service_builder_utils.cc
+index a7c58cc4bb9f..ee06ef24fa2a 100644
+--- a/chrome/browser/profiles/pref_service_builder_utils.cc
++++ b/chrome/browser/profiles/pref_service_builder_utils.cc
+@@ -12,13 +12,13 @@
+ #include "base/files/file_util.h"
+ #include "base/path_service.h"
+ #include "base/sequenced_task_runner.h"
++#include "base/strings/stringprintf.h"
+ #include "base/threading/scoped_blocking_call.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/policy/chrome_browser_policy_connector.h"
+ #include "chrome/browser/prefs/browser_prefs.h"
+ #include "chrome/browser/prefs/chrome_pref_service_factory.h"
+ #include "chrome/browser/prefs/profile_pref_store_manager.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
+ #include "chrome/common/buildflags.h"
+ #include "chrome/common/chrome_constants.h"
+ #include "chrome/grit/chromium_strings.h"

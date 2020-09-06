@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc b/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
+index f20c73fedd1e..4df976f7b63d 100644
+--- a/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
++++ b/chrome/browser/page_load_metrics/page_load_metrics_initialize.cc
+@@ -10,7 +10,6 @@
+ #include "base/macros.h"
+ #include "build/build_config.h"
+ #include "chrome/browser/page_load_metrics/observers/aborts_page_load_metrics_observer.h"
+-#include "chrome/browser/page_load_metrics/observers/ad_metrics/ads_page_load_metrics_observer.h"
+ #include "chrome/browser/page_load_metrics/observers/amp_page_load_metrics_observer.h"
+ #include "chrome/browser/page_load_metrics/observers/data_saver_site_breakdown_metrics_observer.h"
+ #include "chrome/browser/page_load_metrics/observers/data_use_metrics_observer.h"
+@@ -46,7 +45,6 @@
+ #include "components/page_load_metrics/browser/page_load_metrics_embedder_base.h"
+ #include "components/page_load_metrics/browser/page_load_tracker.h"
+ #include "components/prerender/browser/prerender_contents.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "content/public/browser/web_contents.h"
+ #include "extensions/buildflags/buildflags.h"
+ #include "url/gurl.h"
+@@ -127,10 +125,6 @@ void PageLoadMetricsEmbedder::RegisterEmbedderObservers(
+     tracker->AddObserver(std::make_unique<TabRestorePageLoadMetricsObserver>());
+     tracker->AddObserver(
+         std::make_unique<DataSaverSiteBreakdownMetricsObserver>());
+-    std::unique_ptr<AdsPageLoadMetricsObserver> ads_observer =
+-        AdsPageLoadMetricsObserver::CreateIfNeeded(tracker->GetWebContents());
+-    if (ads_observer)
+-      tracker->AddObserver(std::move(ads_observer));
+ 
+     tracker->AddObserver(std::make_unique<ThirdPartyMetricsObserver>());
+ 

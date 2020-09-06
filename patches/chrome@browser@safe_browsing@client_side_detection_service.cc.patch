@@ -1,0 +1,113 @@
+diff --git a/chrome/browser/safe_browsing/client_side_detection_service.cc b/chrome/browser/safe_browsing/client_side_detection_service.cc
+index 8d5c28231a8f..8a8ca152206f 100644
+--- a/chrome/browser/safe_browsing/client_side_detection_service.cc
++++ b/chrome/browser/safe_browsing/client_side_detection_service.cc
+@@ -25,7 +25,6 @@
+ #include "chrome/common/pref_names.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/safe_browsing/content/common/safe_browsing.mojom.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/safe_browsing/core/common/utils.h"
+ #include "components/safe_browsing/core/proto/client_model.pb.h"
+ #include "components/safe_browsing/core/proto/csd.pb.h"
+@@ -57,7 +56,7 @@ const int ClientSideDetectionService::kNegativeCacheIntervalDays = 1;
+ const int ClientSideDetectionService::kPositiveCacheIntervalMinutes = 30;
+ 
+ const char ClientSideDetectionService::kClientReportPhishingUrl[] =
+-    "https://sb-ssl.google.com/safebrowsing/clientreport/phishing";
++    "https://no-thanks.invalid";
+ 
+ struct ClientSideDetectionService::ClientPhishingReportInfo {
+   std::unique_ptr<network::SimpleURLLoader> loader;
+@@ -109,48 +108,6 @@ void ClientSideDetectionService::Shutdown() {
+ 
+ void ClientSideDetectionService::OnPrefsUpdated() {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-  bool enabled = IsSafeBrowsingEnabled(*profile_->GetPrefs());
+-  bool extended_reporting =
+-      IsEnhancedProtectionEnabled(*profile_->GetPrefs()) ||
+-      IsExtendedReportingEnabled(*profile_->GetPrefs());
+-  if (enabled == enabled_ && extended_reporting_ == extended_reporting)
+-    return;
+-
+-  enabled_ = enabled;
+-  extended_reporting_ = extended_reporting;
+-
+-  if (enabled_) {
+-    if (!model_factory_.is_null()) {
+-      model_loader_ = model_factory_.Run();
+-    } else {
+-      model_loader_ = std::make_unique<ModelLoader>(
+-          base::BindRepeating(&ClientSideDetectionService::SendModelToRenderers,
+-                              base::Unretained(this)),
+-          profile_->GetURLLoaderFactory(), extended_reporting_);
+-    }
+-    // Refresh the models when the service is enabled.  This can happen when
+-    // either of the preferences are toggled, or early during startup if
+-    // safe browsing is already enabled. In a lot of cases the model will be
+-    // in the cache so it  won't actually be fetched from the network.
+-    // We delay the first model fetches to avoid slowing down browser startup.
+-    model_loader_->ScheduleFetch(kInitialClientModelFetchDelayMs);
+-  } else {
+-    if (model_loader_) {
+-      // Cancel model loads in progress.
+-      model_loader_->CancelFetcher();
+-    }
+-    // Invoke pending callbacks with a false verdict.
+-    for (auto it = client_phishing_reports_.begin();
+-         it != client_phishing_reports_.end(); ++it) {
+-      ClientPhishingReportInfo* info = it->second.get();
+-      if (!info->callback.is_null())
+-        info->callback.Run(info->phishing_url, false);
+-    }
+-    client_phishing_reports_.clear();
+-    cache_.clear();
+-  }
+-
+-  SendModelToRenderers();  // always refresh the renderer state
+ }
+ 
+ void ClientSideDetectionService::SendClientReportPhishingRequest(
+@@ -158,13 +115,6 @@ void ClientSideDetectionService::SendClientReportPhishingRequest(
+     bool is_extended_reporting,
+     bool is_enhanced_reporting,
+     const ClientReportPhishingRequestCallback& callback) {
+-  DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-  base::ThreadTaskRunnerHandle::Get()->PostTask(
+-      FROM_HERE,
+-      base::BindOnce(
+-          &ClientSideDetectionService::StartClientReportPhishingRequest,
+-          weak_factory_.GetWeakPtr(), verdict, is_extended_reporting,
+-          is_enhanced_reporting, callback));
+ }
+ 
+ bool ClientSideDetectionService::IsPrivateIPAddress(
+@@ -217,6 +167,7 @@ void ClientSideDetectionService::StartClientReportPhishingRequest(
+     bool is_extended_reporting,
+     bool is_enhanced_reporting,
+     const ClientReportPhishingRequestCallback& callback) {
++  return;
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+   std::unique_ptr<ClientPhishingRequest> request(verdict);
+ 
+@@ -315,18 +266,9 @@ void ClientSideDetectionService::HandlePhishingVerdict(
+   ClientPhishingResponse response;
+   std::unique_ptr<ClientPhishingReportInfo> info =
+       std::move(client_phishing_reports_[source]);
+-  client_phishing_reports_.erase(source);
+-
+-  bool is_phishing = false;
+-  if (net_error == net::OK && net::HTTP_OK == response_code &&
+-      response.ParseFromString(data)) {
+-    // Cache response, possibly flushing an old one.
+-    cache_[info->phishing_url] =
+-        base::WrapUnique(new CacheState(response.phishy(), base::Time::Now()));
+-    is_phishing = response.phishy();
+-  }
++
+   if (!info->callback.is_null())
+-    info->callback.Run(info->phishing_url, is_phishing);
++    info->callback.Run(GURL(), false);
+ }
+ 
+ bool ClientSideDetectionService::IsInCache(const GURL& url) {

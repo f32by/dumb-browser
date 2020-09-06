@@ -1,0 +1,58 @@
+diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
+index eb6e5d353b33..1264b5bdb983 100644
+--- a/chrome/renderer/chrome_content_renderer_client.cc
++++ b/chrome/renderer/chrome_content_renderer_client.cc
+@@ -95,11 +95,7 @@
+ #include "components/prerender/renderer/prerender_utils.h"
+ #include "components/prerender/renderer/prerenderer_client.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/content/renderer/threat_dom_details.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+-#include "components/subresource_filter/content/renderer/subresource_filter_agent.h"
+-#include "components/subresource_filter/content/renderer/unverified_ruleset_dealer.h"
+-#include "components/subresource_filter/core/common/common_features.h"
+ #include "components/sync/engine/sync_engine_switches.h"
+ #include "components/translate/content/renderer/per_frame_translate_agent.h"
+ #include "components/translate/core/common/translate_util.h"
+@@ -364,11 +360,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+     InitSpellCheck();
+ #endif
+ 
+-  subresource_filter_ruleset_dealer_.reset(
+-      new subresource_filter::UnverifiedRulesetDealer());
+-
+   thread->AddObserver(chrome_observer_.get());
+-  thread->AddObserver(subresource_filter_ruleset_dealer_.get());
+ 
+ #if !defined(OS_ANDROID)
+   thread->AddObserver(SearchBouncer::GetInstance());
+@@ -590,19 +582,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+   // Owned by |render_frame|.
+   page_load_metrics::MetricsRenderFrameObserver* metrics_render_frame_observer =
+       new page_load_metrics::MetricsRenderFrameObserver(render_frame);
+-  // There is no render thread, thus no UnverifiedRulesetDealer in
+-  // ChromeRenderViewTests.
+-  if (subresource_filter_ruleset_dealer_) {
+-    // Create AdResourceTracker to tracker ad resource loads at the chrome
+-    // layer.
+-    auto ad_resource_tracker =
+-        std::make_unique<subresource_filter::AdResourceTracker>();
+-    metrics_render_frame_observer->SetAdResourceTracker(
+-        ad_resource_tracker.get());
+-    new subresource_filter::SubresourceFilterAgent(
+-        render_frame, subresource_filter_ruleset_dealer_.get(),
+-        std::move(ad_resource_tracker));
+-  }
+ 
+   if (lite_video::IsLiteVideoEnabled())
+     new lite_video::LiteVideoHintAgent(render_frame);
+@@ -1499,9 +1478,6 @@ void ChromeContentRendererClient::
+ #if defined(OS_CHROMEOS) || defined(OS_WIN) || defined(OS_ANDROID)
+     blink::WebRuntimeFeatures::EnableWebShare(true);
+ #endif
+-
+-  if (base::FeatureList::IsEnabled(subresource_filter::kAdTagging))
+-    blink::WebRuntimeFeatures::EnableAdTagging(true);
+ }
+ 
+ bool ChromeContentRendererClient::AllowScriptExtensionForServiceWorker(

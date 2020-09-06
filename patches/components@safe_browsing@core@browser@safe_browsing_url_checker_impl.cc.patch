@@ -1,0 +1,59 @@
+diff --git a/components/safe_browsing/core/browser/safe_browsing_url_checker_impl.cc b/components/safe_browsing/core/browser/safe_browsing_url_checker_impl.cc
+index d0c360caed4d..410b0a01299b 100644
+--- a/components/safe_browsing/core/browser/safe_browsing_url_checker_impl.cc
++++ b/components/safe_browsing/core/browser/safe_browsing_url_checker_impl.cc
+@@ -9,7 +9,6 @@
+ #include "base/metrics/histogram_macros.h"
+ #include "base/metrics/histogram_macros_local.h"
+ #include "base/task/post_task.h"
+-#include "base/trace_event/trace_event.h"
+ #include "components/safe_browsing/core/browser/url_checker_delegate.h"
+ #include "components/safe_browsing/core/common/safebrowsing_constants.h"
+ #include "components/safe_browsing/core/common/thread_utils.h"
+@@ -150,8 +149,6 @@ SafeBrowsingUrlCheckerImpl::~SafeBrowsingUrlCheckerImpl() {
+       database_manager_->CancelCheck(this);
+     }
+     const GURL& url = urls_[next_index_].url;
+-    TRACE_EVENT_ASYNC_END1("safe_browsing", "CheckUrl", this, "url",
+-                           url.spec());
+   }
+ }
+ 
+@@ -212,8 +209,6 @@ void SafeBrowsingUrlCheckerImpl::OnUrlResult(const GURL& url,
+   timer_.Stop();
+   RecordCheckUrlTimeout(/*timed_out=*/false);
+ 
+-  TRACE_EVENT_ASYNC_END1("safe_browsing", "CheckUrl", this, "url", url.spec());
+-
+   const bool is_prefetch = (load_flags_ & net::LOAD_PREFETCH);
+ 
+   // Handle main frame and subresources. We do this to catch resources flagged
+@@ -351,8 +346,6 @@ void SafeBrowsingUrlCheckerImpl::ProcessUrls() {
+     SBThreatType threat_type = CheckWebUIUrls(url);
+     if (threat_type != safe_browsing::SB_THREAT_TYPE_SAFE) {
+       state_ = STATE_CHECKING_URL;
+-      TRACE_EVENT_ASYNC_BEGIN1("safe_browsing", "CheckUrl", this, "url",
+-                               url.spec());
+ 
+       base::PostTask(
+           FROM_HERE, CreateTaskTraits(ThreadID::IO),
+@@ -362,9 +355,6 @@ void SafeBrowsingUrlCheckerImpl::ProcessUrls() {
+       break;
+     }
+ 
+-    TRACE_EVENT_ASYNC_BEGIN1("safe_browsing", "CheckUrl", this, "url",
+-                             url.spec());
+-
+     // Start a timer to abort the check if it takes too long.
+     timer_.Start(FROM_HERE,
+                  base::TimeDelta::FromMilliseconds(kCheckUrlTimeoutMs), this,
+@@ -423,9 +413,6 @@ void SafeBrowsingUrlCheckerImpl::ProcessUrls() {
+       timer_.Stop();
+       RecordCheckUrlTimeout(/*timed_out=*/false);
+ 
+-      TRACE_EVENT_ASYNC_END1("safe_browsing", "CheckUrl", this, "url",
+-                             url.spec());
+-
+       if (!RunNextCallback(true, false))
+         return;
+ 

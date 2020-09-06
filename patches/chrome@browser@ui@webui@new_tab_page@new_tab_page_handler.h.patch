@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
+index bc4c23141f45..9fd7cac7c0b4 100644
+--- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
++++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
+@@ -237,9 +237,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+                      std::unique_ptr<network::SimpleURLLoader>>
+       loader_map_;
+   std::vector<GetPromoCallback> promo_callbacks_;
+-  PromoService* promo_service_;
+-  ScopedObserver<PromoService, PromoServiceObserver> promo_service_observer_{
+-      this};
+   base::Optional<base::TimeTicks> promo_load_start_time_;
+ 
+   // These are located at the end of the list of member variables to ensure the

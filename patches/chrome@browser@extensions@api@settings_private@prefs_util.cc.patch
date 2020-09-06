@@ -1,0 +1,46 @@
+diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chrome/browser/extensions/api/settings_private/prefs_util.cc
+index d17b2f684e8b..6844c8acbc72 100644
+--- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
++++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
+@@ -33,9 +33,7 @@
+ #include "components/payments/core/payment_prefs.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/proxy_config/proxy_config_pref_names.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/search_engines/default_search_manager.h"
+-#include "components/spellcheck/browser/pref_names.h"
+ #include "components/translate/core/browser/translate_pref_names.h"
+ #include "components/translate/core/browser/translate_prefs.h"
+ #include "components/unified_consent/pref_names.h"
+@@ -261,14 +259,6 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetWhitelistedKeys() {
+   // Security page
+   (*s_whitelist)[::kGeneratedPasswordLeakDetectionPref] =
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+-  (*s_whitelist)[::prefs::kSafeBrowsingEnabled] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+-  (*s_whitelist)[::prefs::kSafeBrowsingEnhanced] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+-  (*s_whitelist)[::prefs::kSafeBrowsingScoutReportingEnabled] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+-  (*s_whitelist)[::safe_browsing::kGeneratedSafeBrowsingPref] =
+-      settings_api::PrefType::PREF_TYPE_NUMBER;
+ 
+   // Sync and personalization page.
+   (*s_whitelist)[::prefs::kSearchSuggestEnabled] =
+@@ -280,16 +270,6 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetWhitelistedKeys() {
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+ 
+   // Languages page
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckEnable] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckDictionaries] =
+-      settings_api::PrefType::PREF_TYPE_LIST;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckForcedDictionaries] =
+-      settings_api::PrefType::PREF_TYPE_LIST;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckBlocklistedDictionaries] =
+-      settings_api::PrefType::PREF_TYPE_LIST;
+-  (*s_whitelist)[spellcheck::prefs::kSpellCheckUseSpellingService] =
+-      settings_api::PrefType::PREF_TYPE_BOOLEAN;
+   (*s_whitelist)[::prefs::kOfferTranslateEnabled] =
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+   (*s_whitelist)[language::prefs::kFluentLanguages] =

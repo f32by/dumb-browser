@@ -1,0 +1,25 @@
+diff --git a/third_party/blink/renderer/platform/instrumentation/histogram.cc b/third_party/blink/renderer/platform/instrumentation/histogram.cc
+index d5285d45bc2e..64774a84d6d0 100644
+--- a/third_party/blink/renderer/platform/instrumentation/histogram.cc
++++ b/third_party/blink/renderer/platform/instrumentation/histogram.cc
+@@ -23,12 +23,10 @@ CustomCountHistogram::CustomCountHistogram(base::HistogramBase* histogram)
+     : histogram_(histogram) {}
+ 
+ void CustomCountHistogram::Count(base::HistogramBase::Sample sample) {
+-  histogram_->Add(sample);
+ }
+ 
+ void CustomCountHistogram::CountMany(base::HistogramBase::Sample sample,
+                                      int count) {
+-  histogram_->AddCount(sample, count);
+ }
+ 
+ void CustomCountHistogram::CountMicroseconds(base::TimeDelta delta) {
+@@ -62,7 +60,6 @@ SparseHistogram::SparseHistogram(const char* name) {
+ }
+ 
+ void SparseHistogram::Sample(base::HistogramBase::Sample sample) {
+-  histogram_->Add(sample);
+ }
+ 
+ LinearHistogram::LinearHistogram(const char* name,

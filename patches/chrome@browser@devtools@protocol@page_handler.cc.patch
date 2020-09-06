@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/devtools/protocol/page_handler.cc b/chrome/browser/devtools/protocol/page_handler.cc
+index edbb2dea06c6..d97698c5d862 100644
+--- a/chrome/browser/devtools/protocol/page_handler.cc
++++ b/chrome/browser/devtools/protocol/page_handler.cc
+@@ -5,7 +5,6 @@
+ #include "chrome/browser/devtools/protocol/page_handler.h"
+ 
+ #include "chrome/browser/installable/installable_manager.h"
+-#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
+ #include "ui/gfx/image/image.h"
+ 
+ PageHandler::PageHandler(content::WebContents* web_contents,
+@@ -20,12 +19,6 @@ PageHandler::~PageHandler() {
+ }
+ 
+ void PageHandler::ToggleAdBlocking(bool enabled) {
+-  if (!web_contents())
+-    return;
+-  if (auto* client =
+-          ChromeSubresourceFilterClient::FromWebContents(web_contents())) {
+-    client->ToggleForceActivationInCurrentWebContents(enabled);
+-  }
+ }
+ 
+ protocol::Response PageHandler::Enable() {

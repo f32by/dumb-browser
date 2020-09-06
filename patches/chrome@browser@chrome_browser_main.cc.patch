@@ -1,0 +1,154 @@
+diff --git a/chrome/browser/chrome_browser_main.cc b/chrome/browser/chrome_browser_main.cc
+index 1ee43b77f11c..0339769ddd50 100644
+--- a/chrome/browser/chrome_browser_main.cc
++++ b/chrome/browser/chrome_browser_main.cc
+@@ -134,7 +134,6 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/prefs/pref_value_store.h"
+ #include "components/prefs/scoped_user_pref_update.h"
+-#include "components/rappor/rappor_service_impl.h"
+ #include "components/site_isolation/site_isolation_policy.h"
+ #include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/startup_metric_utils/browser/startup_metric_utils.h"
+@@ -775,7 +774,7 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
+ #if defined(OS_WIN)
+   if (first_run::IsChromeFirstRun()) {
+     bool stats_default;
+-    if (GoogleUpdateSettings::GetCollectStatsConsentDefault(&stats_default)) {
++    if (false) {
+       // |stats_default| == true means that the default state of consent for the
+       // product at the time of install was to report usage statistics, meaning
+       // "opt-out".
+@@ -801,9 +800,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
+ 
+   SetupOriginTrialsCommandLine(browser_process_->local_state());
+ 
+-  metrics::EnableExpiryChecker(chrome_metrics::kExpiredHistogramsHashes,
+-                               chrome_metrics::kNumExpiredHistograms);
+-
+   return service_manager::RESULT_CODE_NORMAL_EXIT;
+ }
+ 
+@@ -954,15 +950,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+   SecKeychainAddCallback(&KeychainCallback, 0, nullptr);
+ #endif  // defined(OS_MAC)
+ 
+-#if defined(OS_WIN) || defined(OS_MAC) || \
+-    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-  metrics::DesktopSessionDurationTracker::Initialize();
+-  ProfileActivityMetricsRecorder::Initialize();
+-  TouchModeStatsTracker::Initialize(
+-      metrics::DesktopSessionDurationTracker::Get(),
+-      ui::TouchUiController::Get());
+-#endif
+-  metrics::RendererUptimeTracker::Initialize();
+ 
+   // Add Site Isolation switches as dictated by policy.
+   auto* command_line = base::CommandLine::ForCurrentProcess();
+@@ -992,12 +979,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+   // this.
+   browser_process_->PreCreateThreads(parsed_command_line());
+ 
+-  // This must occur in PreCreateThreads() because it initializes global state
+-  // which is then read by all threads without synchronization. It must be after
+-  // browser_process_->PreCreateThreads() as that instantiates the IOThread
+-  // which is used in SetupMetrics().
+-  SetupMetrics();
+-
+   return service_manager::RESULT_CODE_NORMAL_EXIT;
+ }
+ 
+@@ -1087,12 +1068,6 @@ void ChromeBrowserMainParts::PreBrowserStart() {
+   // other services to start up before we start adjusting the oom priority.
+   g_browser_process->GetTabManager()->Start();
+ #endif
+-
+-  // The RulesetService will make the filtering rules available to renderers
+-  // immediately after its construction, provided that the rules are already
+-  // available at no cost in an indexed format. This enables activating
+-  // subresource filtering, if needed, also for page loads on start-up.
+-  g_browser_process->subresource_filter_ruleset_service();
+ }
+ 
+ void ChromeBrowserMainParts::PostBrowserStart() {
+@@ -1118,10 +1093,6 @@ void ChromeBrowserMainParts::PostBrowserStart() {
+                    base::BindOnce(&WebUsbDetector::Initialize,
+                                   base::Unretained(web_usb_detector_.get())));
+   }
+-  if (base::FeatureList::IsEnabled(features::kTabMetricsLogging)) {
+-    // Initialize the TabActivityWatcher to begin logging tab activity events.
+-    resource_coordinator::TabActivityWatcher::GetInstance();
+-  }
+ #endif
+ 
+   // At this point, StartupBrowserCreator::Start has run creating initial
+@@ -1147,9 +1118,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+   InitializeWinParentalControls();
+ #endif
+ 
+-  // Now that the file thread has been started, start metrics.
+-  StartMetricsRecording();
+-
+   if (!base::debug::BeingDebugged()) {
+     // Create watchdog thread after creating all other threads because it will
+     // watch the other threads and they must be running.
+@@ -1160,9 +1128,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+   // running.
+   browser_process_->PreMainMessageLoopRun();
+ 
+-  // Record last shutdown time into a histogram.
+-  browser_shutdown::ReadLastShutdownInfo();
+-
+ #if defined(OS_WIN)
+   // On Windows, we use our startup as an opportunity to do upgrade/uninstall
+   // tasks.  Those care whether the browser is already running.  On Linux/Mac,
+@@ -1434,8 +1399,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+   // and preferences have been registered since some of the import code depends
+   // on preferences.
+   if (first_run::IsChromeFirstRun()) {
+-    first_run::AutoImport(profile_, master_prefs_->import_bookmarks_path);
+-
+     // Note: This can pop-up the first run consent dialog on Linux & Mac.
+     first_run::DoPostImportTasks(profile_,
+                                  master_prefs_->make_chrome_default_for_user);
+@@ -1523,13 +1486,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+ #endif
+ 
+   HandleTestParameters(parsed_command_line());
+-  browser_process_->metrics_service()->RecordBreakpadHasDebugger(
+-      base::debug::BeingDebugged());
+-
+-  language_usage_metrics::LanguageUsageMetrics::RecordAcceptLanguages(
+-      profile_->GetPrefs()->GetString(language::prefs::kAcceptLanguages));
+-  language_usage_metrics::LanguageUsageMetrics::RecordApplicationLanguage(
+-      browser_process_->GetApplicationLocale());
+ 
+ // On mobile, need for clean shutdown arises only when the application comes
+ // to foreground (i.e. MetricsService::OnAppEnterForeground is called).
+@@ -1667,15 +1623,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+   downgrade_manager_.DeleteMovedUserDataSoon(user_data_dir_);
+ #endif
+ 
+-#if defined(OS_ANDROID)
+-  // We never run the C++ main loop on Android, since the UI thread message
+-  // loop is controlled by the OS, so this is as close as we can get to
+-  // the start of the main loop.
+-  if (result_code_ <= 0) {
+-    RecordBrowserStartupTime();
+-  }
+-#endif  // defined(OS_ANDROID)
+-
+   return result_code_;
+ }
+ 
+@@ -1695,10 +1642,6 @@ bool ChromeBrowserMainParts::MainMessageLoopRun(int* result_code) {
+   if (!run_message_loop_)
+     return true;  // Don't run the default message loop.
+ 
+-  // These should be invoked as close to the start of the browser's
+-  // UI thread message loop as possible to get a stable measurement
+-  // across versions.
+-  RecordBrowserStartupTime();
+ 
+   DCHECK(base::CurrentUIThread::IsSet());
+ 

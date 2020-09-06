@@ -1,0 +1,50 @@
+diff --git a/chrome/browser/net/trial_comparison_cert_verifier_controller.cc b/chrome/browser/net/trial_comparison_cert_verifier_controller.cc
+index a6a9196252e9..d2f0f1018fe4 100644
+--- a/chrome/browser/net/trial_comparison_cert_verifier_controller.cc
++++ b/chrome/browser/net/trial_comparison_cert_verifier_controller.cc
+@@ -16,11 +16,8 @@
+ #include "build/build_config.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/safe_browsing/certificate_reporting_service.h"
+-#include "chrome/browser/safe_browsing/certificate_reporting_service_factory.h"
+ #include "chrome/common/channel_info.h"
+ #include "chrome/common/chrome_features.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/security_interstitials/content/certificate_error_report.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -43,12 +40,6 @@ TrialComparisonCertVerifierController::TrialComparisonCertVerifierController(
+     // enabled.
+     return;
+   }
+-
+-  pref_change_registrar_.Init(profile_->GetPrefs());
+-  pref_change_registrar_.Add(
+-      prefs::kSafeBrowsingScoutReportingEnabled,
+-      base::BindRepeating(&TrialComparisonCertVerifierController::RefreshState,
+-                          base::Unretained(this)));
+ }
+ 
+ TrialComparisonCertVerifierController::
+@@ -94,9 +85,7 @@ bool TrialComparisonCertVerifierController::IsAllowed() const {
+   if (!MaybeAllowedForProfile(profile_))
+     return false;
+ 
+-  const PrefService& prefs = *profile_->GetPrefs();
+-
+-  return safe_browsing::IsExtendedReportingEnabled(prefs);
++  return false;
+ }
+ 
+ void TrialComparisonCertVerifierController::SendTrialReport(
+@@ -131,9 +120,6 @@ void TrialComparisonCertVerifierController::SendTrialReport(
+   std::string serialized_report;
+   if (!report.Serialize(&serialized_report))
+     return;
+-
+-  CertificateReportingServiceFactory::GetForBrowserContext(profile_)->Send(
+-      serialized_report);
+ }
+ 
+ // static

@@ -1,0 +1,12 @@
+diff --git a/third_party/crashpad/crashpad/client/crashpad_client_mac.cc b/third_party/crashpad/crashpad/client/crashpad_client_mac.cc
+index 3c6d13a7569f..6eaab03759a8 100644
+--- a/third_party/crashpad/crashpad/client/crashpad_client_mac.cc
++++ b/third_party/crashpad/crashpad/client/crashpad_client_mac.cc
+@@ -494,6 +494,7 @@ bool CrashpadClient::SetHandlerMachPort(
+ }
+ 
+ base::mac::ScopedMachSendRight CrashpadClient::GetHandlerMachPort() const {
++  return base::mac::ScopedMachSendRight(MACH_PORT_NULL);
+   DCHECK(exception_port_.is_valid());
+ 
+   // For the purposes of this method, only return a port set by

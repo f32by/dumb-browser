@@ -1,0 +1,49 @@
+diff --git a/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc b/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
+index 80c304aed440..fa095a93f4fb 100644
+--- a/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
++++ b/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
+@@ -36,7 +36,6 @@
+ #include "chrome/browser/ui/webui/chromeos/in_session_password_change/password_change_ui.h"
+ #include "chrome/browser/ui/webui/components/components_ui.h"
+ #include "chrome/browser/ui/webui/constrained_web_dialog_ui.h"
+-#include "chrome/browser/ui/webui/crashes_ui.h"
+ #include "chrome/browser/ui/webui/device_log_ui.h"
+ #include "chrome/browser/ui/webui/domain_reliability_internals_ui.h"
+ #include "chrome/browser/ui/webui/download_internals/download_internals_ui.h"
+@@ -85,8 +84,6 @@
+ #include "components/nacl/common/buildflags.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/content/web_ui/safe_browsing_ui.h"
+-#include "components/safe_browsing/core/web_ui/constants.h"
+ #include "components/security_interstitials/content/connection_help_ui.h"
+ #include "components/security_interstitials/content/known_interception_disclosure_ui.h"
+ #include "components/security_interstitials/content/urls.h"
+@@ -473,8 +470,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+     return &NewWebUI<ComponentsUI>;
+   if (url.spec() == chrome::kChromeUIConstrainedHTMLTestURL)
+     return &NewWebUI<ConstrainedWebDialogUI>;
+-  if (url.host_piece() == chrome::kChromeUICrashesHost)
+-    return &NewWebUI<CrashesUI>;
+   if (url.host_piece() == chrome::kChromeUIDeviceLogHost)
+     return &NewWebUI<chromeos::DeviceLogUI>;
+   if (url.host_piece() == chrome::kChromeUIDomainReliabilityInternalsHost)
+@@ -518,8 +513,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+     return &NewWebUI<PredictorsUI>;
+   if (url.host_piece() == chrome::kChromeUIQuotaInternalsHost)
+     return &NewWebUI<QuotaInternalsUI>;
+-  if (url.host_piece() == safe_browsing::kChromeUISafeBrowsingHost)
+-    return &NewWebUI<safe_browsing::SafeBrowsingUI>;
+   if (url.host_piece() == chrome::kChromeUISignInInternalsHost)
+     return &NewWebUI<SignInInternalsUI>;
+   if (url.host_piece() == chrome::kChromeUISuggestionsHost)
+@@ -1077,9 +1070,6 @@ base::RefCountedMemory* ChromeWebUIControllerFactory::GetFaviconResourceBytes(
+     return ConflictsUI::GetFaviconResourceBytes(scale_factor);
+ #endif
+ 
+-  if (page_url.host_piece() == chrome::kChromeUICrashesHost)
+-    return CrashesUI::GetFaviconResourceBytes(scale_factor);
+-
+   if (page_url.host_piece() == chrome::kChromeUIFlagsHost)
+     return FlagsUI::GetFaviconResourceBytes(scale_factor);
+ 

@@ -1,0 +1,48 @@
+diff --git a/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm b/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
+index f54c77051fdf..79ea77c5a834 100644
+--- a/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
++++ b/chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
+@@ -16,9 +16,7 @@
+ #include "chrome/browser/ui/browser_finder.h"
+ #include "chrome/common/url_constants.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/spellcheck/browser/pref_names.h"
+-#include "components/spellcheck/browser/spellcheck_platform.h"
+-#include "components/spellcheck/common/spellcheck_panel.mojom.h"
++#include "components/spellcheck/spellcheck_buildflags.h"
+ #include "components/web_modal/web_contents_modal_dialog_manager.h"
+ #include "content/public/browser/render_frame_host.h"
+ #include "content/public/browser/render_process_host.h"
+@@ -117,6 +115,8 @@ - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item
+       _renderWidgetHost->GetProcess()->GetBrowserContext());
+   DCHECK(profile);
+   PrefService* pref = profile->GetPrefs();
++
++#if BUILDFLAG(ENABLE_SPELLCHECK)
+   const PrefService::Preference* spellCheckEnablePreference =
+       pref->FindPreference(spellcheck::prefs::kSpellCheckEnable);
+   DCHECK(spellCheckEnablePreference);
+@@ -150,6 +150,7 @@ - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item
+     *valid = spellCheckUserModifiable;
+     return YES;
+   }
++#endif
+ 
+   return NO;
+ }
+@@ -168,6 +169,7 @@ - (void)rendererHandledOverscrollEvent:(const ui::DidOverscrollParams&)params {
+   [_historySwiper onOverscrolled:params];
+ }
+ 
++#if BUILDFLAG(ENABLE_SPELLCHECK)
+ // Spellchecking methods
+ // The next five methods are implemented here since this class is the first
+ // responder for anything in the browser.
+@@ -241,6 +243,7 @@ - (void)toggleContinuousSpellChecking:(id)sender {
+ }
+ 
+ // END Spellchecking methods
++#endif
+ 
+ // If a dialog is visible, make its window key. See becomeFirstResponder.
+ - (void)makeAnyDialogKey {

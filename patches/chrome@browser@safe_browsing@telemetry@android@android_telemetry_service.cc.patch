@@ -1,0 +1,16 @@
+diff --git a/chrome/browser/safe_browsing/telemetry/android/android_telemetry_service.cc b/chrome/browser/safe_browsing/telemetry/android/android_telemetry_service.cc
+index cd9cf3551232..7ba811d79719 100644
+--- a/chrome/browser/safe_browsing/telemetry/android/android_telemetry_service.cc
++++ b/chrome/browser/safe_browsing/telemetry/android/android_telemetry_service.cc
+@@ -134,11 +134,9 @@ bool AndroidTelemetryService::CanSendPing(download::DownloadItem* item) {
+     return false;
+   }
+ 
+-  if (!IsSafeBrowsingEnabled(*GetPrefs())) {
+     RecordApkDownloadTelemetryOutcome(
+         ApkDownloadTelemetryOutcome::NOT_SENT_SAFE_BROWSING_NOT_ENABLED);
+     return false;
+-  }
+ 
+   if (profile_->IsOffTheRecord()) {
+     RecordApkDownloadTelemetryOutcome(

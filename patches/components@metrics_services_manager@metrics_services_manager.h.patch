@@ -1,0 +1,46 @@
+diff --git a/components/metrics_services_manager/metrics_services_manager.h b/components/metrics_services_manager/metrics_services_manager.h
+index 38c955cfde54..b671c1983715 100644
+--- a/components/metrics_services_manager/metrics_services_manager.h
++++ b/components/metrics_services_manager/metrics_services_manager.h
+@@ -19,11 +19,6 @@ namespace metrics {
+ class MetricsService;
+ class MetricsServiceClient;
+ }
+-
+-namespace rappor {
+-class RapporServiceImpl;
+-}
+-
+ namespace ukm {
+ class UkmService;
+ }
+@@ -60,9 +55,6 @@ class MetricsServicesManager {
+   // additionally creating the MetricsServiceClient in that case).
+   metrics::MetricsService* GetMetricsService();
+ 
+-  // Returns the RapporServiceImpl, creating it if it hasn't been created yet.
+-  rappor::RapporServiceImpl* GetRapporServiceImpl();
+-
+   // Returns the UkmService, creating it if it hasn't been created yet.
+   ukm::UkmService* GetUkmService();
+ 
+@@ -86,9 +78,6 @@ class MetricsServicesManager {
+   bool IsMetricsConsentGiven() const;
+ 
+  private:
+-  // Update the managed services when permissions for recording/uploading
+-  // metrics change.
+-  void UpdateRapporServiceImpl();
+ 
+   // Returns the MetricsServiceClient, creating it if it hasn't been
+   // created yet (and additionally creating the MetricsService in that case).
+@@ -124,9 +113,6 @@ class MetricsServicesManager {
+   // The MetricsServiceClient. Owns the MetricsService.
+   std::unique_ptr<metrics::MetricsServiceClient> metrics_service_client_;
+ 
+-  // The RapporServiceImpl, for RAPPOR metric uploads.
+-  std::unique_ptr<rappor::RapporServiceImpl> rappor_service_;
+-
+   // The VariationsService, for server-side experiments infrastructure.
+   std::unique_ptr<variations::VariationsService> variations_service_;
+ 

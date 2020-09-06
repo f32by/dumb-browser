@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/ui/hats/hats_service.cc b/chrome/browser/ui/hats/hats_service.cc
+index bc024ac55a6b..a2e9a6e78743 100644
+--- a/chrome/browser/ui/hats/hats_service.cc
++++ b/chrome/browser/ui/hats/hats_service.cc
+@@ -354,6 +354,7 @@ void HatsService::LaunchSurveyForBrowser(const std::string& trigger,
+ }
+ 
+ bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
++  return false;
+   // Do not show if a survey dialog already exists.
+   if (hats_next_dialog_exists_) {
+     UMA_HISTOGRAM_ENUMERATION(
+@@ -385,11 +386,6 @@ bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
+     return false;
+   }
+ 
+-  bool consent_given =
+-      g_browser_process->GetMetricsServicesManager()->IsMetricsConsentGiven();
+-  if (!consent_given)
+-    return false;
+-
+   if (profile_->GetLastSessionExitType() == Profile::EXIT_CRASHED) {
+     UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
+                               ShouldShowSurveyReasons::kNoLastSessionCrashed);

@@ -1,0 +1,51 @@
+diff --git a/chrome/browser/metrics/metrics_reporting_state.cc b/chrome/browser/metrics/metrics_reporting_state.cc
+index 2745f4a40aca..c6a93dcb1d38 100644
+--- a/chrome/browser/metrics/metrics_reporting_state.cc
++++ b/chrome/browser/metrics/metrics_reporting_state.cc
+@@ -32,6 +32,7 @@ enum MetricsReportingChangeHistogramValue {
+ 
+ void RecordMetricsReportingHistogramValue(
+     MetricsReportingChangeHistogramValue value) {
++  return;
+   UMA_HISTOGRAM_ENUMERATION(
+       "UMA.MetricsReporting.Toggle", value, METRICS_REPORTING_MAX);
+ }
+@@ -39,7 +40,7 @@ void RecordMetricsReportingHistogramValue(
+ // Tries to set metrics reporting status to |enabled| and returns whatever is
+ // the result of the update.
+ bool SetGoogleUpdateSettings(bool enabled) {
+-  GoogleUpdateSettings::SetCollectStatsConsent(enabled);
++  GoogleUpdateSettings::SetCollectStatsConsent(false);
+   bool updated_pref = GoogleUpdateSettings::GetCollectStatsConsent();
+   if (enabled != updated_pref)
+     DVLOG(1) << "Unable to set metrics reporting status to " << enabled;
+@@ -59,7 +60,7 @@ void SetMetricsReporting(bool to_update_pref,
+                          OnMetricsReportingCallbackType callback_fn,
+                          bool updated_pref) {
+   g_browser_process->local_state()->SetBoolean(
+-      metrics::prefs::kMetricsReportingEnabled, updated_pref);
++      metrics::prefs::kMetricsReportingEnabled, false);
+ 
+   UpdateMetricsPrefsOnPermissionChange(updated_pref);
+ 
+@@ -105,12 +106,6 @@ void ChangeMetricsReportingStateWithReply(
+ }
+ 
+ void UpdateMetricsPrefsOnPermissionChange(bool metrics_enabled) {
+-  if (metrics_enabled) {
+-    // When a user opts in to the metrics reporting service, the previously
+-    // collected data should be cleared to ensure that nothing is reported
+-    // before a user opts in and all reported data is accurate.
+-    g_browser_process->metrics_service()->ClearSavedStabilityMetrics();
+-  } else {
+     // Clear the client id and low entropy sources pref when opting out.
+     // Note: This will not affect the running state (e.g. field trial
+     // randomization), as the pref is only read on startup.
+@@ -120,7 +115,6 @@ void UpdateMetricsPrefsOnPermissionChange(bool metrics_enabled) {
+     g_browser_process->local_state()->ClearPref(
+         metrics::prefs::kMetricsReportingEnabledTimestamp);
+     crash_keys::ClearMetricsClientId();
+-  }
+ }
+ 
+ #if !defined(OS_ANDROID)

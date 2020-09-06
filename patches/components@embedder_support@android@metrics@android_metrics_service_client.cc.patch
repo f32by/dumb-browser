@@ -1,0 +1,12 @@
+diff --git a/components/embedder_support/android/metrics/android_metrics_service_client.cc b/components/embedder_support/android/metrics/android_metrics_service_client.cc
+index c4508daef9ac..5da9d23791d3 100644
+--- a/components/embedder_support/android/metrics/android_metrics_service_client.cc
++++ b/components/embedder_support/android/metrics/android_metrics_service_client.cc
+@@ -227,6 +227,7 @@ void AndroidMetricsServiceClient::Initialize(PrefService* pref_service) {
+ }
+ 
+ void AndroidMetricsServiceClient::MaybeStartMetrics() {
++  return;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   // Treat the debugging flag the same as user consent because the user set it,
+   // but keep app_consent_ separate so we never persist data from an opted-out

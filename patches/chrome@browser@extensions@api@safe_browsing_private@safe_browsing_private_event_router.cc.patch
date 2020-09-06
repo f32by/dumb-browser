@@ -1,0 +1,46 @@
+diff --git a/chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.cc b/chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.cc
+index 62c83646ae9a..26e96bc34580 100644
+--- a/chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.cc
++++ b/chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.cc
+@@ -859,32 +859,16 @@ void SafeBrowsingPrivateEventRouter::OnCloudPolicyClientAvailable(
+ }
+ 
+ bool SafeBrowsingPrivateEventRouter::IsRealtimeReportingEnabled() {
+-  auto settings =
+-      enterprise_connectors::ConnectorsManager::GetInstance()
+-          ->GetReportingSettings(
+-              enterprise_connectors::ReportingConnector::SECURITY_EVENT);
+-  return settings.has_value();
++  return false;
+ }
+ 
+ void SafeBrowsingPrivateEventRouter::IfAuthorized(
+     base::OnceCallback<void(bool)> cont) {
+-  if (!binary_upload_service_ && g_browser_process) {
+-    binary_upload_service_ =
+-        safe_browsing::BinaryUploadServiceFactory::GetForProfile(
+-            Profile::FromBrowserContext(context_));
+-  }
+-
+-  // TODO(crbug/1069049): Use reporting URL.
+-  if (binary_upload_service_)
+-    binary_upload_service_->IsAuthorized(GURL(), std::move(cont));
+ }
+ 
+ void SafeBrowsingPrivateEventRouter::ReportRealtimeEvent(
+     const std::string& name,
+     EventBuilder event_builder) {
+-  IfAuthorized(base::BindOnce(
+-      &SafeBrowsingPrivateEventRouter::ReportRealtimeEventCallback,
+-      weak_ptr_factory_.GetWeakPtr(), name, std::move(event_builder)));
+ }
+ 
+ void SafeBrowsingPrivateEventRouter::ReportRealtimeEventCallback(
+@@ -948,6 +932,7 @@ const user_manager::User* SafeBrowsingPrivateEventRouter::GetChromeOSUser() {
+ #endif
+ 
+ bool SafeBrowsingPrivateEventRouter::IsRealtimeReportingAvailable() {
++  return false;
+ #if defined(OS_CHROMEOS)
+   // The device must be managed.
+   if (!g_browser_process->platform_part()

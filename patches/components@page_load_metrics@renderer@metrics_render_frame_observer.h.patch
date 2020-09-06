@@ -1,0 +1,47 @@
+diff --git a/components/page_load_metrics/renderer/metrics_render_frame_observer.h b/components/page_load_metrics/renderer/metrics_render_frame_observer.h
+index 8fb5d352b839..29d32bd8dcfa 100644
+--- a/components/page_load_metrics/renderer/metrics_render_frame_observer.h
++++ b/components/page_load_metrics/renderer/metrics_render_frame_observer.h
+@@ -13,7 +13,6 @@
+ #include "components/page_load_metrics/common/page_load_timing.h"
+ #include "components/page_load_metrics/renderer/page_resource_data_use.h"
+ #include "components/page_load_metrics/renderer/page_timing_metadata_recorder.h"
+-#include "components/subresource_filter/content/renderer/ad_resource_tracker.h"
+ #include "content/public/renderer/render_frame_observer.h"
+ #include "third_party/blink/public/common/loader/loading_behavior_flag.h"
+ #include "third_party/blink/public/mojom/loader/resource_load_info.mojom-shared.h"
+@@ -37,8 +36,7 @@ class PageTimingSender;
+ // child frames). MetricsRenderFrameObserver dispatches timing and metadata
+ // updates for main frames, but only metadata updates for child frames.
+ class MetricsRenderFrameObserver
+-    : public content::RenderFrameObserver,
+-      public subresource_filter::AdResourceTracker::Observer {
++    : public content::RenderFrameObserver {
+  public:
+   explicit MetricsRenderFrameObserver(content::RenderFrame* render_frame);
+   ~MetricsRenderFrameObserver() override;
+@@ -85,13 +83,6 @@ class MetricsRenderFrameObserver
+   // before being destroyed.
+   void WillDetach() override;
+ 
+-  // Set the ad resource tracker that |this| observes.
+-  void SetAdResourceTracker(
+-      subresource_filter::AdResourceTracker* ad_resource_tracker);
+-
+-  // AdResourceTracker implementation
+-  void OnAdResourceTrackerGoingAway() override;
+-  void OnAdResourceObserved(int request_id) override;
+ 
+   void OnMainFrameIntersectionChanged(
+       const blink::WebRect& main_frame_intersection) override;
+@@ -147,10 +138,6 @@ class MetricsRenderFrameObserver
+   std::unique_ptr<PageResourceDataUse> provisional_frame_resource_data_use_;
+   int provisional_frame_resource_id_ = 0;
+ 
+-  ScopedObserver<subresource_filter::AdResourceTracker,
+-                 subresource_filter::AdResourceTracker::Observer>
+-      scoped_ad_resource_observer_;
+-
+   // Set containing all request ids that were reported as ads from the renderer.
+   std::set<int> ad_request_ids_;
+ 

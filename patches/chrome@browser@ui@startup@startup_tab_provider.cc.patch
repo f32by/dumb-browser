@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/startup/startup_tab_provider.cc b/chrome/browser/ui/startup/startup_tab_provider.cc
+index ab549af27db8..0a426080464a 100644
+--- a/chrome/browser/ui/startup/startup_tab_provider.cc
++++ b/chrome/browser/ui/startup/startup_tab_provider.cc
+@@ -47,7 +47,7 @@ bool ProfileHasOtherTabbedBrowser(Profile* profile) {
+ 
+ StartupTabs StartupTabProviderImpl::GetOnboardingTabs(Profile* profile) const {
+ // Chrome OS has its own welcome flow provided by OOBE.
+-#if defined(OS_CHROMEOS)
++#if 1
+   return StartupTabs();
+ #else
+   if (!profile)

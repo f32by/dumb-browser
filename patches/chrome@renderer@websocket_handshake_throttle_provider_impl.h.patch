@@ -1,0 +1,22 @@
+diff --git a/chrome/renderer/websocket_handshake_throttle_provider_impl.h b/chrome/renderer/websocket_handshake_throttle_provider_impl.h
+index 2c04ee4d4861..9b7e271f3ca6 100644
+--- a/chrome/renderer/websocket_handshake_throttle_provider_impl.h
++++ b/chrome/renderer/websocket_handshake_throttle_provider_impl.h
+@@ -9,7 +9,6 @@
+ 
+ #include "base/macros.h"
+ #include "base/threading/thread_checker.h"
+-#include "components/safe_browsing/content/common/safe_browsing.mojom.h"
+ #include "content/public/renderer/websocket_handshake_throttle_provider.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+@@ -37,9 +36,6 @@ class WebSocketHandshakeThrottleProviderImpl final
+   WebSocketHandshakeThrottleProviderImpl(
+       const WebSocketHandshakeThrottleProviderImpl& other);
+ 
+-  mojo::PendingRemote<safe_browsing::mojom::SafeBrowsing> safe_browsing_remote_;
+-  mojo::Remote<safe_browsing::mojom::SafeBrowsing> safe_browsing_;
+-
+   THREAD_CHECKER(thread_checker_);
+ 
+   DISALLOW_ASSIGN(WebSocketHandshakeThrottleProviderImpl);

@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc b/chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc
+index 6a125964fc7f..4bcbc1c6ca8f 100644
+--- a/chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc
++++ b/chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc
+@@ -6,7 +6,6 @@
+ 
+ #include <utility>
+ 
+-#include "chrome/browser/safe_browsing/user_interaction_observer.h"
+ #include "chrome/browser/ui/browser.h"
+ #include "chrome/browser/ui/browser_finder.h"
+ #include "chrome/browser/ui/browser_list.h"
+@@ -40,12 +39,6 @@ void JavaScriptTabModalDialogManagerDelegateDesktop::WillRunDialog() {
+   // warnings until user interaction. If the current page has a delayed warning,
+   // it'll have a user interaction observer attached. Show the warning
+   // immediately in that case.
+-  safe_browsing::SafeBrowsingUserInteractionObserver* observer =
+-      safe_browsing::SafeBrowsingUserInteractionObserver::FromWebContents(
+-          web_contents_);
+-  if (observer) {
+-    observer->OnJavaScriptDialog();
+-  }
+ }
+ 
+ void JavaScriptTabModalDialogManagerDelegateDesktop::DidCloseDialog() {

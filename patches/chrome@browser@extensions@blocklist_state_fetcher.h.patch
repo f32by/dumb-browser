@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/extensions/blocklist_state_fetcher.h b/chrome/browser/extensions/blocklist_state_fetcher.h
+index 9da2debfcb88..9174726aad62 100644
+--- a/chrome/browser/extensions/blocklist_state_fetcher.h
++++ b/chrome/browser/extensions/blocklist_state_fetcher.h
+@@ -11,10 +11,11 @@
+ #include <string>
+ 
+ #include "base/callback.h"
++#include "base/containers/flat_map.h"
+ #include "base/macros.h"
+ #include "base/memory/weak_ptr.h"
+-#include "components/safe_browsing/core/db/util.h"
+ #include "extensions/browser/blocklist_state.h"
++#include "url/gurl.h"
+ 
+ namespace network {
+ class SharedURLLoaderFactory;
+@@ -34,7 +35,6 @@ class BlocklistStateFetcher {
+ 
+   virtual void Request(const std::string& id, const RequestCallback& callback);
+ 
+-  void SetSafeBrowsingConfig(const safe_browsing::V4ProtocolConfig& config);
+ 
+  protected:
+   void OnURLLoaderComplete(network::SimpleURLLoader* url_loader,
+@@ -54,7 +54,6 @@ class BlocklistStateFetcher {
+ 
+   void SendRequest(const std::string& id);
+ 
+-  std::unique_ptr<safe_browsing::V4ProtocolConfig> safe_browsing_config_;
+   scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
+ 
+   // SimpleURLLoader -> (owned loader, extension id).
