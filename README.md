@@ -40,7 +40,7 @@ Other changes / optimizations:
 It's impossible to build Dumb Browser via GitHub Actions due to GitHub free account's resource limitations.
 Please build on your own or wait for official binaries.
 
-Tested on **Windows 10**, **macOS 10.15.6** and **macOS 11.0 Beta 6**.
+Tested on **macOS 10.15.6** and **macOS 11.0 Beta 6**.
 
 ### Prerequisites
 
@@ -64,6 +64,8 @@ cd dumb-browser
 ./build/build.py release
 # wait patiently :)
 ```
+
+Binaries will be found in `src/out/{Release|Debug} .`
 
 ## 2. Official Binaries
 *Coming soon*
