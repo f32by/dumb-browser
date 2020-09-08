@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/first_run/first_run_internal_posix.cc b/chrome/browser/first_run/first_run_internal_posix.cc
+index 3214f78d5d7d..527926b373f5 100644
+--- a/chrome/browser/first_run/first_run_internal_posix.cc
++++ b/chrome/browser/first_run/first_run_internal_posix.cc
+@@ -22,7 +22,6 @@
+ #include "components/metrics/metrics_pref_names.h"
+ #include "components/metrics/metrics_reporting_default_state.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ 
+ namespace first_run {
+ 
+@@ -104,7 +103,6 @@ void DoPostImportPlatformSpecificTasks(Profile* profile) {
+     std::move(GetBeforeShowFirstRunDialogHookForTesting()).Run();
+ 
+   ShowFirstRunDialog(profile);
+-  startup_metric_utils::SetNonBrowserUIDisplayed();
+ #endif  // !OS_CHROMEOS
+ }
+ 

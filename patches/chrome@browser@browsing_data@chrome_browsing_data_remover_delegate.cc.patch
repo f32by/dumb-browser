@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-index 59a1243defb4..b56fb3976f11 100644
+index 59a1243defb4..842dc7b83629 100644
 --- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 +++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-@@ -47,8 +47,6 @@
+@@ -32,7 +32,6 @@
+ #include "chrome/browser/browsing_data/navigation_entry_remover.h"
+ #include "chrome/browser/chrome_notification_types.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+-#include "chrome/browser/crash_upload_list/crash_upload_list.h"
+ #include "chrome/browser/custom_handlers/protocol_handler_registry.h"
+ #include "chrome/browser/custom_handlers/protocol_handler_registry_factory.h"
+ #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
+@@ -47,8 +46,6 @@
  #include "chrome/browser/history/history_service_factory.h"
  #include "chrome/browser/history/web_history_service_factory.h"
  #include "chrome/browser/language/url_language_histogram_factory.h"
@@ -11,7 +19,7 @@ index 59a1243defb4..b56fb3976f11 100644
  #include "chrome/browser/media/history/media_history_keyed_service.h"
  #include "chrome/browser/media/history/media_history_keyed_service_factory.h"
  #include "chrome/browser/media/media_device_id_salt.h"
-@@ -65,7 +63,6 @@
+@@ -65,7 +62,6 @@
  #include "chrome/browser/previews/previews_service.h"
  #include "chrome/browser/previews/previews_service_factory.h"
  #include "chrome/browser/profiles/profile.h"
@@ -19,7 +27,7 @@ index 59a1243defb4..b56fb3976f11 100644
  #include "chrome/browser/translate/chrome_translate_client.h"
  #include "chrome/browser/ui/find_bar/find_bar_state.h"
  #include "chrome/browser/ui/find_bar/find_bar_state_factory.h"
-@@ -283,6 +280,7 @@ bool DoesOriginMatchEmbedderMask(uint64_t origin_type_mask,
+@@ -283,6 +279,7 @@ bool DoesOriginMatchEmbedderMask(uint64_t origin_type_mask,
  // Callback for when cookies have been deleted. Invokes NotifyIfDone.
  // Receiving |cookie_manager| as a parameter so that the receive pipe is
  // not deleted before the response is received.
@@ -27,7 +35,7 @@ index 59a1243defb4..b56fb3976f11 100644
  void OnClearedCookies(
      base::OnceClosure done,
      mojo::Remote<network::mojom::CookieManager> cookie_manager,
-@@ -619,10 +617,12 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -619,10 +616,12 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
  
      AvailabilityProber::ClearData(prefs);
  
@@ -40,7 +48,15 @@ index 59a1243defb4..b56fb3976f11 100644
  
  #if defined(OS_ANDROID)
      OomInterventionDecider* oom_intervention_decider =
-@@ -701,36 +701,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -670,7 +669,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+     }
+ #endif
+ 
+-    CreateCrashUploadList()->Clear(delete_begin_, delete_end_);
+ 
+     FindBarStateFactory::GetForBrowserContext(profile_)->SetLastSearchText(
+         base::string16());
+@@ -701,36 +699,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
          ContentSettingsType::CLIENT_HINTS, base::Time(), base::Time::Max(),
          website_settings_filter);
  

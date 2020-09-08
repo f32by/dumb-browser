@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-index 2c07ff8c5677..73b83ed1f110 100644
+index 2c07ff8c5677..419567db7851 100644
 --- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 +++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 @@ -60,7 +60,6 @@
@@ -18,3 +18,11 @@ index 2c07ff8c5677..73b83ed1f110 100644
    ChromeBrowsingDataRemoverDelegateFactory::GetInstance();
    ChromeSigninClientFactory::GetInstance();
    ClientHintsFactory::GetInstance();
+@@ -347,7 +345,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+ #if BUILDFLAG(FULL_SAFE_BROWSING)
+   safe_browsing::AdvancedProtectionStatusManagerFactory::GetInstance();
+ #endif
+-  SCTReportingServiceFactory::GetInstance();
+ #if defined(OS_ANDROID)
+   SearchPermissionsService::Factory::GetInstance();
+ #endif

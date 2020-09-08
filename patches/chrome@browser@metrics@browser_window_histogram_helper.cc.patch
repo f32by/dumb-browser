@@ -1,0 +1,37 @@
+diff --git a/chrome/browser/metrics/browser_window_histogram_helper.cc b/chrome/browser/metrics/browser_window_histogram_helper.cc
+index 268ff6ddc9cf..ec43d377d2d5 100644
+--- a/chrome/browser/metrics/browser_window_histogram_helper.cc
++++ b/chrome/browser/metrics/browser_window_histogram_helper.cc
+@@ -4,7 +4,6 @@
+ 
+ #include "chrome/browser/metrics/browser_window_histogram_helper.h"
+ 
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ 
+ BrowserWindowHistogramHelper::~BrowserWindowHistogramHelper() {}
+ 
+@@ -24,15 +23,12 @@ BrowserWindowHistogramHelper::MaybeRecordValueAndCreateInstanceOnBrowserPaint(
+ 
+ BrowserWindowHistogramHelper::BrowserWindowHistogramHelper(
+     ui::Compositor* compositor) {
+-  startup_metric_utils::RecordBrowserWindowFirstPaint(base::TimeTicks::Now());
+ 
+ #if defined(OS_MAC)
+   if (!compositor) {
+     // In Cocoa version of Chromium, UI is rendered inside the main process
+     // using CoreAnimation compositor, and at this point everything is already
+     // visible to the user.
+-    startup_metric_utils::RecordBrowserWindowFirstPaintCompositingEnded(
+-        base::TimeTicks::Now());
+     return;
+   }
+ #endif  // OS_MAC
+@@ -42,8 +38,6 @@ BrowserWindowHistogramHelper::BrowserWindowHistogramHelper(
+ 
+ void BrowserWindowHistogramHelper::OnCompositingEnded(
+     ui::Compositor* compositor) {
+-  startup_metric_utils::RecordBrowserWindowFirstPaintCompositingEnded(
+-      base::TimeTicks::Now());
+ 
+   scoped_observer_.RemoveAll();
+ }

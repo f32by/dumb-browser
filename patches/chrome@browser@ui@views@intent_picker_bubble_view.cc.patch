@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/ui/views/intent_picker_bubble_view.cc b/chrome/browser/ui/views/intent_picker_bubble_view.cc
+index 171910db2fe2..41fa9f6d8666 100644
+--- a/chrome/browser/ui/views/intent_picker_bubble_view.cc
++++ b/chrome/browser/ui/views/intent_picker_bubble_view.cc
+@@ -167,13 +167,16 @@ views::Widget* IntentPickerBubbleView::ShowBubble(
+   // to ensure screen readers immediately announce the text of this view.
+   intent_picker_bubble_->GetViewAccessibility().OverrideRole(
+       ax::mojom::Role::kDialog);
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+   if (icon_type == PageActionIconType::kClickToCall) {
+     intent_picker_bubble_->GetViewAccessibility().OverrideName(
+         l10n_util::GetStringUTF16(
+             IDS_BROWSER_SHARING_CLICK_TO_CALL_DIALOG_TITLE_LABEL));
+     ClickToCallUiController::GetOrCreateFromWebContents(web_contents)
+         ->ClearLastDialog();
+-  } else {
++  } else
++#endif
++  {
+     DCHECK(icon_type == PageActionIconType::kIntentPicker);
+     intent_picker_bubble_->GetViewAccessibility().OverrideName(
+         l10n_util::GetStringUTF16(IDS_TOOLTIP_INTENT_PICKER_ICON));

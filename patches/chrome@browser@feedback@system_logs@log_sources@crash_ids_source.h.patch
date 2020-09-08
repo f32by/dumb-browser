@@ -1,0 +1,19 @@
+diff --git a/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.h b/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.h
+index d5071493f9c0..aff69388c807 100644
+--- a/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.h
++++ b/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.h
+@@ -24,14 +24,12 @@ class CrashIdsSource : public SystemLogsSource {
+   void Fetch(SysLogsSourceCallback callback) override;
+ 
+   void SetUploadListForTesting(scoped_refptr<UploadList> upload_list) {
+-    crash_upload_list_ = upload_list;
+   }
+ 
+  private:
+   void OnUploadListAvailable();
+   void RespondWithCrashIds(SysLogsSourceCallback callback);
+ 
+-  scoped_refptr<UploadList> crash_upload_list_;
+ 
+   // A comma-separated list of crash IDs as expected by the server. The first
+   // is for the last hour, the second is for the pat 120 days.

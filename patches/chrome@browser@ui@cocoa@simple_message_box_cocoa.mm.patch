@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm b/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
+index 76db36aa55cd..59e9bf80efdf 100644
+--- a/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
++++ b/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
+@@ -13,7 +13,6 @@
+ #include "base/strings/sys_string_conversions.h"
+ #include "chrome/browser/ui/simple_message_box_internal.h"
+ #include "chrome/grit/generated_resources.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ #include "components/strings/grit/components_strings.h"
+ #include "ui/base/l10n/l10n_util_mac.h"
+ 
+@@ -22,7 +21,6 @@
+ MessageBoxResult ShowMessageBoxCocoa(const base::string16& message,
+                                      MessageBoxType type,
+                                      const base::string16& checkbox_text) {
+-  startup_metric_utils::SetNonBrowserUIDisplayed();
+   if (internal::g_should_skip_message_box_for_test)
+     return MESSAGE_BOX_RESULT_YES;
+ 

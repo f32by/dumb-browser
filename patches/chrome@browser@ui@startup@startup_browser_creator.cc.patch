@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/startup/startup_browser_creator.cc b/chrome/browser/ui/startup/startup_browser_creator.cc
+index 3853cb63fab8..5b2daa182792 100644
+--- a/chrome/browser/ui/startup/startup_browser_creator.cc
++++ b/chrome/browser/ui/startup/startup_browser_creator.cc
+@@ -64,7 +64,6 @@
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/search_engines/util.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ #include "components/url_formatter/url_fixer.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -788,8 +787,6 @@ bool StartupBrowserCreator::ProcessCmdLineImpl(
+ 
+   // If we don't want to launch a new browser window or tab we are done here.
+   if (silent_launch) {
+-    if (process_startup)
+-      startup_metric_utils::SetNonBrowserUIDisplayed();
+     return true;
+   }
+ 

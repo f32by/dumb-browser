@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.cc b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-index 9e827b4ea6f8..d4d0da8c8512 100644
+index 9e827b4ea6f8..b695cfee4f75 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 @@ -56,7 +56,6 @@
@@ -97,7 +97,17 @@ index 9e827b4ea6f8..d4d0da8c8512 100644
  RenderViewContextMenu::RenderViewContextMenu(
      content::RenderFrameHost* render_frame_host,
      const content::ContextMenuParams& params)
-@@ -1643,10 +1605,6 @@ void RenderViewContextMenu::AppendSearchProvider() {
+@@ -1266,7 +1228,9 @@ void RenderViewContextMenu::AppendLinkItems() {
+       }
+     }
+ 
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+     AppendClickToCallItem();
++#endif
+ 
+     menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+     menu_model_.AddItemWithStringId(IDC_CONTENT_CONTEXT_SAVELINKAS,
+@@ -1643,10 +1607,6 @@ void RenderViewContextMenu::AppendSearchProvider() {
  }
  
  void RenderViewContextMenu::AppendEditableItems() {
@@ -108,7 +118,7 @@ index 9e827b4ea6f8..d4d0da8c8512 100644
    if (!params_.misspelled_word.empty()) {
      AppendSearchProvider();
      menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
-@@ -1720,15 +1678,6 @@ void RenderViewContextMenu::AppendLanguageSettings() {
+@@ -1720,15 +1680,6 @@ void RenderViewContextMenu::AppendLanguageSettings() {
  #endif
  }
  
@@ -124,7 +134,33 @@ index 9e827b4ea6f8..d4d0da8c8512 100644
  bool RenderViewContextMenu::AppendAccessibilityLabelsItems() {
    menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
    if (!accessibility_labels_menu_observer_) {
-@@ -1878,13 +1827,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+@@ -1799,7 +1750,9 @@ void RenderViewContextMenu::AppendSharingItems() {
+   int items_before_sharing = menu_model_.GetItemCount();
+   bool starting_separator_added = items_before_sharing > items_initial;
+ 
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+   AppendClickToCallItem();
++#endif
+   AppendSharedClipboardItem();
+ 
+   // Add an ending separator if there are sharing items, otherwise remove the
+@@ -1811,6 +1764,7 @@ void RenderViewContextMenu::AppendSharingItems() {
+     menu_model_.RemoveItemAt(items_initial);
+ }
+ 
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+ void RenderViewContextMenu::AppendClickToCallItem() {
+   SharingClickToCallEntryPoint entry_point;
+   base::Optional<std::string> phone_number;
+@@ -1837,6 +1791,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
+   click_to_call_context_menu_observer_->BuildMenu(*phone_number, selection_text,
+                                                   entry_point);
+ }
++#endif
+ 
+ void RenderViewContextMenu::AppendSharedClipboardItem() {
+   if (!ShouldOfferSharedClipboard(browser_context_, params_.selection_text))
+@@ -1878,13 +1833,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
      return false;
    }
  
@@ -138,7 +174,7 @@ index 9e827b4ea6f8..d4d0da8c8512 100644
  
    // Extension items.
    if (ContextMenuMatcher::IsExtensionsCustomCommandId(id))
-@@ -2028,7 +1970,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+@@ -2028,7 +1976,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
  
      case IDC_CONTENT_CONTEXT_SEARCHWEBFOR:
      case IDC_CONTENT_CONTEXT_GOTOURL:
@@ -146,7 +182,7 @@ index 9e827b4ea6f8..d4d0da8c8512 100644
      case IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS:
      case IDC_SEND_TAB_TO_SELF:
      case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
-@@ -2042,16 +1983,12 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+@@ -2042,16 +1989,12 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
        return send_tab_to_self::AreContentRequirementsMet(
            params_.link_url, GetBrowser()->profile());
  
@@ -163,7 +199,7 @@ index 9e827b4ea6f8..d4d0da8c8512 100644
      case IDC_CONTENT_CONTEXT_OPENLINKWITH:
      case IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS:
      case IDC_CONTENT_CONTEXT_GENERATEPASSWORD:
-@@ -2417,10 +2354,6 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
+@@ -2417,10 +2360,6 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
    }
  }
  

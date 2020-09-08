@@ -1,8 +1,15 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.h b/chrome/browser/renderer_context_menu/render_view_context_menu.h
-index 140c03836951..99dfe1dd7bf1 100644
+index 140c03836951..32124c6548a8 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.h
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.h
-@@ -39,8 +39,6 @@ class PrintPreviewContextMenuObserver;
+@@ -34,13 +34,13 @@
+ #endif
+ 
+ class AccessibilityLabelsMenuObserver;
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+ class ClickToCallContextMenuObserver;
++#endif
+ class PrintPreviewContextMenuObserver;
  class Profile;
  class QuickAnswersMenuObserver;
  class SharedClipboardContextMenuObserver;
@@ -11,7 +18,7 @@ index 140c03836951..99dfe1dd7bf1 100644
  
  namespace content {
  class RenderFrameHost;
-@@ -73,10 +71,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -73,10 +73,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
  
    ~RenderViewContextMenu() override;
  
@@ -22,7 +29,7 @@ index 140c03836951..99dfe1dd7bf1 100644
    // Range of command IDs to use for the items in the send tab to self submenu.
    static const int kMaxSendTabToSelfSubMenuCommandId =
        send_tab_to_self::SendTabToSelfSubMenuModel::kMaxCommandId;
-@@ -86,7 +80,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -86,7 +82,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
    bool IsCommandIdVisible(int command_id) const override;
    bool IsCommandIdEnabled(int command_id) const override;
    void ExecuteCommand(int command_id, int event_flags) override;
@@ -30,7 +37,7 @@ index 140c03836951..99dfe1dd7bf1 100644
    void AddAccessibilityLabelsServiceItem(bool is_checked) override;
  
    // Registers a one-time callback that will be called the next time a context
-@@ -180,7 +173,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -180,7 +175,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
    void AppendRotationItems();
    void AppendEditableItems();
    void AppendLanguageSettings();
@@ -38,7 +45,17 @@ index 140c03836951..99dfe1dd7bf1 100644
    // Returns true if the items were appended. This might not happen in all
    // cases, e.g. these are only appended if a screen reader is enabled.
    bool AppendAccessibilityLabelsItems();
-@@ -264,22 +256,11 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -195,7 +189,9 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+   void AppendPasswordItems();
+   void AppendPictureInPictureItem();
+   void AppendSharingItems();
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+   void AppendClickToCallItem();
++#endif
+   void AppendSharedClipboardItem();
+   void AppendQRCodeGeneratorItem(bool for_image, bool draw_icon);
+ 
+@@ -264,22 +260,11 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
    ui::SimpleMenuModel protocol_handler_submenu_model_;
    ProtocolHandlerRegistry* protocol_handler_registry_;
  
@@ -61,3 +78,15 @@ index 140c03836951..99dfe1dd7bf1 100644
  #if defined(OS_CHROMEOS)
    // An observer that handles "Open with <app>" items.
    std::unique_ptr<RenderViewContextMenuObserver> open_with_menu_observer_;
+@@ -303,9 +288,11 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+   std::unique_ptr<send_tab_to_self::SendTabToSelfSubMenuModel>
+       send_tab_to_self_sub_menu_model_;
+ 
++#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
+   // Click to call menu observer.
+   std::unique_ptr<ClickToCallContextMenuObserver>
+       click_to_call_context_menu_observer_;
++#endif
+ 
+   // Shared clipboard menu observer.
+   std::unique_ptr<SharedClipboardContextMenuObserver>

@@ -24,6 +24,17 @@ from setuptools._vendor.ordered_set import OrderedSet
 from constants import CHROMIUM_SRC_DIR, PATCHES_DIR, PATCHLIST
 from utils import get_patch_filename, get_original_filename
 
+EXCLUSION_FILES = [
+    # language resources
+    'chrome/app/chromium_strings.grd',
+    'chrome/app/generated_resources.grd',
+    'chrome/app/google_chrome_strings.grd',
+    'chrome/app/settings_chromium_strings.grdp',
+    'chrome/app/settings_strings.grdp',
+    # branding resources
+    'chrome/app/theme/chromium/BRANDING'
+]
+
 
 def main(args):
     ret = subprocess.check_output(['git', 'checkout'], cwd=CHROMIUM_SRC_DIR).decode('utf-8').split('\n')
@@ -39,8 +50,12 @@ def main(args):
 
     i = 0
     for entry in ret:
-        i += 1
         filename = entry.replace('M\t', '')
+        # exclude resource files
+        if filename in EXCLUSION_FILES:
+            continue
+
+        i += 1
         new_patch_list.add(filename)
 
         patch_filename = get_patch_filename(filename)
@@ -59,6 +74,7 @@ def main(args):
     if os.path.exists(PATCHLIST):
         print('Removing old patches...')
 
+        removed_count = 0
         old_patches = os.listdir(PATCHES_DIR)
         for op in old_patches:
             if not op.endswith('.patch'):
@@ -66,8 +82,9 @@ def main(args):
 
             orig_filename = get_original_filename(op)
             if orig_filename not in new_patch_list:
-                print('Removing', orig_filename)
-                os.remove(os.path.join(PATCHES_DIR, get_patch_filename(orig_filename)))
+                os.remove(os.path.join(PATCHES_DIR, op))
+                removed_count += 1
+        print('Removed %d unused patch(es).' % removed_count)
 
     print('Writing new patch list...')
     with open(PATCHLIST, 'w') as f:

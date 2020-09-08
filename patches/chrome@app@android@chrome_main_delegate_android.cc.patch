@@ -1,0 +1,21 @@
+diff --git a/chrome/app/android/chrome_main_delegate_android.cc b/chrome/app/android/chrome_main_delegate_android.cc
+index 6af4b123a3d2..84227fc0291f 100644
+--- a/chrome/app/android/chrome_main_delegate_android.cc
++++ b/chrome/app/android/chrome_main_delegate_android.cc
+@@ -16,7 +16,6 @@
+ #include "chrome/common/profiler/main_thread_stack_sampling_profiler.h"
+ #include "components/policy/core/browser/android/android_combined_policy_provider.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ #include "content/public/browser/browser_main_runner.h"
+ 
+ #if BUILDFLAG(SAFE_BROWSING_DB_REMOTE)
+@@ -86,8 +85,6 @@ int ChromeMainDelegateAndroid::RunProcess(
+   // Also only record the start time the first time round, since this is the
+   // start time of the application, and will be same for all requests.
+   if (!browser_runner_) {
+-    startup_metric_utils::RecordApplicationStartTime(
+-        chrome::android::GetApplicationStartTime());
+     browser_runner_ = content::BrowserMainRunner::Create();
+   }
+ 

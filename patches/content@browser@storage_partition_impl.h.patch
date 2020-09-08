@@ -1,0 +1,12 @@
+diff --git a/content/browser/storage_partition_impl.h b/content/browser/storage_partition_impl.h
+index 52bd7c50b491..a0cb6f4485fb 100644
+--- a/content/browser/storage_partition_impl.h
++++ b/content/browser/storage_partition_impl.h
+@@ -269,7 +269,6 @@ class CONTENT_EXPORT StoragePartitionImpl
+ #if defined(OS_CHROMEOS)
+   void OnTrustAnchorUsed() override;
+ #endif
+-  void OnSCTReportReady(const std::string& cache_key) override;
+ 
+   scoped_refptr<URLLoaderFactoryGetter> url_loader_factory_getter() {
+     return url_loader_factory_getter_;

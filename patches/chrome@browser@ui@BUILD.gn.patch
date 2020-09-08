@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/BUILD.gn b/chrome/browser/ui/BUILD.gn
-index 3e9ae4b90060..9b995e9d7fd0 100644
+index 3e9ae4b90060..74abe5f620c9 100644
 --- a/chrome/browser/ui/BUILD.gn
 +++ b/chrome/browser/ui/BUILD.gn
 @@ -206,8 +206,6 @@ static_library("ui") {
@@ -66,20 +66,20 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
      "//components/schema_org/common:improved_mojom",
      "//components/search",
      "//components/search_engines",
-@@ -506,12 +484,9 @@ static_library("ui") {
+@@ -506,12 +484,8 @@ static_library("ui") {
      "//components/signin/core/browser",
      "//components/signin/public/base:signin_buildflags",
      "//components/signin/public/identity_manager",
 -    "//components/spellcheck/browser",
      "//components/ssl_errors",
-     "//components/startup_metric_utils/browser",
+-    "//components/startup_metric_utils/browser",
      "//components/strings",
 -    "//components/subresource_filter/content/browser",
 -    "//components/subresource_filter/core/browser",
      "//components/sync",
      "//components/sync/driver:resources",
      "//components/sync_preferences",
-@@ -626,8 +601,6 @@ static_library("ui") {
+@@ -626,8 +600,6 @@ static_library("ui") {
    if (!is_fuchsia) {
      # TODO(crbug.com/753619): Enable crash reporting on Fuchsia.
      deps += [
@@ -88,7 +88,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
      ]
    }
  
-@@ -816,7 +789,6 @@ static_library("ui") {
+@@ -816,7 +788,6 @@ static_library("ui") {
        "//components/optimization_guide/proto:optimization_guide_proto",
        "//components/page_info",
        "//components/page_info/android:android",
@@ -96,7 +96,16 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "//components/thin_webview:thin_webview",
        "//components/translate/content/android",
        "//crypto:platform",
-@@ -1517,7 +1489,6 @@ static_library("ui") {
+@@ -1431,8 +1402,6 @@ static_library("ui") {
+       "webui/settings/recent_site_settings_helper.h",
+       "webui/settings/reset_settings_handler.cc",
+       "webui/settings/reset_settings_handler.h",
+-      "webui/settings/safety_check_handler.cc",
+-      "webui/settings/safety_check_handler.h",
+       "webui/settings/search_engines_handler.cc",
+       "webui/settings/search_engines_handler.h",
+       "webui/settings/settings_clear_browsing_data_handler.cc",
+@@ -1517,7 +1486,6 @@ static_library("ui") {
        "//chrome/browser/promo_browser_command:mojo_bindings",
        "//chrome/browser/resource_coordinator:tab_metrics_event_proto",
        "//chrome/browser/resource_coordinator/tab_ranker",
@@ -104,7 +113,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "//chrome/browser/ui/color:color_headers",
        "//chrome/browser/ui/color:mixers",
        "//chrome/browser/ui/webui/app_management:mojo_bindings",
-@@ -1535,7 +1506,6 @@ static_library("ui") {
+@@ -1535,7 +1503,6 @@ static_library("ui") {
        "//components/page_load_metrics/browser",
        "//components/performance_manager:site_data_proto",
        "//components/profile_metrics",
@@ -112,7 +121,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "//components/search_provider_logos",
        "//components/services/app_service/public/cpp:app_update",
        "//components/services/app_service/public/mojom",
-@@ -3039,10 +3009,6 @@ static_library("ui") {
+@@ -3039,10 +3006,6 @@ static_library("ui") {
        "views/apps/glass_app_window_frame_view_win.cc",
        "views/apps/glass_app_window_frame_view_win.h",
        "views/certificate_viewer_win.cc",
@@ -123,7 +132,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "views/color_chooser_dialog.cc",
        "views/color_chooser_dialog.h",
        "views/color_chooser_win.cc",
-@@ -3065,8 +3031,6 @@ static_library("ui") {
+@@ -3065,8 +3028,6 @@ static_library("ui") {
        "views/frame/windows_10_caption_button.cc",
        "views/frame/windows_10_caption_button.h",
        "views/network_profile_bubble_view.cc",
@@ -132,7 +141,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "views/status_icons/status_icon_win.cc",
        "views/status_icons/status_icon_win.h",
        "views/status_icons/status_tray_state_changer_win.cc",
-@@ -3087,8 +3051,6 @@ static_library("ui") {
+@@ -3087,8 +3048,6 @@ static_library("ui") {
        "webui/conflicts/conflicts_handler.h",
        "webui/conflicts/conflicts_ui.cc",
        "webui/conflicts/conflicts_ui.h",
@@ -141,7 +150,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "webui/settings_utils_win.cc",
        "webui/version_handler_win.cc",
        "webui/version_handler_win.h",
-@@ -3100,7 +3062,6 @@ static_library("ui") {
+@@ -3100,7 +3059,6 @@ static_library("ui") {
        "//ui/views/controls/webview",
      ]
      deps += [
@@ -149,7 +158,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "//chrome/browser/ui/startup:buildflags",
        "//chrome/browser/win/conflicts:module_info",
        "//chrome/credential_provider/common:common_constants",
-@@ -3412,7 +3373,6 @@ static_library("ui") {
+@@ -3412,7 +3370,6 @@ static_library("ui") {
        "views/device_chooser_content_view.h",
        "views/devtools_process_observer.cc",
        "views/devtools_process_observer.h",
@@ -157,7 +166,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "views/download/download_in_progress_dialog_view.cc",
        "views/download/download_in_progress_dialog_view.h",
        "views/download/download_item_view.cc",
-@@ -3823,14 +3783,6 @@ static_library("ui") {
+@@ -3823,14 +3780,6 @@ static_library("ui") {
        "views/relaunch_notification/relaunch_required_timer_internal.h",
        "views/sad_tab_view.cc",
        "views/sad_tab_view.h",
@@ -172,7 +181,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "views/send_tab_to_self/send_tab_to_self_bubble_device_button.cc",
        "views/send_tab_to_self/send_tab_to_self_bubble_device_button.h",
        "views/send_tab_to_self/send_tab_to_self_bubble_view_impl.cc",
-@@ -3865,8 +3817,8 @@ static_library("ui") {
+@@ -3865,8 +3814,8 @@ static_library("ui") {
        "views/tab_search/tab_search_bubble_view.h",
        "views/tab_sharing/tab_sharing_ui_views.cc",
        "views/tab_sharing/tab_sharing_ui_views.h",
@@ -183,7 +192,7 @@ index 3e9ae4b90060..9b995e9d7fd0 100644
        "views/tabs/browser_tab_strip_controller.cc",
        "views/tabs/browser_tab_strip_controller.h",
        "views/tabs/color_picker_view.cc",
-@@ -4425,15 +4377,6 @@ static_library("ui") {
+@@ -4425,15 +4374,6 @@ static_library("ui") {
      }
    }
  

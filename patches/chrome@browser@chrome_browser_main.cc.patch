@@ -1,16 +1,42 @@
 diff --git a/chrome/browser/chrome_browser_main.cc b/chrome/browser/chrome_browser_main.cc
-index 1ee43b77f11c..0339769ddd50 100644
+index 1ee43b77f11c..0cb2e1802157 100644
 --- a/chrome/browser/chrome_browser_main.cc
 +++ b/chrome/browser/chrome_browser_main.cc
-@@ -134,7 +134,6 @@
+@@ -134,10 +134,8 @@
  #include "components/prefs/pref_service.h"
  #include "components/prefs/pref_value_store.h"
  #include "components/prefs/scoped_user_pref_update.h"
 -#include "components/rappor/rappor_service_impl.h"
  #include "components/site_isolation/site_isolation_policy.h"
  #include "components/spellcheck/spellcheck_buildflags.h"
- #include "components/startup_metric_utils/browser/startup_metric_utils.h"
-@@ -775,7 +774,7 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ #include "components/tracing/common/tracing_switches.h"
+ #include "components/translate/core/browser/translate_download_manager.h"
+ #include "components/variations/field_trial_config/field_trial_util.h"
+@@ -561,22 +559,6 @@ void ChromeBrowserMainParts::StartMetricsRecording() {
+ }
+ 
+ void ChromeBrowserMainParts::RecordBrowserStartupTime() {
+-  // Don't record any metrics if UI was displayed before this point e.g.
+-  // warning dialogs or browser was started in background mode.
+-  if (startup_metric_utils::WasMainWindowStartupInterrupted())
+-    return;
+-
+-  bool is_first_run = false;
+-#if !defined(OS_ANDROID)
+-  // On Android, first run is handled in Java code, and the C++ side of Chrome
+-  // doesn't know if this is the first run. This will cause some inaccuracy in
+-  // the UMA statistics, but this should be minor (first runs are rare).
+-  is_first_run = first_run::IsChromeFirstRun();
+-#endif  // defined(OS_ANDROID)
+-
+-  // Record collected startup metrics.
+-  startup_metric_utils::RecordBrowserMainMessageLoopStart(
+-      base::TimeTicks::Now(), is_first_run);
+ }
+ 
+ void ChromeBrowserMainParts::SetupOriginTrialsCommandLine(
+@@ -775,7 +757,7 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
  #if defined(OS_WIN)
    if (first_run::IsChromeFirstRun()) {
      bool stats_default;
@@ -19,7 +45,7 @@ index 1ee43b77f11c..0339769ddd50 100644
        // |stats_default| == true means that the default state of consent for the
        // product at the time of install was to report usage statistics, meaning
        // "opt-out".
-@@ -801,9 +800,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
+@@ -801,9 +783,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
  
    SetupOriginTrialsCommandLine(browser_process_->local_state());
  
@@ -29,7 +55,7 @@ index 1ee43b77f11c..0339769ddd50 100644
    return service_manager::RESULT_CODE_NORMAL_EXIT;
  }
  
-@@ -954,15 +950,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+@@ -954,15 +933,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
    SecKeychainAddCallback(&KeychainCallback, 0, nullptr);
  #endif  // defined(OS_MAC)
  
@@ -45,7 +71,7 @@ index 1ee43b77f11c..0339769ddd50 100644
  
    // Add Site Isolation switches as dictated by policy.
    auto* command_line = base::CommandLine::ForCurrentProcess();
-@@ -992,12 +979,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+@@ -992,12 +962,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
    // this.
    browser_process_->PreCreateThreads(parsed_command_line());
  
@@ -58,7 +84,7 @@ index 1ee43b77f11c..0339769ddd50 100644
    return service_manager::RESULT_CODE_NORMAL_EXIT;
  }
  
-@@ -1087,12 +1068,6 @@ void ChromeBrowserMainParts::PreBrowserStart() {
+@@ -1087,12 +1051,6 @@ void ChromeBrowserMainParts::PreBrowserStart() {
    // other services to start up before we start adjusting the oom priority.
    g_browser_process->GetTabManager()->Start();
  #endif
@@ -71,7 +97,7 @@ index 1ee43b77f11c..0339769ddd50 100644
  }
  
  void ChromeBrowserMainParts::PostBrowserStart() {
-@@ -1118,10 +1093,6 @@ void ChromeBrowserMainParts::PostBrowserStart() {
+@@ -1118,10 +1076,6 @@ void ChromeBrowserMainParts::PostBrowserStart() {
                     base::BindOnce(&WebUsbDetector::Initialize,
                                    base::Unretained(web_usb_detector_.get())));
    }
@@ -82,7 +108,7 @@ index 1ee43b77f11c..0339769ddd50 100644
  #endif
  
    // At this point, StartupBrowserCreator::Start has run creating initial
-@@ -1147,9 +1118,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1147,9 +1101,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    InitializeWinParentalControls();
  #endif
  
@@ -92,7 +118,7 @@ index 1ee43b77f11c..0339769ddd50 100644
    if (!base::debug::BeingDebugged()) {
      // Create watchdog thread after creating all other threads because it will
      // watch the other threads and they must be running.
-@@ -1160,9 +1128,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1160,9 +1111,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    // running.
    browser_process_->PreMainMessageLoopRun();
  
@@ -102,7 +128,7 @@ index 1ee43b77f11c..0339769ddd50 100644
  #if defined(OS_WIN)
    // On Windows, we use our startup as an opportunity to do upgrade/uninstall
    // tasks.  Those care whether the browser is already running.  On Linux/Mac,
-@@ -1434,8 +1399,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1434,8 +1382,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    // and preferences have been registered since some of the import code depends
    // on preferences.
    if (first_run::IsChromeFirstRun()) {
@@ -111,7 +137,7 @@ index 1ee43b77f11c..0339769ddd50 100644
      // Note: This can pop-up the first run consent dialog on Linux & Mac.
      first_run::DoPostImportTasks(profile_,
                                   master_prefs_->make_chrome_default_for_user);
-@@ -1523,13 +1486,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1523,13 +1469,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
  #endif
  
    HandleTestParameters(parsed_command_line());
@@ -125,7 +151,7 @@ index 1ee43b77f11c..0339769ddd50 100644
  
  // On mobile, need for clean shutdown arises only when the application comes
  // to foreground (i.e. MetricsService::OnAppEnterForeground is called).
-@@ -1667,15 +1623,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1667,15 +1606,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    downgrade_manager_.DeleteMovedUserDataSoon(user_data_dir_);
  #endif
  
@@ -141,7 +167,7 @@ index 1ee43b77f11c..0339769ddd50 100644
    return result_code_;
  }
  
-@@ -1695,10 +1642,6 @@ bool ChromeBrowserMainParts::MainMessageLoopRun(int* result_code) {
+@@ -1695,10 +1625,6 @@ bool ChromeBrowserMainParts::MainMessageLoopRun(int* result_code) {
    if (!run_message_loop_)
      return true;  // Don't run the default message loop.
  

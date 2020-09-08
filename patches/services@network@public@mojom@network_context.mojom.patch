@@ -1,0 +1,15 @@
+diff --git a/services/network/public/mojom/network_context.mojom b/services/network/public/mojom/network_context.mojom
+index 87b26150440e..c46a3177f180 100644
+--- a/services/network/public/mojom/network_context.mojom
++++ b/services/network/public/mojom/network_context.mojom
+@@ -865,8 +865,8 @@ interface NetworkContextClient {
+   OnTrustAnchorUsed();
+ 
+   // Notification that a report was enqueued in the SCT auditing cache.
+-  [EnableIf=is_ct_supported]
+-  OnSCTReportReady(string cache_key);
++  // [EnableIf=is_ct_supported]
++  // OnSCTReportReady(string cache_key);
+ };
+ 
+ // Represents a distinct context for making network requests, with its own

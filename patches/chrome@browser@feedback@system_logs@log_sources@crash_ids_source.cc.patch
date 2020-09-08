@@ -1,0 +1,52 @@
+diff --git a/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.cc b/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.cc
+index e848b83deb1f..f6aa50ec79d7 100644
+--- a/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.cc
++++ b/chrome/browser/feedback/system_logs/log_sources/crash_ids_source.cc
+@@ -9,7 +9,6 @@
+ #include "base/bind.h"
+ #include "base/logging.h"
+ #include "base/time/time.h"
+-#include "chrome/browser/crash_upload_list/crash_upload_list.h"
+ #include "components/feedback/feedback_report.h"
+ #include "content/public/browser/browser_thread.h"
+ 
+@@ -41,7 +40,6 @@ constexpr base::TimeDelta k120DaysTimeDelta = base::TimeDelta::FromDays(120);
+ 
+ CrashIdsSource::CrashIdsSource()
+     : SystemLogsSource("CrashId"),
+-      crash_upload_list_(CreateCrashUploadList()),
+       pending_crash_list_loading_(false) {}
+ 
+ CrashIdsSource::~CrashIdsSource() {}
+@@ -70,15 +68,6 @@ void CrashIdsSource::Fetch(SysLogsSourceCallback callback) {
+   chromeos::DebugDaemonClient* debugd_client =
+       chromeos::DBusThreadManager::Get()->GetDebugDaemonClient();
+   if (debugd_client) {
+-    debugd_client->UploadCrashes(base::BindOnce(
+-        [](base::OnceClosure load_crash_list_cb, bool success) {
+-          if (!success) {
+-            LOG(ERROR) << "crash_sender failed; proceeding anyway";
+-          }
+-          std::move(load_crash_list_cb).Run();
+-        },
+-        base::BindOnce(&UploadList::Load, crash_upload_list_,
+-                       std::move(list_available_cb))));
+ 
+     // Don't call Load directly; instead let UploadCrashes invoke it via the
+     // callback.
+@@ -88,7 +77,6 @@ void CrashIdsSource::Fetch(SysLogsSourceCallback callback) {
+   LOG(ERROR) << "Failed to create debugd_client. debugd may be down?";
+ #endif
+ 
+-  crash_upload_list_->Load(std::move(list_available_cb));
+ }
+ 
+ void CrashIdsSource::OnUploadListAvailable() {
+@@ -99,7 +87,6 @@ void CrashIdsSource::OnUploadListAvailable() {
+   // crash IDs from the past 120 days, which is only included in feedback
+   // reports sent from @google.com accounts.
+   std::vector<UploadList::UploadInfo> crashes;
+-  crash_upload_list_->GetUploads(kMaxCrashesCountToRetrieve, &crashes);
+   const base::Time now = base::Time::Now();
+   crash_ids_list_.clear();
+   crash_ids_list_.reserve(kMaxCrashesCountToRetrieve *

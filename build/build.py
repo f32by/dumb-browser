@@ -23,34 +23,48 @@ from constants import CHROMIUM_SRC_DIR
 from utils import run_command
 
 gn_args = {
+    # release build
     "is_debug": "false",
-    "blink_symbol_level": "0",
     "is_official_build": "!is_debug",
+    # no debug symbols
+    "blink_symbol_level": "0",
     "symbol_level": "0",
+    # do not build dawn tests
+    "build_dawn_tests": "false",
+    # disable click to call
+    "enable_click_to_call": "false",
     "enable_dsyms": "false",
     "enable_hangout_services_extension": "false",
+    "enable_iterator_debugging": "false",
+    # disable mDNS discovery
     "enable_mdns": "false",
     "enable_media_remoting": "false",
-    "enable_mse_mpeg2ts_stream_parser": "false",
+    # no NaCl
     "enable_nacl": "false",
     "enable_nacl_nonsfi": "false",
+    # no readling list
     "enable_reading_list": "false",
     "enable_remoting": "false",
+    # disable reporting
     "enable_reporting": "false",
+    # disable service discovery
     "enable_service_discovery": "false",
-    "enable_widevine": "false",
+    # enable Widevine DRM
+    "enable_widevine": "true",
     "exclude_unwind_tables": "true",
-    "fatal_linker_warnings": "false",
-    "ffmpeg_branding": "Chrome",
     "fieldtrial_testing_like_official_build": "true",
+    # use proprietary codecs
+    "ffmpeg_branding": "Chrome",
     "proprietary_codecs": "true",
+    # disable Safe Browsing
     "safe_browsing_mode": "0",
-    "use_gnome_keyring": "false",
     "use_official_google_api_keys": "false",
-    "use_sysroot": "false",
+    # use Chromium branding
+    "is_chrome_branded": "false",
     "use_unofficial_version_number": "false",
-    "enable_iterator_debugging": "false",
+    # do not build WebRTC samples
     "rtc_build_examples": "false",
+    # enable V8 pointer compression
     "v8_enable_pointer_compression": "true"
 }
 

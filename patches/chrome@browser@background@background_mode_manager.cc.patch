@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/background/background_mode_manager.cc b/chrome/browser/background/background_mode_manager.cc
+index 6c173f5a5f1b..e910c00d243b 100644
+--- a/chrome/browser/background/background_mode_manager.cc
++++ b/chrome/browser/background/background_mode_manager.cc
+@@ -61,7 +61,6 @@
+ #include "components/keep_alive_registry/keep_alive_types.h"
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ #include "content/public/browser/notification_service.h"
+ #include "extensions/browser/extension_system.h"
+ #include "extensions/common/constants.h"
+@@ -672,7 +671,6 @@ void BackgroundModeManager::StartBackgroundMode() {
+   if (in_background_mode_)
+     return;
+ 
+-  startup_metric_utils::SetBackgroundModeEnabled();
+ 
+   // Mark ourselves as running in background mode.
+   in_background_mode_ = true;

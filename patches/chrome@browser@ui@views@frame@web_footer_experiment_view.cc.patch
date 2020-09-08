@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/ui/views/frame/web_footer_experiment_view.cc b/chrome/browser/ui/views/frame/web_footer_experiment_view.cc
+index 6adb64386cd9..4cdb5499a8a7 100644
+--- a/chrome/browser/ui/views/frame/web_footer_experiment_view.cc
++++ b/chrome/browser/ui/views/frame/web_footer_experiment_view.cc
+@@ -7,11 +7,9 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/task_manager/web_contents_tags.h"
+ #include "chrome/common/webui_url_constants.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ 
+ WebFooterExperimentView::WebFooterExperimentView(Profile* profile)
+     : WebView(profile), metrics_collector_(GetWebContents()) {
+-  startup_metric_utils::RecordWebFooterCreation(base::TimeTicks::Now());
+   LoadInitialURL(GURL(chrome::kChromeUIWebFooterExperimentURL));
+   task_manager::WebContentsTags::CreateForTabContents(web_contents());
+ }
+@@ -25,6 +23,4 @@ WebFooterExperimentView::FirstPaintMetricsCollector::
+ 
+ void WebFooterExperimentView::FirstPaintMetricsCollector::
+     DidFirstVisuallyNonEmptyPaint() {
+-  startup_metric_utils::RecordWebFooterDidFirstVisuallyNonEmptyPaint(
+-      base::TimeTicks::Now());
+ }

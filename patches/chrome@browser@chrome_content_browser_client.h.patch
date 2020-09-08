@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index c8fec14e4e05..30ed3dcd1f2d 100644
+index c8fec14e4e05..38a325dd5622 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
 @@ -59,12 +59,6 @@ class PreviewsDecider;
@@ -15,7 +15,16 @@ index c8fec14e4e05..30ed3dcd1f2d 100644
  namespace ui {
  class NativeTheme;
  }
-@@ -730,34 +724,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -281,8 +275,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+ #if defined(OS_CHROMEOS)
+   void OnTrustAnchorUsed(content::BrowserContext* browser_context) override;
+ #endif
+-  void OnSCTReportReady(content::BrowserContext* browser_context,
+-                        const std::string& cache_key) override;
+   scoped_refptr<network::SharedURLLoaderFactory>
+   GetSystemSharedURLLoaderFactory() override;
+   network::mojom::NetworkContext* GetSystemNetworkContext() override;
+@@ -730,34 +722,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  

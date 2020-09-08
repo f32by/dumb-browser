@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/external_protocol/external_protocol_handler.cc b/chrome/browser/external_protocol/external_protocol_handler.cc
+index e1ba429294da..3687636b4507 100644
+--- a/chrome/browser/external_protocol/external_protocol_handler.cc
++++ b/chrome/browser/external_protocol/external_protocol_handler.cc
+@@ -192,7 +192,8 @@ void OnDefaultProtocolClientWorkerFinished(
+   bool chrome_is_default_handler = state == shell_integration::IS_DEFAULT;
+ 
+   // On ChromeOS, Click to Call is integrated into the external protocol dialog.
+-#if !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
++#if !defined(OS_ANDROID) && !defined(OS_CHROMEOS) && \
++    BUILDFLAG(ENABLE_CLICK_TO_CALL)
+   if (web_contents && ShouldOfferClickToCallForURL(
+                           web_contents->GetBrowserContext(), escaped_url)) {
+     // Handle tel links by opening the Click to Call dialog. This will call back

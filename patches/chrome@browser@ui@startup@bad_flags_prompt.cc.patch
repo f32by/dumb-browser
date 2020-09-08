@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/startup/bad_flags_prompt.cc b/chrome/browser/ui/startup/bad_flags_prompt.cc
+index 3b3bb4b8d09f..931fc5b0803b 100644
+--- a/chrome/browser/ui/startup/bad_flags_prompt.cc
++++ b/chrome/browser/ui/startup/bad_flags_prompt.cc
+@@ -27,7 +27,6 @@
+ #include "components/nacl/common/buildflags.h"
+ #include "components/nacl/common/nacl_switches.h"
+ #include "components/network_session_configurator/common/network_switches.h"
+-#include "components/startup_metric_utils/browser/startup_metric_utils.h"
+ #include "components/translate/core/common/translate_switches.h"
+ #include "content/public/common/content_features.h"
+ #include "content/public/common/content_switches.h"
+@@ -204,7 +203,6 @@ void MaybeShowInvalidUserDataDirWarningDialog() {
+   if (user_data_dir.empty())
+     return;
+ 
+-  startup_metric_utils::SetNonBrowserUIDisplayed();
+ 
+   // Ensure the ResourceBundle is initialized for string resource access.
+   bool cleanup_resource_bundle = false;
