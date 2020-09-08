@@ -459,11 +459,6 @@ static void ApplyPotentialQueryStringFilter(const GURL& request_url,
   }
 }
 
-static bool HasQuery(const std::string& url) {
-  return url.find("#") != std::string::npos ||
-    url.find("?") != std::string::npos;
-}
-
 } // namespace
 
 int OnBeforeURLRequest_URLPurifyWork(const ResponseCallback& next_callback,
