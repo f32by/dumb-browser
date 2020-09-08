@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.cc b/chrome/browser/metrics/chrome_metrics_service_client.cc
-index 9a22cf066552..6b109c371be1 100644
+index 9a22cf066552..ab93e56e3738 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
 @@ -53,7 +53,6 @@
@@ -20,7 +20,23 @@ index 9a22cf066552..6b109c371be1 100644
  
  #if !defined(OS_CHROMEOS)
  #include "chrome/browser/signin/chrome_signin_status_metrics_provider_delegate.h"
-@@ -459,8 +455,6 @@ void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
+@@ -201,6 +197,7 @@ const char kCrashpadHistogramAllocatorName[] = "CrashpadMetrics";
+ #if defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
+ // The stream type assigned to the minidump stream that holds the serialized
+ // system profile proto.
++ALLOW_UNUSED_TYPE
+ const uint32_t kSystemProfileMinidumpStreamType = 0x4B6B0003;
+ 
+ // A serialized environment (SystemProfileProto) that was registered with the
+@@ -211,6 +208,7 @@ const uint32_t kSystemProfileMinidumpStreamType = 0x4B6B0003;
+ base::LazyInstance<std::string>::Leaky g_environment_for_crash_reporter;
+ #endif  // defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
+ 
++ALLOW_UNUSED_TYPE
+ void RegisterFileMetricsPreferences(PrefRegistrySimple* registry) {
+   metrics::FileMetricsProvider::RegisterSourcePrefs(registry,
+                                                     kBrowserMetricsName);
+@@ -459,8 +457,6 @@ void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
    metrics::StabilityMetricsHelper::RegisterPrefs(registry);
    prefs::RegisterPrivacyBudgetPrefs(registry);
  
@@ -29,7 +45,7 @@ index 9a22cf066552..6b109c371be1 100644
    metrics::RegisterMetricsReportingStatePrefs(registry);
  
  #if BUILDFLAG(ENABLE_PLUGINS)
-@@ -518,11 +512,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
+@@ -518,11 +514,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
  
    g_environment_for_crash_reporter.Get() = std::move(*environment);
  
@@ -41,7 +57,7 @@ index 9a22cf066552..6b109c371be1 100644
  #endif  // OS_WIN || OS_MAC || OS_ANDROID
  }
  
-@@ -582,6 +571,8 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -582,6 +573,8 @@ void ChromeMetricsServiceClient::Initialize() {
    metrics_service_ = std::make_unique<metrics::MetricsService>(
        metrics_state_manager_, this, local_state);
  
@@ -50,7 +66,7 @@ index 9a22cf066552..6b109c371be1 100644
    notification_listeners_active_ = RegisterForNotifications();
    RegisterMetricsServiceProviders();
  
-@@ -601,6 +592,7 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -601,6 +594,7 @@ void ChromeMetricsServiceClient::Initialize() {
  
      RegisterUKMProviders();
    }
@@ -58,7 +74,7 @@ index 9a22cf066552..6b109c371be1 100644
  
  #if defined(OS_CHROMEOS)
    metrics::structured::Recorder::GetInstance()->SetUiTaskRunner(
-@@ -759,9 +751,6 @@ void ChromeMetricsServiceClient::RegisterMetricsServiceProviders() {
+@@ -759,9 +753,6 @@ void ChromeMetricsServiceClient::RegisterMetricsServiceProviders() {
    metrics_service_->RegisterMetricsProvider(
        std::make_unique<HttpsEngagementMetricsProvider>());
  

@@ -1,0 +1,31 @@
+diff --git a/chrome/renderer/previews/resource_loading_hints_agent.cc b/chrome/renderer/previews/resource_loading_hints_agent.cc
+index 833e6d5bb2b1..9b21692d5e6c 100644
+--- a/chrome/renderer/previews/resource_loading_hints_agent.cc
++++ b/chrome/renderer/previews/resource_loading_hints_agent.cc
+@@ -148,13 +148,6 @@ void ResourceLoadingHintsAgent::NotifyHttpsImageCompressionFetchFailed(
+       retry_after);
+ }
+ 
+-void ResourceLoadingHintsAgent::SetLiteVideoHint(
+-    blink::mojom::LiteVideoHintPtr lite_video_hint) {
+-  auto* lite_video_hint_agent =
+-      lite_video::LiteVideoHintAgent::Get(render_frame());
+-  if (lite_video_hint_agent)
+-    lite_video_hint_agent->SetLiteVideoHint(std::move(lite_video_hint));
+-}
+ 
+ void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
+     blink::mojom::BlinkOptimizationGuideHintsPtr hints) {
+@@ -164,12 +157,6 @@ void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
+ }
+ 
+ void ResourceLoadingHintsAgent::StopThrottlingMediaRequests() {
+-  auto* lite_video_hint_agent =
+-      lite_video::LiteVideoHintAgent::Get(render_frame());
+-  if (lite_video_hint_agent) {
+-    LOCAL_HISTOGRAM_BOOLEAN("LiteVideo.HintsAgent.StopThrottling", true);
+-    lite_video_hint_agent->StopThrottling();
+-  }
+ }
+ 
+ }  // namespace previews

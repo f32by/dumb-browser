@@ -1,9 +1,13 @@
 diff --git a/net/http/http_cache_transaction.cc b/net/http/http_cache_transaction.cc
-index b89b3d79f925..63796adbca90 100644
+index b89b3d79f925..a7b15a82707c 100644
 --- a/net/http/http_cache_transaction.cc
 +++ b/net/http/http_cache_transaction.cc
-@@ -3615,8 +3615,7 @@ bool HttpCache::Transaction::ShouldDisableCaching(
-     static constexpr int kMaxContentSize = 4096 * 4;
+@@ -3612,11 +3612,10 @@ bool HttpCache::Transaction::ShouldDisableCaching(
+     // response. We based our initial definition of 'large' on the disk cache
+     // maximum block size of 16K, which we observed captures the majority of
+     // responses from various MSE implementations.
+-    static constexpr int kMaxContentSize = 4096 * 4;
++    ALLOW_UNUSED_TYPE static constexpr int kMaxContentSize = 4096 * 4;
      std::string mime_type;
      base::CompareCase insensitive_ascii = base::CompareCase::INSENSITIVE_ASCII;
 -    if (headers->GetContentLength() > kMaxContentSize &&

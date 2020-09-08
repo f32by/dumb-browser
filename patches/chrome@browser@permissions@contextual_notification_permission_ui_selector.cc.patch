@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc b/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc
-index 036fdb458dd3..0b4183436da7 100644
+index 036fdb458dd3..cf970e330113 100644
 --- a/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc
 +++ b/chrome/browser/permissions/contextual_notification_permission_ui_selector.cc
 @@ -19,12 +19,10 @@
@@ -15,7 +15,23 @@ index 036fdb458dd3..0b4183436da7 100644
  
  namespace {
  
-@@ -155,9 +153,6 @@ void ContextualNotificationPermissionUiSelector::SelectUiToUse(
+@@ -111,6 +109,7 @@ base::Optional<Decision> GetDecisionBasedOnSiteReputation(
+   return base::nullopt;
+ }
+ 
++#if 0
+ // Roll the dice to decide whether to use the normal UI even when the preload
+ // data indicates that quiet UI should be used. This creates a control group of
+ // normal UI prompt impressions, which facilitates comparing acceptance rates,
+@@ -130,6 +129,7 @@ bool ShouldHoldBackQuietUI(QuietUiReason quiet_ui_reason) {
+   base::UmaHistogramBoolean("Permissions.CrowdDeny.DidHoldbackQuietUi", result);
+   return result;
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -155,9 +155,6 @@ void ContextualNotificationPermissionUiSelector::SelectUiToUse(
  }
  
  void ContextualNotificationPermissionUiSelector::Cancel() {
@@ -25,7 +41,7 @@ index 036fdb458dd3..0b4183436da7 100644
  }
  
  ContextualNotificationPermissionUiSelector::
-@@ -168,45 +163,13 @@ void ContextualNotificationPermissionUiSelector::EvaluatePerSiteTriggers(
+@@ -168,45 +165,13 @@ void ContextualNotificationPermissionUiSelector::EvaluatePerSiteTriggers(
    base::Optional<Decision> decision = GetDecisionBasedOnSiteReputation(
        CrowdDenyPreloadData::GetInstance()->GetReputationDataForSite(origin));
  

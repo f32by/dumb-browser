@@ -1,0 +1,21 @@
+diff --git a/components/security_interstitials/content/cert_report_helper.h b/components/security_interstitials/content/cert_report_helper.h
+index 31f64a2343b9..90560cc9e834 100644
+--- a/components/security_interstitials/content/cert_report_helper.h
++++ b/components/security_interstitials/content/cert_report_helper.h
+@@ -103,13 +103,16 @@ class CertReportHelper {
+   // The SSLInfo used in this helper's report.
+   const net::SSLInfo ssl_info_;
+   // The reason for the interstitial, included in this helper's report.
++  ALLOW_UNUSED_TYPE
+   CertificateErrorReport::InterstitialReason interstitial_reason_;
+   // True if the user was given the option to proceed through the
+   // certificate chain error being reported.
++  ALLOW_UNUSED_TYPE
+   bool overridable_;
+   // The time at which the interstitial was constructed.
+   const base::Time interstitial_time_;
+   // Helpful for recording metrics about cert reports.
++  ALLOW_UNUSED_TYPE
+   security_interstitials::MetricsHelper* metrics_helper_;
+   // Appends additional details to a report.
+   ClientDetailsCallback client_details_callback_;

@@ -1,5 +1,5 @@
 diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
-index f8d655b1078b..4ebb016a151c 100644
+index f8d655b1078b..e7745c416179 100644
 --- a/components/security_interstitials/content/cert_report_helper.cc
 +++ b/components/security_interstitials/content/cert_report_helper.cc
 @@ -15,7 +15,6 @@
@@ -35,31 +35,30 @@ index f8d655b1078b..4ebb016a151c 100644
        break;
      case security_interstitials::CMD_PROCEED:
        user_action_ = CertificateErrorReport::USER_PROCEEDED;
-@@ -126,7 +118,7 @@ void CertReportHelper::FinishCertCollection() {
+@@ -123,6 +115,7 @@ void CertReportHelper::HandleReportingCommands(
+ }
+ 
+ void CertReportHelper::FinishCertCollection() {
++#if 0
    if (!ShouldShowCertificateReporterCheckbox())
      return;
  
--  if (!safe_browsing::IsExtendedReportingEnabled(*GetPrefs(web_contents_)))
-+  if (true)
-     return;
- 
-   if (metrics_helper_) {
-@@ -154,7 +146,6 @@ void CertReportHelper::FinishCertCollection() {
-     return;
+@@ -155,6 +148,7 @@ void CertReportHelper::FinishCertCollection() {
    }
  
--  ssl_cert_reporter_->ReportInvalidCertificateChain(serialized_report);
+   ssl_cert_reporter_->ReportInvalidCertificateChain(serialized_report);
++#endif
  }
  
  bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
-@@ -163,9 +154,7 @@ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
+@@ -163,9 +157,7 @@ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
    const bool in_incognito =
        web_contents_->GetBrowserContext()->IsOffTheRecord();
    const PrefService* pref_service = GetPrefs(web_contents_);
 -  bool can_show_checkbox =
 -      safe_browsing::IsExtendedReportingOptInAllowed(*pref_service) &&
 -      !safe_browsing::IsExtendedReportingPolicyManaged(*pref_service);
-+  bool can_show_checkbox = false;
++  bool can_show_checkbox = pref_service && false;
  
    return base::FieldTrialList::FindFullName(kFinchExperimentName) ==
               kFinchGroupShowPossiblySend &&

@@ -1,7 +1,16 @@
 diff --git a/base/metrics/histogram_macros.h b/base/metrics/histogram_macros.h
-index 4d6ba3bf5c51..f13ca7d77c71 100644
+index 4d6ba3bf5c51..a30188595132 100644
 --- a/base/metrics/histogram_macros.h
 +++ b/base/metrics/histogram_macros.h
+@@ -10,7 +10,7 @@
+ #include "base/metrics/histogram_macros_internal.h"
+ #include "base/metrics/histogram_macros_local.h"
+ #include "base/time/time.h"
+-
++#include "dumb/base/compiler_specific.h"
+ 
+ // Macros for efficient use of histograms.
+ //
 @@ -75,11 +75,7 @@
  // example). For scoped enums, this is awkward since it requires casting the
  // enum to an arithmetic type and adding one. Instead, prefer the two argument
@@ -11,19 +20,18 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -      __VA_ARGS__, INTERNAL_UMA_HISTOGRAM_ENUMERATION_SPECIFY_BOUNDARY, \
 -      INTERNAL_UMA_HISTOGRAM_ENUMERATION_DEDUCE_BOUNDARY)               \
 -  (name, __VA_ARGS__, base::HistogramBase::kUmaTargetedHistogramFlag)
-+#define UMA_HISTOGRAM_ENUMERATION(name, ...)
++#define UMA_HISTOGRAM_ENUMERATION(name, ...) DUMB_UNUSED(name, __VA_ARGS__)
  
  // As above but "scaled" count to avoid overflows caused by increments of
  // large amounts. See UMA_HISTOGRAM_SCALED_EXACT_LINEAR for more information.
-@@ -92,19 +88,13 @@
- 
+@@ -93,18 +89,14 @@
  // Sample usage:
  //    UMA_HISTOGRAM_SCALED_ENUMERATION("FooKiB", kEnumValue, byte_count, 1024)
--#define UMA_HISTOGRAM_SCALED_ENUMERATION(name, sample, count, scale) \
+ #define UMA_HISTOGRAM_SCALED_ENUMERATION(name, sample, count, scale) \
 -  INTERNAL_HISTOGRAM_SCALED_ENUMERATION_WITH_FLAG(                   \
 -      name, sample, count, scale,                                    \
 -      base::HistogramBase::kUmaTargetedHistogramFlag)
-+#define UMA_HISTOGRAM_SCALED_ENUMERATION(name, sample, count, scale)
++    DUMB_UNUSED(name, sample, count, scale)
  
  // Histogram for boolean values.
  
@@ -33,22 +41,22 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -    STATIC_HISTOGRAM_POINTER_BLOCK(name, AddBoolean(sample),                   \
 -        base::BooleanHistogram::FactoryGet(name,                               \
 -            base::HistogramBase::kUmaTargetedHistogramFlag))
-+#define UMA_HISTOGRAM_BOOLEAN(name, sample)
++#define UMA_HISTOGRAM_BOOLEAN(name, sample) \
++    DUMB_UNUSED(name, sample)
  
  //------------------------------------------------------------------------------
  // Linear histograms.
-@@ -118,9 +108,7 @@
- 
+@@ -119,8 +111,7 @@
  // Sample usage:
  //   UMA_HISTOGRAM_EXACT_LINEAR("Histogram.Linear", count, 10);
--#define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, value_max) \
+ #define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, value_max) \
 -  INTERNAL_HISTOGRAM_EXACT_LINEAR_WITH_FLAG(                \
 -      name, sample, value_max, base::HistogramBase::kUmaTargetedHistogramFlag)
-+#define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, value_max)
++    DUMB_UNUSED(name, sample, value_max)
  
  // Used for capturing basic percentages. This will be 100 buckets of size 1.
  
-@@ -148,10 +136,7 @@
+@@ -148,10 +139,8 @@
  //    UMA_HISTOGRAM_SCALED_EXACT_LINER("FooKiB", bucket_no, byte_count,
  //                                     kBucketsMax+1, 1024)
  #define UMA_HISTOGRAM_SCALED_EXACT_LINEAR(name, sample, count, sample_max, \
@@ -56,11 +64,12 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -  INTERNAL_HISTOGRAM_SCALED_EXACT_LINEAR_WITH_FLAG(                        \
 -      name, sample, count, sample_max, scale,                              \
 -      base::HistogramBase::kUmaTargetedHistogramFlag)
-+                                          scale)
++                                          scale) \
++    DUMB_UNUSED(name, sample, count, sample_max, scale)
  
  //------------------------------------------------------------------------------
  // Count histograms. These are used for collecting numeric data. Note that we
-@@ -200,10 +185,7 @@
+@@ -200,10 +189,8 @@
  
  // Sample usage:
  //   UMA_HISTOGRAM_CUSTOM_COUNTS("My.Histogram", sample, 1, 100000000, 50);
@@ -68,36 +77,37 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -    INTERNAL_HISTOGRAM_CUSTOM_COUNTS_WITH_FLAG(                                \
 -        name, sample, min, max, bucket_count,                                  \
 -        base::HistogramBase::kUmaTargetedHistogramFlag)
-+#define UMA_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count)
++#define UMA_HISTOGRAM_CUSTOM_COUNTS(name, sample, min, max, bucket_count) \
++    DUMB_UNUSED(name, sample, min, max, bucket_count)
  
  //------------------------------------------------------------------------------
  // Timing histograms. These are used for collecting timing data (generally
-@@ -219,9 +201,7 @@
+@@ -219,9 +206,8 @@
  
  // Short timings - up to 10 seconds. For high-resolution (microseconds) timings,
  // see UMA_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES.
 -#define UMA_HISTOGRAM_TIMES(name, sample) UMA_HISTOGRAM_CUSTOM_TIMES(          \
 -    name, sample, base::TimeDelta::FromMilliseconds(1),                        \
 -    base::TimeDelta::FromSeconds(10), 50)
-+#define UMA_HISTOGRAM_TIMES(name, sample)
++#define UMA_HISTOGRAM_TIMES(name, sample) \
++    DUMB_UNUSED(name, sample)
  
  // Medium timings - up to 3 minutes. Note this starts at 10ms (no good reason,
  // but not worth changing).
-@@ -246,12 +226,7 @@
- // Sample usage:
+@@ -247,11 +233,7 @@
  //   UMA_HISTOGRAM_CUSTOM_TIMES("Very.Long.Timing.Histogram", time_delta,
  //       base::TimeDelta::FromSeconds(1), base::TimeDelta::FromDays(1), 100);
--#define UMA_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count) \
+ #define UMA_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count) \
 -  STATIC_HISTOGRAM_POINTER_BLOCK(                                        \
 -      name, AddTimeMillisecondsGranularity(sample),                      \
 -      base::Histogram::FactoryTimeGet(                                   \
 -          name, min, max, bucket_count,                                  \
 -          base::HistogramBase::kUmaTargetedHistogramFlag))
-+#define UMA_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count)
++    DUMB_UNUSED(name, sample, min, max, bucket_count)
  
  // Same as UMA_HISTOGRAM_CUSTOM_TIMES but reports |sample| in microseconds,
  // dropping the report if this client doesn't have a high-resolution clock.
-@@ -266,12 +241,7 @@
+@@ -266,12 +248,8 @@
  //      base::TimeDelta::FromMicroseconds(1),
  //      base::TimeDelta::FromMilliseconds(10), 100);
  #define UMA_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES(name, sample, min, max, \
@@ -107,24 +117,24 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -      base::Histogram::FactoryMicrosecondsTimeGet(                      \
 -          name, min, max, bucket_count,                                 \
 -          base::HistogramBase::kUmaTargetedHistogramFlag))
-+                                                bucket_count)
++                                                bucket_count) \
++    DUMB_UNUSED(name, sample, min, max, bucket_count)
  
  // Scoped class which logs its time on this earth in milliseconds as a UMA
  // statistic. This is recommended for when you want a histogram which measures
-@@ -324,11 +294,7 @@
- 
+@@ -325,10 +303,7 @@
  // For details on usage, see the documentation on the non-stability equivalents.
  
--#define UMA_STABILITY_HISTOGRAM_BOOLEAN(name, sample) \
+ #define UMA_STABILITY_HISTOGRAM_BOOLEAN(name, sample) \
 -  STATIC_HISTOGRAM_POINTER_BLOCK(                     \
 -      name, AddBoolean(sample),                       \
 -      base::BooleanHistogram::FactoryGet(             \
 -          name, base::HistogramBase::kUmaStabilityHistogramFlag))
-+#define UMA_STABILITY_HISTOGRAM_BOOLEAN(name, sample)
++    DUMB_UNUSED(name, sample)
  
  #define UMA_STABILITY_HISTOGRAM_COUNTS_100(name, sample)                       \
      UMA_STABILITY_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 100, 50)
-@@ -339,24 +305,11 @@
+@@ -339,24 +314,14 @@
          name, sample, min, max, bucket_count,                                  \
          base::HistogramBase::kUmaStabilityHistogramFlag)
  
@@ -133,28 +143,27 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -      __VA_ARGS__, INTERNAL_UMA_HISTOGRAM_ENUMERATION_SPECIFY_BOUNDARY, \
 -      INTERNAL_UMA_HISTOGRAM_ENUMERATION_DEDUCE_BOUNDARY)               \
 -  (name, __VA_ARGS__, base::HistogramBase::kUmaStabilityHistogramFlag)
--
--#define UMA_STABILITY_HISTOGRAM_LONG_TIMES(name, sample) \
++#define UMA_STABILITY_HISTOGRAM_ENUMERATION(name, ...) \
++    DUMB_UNUSED(name, __VA_ARGS__)
+ 
+ #define UMA_STABILITY_HISTOGRAM_LONG_TIMES(name, sample) \
 -  STATIC_HISTOGRAM_POINTER_BLOCK(                        \
 -      name, AddTimeMillisecondsGranularity(sample),      \
 -      base::Histogram::FactoryTimeGet(                   \
 -          name, base::TimeDelta::FromMilliseconds(1),    \
 -          base::TimeDelta::FromHours(1), 50,             \
 -          base::HistogramBase::kUmaStabilityHistogramFlag))
--
--#define UMA_STABILITY_HISTOGRAM_PERCENTAGE(name, percent_as_int) \
++    DUMB_UNUSED(name, sample)
+ 
+ #define UMA_STABILITY_HISTOGRAM_PERCENTAGE(name, percent_as_int) \
 -  INTERNAL_HISTOGRAM_EXACT_LINEAR_WITH_FLAG(                     \
 -      name, percent_as_int, 101,                                 \
 -      base::HistogramBase::kUmaStabilityHistogramFlag)
-+#define UMA_STABILITY_HISTOGRAM_ENUMERATION(name, ...)
-+
-+#define UMA_STABILITY_HISTOGRAM_LONG_TIMES(name, sample)
-+
-+#define UMA_STABILITY_HISTOGRAM_PERCENTAGE(name, percent_as_int)
++    DUMB_UNUSED(name, percent_as_int)
  
  //------------------------------------------------------------------------------
  // Histogram instantiation helpers.
-@@ -409,9 +362,6 @@
+@@ -409,9 +374,7 @@
  // requirement of |custom_ranges|. You can use the helper function
  // CustomHistogram::ArrayToCustomEnumRanges to transform a C-style array of
  // valid sample values to a std::vector<int>.
@@ -162,6 +171,7 @@ index 4d6ba3bf5c51..f13ca7d77c71 100644
 -    STATIC_HISTOGRAM_POINTER_BLOCK(name, Add(sample),                          \
 -        base::CustomHistogram::FactoryGet(name, custom_ranges,                 \
 -            base::HistogramBase::kUmaTargetedHistogramFlag))
-+#define UMA_HISTOGRAM_CUSTOM_ENUMERATION(name, sample, custom_ranges)
++#define UMA_HISTOGRAM_CUSTOM_ENUMERATION(name, sample, custom_ranges) \
++    DUMB_UNUSED(name, sample, custom_ranges)
  
  #endif  // BASE_METRICS_HISTOGRAM_MACROS_H_

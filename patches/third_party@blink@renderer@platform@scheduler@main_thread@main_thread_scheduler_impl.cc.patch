@@ -1,12 +1,14 @@
 diff --git a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
-index ddec847c5b78..9d02885d42f5 100644
+index ddec847c5b78..317bc1f290cc 100644
 --- a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
 +++ b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
-@@ -612,7 +612,6 @@ void MainThreadSchedulerImpl::Shutdown() {
+@@ -611,8 +611,7 @@ void MainThreadSchedulerImpl::Shutdown() {
+   if (was_shutdown_)
      return;
  
-   base::TimeTicks now = tick_clock()->NowTicks();
+-  base::TimeTicks now = tick_clock()->NowTicks();
 -  main_thread_only().metrics_helper.OnRendererShutdown(now);
++  ALLOW_UNUSED_TYPE base::TimeTicks now = tick_clock()->NowTicks();
    main_thread_only()
        .compositor_priority_experiments.OnMainThreadSchedulerShutdown();
  

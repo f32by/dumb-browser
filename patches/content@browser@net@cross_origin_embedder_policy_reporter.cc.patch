@@ -1,0 +1,68 @@
+diff --git a/content/browser/net/cross_origin_embedder_policy_reporter.cc b/content/browser/net/cross_origin_embedder_policy_reporter.cc
+index 8109a98c697e..8da70b8a578e 100644
+--- a/content/browser/net/cross_origin_embedder_policy_reporter.cc
++++ b/content/browser/net/cross_origin_embedder_policy_reporter.cc
+@@ -13,6 +13,7 @@ namespace content {
+ 
+ namespace {
+ 
++#if 0
+ constexpr char kType[] = "coep";
+ 
+ GURL StripUsernameAndPassword(const GURL& url) {
+@@ -21,6 +22,7 @@ GURL StripUsernameAndPassword(const GURL& url) {
+   replacements.ClearPassword();
+   return url.ReplaceComponents(replacements);
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -43,6 +45,7 @@ void CrossOriginEmbedderPolicyReporter::QueueCorpViolationReport(
+     const GURL& blocked_url,
+     network::mojom::RequestDestination destination,
+     bool report_only) {
++#if 0
+   GURL url_to_pass = StripUsernameAndPassword(blocked_url);
+   // We're migrating from "blocked-url" to "blockedURL".
+   // TODO(crbug.com/1119676): Remove "blocked-url" in M90.
+@@ -53,6 +56,7 @@ void CrossOriginEmbedderPolicyReporter::QueueCorpViolationReport(
+        std::make_pair("destination",
+                       network::RequestDestinationToString(destination))},
+       report_only);
++#endif
+ }
+ 
+ void CrossOriginEmbedderPolicyReporter::BindObserver(
+@@ -63,6 +67,7 @@ void CrossOriginEmbedderPolicyReporter::BindObserver(
+ void CrossOriginEmbedderPolicyReporter::QueueNavigationReport(
+     const GURL& blocked_url,
+     bool report_only) {
++#if 0
+   GURL url_to_pass = StripUsernameAndPassword(blocked_url);
+   // We're migrating from "blocked-url" to "blockedURL".
+   // TODO(crbug.com/1119676): Remove "blocked-url" in M90.
+@@ -70,6 +75,7 @@ void CrossOriginEmbedderPolicyReporter::QueueNavigationReport(
+                   std::make_pair("blocked-url", url_to_pass.spec()),
+                   std::make_pair("blockedURL", url_to_pass.spec())},
+                  report_only);
++#endif
+ }
+ 
+ void CrossOriginEmbedderPolicyReporter::Clone(
+@@ -81,6 +87,7 @@ void CrossOriginEmbedderPolicyReporter::Clone(
+ void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
+     std::initializer_list<std::pair<base::StringPiece, base::StringPiece>> body,
+     bool report_only) {
++#if 0
+   const base::Optional<std::string>& endpoint =
+       report_only ? report_only_endpoint_ : endpoint_;
+   const char* const disposition = report_only ? "reporting" : "enforce";
+@@ -107,6 +114,7 @@ void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
+         kType, *endpoint, context_url_, /*user_agent=*/base::nullopt,
+         std::move(body_to_pass));
+   }
++#endif
+ }
+ 
+ }  // namespace content

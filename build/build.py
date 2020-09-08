@@ -45,7 +45,6 @@ gn_args = {
     "fieldtrial_testing_like_official_build": "true",
     "proprietary_codecs": "true",
     "safe_browsing_mode": "0",
-    "treat_warnings_as_errors": "false",
     "use_gnome_keyring": "false",
     "use_official_google_api_keys": "false",
     "use_sysroot": "false",

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
-index a155246ee97d..6a49fb080d0c 100644
+index a155246ee97d..f1a3079f3a9e 100644
 --- a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
 +++ b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
 @@ -29,8 +29,6 @@
@@ -20,7 +20,15 @@ index a155246ee97d..6a49fb080d0c 100644
  namespace extensions {
  
  namespace BeginInstallWithManifest3 =
-@@ -1035,51 +1031,9 @@ WebstorePrivateGetReferrerChainFunction::
+@@ -204,6 +200,7 @@ void ShowBlockedByParentDialog(const Extension* extension,
+ #endif  // BUILDFLAG(ENABLE_SUPERVISED_USERS)
+ 
+ // The number of user gestures to trace back for the referrer chain.
++ALLOW_UNUSED_TYPE
+ const int kExtensionReferrerUserGestureLimit = 2;
+ 
+ WebstoreInstaller::Delegate* test_webstore_installer_delegate = nullptr;
+@@ -1035,51 +1032,9 @@ WebstorePrivateGetReferrerChainFunction::
  
  ExtensionFunction::ResponseAction
  WebstorePrivateGetReferrerChainFunction::Run() {

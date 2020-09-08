@@ -1,8 +1,21 @@
 diff --git a/chrome/renderer/BUILD.gn b/chrome/renderer/BUILD.gn
-index 62747b5714ed..525367d81e37 100644
+index 62747b5714ed..adc2814f2420 100644
 --- a/chrome/renderer/BUILD.gn
 +++ b/chrome/renderer/BUILD.gn
-@@ -156,13 +156,10 @@ static_library("renderer") {
+@@ -61,12 +61,6 @@ static_library("renderer") {
+     "chrome_render_thread_observer.h",
+     "custom_menu_commands.h",
+     "instant_restricted_id_cache.h",
+-    "lite_video/lite_video_hint_agent.cc",
+-    "lite_video/lite_video_hint_agent.h",
+-    "lite_video/lite_video_url_loader_throttle.cc",
+-    "lite_video/lite_video_url_loader_throttle.h",
+-    "lite_video/lite_video_util.cc",
+-    "lite_video/lite_video_util.h",
+     "loadtimes_extension_bindings.cc",
+     "loadtimes_extension_bindings.h",
+     "media/chrome_key_systems.cc",
+@@ -156,13 +150,10 @@ static_library("renderer") {
      "//components/prerender/renderer",
      "//components/resources:components_resources",
      "//components/safe_browsing:buildflags",
@@ -16,7 +29,7 @@ index 62747b5714ed..525367d81e37 100644
      "//components/translate/content/renderer",
      "//components/translate/core/common",
      "//components/translate/core/language_detection",
-@@ -424,8 +421,6 @@ static_library("test_support") {
+@@ -424,8 +415,6 @@ static_library("test_support") {
    sources = [
      "chrome_mock_render_thread.cc",
      "chrome_mock_render_thread.h",

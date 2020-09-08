@@ -1,5 +1,5 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.cc b/components/metrics_services_manager/metrics_services_manager.cc
-index 107632b0ad8f..112621e4ad6e 100644
+index 107632b0ad8f..f03e02e2be05 100644
 --- a/components/metrics_services_manager/metrics_services_manager.cc
 +++ b/components/metrics_services_manager/metrics_services_manager.cc
 @@ -15,7 +15,6 @@
@@ -26,7 +26,7 @@ index 107632b0ad8f..112621e4ad6e 100644
  ukm::UkmService* MetricsServicesManager::GetUkmService() {
    DCHECK(thread_checker_.CalledOnValidThread());
    return GetMetricsServiceClient()->GetUkmService();
-@@ -115,13 +105,12 @@ void MetricsServicesManager::UpdateRunningServices() {
+@@ -115,26 +105,14 @@ void MetricsServicesManager::UpdateRunningServices() {
    const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
    if (cmdline->HasSwitch(metrics::switches::kMetricsRecordingOnly)) {
      metrics->StartRecordingForTests();
@@ -37,12 +37,15 @@ index 107632b0ad8f..112621e4ad6e 100644
    client_->UpdateRunningServices(may_record_, may_upload_);
  
 -  if (may_record_) {
-+  if (false) {
-     if (!metrics->recording_active())
-       metrics->Start();
-     if (may_upload_)
-@@ -133,11 +122,10 @@ void MetricsServicesManager::UpdateRunningServices() {
-   }
+-    if (!metrics->recording_active())
+-      metrics->Start();
+-    if (may_upload_)
+-      metrics->EnableReporting();
+-    else
+-      metrics->DisableReporting();
+-  } else {
+     metrics->Stop();
+-  }
  
    UpdateUkmService();
 -
@@ -50,11 +53,31 @@ index 107632b0ad8f..112621e4ad6e 100644
  }
  
  void MetricsServicesManager::UpdateUkmService() {
-+  return;
-   ukm::UkmService* ukm = GetUkmService();
+@@ -142,35 +120,12 @@ void MetricsServicesManager::UpdateUkmService() {
    if (!ukm)
      return;
-@@ -164,13 +152,7 @@ void MetricsServicesManager::UpdateUkmService() {
+ 
+-  bool listeners_active =
+-      metrics_service_client_->AreNotificationListenersEnabledOnAllProfiles();
+-  bool sync_enabled =
+-      metrics_service_client_->IsMetricsReportingForceEnabled() ||
+-      metrics_service_client_->IsUkmAllowedForAllProfiles();
+-  bool is_incognito = client_->IsOffTheRecordSessionActive();
+-
+-  if (consent_given_ && listeners_active && sync_enabled && !is_incognito) {
+-    // TODO(skare): revise this - merged in a big change
+-    ukm->EnableRecording(
+-        metrics_service_client_->IsUkmAllowedWithExtensionsForAllProfiles());
+-    if (may_upload_)
+-      ukm->EnableReporting();
+-    else
+-      ukm->DisableReporting();
+-  } else {
+-    ukm->DisableRecording();
+-    ukm->DisableReporting();
+-  }
++  ukm->DisableRecording();
++  ukm->DisableReporting();
  }
  
  void MetricsServicesManager::UpdateUploadPermissions(bool may_upload) {

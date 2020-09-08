@@ -1,0 +1,39 @@
+diff --git a/content/browser/frame_host/render_frame_host_impl.cc b/content/browser/frame_host/render_frame_host_impl.cc
+index 3936083ceb83..558acf959c4a 100644
+--- a/content/browser/frame_host/render_frame_host_impl.cc
++++ b/content/browser/frame_host/render_frame_host_impl.cc
+@@ -651,7 +651,7 @@ void OnDataURLRetrieved(
+   StartDownload(std::move(parameters), mojo::NullRemote());
+ }
+ 
+-void RecordCrossOriginIsolationMetrics(RenderFrameHostImpl* rfh) {
++ALLOW_UNUSED_TYPE void RecordCrossOriginIsolationMetrics(RenderFrameHostImpl* rfh) {
+   ContentBrowserClient* client = GetContentClient()->browser();
+   if (rfh->cross_origin_opener_policy().value ==
+       network::mojom::CrossOriginOpenerPolicyValue::kSameOrigin) {
+@@ -8421,25 +8421,8 @@ bool RenderFrameHostImpl::DidCommitNavigationInternal(
+     // this frame embeds a subframe when that subframe navigates).
+     required_csp_ = std::move(required_csp);
+ 
+-    if (coep_reporter_) {
+-      mojo::PendingRemote<blink::mojom::ReportingObserver> remote;
+-      mojo::PendingReceiver<blink::mojom::ReportingObserver> receiver =
+-          remote.InitWithNewPipeAndPassReceiver();
+-      coep_reporter_->BindObserver(std::move(remote));
+-      // As some tests override the associated frame after commit, do not
+-      // call GetAssociatedLocalFrame now.
+-      base::ThreadTaskRunnerHandle::Get()->PostTask(
+-          FROM_HERE,
+-          base::BindOnce(&RenderFrameHostImpl::BindReportingObserver,
+-                         weak_ptr_factory_.GetWeakPtr(), std::move(receiver)));
+-    }
+   }
+ 
+-  RecordCrossOriginIsolationMetrics(this);
+-
+-  CrossOriginOpenerPolicyReporter::InstallAccessMonitorsIfNeeded(
+-      frame_tree_node_);
+-
+   return true;
+ }
+ 

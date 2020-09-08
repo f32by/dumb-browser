@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 3a0f8dbff3c7..a64a531a9aee 100644
+index 3a0f8dbff3c7..a2d57798edb3 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -111,7 +111,6 @@
+@@ -33,7 +33,6 @@
+ #include "chrome/browser/browser_features.h"
+ #include "chrome/browser/chromeos/android_sms/android_sms_switches.h"
+ #include "chrome/browser/flag_descriptions.h"
+-#include "chrome/browser/lite_video/lite_video_switches.h"
+ #include "chrome/browser/navigation_predictor/search_engine_preconnector.h"
+ #include "chrome/browser/net/stub_resolver_config_reader.h"
+ #include "chrome/browser/net/system_network_context_manager.h"
+@@ -111,7 +110,6 @@
  #include "components/previews/core/previews_features.h"
  #include "components/previews/core/previews_switches.h"
  #include "components/query_tiles/switches.h"
@@ -10,7 +18,23 @@ index 3a0f8dbff3c7..a64a531a9aee 100644
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/security_interstitials/core/features.h"
  #include "components/security_state/core/features.h"
-@@ -2961,6 +2960,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -344,6 +342,7 @@ const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
+      data_reduction_proxy::switches::kDataReductionProxyExperiment,
+      data_reduction_proxy::switches::kDataReductionProxyServerAlternative10}};
+ 
++#if 0
+ const FeatureEntry::Choice kLiteVideoDefaultDownlinkBandwidthKbps[] = {
+     {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+     {"100", lite_video::switches::kLiteVideoDefaultDownlinkBandwidthKbps,
+@@ -372,6 +371,7 @@ const FeatureEntry::Choice kLiteVideoDefaultDownlinkBandwidthKbps[] = {
+      "800"},
+     {"900", lite_video::switches::kLiteVideoDefaultDownlinkBandwidthKbps,
+      "900"}};
++#endif
+ 
+ #if defined(OS_WIN)
+ const FeatureEntry::Choice kUseAngleChoices[] = {
+@@ -2961,6 +2961,9 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kLockScreenNotificationDescription, kOsCrOS,
       FEATURE_VALUE_TYPE(ash::features::kLockScreenNotifications)},
  #endif  // OS_CHROMEOS
@@ -20,3 +44,19 @@ index 3a0f8dbff3c7..a64a531a9aee 100644
      {"reduced-referrer-granularity",
       flag_descriptions::kReducedReferrerGranularityName,
       flag_descriptions::kReducedReferrerGranularityDescription, kOsAll,
+@@ -6331,6 +6334,7 @@ const FeatureEntry kFeatureEntries[] = {
+      kOsAll,
+      SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
+ 
++#if 0
+     {"enable-lite-video", flag_descriptions::kLiteVideoName,
+      flag_descriptions::kLiteVideoDescription, kOsAll,
+      FEATURE_VALUE_TYPE(features::kLiteVideo)},
+@@ -6344,6 +6348,7 @@ const FeatureEntry kFeatureEntries[] = {
+      flag_descriptions::kLiteVideoForceOverrideDecisionName,
+      flag_descriptions::kLiteVideoForceOverrideDecisionDescription, kOsAll,
+      SINGLE_VALUE_TYPE(lite_video::switches::kLiteVideoForceOverrideDecision)},
++#endif
+ 
+ #if !defined(OS_ANDROID)
+     {"edit-passwords-in-settings",

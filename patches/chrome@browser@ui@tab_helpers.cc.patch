@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/ui/tab_helpers.cc b/chrome/browser/ui/tab_helpers.cc
-index 440f669fcf3b..67d49c41f5d4 100644
+index 440f669fcf3b..f45ebd71d101 100644
 --- a/chrome/browser/ui/tab_helpers.cc
 +++ b/chrome/browser/ui/tab_helpers.cc
-@@ -58,13 +58,10 @@
+@@ -31,7 +31,6 @@
+ #include "chrome/browser/history/top_sites_factory.h"
+ #include "chrome/browser/infobars/infobar_service.h"
+ #include "chrome/browser/installable/installable_manager.h"
+-#include "chrome/browser/lite_video/lite_video_observer.h"
+ #include "chrome/browser/media/history/media_history_contents_observer.h"
+ #include "chrome/browser/media/media_engagement_service.h"
+ #include "chrome/browser/metrics/desktop_session_duration/desktop_session_duration_observer.h"
+@@ -58,13 +57,10 @@
  #include "chrome/browser/profiles/profile_key.h"
  #include "chrome/browser/reputation/reputation_web_contents_observer.h"
  #include "chrome/browser/resource_coordinator/tab_helper.h"
@@ -16,7 +24,7 @@ index 440f669fcf3b..67d49c41f5d4 100644
  #include "chrome/browser/subresource_redirect/subresource_redirect_observer.h"
  #include "chrome/browser/sync/sessions/sync_sessions_router_tab_helper.h"
  #include "chrome/browser/sync/sessions/sync_sessions_web_contents_router_factory.h"
-@@ -107,7 +104,6 @@
+@@ -107,7 +103,6 @@
  #include "components/performance_manager/public/decorators/tab_properties_decorator.h"
  #include "components/performance_manager/public/performance_manager.h"
  #include "components/permissions/permission_request_manager.h"
@@ -24,7 +32,7 @@ index 440f669fcf3b..67d49c41f5d4 100644
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/tracing/common/tracing_switches.h"
  #include "components/ukm/content/source_url_recorder.h"
-@@ -242,10 +238,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -242,10 +237,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    ChromePasswordManagerClient::CreateForWebContentsWithAutofillClient(
        web_contents,
        autofill::ChromeAutofillClient::FromWebContents(web_contents));
@@ -35,7 +43,15 @@ index 440f669fcf3b..67d49c41f5d4 100644
    ChromeTranslateClient::CreateForWebContents(web_contents);
    ConnectionHelpTabHelper::CreateForWebContents(web_contents);
    CoreTabHelper::CreateForWebContents(web_contents);
-@@ -307,10 +299,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -262,7 +253,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+   InfoBarService::CreateForWebContents(web_contents);
+   InstallableManager::CreateForWebContents(web_contents);
+   IsolatedPrerenderTabHelper::CreateForWebContents(web_contents);
+-  LiteVideoObserver::MaybeCreateForWebContents(web_contents);
+ 
+ #if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+   TFLiteExperimentObserver::CreateForWebContents(web_contents);
+@@ -307,10 +297,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    resource_coordinator::ResourceCoordinatorTabHelper::CreateForWebContents(
        web_contents);
    ResourceLoadingHintsWebContentsObserver::CreateForWebContents(web_contents);
@@ -46,7 +62,7 @@ index 440f669fcf3b..67d49c41f5d4 100644
    ReputationWebContentsObserver::CreateForWebContents(web_contents);
    SearchEngineTabHelper::CreateForWebContents(web_contents);
    SecurityStateTabHelper::CreateForWebContents(web_contents);
-@@ -374,7 +362,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -374,7 +360,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    pdf::PDFWebContentsHelper::CreateForWebContentsWithClient(
        web_contents, std::make_unique<ChromePDFWebContentsHelperClient>());
    SadTabHelper::CreateForWebContents(web_contents);

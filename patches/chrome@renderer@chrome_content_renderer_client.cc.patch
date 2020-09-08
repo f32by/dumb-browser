@@ -1,8 +1,17 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index eb6e5d353b33..1264b5bdb983 100644
+index eb6e5d353b33..bf2d8316ba6d 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
-@@ -95,11 +95,7 @@
+@@ -48,8 +48,6 @@
+ #include "chrome/renderer/chrome_content_settings_agent_delegate.h"
+ #include "chrome/renderer/chrome_render_frame_observer.h"
+ #include "chrome/renderer/chrome_render_thread_observer.h"
+-#include "chrome/renderer/lite_video/lite_video_hint_agent.h"
+-#include "chrome/renderer/lite_video/lite_video_util.h"
+ #include "chrome/renderer/loadtimes_extension_bindings.h"
+ #include "chrome/renderer/media/flash_embed_rewrite.h"
+ #include "chrome/renderer/media/webrtc_logging_agent_impl.h"
+@@ -95,11 +93,7 @@
  #include "components/prerender/renderer/prerender_utils.h"
  #include "components/prerender/renderer/prerenderer_client.h"
  #include "components/safe_browsing/buildflags.h"
@@ -14,7 +23,7 @@ index eb6e5d353b33..1264b5bdb983 100644
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/translate/content/renderer/per_frame_translate_agent.h"
  #include "components/translate/core/common/translate_util.h"
-@@ -364,11 +360,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -364,11 +358,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
@@ -26,10 +35,13 @@ index eb6e5d353b33..1264b5bdb983 100644
  
  #if !defined(OS_ANDROID)
    thread->AddObserver(SearchBouncer::GetInstance());
-@@ -590,19 +582,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
-   // Owned by |render_frame|.
-   page_load_metrics::MetricsRenderFrameObserver* metrics_render_frame_observer =
-       new page_load_metrics::MetricsRenderFrameObserver(render_frame);
+@@ -587,25 +577,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+       render_frame->GetRoutingID()));
+ #endif
+ 
+-  // Owned by |render_frame|.
+-  page_load_metrics::MetricsRenderFrameObserver* metrics_render_frame_observer =
+-      new page_load_metrics::MetricsRenderFrameObserver(render_frame);
 -  // There is no render thread, thus no UnverifiedRulesetDealer in
 -  // ChromeRenderViewTests.
 -  if (subresource_filter_ruleset_dealer_) {
@@ -43,10 +55,13 @@ index eb6e5d353b33..1264b5bdb983 100644
 -        render_frame, subresource_filter_ruleset_dealer_.get(),
 -        std::move(ad_resource_tracker));
 -  }
+-
+-  if (lite_video::IsLiteVideoEnabled())
+-    new lite_video::LiteVideoHintAgent(render_frame);
  
-   if (lite_video::IsLiteVideoEnabled())
-     new lite_video::LiteVideoHintAgent(render_frame);
-@@ -1499,9 +1478,6 @@ void ChromeContentRendererClient::
+   new previews::ResourceLoadingHintsAgent(
+       render_frame_observer->associated_interfaces(), render_frame);
+@@ -1499,9 +1470,6 @@ void ChromeContentRendererClient::
  #if defined(OS_CHROMEOS) || defined(OS_WIN) || defined(OS_ANDROID)
      blink::WebRuntimeFeatures::EnableWebShare(true);
  #endif

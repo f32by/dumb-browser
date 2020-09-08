@@ -8,7 +8,6 @@ base/metrics/sparse_histogram.cc
 base/metrics/user_metrics.cc
 base/trace_event/builtin_categories.h
 base/trace_event/memory_infra_background_allowlist.cc
-build/config/compiler/BUILD.gn
 build/config/win/BUILD.gn
 cc/trees/layer_tree_host_impl.cc
 chrome/BUILD.gn
@@ -98,15 +97,14 @@ chrome/browser/interstitials/enterprise_util.cc
 chrome/browser/interstitials/enterprise_util.h
 chrome/browser/lifetime/browser_shutdown.cc
 chrome/browser/lifetime/browser_shutdown.h
-chrome/browser/lite_video/lite_video_decider.cc
 chrome/browser/mac/mac_startup_profiler.cc
+chrome/browser/mac/mac_startup_profiler.h
 chrome/browser/media/cast_mirroring_service_host.cc
 chrome/browser/media/router/media_router_feature.cc
 chrome/browser/media/router/mojo/media_router_mojo_impl.cc
 chrome/browser/media/webrtc/display_media_access_handler.cc
 chrome/browser/media/webrtc/webrtc_event_log_uploader.cc
 chrome/browser/media/webrtc/webrtc_log_uploader.cc
-chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
 chrome/browser/metrics/chrome_metrics_service_accessor.cc
 chrome/browser/metrics/chrome_metrics_service_accessor.h
 chrome/browser/metrics/chrome_metrics_service_client.cc
@@ -140,6 +138,7 @@ chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 chrome/browser/profiles/pref_service_builder_utils.cc
 chrome/browser/profiles/profile.cc
 chrome/browser/profiles/profile_impl.cc
+chrome/browser/profiles/profile_manager.cc
 chrome/browser/profiles/profiles_state.cc
 chrome/browser/renderer_context_menu/render_view_context_menu.cc
 chrome/browser/renderer_context_menu/render_view_context_menu.h
@@ -291,6 +290,8 @@ chrome/renderer/DEPS
 chrome/renderer/chrome_content_renderer_client.cc
 chrome/renderer/chrome_content_renderer_client.h
 chrome/renderer/chrome_render_frame_observer.cc
+chrome/renderer/previews/resource_loading_hints_agent.cc
+chrome/renderer/previews/resource_loading_hints_agent.h
 chrome/renderer/searchbox/searchbox.cc
 chrome/renderer/searchbox/searchbox.h
 chrome/renderer/searchbox/searchbox_extension.cc
@@ -328,6 +329,7 @@ components/metrics_services_manager/metrics_services_manager_client.h
 components/network_time/network_time_tracker.cc
 components/ntp_tiles/BUILD.gn
 components/ntp_tiles/DEPS
+components/optimization_guide/proto/BUILD.gn
 components/page_info/BUILD.gn
 components/page_info/page_info.cc
 components/page_load_metrics/renderer/BUILD.gn
@@ -377,6 +379,7 @@ components/security_interstitials/DEPS
 components/security_interstitials/content/bad_clock_blocking_page.cc
 components/security_interstitials/content/captive_portal_blocking_page.cc
 components/security_interstitials/content/cert_report_helper.cc
+components/security_interstitials/content/cert_report_helper.h
 components/security_interstitials/content/mitm_software_blocking_page.cc
 components/security_interstitials/content/security_interstitial_controller_client.cc
 components/security_interstitials/content/security_interstitial_controller_client.h
@@ -389,12 +392,6 @@ components/security_interstitials/core/unsafe_resource.cc
 components/security_interstitials/core/unsafe_resource.h
 components/signin/public/identity_manager/identity_manager.cc
 components/spellcheck/spellcheck_build_features.gni
-components/subresource_filter/content/browser/BUILD.gn
-components/subresource_filter/content/browser/content_activation_list_utils.cc
-components/subresource_filter/content/browser/content_activation_list_utils.h
-components/subresource_filter/content/browser/subresource_filter_observer.h
-components/subresource_filter/content/browser/subresource_filter_observer_manager.cc
-components/subresource_filter/content/browser/subresource_filter_observer_manager.h
 components/ukm/ukm_reporting_service.cc
 components/unified_consent/unified_consent_service.cc
 components/url_formatter/url_formatter.cc
@@ -402,8 +399,13 @@ components/variations/service/variations_service.cc
 content/browser/BUILD.gn
 content/browser/DEPS
 content/browser/browser_main_loop.cc
+content/browser/frame_host/cross_origin_opener_policy_status.cc
+content/browser/frame_host/cross_origin_opener_policy_status.h
+content/browser/frame_host/render_frame_host_impl.cc
 content/browser/native_file_system/native_file_system_file_writer_impl.cc
 content/browser/native_file_system/native_file_system_file_writer_impl.h
+content/browser/net/cross_origin_embedder_policy_reporter.cc
+content/browser/net/cross_origin_opener_policy_reporter.cc
 content/browser/renderer_host/DEPS
 content/browser/renderer_host/pepper/pepper_file_io_host.cc
 content/browser/renderer_host/pepper/pepper_file_io_host.h
@@ -427,6 +429,7 @@ services/device/battery/battery_status_service.cc
 services/device/battery/battery_status_service.h
 services/network/cors/cors_url_loader_factory.cc
 services/preferences/tracked/device_id_win.cc
+third_party/blink/public/mojom/loader/previews_resource_loading_hints.mojom
 third_party/blink/renderer/bindings/core/v8/v8_gc_for_context_dispose.cc
 third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.h
 third_party/blink/renderer/platform/graphics/video_frame_submitter.cc

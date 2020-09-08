@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/download_target_determiner.cc b/chrome/browser/download/download_target_determiner.cc
-index cdeecb35a998..d609fbc68c7a 100644
+index cdeecb35a998..51c38f1a36d7 100644
 --- a/chrome/browser/download/download_target_determiner.cc
 +++ b/chrome/browser/download/download_target_determiner.cc
 @@ -28,7 +28,6 @@
@@ -18,7 +18,15 @@ index cdeecb35a998..d609fbc68c7a 100644
  
  namespace {
  
-@@ -101,8 +99,6 @@ DownloadTargetDeterminer::DownloadTargetDeterminer(
+@@ -72,6 +70,7 @@ const base::FilePath::CharType kCrdownloadSuffix[] =
+ // single bool. A host is considered visited before if prior visible visits were
+ // found in history and the first such visit was earlier than the most recent
+ // midnight.
++ALLOW_UNUSED_TYPE
+ void VisitCountsToVisitedBefore(base::OnceCallback<void(bool)> callback,
+                                 history::VisibleVisitCountToHostResult result) {
+   std::move(callback).Run(
+@@ -101,8 +100,6 @@ DownloadTargetDeterminer::DownloadTargetDeterminer(
        should_notify_extensions_(false),
        create_target_directory_(false),
        conflict_action_(conflict_action),
@@ -27,7 +35,7 @@ index cdeecb35a998..d609fbc68c7a 100644
        virtual_path_(initial_virtual_path),
        is_filetype_handled_safely_(false),
  #if defined(OS_ANDROID)
-@@ -292,13 +288,6 @@ base::FilePath DownloadTargetDeterminer::GenerateFileName() const {
+@@ -292,13 +289,6 @@ base::FilePath DownloadTargetDeterminer::GenerateFileName() const {
        download_->GetURL(), download_->GetContentDisposition(), referrer_charset,
        suggested_filename, sniffed_mime_type, default_filename);
  
@@ -41,7 +49,7 @@ index cdeecb35a998..d609fbc68c7a 100644
    // If no mime type or explicitly specified a name, don't replace file
    // extension.
    if (sniffed_mime_type.empty() || !suggested_filename.empty())
-@@ -779,24 +768,12 @@ DownloadTargetDeterminer::Result
+@@ -779,24 +769,12 @@ DownloadTargetDeterminer::Result
    DCHECK(!virtual_path_.empty());
    next_state_ = STATE_CHECK_VISITED_REFERRER_BEFORE;
  
@@ -68,7 +76,7 @@ index cdeecb35a998..d609fbc68c7a 100644
    DoLoop();
  }
  
-@@ -805,50 +782,6 @@ DownloadTargetDeterminer::Result
+@@ -805,50 +783,6 @@ DownloadTargetDeterminer::Result
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
    next_state_ = STATE_DETERMINE_INTERMEDIATE_PATH;
  
@@ -119,7 +127,7 @@ index cdeecb35a998..d609fbc68c7a 100644
    return CONTINUE;
  }
  
-@@ -856,11 +789,6 @@ void DownloadTargetDeterminer::CheckVisitedReferrerBeforeDone(
+@@ -856,11 +790,6 @@ void DownloadTargetDeterminer::CheckVisitedReferrerBeforeDone(
      bool visited_referrer_before) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
    DCHECK_EQ(STATE_DETERMINE_INTERMEDIATE_PATH, next_state_);
@@ -131,7 +139,7 @@ index cdeecb35a998..d609fbc68c7a 100644
    DoLoop();
  }
  
-@@ -902,58 +830,31 @@ DownloadTargetDeterminer::Result
+@@ -902,58 +831,31 @@ DownloadTargetDeterminer::Result
    // target path. In practice the temporary download file that was created prior
    // to download filename determination is already named
    // download_->GetForcedFilePath().
@@ -194,7 +202,7 @@ index cdeecb35a998..d609fbc68c7a 100644
    return COMPLETE;
  }
  
-@@ -964,8 +865,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
+@@ -964,8 +866,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
              << " Local:" << local_path_.AsUTF8Unsafe()
              << " Intermediate:" << intermediate_path_.AsUTF8Unsafe()
              << " Confirmation reason:" << static_cast<int>(confirmation_reason_)
@@ -203,7 +211,7 @@ index cdeecb35a998..d609fbc68c7a 100644
              << " Result:" << static_cast<int>(result);
    std::unique_ptr<DownloadTargetInfo> target_info(new DownloadTargetInfo);
  
-@@ -976,8 +875,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
+@@ -976,8 +876,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
                 confirmation_reason_ != DownloadConfirmationReason::NONE
             ? DownloadItem::TARGET_DISPOSITION_PROMPT
             : DownloadItem::TARGET_DISPOSITION_OVERWRITE);
@@ -212,7 +220,7 @@ index cdeecb35a998..d609fbc68c7a 100644
    target_info->intermediate_path = intermediate_path_;
    target_info->mime_type = mime_type_;
    target_info->is_filetype_handled_safely = is_filetype_handled_safely_;
-@@ -1066,55 +963,6 @@ bool DownloadTargetDeterminer::HasPromptedForPath() const {
+@@ -1066,55 +964,6 @@ bool DownloadTargetDeterminer::HasPromptedForPath() const {
                                  DownloadItem::TARGET_DISPOSITION_PROMPT);
  }
  

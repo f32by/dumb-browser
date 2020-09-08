@@ -1,12 +1,29 @@
 diff --git a/components/metrics/persistent_histograms.cc b/components/metrics/persistent_histograms.cc
-index e77f48b06ee5..e792d9046b61 100644
+index e77f48b06ee5..4f5cc17f2ad2 100644
 --- a/components/metrics/persistent_histograms.cc
 +++ b/components/metrics/persistent_histograms.cc
+@@ -33,8 +33,8 @@ constexpr int kSpareFileCreateDelaySeconds = 10;
+ // Desktop may have to restore a lot of tabs so give it more time before doing
+ // non-essential work. The spare file is still a performance boost but not as
+ // significant of one so it's not required.
+-constexpr bool kSpareFileRequired = false;
+-constexpr int kSpareFileCreateDelaySeconds = 90;
++ALLOW_UNUSED_TYPE constexpr bool kSpareFileRequired = false;
++ALLOW_UNUSED_TYPE constexpr int kSpareFileCreateDelaySeconds = 90;
+ #endif
+ 
+ #if defined(OS_WIN)
 @@ -85,6 +85,7 @@ const char kBrowserMetricsName[] = "BrowserMetrics";
  // Check for feature enabling the use of persistent histogram storage and
  // enable the global allocator if so.
  void InstantiatePersistentHistograms(const base::FilePath& metrics_dir) {
-+  return;
++#if 0
    // Create a directory for storing completed metrics files. Files in this
    // directory must have embedded system profiles. If the directory can't be
    // created, the file will just be deleted below.
+@@ -219,4 +220,5 @@ void InstantiatePersistentHistograms(const base::FilePath& metrics_dir) {
+       base::BindOnce(&DeleteOldWindowsTempFiles, std::move(metrics_dir)),
+       kDeleteOldWindowsTempFilesDelay);
+ #endif  // defined(OS_WIN)
++#endif
+ }
