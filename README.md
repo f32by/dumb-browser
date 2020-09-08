@@ -1,5 +1,5 @@
 # Dumb Browser
-A custom chromium build inspired by ungoogled-chromium and Brave.
+A custom Chromium build inspired by ungoogled-chromium and Brave.
 
 Current version: `87.0.4252.0`.
 
@@ -24,6 +24,8 @@ Following components are removed/disabled:
 13. Promotions in New Tab Page
 14. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
 15. Spell Checker
+16. Installer and Updater
+17. Subresource filter (which is used by Chrome's integrated AdBlocking feature.)
 
 Other changes / optimizations:
 1. [UI] Change web controls' color to gray (edge style)
@@ -43,6 +45,8 @@ Please build on your own or wait for official binaries.
 Tested on **macOS 10.15.6** and **macOS 11.0 Beta 6**.
 
 ### Prerequisites
+
+Android: Currently not supported.
 
 Windows: [Building Dumb Browser for Windows](docs/windows.md)
 
