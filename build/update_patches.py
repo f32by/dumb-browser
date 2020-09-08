@@ -27,8 +27,6 @@ from utils import get_patch_filename, get_original_filename
 EXCLUSION_FILES = [
     # language resources
     'chrome/app/chromium_strings.grd',
-    'chrome/app/generated_resources.grd',
-    'chrome/app/google_chrome_strings.grd',
     'chrome/app/settings_chromium_strings.grdp',
     'chrome/app/settings_strings.grdp',
     # branding resources
