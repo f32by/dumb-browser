@@ -53,6 +53,7 @@ def main(args):
 
     print('Copying resources...')
     copy_tree(os.path.join(PROJECT_DIR, 'resources', 'chrome'), CHROMIUM_SRC_DIR)
+    copy_tree(os.path.join(PROJECT_DIR, 'resources', 'components'), CHROMIUM_SRC_DIR)
 
     print("Project synchronization finished. Now you can run 'build/build.py' to build Dumb Browser.")
 
