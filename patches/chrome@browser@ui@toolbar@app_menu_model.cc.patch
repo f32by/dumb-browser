@@ -1,0 +1,48 @@
+diff --git a/chrome/browser/ui/toolbar/app_menu_model.cc b/chrome/browser/ui/toolbar/app_menu_model.cc
+index 0436f84939a6..beb9ce288839 100644
+--- a/chrome/browser/ui/toolbar/app_menu_model.cc
++++ b/chrome/browser/ui/toolbar/app_menu_model.cc
+@@ -45,7 +45,6 @@
+ #include "chrome/browser/ui/toolbar/toolbar_actions_bar.h"
+ #include "chrome/browser/ui/ui_features.h"
+ #include "chrome/browser/ui/web_applications/web_app_launch_utils.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/browser/web_applications/web_app_provider.h"
+ #include "chrome/common/chrome_features.h"
+ #include "chrome/common/chrome_paths.h"
+@@ -113,16 +112,6 @@ constexpr size_t kMaxAppNameLength = 30;
+ const int kEmptyMenuItemCommand = 0;
+ #endif
+ 
+-// Conditionally return the update app menu item title based on upgrade detector
+-// state.
+-base::string16 GetUpgradeDialogMenuItemName() {
+-  if (UpgradeDetector::GetInstance()->is_outdated_install() ||
+-      UpgradeDetector::GetInstance()->is_outdated_install_no_au()) {
+-    return l10n_util::GetStringUTF16(IDS_UPGRADE_BUBBLE_MENU_ITEM);
+-  } else {
+-    return l10n_util::GetStringUTF16(IDS_UPDATE_NOW);
+-  }
+-}
+ 
+ // Returns the appropriate menu label for the IDC_INSTALL_PWA command if
+ // available.
+@@ -327,8 +316,7 @@ base::string16 AppMenuModel::GetLabelForCommandId(int command_id) const {
+     case IDC_INSTALL_PWA:
+       return GetInstallPWAAppMenuItemName(browser_).value();
+     case IDC_UPGRADE_DIALOG:
+-      DCHECK(browser_defaults::kShowUpgradeMenuItem);
+-      return GetUpgradeDialogMenuItemName();
++      return base::string16();
+     default:
+       NOTREACHED();
+       return base::string16();
+@@ -765,8 +753,6 @@ void AppMenuModel::Build() {
+   if (CreateActionToolbarOverflowMenu())
+     AddSeparator(ui::UPPER_SEPARATOR);
+ 
+-  if (IsCommandIdVisible(IDC_UPGRADE_DIALOG))
+-    AddItem(IDC_UPGRADE_DIALOG, GetUpgradeDialogMenuItemName());
+   if (AddGlobalErrorMenuItems() || IsCommandIdVisible(IDC_UPGRADE_DIALOG))
+     AddSeparator(ui::NORMAL_SEPARATOR);
+ 

@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-index 2c07ff8c5677..419567db7851 100644
+index 2c07ff8c5677..1ce081852c76 100644
 --- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 +++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-@@ -60,7 +60,6 @@
+@@ -32,7 +32,6 @@
+ #include "chrome/browser/favicon/favicon_service_factory.h"
+ #include "chrome/browser/favicon/history_ui_favicon_request_handler_factory.h"
+ #include "chrome/browser/feature_engagement/tracker_factory.h"
+-#include "chrome/browser/google/google_search_domain_mixing_metrics_emitter_factory.h"
+ #include "chrome/browser/history/domain_diversity_reporter_factory.h"
+ #include "chrome/browser/history/history_service_factory.h"
+ #include "chrome/browser/history/top_sites_factory.h"
+@@ -60,7 +59,6 @@
  #include "chrome/browser/prerender/prerender_manager_factory.h"
  #include "chrome/browser/profiles/gaia_info_update_service_factory.h"
  #include "chrome/browser/profiles/renderer_updater_factory.h"
@@ -10,7 +18,7 @@ index 2c07ff8c5677..419567db7851 100644
  #include "chrome/browser/search/suggestions/suggestions_service_factory.h"
  #include "chrome/browser/search_engines/template_url_fetcher_factory.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
-@@ -242,7 +241,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -242,7 +240,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
    CaptivePortalServiceFactory::GetInstance();
  #endif
@@ -18,7 +26,15 @@ index 2c07ff8c5677..419567db7851 100644
    ChromeBrowsingDataRemoverDelegateFactory::GetInstance();
    ChromeSigninClientFactory::GetInstance();
    ClientHintsFactory::GetInstance();
-@@ -347,7 +345,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -272,7 +269,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+ #if !defined(OS_ANDROID)
+   GlobalErrorServiceFactory::GetInstance();
+ #endif
+-  GoogleSearchDomainMixingMetricsEmitterFactory::GetInstance();
+   HistoryServiceFactory::GetInstance();
+   HistoryUiFaviconRequestHandlerFactory::GetInstance();
+   HostContentSettingsMapFactory::GetInstance();
+@@ -347,7 +343,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(FULL_SAFE_BROWSING)
    safe_browsing::AdvancedProtectionStatusManagerFactory::GetInstance();
  #endif

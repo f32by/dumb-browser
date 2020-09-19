@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/ui/autofill/payments/credit_card_scanner_controller.cc b/chrome/browser/ui/autofill/payments/credit_card_scanner_controller.cc
+index 01db487ac583..6b44bf9a4c5c 100644
+--- a/chrome/browser/ui/autofill/payments/credit_card_scanner_controller.cc
++++ b/chrome/browser/ui/autofill/payments/credit_card_scanner_controller.cc
+@@ -14,7 +14,6 @@
+ #include "base/time/time.h"
+ #include "chrome/browser/ui/autofill/payments/credit_card_scanner_view.h"
+ #include "chrome/browser/ui/autofill/payments/credit_card_scanner_view_delegate.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ 
+ namespace autofill {
+ 
+@@ -43,15 +42,11 @@ class Controller : public CreditCardScannerViewDelegate,
+ 
+   // CreditCardScannerViewDelegate implementation.
+   void ScanCancelled() override {
+-    AutofillMetrics::LogScanCreditCardCompleted(
+-        base::TimeTicks::Now() - show_time_, false);
+     delete this;
+   }
+ 
+   // CreditCardScannerViewDelegate implementation.
+   void ScanCompleted(const CreditCard& card) override {
+-    AutofillMetrics::LogScanCreditCardCompleted(
+-        base::TimeTicks::Now() - show_time_, true);
+     std::move(callback_).Run(card);
+     delete this;
+   }

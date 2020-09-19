@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/notifications/platform_notification_service_factory.cc b/chrome/browser/notifications/platform_notification_service_factory.cc
+index decc570e86d1..3bc01be4d251 100644
+--- a/chrome/browser/notifications/platform_notification_service_factory.cc
++++ b/chrome/browser/notifications/platform_notification_service_factory.cc
+@@ -35,8 +35,6 @@ PlatformNotificationServiceFactory::PlatformNotificationServiceFactory()
+           BrowserContextDependencyManager::GetInstance()) {
+   DependsOn(HostContentSettingsMapFactory::GetInstance());
+   DependsOn(NotificationDisplayServiceFactory::GetInstance());
+-  DependsOn(NotificationMetricsLoggerFactory::GetInstance());
+-  DependsOn(ukm::UkmBackgroundRecorderFactory::GetInstance());
+ }
+ 
+ KeyedService* PlatformNotificationServiceFactory::BuildServiceInstanceFor(

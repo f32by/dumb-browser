@@ -1,8 +1,8 @@
 diff --git a/content/browser/browser_main_loop.cc b/content/browser/browser_main_loop.cc
-index 40e29b8f369e..ebcd069dbee6 100644
+index 0c286cd8ade5..0c496295e22f 100644
 --- a/content/browser/browser_main_loop.cc
 +++ b/content/browser/browser_main_loop.cc
-@@ -1129,12 +1129,6 @@ void BrowserMainLoop::ShutdownThreadsAndCleanUp() {
+@@ -1130,12 +1130,6 @@ void BrowserMainLoop::ShutdownThreadsAndCleanUp() {
      }
    }
  
@@ -15,7 +15,7 @@ index 40e29b8f369e..ebcd069dbee6 100644
    {
      TRACE_EVENT0("shutdown", "BrowserMainLoop::Subsystem:DeleteDataSources");
      URLDataManager::DeleteDataSources();
-@@ -1275,16 +1269,6 @@ int BrowserMainLoop::BrowserThreadsStarted() {
+@@ -1276,16 +1270,6 @@ int BrowserMainLoop::BrowserThreadsStarted() {
      midi_service_.reset(new midi::MidiService);
    }
  

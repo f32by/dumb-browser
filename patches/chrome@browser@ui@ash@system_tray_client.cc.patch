@@ -1,0 +1,73 @@
+diff --git a/chrome/browser/ui/ash/system_tray_client.cc b/chrome/browser/ui/ash/system_tray_client.cc
+index fab566468588..61a5d74c9576 100644
+--- a/chrome/browser/ui/ash/system_tray_client.cc
++++ b/chrome/browser/ui/ash/system_tray_client.cc
+@@ -36,7 +36,6 @@
+ #include "chrome/browser/ui/webui/chromeos/internet_detail_dialog.h"
+ #include "chrome/browser/ui/webui/chromeos/multidevice_setup/multidevice_setup_dialog.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/constants/routes.mojom.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/common/url_constants.h"
+ #include "chromeos/constants/chromeos_switches.h"
+ #include "chromeos/dbus/dbus_thread_manager.h"
+@@ -119,8 +118,6 @@ SystemTrayClient::SystemTrayClient()
+   g_browser_process->platform_part()->GetSystemClock()->AddObserver(this);
+ 
+   // If an upgrade is available at startup then tell ash about it.
+-  if (UpgradeDetector::GetInstance()->notify_upgrade())
+-    HandleUpdateAvailable();
+ 
+   // If the device is enterprise managed then send ash the enterprise domain.
+   policy::BrowserPolicyConnectorChromeOS* policy_connector =
+@@ -135,7 +132,6 @@ SystemTrayClient::SystemTrayClient()
+ 
+   DCHECK(!g_system_tray_client_instance);
+   g_system_tray_client_instance = this;
+-  UpgradeDetector::GetInstance()->AddObserver(this);
+ }
+ 
+ SystemTrayClient::~SystemTrayClient() {
+@@ -152,7 +148,6 @@ SystemTrayClient::~SystemTrayClient() {
+     policy_manager->core()->store()->RemoveObserver(this);
+ 
+   g_browser_process->platform_part()->GetSystemClock()->RemoveObserver(this);
+-  UpgradeDetector::GetInstance()->RemoveObserver(this);
+ }
+ 
+ // static
+@@ -458,35 +453,6 @@ void SystemTrayClient::SetLocaleAndExit(const std::string& locale_iso_code) {
+ }
+ 
+ void SystemTrayClient::HandleUpdateAvailable() {
+-  // Show an update icon for Chrome updates and Flash component updates.
+-  UpgradeDetector* detector = UpgradeDetector::GetInstance();
+-  bool update_available = detector->notify_upgrade() || flash_update_available_;
+-  DCHECK(update_available);
+-  if (!update_available)
+-    return;
+-
+-  // Get the Chrome update severity.
+-  ash::UpdateSeverity severity = GetUpdateSeverity(detector);
+-
+-  // Flash updates are low severity unless the Chrome severity is higher.
+-  if (flash_update_available_)
+-    severity = std::max(severity, ash::UpdateSeverity::kLow);
+-
+-  // Show a string specific to updating flash player if there is no system
+-  // update.
+-  ash::UpdateType update_type = detector->notify_upgrade()
+-                                    ? ash::UpdateType::kSystem
+-                                    : ash::UpdateType::kFlash;
+-
+-  system_tray_->ShowUpdateIcon(severity, detector->is_factory_reset_required(),
+-                               detector->is_rollback(), update_type);
+-
+-  // Only overwrite title and body for system updates, not for flash updates.
+-  if (update_type == ash::UpdateType::kSystem) {
+-    system_tray_->SetUpdateNotificationState(update_notification_style_,
+-                                             update_notification_title_,
+-                                             update_notification_body_);
+-  }
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////

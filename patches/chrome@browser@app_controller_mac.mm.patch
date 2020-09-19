@@ -1,13 +1,42 @@
 diff --git a/chrome/browser/app_controller_mac.mm b/chrome/browser/app_controller_mac.mm
-index 8493d1b2233b..2baaf1c01933 100644
+index ce66d73e0fa4..507f02d19c4a 100644
 --- a/chrome/browser/app_controller_mac.mm
 +++ b/chrome/browser/app_controller_mac.mm
-@@ -668,7 +668,7 @@ - (void)setUpdateCheckInterval {
-   CFStringRef checkInterval = CFSTR("checkInterval");
-   CFPropertyListRef plist = CFPreferencesCopyAppValue(checkInterval, app);
-   if (!plist) {
--    const float fiveHoursInSeconds = 5.0 * 60.0 * 60.0;
-+    const float fiveHoursInSeconds = 0.0;
-     NSNumber* value = [NSNumber numberWithFloat:fiveHoursInSeconds];
-     CFPreferencesSetAppValue(checkInterval, value, app);
-     CFPreferencesAppSynchronize(app);
+@@ -43,7 +43,6 @@
+ #include "chrome/browser/first_run/first_run.h"
+ #include "chrome/browser/lifetime/application_lifetime.h"
+ #include "chrome/browser/lifetime/browser_shutdown.h"
+-#include "chrome/browser/mac/mac_startup_profiler.h"
+ #include "chrome/browser/policy/chrome_browser_policy_connector.h"
+ #include "chrome/browser/prefs/incognito_mode_prefs.h"
+ #include "chrome/browser/profiles/profile_attributes_entry.h"
+@@ -346,8 +345,6 @@ - (void)dealloc {
+ // the profile is loaded or any preferences have been registered). Defer any
+ // user-data initialization until -applicationDidFinishLaunching:.
+ - (void)mainMenuCreated {
+-  MacStartupProfiler::GetInstance()->Profile(
+-      MacStartupProfiler::AWAKE_FROM_NIB);
+   // We need to register the handlers early to catch events fired on launch.
+   NSAppleEventManager* em = [NSAppleEventManager sharedAppleEventManager];
+   [em setEventHandler:self
+@@ -416,9 +413,6 @@ - (void)unregisterEventHandlers {
+ // (NSApplicationDelegate protocol) This is the Apple-approved place to override
+ // the default handlers.
+ - (void)applicationWillFinishLaunching:(NSNotification*)notification {
+-  MacStartupProfiler::GetInstance()->Profile(
+-      MacStartupProfiler::WILL_FINISH_LAUNCHING);
+-
+   if (@available(macOS 10.12, *)) {
+     NSWindow.allowsAutomaticWindowTabbing = NO;
+   }
+@@ -741,10 +735,6 @@ - (void)applicationDidFinishLaunching:(NSNotification*)notify {
+     return;
+   }
+ 
+-  MacStartupProfiler::GetInstance()->Profile(
+-      MacStartupProfiler::DID_FINISH_LAUNCHING);
+-  MacStartupProfiler::GetInstance()->RecordMetrics();
+-
+   // Notify BrowserList to keep the application running so it doesn't go away
+   // when all the browser windows get closed.
+   _keep_alive.reset(new ScopedKeepAlive(KeepAliveOrigin::APP_CONTROLLER,

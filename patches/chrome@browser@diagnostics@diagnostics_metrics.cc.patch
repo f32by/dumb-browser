@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/diagnostics/diagnostics_metrics.cc b/chrome/browser/diagnostics/diagnostics_metrics.cc
+index 6d9e3cc389e4..893f7b0a8b40 100644
+--- a/chrome/browser/diagnostics/diagnostics_metrics.cc
++++ b/chrome/browser/diagnostics/diagnostics_metrics.cc
+@@ -110,23 +110,9 @@ std::string GetTestDescription(DiagnosticsTestId id) {
+   TEST_CASE(name, DIAGNOSTICS_SQLITE_INTEGRITY_TOPSITES_TEST);
+ 
+ void RecordUMARecoveryResult(DiagnosticsTestId id, RunResultMetrics result) {
+-  const std::string name("Diagnostics.Recovery." +
+-                         GetTestName(static_cast<DiagnosticsTestId>(id)));
+-  switch (id) {
+-    TEST_CASES(name);  // See above
+-    default:
+-      NOTREACHED() << "Unhandled UMA Metric type" << id;
+-  }
+ }
+ 
+ void RecordUMATestResult(DiagnosticsTestId id, RunResultMetrics result) {
+-  const std::string name("Diagnostics.Test." +
+-                         GetTestName(static_cast<DiagnosticsTestId>(id)));
+-  switch (id) {
+-    TEST_CASES(name);  // See above
+-    default:
+-      NOTREACHED() << "Unhandled UMA Metric type" << id;
+-  }
+ }
+ #undef TEST_CASE
+ #undef TEST_CASES

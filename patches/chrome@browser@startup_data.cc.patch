@@ -1,0 +1,29 @@
+diff --git a/chrome/browser/startup_data.cc b/chrome/browser/startup_data.cc
+index dd46f01b5510..cbe9be041816 100644
+--- a/chrome/browser/startup_data.cc
++++ b/chrome/browser/startup_data.cc
+@@ -48,7 +48,6 @@
+ #include "components/sync_preferences/pref_service_syncable.h"
+ #include "content/public/browser/network_service_instance.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+-#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
+ 
+ namespace {
+ 
+@@ -201,15 +200,13 @@ void StartupData::CreateServicesInternal() {
+                        chrome_feature_list_creator_->actual_locale(),
+                        pref_registry_.get());
+ 
+-  mojo::PendingRemote<prefs::mojom::TrackedPreferenceValidationDelegate>
+-      pref_validation_delegate;
+   // The preference tracking and protection is not required on Android.
+   DCHECK(!ProfilePrefStoreManager::kPlatformSupportsPreferenceTracking);
+ 
+   prefs_ = CreatePrefService(
+       pref_registry_, nullptr /* extension_pref_store */,
+       profile_policy_connector_->policy_service(), browser_policy_connector,
+-      std::move(pref_validation_delegate), io_task_runner, key_.get(), path,
++      io_task_runner, key_.get(), path,
+       false /* async_prefs*/);
+ }
+ #endif

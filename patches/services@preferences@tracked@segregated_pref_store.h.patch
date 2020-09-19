@@ -1,0 +1,36 @@
+diff --git a/services/preferences/tracked/segregated_pref_store.h b/services/preferences/tracked/segregated_pref_store.h
+index dd9b7025ed6c..af1fb17a9f94 100644
+--- a/services/preferences/tracked/segregated_pref_store.h
++++ b/services/preferences/tracked/segregated_pref_store.h
+@@ -17,7 +17,6 @@
+ #include "base/observer_list.h"
+ #include "components/prefs/persistent_pref_store.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+-#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
+ 
+ // Provides a unified PersistentPrefStore implementation that splits its storage
+ // and retrieval between two underlying PersistentPrefStore instances: a set of
+@@ -45,9 +44,7 @@ class SegregatedPrefStore : public PersistentPrefStore {
+   SegregatedPrefStore(
+       const scoped_refptr<PersistentPrefStore>& default_pref_store,
+       const scoped_refptr<PersistentPrefStore>& selected_pref_store,
+-      const std::set<std::string>& selected_pref_names,
+-      mojo::Remote<prefs::mojom::TrackedPreferenceValidationDelegate>
+-          validation_delegate);
++      const std::set<std::string>& selected_pref_names);
+ 
+   // PrefStore implementation
+   void AddObserver(Observer* observer) override;
+@@ -109,12 +106,6 @@ class SegregatedPrefStore : public PersistentPrefStore {
+   PersistentPrefStore* StoreForKey(const std::string& key);
+   const PersistentPrefStore* StoreForKey(const std::string& key) const;
+ 
+-  // |validation_delegate_| is used by |default_pref_store_| and
+-  // |selected_pref_store_| PrefHashFilters. Its lifetime is managed here since
+-  // a single owner is required.
+-  mojo::Remote<prefs::mojom::TrackedPreferenceValidationDelegate>
+-      validation_delegate_;
+-
+   scoped_refptr<PersistentPrefStore> default_pref_store_;
+   scoped_refptr<PersistentPrefStore> selected_pref_store_;
+   std::set<std::string> selected_preference_names_;

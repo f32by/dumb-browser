@@ -1,0 +1,26 @@
+diff --git a/chrome/browser/profiles/profile_info_cache.cc b/chrome/browser/profiles/profile_info_cache.cc
+index cc0028feecdd..52b19f504e7c 100644
+--- a/chrome/browser/profiles/profile_info_cache.cc
++++ b/chrome/browser/profiles/profile_info_cache.cc
+@@ -124,11 +124,6 @@ ProfileInfoCache::ProfileInfoCache(PrefService* prefs,
+     MigrateLegacyProfileNamesAndRecomputeIfNeeded();
+     prefs_->SetBoolean(kLegacyProfileNameMigrated, true);
+   }
+-
+-  repeating_timer_ = std::make_unique<signin::PersistentRepeatingTimer>(
+-      prefs_, kProfileCountLastUpdatePref, base::TimeDelta::FromHours(24),
+-      base::Bind(&ProfileMetrics::LogNumberOfProfiles, this));
+-  repeating_timer_->Start();
+ #endif  // !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+ }
+ 
+@@ -195,9 +190,6 @@ void ProfileInfoCache::AddProfileToCache(const base::FilePath& profile_path,
+ }
+ 
+ void ProfileInfoCache::DisableProfileMetricsForTesting() {
+-#if !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+-  repeating_timer_.reset();
+-#endif
+ }
+ 
+ void ProfileInfoCache::NotifyIfProfileNamesHaveChanged() {

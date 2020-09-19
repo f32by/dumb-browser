@@ -1,20 +1,22 @@
 diff --git a/base/metrics/sparse_histogram.cc b/base/metrics/sparse_histogram.cc
-index 6d2720c23698..5255773303de 100644
+index 6d2720c23698..1af9c45d0e91 100644
 --- a/base/metrics/sparse_histogram.cc
 +++ b/base/metrics/sparse_histogram.cc
-@@ -115,6 +115,7 @@ void SparseHistogram::Add(Sample value) {
+@@ -115,17 +115,6 @@ void SparseHistogram::Add(Sample value) {
  }
  
  void SparseHistogram::AddCount(Sample value, int count) {
-+#if 0
-   if (count <= 0) {
-     NOTREACHED();
-     return;
-@@ -126,6 +127,7 @@ void SparseHistogram::AddCount(Sample value, int count) {
- 
-   if (UNLIKELY(StatisticsRecorder::have_active_callbacks()))
-     FindAndRunCallback(value);
-+#endif
+-  if (count <= 0) {
+-    NOTREACHED();
+-    return;
+-  }
+-  {
+-    base::AutoLock auto_lock(lock_);
+-    unlogged_samples_->Accumulate(value, count);
+-  }
+-
+-  if (UNLIKELY(StatisticsRecorder::have_active_callbacks()))
+-    FindAndRunCallback(value);
  }
  
  std::unique_ptr<HistogramSamples> SparseHistogram::SnapshotSamples() const {

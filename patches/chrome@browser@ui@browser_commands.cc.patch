@@ -1,0 +1,30 @@
+diff --git a/chrome/browser/ui/browser_commands.cc b/chrome/browser/ui/browser_commands.cc
+index de12b8b684c1..86c2dcbe6745 100644
+--- a/chrome/browser/ui/browser_commands.cc
++++ b/chrome/browser/ui/browser_commands.cc
+@@ -67,7 +67,6 @@
+ #include "chrome/browser/ui/tabs/tab_group_model.h"
+ #include "chrome/browser/ui/translate/translate_bubble_view_state_transition.h"
+ #include "chrome/browser/ui/web_applications/app_browser_controller.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/browser/web_applications/components/app_registrar.h"
+ #include "chrome/browser/web_applications/components/web_app_constants.h"
+ #include "chrome/browser/web_applications/components/web_app_id.h"
+@@ -1410,17 +1409,6 @@ void ShowAvatarMenu(Browser* browser) {
+       signin_metrics::AccessPoint::ACCESS_POINT_AVATAR_BUBBLE_SIGN_IN, true);
+ }
+ 
+-void OpenUpdateChromeDialog(Browser* browser) {
+-  if (UpgradeDetector::GetInstance()->is_outdated_install()) {
+-    UpgradeDetector::GetInstance()->NotifyOutdatedInstall();
+-  } else if (UpgradeDetector::GetInstance()->is_outdated_install_no_au()) {
+-    UpgradeDetector::GetInstance()->NotifyOutdatedInstallNoAutoUpdate();
+-  } else {
+-    base::RecordAction(UserMetricsAction("UpdateChrome"));
+-    browser->window()->ShowUpdateChromeDialog();
+-  }
+-}
+-
+ void ToggleDistilledView(Browser* browser) {
+   auto* current_web_contents =
+       browser->tab_strip_model()->GetActiveWebContents();

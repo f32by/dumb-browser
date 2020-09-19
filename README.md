@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `87.0.4252.0`.
+Current version: `87.0.4263.3`.
 
 **Some patches are experimental and build may fail.**
 
@@ -58,14 +58,14 @@ macOS: [Building Dumb Browser for macOS](docs/windows.md)
 git clone https://github.com/bytanuky/dumb-browser
 cd dumb-browser
 # install dependencies
-./build/prepare.py
+./scripts/prepare.py
 # fetch chromium src and apply dumb browser's patches
 # depend on your network connection, this may take 30-60 minutes.
-./build/sync.py
+./scripts/sync.py
 # get a release build
 # you may also use `./build/build.py debug` to get a debug build
 # show available options: ./build/build.py -h
-./build/build.py release
+./scripts/build.py release
 # wait patiently :)
 ```
 

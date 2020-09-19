@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/views/autofill/payments/save_card_offer_bubble_views.cc b/chrome/browser/ui/views/autofill/payments/save_card_offer_bubble_views.cc
+index bfec965f8286..f3936d70eef5 100644
+--- a/chrome/browser/ui/views/autofill/payments/save_card_offer_bubble_views.cc
++++ b/chrome/browser/ui/views/autofill/payments/save_card_offer_bubble_views.cc
+@@ -17,7 +17,6 @@
+ #include "chrome/browser/ui/views/chrome_typography.h"
+ #include "chrome/grit/generated_resources.h"
+ #include "components/autofill/core/browser/autofill_experiments.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/data_model/credit_card.h"
+ #include "components/autofill/core/browser/payments/legal_message_line.h"
+ #include "components/autofill/core/browser/validation.h"
+@@ -195,8 +194,6 @@ std::unique_ptr<views::View> SaveCardOfferBubbleViews::CreateMainContentView() {
+     cardholder_name_textfield_->SetTextInputType(
+         ui::TextInputType::TEXT_INPUT_TYPE_TEXT);
+     cardholder_name_textfield_->SetText(prefilled_name);
+-    AutofillMetrics::LogSaveCardCardholderNamePrefilled(
+-        !prefilled_name.empty());
+ 
+     // Add cardholder name elements to a single view, then to the final dialog.
+     std::unique_ptr<views::View> cardholder_name_view =

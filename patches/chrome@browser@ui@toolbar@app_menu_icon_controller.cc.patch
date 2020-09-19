@@ -1,0 +1,116 @@
+diff --git a/chrome/browser/ui/toolbar/app_menu_icon_controller.cc b/chrome/browser/ui/toolbar/app_menu_icon_controller.cc
+index a927f50a7346..12852aba73af 100644
+--- a/chrome/browser/ui/toolbar/app_menu_icon_controller.cc
++++ b/chrome/browser/ui/toolbar/app_menu_icon_controller.cc
+@@ -9,53 +9,12 @@
+ #include "chrome/app/vector_icons/vector_icons.h"
+ #include "chrome/browser/defaults.h"
+ #include "chrome/browser/ui/global_error/global_error_service_factory.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/common/channel_info.h"
+ #include "components/version_info/channel.h"
+ #include "ui/gfx/paint_vector_icon.h"
+ 
+ namespace {
+ 
+-// Maps an upgrade level to a severity level. When |show_very_low_upgrade_level|
+-// is true, VERY_LOW through HIGH all return Severity::LOW. Otherwise, VERY_LOW
+-// is ignored and LOW through HIGH return their respective Severity level.
+-AppMenuIconController::Severity SeverityFromUpgradeLevel(
+-    bool show_very_low_upgrade_level,
+-    UpgradeDetector::UpgradeNotificationAnnoyanceLevel level) {
+-  if (show_very_low_upgrade_level) {
+-    // Anything between kNone and kCritical is LOW for unstable desktop Chrome.
+-    switch (level) {
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_NONE:
+-        break;
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_VERY_LOW:
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_LOW:
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_ELEVATED:
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_HIGH:
+-        return AppMenuIconController::Severity::LOW;
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_CRITICAL:
+-        return AppMenuIconController::Severity::HIGH;
+-    }
+-  } else {
+-    switch (level) {
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_NONE:
+-        break;
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_VERY_LOW:
+-        // kVeryLow is meaningless for stable channels.
+-        return AppMenuIconController::Severity::NONE;
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_LOW:
+-        return AppMenuIconController::Severity::LOW;
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_ELEVATED:
+-        return AppMenuIconController::Severity::MEDIUM;
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_HIGH:
+-      case UpgradeDetector::UPGRADE_ANNOYANCE_CRITICAL:
+-        return AppMenuIconController::Severity::HIGH;
+-    }
+-  }
+-  DCHECK_EQ(level, UpgradeDetector::UPGRADE_ANNOYANCE_NONE);
+-
+-  return AppMenuIconController::Severity::NONE;
+-}
+-
+ // Return true if the browser is updating on the dev or canary channels.
+ bool IsUnstableChannel() {
+   // Unbranded (Chromium) builds are on the UNKNOWN channel, so check explicitly
+@@ -68,16 +27,10 @@ bool IsUnstableChannel() {
+ 
+ }  // namespace
+ 
+-AppMenuIconController::AppMenuIconController(Profile* profile,
+-                                             Delegate* delegate)
+-    : AppMenuIconController(UpgradeDetector::GetInstance(), profile, delegate) {
+-}
+ 
+-AppMenuIconController::AppMenuIconController(UpgradeDetector* upgrade_detector,
+-                                             Profile* profile,
++AppMenuIconController::AppMenuIconController(Profile* profile,
+                                              Delegate* delegate)
+     : is_unstable_channel_(IsUnstableChannel()),
+-      upgrade_detector_(upgrade_detector),
+       profile_(profile),
+       delegate_(delegate) {
+   DCHECK(profile_);
+@@ -85,12 +38,9 @@ AppMenuIconController::AppMenuIconController(UpgradeDetector* upgrade_detector,
+ 
+   global_error_observer_.Add(
+       GlobalErrorServiceFactory::GetForProfile(profile_));
+-
+-  upgrade_detector_->AddObserver(this);
+ }
+ 
+ AppMenuIconController::~AppMenuIconController() {
+-  upgrade_detector_->RemoveObserver(this);
+ }
+ 
+ void AppMenuIconController::UpdateDelegate() {
+@@ -99,18 +49,6 @@ void AppMenuIconController::UpdateDelegate() {
+ 
+ AppMenuIconController::TypeAndSeverity
+ AppMenuIconController::GetTypeAndSeverity() const {
+-  if (browser_defaults::kShowUpgradeMenuItem &&
+-      upgrade_detector_->notify_upgrade()) {
+-    UpgradeDetector::UpgradeNotificationAnnoyanceLevel level =
+-        upgrade_detector_->upgrade_notification_stage();
+-    // The severity may be NONE even if the detector has been notified of an
+-    // update. This can happen for beta and stable channels once the VERY_LOW
+-    // annoyance level is reached.
+-    auto severity = SeverityFromUpgradeLevel(is_unstable_channel_, level);
+-    if (severity != Severity::NONE)
+-      return {IconType::UPGRADE_NOTIFICATION, severity};
+-  }
+-
+   if (GlobalErrorServiceFactory::GetForProfile(profile_)
+           ->GetHighestSeverityGlobalErrorWithAppMenuItem()) {
+     // If you change the severity here, make sure to also change the menu icon
+@@ -154,7 +92,3 @@ SkColor AppMenuIconController::GetIconColor(
+ void AppMenuIconController::OnGlobalErrorsChanged() {
+   UpdateDelegate();
+ }
+-
+-void AppMenuIconController::OnUpgradeRecommended() {
+-  UpdateDelegate();
+-}

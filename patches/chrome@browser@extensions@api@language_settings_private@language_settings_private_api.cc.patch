@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc b/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
-index 5cc290e45f8b..1bba5e5e69f6 100644
+index 5cc290e45f8b..2f0d0480ddf5 100644
 --- a/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
 +++ b/chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
-@@ -25,8 +25,6 @@
+@@ -13,6 +13,7 @@
+ #include <vector>
+ 
+ #include "base/containers/flat_set.h"
++#include "base/macros.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string16.h"
+ #include "base/strings/string_split.h"
+@@ -25,8 +26,6 @@
  #include "chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.h"
  #include "chrome/browser/language/language_model_manager_factory.h"
  #include "chrome/browser/profiles/profile.h"
@@ -11,7 +19,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  #include "chrome/browser/translate/chrome_translate_client.h"
  #include "chrome/browser/translate/translate_service.h"
  #include "chrome/common/extensions/api/language_settings_private.h"
-@@ -35,9 +33,6 @@
+@@ -35,9 +34,6 @@
  #include "components/language/core/browser/pref_names.h"
  #include "components/language/core/common/language_util.h"
  #include "components/language/core/common/locale_util.h"
@@ -21,7 +29,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  #include "components/spellcheck/spellcheck_buildflags.h"
  #include "components/translate/core/browser/translate_download_manager.h"
  #include "components/translate/core/browser/translate_prefs.h"
-@@ -206,12 +201,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+@@ -206,12 +202,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
    translate::TranslatePrefs::GetLanguageInfoList(
        app_locale, translate_prefs->IsTranslateAllowedByPolicy(), &languages);
  
@@ -34,7 +42,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
    // Build the language list.
    language_list_->Clear();
  #if defined(OS_CHROMEOS)
-@@ -226,9 +215,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+@@ -226,9 +216,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
      language.native_display_name = entry.native_display_name;
  
      // Set optional fields only if they differ from the default.
@@ -44,7 +52,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
      if (entry.supports_translate) {
        language.supports_translate.reset(new bool(true));
      }
-@@ -260,26 +246,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
+@@ -260,26 +247,6 @@ LanguageSettingsPrivateGetLanguageListFunction::Run() {
    }
  #endif  // defined(OS_CHROMEOS)
  
@@ -71,7 +79,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
    return RespondNow(OneArgument(std::move(language_list_)));
  }
  
-@@ -294,13 +260,6 @@ void LanguageSettingsPrivateGetLanguageListFunction::
+@@ -294,13 +261,6 @@ void LanguageSettingsPrivateGetLanguageListFunction::
  
  void LanguageSettingsPrivateGetLanguageListFunction::
      UpdateSupportedPlatformDictionaries() {
@@ -85,7 +93,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  }
  #endif  // defined(OS_WIN)
  
-@@ -462,13 +421,7 @@ LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::
+@@ -462,13 +422,7 @@ LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::
  
  ExtensionFunction::ResponseAction
  LanguageSettingsPrivateGetSpellcheckDictionaryStatusesFunction::Run() {
@@ -100,7 +108,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  }
  
  LanguageSettingsPrivateGetSpellcheckWordsFunction::
-@@ -479,24 +432,12 @@ LanguageSettingsPrivateGetSpellcheckWordsFunction::
+@@ -479,24 +433,12 @@ LanguageSettingsPrivateGetSpellcheckWordsFunction::
  
  ExtensionFunction::ResponseAction
  LanguageSettingsPrivateGetSpellcheckWordsFunction::Run() {
@@ -123,11 +131,11 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
 -      SpellcheckServiceFactory::GetForContext(browser_context());
 -  service->GetCustomDictionary()->RemoveObserver(this);
 -  Respond(OneArgument(GetSpellcheckWords()));
-+  auto _ = RespondNow(NoArguments());
++  ignore_result(RespondNow(NoArguments()));
    Release();
  }
  
-@@ -510,17 +451,7 @@ void LanguageSettingsPrivateGetSpellcheckWordsFunction::
+@@ -510,17 +452,7 @@ void LanguageSettingsPrivateGetSpellcheckWordsFunction::
  
  std::unique_ptr<base::ListValue>
  LanguageSettingsPrivateGetSpellcheckWordsFunction::GetSpellcheckWords() const {
@@ -146,7 +154,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  }
  
  LanguageSettingsPrivateAddSpellcheckWordFunction::
-@@ -531,22 +462,7 @@ LanguageSettingsPrivateAddSpellcheckWordFunction::
+@@ -531,22 +463,7 @@ LanguageSettingsPrivateAddSpellcheckWordFunction::
  
  ExtensionFunction::ResponseAction
  LanguageSettingsPrivateAddSpellcheckWordFunction::Run() {
@@ -170,7 +178,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  }
  
  LanguageSettingsPrivateRemoveSpellcheckWordFunction::
-@@ -557,22 +473,7 @@ LanguageSettingsPrivateRemoveSpellcheckWordFunction::
+@@ -557,22 +474,7 @@ LanguageSettingsPrivateRemoveSpellcheckWordFunction::
  
  ExtensionFunction::ResponseAction
  LanguageSettingsPrivateRemoveSpellcheckWordFunction::Run() {
@@ -194,7 +202,7 @@ index 5cc290e45f8b..1bba5e5e69f6 100644
  }
  
  LanguageSettingsPrivateGetTranslateTargetLanguageFunction::
-@@ -772,15 +673,6 @@ LanguageSettingsPrivateRetryDownloadDictionaryFunction::
+@@ -772,15 +674,6 @@ LanguageSettingsPrivateRetryDownloadDictionaryFunction::
  
  ExtensionFunction::ResponseAction
  LanguageSettingsPrivateRetryDownloadDictionaryFunction::Run() {

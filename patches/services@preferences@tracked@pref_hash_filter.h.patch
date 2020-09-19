@@ -1,0 +1,25 @@
+diff --git a/services/preferences/tracked/pref_hash_filter.h b/services/preferences/tracked/pref_hash_filter.h
+index ae0cbd5df7d4..294fa1acf473 100644
+--- a/services/preferences/tracked/pref_hash_filter.h
++++ b/services/preferences/tracked/pref_hash_filter.h
+@@ -33,12 +33,6 @@ class DictionaryValue;
+ class Time;
+ }  // namespace base
+ 
+-namespace prefs {
+-namespace mojom {
+-class TrackedPreferenceValidationDelegate;
+-}
+-}
+-
+ namespace user_prefs {
+ class PrefRegistrySyncable;
+ }  // namespace user_prefs
+@@ -66,7 +60,6 @@ class PrefHashFilter : public InterceptablePrefFilter {
+                      tracked_preferences,
+                  mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
+                      reset_on_load_observer,
+-                 prefs::mojom::TrackedPreferenceValidationDelegate* delegate,
+                  size_t reporting_ids_count);
+ 
+   ~PrefHashFilter() override;

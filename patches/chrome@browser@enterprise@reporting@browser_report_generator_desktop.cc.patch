@@ -1,0 +1,27 @@
+diff --git a/chrome/browser/enterprise/reporting/browser_report_generator_desktop.cc b/chrome/browser/enterprise/reporting/browser_report_generator_desktop.cc
+index 2315a64f6f79..4eb2e175717c 100644
+--- a/chrome/browser/enterprise/reporting/browser_report_generator_desktop.cc
++++ b/chrome/browser/enterprise/reporting/browser_report_generator_desktop.cc
+@@ -15,7 +15,6 @@
+ #include "chrome/browser/profiles/profile_attributes_entry.h"
+ #include "chrome/browser/profiles/profile_attributes_storage.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/upgrade_detector/build_state.h"
+ #include "chrome/common/channel_info.h"
+ #include "components/policy/core/common/cloud/cloud_policy_util.h"
+ #include "components/version_info/version_info.h"
+@@ -50,14 +49,6 @@ version_info::Channel BrowserReportGeneratorDesktop::GetChannel() {
+ 
+ void BrowserReportGeneratorDesktop::GenerateBuildStateInfo(
+     em::BrowserReport* report) {
+-#if !defined(OS_CHROMEOS)
+-  const auto* const build_state = g_browser_process->GetBuildState();
+-  if (build_state->update_type() != BuildState::UpdateType::kNone) {
+-    const auto& installed_version = build_state->installed_version();
+-    if (installed_version)
+-      report->set_installed_browser_version(installed_version->GetString());
+-  }
+-#endif
+ }
+ 
+ // Generates user profiles info in the given report instance.

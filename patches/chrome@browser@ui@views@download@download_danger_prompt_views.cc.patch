@@ -1,21 +1,18 @@
 diff --git a/chrome/browser/ui/views/download/download_danger_prompt_views.cc b/chrome/browser/ui/views/download/download_danger_prompt_views.cc
-index 4ece90d33c39..f5b4906d1524 100644
+index 4ece90d33c39..8e11bdc96f4f 100644
 --- a/chrome/browser/ui/views/download/download_danger_prompt_views.cc
 +++ b/chrome/browser/ui/views/download/download_danger_prompt_views.cc
-@@ -205,17 +205,18 @@ base::string16 DownloadDangerPromptViews::GetMessageBody() const {
+@@ -205,17 +205,9 @@ base::string16 DownloadDangerPromptViews::GetMessageBody() const {
              download_->GetFileNameToReportUser().LossyDisplayName());
        }
        case download::DOWNLOAD_DANGER_TYPE_UNCOMMON_CONTENT: {
-+#if BUILDFLAG(FULL_SAFE_BROWSING)
-         if (safe_browsing::AdvancedProtectionStatusManagerFactory::
-                 GetForProfile(profile_)
-                     ->IsUnderAdvancedProtection()) {
-           return l10n_util::GetStringFUTF16(
-               IDS_PROMPT_UNCOMMON_DOWNLOAD_CONTENT_IN_ADVANCED_PROTECTION,
-               download_->GetFileNameToReportUser().LossyDisplayName());
+-        if (safe_browsing::AdvancedProtectionStatusManagerFactory::
+-                GetForProfile(profile_)
+-                    ->IsUnderAdvancedProtection()) {
+-          return l10n_util::GetStringFUTF16(
+-              IDS_PROMPT_UNCOMMON_DOWNLOAD_CONTENT_IN_ADVANCED_PROTECTION,
+-              download_->GetFileNameToReportUser().LossyDisplayName());
 -        } else {
-+        } else
-+#endif
            return l10n_util::GetStringFUTF16(
                IDS_PROMPT_UNCOMMON_DOWNLOAD_CONTENT,
                download_->GetFileNameToReportUser().LossyDisplayName());

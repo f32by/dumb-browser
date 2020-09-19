@@ -1,0 +1,35 @@
+diff --git a/services/preferences/tracked/tracked_atomic_preference.h b/services/preferences/tracked/tracked_atomic_preference.h
+index 3f3477e9dd98..ff61c82d1063 100644
+--- a/services/preferences/tracked/tracked_atomic_preference.h
++++ b/services/preferences/tracked/tracked_atomic_preference.h
+@@ -15,12 +15,6 @@
+ #include "services/preferences/tracked/tracked_preference.h"
+ #include "services/preferences/tracked/tracked_preference_helper.h"
+ 
+-namespace prefs {
+-namespace mojom {
+-class TrackedPreferenceValidationDelegate;
+-}
+-}
+-
+ // A TrackedAtomicPreference is tracked as a whole. A hash is stored for its
+ // entire value and it is entirely reset on mismatch. An optional delegate is
+ // notified of the status of the preference during enforcement.
+@@ -32,8 +26,7 @@ class TrackedAtomicPreference : public TrackedPreference {
+       size_t reporting_ids_count,
+       prefs::mojom::TrackedPreferenceMetadata::EnforcementLevel
+           enforcement_level,
+-      prefs::mojom::TrackedPreferenceMetadata::ValueType value_type,
+-      prefs::mojom::TrackedPreferenceValidationDelegate* delegate);
++      prefs::mojom::TrackedPreferenceMetadata::ValueType value_type);
+ 
+   // TrackedPreference implementation.
+   TrackedPreferenceType GetType() const override;
+@@ -47,7 +40,6 @@ class TrackedAtomicPreference : public TrackedPreference {
+  private:
+   const std::string pref_path_;
+   const TrackedPreferenceHelper helper_;
+-  prefs::mojom::TrackedPreferenceValidationDelegate* delegate_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(TrackedAtomicPreference);
+ };

@@ -1,14 +1,15 @@
 diff --git a/content/browser/storage_partition_impl.cc b/content/browser/storage_partition_impl.cc
-index bed56f23463b..0e6f9d695c79 100644
+index 10aacd309458..7132deb17da2 100644
 --- a/content/browser/storage_partition_impl.cc
 +++ b/content/browser/storage_partition_impl.cc
-@@ -1864,9 +1864,6 @@ void StoragePartitionImpl::OnTrustAnchorUsed() {
+@@ -1868,10 +1868,6 @@ void StoragePartitionImpl::OnTrustAnchorUsed() {
  }
  #endif
  
 -void StoragePartitionImpl::OnSCTReportReady(const std::string& cache_key) {
 -  GetContentClient()->browser()->OnSCTReportReady(browser_context_, cache_key);
 -}
- 
+-
  void StoragePartitionImpl::ClearDataImpl(
      uint32_t remove_mask,
+     uint32_t quota_storage_remove_mask,

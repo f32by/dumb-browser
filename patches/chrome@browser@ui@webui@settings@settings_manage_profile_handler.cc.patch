@@ -1,0 +1,45 @@
+diff --git a/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc b/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc
+index a06c62efb33e..3ba106b2359e 100644
+--- a/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc
++++ b/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc
+@@ -18,7 +18,6 @@
+ #include "chrome/browser/profiles/profile_attributes_entry.h"
+ #include "chrome/browser/profiles/profile_avatar_icon_util.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/profiles/profile_shortcut_manager.h"
+ #include "chrome/browser/profiles/profile_window.h"
+ #include "chrome/browser/profiles/profiles_state.h"
+@@ -161,13 +160,7 @@ void ManageProfileHandler::HandleSetProfileIconToGaiaAvatar(
+   pref_service->SetBoolean(prefs::kProfileUsingDefaultAvatar, false);
+   pref_service->SetBoolean(prefs::kProfileUsingGAIAAvatar, true);
+   if (!previously_using_gaia_icon) {
+-    // Only log if they changed to the GAIA photo.
+-    // Selection of GAIA photo as avatar is logged as part of the function
+-    // below.
+-    ProfileMetrics::LogProfileSwitchGaia(ProfileMetrics::GAIA_OPT_IN);
+   }
+-
+-  ProfileMetrics::LogProfileUpdate(profile_->GetPath());
+ }
+ 
+ void ManageProfileHandler::HandleSetProfileIconToDefaultAvatar(
+@@ -186,9 +179,6 @@ void ManageProfileHandler::HandleSetProfileIconToDefaultAvatar(
+   pref_service->SetInteger(prefs::kProfileAvatarIndex, new_icon_index);
+   pref_service->SetBoolean(prefs::kProfileUsingDefaultAvatar, false);
+   pref_service->SetBoolean(prefs::kProfileUsingGAIAAvatar, false);
+-
+-  ProfileMetrics::LogProfileAvatarSelection(new_icon_index);
+-  ProfileMetrics::LogProfileUpdate(profile_->GetPath());
+ }
+ 
+ void ManageProfileHandler::HandleSetProfileName(const base::ListValue* args) {
+@@ -205,8 +195,6 @@ void ManageProfileHandler::HandleSetProfileName(const base::ListValue* args) {
+   base::TrimWhitespace(new_profile_name, base::TRIM_ALL, &new_profile_name);
+   CHECK(!new_profile_name.empty());
+   profiles::UpdateProfileName(profile_, new_profile_name);
+-
+-  ProfileMetrics::LogProfileUpdate(profile_->GetPath());
+ }
+ 
+ void ManageProfileHandler::HandleRequestProfileShortcutStatus(

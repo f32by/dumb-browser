@@ -1,5 +1,5 @@
 diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index 14a04f524e5d..c95e30458cb2 100644
+index 7997568809d0..9f2e1686e4cc 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
 @@ -143,8 +143,6 @@ if (!is_android && !is_mac) {
@@ -59,3 +59,62 @@ index 14a04f524e5d..c95e30458cb2 100644
        "//components/policy:generated",
        "//content/public/app",
        "//content/public/common:service_names",
+@@ -1071,7 +1062,6 @@ if (is_win) {
+     _chrome_symbols_sources = [
+       "$root_out_dir/$chrome_product_full_name.app/Contents/MacOS/$chrome_product_full_name",
+       "$root_out_dir/AlertNotificationService.xpc/Contents/MacOS/AlertNotificationService",
+-      "$root_out_dir/chrome_crashpad_handler",
+       "$root_out_dir/libswiftshader_libEGL.dylib",
+       "$root_out_dir/libswiftshader_libGLESv2.dylib",
+       _framework_binary_path,
+@@ -1103,7 +1093,6 @@ if (is_win) {
+         ":chrome_app",
+         ":chrome_framework",
+         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
+-        "//components/crash/core/app:chrome_crashpad_handler",
+         "//third_party/breakpad:dump_syms",
+         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
+         "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
+@@ -1125,7 +1114,6 @@ if (is_win) {
+         "$root_out_dir/AlertNotificationService.dSYM",
+         "$root_out_dir/$chrome_framework_name.dSYM",
+         "$root_out_dir/$chrome_product_full_name.dSYM",
+-        "$root_out_dir/chrome_crashpad_handler.dSYM",
+         "$root_out_dir/libswiftshader_libEGL.dylib.dSYM",
+         "$root_out_dir/libswiftshader_libGLESv2.dylib.dSYM",
+       ]
+@@ -1134,7 +1122,6 @@ if (is_win) {
+         ":chrome_app",
+         ":chrome_framework",
+         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
+-        "//components/crash/core/app:chrome_crashpad_handler",
+         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
+         "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
+       ]
+@@ -1553,7 +1540,6 @@ if (is_linux || is_chromeos) {
+         ":angle_egl_symbols",
+         ":angle_gles_symbols",
+         ":chrome_symbols",
+-        ":crashpad_symbols",
+         ":swiftshader_egl_symbols",
+         ":swiftshader_gles_symbols",
+       ]
+@@ -1570,18 +1556,6 @@ if (is_linux || is_chromeos) {
+ 
+       deps = [ ":chrome" ]
+     }
+-    extract_symbols("crashpad_symbols") {
+-      binary = "$root_out_dir/crashpad_handler"
+-
+-      if (current_cpu == "x86") {
+-        # GYP used "ia32" so keep that naming for back-compat.
+-        symbol_file = "$root_out_dir/crashpad.breakpad.ia32"
+-      } else {
+-        symbol_file = "$root_out_dir/crashpad.breakpad.$current_cpu"
+-      }
+-
+-      deps = [ "//third_party/crashpad/crashpad/handler:crashpad_handler" ]
+-    }
+     extract_symbols("swiftshader_egl_symbols") {
+       binary = "$root_out_dir/swiftshader/libEGL.so"
+ 

@@ -1,0 +1,63 @@
+diff --git a/chrome/browser/background_sync/background_sync_controller_impl.cc b/chrome/browser/background_sync/background_sync_controller_impl.cc
+index 1ab1e083edef..bea0d913fbe9 100644
+--- a/chrome/browser/background_sync/background_sync_controller_impl.cc
++++ b/chrome/browser/background_sync/background_sync_controller_impl.cc
+@@ -10,7 +10,6 @@
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+ #include "chrome/browser/engagement/site_engagement_service.h"
+-#include "chrome/browser/metrics/ukm_background_recorder_service.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+ #include "components/content_settings/core/common/content_settings.h"
+@@ -61,9 +60,7 @@ const char BackgroundSyncControllerImpl::kMinPeriodicSyncEventsInterval[] =
+ BackgroundSyncControllerImpl::BackgroundSyncControllerImpl(Profile* profile)
+     : SiteEngagementObserver(SiteEngagementService::Get(profile)),
+       profile_(profile),
+-      site_engagement_service_(SiteEngagementService::Get(profile)),
+-      background_sync_metrics_(
+-          ukm::UkmBackgroundRecorderFactory::GetForProfile(profile_)) {
++      site_engagement_service_(SiteEngagementService::Get(profile)) {
+   DCHECK(profile_);
+   DCHECK(site_engagement_service_);
+   HostContentSettingsMapFactory::GetForProfile(profile_)->AddObserver(this);
+@@ -238,9 +235,6 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncRegistered(
+     bool can_fire,
+     bool is_reregistered) {
+   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_.MaybeRecordOneShotSyncRegistrationEvent(
+-      origin, can_fire, is_reregistered);
+ }
+ 
+ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncRegistered(
+@@ -248,9 +242,6 @@ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncRegistered(
+     int min_interval,
+     bool is_reregistered) {
+   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_.MaybeRecordPeriodicSyncRegistrationEvent(
+-      origin, min_interval, is_reregistered);
+ }
+ 
+ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
+@@ -259,9 +250,6 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
+     int num_attempts,
+     int max_attempts) {
+   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_.MaybeRecordOneShotSyncCompletionEvent(
+-      origin, status_code, num_attempts, max_attempts);
+ }
+ 
+ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
+@@ -270,9 +258,6 @@ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
+     int num_attempts,
+     int max_attempts) {
+   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_.MaybeRecordPeriodicSyncEventCompletion(
+-      origin, status_code, num_attempts, max_attempts);
+ }
+ 
+ void BackgroundSyncControllerImpl::ScheduleBrowserWakeUpWithDelay(

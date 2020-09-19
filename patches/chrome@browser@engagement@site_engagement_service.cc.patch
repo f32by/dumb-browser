@@ -1,0 +1,148 @@
+diff --git a/chrome/browser/engagement/site_engagement_service.cc b/chrome/browser/engagement/site_engagement_service.cc
+index 7fef0417cad2..03a0b0d12dc8 100644
+--- a/chrome/browser/engagement/site_engagement_service.cc
++++ b/chrome/browser/engagement/site_engagement_service.cc
+@@ -21,7 +21,6 @@
+ #include "chrome/browser/banners/app_banner_settings_helper.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+ #include "chrome/browser/engagement/site_engagement_helper.h"
+-#include "chrome/browser/engagement/site_engagement_metrics.h"
+ #include "chrome/browser/engagement/site_engagement_observer.h"
+ #include "chrome/browser/engagement/site_engagement_score.h"
+ #include "chrome/browser/engagement/site_engagement_service_factory.h"
+@@ -49,9 +48,6 @@ const int FOUR_WEEKS_IN_DAYS = 28;
+ // Global bool to ensure we only update the parameters from variations once.
+ bool g_updated_from_variations = false;
+ 
+-// Length of time between metrics logging.
+-const int kMetricsIntervalInMinutes = 60;
+-
+ // A clock that keeps showing the time it was constructed with.
+ class StoppedClock : public base::Clock {
+  public:
+@@ -260,7 +256,6 @@ void SiteEngagementService::HandleNotificationInteraction(const GURL& url) {
+ 
+   AddPoints(url, SiteEngagementScore::GetNotificationInteractionPoints());
+ 
+-  MaybeRecordMetrics();
+   OnEngagementEvent(nullptr /* web_contents */, url,
+                     ENGAGEMENT_NOTIFICATION_INTERACTION);
+ }
+@@ -319,8 +314,6 @@ void SiteEngagementService::SetLastShortcutLaunchTime(
+   base::Time now = clock_->Now();
+   base::Time last_launch = score.last_shortcut_launch_time();
+   if (!last_launch.is_null()) {
+-    SiteEngagementMetrics::RecordDaysSinceLastShortcutLaunch(
+-        std::max(0, (now - last_launch).InDays()));
+   }
+ 
+   score.set_last_shortcut_launch_time(now);
+@@ -481,75 +474,6 @@ void SiteEngagementService::CleanupEngagementScores(
+     SetLastEngagementTime(new_last_engagement_time);
+ }
+ 
+-void SiteEngagementService::MaybeRecordMetrics() {
+-  base::Time now = clock_->Now();
+-  if (profile_->IsOffTheRecord() ||
+-      (!last_metrics_time_.is_null() &&
+-       (now - last_metrics_time_).InMinutes() < kMetricsIntervalInMinutes)) {
+-    return;
+-  }
+-
+-  // Clean up engagement first before retrieving scores.
+-  if (IsLastEngagementStale())
+-    CleanupEngagementScores(true);
+-
+-  last_metrics_time_ = now;
+-
+-  // Retrieve details on a background thread as this is expensive. We may end up
+-  // with minor data inconsistency but this doesn't really matter for metrics
+-  // purposes.
+-  //
+-  // The profile and its KeyedServices are normally destroyed before the
+-  // ThreadPool shuts down background threads, so the task needs to hold a
+-  // strong reference to HostContentSettingsMap (which supports outliving the
+-  // profile), and needs to avoid using any members of SiteEngagementService
+-  // (which does not). See https://crbug.com/900022.
+-  base::ThreadPool::PostTaskAndReplyWithResult(
+-      FROM_HERE,
+-      {base::TaskPriority::BEST_EFFORT,
+-       base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN},
+-      base::BindOnce(
+-          &GetAllDetailsInBackground, now,
+-          base::WrapRefCounted(
+-              HostContentSettingsMapFactory::GetForProfile(profile_))),
+-      base::BindOnce(&SiteEngagementService::RecordMetrics,
+-                     weak_factory_.GetWeakPtr()));
+-}
+-
+-void SiteEngagementService::RecordMetrics(
+-    std::vector<mojom::SiteEngagementDetails> details) {
+-  std::sort(details.begin(), details.end(),
+-            [](const mojom::SiteEngagementDetails& lhs,
+-               const mojom::SiteEngagementDetails& rhs) {
+-              return lhs.total_score < rhs.total_score;
+-            });
+-
+-  int total_origins = details.size();
+-
+-  double total_engagement = 0;
+-  int origins_with_max_engagement = 0;
+-  for (const auto& detail : details) {
+-    if (detail.total_score == SiteEngagementScore::kMaxPoints)
+-      ++origins_with_max_engagement;
+-    total_engagement += detail.total_score;
+-  }
+-
+-  double mean_engagement =
+-      (total_origins == 0 ? 0 : total_engagement / total_origins);
+-
+-  SiteEngagementMetrics::RecordTotalOriginsEngaged(total_origins);
+-  SiteEngagementMetrics::RecordTotalSiteEngagement(total_engagement);
+-  SiteEngagementMetrics::RecordMeanEngagement(mean_engagement);
+-  SiteEngagementMetrics::RecordMedianEngagement(
+-      GetMedianEngagementFromSortedDetails(details));
+-  SiteEngagementMetrics::RecordEngagementScores(details);
+-
+-  SiteEngagementMetrics::RecordOriginsWithMaxDailyEngagement(
+-      OriginsWithMaxDailyEngagement());
+-  SiteEngagementMetrics::RecordOriginsWithMaxEngagement(
+-      origins_with_max_engagement);
+-}
+-
+ bool SiteEngagementService::ShouldRecordEngagement(const GURL& url) const {
+   return url.SchemeIsHTTPOrHTTPS();
+ }
+@@ -607,7 +531,6 @@ void SiteEngagementService::HandleMediaPlaying(
+   AddPoints(url, is_hidden ? SiteEngagementScore::GetHiddenMediaPoints()
+                            : SiteEngagementScore::GetVisibleMediaPoints());
+ 
+-  MaybeRecordMetrics();
+   OnEngagementEvent(
+       web_contents, url,
+       is_hidden ? ENGAGEMENT_MEDIA_HIDDEN : ENGAGEMENT_MEDIA_VISIBLE);
+@@ -621,7 +544,6 @@ void SiteEngagementService::HandleNavigation(content::WebContents* web_contents,
+ 
+   AddPoints(url, SiteEngagementScore::GetNavigationPoints());
+ 
+-  MaybeRecordMetrics();
+   OnEngagementEvent(web_contents, url, ENGAGEMENT_NAVIGATION);
+ }
+ 
+@@ -633,7 +555,6 @@ void SiteEngagementService::HandleUserInput(content::WebContents* web_contents,
+ 
+   AddPoints(url, SiteEngagementScore::GetUserInputPoints());
+ 
+-  MaybeRecordMetrics();
+   OnEngagementEvent(web_contents, url, type);
+ }
+ 
+@@ -641,8 +562,6 @@ void SiteEngagementService::OnEngagementEvent(
+     content::WebContents* web_contents,
+     const GURL& url,
+     EngagementType type) {
+-  SiteEngagementMetrics::RecordEngagement(type);
+-
+   double score = GetScore(url);
+   for (SiteEngagementObserver& observer : observer_list_)
+     observer.OnEngagementEvent(web_contents, url, score, type);

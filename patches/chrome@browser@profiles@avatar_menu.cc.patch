@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/profiles/avatar_menu.cc b/chrome/browser/profiles/avatar_menu.cc
+index e8d69272187c..1b07291415c5 100644
+--- a/chrome/browser/profiles/avatar_menu.cc
++++ b/chrome/browser/profiles/avatar_menu.cc
+@@ -100,8 +100,8 @@ void AvatarMenu::SwitchToProfile(size_t index, bool always_create) {
+                             ProfileManager::CreateCallback());
+ }
+ 
+-void AvatarMenu::AddNewProfile(ProfileMetrics::ProfileAdd type) {
+-  menu_actions_->AddNewProfile(type);
++void AvatarMenu::AddNewProfile() {
++  menu_actions_->AddNewProfile();
+ }
+ 
+ void AvatarMenu::EditProfile(size_t index) {

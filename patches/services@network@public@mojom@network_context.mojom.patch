@@ -1,15 +1,15 @@
 diff --git a/services/network/public/mojom/network_context.mojom b/services/network/public/mojom/network_context.mojom
-index 87b26150440e..c46a3177f180 100644
+index 789ec2a8187f..f54b9c4c8cf4 100644
 --- a/services/network/public/mojom/network_context.mojom
 +++ b/services/network/public/mojom/network_context.mojom
-@@ -865,8 +865,8 @@ interface NetworkContextClient {
+@@ -867,10 +867,6 @@ interface NetworkContextClient {
+   // Notification that a trust anchor was used for the given user.
+   [EnableIf=is_chromeos]
    OnTrustAnchorUsed();
- 
-   // Notification that a report was enqueued in the SCT auditing cache.
+-
+-  // Notification that a report was enqueued in the SCT auditing cache.
 -  [EnableIf=is_ct_supported]
 -  OnSCTReportReady(string cache_key);
-+  // [EnableIf=is_ct_supported]
-+  // OnSCTReportReady(string cache_key);
  };
  
  // Represents a distinct context for making network requests, with its own

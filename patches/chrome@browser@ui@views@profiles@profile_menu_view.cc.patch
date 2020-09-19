@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/views/profiles/profile_menu_view.cc b/chrome/browser/ui/views/profiles/profile_menu_view.cc
+index 1a401d8fc081..5662fd9a70a9 100644
+--- a/chrome/browser/ui/views/profiles/profile_menu_view.cc
++++ b/chrome/browser/ui/views/profiles/profile_menu_view.cc
+@@ -19,7 +19,6 @@
+ #include "chrome/browser/lifetime/application_lifetime.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/profiles/profile_avatar_icon_util.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/profiles/profiles_state.h"
+ #include "chrome/browser/signin/account_consistency_mode_manager.h"
+ #include "chrome/browser/signin/chrome_signin_client_factory.h"
+@@ -338,7 +337,6 @@ void ProfileMenuView::OnSyncErrorButtonClicked(
+           signin_metrics::AccessPoint::ACCESS_POINT_AVATAR_BUBBLE_SIGN_IN);
+       break;
+     case sync_ui_util::UPGRADE_CLIENT_ERROR:
+-      chrome::OpenUpdateChromeDialog(browser());
+       break;
+     case sync_ui_util::TRUSTED_VAULT_KEY_MISSING_FOR_EVERYTHING_ERROR:
+     case sync_ui_util::TRUSTED_VAULT_KEY_MISSING_FOR_PASSWORDS_ERROR:

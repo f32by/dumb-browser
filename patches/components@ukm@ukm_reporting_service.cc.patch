@@ -1,5 +1,5 @@
 diff --git a/components/ukm/ukm_reporting_service.cc b/components/ukm/ukm_reporting_service.cc
-index 8beedce934d8..3cea44f2f079 100644
+index 8beedce934d8..b7f63c601ed6 100644
 --- a/components/ukm/ukm_reporting_service.cc
 +++ b/components/ukm/ukm_reporting_service.cc
 @@ -41,7 +41,7 @@ constexpr int kMinUnsentLogBytes = 300000;
@@ -7,7 +7,7 @@ index 8beedce934d8..3cea44f2f079 100644
  
  GURL GetServerUrl() {
 -  constexpr char kDefaultServerUrl[] = "https://clients4.google.com/ukm";
-+  constexpr char kDefaultServerUrl[] = "http://no-thanks.invalid";
++  constexpr char kDefaultServerUrl[] = "https://no-thanks.invalid";
    std::string server_url =
        base::GetFieldTrialParamValueByFeature(kUkmFeature, "ServerUrl");
    if (!server_url.empty())

@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/ui/webui/profile_helper.h b/chrome/browser/ui/webui/profile_helper.h
+index 4d5be1e40f36..39e1d37929db 100644
+--- a/chrome/browser/ui/webui/profile_helper.h
++++ b/chrome/browser/ui/webui/profile_helper.h
+@@ -7,7 +7,6 @@
+ 
+ #include "base/files/file_path.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ 
+ namespace webui {
+ 
+@@ -18,8 +17,7 @@ namespace webui {
+ void OpenNewWindowForProfile(Profile* profile);
+ 
+ // Deletes the profile at the given |file_path|.
+-void DeleteProfileAtPath(base::FilePath file_path,
+-                         ProfileMetrics::ProfileDelete deletion_source);
++void DeleteProfileAtPath(base::FilePath file_path);
+ 
+ }  // namespace webui
+ 

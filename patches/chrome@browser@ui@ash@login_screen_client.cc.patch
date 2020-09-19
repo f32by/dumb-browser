@@ -1,0 +1,26 @@
+diff --git a/chrome/browser/ui/ash/login_screen_client.cc b/chrome/browser/ui/ash/login_screen_client.cc
+index 49f4cca311db..8202cf6ff75e 100644
+--- a/chrome/browser/ui/ash/login_screen_client.cc
++++ b/chrome/browser/ui/ash/login_screen_client.cc
+@@ -19,7 +19,6 @@
+ #include "chrome/browser/chromeos/login/ui/login_display_host.h"
+ #include "chrome/browser/chromeos/login/ui/user_adding_screen.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/ui/ash/wallpaper_controller_client.h"
+ #include "chrome/browser/ui/settings_window_manager_chromeos.h"
+ #include "chrome/browser/ui/webui/chromeos/login/l10n_util.h"
+@@ -187,13 +186,9 @@ void LoginScreenClient::ShowGaiaSignin(const AccountId& prefilled_account) {
+ }
+ 
+ void LoginScreenClient::OnRemoveUserWarningShown() {
+-  ProfileMetrics::LogProfileDeleteUser(
+-      ProfileMetrics::DELETE_PROFILE_USER_MANAGER_SHOW_WARNING);
+ }
+ 
+ void LoginScreenClient::RemoveUser(const AccountId& account_id) {
+-  ProfileMetrics::LogProfileDeleteUser(
+-      ProfileMetrics::DELETE_PROFILE_USER_MANAGER);
+   user_manager::UserManager::Get()->RemoveUser(account_id,
+                                                nullptr /*delegate*/);
+   if (chromeos::LoginDisplayHost::default_host())

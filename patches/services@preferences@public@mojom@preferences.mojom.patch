@@ -1,0 +1,20 @@
+diff --git a/services/preferences/public/mojom/preferences.mojom b/services/preferences/public/mojom/preferences.mojom
+index edad7de7b214..621c38c0ef7f 100644
+--- a/services/preferences/public/mojom/preferences.mojom
++++ b/services/preferences/public/mojom/preferences.mojom
+@@ -8,7 +8,6 @@ import "mojo/public/mojom/base/token.mojom";
+ import "mojo/public/mojom/base/file_path.mojom";
+ import "mojo/public/mojom/base/string16.mojom";
+ import "mojo/public/mojom/base/values.mojom";
+-import "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom";
+ 
+ // These parameters are passed to prefs::CreateTrackedPersistentPrefStore() in
+ // services/preferences/persistent_pref_store_factory.cc.
+@@ -21,7 +20,6 @@ struct TrackedPersistentPrefStoreConfiguration {
+   string legacy_device_id;
+   string registry_seed;
+   mojo_base.mojom.String16 registry_path;
+-  pending_remote<TrackedPreferenceValidationDelegate>? validation_delegate;
+   pending_remote<ResetOnLoadObserver>? reset_on_load_observer;
+ };
+ 

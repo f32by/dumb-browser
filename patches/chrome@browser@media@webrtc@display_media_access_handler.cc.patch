@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/media/webrtc/display_media_access_handler.cc b/chrome/browser/media/webrtc/display_media_access_handler.cc
-index ce03afe535d5..74aa6cdfc9e2 100644
+index ce03afe535d5..62e0d880f48c 100644
 --- a/chrome/browser/media/webrtc/display_media_access_handler.cc
 +++ b/chrome/browser/media/webrtc/display_media_access_handler.cc
 @@ -17,7 +17,6 @@
@@ -10,7 +10,7 @@ index ce03afe535d5..74aa6cdfc9e2 100644
  #include "chrome/common/pref_names.h"
  #include "components/prefs/pref_service.h"
  #include "components/url_formatter/elide_url.h"
-@@ -101,20 +100,6 @@ void DisplayMediaAccessHandler::HandleRequest(
+@@ -101,21 +100,6 @@ void DisplayMediaAccessHandler::HandleRequest(
      return;
    }
  
@@ -28,6 +28,7 @@ index ce03afe535d5..74aa6cdfc9e2 100644
 -    observer->OnDesktopCaptureRequest();
 -    return;
 -  }
- 
+-
  #if defined(OS_MAC)
    // Do not allow picker UI to be shown on a page that isn't in the foreground
+   // in Mac, because the UI implementation in Mac pops a window over any content

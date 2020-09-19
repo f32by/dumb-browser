@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/policy/configuration_policy_handler_list_factory.cc b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
-index 6e12d03b9ea0..502ec8be4fb8 100644
+index 953e8e565731..fde48affe098 100644
 --- a/chrome/browser/policy/configuration_policy_handler_list_factory.cc
 +++ b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
 @@ -78,8 +78,6 @@
@@ -11,7 +11,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
  #include "components/search_engines/default_search_policy_handler.h"
  #include "components/search_engines/search_engines_pref_names.h"
  #include "components/security_interstitials/core/pref_names.h"
-@@ -165,6 +163,7 @@ namespace {
+@@ -161,6 +159,7 @@ namespace {
  // List of policy types to preference names. This is used for simple policies
  // that directly map to a single preference.
  // clang-format off
@@ -19,7 +19,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
  const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kHomepageIsNewTabPage,
      prefs::kHomePageIsNewTabPage,
-@@ -190,12 +189,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -186,12 +185,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kQuicAllowed,
      prefs::kQuicAllowed,
      base::Value::Type::BOOLEAN },
@@ -32,7 +32,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    { key::kUrlKeyedAnonymizedDataCollectionEnabled,
      unified_consent::prefs::kUrlKeyedAnonymizedDataCollectionEnabled,
      base::Value::Type::BOOLEAN },
-@@ -334,21 +327,9 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -330,21 +323,9 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kGloballyScopeHTTPAuthCacheEnabled,
      prefs::kGloballyScopeHTTPAuthCacheEnabled,
      base::Value::Type::BOOLEAN },
@@ -54,7 +54,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    { key::kAmbientAuthenticationInPrivateModesEnabled,
      prefs::kAmbientAuthenticationInPrivateModesEnabled,
      base::Value::Type::INTEGER },
-@@ -400,9 +381,11 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -396,9 +377,11 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kPromptForDownloadLocation,
      prefs::kPromptForDownload,
      base::Value::Type::BOOLEAN },
@@ -66,7 +66,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    { key::kSharedClipboardEnabled,
      prefs::kSharedClipboardEnabled,
      base::Value::Type::BOOLEAN },
-@@ -453,7 +436,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -449,7 +432,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kImportAutofillFormData,
      prefs::kImportDialogAutofillFormData,
      base::Value::Type::BOOLEAN },
@@ -74,7 +74,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    { key::kMaxConnectionsPerProxy,
      prefs::kMaxConnectionsPerProxy,
      base::Value::Type::INTEGER },
-@@ -466,9 +448,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -462,9 +444,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kDefaultMediaStreamSetting,
      prefs::kManagedDefaultMediaStreamSetting,
      base::Value::Type::INTEGER },
@@ -84,7 +84,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    { key::kSSLErrorOverrideAllowed,
      prefs::kSSLErrorOverrideAllowed,
      base::Value::Type::BOOLEAN },
-@@ -622,9 +601,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -618,9 +597,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kDNSInterceptionChecksEnabled,
      prefs::kDNSInterceptionChecksEnabled,
      base::Value::Type::BOOLEAN },
@@ -94,7 +94,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    { key::kAccessibilityImageLabelsEnabled,
      prefs::kAccessibilityImageLabelsEnabled,
      base::Value::Type::BOOLEAN },
-@@ -682,36 +658,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -678,36 +654,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kBrowserGuestModeEnforced,
      prefs::kBrowserGuestModeEnforced,
      base::Value::Type::BOOLEAN },
@@ -131,17 +131,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
  #endif  // defined(OS_ANDROID)
  
  #if defined(OS_CHROMEOS)
-@@ -1285,9 +1231,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
-   { key::kReportExtensionsAndPluginsData,
-     extensions::enterprise_reporting::kReportExtensionsAndPluginsData,
-     base::Value::Type::BOOLEAN },
--  { key::kReportSafeBrowsingData,
--    extensions::enterprise_reporting::kReportSafeBrowsingData,
--    base::Value::Type::BOOLEAN },
-   { key::kBlockExternalExtensions,
-     extensions::pref_names::kBlockExternalExtensions,
-     base::Value::Type::BOOLEAN },
-@@ -1406,11 +1349,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1384,11 +1330,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
        new ConfigurationPolicyHandlerList(
            base::Bind(&PopulatePolicyHandlerParameters),
            base::Bind(&GetChromePolicyDetails), AreFuturePoliciesSupported()));
@@ -153,7 +143,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
  
    handlers->AddHandler(
        std::make_unique<autofill::AutofillAddressPolicyHandler>());
-@@ -1471,8 +1409,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1449,8 +1390,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
    handlers->AddHandler(std::make_unique<JavascriptPolicyHandler>());
    handlers->AddHandler(std::make_unique<NetworkPredictionPolicyHandler>());
    handlers->AddHandler(std::make_unique<RestoreOnStartupPolicyHandler>());
@@ -162,7 +152,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    handlers->AddHandler(std::make_unique<SimpleDeprecatingPolicyHandler>(
        std::make_unique<SimplePolicyHandler>(key::kAuthServerWhitelist,
                                              prefs::kAuthServerAllowlist,
-@@ -1488,13 +1424,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1466,13 +1405,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            key::kAuthNegotiateDelegateAllowlist,
            prefs::kAuthNegotiateDelegateAllowlist, base::Value::Type::STRING)));
  
@@ -176,7 +166,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
    handlers->AddHandler(std::make_unique<syncer::SyncPolicyHandler>());
    handlers->AddHandler(std::make_unique<StringMappingListPolicyHandler>(
        key::kEnableDeprecatedWebPlatformFeatures,
-@@ -1512,12 +1441,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1490,12 +1422,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
        std::make_unique<SimplePolicyHandler>(key::kURLAllowlist,
                                              policy_prefs::kUrlWhitelist,
                                              base::Value::Type::LIST)));
@@ -189,7 +179,7 @@ index 6e12d03b9ea0..502ec8be4fb8 100644
  
  #if defined(OS_ANDROID)
    handlers->AddHandler(
-@@ -1589,11 +1512,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1567,11 +1493,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            enterprise_connectors::EnterpriseConnectorsPolicyHandler>(
            key::kOnSecurityEventEnterpriseConnector,
            enterprise_connectors::kOnSecurityEventPref, chrome_schema));

@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/recovery/recovery_install_global_error.cc b/chrome/browser/recovery/recovery_install_global_error.cc
+index 9e9d6bfe51dd..ff95548ba923 100644
+--- a/chrome/browser/recovery/recovery_install_global_error.cc
++++ b/chrome/browser/recovery/recovery_install_global_error.cc
+@@ -12,7 +12,6 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/ui/global_error/global_error_service.h"
+ #include "chrome/browser/ui/global_error/global_error_service_factory.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/common/chrome_switches.h"
+ #include "chrome/common/pref_names.h"
+ #include "chrome/grit/chromium_strings.h"
+@@ -133,8 +132,7 @@ void RecoveryInstallGlobalError::BubbleViewCancelButtonPressed(
+ }
+ 
+ bool RecoveryInstallGlobalError::HasElevationNotification() const {
+-  // Do not show this bubble if we already have an upgrade notice.
+-  return elevation_needed_ && !UpgradeDetector::GetInstance()->notify_upgrade();
++  return false;
+ }
+ 
+ void RecoveryInstallGlobalError::OnElevationRequirementChanged() {

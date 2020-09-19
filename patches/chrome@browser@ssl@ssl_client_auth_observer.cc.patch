@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/ssl/ssl_client_auth_observer.cc b/chrome/browser/ssl/ssl_client_auth_observer.cc
+index f8f7597bf1a2..2ba5fff73df0 100644
+--- a/chrome/browser/ssl/ssl_client_auth_observer.cc
++++ b/chrome/browser/ssl/ssl_client_auth_observer.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "base/logging.h"
+ #include "base/no_destructor.h"
+-#include "chrome/browser/ssl/ssl_client_auth_metrics.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/client_certificate_delegate.h"
+ #include "net/cert/x509_certificate.h"
+@@ -40,14 +39,6 @@ void SSLClientAuthObserver::CertificateSelected(
+   if (!delegate_)
+     return;
+ 
+-  // CertificateSelected is called with a valid delegate any time that the
+-  // selector is explicitly closed by the user. If the user closes the entire
+-  // tab, CancelCertificateSelection() is called first, removing the delegate.
+-  if (certificate)
+-    LogClientAuthResult(ClientCertSelectionResult::kUserSelect);
+-  else
+-    LogClientAuthResult(ClientCertSelectionResult::kUserCancel);
+-
+   // Stop listening now that the delegate has been resolved. This is also to
+   // avoid getting a self-notification.
+   StopObserving();
+@@ -68,10 +59,6 @@ void SSLClientAuthObserver::CancelCertificateSelection() {
+   if (!delegate_)
+     return;
+ 
+-  // This code is only reached when the selector's tab is closed-- cancelling
+-  // the selection box calls CertificateSelected(nullptr, nullptr) first.
+-  LogClientAuthResult(ClientCertSelectionResult::kUserCloseTab);
+-
+   // Stop observing now that the delegate has been resolved.
+   StopObserving();
+   delegate_.reset();

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/downloads/downloads_ui.cc b/chrome/browser/ui/webui/downloads/downloads_ui.cc
-index a1ddff80f280..c47517a0acef 100644
+index a1ddff80f280..d94b53d26cbc 100644
 --- a/chrome/browser/ui/webui/downloads/downloads_ui.cc
 +++ b/chrome/browser/ui/webui/downloads/downloads_ui.cc
 @@ -16,8 +16,6 @@
@@ -19,21 +19,20 @@ index a1ddff80f280..c47517a0acef 100644
  #include "content/public/browser/download_manager.h"
  #include "content/public/browser/url_data_source.h"
  #include "content/public/browser/web_contents.h"
-@@ -73,9 +72,13 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
+@@ -72,11 +71,7 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
+       kGeneratedPath, IDR_DOWNLOADS_DOWNLOADS_HTML);
  #endif
  
-   bool requests_ap_verdicts =
-+#if BUILDFLAG(FULL_SAFE_BROWSING)
-       safe_browsing::AdvancedProtectionStatusManagerFactory::GetForProfile(
-           profile)
-           ->IsUnderAdvancedProtection();
-+#else
-+      false;
-+#endif
-   source->AddBoolean("requestsApVerdicts", requests_ap_verdicts);
+-  bool requests_ap_verdicts =
+-      safe_browsing::AdvancedProtectionStatusManagerFactory::GetForProfile(
+-          profile)
+-          ->IsUnderAdvancedProtection();
+-  source->AddBoolean("requestsApVerdicts", requests_ap_verdicts);
++  source->AddBoolean("requestsApVerdicts", false);
  
    static constexpr webui::LocalizedString kStrings[] = {
-@@ -133,11 +136,8 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
+       {"title", IDS_DOWNLOAD_TITLE},
+@@ -133,11 +128,8 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
  
    source->AddLocalizedString("dangerDownloadDesc",
                               IDS_BLOCK_REASON_DANGEROUS_DOWNLOAD);

@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index e81210859bd3..9f473bafe9b3 100644
+index 5780f0b34a1f..f7492e5cf8df 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
 @@ -55,7 +55,6 @@
@@ -10,41 +10,42 @@ index e81210859bd3..9f473bafe9b3 100644
  #include "components/version_info/version_info.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_constants.h"
-@@ -473,12 +472,12 @@ void InitLogging(const std::string& process_type) {
+@@ -473,46 +472,12 @@ void InitLogging(const std::string& process_type) {
  }
  #endif
  
-+#if 0
- void RecordMainStartupMetrics(base::TimeTicks application_start_time) {
-   const base::TimeTicks now = base::TimeTicks::Now();
- 
- #if defined(OS_WIN)
-   DCHECK(!application_start_time.is_null());
+-void RecordMainStartupMetrics(base::TimeTicks application_start_time) {
+-  const base::TimeTicks now = base::TimeTicks::Now();
+-
+-#if defined(OS_WIN)
+-  DCHECK(!application_start_time.is_null());
 -  startup_metric_utils::RecordApplicationStartTime(application_start_time);
- #elif defined(OS_ANDROID)
-   // On Android the main entry point time is the time when the Java code starts.
-   // This happens before the shared library containing this code is even loaded.
-@@ -488,18 +487,14 @@ void RecordMainStartupMetrics(base::TimeTicks application_start_time) {
- #else
-   // On other platforms, |application_start_time| == |now| since the application
-   // starts with ChromeMain().
+-#elif defined(OS_ANDROID)
+-  // On Android the main entry point time is the time when the Java code starts.
+-  // This happens before the shared library containing this code is even loaded.
+-  // The Java startup code has recorded that time, but the C++ code can't fetch
+-  // it from the Java side until it has initialized the JNI. See
+-  // ChromeMainDelegateAndroid.
+-#else
+-  // On other platforms, |application_start_time| == |now| since the application
+-  // starts with ChromeMain().
 -  startup_metric_utils::RecordApplicationStartTime(now);
- #endif
- 
- #if defined(OS_MAC) || defined(OS_WIN) || defined(OS_LINUX) || \
-     defined(OS_CHROMEOS)
--  // Record the startup process creation time on supported platforms.
+-#endif
+-
+-#if defined(OS_MAC) || defined(OS_WIN) || defined(OS_LINUX) || \
+-    defined(OS_CHROMEOS)
+-  // Record the startup process creation time on supported platforms. On Android
+-  // this is recorded in ChromeMainDelegateAndroid.
 -  startup_metric_utils::RecordStartupProcessCreationTime(
 -      base::Process::Current().CreationTime());
- #endif
- 
+-#endif
+-
 -  startup_metric_utils::RecordChromeMainEntryTime(now);
- }
-+#endif
- 
+-}
+-
  }  // namespace
  
-@@ -507,11 +502,6 @@ ChromeMainDelegate::ChromeMainDelegate()
+ ChromeMainDelegate::ChromeMainDelegate()
      : ChromeMainDelegate(base::TimeTicks()) {}
  
  ChromeMainDelegate::ChromeMainDelegate(base::TimeTicks exe_entry_point_ticks) {
@@ -56,7 +57,7 @@ index e81210859bd3..9f473bafe9b3 100644
  }
  
  ChromeMainDelegate::~ChromeMainDelegate() {
-@@ -636,7 +626,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -642,7 +607,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
  
  #if defined(OS_WIN)
@@ -64,7 +65,7 @@ index e81210859bd3..9f473bafe9b3 100644
    base::sequence_manager::internal::ThreadControllerPowerMonitor::
        InitializeOnMainThread();
  #endif
-@@ -697,15 +686,7 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -703,15 +667,7 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    tracing_sampler_profiler_ =
        tracing::TracingSamplerProfiler::CreateOnMainThread();
  
@@ -80,7 +81,7 @@ index e81210859bd3..9f473bafe9b3 100644
  
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
-@@ -918,16 +899,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -924,16 +880,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
    std::string process_type =
        command_line.GetSwitchValueASCII(switches::kProcessType);
  
@@ -97,7 +98,7 @@ index e81210859bd3..9f473bafe9b3 100644
  
  #if defined(OS_WIN)
    child_process_logging::Init();
-@@ -1052,28 +1023,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -1058,28 +1004,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
          locale;
    }
  
@@ -126,7 +127,7 @@ index e81210859bd3..9f473bafe9b3 100644
  
  #if defined(OS_ANDROID)
    CHECK_EQ(base::android::GetLibraryProcessType(),
-@@ -1181,23 +1130,6 @@ void ChromeMainDelegate::ZygoteForked() {
+@@ -1187,23 +1111,6 @@ void ChromeMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

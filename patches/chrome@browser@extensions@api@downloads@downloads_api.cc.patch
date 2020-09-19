@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/api/downloads/downloads_api.cc b/chrome/browser/extensions/api/downloads/downloads_api.cc
-index a2d94803355d..5bda696160a9 100644
+index a2d94803355d..60bf6fedf089 100644
 --- a/chrome/browser/extensions/api/downloads/downloads_api.cc
 +++ b/chrome/browser/extensions/api/downloads/downloads_api.cc
 @@ -38,7 +38,6 @@
@@ -20,10 +20,11 @@ index a2d94803355d..5bda696160a9 100644
  ExtensionFunction::ResponseAction DownloadsAcceptDangerFunction::Run() {
    std::unique_ptr<downloads::AcceptDanger::Params> params(
        downloads::AcceptDanger::Params::Create(*args_));
-@@ -1371,43 +1367,7 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
+@@ -1370,44 +1366,7 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
+     Respond(Error(download_extension_errors::kInvisibleContext));
      return;
    }
-   RecordApiFunctions(DOWNLOADS_FUNCTION_ACCEPT_DANGER);
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_ACCEPT_DANGER);
 -  // DownloadDangerPrompt displays a modal dialog using native widgets that the
 -  // user must either accept or cancel. It cannot be scripted.
 -  DownloadDangerPrompt* prompt = DownloadDangerPrompt::Create(

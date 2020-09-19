@@ -1,0 +1,114 @@
+diff --git a/chrome/browser/notifications/platform_notification_service_impl.cc b/chrome/browser/notifications/platform_notification_service_impl.cc
+index 403cf8f11bec..ad3061d10818 100644
+--- a/chrome/browser/notifications/platform_notification_service_impl.cc
++++ b/chrome/browser/notifications/platform_notification_service_impl.cc
+@@ -18,9 +18,6 @@
+ #include "build/build_config.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+-#include "chrome/browser/metrics/ukm_background_recorder_service.h"
+-#include "chrome/browser/notifications/metrics/notification_metrics_logger.h"
+-#include "chrome/browser/notifications/metrics/notification_metrics_logger_factory.h"
+ #include "chrome/browser/notifications/notification_display_service.h"
+ #include "chrome/browser/notifications/notification_display_service_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+@@ -36,7 +33,6 @@
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/platform_notification_context.h"
+ #include "content/public/browser/storage_partition.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/common/notifications/notification_resources.h"
+ #include "third_party/blink/public/common/notifications/platform_notification_data.h"
+ #include "third_party/skia/include/core/SkBitmap.h"
+@@ -240,9 +236,6 @@ void PlatformNotificationServiceImpl::DisplayPersistentNotification(
+   NotificationDisplayServiceFactory::GetForProfile(profile_)->Display(
+       NotificationHandler::Type::WEB_PERSISTENT, notification,
+       std::move(metadata));
+-
+-  NotificationMetricsLoggerFactory::GetForBrowserContext(profile_)
+-      ->LogPersistentNotificationShown();
+ }
+ 
+ void PlatformNotificationServiceImpl::CloseNotification(
+@@ -322,81 +315,11 @@ int64_t PlatformNotificationServiceImpl::ReadNextPersistentNotificationId() {
+   return next_id;
+ }
+ 
+-void PlatformNotificationServiceImpl::RecordNotificationUkmEvent(
+-    const NotificationDatabaseData& data) {
+-  DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-  if (g_browser_process->IsShuttingDown() || !profile_)
+-    return;
+-
+-  // Only record the event if a user explicitly interacted with the notification
+-  // to close it.
+-  if (data.closed_reason != NotificationDatabaseData::ClosedReason::USER &&
+-      data.num_clicks == 0 && data.num_action_button_clicks == 0) {
+-    return;
+-  }
+-
+-  // Check if this event can be recorded via UKM.
+-  auto* ukm_background_service =
+-      ukm::UkmBackgroundRecorderFactory::GetForProfile(profile_);
+-  ukm_background_service->GetBackgroundSourceIdIfAllowed(
+-      url::Origin::Create(data.origin),
+-      base::BindOnce(&PlatformNotificationServiceImpl::DidGetBackgroundSourceId,
+-                     std::move(ukm_recorded_closure_for_testing_), data));
+-}
+-
+ NotificationTriggerScheduler*
+ PlatformNotificationServiceImpl::GetNotificationTriggerScheduler() {
+   return trigger_scheduler_.get();
+ }
+ 
+-// static
+-void PlatformNotificationServiceImpl::DidGetBackgroundSourceId(
+-    base::OnceClosure recorded_closure,
+-    const content::NotificationDatabaseData& data,
+-    base::Optional<ukm::SourceId> source_id) {
+-  // This background event did not meet the requirements for the UKM service.
+-  if (!source_id)
+-    return;
+-
+-  ukm::builders::Notification builder(*source_id);
+-
+-  int64_t time_until_first_click_millis =
+-      data.time_until_first_click_millis.has_value()
+-          ? data.time_until_first_click_millis.value().InMilliseconds()
+-          : -1;
+-
+-  int64_t time_until_last_click_millis =
+-      data.time_until_last_click_millis.has_value()
+-          ? data.time_until_last_click_millis.value().InMilliseconds()
+-          : -1;
+-
+-  int64_t time_until_close_millis =
+-      data.time_until_close_millis.has_value()
+-          ? data.time_until_close_millis.value().InMilliseconds()
+-          : -1;
+-
+-  // TODO(yangsharon):Add did_user_open_settings field and update here.
+-  builder.SetClosedReason(static_cast<int>(data.closed_reason))
+-      .SetDidReplaceAnotherNotification(data.replaced_existing_notification)
+-      .SetHasBadge(!data.notification_data.badge.is_empty())
+-      .SetHasIcon(!data.notification_data.icon.is_empty())
+-      .SetHasImage(!data.notification_data.image.is_empty())
+-      .SetHasRenotify(data.notification_data.renotify)
+-      .SetHasTag(!data.notification_data.tag.empty())
+-      .SetIsSilent(data.notification_data.silent)
+-      .SetNumActions(data.notification_data.actions.size())
+-      .SetNumActionButtonClicks(data.num_action_button_clicks)
+-      .SetNumClicks(data.num_clicks)
+-      .SetRequireInteraction(data.notification_data.require_interaction)
+-      .SetTimeUntilClose(time_until_close_millis)
+-      .SetTimeUntilFirstClick(time_until_first_click_millis)
+-      .SetTimeUntilLastClick(time_until_last_click_millis)
+-      .Record(ukm::UkmRecorder::Get());
+-
+-  if (recorded_closure)
+-    std::move(recorded_closure).Run();
+-}
+-
+ message_center::Notification
+ PlatformNotificationServiceImpl::CreateNotificationFromData(
+     const GURL& origin,

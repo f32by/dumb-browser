@@ -1,20 +1,22 @@
 diff --git a/content/browser/web_contents/web_contents_impl.cc b/content/browser/web_contents/web_contents_impl.cc
-index ecc73328f4fa..6d6cce61ed32 100644
+index d76fe04e2e6e..9eefec795d34 100644
 --- a/content/browser/web_contents/web_contents_impl.cc
 +++ b/content/browser/web_contents/web_contents_impl.cc
-@@ -43,7 +43,6 @@
+@@ -47,7 +47,6 @@
  #include "build/build_config.h"
- #include "build/lacros_buildflags.h"
+ #include "build/chromeos_buildflags.h"
  #include "components/download/public/common/download_stats.h"
 -#include "components/rappor/public/rappor_utils.h"
  #include "components/url_formatter/url_formatter.h"
  #include "content/browser/accessibility/accessibility_event_recorder.h"
  #include "content/browser/accessibility/accessibility_tree_formatter_blink.h"
-@@ -7993,14 +7992,6 @@ void WebContentsImpl::RemoveReceiverSet(const std::string& interface_name) {
+@@ -8789,16 +8788,6 @@ void WebContentsImpl::RemoveReceiverSet(const std::string& interface_name) {
      receiver_sets_.erase(it);
  }
  
 -bool WebContentsImpl::AddDomainInfoToRapporSample(rappor::Sample* sample) {
+-  OPTIONAL_TRACE_EVENT0("content",
+-                        "WebContentsImpl::AddDomainInfoToRapporSample");
 -  // Here we associate this metric to the main frame URL regardless of what
 -  // caused it.
 -  sample->SetStringField("Domain", ::rappor::GetDomainAndRegistrySampleFromGURL(
@@ -23,5 +25,5 @@ index ecc73328f4fa..6d6cce61ed32 100644
 -}
 -
  void WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded() {
-   bool allow_localhost = base::CommandLine::ForCurrentProcess()->HasSwitch(
-       switches::kAllowInsecureLocalhost);
+   OPTIONAL_TRACE_EVENT0(
+       "content", "WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded");

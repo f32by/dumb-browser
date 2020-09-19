@@ -434,9 +434,8 @@ private:
 };
 
 static QueryMatcher& GetMatcher() {
-  // don't use base::NoDestructor
-  static QueryMatcher instance;
-  return instance;
+  static base::NoDestructor<QueryMatcher> instance;
+  return *instance;
 }
 
 static void ApplyPotentialQueryStringFilter(const GURL& request_url,

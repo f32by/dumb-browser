@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/ui/webui/settings/about_handler.cc b/chrome/browser/ui/webui/settings/about_handler.cc
+index 96948888dfc5..b1a3a3e9256e 100644
+--- a/chrome/browser/ui/webui/settings/about_handler.cc
++++ b/chrome/browser/ui/webui/settings/about_handler.cc
+@@ -32,7 +32,6 @@
+ #include "chrome/browser/ui/browser_commands.h"
+ #include "chrome/browser/ui/browser_finder.h"
+ #include "chrome/browser/ui/chrome_pages.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/common/pref_names.h"
+ #include "chrome/common/url_constants.h"
+ #include "chrome/grit/chromium_strings.h"
+@@ -255,11 +254,9 @@ AboutHandler::AboutHandler(Profile* profile)
+     : profile_(profile),
+       apply_changes_from_upgrade_observer_(false),
+       clock_(base::DefaultClock::GetInstance()) {
+-  UpgradeDetector::GetInstance()->AddObserver(this);
+ }
+ 
+ AboutHandler::~AboutHandler() {
+-  UpgradeDetector::GetInstance()->RemoveObserver(this);
+ }
+ 
+ void AboutHandler::RegisterMessages() {

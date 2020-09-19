@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.cc b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-index 9e827b4ea6f8..b695cfee4f75 100644
+index 9e827b4ea6f8..e32fb689234c 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 @@ -56,7 +56,6 @@
@@ -160,7 +160,7 @@ index 9e827b4ea6f8..b695cfee4f75 100644
  
  void RenderViewContextMenu::AppendSharedClipboardItem() {
    if (!ShouldOfferSharedClipboard(browser_context_, params_.selection_text))
-@@ -1878,13 +1833,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+@@ -1878,14 +1833,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
      return false;
    }
  
@@ -171,10 +171,11 @@ index 9e827b4ea6f8..b695cfee4f75 100644
 -      (id < IDC_SPELLCHECK_LANGUAGES_LAST)) {
 -    return prefs->GetBoolean(spellcheck::prefs::kSpellCheckEnable);
 -  }
- 
+-
    // Extension items.
    if (ContextMenuMatcher::IsExtensionsCustomCommandId(id))
-@@ -2028,7 +1976,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+     return extension_items_.IsCommandIdEnabled(id);
+@@ -2028,7 +1975,6 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
  
      case IDC_CONTENT_CONTEXT_SEARCHWEBFOR:
      case IDC_CONTENT_CONTEXT_GOTOURL:
@@ -182,7 +183,7 @@ index 9e827b4ea6f8..b695cfee4f75 100644
      case IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS:
      case IDC_SEND_TAB_TO_SELF:
      case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
-@@ -2042,16 +1989,12 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
+@@ -2042,16 +1988,12 @@ bool RenderViewContextMenu::IsCommandIdEnabled(int id) const {
        return send_tab_to_self::AreContentRequirementsMet(
            params_.link_url, GetBrowser()->profile());
  
@@ -199,7 +200,7 @@ index 9e827b4ea6f8..b695cfee4f75 100644
      case IDC_CONTENT_CONTEXT_OPENLINKWITH:
      case IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS:
      case IDC_CONTENT_CONTEXT_GENERATEPASSWORD:
-@@ -2417,10 +2360,6 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
+@@ -2417,10 +2359,6 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
    }
  }
  

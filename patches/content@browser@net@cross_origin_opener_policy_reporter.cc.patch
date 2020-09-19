@@ -1,83 +1,163 @@
 diff --git a/content/browser/net/cross_origin_opener_policy_reporter.cc b/content/browser/net/cross_origin_opener_policy_reporter.cc
-index 5c86a8b55b88..791d1c0bcfca 100644
+index 5c86a8b55b88..7bfaab28e341 100644
 --- a/content/browser/net/cross_origin_opener_policy_reporter.cc
 +++ b/content/browser/net/cross_origin_opener_policy_reporter.cc
-@@ -20,6 +20,7 @@ namespace content {
+@@ -20,54 +20,6 @@ namespace content {
  
  namespace {
  
-+#if 0
- // Report attribute names (camelCase):
- constexpr char kColumnNumber[] = "columnNumber";
- constexpr char kDisposition[] = "disposition";
-@@ -67,6 +68,7 @@ const char* ToString(network::mojom::CoopAccessReportType report_type) {
-       return "access-to-coop-page-from-other";
-   }
- }
-+#endif
- 
+-// Report attribute names (camelCase):
+-constexpr char kColumnNumber[] = "columnNumber";
+-constexpr char kDisposition[] = "disposition";
+-constexpr char kEffectivePolicy[] = "effectivePolicy";
+-constexpr char kLineNumber[] = "lineNumber";
+-constexpr char kNextURL[] = "nextResponseURL";
+-constexpr char kPreviousURL[] = "previousResponseURL";
+-constexpr char kProperty[] = "property";
+-constexpr char kReferrer[] = "referrer";
+-constexpr char kSourceFile[] = "sourceFile";
+-constexpr char kViolationType[] = "type";
+-
+-// Report attribute values:
+-constexpr char kDispositionEnforce[] = "enforce";
+-constexpr char kDispositionReporting[] = "reporting";
+-constexpr char kTypeFromResponse[] = "navigation-from-response";
+-constexpr char kTypeToResponse[] = "navigation-to-response";
+-
+-std::string ToString(network::mojom::CrossOriginOpenerPolicyValue coop_value) {
+-  switch (coop_value) {
+-    case network::mojom::CrossOriginOpenerPolicyValue::kUnsafeNone:
+-      return "unsafe-none";
+-    case network::mojom::CrossOriginOpenerPolicyValue::kSameOrigin:
+-      return "same-origin";
+-    case network::mojom::CrossOriginOpenerPolicyValue::kSameOriginAllowPopups:
+-      return "same-origin-allow-popups";
+-    case network::mojom::CrossOriginOpenerPolicyValue::kSameOriginPlusCoep:
+-      return "same-origin-plus-coep";
+-  }
+-}
+-
+-const char* ToString(network::mojom::CoopAccessReportType report_type) {
+-  switch (report_type) {
+-    case network::mojom::CoopAccessReportType::kAccessFromCoopPageToOpener:
+-      return "access-from-coop-page-to-opener";
+-    case network::mojom::CoopAccessReportType::kAccessFromCoopPageToOpenee:
+-      return "access-from-coop-page-to-openee";
+-    case network::mojom::CoopAccessReportType::kAccessFromCoopPageToOther:
+-      return "access-from-coop-page-to-other";
+-    case network::mojom::CoopAccessReportType::kAccessToCoopPageFromOpener:
+-      return "access-to-coop-page-from-opener";
+-    case network::mojom::CoopAccessReportType::kAccessToCoopPageFromOpenee:
+-      return "access-to-coop-page-from-openee";
+-    case network::mojom::CoopAccessReportType::kAccessToCoopPageFromOther:
+-      return "access-to-coop-page-from-other";
+-  }
+-}
+-
  base::UnguessableToken GetFrameToken(FrameTreeNode* frame,
                                       SiteInstance* site_instance) {
-@@ -131,6 +133,7 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationToCOOPReport(
+   RenderFrameHostImpl* rfh = frame->current_frame_host();
+@@ -131,29 +83,6 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationToCOOPReport(
      const GURL& referrer_url,
      bool same_origin_with_previous,
      bool is_report_only) {
-+#if 0
-   const base::Optional<std::string>& endpoint =
-       is_report_only ? coop_.report_only_reporting_endpoint
-                      : coop_.reporting_endpoint;
-@@ -154,6 +157,7 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationToCOOPReport(
-   body.SetString(kReferrer, sanitized_referrer_url);
-   body.SetString(kViolationType, kTypeToResponse);
-   QueueNavigationReport(std::move(body), *endpoint, is_report_only);
-+#endif
+-  const base::Optional<std::string>& endpoint =
+-      is_report_only ? coop_.report_only_reporting_endpoint
+-                     : coop_.reporting_endpoint;
+-  if (!endpoint)
+-    return;
+-
+-  url::Replacements<char> replacements;
+-  replacements.ClearUsername();
+-  replacements.ClearPassword();
+-  std::string sanitized_previous_url;
+-  if (same_origin_with_previous) {
+-    sanitized_previous_url =
+-        previous_url.ReplaceComponents(replacements).spec();
+-  }
+-  std::string sanitized_referrer_url =
+-      referrer_url.ReplaceComponents(replacements).spec();
+-  base::DictionaryValue body;
+-  body.SetString(kDisposition,
+-                 is_report_only ? kDispositionReporting : kDispositionEnforce);
+-  body.SetString(kPreviousURL, sanitized_previous_url);
+-  body.SetString(kReferrer, sanitized_referrer_url);
+-  body.SetString(kViolationType, kTypeToResponse);
+-  QueueNavigationReport(std::move(body), *endpoint, is_report_only);
  }
  
  void CrossOriginOpenerPolicyReporter::QueueNavigationAwayFromCOOPReport(
-@@ -161,6 +165,7 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationAwayFromCOOPReport(
+@@ -161,54 +90,12 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationAwayFromCOOPReport(
      bool is_current_source,
      bool same_origin_with_next,
      bool is_report_only) {
-+#if 0
-   const base::Optional<std::string>& endpoint =
-       is_report_only ? coop_.report_only_reporting_endpoint
-                      : coop_.reporting_endpoint;
-@@ -178,12 +183,14 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationAwayFromCOOPReport(
-   body.SetString(kNextURL, sanitized_next_url);
-   body.SetString(kViolationType, kTypeFromResponse);
-   QueueNavigationReport(std::move(body), *endpoint, is_report_only);
-+#endif
+-  const base::Optional<std::string>& endpoint =
+-      is_report_only ? coop_.report_only_reporting_endpoint
+-                     : coop_.reporting_endpoint;
+-  if (!endpoint)
+-    return;
+-
+-  url::Replacements<char> replacements;
+-  replacements.ClearUsername();
+-  replacements.ClearPassword();
+-  std::string sanitized_next_url;
+-  if (is_current_source || same_origin_with_next) {
+-    sanitized_next_url = next_url.ReplaceComponents(replacements).spec();
+-  }
+-  base::DictionaryValue body;
+-  body.SetString(kNextURL, sanitized_next_url);
+-  body.SetString(kViolationType, kTypeFromResponse);
+-  QueueNavigationReport(std::move(body), *endpoint, is_report_only);
  }
  
  void CrossOriginOpenerPolicyReporter::QueueAccessReport(
      network::mojom::CoopAccessReportType report_type,
      const std::string& property,
      network::mojom::SourceLocationPtr source_location) {
-+#if 0
-   // Cross-Origin-Opener-Policy-Report-Only is not required to provide
-   // endpoints.
-   if (!coop_.report_only_reporting_endpoint)
-@@ -209,6 +216,7 @@ void CrossOriginOpenerPolicyReporter::QueueAccessReport(
-   }
-   storage_partition_->GetNetworkContext()->QueueReport(
-       "coop", endpoint, context_url_, base::nullopt, std::move(body));
-+#endif
+-  // Cross-Origin-Opener-Policy-Report-Only is not required to provide
+-  // endpoints.
+-  if (!coop_.report_only_reporting_endpoint)
+-    return;
+-
+-  const std::string& endpoint = coop_.report_only_reporting_endpoint.value();
+-
+-  DCHECK(base::FeatureList::IsEnabled(
+-      network::features::kCrossOriginOpenerPolicyAccessReporting));
+-
+-  base::DictionaryValue body;
+-  body.SetStringPath(kViolationType, ToString(report_type));
+-  body.SetStringPath(kDisposition, kDispositionReporting);
+-  body.SetStringPath(kEffectivePolicy,
+-                     ToString(coop_.report_only_value));
+-  body.SetStringPath(kProperty, property);
+-  // TODO(arthursonzogni): Fill "blocked-window-url".
+-  if (network::IsAccessFromCoopPage(report_type) &&
+-      source_location->url != "") {
+-    body.SetStringPath(kSourceFile, source_location->url);
+-    body.SetIntPath(kLineNumber, source_location->line);
+-    body.SetIntPath(kColumnNumber, source_location->column);
+-  }
+-  storage_partition_->GetNetworkContext()->QueueReport(
+-      "coop", endpoint, context_url_, base::nullopt, std::move(body));
  }
  
  void CrossOriginOpenerPolicyReporter::Clone(
-@@ -326,6 +334,7 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationReport(
+@@ -326,18 +213,6 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationReport(
      base::DictionaryValue body,
      const std::string& endpoint,
      bool is_report_only) {
-+#if 0
-   body.SetString(kDisposition,
-                  is_report_only ? kDispositionReporting : kDispositionEnforce);
-   body.SetString(
-@@ -338,6 +347,7 @@ void CrossOriginOpenerPolicyReporter::QueueNavigationReport(
-   storage_partition_->GetNetworkContext()->QueueReport(
-       "coop", endpoint, sanitized_context_url, /*user_agent=*/base::nullopt,
-       std::move(body));
-+#endif
+-  body.SetString(kDisposition,
+-                 is_report_only ? kDispositionReporting : kDispositionEnforce);
+-  body.SetString(
+-      kEffectivePolicy,
+-      ToString(is_report_only ? coop_.report_only_value : coop_.value));
+-  url::Replacements<char> replacements;
+-  replacements.ClearUsername();
+-  replacements.ClearPassword();
+-  GURL sanitized_context_url = context_url_.ReplaceComponents(replacements);
+-  storage_partition_->GetNetworkContext()->QueueReport(
+-      "coop", endpoint, sanitized_context_url, /*user_agent=*/base::nullopt,
+-      std::move(body));
  }
  
  }  // namespace content

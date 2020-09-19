@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/engagement/site_engagement_service.h b/chrome/browser/engagement/site_engagement_service.h
+index df061e0c8530..35668f28288e 100644
+--- a/chrome/browser/engagement/site_engagement_service.h
++++ b/chrome/browser/engagement/site_engagement_service.h
+@@ -263,12 +263,6 @@ class SiteEngagementService : public KeyedService,
+   // left it once they return.
+   void CleanupEngagementScores(bool update_last_engagement_time) const;
+ 
+-  // Possibly records UMA metrics if we haven't recorded them lately.
+-  void MaybeRecordMetrics();
+-
+-  // Actually records metrics for the engagement in |details|.
+-  void RecordMetrics(std::vector<mojom::SiteEngagementDetails>);
+-
+   // Returns true if we should record engagement for this URL. Currently,
+   // engagement is only earned for HTTP and HTTPS.
+   bool ShouldRecordEngagement(const GURL& url) const;
+@@ -343,13 +337,6 @@ class SiteEngagementService : public KeyedService,
+   std::unique_ptr<SiteEngagementServiceAndroid> android_service_;
+ #endif
+ 
+-  // Metrics are recorded at non-incognito browser startup, and then
+-  // approximately once per hour thereafter. Store the local time at which
+-  // metrics were previously uploaded: the first event which affects any
+-  // origin's engagement score after an hour has elapsed triggers the next
+-  // upload.
+-  base::Time last_metrics_time_;
+-
+   // A list of observers. When any origin registers an engagement-increasing
+   // event, each observer's OnEngagementEvent method will be called.
+   base::ObserverList<SiteEngagementObserver>::Unchecked observer_list_;

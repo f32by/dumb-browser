@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/ui/search/search_tab_helper.cc b/chrome/browser/ui/search/search_tab_helper.cc
-index a8985d166eaf..9fd0172f3ccd 100644
+index a8985d166eaf..7e09e4e72e03 100644
 --- a/chrome/browser/ui/search/search_tab_helper.cc
 +++ b/chrome/browser/ui/search/search_tab_helper.cc
-@@ -770,16 +770,6 @@ void SearchTabHelper::LogCharTypedToRepaintLatency(uint32_t latency_ms) {
+@@ -26,7 +26,6 @@
+ #include "chrome/browser/predictors/autocomplete_action_predictor.h"
+ #include "chrome/browser/predictors/autocomplete_action_predictor_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/search/chrome_colors/chrome_colors_factory.h"
+ #include "chrome/browser/search/instant_service.h"
+ #include "chrome/browser/search/instant_service_factory.h"
+@@ -770,16 +769,6 @@ void SearchTabHelper::LogCharTypedToRepaintLatency(uint32_t latency_ms) {
                        base::TimeDelta::FromMillisecondsD(latency_ms));
  }
  
@@ -19,3 +27,12 @@ index a8985d166eaf..9fd0172f3ccd 100644
  void SearchTabHelper::OpenExtensionsPage(double button,
                                           bool alt_key,
                                           bool ctrl_key,
+@@ -869,8 +858,6 @@ void SearchTabHelper::OpenAutocompleteMatch(
+ 
+   auto* bookmark_model = BookmarkModelFactory::GetForBrowserContext(profile());
+   if (bookmark_model->IsBookmarked(match.destination_url)) {
+-    RecordBookmarkLaunch(BOOKMARK_LAUNCH_LOCATION_OMNIBOX,
+-                         ProfileMetrics::GetBrowserProfileType(profile()));
+   }
+ 
+   const AutocompleteInput& input = autocomplete_controller_->input();

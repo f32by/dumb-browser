@@ -1,0 +1,34 @@
+diff --git a/chrome/browser/service_process/service_process_control.cc b/chrome/browser/service_process/service_process_control.cc
+index 222712ccfc3f..f24fb9a7b9c2 100644
+--- a/chrome/browser/service_process/service_process_control.cc
++++ b/chrome/browser/service_process/service_process_control.cc
+@@ -25,7 +25,6 @@
+ #include "base/threading/thread_task_runner_handle.h"
+ #include "build/build_config.h"
+ #include "chrome/browser/browser_process.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "chrome/common/service_process_util.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -203,7 +202,6 @@ void ServiceProcessControl::Disconnect() {
+   mojo_connection_.reset();
+   remote_interfaces_.Close();
+   service_process_.reset();
+-  UpgradeDetector::GetInstance()->RemoveObserver(this);
+ }
+ 
+ void ServiceProcessControl::OnProcessLaunched() {
+@@ -238,13 +236,9 @@ void ServiceProcessControl::OnChannelConnected() {
+   UMA_HISTOGRAM_ENUMERATION("CloudPrint.ServiceEvents",
+                             SERVICE_EVENT_CHANNEL_CONNECTED, SERVICE_EVENT_MAX);
+ 
+-  UpgradeDetector::GetInstance()->AddObserver(this);
+ 
+   // We just established a channel with the service process. Notify it if an
+   // upgrade is available.
+-  if (UpgradeDetector::GetInstance()->notify_upgrade())
+-    service_process_->UpdateAvailable();
+-  else
+     apply_changes_from_upgrade_observer_ = true;
+ 
+   RunConnectDoneTasks();

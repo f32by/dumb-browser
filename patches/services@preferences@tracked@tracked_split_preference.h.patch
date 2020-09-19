@@ -1,0 +1,35 @@
+diff --git a/services/preferences/tracked/tracked_split_preference.h b/services/preferences/tracked/tracked_split_preference.h
+index 793bf47e4248..1898310d9222 100644
+--- a/services/preferences/tracked/tracked_split_preference.h
++++ b/services/preferences/tracked/tracked_split_preference.h
+@@ -15,12 +15,6 @@
+ #include "services/preferences/tracked/tracked_preference.h"
+ #include "services/preferences/tracked/tracked_preference_helper.h"
+ 
+-namespace prefs {
+-namespace mojom {
+-class TrackedPreferenceValidationDelegate;
+-}
+-}
+-
+ // A TrackedSplitPreference must be tracking a dictionary pref. Each top-level
+ // entry in its dictionary is tracked and enforced independently. An optional
+ // delegate is notified of the status of the preference during enforcement.
+@@ -33,8 +27,7 @@ class TrackedSplitPreference : public TrackedPreference {
+       size_t reporting_ids_count,
+       prefs::mojom::TrackedPreferenceMetadata::EnforcementLevel
+           enforcement_level,
+-      prefs::mojom::TrackedPreferenceMetadata::ValueType value_type,
+-      prefs::mojom::TrackedPreferenceValidationDelegate* delegate);
++      prefs::mojom::TrackedPreferenceMetadata::ValueType value_type);
+ 
+   // TrackedPreference implementation.
+   TrackedPreferenceType GetType() const override;
+@@ -48,7 +41,6 @@ class TrackedSplitPreference : public TrackedPreference {
+  private:
+   const std::string pref_path_;
+   const TrackedPreferenceHelper helper_;
+-  prefs::mojom::TrackedPreferenceValidationDelegate* delegate_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(TrackedSplitPreference);
+ };

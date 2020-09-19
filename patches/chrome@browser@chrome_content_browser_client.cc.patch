@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index 24f13de1d9d3..eba0cd37ca8c 100644
+index 789b541d3033..6aa7a2a6cd4d 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
 @@ -74,7 +74,6 @@
@@ -28,19 +28,19 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  #include "chrome/browser/search/search.h"
  #include "chrome/browser/sharing/sms/sms_remote_fetcher.h"
  #include "chrome/browser/signin/chrome_signin_proxying_url_loader_factory.h"
-@@ -132,11 +120,8 @@
+@@ -132,11 +120,7 @@
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/speech/chrome_speech_recognition_manager_delegate.h"
  #include "chrome/browser/ssl/chrome_security_blocking_page_factory.h"
 -#include "chrome/browser/ssl/sct_reporting_service.h"
 -#include "chrome/browser/ssl/sct_reporting_service_factory.h"
- #include "chrome/browser/ssl/ssl_client_auth_metrics.h"
+-#include "chrome/browser/ssl/ssl_client_auth_metrics.h"
  #include "chrome/browser/ssl/ssl_client_certificate_selector.h"
 -#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
  #include "chrome/browser/sync_file_system/local/sync_file_system_backend.h"
  #include "chrome/browser/tab_contents/tab_util.h"
  #include "chrome/browser/tracing/chrome_tracing_delegate.h"
-@@ -245,14 +230,6 @@
+@@ -245,14 +229,6 @@
  #include "components/previews/core/previews_features.h"
  #include "components/previews/core/previews_switches.h"
  #include "components/safe_browsing/buildflags.h"
@@ -55,7 +55,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  #include "components/security_interstitials/content/insecure_form_navigation_throttle.h"
  #include "components/security_interstitials/content/origin_policy_ui.h"
  #include "components/security_interstitials/content/ssl_cert_reporter.h"
-@@ -262,7 +239,6 @@
+@@ -262,7 +238,6 @@
  #include "components/site_isolation/pref_names.h"
  #include "components/site_isolation/preloaded_isolated_origins.h"
  #include "components/site_isolation/site_isolation_policy.h"
@@ -63,15 +63,15 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  #include "components/translate/core/common/translate_switches.h"
  #include "components/ukm/app_source_url_recorder.h"
  #include "components/ukm/content/source_url_recorder.h"
-@@ -315,6 +291,7 @@
- #include "content/public/common/web_preferences.h"
+@@ -314,6 +289,7 @@
+ #include "content/public/common/user_agent.h"
  #include "content/public/common/window_container_type.mojom-shared.h"
  #include "device/vr/buildflags/buildflags.h"
 +#include "dumb/browser/net/dumb_proxying_url_loader_factory.h"
  #include "extensions/browser/process_map.h"
  #include "extensions/buildflags/buildflags.h"
  #include "google_apis/gaia/gaia_urls.h"
-@@ -872,30 +849,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
+@@ -871,30 +847,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
    GetIOThreadApplicationLocale() = locale;
  }
  
@@ -102,7 +102,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  #if BUILDFLAG(ENABLE_EXTENSIONS)
  
  AppLoadedInTabSource ClassifyAppLoadedInTabSource(
-@@ -1391,7 +1344,6 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
+@@ -1390,7 +1342,6 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
  
    main_parts->AddParts(std::make_unique<ChromeBrowserMainExtraPartsMemory>());
  
@@ -110,7 +110,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  
    // Always add ChromeBrowserMainExtraPartsGpu last to make sure
    // GpuDataManager initialization could pick up about:flags settings.
-@@ -1409,7 +1361,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
+@@ -1408,7 +1359,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
    InitNetworkContextsParentDirectory();
  
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
@@ -118,7 +118,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  }
  
  bool ChromeContentBrowserClient::IsBrowserStartupComplete() {
-@@ -2231,7 +2182,7 @@ void ChromeContentBrowserClient::AppendExtraCommandLineSwitches(
+@@ -2230,7 +2180,7 @@ void ChromeContentBrowserClient::AppendExtraCommandLineSwitches(
        // Disable client-side phishing detection in the renderer if it is
        // disabled in the Profile preferences, or by command line flag, or by not
        // being enabled on Android.
@@ -127,7 +127,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
          command_line->AppendSwitch(
              switches::kDisableClientSidePhishingDetection);
        }
-@@ -2784,16 +2735,6 @@ void ChromeContentBrowserClient::OnTrustAnchorUsed(
+@@ -2783,16 +2733,6 @@ void ChromeContentBrowserClient::OnTrustAnchorUsed(
  }
  #endif
  
@@ -144,7 +144,22 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  
  scoped_refptr<network::SharedURLLoaderFactory>
  ChromeContentBrowserClient::GetSystemSharedURLLoaderFactory() {
-@@ -4023,12 +3964,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -3020,14 +2960,12 @@ base::OnceClosure ChromeContentBrowserClient::SelectClientCertificate(
+         base::BindOnce(
+             &content::ClientCertificateDelegate::ContinueWithCertificate,
+             std::move(delegate), std::move(cert)));
+-    LogClientAuthResult(ClientCertSelectionResult::kAutoSelect);
+     return base::OnceClosure();
+   }
+ 
+   if (!may_show_cert_selection) {
+     LOG(WARNING) << "No client cert matched by policy and user selection is "
+                     "not allowed.";
+-    LogClientAuthResult(ClientCertSelectionResult::kNoSelectionAllowed);
+     // Continue without client certificate. We do this to mimic the case of no
+     // client certificate being present in the profile's certificate store.
+     delegate->ContinueWithCertificate(nullptr, nullptr);
+@@ -4025,12 +3963,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
        &throttles);
  #endif
  
@@ -158,7 +173,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  
  #if !defined(OS_ANDROID)
    // BackgroundTabNavigationThrottle is used by TabManager, which is only
-@@ -4065,7 +4001,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4067,7 +4000,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
        base::BindRepeating(&MaybeTriggerSecurityInterstitialShownEvent));
    throttles.push_back(std::make_unique<SSLErrorNavigationThrottle>(
        handle,
@@ -167,8 +182,8 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
        base::BindOnce(&HandleSSLErrorWrapper), base::BindOnce(&IsInHostedApp)));
  
    throttles.push_back(std::make_unique<LoginNavigationThrottle>(handle));
-@@ -4083,14 +4019,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
- 
+@@ -4080,14 +4013,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+                    &throttles);
  #endif
  
 -  throttles.push_back(
@@ -184,7 +199,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  
  #if defined(OS_WIN) || defined(OS_MAC) || \
      (defined(OS_LINUX) && !defined(OS_CHROMEOS))
-@@ -4723,6 +4658,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
+@@ -4726,6 +4658,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
      network::mojom::URLLoaderFactoryOverridePtr* factory_override) {
    bool use_proxy = false;
  
@@ -196,7 +211,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  #if BUILDFLAG(ENABLE_EXTENSIONS)
    auto* web_request_api =
        extensions::BrowserContextKeyedAPIFactory<extensions::WebRequestAPI>::Get(
-@@ -5165,54 +5105,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
+@@ -5168,54 +5105,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
    return ui::NativeTheme::GetInstanceForWeb();
  }
  
@@ -251,7 +266,7 @@ index 24f13de1d9d3..eba0cd37ca8c 100644
  base::Optional<std::string>
  ChromeContentBrowserClient::GetOriginPolicyErrorPage(
      network::OriginPolicyState error_reason,
-@@ -5612,22 +5504,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
+@@ -5615,22 +5504,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
      const content::RenderFrameHost* frame_host,
      bool user_gesture,
      content::NavigationDownloadPolicy* download_policy) {

@@ -1,29 +1,47 @@
 diff --git a/components/metrics/metrics_service.cc b/components/metrics/metrics_service.cc
-index a63c847d5deb..15aa0ed00a72 100644
+index a63c847d5deb..798e1b0ac2cc 100644
 --- a/components/metrics/metrics_service.cc
 +++ b/components/metrics/metrics_service.cc
-@@ -222,6 +222,7 @@ MetricsService::MetricsService(MetricsStateManager* state_manager,
-       session_id_(-1),
-       synthetic_trial_registry_(
-           client->IsExternalExperimentAllowlistEnabled()) {
-+  return;
-   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+@@ -226,51 +226,23 @@ MetricsService::MetricsService(MetricsStateManager* state_manager,
    DCHECK(state_manager_);
    DCHECK(client_);
-@@ -238,6 +239,7 @@ MetricsService::~MetricsService() {
+   DCHECK(local_state_);
+-
+-  RegisterMetricsProvider(
+-      std::make_unique<StabilityMetricsProvider>(local_state_));
+-
+-  RegisterMetricsProvider(state_manager_->GetProvider());
  }
  
- void MetricsService::InitializeMetricsRecordingState() {
-+#if 0
-   // The FieldTrialsProvider should be registered last. This ensures that
-   // studies whose features are checked when providers add their information to
-   // the log appear in the active field trials.
-@@ -260,17 +262,18 @@ void MetricsService::InitializeMetricsRecordingState() {
- 
-   // Init() has to be called after LogCrash() in order for LogCrash() to work.
-   delegating_provider_.Init();
-+#endif
+ MetricsService::~MetricsService() {
+   DisableRecording();
  }
+ 
+-void MetricsService::InitializeMetricsRecordingState() {
+-  // The FieldTrialsProvider should be registered last. This ensures that
+-  // studies whose features are checked when providers add their information to
+-  // the log appear in the active field trials.
+-  RegisterMetricsProvider(std::make_unique<variations::FieldTrialsProvider>(
+-      &synthetic_trial_registry_, base::StringPiece()));
+-
+-  reporting_service_.Initialize();
+-  InitializeMetricsState();
+-
+-  base::RepeatingClosure upload_callback = base::BindRepeating(
+-      &MetricsService::StartScheduledUpload, self_ptr_factory_.GetWeakPtr());
+-
+-  rotation_scheduler_.reset(new MetricsRotationScheduler(
+-      upload_callback,
+-      // MetricsServiceClient outlives MetricsService, and
+-      // MetricsRotationScheduler is tied to the lifetime of |this|.
+-      base::BindRepeating(&MetricsServiceClient::GetUploadInterval,
+-                          base::Unretained(client_)),
+-      client_->ShouldStartUpFastForTesting()));
+-
+-  // Init() has to be called after LogCrash() in order for LogCrash() to work.
+-  delegating_provider_.Init();
+-}
++void MetricsService::InitializeMetricsRecordingState() {}
  
  void MetricsService::Start() {
    HandleIdleSinceLastTransmission(false);
@@ -40,24 +58,51 @@ index a63c847d5deb..15aa0ed00a72 100644
    DisableReporting();
  }
  
-@@ -289,10 +292,12 @@ void MetricsService::Stop() {
+@@ -288,12 +260,7 @@ void MetricsService::Stop() {
+   DisableRecording();
  }
  
- void MetricsService::EnableReporting() {
-+#if 0
-   if (reporting_service_.reporting_active())
-     return;
-   reporting_service_.EnableReporting();
-   StartSchedulerIfNecessary();
-+#endif
- }
+-void MetricsService::EnableReporting() {
+-  if (reporting_service_.reporting_active())
+-    return;
+-  reporting_service_.EnableReporting();
+-  StartSchedulerIfNecessary();
+-}
++void MetricsService::EnableReporting() {}
  
  void MetricsService::DisableReporting() {
-@@ -312,6 +317,7 @@ bool MetricsService::WasLastShutdownClean() const {
+   reporting_service_.DisableReporting();
+@@ -311,32 +278,7 @@ bool MetricsService::WasLastShutdownClean() const {
+   return state_manager_->clean_exit_beacon()->exited_cleanly();
  }
  
- void MetricsService::EnableRecording() {
-+  return;
-   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-void MetricsService::EnableRecording() {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-
+-  if (recording_state_ == ACTIVE)
+-    return;
+-  recording_state_ = ACTIVE;
+-
+-  state_manager_->ForceClientIdCreation();
+-  client_->SetMetricsClientId(state_manager_->client_id());
+-
+-  if (!log_manager_.current_log())
+-    OpenNewLog();
+-
+-  delegating_provider_.OnRecordingEnabled();
+-
+-  // Fill in the system profile in the log and persist it (to prefs, .pma and
+-  // crashpad). This includes running the providers so that information like
+-  // field trials and hardware info is provided. If Chrome crashes before this
+-  // log is completed, the .pma file will have this system profile.
+-  RecordCurrentEnvironment(log_manager_.current_log(), /*complete=*/false);
+-
+-  base::RemoveActionCallback(action_callback_);
+-  action_callback_ = base::BindRepeating(&MetricsService::OnUserAction,
+-                                         base::Unretained(this));
+-  base::AddActionCallback(action_callback_);
+-}
++void MetricsService::EnableRecording() {}
  
-   if (recording_state_ == ACTIVE)
+ void MetricsService::DisableRecording() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);

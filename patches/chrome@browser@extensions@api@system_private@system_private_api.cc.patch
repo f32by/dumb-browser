@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/extensions/api/system_private/system_private_api.cc b/chrome/browser/extensions/api/system_private/system_private_api.cc
+index a6571765205c..803b4915be16 100644
+--- a/chrome/browser/extensions/api/system_private/system_private_api.cc
++++ b/chrome/browser/extensions/api/system_private/system_private_api.cc
+@@ -22,7 +22,6 @@
+ #include "chromeos/dbus/dbus_thread_manager.h"
+ #include "chromeos/dbus/update_engine_client.h"
+ #else
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #endif
+ 
+ namespace {
+@@ -41,7 +40,6 @@ const char kStateKey[] = "state";
+ 
+ // System update states.
+ const char kNotAvailableState[] = "NotAvailable";
+-const char kNeedRestartState[] = "NeedRestart";
+ 
+ #if defined(OS_CHROMEOS)
+ const char kUpdatingState[] = "Updating";
+@@ -116,12 +114,7 @@ ExtensionFunction::ResponseAction SystemPrivateGetUpdateStatusFunction::Run() {
+       NOTREACHED();
+   }
+ #else
+-  if (UpgradeDetector::GetInstance()->notify_upgrade()) {
+-    state = kNeedRestartState;
+-    download_progress = 1;
+-  } else {
+     state = kNotAvailableState;
+-  }
+ #endif
+ 
+   std::unique_ptr<base::DictionaryValue> dict(new base::DictionaryValue());

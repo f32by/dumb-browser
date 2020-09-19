@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/media/webrtc/webrtc_log_uploader.cc b/chrome/browser/media/webrtc/webrtc_log_uploader.cc
-index b3d74a06e147..853cd790e418 100644
+index bd9dda865eaa..f8563821e763 100644
 --- a/chrome/browser/media/webrtc/webrtc_log_uploader.cc
 +++ b/chrome/browser/media/webrtc/webrtc_log_uploader.cc
-@@ -125,28 +125,12 @@ void WebRtcLogUploader::LoggingStoppedDoUpload(
+@@ -125,28 +125,11 @@ void WebRtcLogUploader::LoggingStoppedDoUpload(
    DCHECK(meta_data.get());
    DCHECK(!upload_done_data.paths.directory.empty());
  
@@ -12,7 +12,7 @@ index b3d74a06e147..853cd790e418 100644
 -
    if (base::PathExists(upload_done_data.paths.directory)) {
      webrtc_logging::DeleteOldWebRtcLogFiles(upload_done_data.paths.directory);
- 
+-
 -    local_log_id = base::NumberToString(base::Time::Now().ToDoubleT());
 -    base::FilePath log_file_path =
 -        upload_done_data.paths.directory.AppendASCII(local_log_id)
@@ -32,10 +32,11 @@ index b3d74a06e147..853cd790e418 100644
  }
  
  void WebRtcLogUploader::PrepareMultipartPostData(
-@@ -157,28 +141,6 @@ void WebRtcLogUploader::PrepareMultipartPostData(
+@@ -156,29 +139,6 @@ void WebRtcLogUploader::PrepareMultipartPostData(
+   DCHECK(background_task_runner_->RunsTasksInCurrentSequence());
    DCHECK(!compressed_log.empty());
    DCHECK(meta_data.get());
- 
+-
 -  std::unique_ptr<std::string> post_data(new std::string());
 -  SetupMultipart(post_data.get(), compressed_log,
 -                 upload_done_data.paths.incoming_rtp_dump,
@@ -61,7 +62,7 @@ index b3d74a06e147..853cd790e418 100644
  }
  
  void WebRtcLogUploader::UploadStoredLog(
-@@ -187,50 +149,7 @@ void WebRtcLogUploader::UploadStoredLog(
+@@ -187,50 +147,7 @@ void WebRtcLogUploader::UploadStoredLog(
    DCHECK(!upload_data.local_log_id.empty());
    DCHECK(!upload_data.paths.directory.empty());
  
@@ -113,7 +114,7 @@ index b3d74a06e147..853cd790e418 100644
  }
  
  void WebRtcLogUploader::LoggingStoppedDoStore(
-@@ -479,7 +398,7 @@ void WebRtcLogUploader::UploadCompressedLog(
+@@ -479,7 +396,7 @@ void WebRtcLogUploader::UploadCompressedLog(
              "Not implemented, it would be good to do so."
          })");
  

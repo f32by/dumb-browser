@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/tab_contents/chrome_web_contents_view_handle_drop.cc b/chrome/browser/ui/tab_contents/chrome_web_contents_view_handle_drop.cc
-index e31679eebc54..155a5d1d4f48 100644
+index e31679eebc54..e8e141469b80 100644
 --- a/chrome/browser/ui/tab_contents/chrome_web_contents_view_handle_drop.cc
 +++ b/chrome/browser/ui/tab_contents/chrome_web_contents_view_handle_drop.cc
-@@ -12,104 +12,16 @@
+@@ -12,104 +12,17 @@
  #include "base/task/thread_pool.h"
  #include "base/task_runner_util.h"
  #include "chrome/browser/profiles/profile.h"
@@ -13,7 +13,7 @@ index e31679eebc54..155a5d1d4f48 100644
  #include "content/public/common/drop_data.h"
  
  namespace {
- 
+-
 -void DeepScanCompletionCallback(
 -    content::WebContentsViewDelegate::DropCompletionCallback callback,
 -    const safe_browsing::DeepScanningDialogDelegate::Data& data,
@@ -106,4 +106,6 @@ index e31679eebc54..155a5d1d4f48 100644
 -                       std::move(data)),
 -        base::BindOnce(&ScanData, web_contents, std::move(callback)));
 -  }
++  std::move(callback).Run(
++      content::WebContentsViewDelegate::DropCompletionResult::kContinue);
  }

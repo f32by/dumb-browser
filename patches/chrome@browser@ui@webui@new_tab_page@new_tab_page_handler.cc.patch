@@ -1,32 +1,98 @@
 diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
-index f030459f5012..bdfcf3dcefd8 100644
+index dee7b7ef3bfa..29a32ca92bc0 100644
 --- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
 +++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
-@@ -37,7 +37,6 @@
- #include "chrome/browser/search/chrome_colors/chrome_colors_service.h"
+@@ -30,12 +30,10 @@
+ #include "chrome/browser/predictors/autocomplete_action_predictor.h"
+ #include "chrome/browser/predictors/autocomplete_action_predictor_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/search/background/ntp_background_service.h"
+ #include "chrome/browser/search/background/ntp_background_service_factory.h"
  #include "chrome/browser/search/instant_service.h"
  #include "chrome/browser/search/one_google_bar/one_google_bar_service_factory.h"
 -#include "chrome/browser/search/promos/promo_service_factory.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
  #include "chrome/browser/search_provider_logos/logo_service_factory.h"
  #include "chrome/browser/ui/bookmarks/bookmark_stats.h"
-@@ -291,6 +290,7 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
+@@ -263,76 +261,6 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
    return doodle;
  }
  
-+#if 0
- new_tab_page::mojom::PromoPtr MakePromo(const PromoData& data) {
-   // |data.middle_slot_json| is safe to be decoded here. The JSON string is part
-   // of a larger JSON initially decoded using the data decoder utility in the
-@@ -360,6 +360,7 @@ new_tab_page::mojom::PromoPtr MakePromo(const PromoData& data) {
-   promo->log_url = data.promo_log_url;
-   return promo;
- }
-+#endif
- 
+-new_tab_page::mojom::PromoPtr MakePromo(const PromoData& data) {
+-  // |data.middle_slot_json| is safe to be decoded here. The JSON string is part
+-  // of a larger JSON initially decoded using the data decoder utility in the
+-  // PromoService to base::Value. The middle-slot promo part is then reencoded
+-  // from base::Value to a JSON string stored in |data.middle_slot_json|.
+-  auto middle_slot = base::JSONReader::Read(data.middle_slot_json);
+-  if (!middle_slot.has_value() ||
+-      middle_slot.value().FindBoolPath("hidden").value_or(false)) {
+-    return nullptr;
+-  }
+-  auto promo = new_tab_page::mojom::Promo::New();
+-  promo->id = data.promo_id;
+-  if (middle_slot.has_value()) {
+-    auto* parts = middle_slot.value().FindListPath("part");
+-    if (parts) {
+-      std::vector<new_tab_page::mojom::PromoPartPtr> mojom_parts;
+-      for (const base::Value& part : parts->GetList()) {
+-        if (part.FindKey("image")) {
+-          auto mojom_image = new_tab_page::mojom::PromoImagePart::New();
+-          auto* image_url = part.FindStringPath("image.image_url");
+-          if (!image_url || image_url->empty()) {
+-            continue;
+-          }
+-          mojom_image->image_url = GURL(*image_url);
+-          auto* target = part.FindStringPath("image.target");
+-          if (target && !target->empty()) {
+-            mojom_image->target = GURL(*target);
+-          }
+-          mojom_parts.push_back(
+-              new_tab_page::mojom::PromoPart::NewImage(std::move(mojom_image)));
+-        } else if (part.FindKey("link")) {
+-          auto mojom_link = new_tab_page::mojom::PromoLinkPart::New();
+-          auto* url = part.FindStringPath("link.url");
+-          if (!url || url->empty()) {
+-            continue;
+-          }
+-          mojom_link->url = GURL(*url);
+-          auto* text = part.FindStringPath("link.text");
+-          if (!text || text->empty()) {
+-            continue;
+-          }
+-          mojom_link->text = *text;
+-          auto* color = part.FindStringPath("link.color");
+-          if (color && !color->empty()) {
+-            mojom_link->color = *color;
+-          }
+-          mojom_parts.push_back(
+-              new_tab_page::mojom::PromoPart::NewLink(std::move(mojom_link)));
+-        } else if (part.FindKey("text")) {
+-          auto mojom_text = new_tab_page::mojom::PromoTextPart::New();
+-          auto* text = part.FindStringPath("text.text");
+-          if (!text || text->empty()) {
+-            continue;
+-          }
+-          mojom_text->text = *text;
+-          auto* color = part.FindStringPath("text.color");
+-          if (color && !color->empty()) {
+-            mojom_text->color = *color;
+-          }
+-          mojom_parts.push_back(
+-              new_tab_page::mojom::PromoPart::NewText(std::move(mojom_text)));
+-        }
+-      }
+-      promo->middle_slot_parts = std::move(mojom_parts);
+-    }
+-  }
+-  promo->log_url = data.promo_log_url;
+-  return promo;
+-}
+-
  }  // namespace
  
-@@ -392,14 +393,12 @@ NewTabPageHandler::NewTabPageHandler(
+ NewTabPageHandler::NewTabPageHandler(
+@@ -362,14 +290,12 @@ NewTabPageHandler::NewTabPageHandler(
        web_contents_(web_contents),
        ntp_navigation_start_time_(ntp_navigation_start_time),
        logger_(logger),
@@ -41,7 +107,7 @@ index f030459f5012..bdfcf3dcefd8 100644
    CHECK(web_contents_);
    CHECK(logger_);
    instant_service_->AddObserver(this);
-@@ -407,7 +406,6 @@ NewTabPageHandler::NewTabPageHandler(
+@@ -377,7 +303,6 @@ NewTabPageHandler::NewTabPageHandler(
    instant_service_->UpdateNtpTheme();
    OmniboxTabHelper::CreateForWebContents(web_contents);
    OmniboxTabHelper::FromWebContents(web_contents_)->AddObserver(this);
@@ -49,31 +115,75 @@ index f030459f5012..bdfcf3dcefd8 100644
    one_google_bar_service_observer_.Add(one_google_bar_service_);
  }
  
-@@ -688,6 +686,7 @@ void NewTabPageHandler::GetOneGoogleBarParts(
+@@ -613,76 +538,12 @@ void NewTabPageHandler::GetOneGoogleBarParts(
  }
  
  void NewTabPageHandler::GetPromo(GetPromoCallback callback) {
-+#if 0
-   // Replace the promo URL with "command:<id>" if such a command ID is set
-   // via the feature params.
-   const std::string command_id = base::GetFieldTrialParamValueByFeature(
-@@ -720,9 +719,11 @@ void NewTabPageHandler::GetPromo(GetPromoCallback callback) {
-   }
-   promo_load_start_time_ = base::TimeTicks::Now();
-   promo_service_->Refresh();
-+#endif
+-  // Replace the promo URL with "command:<id>" if such a command ID is set
+-  // via the feature params.
+-  const std::string command_id = base::GetFieldTrialParamValueByFeature(
+-      features::kPromoBrowserCommands, features::kPromoBrowserCommandIdParam);
+-  if (!command_id.empty()) {
+-    auto promo = new_tab_page::mojom::Promo::New();
+-    std::vector<new_tab_page::mojom::PromoPartPtr> parts;
+-    auto image = new_tab_page::mojom::PromoImagePart::New();
+-    // Warning symbol used as the test image.
+-    image->image_url = GURL(
+-        "data:image/"
+-        "svg+xml;base64,"
+-        "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01IC"
+-        "01IDU4IDU4IiBmaWxsPSIjZmRkNjMzIj48cGF0aCBkPSJNMiA0Mmg0NEwyNCA0IDIgNDJ6"
+-        "bTI0LTZoLTR2LTRoNHY0em0wLThoLTR2LThoNHY4eiIvPjwvc3ZnPg==");
+-    image->target = GURL("command:" + command_id);
+-    parts.push_back(new_tab_page::mojom::PromoPart::NewImage(std::move(image)));
+-    auto link = new_tab_page::mojom::PromoLinkPart::New();
+-    link->url = GURL("command:" + command_id);
+-    link->text = "Test command: " + command_id;
+-    parts.push_back(new_tab_page::mojom::PromoPart::NewLink(std::move(link)));
+-    promo->middle_slot_parts = std::move(parts);
+-    std::move(callback).Run(std::move(promo));
+-    return;
+-  }
+-
+-  promo_callbacks_.push_back(std::move(callback));
+-  if (promo_service_->promo_data().has_value()) {
+-    OnPromoDataUpdated();
+-  }
+-  promo_load_start_time_ = base::TimeTicks::Now();
+-  promo_service_->Refresh();
  }
  
  void NewTabPageHandler::OnPromoDataUpdated() {
-+#if 0
-   if (promo_load_start_time_.has_value()) {
-     base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
-     UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2", duration);
-@@ -753,11 +754,10 @@ void NewTabPageHandler::OnPromoDataUpdated() {
-     }
-   }
-   promo_callbacks_.clear();
-+#endif
+-  if (promo_load_start_time_.has_value()) {
+-    base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
+-    UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2", duration);
+-    if (promo_service_->promo_status() == PromoService::Status::OK_WITH_PROMO) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessWithPromo", duration);
+-    } else if (promo_service_->promo_status() ==
+-               PromoService::Status::OK_BUT_BLOCKED) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessButBlocked", duration);
+-    } else if (promo_service_->promo_status() ==
+-               PromoService::Status::OK_WITHOUT_PROMO) {
+-      UMA_HISTOGRAM_MEDIUM_TIMES(
+-          "NewTabPage.Promos.RequestLatency2.SuccessWithoutPromo", duration);
+-    } else {
+-      UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2.Failure",
+-                                 duration);
+-    }
+-    promo_load_start_time_ = base::nullopt;
+-  }
+-
+-  const auto& data = promo_service_->promo_data();
+-  for (auto& callback : promo_callbacks_) {
+-    if (data.has_value() && !data->promo_html.empty()) {
+-      std::move(callback).Run(MakePromo(data.value()));
+-    } else {
+-      std::move(callback).Run(nullptr);
+-    }
+-  }
+-  promo_callbacks_.clear();
  }
  
  void NewTabPageHandler::OnPromoServiceShuttingDown() {
@@ -82,3 +192,12 @@ index f030459f5012..bdfcf3dcefd8 100644
  }
  
  void NewTabPageHandler::OnMostVisitedTilesRendered(
+@@ -1026,8 +887,6 @@ void NewTabPageHandler::OpenAutocompleteMatch(
+ 
+   auto* bookmark_model = BookmarkModelFactory::GetForBrowserContext(profile_);
+   if (bookmark_model->IsBookmarked(match.destination_url)) {
+-    RecordBookmarkLaunch(BOOKMARK_LAUNCH_LOCATION_OMNIBOX,
+-                         ProfileMetrics::GetBrowserProfileType(profile_));
+   }
+ 
+   const AutocompleteInput& input = autocomplete_controller_->input();

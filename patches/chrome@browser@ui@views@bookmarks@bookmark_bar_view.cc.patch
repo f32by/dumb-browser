@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc b/chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc
+index fe2c5e160943..e9bb796489d0 100644
+--- a/chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc
++++ b/chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc
+@@ -29,7 +29,6 @@
+ #include "chrome/browser/defaults.h"
+ #include "chrome/browser/favicon/favicon_utils.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/search/search.h"
+ #include "chrome/browser/themes/theme_properties.h"
+ #include "chrome/browser/ui/bookmarks/bookmark_drag_drop.h"
+@@ -1377,9 +1376,6 @@ void BookmarkBarView::OnButtonPressed(views::Button* sender,
+                                 disposition_from_event_flags,
+                                 ui::PAGE_TRANSITION_AUTO_BOOKMARK, false);
+   page_navigator_->OpenURL(params);
+-  RecordBookmarkLaunch(
+-      BOOKMARK_LAUNCH_LOCATION_ATTACHED_BAR,
+-      ProfileMetrics::GetBrowserProfileType(browser_->profile()));
+ }
+ 
+ void BookmarkBarView::ShowContextMenuForViewImpl(

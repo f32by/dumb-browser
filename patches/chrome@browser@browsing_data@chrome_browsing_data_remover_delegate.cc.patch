@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-index 59a1243defb4..842dc7b83629 100644
+index 52832d3811a5..97adbb4f0835 100644
 --- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 +++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 @@ -32,7 +32,6 @@
@@ -27,28 +27,19 @@ index 59a1243defb4..842dc7b83629 100644
  #include "chrome/browser/translate/chrome_translate_client.h"
  #include "chrome/browser/ui/find_bar/find_bar_state.h"
  #include "chrome/browser/ui/find_bar/find_bar_state_factory.h"
-@@ -283,6 +279,7 @@ bool DoesOriginMatchEmbedderMask(uint64_t origin_type_mask,
- // Callback for when cookies have been deleted. Invokes NotifyIfDone.
- // Receiving |cookie_manager| as a parameter so that the receive pipe is
- // not deleted before the response is received.
-+ALLOW_UNUSED_TYPE
- void OnClearedCookies(
-     base::OnceClosure done,
-     mojo::Remote<network::mojom::CookieManager> cookie_manager,
-@@ -619,10 +616,12 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -589,11 +585,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
  
      AvailabilityProber::ClearData(prefs);
  
-+#if 0
-     LiteVideoKeyedService* lite_video_keyed_service =
-         LiteVideoKeyedServiceFactory::GetForProfile(profile_);
-     if (lite_video_keyed_service)
-       lite_video_keyed_service->ClearData(delete_begin_, delete_end_);
-+#endif
- 
+-    LiteVideoKeyedService* lite_video_keyed_service =
+-        LiteVideoKeyedServiceFactory::GetForProfile(profile_);
+-    if (lite_video_keyed_service)
+-      lite_video_keyed_service->ClearData(delete_begin_, delete_end_);
+-
  #if defined(OS_ANDROID)
      OomInterventionDecider* oom_intervention_decider =
-@@ -670,7 +669,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+         OomInterventionDecider::GetForBrowserContext(profile_);
+@@ -640,7 +631,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      }
  #endif
  
@@ -56,39 +47,22 @@ index 59a1243defb4..842dc7b83629 100644
  
      FindBarStateFactory::GetForBrowserContext(profile_)->SetLastSearchText(
          base::string16());
-@@ -701,36 +699,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
-         ContentSettingsType::CLIENT_HINTS, base::Time(), base::Time::Max(),
-         website_settings_filter);
+@@ -667,19 +657,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+        content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB)) {
+     base::RecordAction(UserMetricsAction("ClearBrowsingData_Cookies"));
  
--    // Clear the safebrowsing cookies only if time period is for "all time".  It
--    // doesn't make sense to apply the time period of deleting in the last X
--    // hours/days to the safebrowsing cookies since they aren't the result of
--    // any user action.
--    if (IsForAllTime()) {
--      safe_browsing::SafeBrowsingService* sb_service =
--          g_browser_process->safe_browsing_service();
--      if (sb_service) {
--        mojo::Remote<network::mojom::CookieManager> cookie_manager;
--        sb_service->GetNetworkContext(profile_)->GetCookieManager(
--            cookie_manager.BindNewPipeAndPassReceiver());
+-    network::mojom::NetworkContext* safe_browsing_context = nullptr;
+-    safe_browsing::SafeBrowsingService* sb_service =
+-        g_browser_process->safe_browsing_service();
+-    if (sb_service)
+-      safe_browsing_context = sb_service->GetNetworkContext(profile_);
 -
--        network::mojom::CookieManager* manager_ptr = cookie_manager.get();
--
--        network::mojom::CookieDeletionFilterPtr deletion_filter =
--            filter_builder->BuildCookieDeletionFilter();
--        if (!delete_begin_.is_null())
--          deletion_filter->created_after_time = delete_begin_;
--        if (!delete_end_.is_null())
--          deletion_filter->created_before_time = delete_end_;
--
--        manager_ptr->DeleteCookies(
--            std::move(deletion_filter),
--            base::BindOnce(
--                &OnClearedCookies,
--                CreateTaskCompletionClosure(TracingDataType::kCookies),
--                std::move(cookie_manager)));
--      }
--    }
+-    browsing_data::RemoveEmbedderCookieData(
+-        delete_begin, delete_end, filter_builder, host_content_settings_map_,
+-        safe_browsing_context,
+-        base::BindOnce(
+-            &ChromeBrowsingDataRemoverDelegate::CreateTaskCompletionClosure,
+-            base::Unretained(this), TracingDataType::kCookies));
 -
      if (filter_builder->GetMode() ==
          BrowsingDataFilterBuilder::Mode::kPreserve) {

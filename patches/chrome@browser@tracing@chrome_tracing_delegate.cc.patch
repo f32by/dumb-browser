@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/tracing/chrome_tracing_delegate.cc b/chrome/browser/tracing/chrome_tracing_delegate.cc
+index d4081dab5fcc..343b99191071 100644
+--- a/chrome/browser/tracing/chrome_tracing_delegate.cc
++++ b/chrome/browser/tracing/chrome_tracing_delegate.cc
+@@ -18,7 +18,6 @@
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/tracing/crash_service_uploader.h"
+ #include "chrome/browser/ui/browser_otr_state.h"
+ #include "chrome/common/pref_names.h"
+ #include "components/metrics/metrics_pref_names.h"
+@@ -106,12 +105,6 @@ void ChromeTracingDelegate::OnBrowserAdded(Browser* browser) {
+ }
+ #endif  // defined(OS_ANDROID)
+ 
+-std::unique_ptr<content::TraceUploader> ChromeTracingDelegate::GetTraceUploader(
+-    scoped_refptr<network::SharedURLLoaderFactory> factory) {
+-  return std::unique_ptr<content::TraceUploader>(
+-      new TraceCrashServiceUploader(std::move(factory)));
+-}
+-
+ namespace {
+ 
+ enum PermitMissingProfile { PROFILE_REQUIRED, PROFILE_NOT_REQUIRED };

@@ -1,16 +1,20 @@
 diff --git a/chrome/browser/browser_process_impl.h b/chrome/browser/browser_process_impl.h
-index f22581ef5d5c..497db411b320 100644
+index f22581ef5d5c..a099c70ecdbb 100644
 --- a/chrome/browser/browser_process_impl.h
 +++ b/chrome/browser/browser_process_impl.h
-@@ -38,7 +38,6 @@
- #include "chrome/browser/upgrade_detector/build_state.h"
- #endif
+@@ -34,11 +34,7 @@
+ #include "services/network/public/cpp/network_quality_tracker.h"
+ #include "services/network/public/mojom/network_service.mojom-forward.h"
+ 
+-#if !defined(OS_ANDROID)
+-#include "chrome/browser/upgrade_detector/build_state.h"
+-#endif
  
 -class BatteryMetrics;
  class ChromeMetricsServicesManagerClient;
  class DevToolsAutoOpener;
  class RemoteDebuggingServer;
-@@ -132,7 +131,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -132,7 +128,6 @@ class BrowserProcessImpl : public BrowserProcess,
    metrics_services_manager::MetricsServicesManager* GetMetricsServicesManager()
        override;
    metrics::MetricsService* metrics_service() override;
@@ -18,7 +22,7 @@ index f22581ef5d5c..497db411b320 100644
    // TODO(qinmin): Remove this method as callers can retrieve the global
    // instance from SystemNetworkContextManager directly.
    SystemNetworkContextManager* system_network_context_manager() override;
-@@ -167,10 +165,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -167,10 +162,6 @@ class BrowserProcessImpl : public BrowserProcess,
    void set_background_mode_manager_for_test(
        std::unique_ptr<BackgroundModeManager> manager) override;
    StatusTray* status_tray() override;
@@ -29,7 +33,15 @@ index f22581ef5d5c..497db411b320 100644
    optimization_guide::OptimizationGuideService* optimization_guide_service()
        override;
  
-@@ -218,9 +212,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -195,7 +186,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   resource_coordinator::ResourceCoordinatorParts* resource_coordinator_parts()
+       override;
+ 
+-  BuildState* GetBuildState() override;
+ 
+   static void RegisterPrefs(PrefRegistrySimple* registry);
+ 
+@@ -218,9 +208,6 @@ class BrowserProcessImpl : public BrowserProcess,
    void CreateNotificationUIManager();
    void CreatePrintPreviewDialogController();
    void CreateBackgroundPrintingManager();
@@ -39,7 +51,7 @@ index f22581ef5d5c..497db411b320 100644
    void CreateOptimizationGuideService();
    void CreateStatusTray();
    void CreateBackgroundModeManager();
-@@ -314,15 +305,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -314,15 +301,6 @@ class BrowserProcessImpl : public BrowserProcess,
    std::unique_ptr<BackgroundModeManager> background_mode_manager_;
  #endif
  
@@ -55,7 +67,7 @@ index f22581ef5d5c..497db411b320 100644
  
    bool created_optimization_guide_service_ = false;
    std::unique_ptr<optimization_guide::OptimizationGuideService>
-@@ -348,8 +330,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -348,8 +326,6 @@ class BrowserProcessImpl : public BrowserProcess,
    // notifications are properly added and removed.
    PrefChangeRegistrar pref_change_registrar_;
  
@@ -64,3 +76,11 @@ index f22581ef5d5c..497db411b320 100644
  #if defined(OS_WIN) || (defined(OS_LINUX) && !defined(OS_CHROMEOS))
    base::RepeatingTimer autoupdate_timer_;
  
+@@ -400,7 +376,6 @@ class BrowserProcessImpl : public BrowserProcess,
+   // Called to signal the process' main message loop to exit.
+   base::OnceClosure quit_closure_;
+ 
+-  BuildState build_state_;
+ #endif
+ 
+   SEQUENCE_CHECKER(sequence_checker_);

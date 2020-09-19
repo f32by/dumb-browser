@@ -1,0 +1,14 @@
+diff --git a/content/browser/notifications/platform_notification_service_proxy.h b/content/browser/notifications/platform_notification_service_proxy.h
+index 70d20ba07b40..d870defb7fc4 100644
+--- a/content/browser/notifications/platform_notification_service_proxy.h
++++ b/content/browser/notifications/platform_notification_service_proxy.h
+@@ -65,9 +65,6 @@ class CONTENT_EXPORT PlatformNotificationServiceProxy {
+   // called on the UI thread.
+   base::Time GetNextTrigger();
+ 
+-  // Records a given notification to UKM. Must be called on the UI thread.
+-  void RecordNotificationUkmEvent(const NotificationDatabaseData& data);
+-
+   // Returns if we should log a notification close event by calling LogClose.
+   // Must be called on the UI thread.
+   bool ShouldLogClose(const GURL& origin);

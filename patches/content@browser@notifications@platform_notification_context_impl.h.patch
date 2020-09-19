@@ -1,0 +1,13 @@
+diff --git a/content/browser/notifications/platform_notification_context_impl.h b/content/browser/notifications/platform_notification_context_impl.h
+index f9b6a18aa739..02e31c8ffc59 100644
+--- a/content/browser/notifications/platform_notification_context_impl.h
++++ b/content/browser/notifications/platform_notification_context_impl.h
+@@ -329,8 +329,6 @@ class CONTENT_EXPORT PlatformNotificationContextImpl
+   // removed when either this class is destroyed or the Mojo pipe disconnects.
+   std::vector<std::unique_ptr<BlinkNotificationServiceImpl>> services_;
+ 
+-  NotificationDatabase::UkmCallback ukm_callback_;
+-
+   // Flag if the |browser_context_| has been shutdown already.
+   bool has_shutdown_;
+ 

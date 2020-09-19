@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process.h b/chrome/browser/browser_process.h
-index e52ef494a8d4..18e37022c171 100644
+index e52ef494a8d4..fb1e5c048f8e 100644
 --- a/chrome/browser/browser_process.h
 +++ b/chrome/browser/browser_process.h
 @@ -46,18 +46,6 @@ class NetworkQualityTracker;
@@ -59,3 +59,11 @@ index e52ef494a8d4..18e37022c171 100644
    // Returns the service used to provide hints for what optimizations can be
    // performed on slow page loads.
    virtual optimization_guide::OptimizationGuideService*
+@@ -269,7 +240,6 @@ class BrowserProcess {
+   virtual resource_coordinator::ResourceCoordinatorParts*
+   resource_coordinator_parts() = 0;
+ 
+-  virtual BuildState* GetBuildState() = 0;
+ 
+  private:
+   DISALLOW_COPY_AND_ASSIGN(BrowserProcess);

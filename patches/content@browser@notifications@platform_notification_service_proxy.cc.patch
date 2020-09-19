@@ -1,0 +1,19 @@
+diff --git a/content/browser/notifications/platform_notification_service_proxy.cc b/content/browser/notifications/platform_notification_service_proxy.cc
+index fe806d8caa5f..fd315fdbb6cc 100644
+--- a/content/browser/notifications/platform_notification_service_proxy.cc
++++ b/content/browser/notifications/platform_notification_service_proxy.cc
+@@ -169,14 +169,6 @@ base::Time PlatformNotificationServiceProxy::GetNextTrigger() {
+   return notification_service_->ReadNextTriggerTimestamp();
+ }
+ 
+-void PlatformNotificationServiceProxy::RecordNotificationUkmEvent(
+-    const NotificationDatabaseData& data) {
+-  DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-  if (!notification_service_)
+-    return;
+-  notification_service_->RecordNotificationUkmEvent(data);
+-}
+-
+ bool PlatformNotificationServiceProxy::ShouldLogClose(const GURL& origin) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+   return notifications::ShouldLogNotificationEventToDevTools(browser_context_,

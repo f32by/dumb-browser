@@ -1,0 +1,15 @@
+diff --git a/components/crash/content/browser/BUILD.gn b/components/crash/content/browser/BUILD.gn
+index 974915e36c2c..feb045755f89 100644
+--- a/components/crash/content/browser/BUILD.gn
++++ b/components/crash/content/browser/BUILD.gn
+@@ -38,10 +38,6 @@ source_set("browser") {
+     ]
+   }
+ 
+-  if (!is_chromeos) {
+-    deps += [ "//third_party/crashpad/crashpad/client" ]
+-  }
+-
+   if (!is_android) {
+     deps += [ "//third_party/breakpad:client" ]
+   }

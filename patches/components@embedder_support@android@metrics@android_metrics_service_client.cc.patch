@@ -1,12 +1,38 @@
 diff --git a/components/embedder_support/android/metrics/android_metrics_service_client.cc b/components/embedder_support/android/metrics/android_metrics_service_client.cc
-index c4508daef9ac..5da9d23791d3 100644
+index c4508daef9ac..aae2cc4b6b78 100644
 --- a/components/embedder_support/android/metrics/android_metrics_service_client.cc
 +++ b/components/embedder_support/android/metrics/android_metrics_service_client.cc
-@@ -227,6 +227,7 @@ void AndroidMetricsServiceClient::Initialize(PrefService* pref_service) {
+@@ -227,33 +227,6 @@ void AndroidMetricsServiceClient::Initialize(PrefService* pref_service) {
  }
  
  void AndroidMetricsServiceClient::MaybeStartMetrics() {
-+  return;
-   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-   // Treat the debugging flag the same as user consent because the user set it,
-   // but keep app_consent_ separate so we never persist data from an opted-out
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  // Treat the debugging flag the same as user consent because the user set it,
+-  // but keep app_consent_ separate so we never persist data from an opted-out
+-  // app.
+-  bool user_consent_or_flag = user_consent_ || IsMetricsReportingForceEnabled();
+-  if (IsConsentDetermined()) {
+-    if (app_consent_ && user_consent_or_flag) {
+-      CreateMetricsService(metrics_state_manager_.get(), this, pref_service_);
+-      // Register for notifications so we can detect when the user or app are
+-      // interacting with the embedder. We use these as signals to wake up the
+-      // MetricsService.
+-      RegisterForNotifications();
+-      metrics_state_manager_->ForceClientIdCreation();
+-      OnMetricsStart();
+-      is_in_sample_ = IsInSample();
+-      if (IsReportingEnabled()) {
+-        // We assume the embedder has no shutdown sequence, so there's no need
+-        // for a matching Stop() call.
+-        metrics_service_->Start();
+-      }
+-
+-      CreateUkmService();
+-    } else {
+-      OnMetricsNotStarted();
+-      pref_service_->ClearPref(prefs::kMetricsClientID);
+-    }
+-  }
+ }
+ 
+ void AndroidMetricsServiceClient::CreateMetricsService(

@@ -1,0 +1,30 @@
+diff --git a/chrome/browser/apps/app_service/app_service_proxy.cc b/chrome/browser/apps/app_service/app_service_proxy.cc
+index c9725aaf605d..ef957f3dde20 100644
+--- a/chrome/browser/apps/app_service/app_service_proxy.cc
++++ b/chrome/browser/apps/app_service/app_service_proxy.cc
+@@ -13,7 +13,6 @@
+ #include "base/stl_util.h"
+ #include "base/threading/thread_task_runner_handle.h"
+ #include "chrome/browser/apps/app_service/app_icon_source.h"
+-#include "chrome/browser/apps/app_service/app_service_metrics.h"
+ #include "chrome/browser/apps/app_service/app_service_proxy_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/ui/web_applications/system_web_app_ui_utils.h"
+@@ -274,7 +273,6 @@ void AppServiceProxy::Launch(const std::string& app_id,
+       base::Optional<web_app::SystemAppType> system_app_type =
+           web_app::GetSystemWebAppTypeForAppId(profile_, update.AppId());
+       if (!system_app_type) {
+-        RecordAppLaunch(update.AppId(), launch_source);
+       }
+       app_service_->Launch(update.AppType(), update.AppId(), event_flags,
+                            launch_source, display_id);
+@@ -337,9 +335,6 @@ void AppServiceProxy::LaunchAppWithIntent(
+       base::Optional<web_app::SystemAppType> system_app_type =
+           web_app::GetSystemWebAppTypeForAppId(profile_, update.AppId());
+       if (!system_app_type) {
+-        // Don't record system apps metric here, they are handled in
+-        // LaunchSystemWebApp.
+-        RecordAppLaunch(update.AppId(), launch_source);
+       }
+       app_service_->LaunchAppWithIntent(update.AppType(), update.AppId(),
+                                         event_flags, std::move(intent),

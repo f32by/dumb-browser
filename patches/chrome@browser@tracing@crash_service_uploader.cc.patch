@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/tracing/crash_service_uploader.cc b/chrome/browser/tracing/crash_service_uploader.cc
-index d879eea5cffb..0a740e3f33a5 100644
+index d879eea5cffb..f8717b158c6a 100644
 --- a/chrome/browser/tracing/crash_service_uploader.cc
 +++ b/chrome/browser/tracing/crash_service_uploader.cc
 @@ -40,7 +40,7 @@ using std::string;
@@ -7,7 +7,7 @@ index d879eea5cffb..0a740e3f33a5 100644
  namespace {
  
 -const char kUploadURL[] = "https://clients2.google.com/cr/report";
-+const char kUploadURL[] = "http://no-thanks.invalid";
++const char kUploadURL[] = "https://no-thanks.invalid";
  const char kCrashUploadContentType[] = "multipart/form-data";
  const char kCrashMultipartBoundary[] =
      "----**--yradnuoBgoLtrapitluMklaTelgooG--**----";
@@ -32,11 +32,70 @@ index d879eea5cffb..0a740e3f33a5 100644
  }
  
  void TraceCrashServiceUploader::DoCompressOnBackgroundThread(
-@@ -306,6 +311,7 @@ bool TraceCrashServiceUploader::Compress(std::string input,
+@@ -306,66 +311,4 @@ bool TraceCrashServiceUploader::Compress(std::string input,
  void TraceCrashServiceUploader::CreateAndStartURLLoader(
      const std::string& upload_url,
      const std::string& post_data) {
-+  return;
-   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
-   DCHECK(!simple_url_loader_);
- 
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-  DCHECK(!simple_url_loader_);
+-
+-  std::string content_type = kCrashUploadContentType;
+-  content_type.append("; boundary=");
+-  content_type.append(kCrashMultipartBoundary);
+-
+-  // Create traffic annotation tag.
+-  net::NetworkTrafficAnnotationTag traffic_annotation =
+-      net::DefineNetworkTrafficAnnotation("background_performance_tracer", R"(
+-        semantics {
+-          sender: "Background Performance Traces"
+-          description:
+-            "Under certain conditions, Chromium will send anonymized "
+-            "performance timeline data to Google for the purposes of improving "
+-            "Chromium performance. We can set up a percentage of the "
+-            "population to send back trace reports when a certain UMA "
+-            "histogram bucket is incremented, for example, 'For 1% of the Beta "
+-            "population, send us a trace if it ever takes more than 1 seconds "
+-            "for the Omnibox to respond to a typed character'. The possible "
+-            "types of triggers right now are UMA histograms, and manually "
+-            "triggered events from code (think of them like asserts, that'll "
+-            "cause a report to be sent if enabled for that population)."
+-          trigger:
+-            "Google-controlled triggering conditions, usually when a bad "
+-            "performance situation occurs."
+-          data: "An anonymized Chromium trace (see about://tracing)."
+-          destination: GOOGLE_OWNED_SERVICE
+-        }
+-        policy {
+-          cookies_allowed: NO
+-          setting:
+-            "You can enable or disable this feature via 'Automatically send "
+-            "usage statistics and crash reports to Google' in Chromium's "
+-            "settings under Advanced, Privacy. This feature is enabled by "
+-            "default."
+-          chrome_policy {
+-            MetricsReportingEnabled {
+-              policy_options {mode: MANDATORY}
+-              MetricsReportingEnabled: false
+-            }
+-          }
+-        })");
+-
+-  auto resource_request = std::make_unique<network::ResourceRequest>();
+-  resource_request->url = GURL(upload_url);
+-  resource_request->method = "POST";
+-  resource_request->enable_upload_progress = true;
+-  resource_request->credentials_mode = network::mojom::CredentialsMode::kOmit;
+-
+-  simple_url_loader_ = network::SimpleURLLoader::Create(
+-      std::move(resource_request), traffic_annotation);
+-  simple_url_loader_->AttachStringForUpload(post_data, content_type);
+-
+-  simple_url_loader_->SetOnUploadProgressCallback(
+-      base::BindRepeating(&TraceCrashServiceUploader::OnURLLoaderUploadProgress,
+-                          base::Unretained(this)));
+-
+-  simple_url_loader_->DownloadToStringOfUnboundedSizeUntilCrashAndDie(
+-      shared_url_loader_factory_.get(),
+-      base::BindOnce(&TraceCrashServiceUploader::OnSimpleURLLoaderComplete,
+-                     base::Unretained(this)));
+ }

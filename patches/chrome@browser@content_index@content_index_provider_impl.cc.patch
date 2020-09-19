@@ -1,0 +1,55 @@
+diff --git a/chrome/browser/content_index/content_index_provider_impl.cc b/chrome/browser/content_index/content_index_provider_impl.cc
+index 31e45670d685..79a153e832dc 100644
+--- a/chrome/browser/content_index/content_index_provider_impl.cc
++++ b/chrome/browser/content_index/content_index_provider_impl.cc
+@@ -14,7 +14,6 @@
+ #include "chrome/browser/engagement/site_engagement_score.h"
+ #include "chrome/browser/engagement/site_engagement_service.h"
+ #include "chrome/browser/engagement/site_engagement_service_factory.h"
+-#include "chrome/browser/metrics/ukm_background_recorder_service.h"
+ #include "chrome/browser/offline_items_collection/offline_content_aggregator_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/profiles/profile_key.h"
+@@ -102,7 +101,6 @@ OfflineItemFilter CategoryToFilter(blink::mojom::ContentCategory category) {
+ 
+ ContentIndexProviderImpl::ContentIndexProviderImpl(Profile* profile)
+     : profile_(profile),
+-      metrics_(ukm::UkmBackgroundRecorderFactory::GetForProfile(profile)),
+       aggregator_(
+           OfflineContentAggregatorFactory::GetForKey(profile->GetProfileKey())),
+       site_engagement_service_(
+@@ -148,9 +146,6 @@ void ContentIndexProviderImpl::OnContentAdded(
+ 
+   for (auto& observer : observers_)
+     observer.OnItemsAdded(items);
+-
+-  metrics_.RecordContentAdded(url::Origin::Create(entry.launch_url.GetOrigin()),
+-                              entry.description->category);
+ }
+ 
+ void ContentIndexProviderImpl::OnContentDeleted(
+@@ -207,7 +202,6 @@ void ContentIndexProviderImpl::DidGetEntryToOpen(
+ 
+ void ContentIndexProviderImpl::DidOpenTab(content::ContentIndexEntry entry,
+                                           content::WebContents* web_contents) {
+-  metrics_.RecordContentOpened(web_contents, entry.description->category);
+ }
+ 
+ void ContentIndexProviderImpl::RemoveItem(const ContentId& id) {
+@@ -219,8 +213,6 @@ void ContentIndexProviderImpl::RemoveItem(const ContentId& id) {
+   if (!storage_partition || !storage_partition->GetContentIndexContext())
+     return;
+ 
+-  metrics_.RecordContentDeletedByUser(components.origin);
+-
+   storage_partition->GetContentIndexContext()->OnUserDeletedItem(
+       components.service_worker_registration_id, components.origin,
+       components.description_id);
+@@ -308,7 +300,6 @@ void ContentIndexProviderImpl::GetAllItems(MultipleItemCallback callback) {
+ void ContentIndexProviderImpl::DidGetAllEntriesAcrossStorageParitions(
+     std::unique_ptr<OfflineItemList> item_list,
+     MultipleItemCallback callback) {
+-  ContentIndexMetrics::RecordContentIndexEntries(item_list->size());
+   std::move(callback).Run(*item_list);
+ }
+ 

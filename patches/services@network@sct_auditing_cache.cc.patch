@@ -1,8 +1,8 @@
 diff --git a/services/network/sct_auditing_cache.cc b/services/network/sct_auditing_cache.cc
-index c6b01f76ab21..094d09c0227b 100644
+index df60a69c5a53..02cd28ad7e9c 100644
 --- a/services/network/sct_auditing_cache.cc
 +++ b/services/network/sct_auditing_cache.cc
-@@ -83,8 +83,6 @@ void SCTAuditingCache::MaybeEnqueueReport(
+@@ -138,8 +138,6 @@ void SCTAuditingCache::MaybeEnqueueReport(
    double sampling_rate = features::kSCTAuditingSamplingRate.Get();
    if (base::RandDouble() > sampling_rate)
      return;
@@ -10,4 +10,4 @@ index c6b01f76ab21..094d09c0227b 100644
 -  context->client()->OnSCTReportReady(net::HashValue(cache_key).ToString());
  }
  
- SCTAuditReport* SCTAuditingCache::GetPendingReport(
+ sct_auditing::TLSConnectionReport* SCTAuditingCache::GetPendingReport(

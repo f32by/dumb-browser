@@ -1,0 +1,37 @@
+diff --git a/chrome/browser/ui/toolbar/app_menu_icon_controller.h b/chrome/browser/ui/toolbar/app_menu_icon_controller.h
+index d4c00dfbf3de..894aed36e45d 100644
+--- a/chrome/browser/ui/toolbar/app_menu_icon_controller.h
++++ b/chrome/browser/ui/toolbar/app_menu_icon_controller.h
+@@ -22,8 +22,7 @@ class UpgradeDetector;
+ 
+ // AppMenuIconController encapsulates the logic for badging the app menu icon
+ // as a result of various events - such as available updates, errors, etc.
+-class AppMenuIconController : public GlobalErrorObserver,
+-                              public UpgradeObserver {
++class AppMenuIconController : public GlobalErrorObserver {
+  public:
+   enum class IconType {
+     NONE,
+@@ -60,9 +59,6 @@ class AppMenuIconController : public GlobalErrorObserver,
+   // Creates an instance of this class for the given |profile| that will notify
+   // |delegate| of updates.
+   AppMenuIconController(Profile* profile, Delegate* delegate);
+-  AppMenuIconController(UpgradeDetector* upgrade_detector,
+-                        Profile* profile,
+-                        Delegate* delegate);
+   ~AppMenuIconController() override;
+ 
+   // Forces an update of the UI based on the current state of the world. This
+@@ -93,12 +89,9 @@ class AppMenuIconController : public GlobalErrorObserver,
+   // GlobalErrorObserver:
+   void OnGlobalErrorsChanged() override;
+ 
+-  // UpgradeObserver:
+-  void OnUpgradeRecommended() override;
+ 
+   // True for desktop Chrome on dev and canary channels.
+   const bool is_unstable_channel_;
+-  UpgradeDetector* const upgrade_detector_;
+   Profile* const profile_;
+   Delegate* const delegate_;
+   ScopedObserver<GlobalErrorService, GlobalErrorObserver>

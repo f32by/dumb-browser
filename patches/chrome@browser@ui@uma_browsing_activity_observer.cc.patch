@@ -1,0 +1,27 @@
+diff --git a/chrome/browser/ui/uma_browsing_activity_observer.cc b/chrome/browser/ui/uma_browsing_activity_observer.cc
+index a3464b18c6ec..e5a99af2f27d 100644
+--- a/chrome/browser/ui/uma_browsing_activity_observer.cc
++++ b/chrome/browser/ui/uma_browsing_activity_observer.cc
+@@ -17,7 +17,6 @@
+ #include "chrome/browser/ui/tabs/tab_group.h"
+ #include "chrome/browser/ui/tabs/tab_group_model.h"
+ #include "chrome/browser/ui/tabs/tab_strip_model.h"
+-#include "chrome/browser/upgrade_detector/upgrade_detector.h"
+ #include "components/search_engines/template_url_service.h"
+ #include "components/tab_groups/tab_group_visual_data.h"
+ #include "content/public/browser/navigation_controller.h"
+@@ -88,14 +87,6 @@ void UMABrowsingActivityObserver::Observe(
+ }
+ 
+ void UMABrowsingActivityObserver::LogTimeBeforeUpdate() const {
+-  const base::Time upgrade_detected_time =
+-      UpgradeDetector::GetInstance()->upgrade_detected_time();
+-  if (upgrade_detected_time.is_null())
+-    return;
+-  const base::Time now = base::Time::Now();
+-  UMA_HISTOGRAM_EXACT_LINEAR(
+-      "UpgradeDetector.DaysBeforeUpgrade",
+-      base::TimeDelta(now - upgrade_detected_time).InDays(), 30);
+ }
+ 
+ void UMABrowsingActivityObserver::LogRenderProcessHostCount() const {

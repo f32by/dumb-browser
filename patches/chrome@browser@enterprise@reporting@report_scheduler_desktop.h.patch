@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/enterprise/reporting/report_scheduler_desktop.h b/chrome/browser/enterprise/reporting/report_scheduler_desktop.h
+index 953af228076f..d0ec98f8c2cf 100644
+--- a/chrome/browser/enterprise/reporting/report_scheduler_desktop.h
++++ b/chrome/browser/enterprise/reporting/report_scheduler_desktop.h
+@@ -8,15 +8,13 @@
+ #include "components/enterprise/browser/reporting/report_scheduler.h"
+ 
+ #include "chrome/browser/enterprise/reporting/notification/extension_request_observer_factory.h"
+-#include "chrome/browser/upgrade_detector/build_state_observer.h"
+ 
+ class Profile;
+ 
+ namespace enterprise_reporting {
+ 
+ // Desktop implementation of the ReportScheduler delegate.
+-class ReportSchedulerDesktop : public ReportScheduler::Delegate,
+-                               public BuildStateObserver {
++class ReportSchedulerDesktop : public ReportScheduler::Delegate {
+  public:
+   explicit ReportSchedulerDesktop(Profile* profile = nullptr);
+   ReportSchedulerDesktop(const ReportSchedulerDesktop&) = delete;
+@@ -31,9 +29,6 @@ class ReportSchedulerDesktop : public ReportScheduler::Delegate,
+   void StopWatchingUpdates() override;
+   void SaveLastUploadVersion() override;
+ 
+-  // BuildStateObserver implementation.
+-  void OnUpdate(const BuildState* build_state) override;
+-
+  private:
+   ExtensionRequestObserverFactory extension_request_observer_factory_;
+ };

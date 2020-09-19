@@ -1,17 +1,8 @@
 diff --git a/components/signin/public/identity_manager/identity_manager.cc b/components/signin/public/identity_manager/identity_manager.cc
-index d82036005b58..6323aaa5b547 100644
+index d82036005b58..459f278ea20b 100644
 --- a/components/signin/public/identity_manager/identity_manager.cc
 +++ b/components/signin/public/identity_manager/identity_manager.cc
-@@ -2,6 +2,8 @@
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
- 
-+#include <iostream>
-+
- #include "components/signin/public/identity_manager/identity_manager.h"
- 
- #include <string>
-@@ -101,6 +103,7 @@ IdentityManager::~IdentityManager() {
+@@ -101,6 +101,7 @@ IdentityManager::~IdentityManager() {
      Java_IdentityManager_destroy(base::android::AttachCurrentThread(),
                                   java_identity_manager_);
  #endif

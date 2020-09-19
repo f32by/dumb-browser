@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/profiles/avatar_menu.h b/chrome/browser/profiles/avatar_menu.h
+index 9ecb388b4395..a51e823c07d9 100644
+--- a/chrome/browser/profiles/avatar_menu.h
++++ b/chrome/browser/profiles/avatar_menu.h
+@@ -16,7 +16,6 @@
+ #include "base/scoped_observer.h"
+ #include "base/strings/string16.h"
+ #include "chrome/browser/profiles/profile_attributes_storage.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/common/buildflags.h"
+ #include "content/public/browser/web_contents.h"
+ #include "content/public/browser/web_contents_observer.h"
+@@ -123,7 +122,7 @@ class AvatarMenu :
+   void SwitchToProfile(size_t index, bool always_create);
+ 
+   // Creates a new profile.
+-  void AddNewProfile(ProfileMetrics::ProfileAdd type);
++  void AddNewProfile();
+ 
+   // Opens the profile settings in response to clicking the edit button next to
+   // an item.

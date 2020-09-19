@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/profiles/avatar_menu_actions_desktop.h b/chrome/browser/profiles/avatar_menu_actions_desktop.h
+index 8973e5086f75..929856f1bdf8 100644
+--- a/chrome/browser/profiles/avatar_menu_actions_desktop.h
++++ b/chrome/browser/profiles/avatar_menu_actions_desktop.h
+@@ -9,7 +9,6 @@
+ 
+ #include "base/macros.h"
+ #include "chrome/browser/profiles/avatar_menu_actions.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ 
+ class Browser;
+ class Profile;
+@@ -21,7 +20,7 @@ class AvatarMenuActionsDesktop : public AvatarMenuActions {
+   ~AvatarMenuActionsDesktop() override;
+ 
+   // AvatarMenuActions overrides:
+-  void AddNewProfile(ProfileMetrics::ProfileAdd type) override;
++  void AddNewProfile() override;
+   void EditProfile(Profile* profile) override;
+   bool ShouldShowAddNewProfileLink() const override;
+   bool ShouldShowEditProfileLink() const override;

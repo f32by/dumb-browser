@@ -1,5 +1,5 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.h b/components/metrics_services_manager/metrics_services_manager.h
-index 38c955cfde54..b671c1983715 100644
+index 38c955cfde54..2f833560071d 100644
 --- a/components/metrics_services_manager/metrics_services_manager.h
 +++ b/components/metrics_services_manager/metrics_services_manager.h
 @@ -19,11 +19,6 @@ namespace metrics {
@@ -24,17 +24,18 @@ index 38c955cfde54..b671c1983715 100644
    // Returns the UkmService, creating it if it hasn't been created yet.
    ukm::UkmService* GetUkmService();
  
-@@ -86,9 +78,6 @@ class MetricsServicesManager {
+@@ -86,10 +78,6 @@ class MetricsServicesManager {
    bool IsMetricsConsentGiven() const;
  
   private:
 -  // Update the managed services when permissions for recording/uploading
 -  // metrics change.
 -  void UpdateRapporServiceImpl();
- 
+-
    // Returns the MetricsServiceClient, creating it if it hasn't been
    // created yet (and additionally creating the MetricsService in that case).
-@@ -124,9 +113,6 @@ class MetricsServicesManager {
+   metrics::MetricsServiceClient* GetMetricsServiceClient();
+@@ -124,9 +112,6 @@ class MetricsServicesManager {
    // The MetricsServiceClient. Owns the MetricsService.
    std::unique_ptr<metrics::MetricsServiceClient> metrics_service_client_;
  

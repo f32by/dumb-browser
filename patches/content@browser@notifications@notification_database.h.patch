@@ -1,0 +1,32 @@
+diff --git a/content/browser/notifications/notification_database.h b/content/browser/notifications/notification_database.h
+index f1ec475c0d76..a1ca9dcc1e71 100644
+--- a/content/browser/notifications/notification_database.h
++++ b/content/browser/notifications/notification_database.h
+@@ -44,8 +44,6 @@ struct NotificationDatabaseData;
+ // file I/O. The same thread or task runner must be used for all method calls.
+ class CONTENT_EXPORT NotificationDatabase {
+  public:
+-  using UkmCallback =
+-      base::RepeatingCallback<void(const NotificationDatabaseData&)>;
+   using ReadAllNotificationsCallback =
+       base::RepeatingCallback<void(const NotificationDatabaseData&)>;
+ 
+@@ -78,7 +76,7 @@ class CONTENT_EXPORT NotificationDatabase {
+     STATUS_COUNT = 7
+   };
+ 
+-  NotificationDatabase(const base::FilePath& path, UkmCallback callback);
++  explicit NotificationDatabase(const base::FilePath& path);
+ 
+   ~NotificationDatabase();
+ 
+@@ -251,9 +249,6 @@ class CONTENT_EXPORT NotificationDatabase {
+ 
+   base::SequenceChecker sequence_checker_;
+ 
+-  // Callback to use for recording UKM metrics. Must be posted to the UI thread.
+-  UkmCallback record_notification_to_ukm_callback_;
+-
+   DISALLOW_COPY_AND_ASSIGN(NotificationDatabase);
+ };
+ 

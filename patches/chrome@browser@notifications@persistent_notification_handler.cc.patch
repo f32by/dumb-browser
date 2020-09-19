@@ -1,0 +1,56 @@
+diff --git a/chrome/browser/notifications/persistent_notification_handler.cc b/chrome/browser/notifications/persistent_notification_handler.cc
+index 181a2b7d1c37..c790265bfc43 100644
+--- a/chrome/browser/notifications/persistent_notification_handler.cc
++++ b/chrome/browser/notifications/persistent_notification_handler.cc
+@@ -9,8 +9,6 @@
+ #include "base/check_op.h"
+ #include "base/metrics/histogram_macros.h"
+ #include "chrome/browser/engagement/site_engagement_service.h"
+-#include "chrome/browser/notifications/metrics/notification_metrics_logger.h"
+-#include "chrome/browser/notifications/metrics/notification_metrics_logger_factory.h"
+ #include "chrome/browser/notifications/notification_common.h"
+ #include "chrome/browser/notifications/notification_permission_context.h"
+ #include "chrome/browser/notifications/platform_notification_service_factory.h"
+@@ -54,13 +52,6 @@ void PersistentNotificationHandler::OnClose(
+     return;
+   }
+ 
+-  NotificationMetricsLogger* metrics_logger =
+-      NotificationMetricsLoggerFactory::GetForBrowserContext(profile);
+-  if (by_user)
+-    metrics_logger->LogPersistentNotificationClosedByUser();
+-  else
+-    metrics_logger->LogPersistentNotificationClosedProgrammatically();
+-
+   content::NotificationEventDispatcher::GetInstance()
+       ->DispatchNotificationCloseEvent(
+           profile, notification_id, origin, by_user,
+@@ -88,9 +79,6 @@ void PersistentNotificationHandler::OnClick(
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+   DCHECK(origin.is_valid());
+ 
+-  NotificationMetricsLogger* metrics_logger =
+-      NotificationMetricsLoggerFactory::GetForBrowserContext(profile);
+-
+ #if BUILDFLAG(ENABLE_BACKGROUND_MODE)
+   // Ensure the browser stays alive while the event is processed. The keep alive
+   // will be reset when all click events have been acknowledged.
+@@ -109,18 +97,11 @@ void PersistentNotificationHandler::OnClick(
+   // Don't process click events when the |origin| doesn't have permission. This
+   // can't be a DCHECK because of potential races with native notifications.
+   if (permission_status != blink::mojom::PermissionStatus::GRANTED) {
+-    metrics_logger->LogPersistentNotificationClickWithoutPermission();
+-
+     OnClickCompleted(profile, notification_id, std::move(completed_closure),
+                      content::PersistentNotificationStatus::kPermissionMissing);
+     return;
+   }
+ 
+-  if (action_index.has_value())
+-    metrics_logger->LogPersistentNotificationActionButtonClick();
+-  else
+-    metrics_logger->LogPersistentNotificationClick();
+-
+   // Notification clicks are considered a form of engagement with the |origin|,
+   // thus we log the interaction with the Site Engagement service.
+   SiteEngagementService::Get(profile)->HandleNotificationInteraction(origin);

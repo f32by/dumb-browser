@@ -1,0 +1,27 @@
+diff --git a/services/preferences/tracked/pref_hash_filter.cc b/services/preferences/tracked/pref_hash_filter.cc
+index 72f06ceacf88..34331df249b1 100644
+--- a/services/preferences/tracked/pref_hash_filter.cc
++++ b/services/preferences/tracked/pref_hash_filter.cc
+@@ -56,7 +56,6 @@ PrefHashFilter::PrefHashFilter(
+         tracked_preferences,
+     mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
+         reset_on_load_observer,
+-    prefs::mojom::TrackedPreferenceValidationDelegate* delegate,
+     size_t reporting_ids_count)
+     : pref_hash_store_(std::move(pref_hash_store)),
+       external_validation_hash_store_pair_(
+@@ -82,12 +81,12 @@ PrefHashFilter::PrefHashFilter(
+       case PrefTrackingStrategy::ATOMIC:
+         tracked_preference.reset(new TrackedAtomicPreference(
+             metadata.name, metadata.reporting_id, reporting_ids_count,
+-            metadata.enforcement_level, metadata.value_type, delegate));
++            metadata.enforcement_level, metadata.value_type));
+         break;
+       case PrefTrackingStrategy::SPLIT:
+         tracked_preference.reset(new TrackedSplitPreference(
+             metadata.name, metadata.reporting_id, reporting_ids_count,
+-            metadata.enforcement_level, metadata.value_type, delegate));
++            metadata.enforcement_level, metadata.value_type));
+         break;
+     }
+     DCHECK(tracked_preference);

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/download_item_model.cc b/chrome/browser/download/download_item_model.cc
-index 9f509889ba6f..6ddc97f97116 100644
+index 9f509889ba6f..f3fef73057c4 100644
 --- a/chrome/browser/download/download_item_model.cc
 +++ b/chrome/browser/download/download_item_model.cc
 @@ -27,16 +27,12 @@
@@ -89,19 +89,35 @@ index 9f509889ba6f..6ddc97f97116 100644
               !download_crx_util::IsExtensionDownload(*download_);
      case DownloadCommands::PAUSE:
        return !download_->IsSavePackageDownload() &&
-@@ -702,6 +671,7 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
+@@ -702,31 +671,6 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
        DownloadUIModel::ExecuteCommand(download_commands, command);
        break;
      case DownloadCommands::DEEP_SCAN:
-+#if BUILDFLAG(FULL_SAFE_BROWSING)
-       safe_browsing::SafeBrowsingService* sb_service =
-           g_browser_process->safe_browsing_service();
-       if (!sb_service)
-@@ -727,6 +697,7 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
-           safe_browsing::DeepScanningRequest::DeepScanTrigger::
-               TRIGGER_APP_PROMPT,
-           std::move(settings));
-+#endif
+-      safe_browsing::SafeBrowsingService* sb_service =
+-          g_browser_process->safe_browsing_service();
+-      if (!sb_service)
+-        break;
+-      safe_browsing::DownloadProtectionService* protection_service =
+-          sb_service->download_protection_service();
+-      if (!protection_service)
+-        break;
+-      DownloadCoreService* download_core_service =
+-          DownloadCoreServiceFactory::GetForBrowserContext(
+-              content::DownloadItemUtils::GetBrowserContext(download_));
+-      DCHECK(download_core_service);
+-      ChromeDownloadManagerDelegate* delegate =
+-          download_core_service->GetDownloadManagerDelegate();
+-      DCHECK(delegate);
+-      enterprise_connectors::AnalysisSettings settings;
+-      settings.tags = {"malware"};
+-      protection_service->UploadForDeepScanning(
+-          download_,
+-          base::BindRepeating(
+-              &ChromeDownloadManagerDelegate::CheckClientDownloadDone,
+-              delegate->GetWeakPtr(), download_->GetId()),
+-          safe_browsing::DeepScanningRequest::DeepScanTrigger::
+-              TRIGGER_APP_PROMPT,
+-          std::move(settings));
        break;
    }
  }

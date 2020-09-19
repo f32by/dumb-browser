@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/ui/webui/signin/signin_create_profile_handler.cc b/chrome/browser/ui/webui/signin/signin_create_profile_handler.cc
+index 7c3861b0d3c4..ee1774eeff77 100644
+--- a/chrome/browser/ui/webui/signin/signin_create_profile_handler.cc
++++ b/chrome/browser/ui/webui/signin/signin_create_profile_handler.cc
+@@ -21,7 +21,6 @@
+ #include "chrome/browser/profiles/profile_attributes_storage.h"
+ #include "chrome/browser/profiles/profile_avatar_icon_util.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/profiles/profiles_state.h"
+ #include "chrome/browser/signin/signin_error_controller_factory.h"
+ #include "chrome/browser/signin/signin_util.h"
+@@ -111,8 +110,6 @@ void SigninCreateProfileHandler::OpenForceSigninDialogForProfile(
+ void SigninCreateProfileHandler::DoCreateProfile(const base::string16& name,
+                                                  const std::string& icon_url,
+                                                  bool create_shortcut) {
+-  ProfileMetrics::LogProfileAddNewUser(ProfileMetrics::ADD_NEW_USER_DIALOG);
+-
+   profile_path_being_created_ = ProfileManager::CreateMultiProfileAsync(
+       name, icon_url,
+       base::Bind(&SigninCreateProfileHandler::OnProfileCreated,
+@@ -244,8 +241,7 @@ void SigninCreateProfileHandler::ShowProfileCreationError(
+       base::Value(error));
+   // The ProfileManager calls us back with a NULL profile in some cases.
+   if (profile) {
+-    webui::DeleteProfileAtPath(profile->GetPath(),
+-                               ProfileMetrics::DELETE_PROFILE_SETTINGS);
++    webui::DeleteProfileAtPath(profile->GetPath());
+   }
+   profile_creation_type_ = NO_CREATION_IN_PROGRESS;
+   profile_path_being_created_.clear();

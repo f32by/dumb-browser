@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/download/download_item_view.cc b/chrome/browser/ui/views/download/download_item_view.cc
-index 19ec5971d9ae..295db157d666 100644
+index 99741c538957..e4917885bdaa 100644
 --- a/chrome/browser/ui/views/download/download_item_view.cc
 +++ b/chrome/browser/ui/views/download/download_item_view.cc
 @@ -36,23 +36,15 @@
@@ -42,15 +42,6 @@ index 19ec5971d9ae..295db157d666 100644
    return label.GetDefaultTextStyle();
  }
  
-@@ -571,7 +559,7 @@ void DownloadItemView::OnPaintBackground(gfx::Canvas* canvas) {
- void DownloadItemView::OnPaint(gfx::Canvas* canvas) {
-   OnPaintBackground(canvas);
- 
--  const bool use_new_warnings = UseNewWarnings();
-+  const bool use_new_warnings = false;
- 
-   const gfx::Image* const file_icon_image =
-       g_browser_process->icon_manager()->LookupIconFromFilepath(
 @@ -774,11 +762,7 @@ void DownloadItemView::UpdateLabels() {
  
    deep_scanning_label_->SetVisible(mode_ == Mode::kDeepScanning);

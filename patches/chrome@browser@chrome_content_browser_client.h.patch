@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index c8fec14e4e05..38a325dd5622 100644
+index 1f90198c6622..d5bfa66d5bcb 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
-@@ -59,12 +59,6 @@ class PreviewsDecider;
+@@ -62,12 +62,6 @@ class PreviewsDecider;
  class PreviewsUserData;
  }  // namespace previews
  
@@ -15,7 +15,7 @@ index c8fec14e4e05..38a325dd5622 100644
  namespace ui {
  class NativeTheme;
  }
-@@ -281,8 +275,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -284,8 +278,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
  #if defined(OS_CHROMEOS)
    void OnTrustAnchorUsed(content::BrowserContext* browser_context) override;
  #endif
@@ -24,7 +24,7 @@ index c8fec14e4e05..38a325dd5622 100644
    scoped_refptr<network::SharedURLLoaderFactory>
    GetSystemSharedURLLoaderFactory() override;
    network::mojom::NetworkContext* GetSystemNetworkContext() override;
-@@ -730,34 +722,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -735,34 +727,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  

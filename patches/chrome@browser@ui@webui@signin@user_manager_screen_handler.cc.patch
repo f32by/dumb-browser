@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/ui/webui/signin/user_manager_screen_handler.cc b/chrome/browser/ui/webui/signin/user_manager_screen_handler.cc
+index 295468faa44e..40cfbc38f56f 100644
+--- a/chrome/browser/ui/webui/signin/user_manager_screen_handler.cc
++++ b/chrome/browser/ui/webui/signin/user_manager_screen_handler.cc
+@@ -180,8 +180,6 @@ void UrlHashHelper::ExecuteUrlHash() {
+ }
+ 
+ void HandleLogRemoveUserWarningShown(const base::ListValue* args) {
+-  ProfileMetrics::LogProfileDeleteUser(
+-      ProfileMetrics::DELETE_PROFILE_USER_MANAGER_SHOW_WARNING);
+ }
+ 
+ void DisplayErrorMessage(const base::string16 error_message,
+@@ -435,8 +433,7 @@ void UserManagerScreenHandler::HandleRemoveUser(const base::ListValue* args) {
+ 
+   // The callback is run if the only profile has been deleted, and a new
+   // profile has been created to replace it.
+-  webui::DeleteProfileAtPath(*profile_path,
+-                             ProfileMetrics::DELETE_PROFILE_USER_MANAGER);
++  webui::DeleteProfileAtPath(*profile_path);
+ }
+ 
+ void UserManagerScreenHandler::HandleLaunchGuest(const base::ListValue* args) {

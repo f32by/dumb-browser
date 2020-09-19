@@ -1,8 +1,8 @@
 diff --git a/content/public/browser/content_browser_client.h b/content/public/browser/content_browser_client.h
-index 0229ba39ba7f..8e75178aa3fd 100644
+index 718fc096bd10..d796889b0eea 100644
 --- a/content/public/browser/content_browser_client.h
 +++ b/content/public/browser/content_browser_client.h
-@@ -744,10 +744,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -746,11 +746,6 @@ class CONTENT_EXPORT ContentBrowserClient {
    virtual void OnTrustAnchorUsed(BrowserContext* browser_context) {}
  #endif
  
@@ -10,6 +10,7 @@ index 0229ba39ba7f..8e75178aa3fd 100644
 -  // Allows an embedder to implement their own behavior for auditing SCTs.
 -  virtual void OnSCTReportReady(BrowserContext* browser_context,
 -                                const std::string& cache_key) {}
- 
+-
    // Allows the embedder to override the LocationProvider implementation.
    // Return nullptr to indicate the default one for the platform should be
+   // created. This is used by Qt, see

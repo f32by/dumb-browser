@@ -1,8 +1,8 @@
 diff --git a/base/metrics/histogram.cc b/base/metrics/histogram.cc
-index e28233b77060..7b1bd70a900e 100644
+index e28233b77060..62252c2f2d96 100644
 --- a/base/metrics/histogram.cc
 +++ b/base/metrics/histogram.cc
-@@ -513,10 +513,10 @@ bool Histogram::HasConstructionArguments(Sample expected_minimum,
+@@ -513,25 +513,9 @@ bool Histogram::HasConstructionArguments(Sample expected_minimum,
  }
  
  void Histogram::Add(int value) {
@@ -10,7 +10,21 @@ index e28233b77060..7b1bd70a900e 100644
  }
  
  void Histogram::AddCount(int value, int count) {
-+  return;
-   DCHECK_EQ(0, ranges(0));
-   DCHECK_EQ(kSampleType_MAX, ranges(bucket_count()));
+-  DCHECK_EQ(0, ranges(0));
+-  DCHECK_EQ(kSampleType_MAX, ranges(bucket_count()));
+-
+-  if (value > kSampleType_MAX - 1)
+-    value = kSampleType_MAX - 1;
+-  if (value < 0)
+-    value = 0;
+-  if (count <= 0) {
+-    NOTREACHED();
+-    return;
+-  }
+-  unlogged_samples_->Accumulate(value, count);
+-
+-  if (UNLIKELY(StatisticsRecorder::have_active_callbacks()))
+-    FindAndRunCallback(value);
+ }
  
+ std::unique_ptr<HistogramSamples> Histogram::SnapshotSamples() const {

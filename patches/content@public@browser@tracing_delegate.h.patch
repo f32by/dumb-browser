@@ -1,0 +1,15 @@
+diff --git a/content/public/browser/tracing_delegate.h b/content/public/browser/tracing_delegate.h
+index 0aede03af602..af5485dd3642 100644
+--- a/content/public/browser/tracing_delegate.h
++++ b/content/public/browser/tracing_delegate.h
+@@ -29,10 +29,6 @@ class CONTENT_EXPORT TracingDelegate {
+  public:
+   virtual ~TracingDelegate() {}
+ 
+-  // Provide trace uploading functionality; see trace_uploader.h.
+-  virtual std::unique_ptr<TraceUploader> GetTraceUploader(
+-      scoped_refptr<network::SharedURLLoaderFactory>) = 0;
+-
+   // This can be used to veto a particular background tracing scenario.
+   virtual bool IsAllowedToBeginBackgroundScenario(
+       const BackgroundTracingConfig& config,

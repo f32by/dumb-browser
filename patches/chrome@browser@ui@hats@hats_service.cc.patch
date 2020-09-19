@@ -1,48 +1,112 @@
 diff --git a/chrome/browser/ui/hats/hats_service.cc b/chrome/browser/ui/hats/hats_service.cc
-index bc024ac55a6b..2c2cb8abfc3b 100644
+index bc024ac55a6b..5308ea76fd87 100644
 --- a/chrome/browser/ui/hats/hats_service.cc
 +++ b/chrome/browser/ui/hats/hats_service.cc
-@@ -56,12 +56,14 @@ constexpr double kHatsSurveyProbabilityDefault = 0;
+@@ -56,14 +56,9 @@ constexpr double kHatsSurveyProbabilityDefault = 0;
  
  constexpr char kHatsSurveyEnSiteIDDefault[] = "bhej2dndhpc33okm6xexsbyv4y";
  
-+ALLOW_UNUSED_TYPE
- constexpr base::TimeDelta kMinimumTimeBetweenSurveyStarts =
-     base::TimeDelta::FromDays(60);
- 
+-constexpr base::TimeDelta kMinimumTimeBetweenSurveyStarts =
+-    base::TimeDelta::FromDays(60);
+-
  constexpr base::TimeDelta kMinimumTimeBetweenSurveyChecks =
      base::TimeDelta::FromDays(1);
  
-+ALLOW_UNUSED_TYPE
- constexpr base::TimeDelta kMinimumProfileAge = base::TimeDelta::FromDays(30);
- 
+-constexpr base::TimeDelta kMinimumProfileAge = base::TimeDelta::FromDays(30);
+-
  // Preferences Data Model
-@@ -354,6 +356,8 @@ void HatsService::LaunchSurveyForBrowser(const std::string& trigger,
+ // The kHatsSurveyMetadata pref points to a dictionary.
+ // The valid keys and value types for this dictionary are as follows:
+@@ -354,91 +349,7 @@ void HatsService::LaunchSurveyForBrowser(const std::string& trigger,
  }
  
  bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
-+  return false;
-+#if 0
-   // Do not show if a survey dialog already exists.
-   if (hats_next_dialog_exists_) {
-     UMA_HISTOGRAM_ENUMERATION(
-@@ -385,11 +389,6 @@ bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
-     return false;
-   }
- 
+-  // Do not show if a survey dialog already exists.
+-  if (hats_next_dialog_exists_) {
+-    UMA_HISTOGRAM_ENUMERATION(
+-        kHatsShouldShowSurveyReasonHistogram,
+-        ShouldShowSurveyReasons::kNoSurveyAlreadyInProgress);
+-    return false;
+-  }
+-
+-  // Survey should not be loaded if the corresponding survey config is
+-  // unavailable.
+-  if (survey_configs_by_triggers_.find(trigger) ==
+-      survey_configs_by_triggers_.end()) {
+-    UMA_HISTOGRAM_ENUMERATION(
+-        kHatsShouldShowSurveyReasonHistogram,
+-        ShouldShowSurveyReasons::kNoTriggerStringMismatch);
+-    return false;
+-  }
+-
+-  if (base::FeatureList::IsEnabled(
+-          features::kHappinessTrackingSurveysForDesktopDemo)) {
+-    // Always show the survey in demo mode.
+-    return true;
+-  }
+-
+-  // Survey can not be loaded and shown if there is no network connection.
+-  if (net::NetworkChangeNotifier::IsOffline()) {
+-    UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
+-                              ShouldShowSurveyReasons::kNoOffline);
+-    return false;
+-  }
+-
 -  bool consent_given =
 -      g_browser_process->GetMetricsServicesManager()->IsMetricsConsentGiven();
 -  if (!consent_given)
 -    return false;
 -
-   if (profile_->GetLastSessionExitType() == Profile::EXIT_CRASHED) {
-     UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
-                               ShouldShowSurveyReasons::kNoLastSessionCrashed);
-@@ -439,6 +438,7 @@ bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
-   }
- 
-   return should_show_survey;
-+#endif
+-  if (profile_->GetLastSessionExitType() == Profile::EXIT_CRASHED) {
+-    UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
+-                              ShouldShowSurveyReasons::kNoLastSessionCrashed);
+-    return false;
+-  }
+-
+-  const base::DictionaryValue* pref_data =
+-      profile_->GetPrefs()->GetDictionary(prefs::kHatsSurveyMetadata);
+-  base::Optional<int> last_major_version =
+-      pref_data->FindIntPath(GetMajorVersionPath(trigger));
+-  if (last_major_version.has_value() &&
+-      static_cast<uint32_t>(*last_major_version) ==
+-          version_info::GetVersion().components()[0]) {
+-    UMA_HISTOGRAM_ENUMERATION(
+-        kHatsShouldShowSurveyReasonHistogram,
+-        ShouldShowSurveyReasons::kNoReceivedSurveyInCurrentMilestone);
+-    return false;
+-  }
+-
+-  base::Time now = base::Time::Now();
+-
+-  if ((now - profile_->GetCreationTime()) < kMinimumProfileAge) {
+-    UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
+-                              ShouldShowSurveyReasons::kNoProfileTooNew);
+-    return false;
+-  }
+-
+-  base::Optional<base::Time> last_survey_started_time =
+-      util::ValueToTime(pref_data->FindPath(GetLastSurveyStartedTime(trigger)));
+-  if (last_survey_started_time.has_value()) {
+-    base::TimeDelta elapsed_time_since_last_start =
+-        now - *last_survey_started_time;
+-    if (elapsed_time_since_last_start < kMinimumTimeBetweenSurveyStarts) {
+-      UMA_HISTOGRAM_ENUMERATION(
+-          kHatsShouldShowSurveyReasonHistogram,
+-          ShouldShowSurveyReasons::kNoLastSurveyTooRecent);
+-      return false;
+-    }
+-  }
+-
+-  auto probability_ = survey_configs_by_triggers_.at(trigger).probability_;
+-  bool should_show_survey = base::RandDouble() < probability_;
+-  if (!should_show_survey) {
+-    UMA_HISTOGRAM_ENUMERATION(
+-        kHatsShouldShowSurveyReasonHistogram,
+-        ShouldShowSurveyReasons::kNoBelowProbabilityLimit);
+-  }
+-
+-  return should_show_survey;
++  return false;
  }
  
  void HatsService::CheckSurveyStatusAndMaybeShow(Browser* browser,

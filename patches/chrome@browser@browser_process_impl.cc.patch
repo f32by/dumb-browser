@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
-index 1d94d9154140..2016ba334a38 100644
+index 1d94d9154140..0dc0d7acb7c7 100644
 --- a/chrome/browser/browser_process_impl.cc
 +++ b/chrome/browser/browser_process_impl.cc
 @@ -34,7 +34,6 @@
@@ -92,7 +92,23 @@ index 1d94d9154140..2016ba334a38 100644
  SystemNetworkContextManager*
  BrowserProcessImpl::system_network_context_manager() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-@@ -983,30 +957,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
+@@ -905,15 +879,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
+   return resource_coordinator_parts_.get();
+ }
+ 
+-BuildState* BrowserProcessImpl::GetBuildState() {
+-#if !defined(OS_ANDROID)
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  return &build_state_;
+-#else
+-  NOTIMPLEMENTED();
+-  return nullptr;
+-#endif
+-}
+ 
+ // static
+ void BrowserProcessImpl::RegisterPrefs(PrefRegistrySimple* registry) {
+@@ -983,30 +948,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
    return status_tray_.get();
  }
  
@@ -123,7 +139,7 @@ index 1d94d9154140..2016ba334a38 100644
  optimization_guide::OptimizationGuideService*
  BrowserProcessImpl::optimization_guide_service() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-@@ -1117,8 +1067,6 @@ void BrowserProcessImpl::PreCreateThreads(
+@@ -1117,8 +1058,6 @@ void BrowserProcessImpl::PreCreateThreads(
        extensions::kExtensionScheme, true);
  #endif
  
@@ -132,7 +148,7 @@ index 1d94d9154140..2016ba334a38 100644
    secure_origin_prefs_observer_ =
        std::make_unique<SecureOriginPrefsObserver>(local_state());
    site_isolation_prefs_observer_ =
-@@ -1250,64 +1198,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
+@@ -1250,64 +1189,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
  #endif
  }
  

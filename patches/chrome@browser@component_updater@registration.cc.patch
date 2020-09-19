@@ -1,16 +1,26 @@
 diff --git a/chrome/browser/component_updater/registration.cc b/chrome/browser/component_updater/registration.cc
-index e4d08bbf6754..35ddf19672ad 100644
+index 302cca1f3575..15d12207499a 100644
 --- a/chrome/browser/component_updater/registration.cc
 +++ b/chrome/browser/component_updater/registration.cc
-@@ -12,7 +12,6 @@
+@@ -12,9 +12,7 @@
+ #include "chrome/browser/component_updater/autofill_states_component_installer.h"
  #include "chrome/browser/component_updater/crl_set_component_installer.h"
  #include "chrome/browser/component_updater/crowd_deny_component_installer.h"
- #include "chrome/browser/component_updater/file_type_policies_component_installer.h"
+-#include "chrome/browser/component_updater/file_type_policies_component_installer.h"
+ #include "chrome/browser/component_updater/first_party_sets_component_installer.h"
 -#include "chrome/browser/component_updater/floc_blocklist_component_installer.h"
  #include "chrome/browser/component_updater/games_component_installer.h"
  #include "chrome/browser/component_updater/mei_preload_component_installer.h"
  #include "chrome/browser/component_updater/optimization_hints_component_installer.h"
-@@ -118,9 +117,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -22,7 +20,6 @@
+ #include "chrome/browser/component_updater/safety_tips_component_installer.h"
+ #include "chrome/browser/component_updater/ssl_error_assistant_component_installer.h"
+ #include "chrome/browser/component_updater/sth_set_component_remover.h"
+-#include "chrome/browser/component_updater/subresource_filter_component_installer.h"
+ #include "chrome/browser/component_updater/tls_deprecation_config_component_installer.h"
+ #include "chrome/browser/component_updater/trust_token_key_commitments_component_installer.h"
+ #include "chrome/browser/component_updater/zxcvbn_data_component_installer.h"
+@@ -120,9 +117,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    whitelist_installer->RegisterComponents();
  #endif
  
@@ -20,16 +30,15 @@ index e4d08bbf6754..35ddf19672ad 100644
    RegisterOnDeviceHeadSuggestComponent(
        cus, g_browser_process->GetApplicationLocale());
    RegisterOptimizationHintsComponent(cus, is_off_the_record_profile);
-@@ -148,8 +144,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
- 
-     RegisterOriginTrialsComponent(cus, path);
- 
--    RegisterFileTypePoliciesComponent(cus, path);
--
-     RegisterTrustTokenKeyCommitmentsComponentIfTrustTokensEnabled(cus, path);
- 
-     RegisterSSLErrorAssistantComponent(cus, path);
-@@ -162,7 +156,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -144,7 +138,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+ #endif
+   }
+   RegisterSSLErrorAssistantComponent(cus);
+-  RegisterFileTypePoliciesComponent(cus);
+ #if !defined(OS_CHROMEOS)
+   // CRLSetFetcher attempts to load a CRL set from either the local disk or
+   // network.
+@@ -160,7 +153,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    // on chromium build bots, it is always registered here and
    // RegisterSwReporterComponent() has support for running only in official
    // builds or tests.

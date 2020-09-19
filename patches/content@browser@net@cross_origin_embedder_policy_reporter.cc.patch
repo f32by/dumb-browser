@@ -1,68 +1,96 @@
 diff --git a/content/browser/net/cross_origin_embedder_policy_reporter.cc b/content/browser/net/cross_origin_embedder_policy_reporter.cc
-index 8109a98c697e..8da70b8a578e 100644
+index 8109a98c697e..bbf7758646ab 100644
 --- a/content/browser/net/cross_origin_embedder_policy_reporter.cc
 +++ b/content/browser/net/cross_origin_embedder_policy_reporter.cc
-@@ -13,6 +13,7 @@ namespace content {
+@@ -11,19 +11,6 @@
  
- namespace {
+ namespace content {
  
-+#if 0
- constexpr char kType[] = "coep";
- 
- GURL StripUsernameAndPassword(const GURL& url) {
-@@ -21,6 +22,7 @@ GURL StripUsernameAndPassword(const GURL& url) {
-   replacements.ClearPassword();
-   return url.ReplaceComponents(replacements);
- }
-+#endif
- 
- }  // namespace
- 
-@@ -43,6 +45,7 @@ void CrossOriginEmbedderPolicyReporter::QueueCorpViolationReport(
+-namespace {
+-
+-constexpr char kType[] = "coep";
+-
+-GURL StripUsernameAndPassword(const GURL& url) {
+-  url::Replacements<char> replacements;
+-  replacements.ClearUsername();
+-  replacements.ClearPassword();
+-  return url.ReplaceComponents(replacements);
+-}
+-
+-}  // namespace
+-
+ CrossOriginEmbedderPolicyReporter::CrossOriginEmbedderPolicyReporter(
+     StoragePartition* storage_partition,
+     const GURL& context_url,
+@@ -42,18 +29,7 @@ CrossOriginEmbedderPolicyReporter::~CrossOriginEmbedderPolicyReporter() =
+ void CrossOriginEmbedderPolicyReporter::QueueCorpViolationReport(
      const GURL& blocked_url,
      network::mojom::RequestDestination destination,
-     bool report_only) {
-+#if 0
-   GURL url_to_pass = StripUsernameAndPassword(blocked_url);
-   // We're migrating from "blocked-url" to "blockedURL".
-   // TODO(crbug.com/1119676): Remove "blocked-url" in M90.
-@@ -53,6 +56,7 @@ void CrossOriginEmbedderPolicyReporter::QueueCorpViolationReport(
-        std::make_pair("destination",
-                       network::RequestDestinationToString(destination))},
-       report_only);
-+#endif
- }
+-    bool report_only) {
+-  GURL url_to_pass = StripUsernameAndPassword(blocked_url);
+-  // We're migrating from "blocked-url" to "blockedURL".
+-  // TODO(crbug.com/1119676): Remove "blocked-url" in M90.
+-  QueueAndNotify(
+-      {std::make_pair("type", "corp"),
+-       std::make_pair("blocked-url", url_to_pass.spec()),
+-       std::make_pair("blockedURL", url_to_pass.spec()),
+-       std::make_pair("destination",
+-                      network::RequestDestinationToString(destination))},
+-      report_only);
+-}
++    bool report_only) {}
  
  void CrossOriginEmbedderPolicyReporter::BindObserver(
-@@ -63,6 +67,7 @@ void CrossOriginEmbedderPolicyReporter::BindObserver(
+     mojo::PendingRemote<blink::mojom::ReportingObserver> observer) {
+@@ -62,15 +38,7 @@ void CrossOriginEmbedderPolicyReporter::BindObserver(
+ 
  void CrossOriginEmbedderPolicyReporter::QueueNavigationReport(
      const GURL& blocked_url,
-     bool report_only) {
-+#if 0
-   GURL url_to_pass = StripUsernameAndPassword(blocked_url);
-   // We're migrating from "blocked-url" to "blockedURL".
-   // TODO(crbug.com/1119676): Remove "blocked-url" in M90.
-@@ -70,6 +75,7 @@ void CrossOriginEmbedderPolicyReporter::QueueNavigationReport(
-                   std::make_pair("blocked-url", url_to_pass.spec()),
-                   std::make_pair("blockedURL", url_to_pass.spec())},
-                  report_only);
-+#endif
- }
+-    bool report_only) {
+-  GURL url_to_pass = StripUsernameAndPassword(blocked_url);
+-  // We're migrating from "blocked-url" to "blockedURL".
+-  // TODO(crbug.com/1119676): Remove "blocked-url" in M90.
+-  QueueAndNotify({std::make_pair("type", "navigation"),
+-                  std::make_pair("blocked-url", url_to_pass.spec()),
+-                  std::make_pair("blockedURL", url_to_pass.spec())},
+-                 report_only);
+-}
++    bool report_only) {}
  
  void CrossOriginEmbedderPolicyReporter::Clone(
-@@ -81,6 +87,7 @@ void CrossOriginEmbedderPolicyReporter::Clone(
+     mojo::PendingReceiver<network::mojom::CrossOriginEmbedderPolicyReporter>
+@@ -80,33 +48,6 @@ void CrossOriginEmbedderPolicyReporter::Clone(
+ 
  void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
      std::initializer_list<std::pair<base::StringPiece, base::StringPiece>> body,
-     bool report_only) {
-+#if 0
-   const base::Optional<std::string>& endpoint =
-       report_only ? report_only_endpoint_ : endpoint_;
-   const char* const disposition = report_only ? "reporting" : "enforce";
-@@ -107,6 +114,7 @@ void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
-         kType, *endpoint, context_url_, /*user_agent=*/base::nullopt,
-         std::move(body_to_pass));
-   }
-+#endif
- }
+-    bool report_only) {
+-  const base::Optional<std::string>& endpoint =
+-      report_only ? report_only_endpoint_ : endpoint_;
+-  const char* const disposition = report_only ? "reporting" : "enforce";
+-  if (observer_) {
+-    std::vector<blink::mojom::ReportBodyElementPtr> list;
+-
+-    for (const auto& pair : body) {
+-      list.push_back(blink::mojom::ReportBodyElement::New(
+-          pair.first.as_string(), pair.second.as_string()));
+-    }
+-    list.push_back(
+-        blink::mojom::ReportBodyElement::New("disposition", disposition));
+-
+-    observer_->Notify(blink::mojom::Report::New(
+-        kType, context_url_, blink::mojom::ReportBody::New(std::move(list))));
+-  }
+-  if (endpoint) {
+-    base::DictionaryValue body_to_pass;
+-    for (const auto& pair : body) {
+-      body_to_pass.SetString(pair.first, pair.second);
+-    }
+-    body_to_pass.SetString("disposition", disposition);
+-    storage_partition_->GetNetworkContext()->QueueReport(
+-        kType, *endpoint, context_url_, /*user_agent=*/base::nullopt,
+-        std::move(body_to_pass));
+-  }
+-}
++    bool report_only) {}
  
  }  // namespace content

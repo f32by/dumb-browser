@@ -1,5 +1,5 @@
 diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
-index f8d655b1078b..e7745c416179 100644
+index f8d655b1078b..997749fdbffa 100644
 --- a/components/security_interstitials/content/cert_report_helper.cc
 +++ b/components/security_interstitials/content/cert_report_helper.cc
 @@ -15,7 +15,6 @@
@@ -10,7 +10,20 @@ index f8d655b1078b..e7745c416179 100644
  #include "components/security_interstitials/content/ssl_cert_reporter.h"
  #include "components/security_interstitials/core/controller_client.h"
  #include "components/security_interstitials/core/metrics_helper.h"
-@@ -83,8 +82,7 @@ void CertReportHelper::PopulateExtendedReportingOption(
+@@ -58,11 +57,7 @@ CertReportHelper::CertReportHelper(
+     : ssl_cert_reporter_(std::move(ssl_cert_reporter)),
+       web_contents_(web_contents),
+       request_url_(request_url),
+-      ssl_info_(ssl_info),
+-      interstitial_reason_(interstitial_reason),
+-      overridable_(overridable),
+-      interstitial_time_(interstitial_time),
+-      metrics_helper_(metrics_helper) {}
++      ssl_info_(ssl_info) {}
+ 
+ CertReportHelper::~CertReportHelper() = default;
+ 
+@@ -83,8 +78,7 @@ void CertReportHelper::PopulateExtendedReportingOption(
      return;
  
    load_time_data->SetBoolean(
@@ -20,7 +33,7 @@ index f8d655b1078b..e7745c416179 100644
  
    load_time_data->SetString(
        security_interstitials::kOptInLink,
-@@ -101,14 +99,8 @@ void CertReportHelper::HandleReportingCommands(
+@@ -101,14 +95,8 @@ void CertReportHelper::HandleReportingCommands(
      PrefService* pref_service) {
    switch (command) {
      case security_interstitials::CMD_DO_REPORT:
@@ -35,23 +48,49 @@ index f8d655b1078b..e7745c416179 100644
        break;
      case security_interstitials::CMD_PROCEED:
        user_action_ = CertificateErrorReport::USER_PROCEEDED;
-@@ -123,6 +115,7 @@ void CertReportHelper::HandleReportingCommands(
- }
- 
- void CertReportHelper::FinishCertCollection() {
-+#if 0
-   if (!ShouldShowCertificateReporterCheckbox())
-     return;
- 
-@@ -155,6 +148,7 @@ void CertReportHelper::FinishCertCollection() {
+@@ -122,40 +110,7 @@ void CertReportHelper::HandleReportingCommands(
    }
- 
-   ssl_cert_reporter_->ReportInvalidCertificateChain(serialized_report);
-+#endif
  }
+ 
+-void CertReportHelper::FinishCertCollection() {
+-  if (!ShouldShowCertificateReporterCheckbox())
+-    return;
+-
+-  if (!safe_browsing::IsExtendedReportingEnabled(*GetPrefs(web_contents_)))
+-    return;
+-
+-  if (metrics_helper_) {
+-    metrics_helper_->RecordUserInteraction(
+-        security_interstitials::MetricsHelper::EXTENDED_REPORTING_IS_ENABLED);
+-  }
+-
+-  if (!ShouldReportCertificateError())
+-    return;
+-
+-  std::string serialized_report;
+-  CertificateErrorReport report(request_url_.host(), ssl_info_);
+-
+-  if (client_details_callback_)
+-    client_details_callback_.Run(&report);
+-
+-  report.SetInterstitialInfo(
+-      interstitial_reason_, user_action_,
+-      overridable_ ? CertificateErrorReport::INTERSTITIAL_OVERRIDABLE
+-                   : CertificateErrorReport::INTERSTITIAL_NOT_OVERRIDABLE,
+-      interstitial_time_);
+-
+-  if (!report.Serialize(&serialized_report)) {
+-    LOG(ERROR) << "Failed to serialize certificate report.";
+-    return;
+-  }
+-
+-  ssl_cert_reporter_->ReportInvalidCertificateChain(serialized_report);
+-}
++void CertReportHelper::FinishCertCollection() {}
  
  bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
-@@ -163,9 +157,7 @@ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
+   // Only show the checkbox iff the user is part of the respective Finch group
+@@ -163,9 +118,7 @@ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
    const bool in_incognito =
        web_contents_->GetBrowserContext()->IsOffTheRecord();
    const PrefService* pref_service = GetPrefs(web_contents_);

@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.h b/chrome/browser/ui/views/toolbar/toolbar_view.h
+index 21510da06867..831f4f0a9b00 100644
+--- a/chrome/browser/ui/views/toolbar/toolbar_view.h
++++ b/chrome/browser/ui/views/toolbar/toolbar_view.h
+@@ -23,7 +23,6 @@
+ #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
+ #include "chrome/browser/ui/views/profiles/avatar_toolbar_button.h"
+ #include "chrome/browser/ui/views/toolbar/browser_actions_container.h"
+-#include "chrome/browser/upgrade_detector/upgrade_observer.h"
+ #include "components/prefs/pref_member.h"
+ #include "ui/base/accelerators/accelerator.h"
+ #include "ui/base/pointer/touch_ui_controller.h"
+@@ -73,7 +72,6 @@ class ToolbarView : public views::AccessiblePaneView,
+                     public CommandObserver,
+                     public views::ButtonListener,
+                     public AppMenuIconController::Delegate,
+-                    public UpgradeObserver,
+                     public ToolbarButtonProvider,
+                     public BrowserRootView::DropTarget {
+  public:
+@@ -176,10 +174,6 @@ class ToolbarView : public views::AccessiblePaneView,
+   // views::ButtonListener:
+   void ButtonPressed(views::Button* sender, const ui::Event& event) override;
+ 
+-  // UpgradeObserver toolbar_button_view_provider.
+-  void OnOutdatedInstall() override;
+-  void OnOutdatedInstallNoAutoUpdate() override;
+-  void OnCriticalUpgradeInstalled() override;
+ 
+   // ui::AcceleratorProvider:
+   bool GetAcceleratorForCommandId(int command_id,
