@@ -27,23 +27,23 @@ def main(args):
     chromium_version = get_chromium_version()
 
     # run gclient
-    # ret = run_command(['gclient', 'sync',
-    #                    '--reset',
-    #                    '--revision', 'src@refs/tags/%s' % chromium_version,
-    #                    '--force',
-    #                    '--with_tags',
-    #                    '--with_branch_heads',
-    #                    '--upstream'],
-    #                   cwd=PROJECT_DIR)
+    ret = run_command(['gclient', 'sync',
+                       '--reset',
+                       '--revision', 'src@refs/tags/%s' % chromium_version,
+                       '--force',
+                       '--with_tags',
+                       '--with_branch_heads',
+                       '--upstream'],
+                      cwd=PROJECT_DIR)
 
-    # if ret != 0:
-    #     print('Failed to run gclient.')
-    #     return 1
+    if ret != 0:
+        print('Failed to run gclient.')
+        return 1
 
-    # # apply patches
-    # if not check_patch_consistency(treat_as_fatal=True):
-    #     print('Please solve these problems before apply any patch.')
-    #     return 1
+    # apply patches
+    if not check_patch_consistency(treat_as_fatal=True):
+        print('Please solve these problems before apply any patch.')
+        return 1
 
     apply_patches()
     return 0
