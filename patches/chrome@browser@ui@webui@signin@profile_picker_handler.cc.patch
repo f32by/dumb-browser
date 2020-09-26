@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/signin/profile_picker_handler.cc b/chrome/browser/ui/webui/signin/profile_picker_handler.cc
-index 44585a46709d..a38ab6b6af71 100644
+index fb3cde19cf5f..b3cf3e5777b0 100644
 --- a/chrome/browser/ui/webui/signin/profile_picker_handler.cc
 +++ b/chrome/browser/ui/webui/signin/profile_picker_handler.cc
-@@ -329,7 +329,6 @@ void ProfilePickerHandler::HandleCreateProfile(const base::ListValue* args) {
+@@ -337,7 +337,6 @@ void ProfilePickerHandler::HandleCreateProfile(const base::ListValue* args) {
    DCHECK(profiles::IsDefaultAvatarIconUrl(avatar_url, &icon_index));
  #endif
  
@@ -10,7 +10,7 @@ index 44585a46709d..a38ab6b6af71 100644
    ProfileManager::CreateMultiProfileAsync(
        profile_name, avatar_url,
        base::BindRepeating(&ProfilePickerHandler::OnProfileCreated,
-@@ -418,8 +417,7 @@ void ProfilePickerHandler::HandleRemoveProfile(const base::ListValue* args) {
+@@ -426,8 +425,7 @@ void ProfilePickerHandler::HandleRemoveProfile(const base::ListValue* args) {
      return;
    }
    RecordProfilePickerAction(ProfilePickerAction::kDeleteProfile);

@@ -20,10 +20,11 @@ import os
 CWD = os.path.dirname(os.path.realpath(__file__))
 PROJECT_DIR = os.path.realpath(os.path.join(CWD, '..'))
 
+CHROMIUM_VERSION_FILE = os.path.join(PROJECT_DIR, 'config', 'VERSION')
 CHROMIUM_SRC_DIR = os.path.join(PROJECT_DIR, 'src')
 DUMB_SRC_DIR = os.path.join(PROJECT_DIR, 'dumb')
 DEPOT_TOOLS_DIR = os.path.join(PROJECT_DIR, 'depot_tools')
-PATCHLIST = os.path.join(PROJECT_DIR, 'scripts', 'PATCHES')
+PATCHLIST = os.path.join(PROJECT_DIR, 'config', 'PATCHES')
 PATCHES_DIR = os.path.join(PROJECT_DIR, 'patches')
 
 

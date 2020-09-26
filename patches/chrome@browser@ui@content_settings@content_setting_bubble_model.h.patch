@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/content_settings/content_setting_bubble_model.h b/chrome/browser/ui/content_settings/content_setting_bubble_model.h
-index ae133ec7a6e2..0e462ec4c8da 100644
+index d37be8dd0032..95da22bdb457 100644
 --- a/chrome/browser/ui/content_settings/content_setting_bubble_model.h
 +++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.h
 @@ -37,10 +37,6 @@ namespace content {
@@ -10,10 +10,10 @@ index ae133ec7a6e2..0e462ec4c8da 100644
 -class RapporServiceImpl;
 -}
 -
- // The hierarchy of bubble models:
- //
- // ContentSettingBubbleModel                  - base class
-@@ -219,12 +215,6 @@ class ContentSettingBubbleModel {
+ namespace ui {
+ class Event;
+ }
+@@ -223,12 +219,6 @@ class ContentSettingBubbleModel {
    // Cast this bubble into ContentSettingNotificationsBubbleModel if possible.
    virtual ContentSettingNotificationsBubbleModel* AsNotificationsBubbleModel();
  
@@ -26,7 +26,7 @@ index ae133ec7a6e2..0e462ec4c8da 100644
   protected:
    // |web_contents| must outlive this.
    ContentSettingBubbleModel(Delegate* delegate,
-@@ -277,15 +267,12 @@ class ContentSettingBubbleModel {
+@@ -281,15 +271,12 @@ class ContentSettingBubbleModel {
    void set_cancel_button_text(const base::string16& cancel_button_text) {
      bubble_content_.cancel_button_text = cancel_button_text;
    }

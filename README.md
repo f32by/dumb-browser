@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `87.0.4263.3`.
+Current version: `87.0.4270.0`.
 
 **Some patches are experimental and build may fail.**
 
@@ -42,7 +42,7 @@ Other changes / optimizations:
 It's impossible to build Dumb Browser via GitHub Actions due to GitHub free account's resource limitations.
 Please build on your own or wait for official binaries.
 
-Tested on **macOS 10.15.6** and **macOS 11.0 Beta 6**.
+Tested on **macOS 10.15.6** and **macOS 11.0 Beta 8**.
 
 ### Prerequisites
 

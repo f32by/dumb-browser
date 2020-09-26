@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index 5780f0b34a1f..f7492e5cf8df 100644
+index ea8e1d417996..c2cec7f7da89 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
 @@ -55,7 +55,6 @@
@@ -10,7 +10,7 @@ index 5780f0b34a1f..f7492e5cf8df 100644
  #include "components/version_info/version_info.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_constants.h"
-@@ -473,46 +472,12 @@ void InitLogging(const std::string& process_type) {
+@@ -470,46 +469,12 @@ void InitLogging(const std::string& process_type) {
  }
  #endif
  
@@ -57,7 +57,7 @@ index 5780f0b34a1f..f7492e5cf8df 100644
  }
  
  ChromeMainDelegate::~ChromeMainDelegate() {
-@@ -642,7 +607,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -639,7 +604,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
  
  #if defined(OS_WIN)
@@ -65,7 +65,7 @@ index 5780f0b34a1f..f7492e5cf8df 100644
    base::sequence_manager::internal::ThreadControllerPowerMonitor::
        InitializeOnMainThread();
  #endif
-@@ -703,15 +667,7 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -700,15 +664,7 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    tracing_sampler_profiler_ =
        tracing::TracingSamplerProfiler::CreateOnMainThread();
  
@@ -81,7 +81,7 @@ index 5780f0b34a1f..f7492e5cf8df 100644
  
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
-@@ -924,16 +880,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -921,16 +877,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
    std::string process_type =
        command_line.GetSwitchValueASCII(switches::kProcessType);
  
@@ -98,7 +98,7 @@ index 5780f0b34a1f..f7492e5cf8df 100644
  
  #if defined(OS_WIN)
    child_process_logging::Init();
-@@ -1058,28 +1004,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -1055,28 +1001,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
          locale;
    }
  
@@ -127,7 +127,7 @@ index 5780f0b34a1f..f7492e5cf8df 100644
  
  #if defined(OS_ANDROID)
    CHECK_EQ(base::android::GetLibraryProcessType(),
-@@ -1187,23 +1111,6 @@ void ChromeMainDelegate::ZygoteForked() {
+@@ -1184,23 +1108,6 @@ void ChromeMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

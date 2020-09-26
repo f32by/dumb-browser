@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/resources/settings/privacy_page/privacy_page.html b/chrome/browser/resources/settings/privacy_page/privacy_page.html
-index e1faf28d2d15..060bc769c714 100644
+index d8d14c342434..db9e1daf11e7 100644
 --- a/chrome/browser/resources/settings/privacy_page/privacy_page.html
 +++ b/chrome/browser/resources/settings/privacy_page/privacy_page.html
-@@ -370,25 +370,6 @@
+@@ -554,40 +554,6 @@
            </category-setting-exceptions>
          </settings-subpage>
        </template>
@@ -12,11 +12,25 @@ index e1faf28d2d15..060bc769c714 100644
 -          <settings-subpage page-title="$i18n{siteSettingsAds}"
 -              search-label="$i18n{siteSettingsAllSitesSearch}"
 -              search-term="{{searchFilter_}}">
--            <category-default-setting
--                category="[[ContentSettingsTypes.ADS]]"
--                toggle-off-label="$i18n{siteSettingsAdsBlockRecommended}"
--                toggle-on-label="$i18n{siteSettingsAllowed}">
--            </category-default-setting>
+-            <template is="dom-if" if="[[enableContentSettingsRedesign_]]">
+-              <div class="content-settings-header">
+-                <h2>$i18n{siteSettingsAdsDescription}</h2>
+-              </div>
+-              <settings-category-default-radio-group
+-                  category="[[ContentSettingsTypes.ADS]]"
+-                  allow-option-label="$i18n{siteSettingsAdsAllowed}"
+-                  allow-option-icon="settings:ads"
+-                  block-option-label="$i18n{siteSettingsAdsBlocked}"
+-                  block-option-icon="settings:block">
+-              </settings-category-default-radio-group>
+-            </template>
+-            <template is="dom-if" if="[[!enableContentSettingsRedesign_]]">
+-              <category-default-setting
+-                  category="[[ContentSettingsTypes.ADS]]"
+-                  toggle-off-label="$i18n{siteSettingsAdsBlockRecommended}"
+-                  toggle-on-label="$i18n{siteSettingsAllowed}">
+-              </category-default-setting>
+-            </template>
 -            <category-setting-exceptions
 -                category="[[ContentSettingsTypes.ADS]]"
 -                read-only-list
@@ -25,6 +39,7 @@ index e1faf28d2d15..060bc769c714 100644
 -            </category-setting-exceptions>
 -          </settings-subpage>
 -       </template>
-      </template>
+-     </template>
       <template is="dom-if" route-path="/content/unsandboxedPlugins" no-search>
          <settings-subpage page-title="$i18n{siteSettingsUnsandboxedPlugins}"
+             search-label="$i18n{siteSettingsAllSitesSearch}"

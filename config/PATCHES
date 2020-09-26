@@ -70,10 +70,6 @@ chrome/browser/enterprise/reporting/report_scheduler_desktop.h
 chrome/browser/extensions/BUILD.gn
 chrome/browser/extensions/api/downloads/downloads_api.cc
 chrome/browser/extensions/api/downloads/downloads_api.h
-chrome/browser/extensions/api/language_settings_private/language_settings_private_api.cc
-chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.cc
-chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate.h
-chrome/browser/extensions/api/language_settings_private/language_settings_private_delegate_factory.cc
 chrome/browser/extensions/api/preference/preference_api.cc
 chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_api.cc
 chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.cc
@@ -91,8 +87,8 @@ chrome/browser/extensions/blocklist_state_fetcher.h
 chrome/browser/extensions/browser_context_keyed_service_factories.cc
 chrome/browser/extensions/crx_installer.cc
 chrome/browser/extensions/extension_service.cc
+chrome/browser/extensions/extension_service.h
 chrome/browser/extensions/extension_tab_util.cc
-chrome/browser/extensions/forced_extensions/force_installed_metrics.cc
 chrome/browser/extensions/webstore_data_fetcher.cc
 chrome/browser/external_protocol/external_protocol_handler.cc
 chrome/browser/feedback/system_logs/log_sources/crash_ids_source.cc
@@ -176,7 +172,6 @@ chrome/browser/profiling_host/profiling_process_host.cc
 chrome/browser/recovery/recovery_install_global_error.cc
 chrome/browser/renderer_context_menu/render_view_context_menu.cc
 chrome/browser/renderer_context_menu/render_view_context_menu.h
-chrome/browser/renderer_host/chrome_render_widget_host_view_mac_delegate.mm
 chrome/browser/reputation/safety_tips_config.cc
 chrome/browser/resources/local_ntp/externs.js
 chrome/browser/resources/local_ntp/local_ntp.js
@@ -185,15 +180,8 @@ chrome/browser/resources/settings/basic_page/BUILD.gn
 chrome/browser/resources/settings/basic_page/basic_page.html
 chrome/browser/resources/settings/basic_page/basic_page.js
 chrome/browser/resources/settings/languages_page/BUILD.gn
-chrome/browser/resources/settings/languages_page/languages.js
-chrome/browser/resources/settings/languages_page/languages_page.html
-chrome/browser/resources/settings/languages_page/languages_types.js
 chrome/browser/resources/settings/lazy_load.js
 chrome/browser/resources/settings/privacy_page/disable_safebrowsing_dialog.html
-chrome/browser/resources/settings/privacy_page/passwords_leak_detection_toggle.html
-chrome/browser/resources/settings/privacy_page/passwords_leak_detection_toggle.js
-chrome/browser/resources/settings/privacy_page/personalization_options.html
-chrome/browser/resources/settings/privacy_page/personalization_options.js
 chrome/browser/resources/settings/privacy_page/privacy_page.html
 chrome/browser/resources/settings/privacy_page/privacy_page.js
 chrome/browser/resources/settings/privacy_page/security_page.html
@@ -214,7 +202,6 @@ chrome/browser/ssl/security_state_tab_helper.cc
 chrome/browser/ssl/ssl_client_auth_observer.cc
 chrome/browser/ssl/ssl_error_controller_client.cc
 chrome/browser/startup_data.cc
-chrome/browser/sync/profile_sync_service_factory.cc
 chrome/browser/tab_contents/navigation_metrics_recorder.cc
 chrome/browser/tracing/background_tracing_field_trial.cc
 chrome/browser/tracing/chrome_tracing_delegate.cc
@@ -375,6 +362,8 @@ components/crash/core/app/crash_reporter_client.cc
 components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.cc
 components/download/internal/common/base_file.cc
 components/embedder_support/android/metrics/android_metrics_service_client.cc
+components/metrics/BUILD.gn
+components/metrics/file_metrics_provider.cc
 components/metrics/metrics_service.cc
 components/metrics/metrics_service_accessor.cc
 components/metrics/persistent_histograms.cc
@@ -401,7 +390,6 @@ components/password_manager/core/browser/password_store.h
 components/password_manager/core/browser/password_store_signin_notifier.cc
 components/password_manager/core/browser/stub_password_manager_client.cc
 components/password_manager/core/browser/stub_password_manager_client.h
-components/renderer_context_menu/render_view_context_menu_proxy.h
 components/safety_check/safety_check.cc
 components/search_engines/template_url_service.cc
 components/security_interstitials/content/bad_clock_blocking_page.cc
@@ -419,7 +407,6 @@ components/security_interstitials/core/safe_browsing_loud_error_ui.cc
 components/security_interstitials/core/unsafe_resource.cc
 components/security_interstitials/core/unsafe_resource.h
 components/signin/public/identity_manager/identity_manager.cc
-components/spellcheck/spellcheck_build_features.gni
 components/ukm/ukm_reporting_service.cc
 components/unified_consent/unified_consent_service.cc
 components/url_formatter/url_formatter.cc
@@ -428,7 +415,6 @@ content/browser/browser_main_loop.cc
 content/browser/native_file_system/native_file_system_file_writer_impl.cc
 content/browser/native_file_system/native_file_system_file_writer_impl.h
 content/browser/net/cross_origin_embedder_policy_reporter.cc
-content/browser/net/cross_origin_opener_policy_reporter.cc
 content/browser/network_context_client_base_impl.cc
 content/browser/notifications/notification_database.cc
 content/browser/notifications/notification_database.h
@@ -455,6 +441,7 @@ content/shell/BUILD.gn
 extensions/browser/api/crash_report_private/crash_report_private_api.cc
 extensions/common/extension.cc
 headless/BUILD.gn
+ios/chrome/browser/ios_chrome_field_trials.cc
 ios/chrome/browser/passwords/ios_chrome_password_manager_client.mm
 ios/chrome/browser/ui/autofill/chrome_autofill_client_ios.mm
 ios/chrome/browser/ui/settings/BUILD.gn

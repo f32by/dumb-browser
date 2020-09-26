@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index 789b541d3033..6aa7a2a6cd4d 100644
+index 71d31ea8e65c..58552898deda 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
 @@ -74,7 +74,6 @@
@@ -10,14 +10,12 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #include "chrome/browser/metrics/chrome_feature_list_creator.h"
  #include "chrome/browser/nacl_host/nacl_browser_delegate_impl.h"
  #include "chrome/browser/net/chrome_network_delegate.h"
-@@ -113,17 +112,6 @@
+@@ -113,15 +112,6 @@
  #include "chrome/browser/renderer_host/pepper/chrome_browser_pepper_host_factory.h"
  #include "chrome/browser/renderer_preferences_util.h"
  #include "chrome/browser/resource_coordinator/background_tab_navigation_throttle.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_service.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_service_factory.h"
--#include "chrome/browser/safe_browsing/chrome_enterprise_url_lookup_service.h"
--#include "chrome/browser/safe_browsing/chrome_enterprise_url_lookup_service_factory.h"
 -#include "chrome/browser/safe_browsing/cloud_content_scanning/deep_scanning_utils.h"
 -#include "chrome/browser/safe_browsing/delayed_warning_navigation_throttle.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_navigation_throttle.h"
@@ -28,7 +26,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #include "chrome/browser/search/search.h"
  #include "chrome/browser/sharing/sms/sms_remote_fetcher.h"
  #include "chrome/browser/signin/chrome_signin_proxying_url_loader_factory.h"
-@@ -132,11 +120,7 @@
+@@ -130,11 +120,7 @@
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/speech/chrome_speech_recognition_manager_delegate.h"
  #include "chrome/browser/ssl/chrome_security_blocking_page_factory.h"
@@ -40,7 +38,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #include "chrome/browser/sync_file_system/local/sync_file_system_backend.h"
  #include "chrome/browser/tab_contents/tab_util.h"
  #include "chrome/browser/tracing/chrome_tracing_delegate.h"
-@@ -245,14 +229,6 @@
+@@ -243,14 +229,6 @@
  #include "components/previews/core/previews_features.h"
  #include "components/previews/core/previews_switches.h"
  #include "components/safe_browsing/buildflags.h"
@@ -55,15 +53,15 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #include "components/security_interstitials/content/insecure_form_navigation_throttle.h"
  #include "components/security_interstitials/content/origin_policy_ui.h"
  #include "components/security_interstitials/content/ssl_cert_reporter.h"
-@@ -262,7 +238,6 @@
+@@ -260,7 +238,6 @@
  #include "components/site_isolation/pref_names.h"
  #include "components/site_isolation/preloaded_isolated_origins.h"
  #include "components/site_isolation/site_isolation_policy.h"
 -#include "components/subresource_filter/content/browser/content_subresource_filter_throttle_manager.h"
  #include "components/translate/core/common/translate_switches.h"
- #include "components/ukm/app_source_url_recorder.h"
  #include "components/ukm/content/source_url_recorder.h"
-@@ -314,6 +289,7 @@
+ #include "components/url_formatter/url_fixer.h"
+@@ -311,6 +288,7 @@
  #include "content/public/common/user_agent.h"
  #include "content/public/common/window_container_type.mojom-shared.h"
  #include "device/vr/buildflags/buildflags.h"
@@ -71,7 +69,15 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #include "extensions/browser/process_map.h"
  #include "extensions/buildflags/buildflags.h"
  #include "google_apis/gaia/gaia_urls.h"
-@@ -871,30 +847,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
+@@ -457,7 +435,6 @@
+ #include "chrome/browser/devtools/chrome_devtools_manager_delegate.h"
+ #include "chrome/browser/devtools/devtools_window.h"
+ #include "chrome/browser/media/unified_autoplay_config.h"
+-#include "chrome/browser/safe_browsing/dm_token_utils.h"
+ #include "chrome/browser/search/instant_service.h"
+ #include "chrome/browser/search/instant_service_factory.h"
+ #include "chrome/browser/serial/chrome_serial_delegate.h"
+@@ -872,30 +849,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
    GetIOThreadApplicationLocale() = locale;
  }
  
@@ -102,7 +108,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #if BUILDFLAG(ENABLE_EXTENSIONS)
  
  AppLoadedInTabSource ClassifyAppLoadedInTabSource(
-@@ -1390,7 +1342,6 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
+@@ -1390,7 +1343,6 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
  
    main_parts->AddParts(std::make_unique<ChromeBrowserMainExtraPartsMemory>());
  
@@ -110,7 +116,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  
    // Always add ChromeBrowserMainExtraPartsGpu last to make sure
    // GpuDataManager initialization could pick up about:flags settings.
-@@ -1408,7 +1359,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
+@@ -1408,7 +1360,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
    InitNetworkContextsParentDirectory();
  
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
@@ -118,7 +124,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  }
  
  bool ChromeContentBrowserClient::IsBrowserStartupComplete() {
-@@ -2230,7 +2180,7 @@ void ChromeContentBrowserClient::AppendExtraCommandLineSwitches(
+@@ -2219,7 +2170,7 @@ void ChromeContentBrowserClient::AppendExtraCommandLineSwitches(
        // Disable client-side phishing detection in the renderer if it is
        // disabled in the Profile preferences, or by command line flag, or by not
        // being enabled on Android.
@@ -127,7 +133,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
          command_line->AppendSwitch(
              switches::kDisableClientSidePhishingDetection);
        }
-@@ -2783,16 +2733,6 @@ void ChromeContentBrowserClient::OnTrustAnchorUsed(
+@@ -2772,16 +2723,6 @@ void ChromeContentBrowserClient::OnTrustAnchorUsed(
  }
  #endif
  
@@ -144,7 +150,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  
  scoped_refptr<network::SharedURLLoaderFactory>
  ChromeContentBrowserClient::GetSystemSharedURLLoaderFactory() {
-@@ -3020,14 +2960,12 @@ base::OnceClosure ChromeContentBrowserClient::SelectClientCertificate(
+@@ -3009,14 +2950,12 @@ base::OnceClosure ChromeContentBrowserClient::SelectClientCertificate(
          base::BindOnce(
              &content::ClientCertificateDelegate::ContinueWithCertificate,
              std::move(delegate), std::move(cert)));
@@ -159,7 +165,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
      // Continue without client certificate. We do this to mimic the case of no
      // client certificate being present in the profile's certificate store.
      delegate->ContinueWithCertificate(nullptr, nullptr);
-@@ -4025,12 +3963,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4014,12 +3953,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
        &throttles);
  #endif
  
@@ -173,7 +179,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  
  #if !defined(OS_ANDROID)
    // BackgroundTabNavigationThrottle is used by TabManager, which is only
-@@ -4067,7 +4000,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4056,7 +3990,7 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
        base::BindRepeating(&MaybeTriggerSecurityInterstitialShownEvent));
    throttles.push_back(std::make_unique<SSLErrorNavigationThrottle>(
        handle,
@@ -182,7 +188,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
        base::BindOnce(&HandleSSLErrorWrapper), base::BindOnce(&IsInHostedApp)));
  
    throttles.push_back(std::make_unique<LoginNavigationThrottle>(handle));
-@@ -4080,14 +4013,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4069,14 +4003,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
                     &throttles);
  #endif
  
@@ -199,7 +205,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  
  #if defined(OS_WIN) || defined(OS_MAC) || \
      (defined(OS_LINUX) && !defined(OS_CHROMEOS))
-@@ -4726,6 +4658,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
+@@ -4720,6 +4653,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
      network::mojom::URLLoaderFactoryOverridePtr* factory_override) {
    bool use_proxy = false;
  
@@ -211,7 +217,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  #if BUILDFLAG(ENABLE_EXTENSIONS)
    auto* web_request_api =
        extensions::BrowserContextKeyedAPIFactory<extensions::WebRequestAPI>::Get(
-@@ -5168,54 +5105,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
+@@ -5162,54 +5100,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
    return ui::NativeTheme::GetInstanceForWeb();
  }
  
@@ -266,7 +272,7 @@ index 789b541d3033..6aa7a2a6cd4d 100644
  base::Optional<std::string>
  ChromeContentBrowserClient::GetOriginPolicyErrorPage(
      network::OriginPolicyState error_reason,
-@@ -5615,22 +5504,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
+@@ -5609,22 +5499,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
      const content::RenderFrameHost* frame_host,
      bool user_gesture,
      content::NavigationDownloadPolicy* download_policy) {

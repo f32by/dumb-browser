@@ -1,8 +1,8 @@
 diff --git a/chrome/test/BUILD.gn b/chrome/test/BUILD.gn
-index 7429f324e6e8..505313bc011d 100644
+index 24b1e6d45fd1..46889c2e5a8f 100644
 --- a/chrome/test/BUILD.gn
 +++ b/chrome/test/BUILD.gn
-@@ -488,7 +488,6 @@ if (is_android) {
+@@ -509,7 +509,6 @@ if (is_android) {
        "//chrome/browser/privacy_budget:browser_tests",
        "//chrome/browser/profiling_host:profiling_browsertests",
        "//components/browser_ui/widget/android:java",
@@ -10,18 +10,3 @@ index 7429f324e6e8..505313bc011d 100644
        "//components/games/core/test:test_support",
        "//components/metrics:demographics_test_support",
        "//components/ukm:ukm_test_helper",
-@@ -5493,14 +5492,6 @@ test("unit_tests") {
-     ldflags = [ "-Wl,--strip-debug" ]
-   }
-   if (is_mac) {
--    sources -= [
--      # This tests the function GetSpellCheckLanguages which is not used on
--      # Mac.
--      "../browser/spellchecker/spellcheck_service_unittest.cc",
--
--      # This tests Chrome's spellchecker which Mac doesn't use.
--      "../tools/convert_dict/convert_dict_unittest.cc",
--    ]
- 
-     # The test fetches resources which means Mac need the app bundle to exist
-     # on disk so it can pull from it.

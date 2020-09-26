@@ -1,13 +1,53 @@
 diff --git a/extensions/browser/api/crash_report_private/crash_report_private_api.cc b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
-index a9658eb82953..864627d8ca76 100644
+index 362c825a0717..9f29d7021402 100644
 --- a/extensions/browser/api/crash_report_private/crash_report_private_api.cc
 +++ b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
-@@ -31,7 +31,7 @@ base::Time g_last_called_time;
- base::Clock* g_clock = base::DefaultClock::GetInstance();
+@@ -27,47 +27,7 @@ CrashReportPrivateReportErrorFunction::
+     ~CrashReportPrivateReportErrorFunction() = default;
  
- #if defined(GOOGLE_CHROME_BUILD)
--constexpr char kCrashEndpointUrl[] = "https://clients2.google.com/cr/report";
-+constexpr char kCrashEndpointUrl[] = "https://no-thanks.invalid";
- #else
- constexpr char kCrashEndpointUrl[] = "";
- #endif
+ ExtensionFunction::ResponseAction CrashReportPrivateReportErrorFunction::Run() {
+-  // Ensure we don't send too many crash reports. Limit to one report per hour.
+-  if (!g_last_called_time.is_null() &&
+-      g_clock->Now() - g_last_called_time < base::TimeDelta::FromHours(1)) {
+-    return RespondNow(Error("Too many calls to this API"));
+-  }
+-  g_last_called_time = base::Time::Now();
+-
+-  // TODO(https://crbug.com/986166): Use crash_reporter for Chrome OS.
+-  const auto params = crash_report_private::ReportError::Params::Create(*args_);
+-  EXTENSION_FUNCTION_VALIDATE(params.get());
+-
+-  JavaScriptErrorReport error_report;
+-  error_report.message = std::move(params->info.message);
+-  error_report.url = std::move(params->info.url);
+-  if (params->info.product) {
+-    error_report.product = std::move(*params->info.product);
+-  }
+-
+-  if (params->info.version) {
+-    error_report.version = std::move(*params->info.version);
+-  }
+-
+-  if (params->info.line_number) {
+-    error_report.line_number = *params->info.line_number;
+-  }
+-
+-  if (params->info.column_number) {
+-    error_report.column_number = *params->info.column_number;
+-  }
+-
+-  if (params->info.stack_trace) {
+-    error_report.stack_trace = std::move(*params->info.stack_trace);
+-  }
+-
+-  SendJavaScriptErrorReport(
+-      std::move(error_report),
+-      base::BindOnce(&CrashReportPrivateReportErrorFunction::OnReportComplete,
+-                     this),
+-      browser_context());
+-
+-  return RespondLater();
++  return RespondNow(NoArguments());
+ }
+ 
+ void CrashReportPrivateReportErrorFunction::OnReportComplete() {

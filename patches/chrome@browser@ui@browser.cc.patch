@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser.cc b/chrome/browser/ui/browser.cc
-index abd9c297d452..cf3a0abfd2a3 100644
+index 2d26d60ad629..8312e8978bac 100644
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
 @@ -73,7 +73,6 @@
@@ -34,7 +34,7 @@ index abd9c297d452..cf3a0abfd2a3 100644
  #include "components/translate/core/browser/language_state.h"
  #include "components/user_manager/user_manager.h"
  #include "components/viz/common/surfaces/surface_id.h"
-@@ -495,8 +490,6 @@ Browser::Browser(const CreateParams& params)
+@@ -496,8 +491,6 @@ Browser::Browser(const CreateParams& params)
  
    UpdateBookmarkBarState(BOOKMARK_BAR_STATE_CHANGE_INIT);
  
@@ -43,7 +43,7 @@ index abd9c297d452..cf3a0abfd2a3 100644
    if (params.skip_window_init_for_testing)
      return;
  
-@@ -1467,10 +1460,6 @@ void Browser::OnDidBlockNavigation(
+@@ -1492,10 +1485,6 @@ void Browser::OnDidBlockNavigation(
        framebust_helper->AddBlockedUrl(blocked_url, base::BindOnce(on_click));
      }
    }
@@ -54,7 +54,7 @@ index abd9c297d452..cf3a0abfd2a3 100644
  }
  
  content::PictureInPictureResult Browser::EnterPictureInPicture(
-@@ -1545,10 +1534,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
+@@ -1570,10 +1559,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
  bool Browser::IsFrameLowPriority(
      const content::WebContents* web_contents,
      const content::RenderFrameHost* render_frame_host) {
@@ -66,7 +66,7 @@ index abd9c297d452..cf3a0abfd2a3 100644
  }
  
  void Browser::MediaWatchTimeChanged(
-@@ -1572,7 +1558,6 @@ void Browser::OnWindowDidShow() {
+@@ -1597,7 +1583,6 @@ void Browser::OnWindowDidShow() {
      return;
    window_has_shown_ = true;
  

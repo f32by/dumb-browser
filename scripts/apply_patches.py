@@ -20,26 +20,10 @@ import sys
 from distutils.dir_util import copy_tree
 
 from constants import PROJECT_DIR, DUMB_SRC_DIR, CHROMIUM_SRC_DIR
-from utils import run_command, get_chromium_version, check_patch_consistency, apply_patches
+from utils import check_patch_consistency, apply_patches
 
 
 def main(args):
-    chromium_version = get_chromium_version()
-
-    # run gclient
-    ret = run_command(['gclient', 'sync',
-                       '--reset',
-                       '--revision', 'src@refs/tags/%s' % chromium_version,
-                       '--force',
-                       '--with_tags',
-                       '--with_branch_heads',
-                       '--upstream'],
-                      cwd=PROJECT_DIR)
-
-    if ret != 0:
-        print('Failed to run gclient.')
-        return 1
-
     # apply patches
     if not check_patch_consistency(treat_as_fatal=True):
         print('Please solve these problems before apply any patch.')
@@ -55,7 +39,7 @@ def main(args):
     copy_tree(os.path.join(PROJECT_DIR, 'resources', 'chrome'), CHROMIUM_SRC_DIR)
     copy_tree(os.path.join(PROJECT_DIR, 'resources', 'components'), CHROMIUM_SRC_DIR)
 
-    print("Project synchronization finished. Now you can run 'build/build.py' to build Dumb Browser.")
+    print("Patches applied.")
 
     return 0
 

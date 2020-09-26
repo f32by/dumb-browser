@@ -19,11 +19,11 @@ import os
 import subprocess
 import sys
 
-from constants import PROJECT_DIR, PATCHLIST, PATCHES_DIR, CHROMIUM_SRC_DIR, get_env
+from constants import CHROMIUM_VERSION_FILE, PATCHLIST, PATCHES_DIR, CHROMIUM_SRC_DIR, get_env
 
 
 def get_chromium_version():
-    with open(os.path.join(PROJECT_DIR, 'build', 'VERSION'), 'r') as f:
+    with open(CHROMIUM_VERSION_FILE, 'r') as f:
         version = f.read().replace('\n', '').replace(' ', '')
     return version
 
@@ -65,7 +65,7 @@ def check_patch_consistency(treat_as_fatal=False):
             print(missing)
         return False
 
-    print('Patch consistency check finished.')
+    print('Patch consistency checked.')
     return True
 
 

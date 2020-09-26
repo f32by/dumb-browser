@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index eb6e5d353b33..bf2d8316ba6d 100644
+index 87243e716262..65612e5713bf 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
 @@ -48,8 +48,6 @@
@@ -23,7 +23,7 @@ index eb6e5d353b33..bf2d8316ba6d 100644
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/translate/content/renderer/per_frame_translate_agent.h"
  #include "components/translate/core/common/translate_util.h"
-@@ -364,11 +358,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -366,11 +360,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
@@ -35,7 +35,7 @@ index eb6e5d353b33..bf2d8316ba6d 100644
  
  #if !defined(OS_ANDROID)
    thread->AddObserver(SearchBouncer::GetInstance());
-@@ -587,25 +577,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -589,25 +579,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
        render_frame->GetRoutingID()));
  #endif
  
@@ -61,7 +61,7 @@ index eb6e5d353b33..bf2d8316ba6d 100644
  
    new previews::ResourceLoadingHintsAgent(
        render_frame_observer->associated_interfaces(), render_frame);
-@@ -1499,9 +1470,6 @@ void ChromeContentRendererClient::
+@@ -1501,9 +1472,6 @@ void ChromeContentRendererClient::
  #if defined(OS_CHROMEOS) || defined(OS_WIN) || defined(OS_ANDROID)
      blink::WebRuntimeFeatures::EnableWebShare(true);
  #endif

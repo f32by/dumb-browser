@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_impl.cc b/chrome/browser/profiles/profile_impl.cc
-index 5ee4f5589a72..8fcf3ef44376 100644
+index 55d2bd854a6f..4dc47d63f078 100644
 --- a/chrome/browser/profiles/profile_impl.cc
 +++ b/chrome/browser/profiles/profile_impl.cc
-@@ -64,8 +64,6 @@
+@@ -63,8 +63,6 @@
  #include "chrome/browser/download/download_core_service.h"
  #include "chrome/browser/download/download_core_service_factory.h"
  #include "chrome/browser/download/download_manager_utils.h"
@@ -11,7 +11,7 @@ index 5ee4f5589a72..8fcf3ef44376 100644
  #include "chrome/browser/heavy_ad_intervention/heavy_ad_service.h"
  #include "chrome/browser/heavy_ad_intervention/heavy_ad_service_factory.h"
  #include "chrome/browser/media/media_device_id_salt.h"
-@@ -91,10 +89,8 @@
+@@ -90,10 +88,8 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
  #include "chrome/browser/profiles/profile_key.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -22,15 +22,15 @@ index 5ee4f5589a72..8fcf3ef44376 100644
  #include "chrome/browser/sharing/sharing_service_factory.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_ui_util.h"
-@@ -165,7 +161,6 @@
+@@ -162,7 +158,6 @@
+ #include "printing/buildflags/buildflags.h"
  #include "services/data_decoder/public/cpp/data_decoder.h"
- #include "services/network/public/cpp/features.h"
  #include "services/preferences/public/mojom/preferences.mojom.h"
 -#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
  #include "services/service_manager/public/cpp/service.h"
  #include "ui/base/l10n/l10n_util.h"
  
-@@ -413,7 +408,7 @@ void ProfileImpl::RegisterProfilePrefs(
+@@ -410,7 +405,7 @@ void ProfileImpl::RegisterProfilePrefs(
  #endif
  
    registry->RegisterBooleanPref(prefs::kForceEphemeralProfiles, false);
@@ -39,7 +39,7 @@ index 5ee4f5589a72..8fcf3ef44376 100644
  #if defined(OS_CHROMEOS)
    registry->RegisterBooleanPref(
        prefs::kOobeMarketingOptInScreenFinished, false,
-@@ -589,25 +584,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
+@@ -586,25 +581,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
                           g_browser_process->GetApplicationLocale(),
                           pref_registry_.get());
  
@@ -66,7 +66,7 @@ index 5ee4f5589a72..8fcf3ef44376 100644
                          key_.get(), path_, async_prefs);
    key_->SetPrefs(prefs_.get());
  }
-@@ -749,10 +730,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -746,10 +727,6 @@ void ProfileImpl::DoFinalInit() {
    // initialized. https://crbug.com/171406
    SharingServiceFactory::GetForBrowserContext(this);
  

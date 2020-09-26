@@ -1,8 +1,13 @@
 diff --git a/chrome/browser/unified_consent/unified_consent_service_factory.cc b/chrome/browser/unified_consent/unified_consent_service_factory.cc
-index cf51a900f44b..d57cd617ddb7 100644
+index cf51a900f44b..655ec600f2e7 100644
 --- a/chrome/browser/unified_consent/unified_consent_service_factory.cc
 +++ b/chrome/browser/unified_consent/unified_consent_service_factory.cc
-@@ -13,8 +13,6 @@
+@@ -9,12 +9,11 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/signin/identity_manager_factory.h"
+ #include "chrome/browser/sync/profile_sync_service_factory.h"
++#include "components/spellcheck/browser/pref_names.h"
+ #include "chrome/common/pref_names.h"
  #include "components/embedder_support/pref_names.h"
  #include "components/keyed_service/content/browser_context_dependency_manager.h"
  #include "components/prefs/pref_registry_simple.h"
@@ -11,12 +16,13 @@ index cf51a900f44b..d57cd617ddb7 100644
  #include "components/sync_preferences/pref_service_syncable.h"
  #include "components/unified_consent/unified_consent_metrics.h"
  #include "components/unified_consent/unified_consent_service.h"
-@@ -35,8 +33,6 @@ namespace {
+@@ -35,8 +34,7 @@ namespace {
  std::vector<std::string> GetSyncedServicePrefNames() {
    return {
      prefs::kSearchSuggestEnabled, embedder_support::kAlternateErrorPagesEnabled,
 -        prefs::kSafeBrowsingEnabled, prefs::kSafeBrowsingScoutReportingEnabled,
 -        spellcheck::prefs::kSpellCheckUseSpellingService,
++    spellcheck::prefs::kSpellCheckUseSpellingService,
  #if defined(OS_ANDROID)
          prefs::kContextualSearchEnabled
  #endif

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/extension_service.cc b/chrome/browser/extensions/extension_service.cc
-index 0f5349ffa640..919940f1a961 100644
+index 1fcb578576c0..cd048f57b5b8 100644
 --- a/chrome/browser/extensions/extension_service.cc
 +++ b/chrome/browser/extensions/extension_service.cc
 @@ -61,7 +61,6 @@
@@ -10,7 +10,17 @@ index 0f5349ffa640..919940f1a961 100644
  #include "chrome/browser/web_applications/components/externally_installed_web_app_prefs.h"
  #include "chrome/common/buildflags.h"
  #include "chrome/common/chrome_switches.h"
-@@ -409,8 +408,6 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -389,8 +388,7 @@ ExtensionService::ExtensionService(Profile* profile,
+       ready_(ready),
+       shared_module_service_(new SharedModuleService(profile_)),
+       extension_registrar_(profile_, this),
+-      force_installed_tracker_(registry_, profile_),
+-      force_installed_metrics_(registry_, profile_, &force_installed_tracker_) {
++      force_installed_tracker_(registry_, profile_) {
+   CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+   TRACE_EVENT0("browser,startup", "ExtensionService::ExtensionService::ctor");
+ 
+@@ -409,8 +407,6 @@ ExtensionService::ExtensionService(Profile* profile,
    if (g_browser_process->profile_manager())
      profile_manager_observer_.Add(g_browser_process->profile_manager());
  
@@ -19,7 +29,7 @@ index 0f5349ffa640..919940f1a961 100644
    ExtensionManagementFactory::GetForBrowserContext(profile_)->AddObserver(this);
  
    // Set up the ExtensionUpdater.
-@@ -453,7 +450,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
+@@ -453,7 +449,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
  }
  
  ExtensionService::~ExtensionService() {

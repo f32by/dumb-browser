@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index c476b77f26e7..8076cc6a62f2 100644
+index 9ca1ad5edd0c..59fcaecda223 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
 @@ -33,7 +33,6 @@
@@ -26,7 +26,7 @@ index c476b77f26e7..8076cc6a62f2 100644
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/security_interstitials/core/features.h"
  #include "components/security_state/core/features.h"
-@@ -343,35 +340,6 @@ const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
+@@ -344,35 +341,6 @@ const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
       data_reduction_proxy::switches::kDataReductionProxyExperiment,
       data_reduction_proxy::switches::kDataReductionProxyServerAlternative10}};
  
@@ -62,7 +62,7 @@ index c476b77f26e7..8076cc6a62f2 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -2892,6 +2860,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2922,6 +2890,9 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kLockScreenNotificationDescription, kOsCrOS,
       FEATURE_VALUE_TYPE(ash::features::kLockScreenNotifications)},
  #endif  // OS_CHROMEOS
@@ -72,7 +72,7 @@ index c476b77f26e7..8076cc6a62f2 100644
      {"reduced-referrer-granularity",
       flag_descriptions::kReducedReferrerGranularityName,
       flag_descriptions::kReducedReferrerGranularityDescription, kOsAll,
-@@ -3214,9 +3185,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -3261,9 +3232,6 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kQueryTilesInstantFetchDescription, kOsAndroid,
       SINGLE_VALUE_TYPE(
           query_tiles::switches::kQueryTilesInstantBackgroundTask)},
@@ -82,7 +82,7 @@ index c476b77f26e7..8076cc6a62f2 100644
      {"android-picture-in-picture-api",
       flag_descriptions::kAndroidPictureInPictureAPIName,
       flag_descriptions::kAndroidPictureInPictureAPIDescription, kOsAndroid,
-@@ -6248,20 +6216,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6263,20 +6231,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  
