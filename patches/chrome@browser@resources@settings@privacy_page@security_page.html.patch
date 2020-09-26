@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/privacy_page/security_page.html b/chrome/browser/resources/settings/privacy_page/security_page.html
-index b8a2f80b5f2a..05dd58a49321 100644
+index b8a2f80b5f2a..7c3c80208438 100644
 --- a/chrome/browser/resources/settings/privacy_page/security_page.html
 +++ b/chrome/browser/resources/settings/privacy_page/security_page.html
 @@ -3,10 +3,6 @@
@@ -113,10 +113,17 @@ index b8a2f80b5f2a..05dd58a49321 100644
      <div class="cr-row first">
        <h2>$i18n{advancedPageTitle}</h2>
      </div>
-@@ -182,8 +85,3 @@
-         on-click="onAdvancedProtectionProgramLinkClick_"
-         external>
-     </cr-link-row>
+@@ -175,15 +78,3 @@
+         sub-label="$i18n{manageCertificatesDescription}"
+         on-click="onManageCertificatesClick_"></cr-link-row>
+ </if>
+-    <cr-link-row id="advanced-protection-program-link"
+-        class="hr"
+-        label="$i18n{advancedProtectionProgramTitle}"
+-        sub-label="$i18n{advancedProtectionProgramDesc}"
+-        on-click="onAdvancedProtectionProgramLinkClick_"
+-        external>
+-    </cr-link-row>
 -    <template is="dom-if" if="[[showDisableSafebrowsingDialog_]]" restamp>
 -      <settings-disable-safebrowsing-dialog prefs="{{prefs}}"
 -          on-close="onDisableSafebrowsingDialogClose_">
