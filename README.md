@@ -51,7 +51,7 @@ Android: Currently not supported.
 
 Windows: [Building Dumb Browser for Windows](docs/windows.md)
 
-macOS: [Building Dumb Browser for macOS](docs/windows.md)
+macOS: [Building Dumb Browser for macOS](docs/macos.md)
 
 ### Build Instruction
 
