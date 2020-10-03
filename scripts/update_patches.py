@@ -47,7 +47,7 @@ def main(args):
 
     ret = ret[:-3]
     total = len(ret)
-    print('Processing %d files...' % total)
+    print('Updating files...')
 
     new_patch_list = OrderedSet()
 
@@ -64,11 +64,10 @@ def main(args):
         if len(entry) == 0:
             continue
 
-        i += 1
-
         filename = regex.findall(entry)[0]
 
         if filename in EXCLUSION_FILES:
+            total -= 1
             continue
 
         new_patch_list.add(filename)
@@ -80,6 +79,8 @@ def main(args):
         with open(os.path.join(PATCHES_DIR, patch_filename), 'w', newline='\n') as f:
             f.write(GIT_DIFF_PATTERN)
             f.write(entry)
+
+        i += 1
 
     # remove old patches
     if os.path.exists(PATCH_LIST_FILE):

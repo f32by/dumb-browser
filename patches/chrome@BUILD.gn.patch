@@ -1,5 +1,5 @@
 diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index e561fed130ff..ec4606d04a7d 100644
+index e561fed130ff..8d4cee3a5aca 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
 @@ -107,7 +107,7 @@ if (!is_android && !is_mac) {
@@ -7,7 +7,7 @@ index e561fed130ff..ec4606d04a7d 100644
      data_deps = [ ":chrome_initial" ]
      if (is_win) {
 -      public_deps += [ ":reorder_imports" ]
-+      public_deps += [ ":reorder_imports", "//dumb/build/win:dumb_copy_exe" ]
++      public_deps += [ ":reorder_imports", "//dumb/build/win:copy_exe_and_pdb" ]
        data_deps += [ ":reorder_imports" ]
      }
      if (is_chromeos) {
