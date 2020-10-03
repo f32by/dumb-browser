@@ -19,7 +19,7 @@ import os
 import subprocess
 import sys
 
-from constants import CHROMIUM_VERSION_FILE, PATCHLIST, PATCHES_DIR, CHROMIUM_SRC_DIR, get_env
+from constants import CHROMIUM_VERSION_FILE, PATCH_LIST_FILE, PATCHES_DIR, CHROMIUM_SRC_DIR, get_env
 
 
 def get_chromium_version():
@@ -29,15 +29,15 @@ def get_chromium_version():
 
 
 def get_patch_filename(filename):
-    return filename.replace(os.path.sep, '@') + '.patch'
+    return filename.replace('/', '@') + '.patch'
 
 
 def get_original_filename(filename):
-    return filename.replace('@', os.path.sep)[:-6]
+    return filename.replace('@', '/')[:-6]
 
 
 def check_patch_consistency(treat_as_fatal=False):
-    with open(PATCHLIST, 'r') as f:
+    with open(PATCH_LIST_FILE, 'r') as f:
         patch_list = f.read().split('\n')
 
     patch_list = set(patch_list)
@@ -46,8 +46,6 @@ def check_patch_consistency(treat_as_fatal=False):
     for p in patch_files:
         if not p.endswith('.patch'):
             print('Found non-patch file %s, please consider move or delete it.' % p)
-            if treat_as_fatal:
-                return False
             continue
 
         patch_filename = get_original_filename(p)
@@ -60,7 +58,7 @@ def check_patch_consistency(treat_as_fatal=False):
             patch_list.remove(patch_filename)
 
     if len(patch_list) > 0:
-        print('Missing patches for following file(s):')
+        print('Missing patch(es) for following file(s):')
         for missing in patch_list:
             print(missing)
         return False
@@ -70,7 +68,7 @@ def check_patch_consistency(treat_as_fatal=False):
 
 
 def apply_patches():
-    with open(PATCHLIST, 'r') as f:
+    with open(PATCH_LIST_FILE, 'r') as f:
         patch_list = f.read().split('\n')
 
     print('Applying patches...')
@@ -83,7 +81,7 @@ def apply_patches():
                            '--no-backup-if-mismatch',
                            '--forward'])
 
-        if ret != 0:
+        if not ret:
             print('Failed to patch file ', p)
             return False
 
@@ -109,7 +107,8 @@ def run_command(command, extra_env=None, cwd=None):
                             env=env)
     while True:
         output = proc.stdout.readline()
-        if not output: break
+        if len(output) == 0 and proc.poll() is not None:
+            break
 
         print(output.decode(sys.stdout.encoding))
 

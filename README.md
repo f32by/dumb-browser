@@ -11,7 +11,7 @@ Current version: `87.0.4270.0`.
 
 Following components are removed/disabled:
 1. [Safe Browsing](https://safebrowsing.google.com)
-2. Metrics (Histogram)
+2. Histogram logging ( chrome://histograms )
 3. Crash Reporter & Crashpad
 4. WebRTC Log Uploader
 5. Network Time Tracker
@@ -23,17 +23,15 @@ Following components are removed/disabled:
 12. Field trails fetching
 13. Promotions in New Tab Page
 14. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
-15. Spell Checker
 16. Installer and Updater
 17. Subresource filter (which is used by Chrome's integrated AdBlocking feature.)
 
 Other changes / optimizations:
-1. [UI] Change web controls' color to gray (edge style)
+1. [UI] Change web controls' color to gray (Microsoft Edge style)
 2. [UI] Reduce location bar corner radius
 3. [UI] Disable Chromium's missing key warning
 4. [UI] Restore mute button on tab
 5. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
-6. [UI] Remove "Your Internet connection is being controlled" bubble
 
 # Installation
 
@@ -42,7 +40,10 @@ Other changes / optimizations:
 It's impossible to build Dumb Browser via GitHub Actions due to GitHub free account's resource limitations.
 Please build on your own or wait for official binaries.
 
-Tested on **macOS 10.15.6** and **macOS 11.0 Beta 8**.
+Tested on following OS:
+1. macOS 10.15.7
+2. macOS 11.0 Beta 9
+3. Windows 10 1909 18363.1082
 
 ### Prerequisites
 

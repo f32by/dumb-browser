@@ -19,7 +19,7 @@ import os
 import sys
 from distutils.dir_util import copy_tree
 
-from constants import PROJECT_DIR, DUMB_SRC_DIR, CHROMIUM_SRC_DIR
+from constants import DUMB_SRC_DIR, CHROMIUM_SRC_DIR
 from utils import check_patch_consistency, apply_patches
 
 
@@ -32,12 +32,7 @@ def main(args):
     apply_patches()
 
     # copy dumb-specific sources to src
-    print('Copying Dumb Browser source files to Chromium source root...')
-    copy_tree(DUMB_SRC_DIR, os.path.join(CHROMIUM_SRC_DIR, 'dumb'))
-
-    print('Copying resources...')
-    copy_tree(os.path.join(PROJECT_DIR, 'resources', 'chrome'), CHROMIUM_SRC_DIR)
-    copy_tree(os.path.join(PROJECT_DIR, 'resources', 'components'), CHROMIUM_SRC_DIR)
+    copy_tree(DUMB_SRC_DIR, CHROMIUM_SRC_DIR)
 
     print("Patches applied.")
 

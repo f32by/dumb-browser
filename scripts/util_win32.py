@@ -36,7 +36,7 @@ def check_vs_version(required_version=2019):
 
     try:
         winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, VS_REGISTRY_KEY, 0, winreg.KEY_READ)
-    except Exception as e:
+    except Exception:
         print('Visual Studio 2019 not found.')
         return False
 

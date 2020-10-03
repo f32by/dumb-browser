@@ -1,16 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 5b0fa041820f..9faffc8f8c61 100644
+index 5b0fa041820f..0e3812447582 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -72,7 +72,6 @@ group("gn_all") {
-     "//base:base_perftests",
-     "//base:base_unittests",
-     "//base/util:base_util_unittests",
--    "//chrome/installer",
-     "//chrome/updater",
-     "//components:components_unittests",
-     "//components/gwp_asan:gwp_asan_unittests",
-@@ -114,7 +113,6 @@ group("gn_all") {
+@@ -114,7 +114,6 @@ group("gn_all") {
        "//chrome/test:interactive_ui_tests",
        "//chrome/test:sync_integration_tests",
        "//chrome/test/chromedriver:chromedriver_unittests",
@@ -18,7 +10,7 @@ index 5b0fa041820f..9faffc8f8c61 100644
        "//components/zucchini:zucchini",
        "//components/zucchini:zucchini_unittests",
        "//gpu/gles2_conform_support:gles2_conform_test",
-@@ -244,7 +242,6 @@ group("gn_all") {
+@@ -244,7 +243,6 @@ group("gn_all") {
    } else if (is_ios) {
      deps += [
        "//ios:all",
@@ -26,7 +18,7 @@ index 5b0fa041820f..9faffc8f8c61 100644
      ]
    } else if (is_fuchsia) {
      deps += [
-@@ -454,14 +451,6 @@ group("gn_all") {
+@@ -454,14 +452,6 @@ group("gn_all") {
      ]
    }
  
@@ -41,7 +33,7 @@ index 5b0fa041820f..9faffc8f8c61 100644
    if (is_linux || is_chromeos) {
      # The following are definitely linux-only.
      deps += [
-@@ -635,7 +624,6 @@ group("gn_all") {
+@@ -635,7 +625,6 @@ group("gn_all") {
    if (is_win) {
      deps += [
        "//base:pe_image_test",
@@ -49,7 +41,7 @@ index 5b0fa041820f..9faffc8f8c61 100644
        "//chrome/chrome_elf:chrome_elf_unittests",
        "//chrome/chrome_elf:dll_hash_main",
        "//chrome/elevation_service:elevation_service_unittests",
-@@ -683,14 +671,6 @@ group("gn_all") {
+@@ -683,14 +672,6 @@ group("gn_all") {
      }
    }
  
@@ -64,7 +56,7 @@ index 5b0fa041820f..9faffc8f8c61 100644
    if (use_openh264) {
      deps += [
        "//third_party/openh264:common",
-@@ -727,7 +707,6 @@ group("gn_all") {
+@@ -727,7 +708,6 @@ group("gn_all") {
        "//chrome/tools/convert_dict",
        "//components/constrained_window:unit_tests",
        "//components/metrics:serialization",
@@ -72,7 +64,7 @@ index 5b0fa041820f..9faffc8f8c61 100644
        "//components/services/filesystem:filesystem_service_unittests",
        "//components/sessions:unit_tests",
        "//media/blink:media_blink_unittests",
-@@ -853,10 +832,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
+@@ -853,10 +833,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
        "//remoting/host:host",
        "//tools/traffic_annotation/summary:annotations_xml",
      ]

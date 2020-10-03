@@ -1,0 +1,36 @@
+diff --git a/components/keep_alive_registry/keep_alive_registry.cc b/components/keep_alive_registry/keep_alive_registry.cc
+index 913402e8ee55..bf37e64f6b3e 100644
+--- a/components/keep_alive_registry/keep_alive_registry.cc
++++ b/components/keep_alive_registry/keep_alive_registry.cc
+@@ -11,7 +11,6 @@
+ 
+ #if defined(OS_WIN)
+ #include "components/browser_watcher/activity_data_names.h"
+-#include "components/browser_watcher/extended_crash_reporting.h"
+ #endif
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -158,10 +157,7 @@ void KeepAliveRegistry::Unregister(KeepAliveOrigin origin,
+ void KeepAliveRegistry::OnKeepAliveStateChanged(bool new_keeping_alive) {
+   DVLOG(1) << "Notifying KeepAliveStateObservers: KeepingAlive changed to: "
+            << new_keeping_alive;
+-#if defined(OS_WIN)
+-  browser_watcher::ExtendedCrashReporting::SetDataBool(
+-      browser_watcher::kActivityKeepAlive, new_keeping_alive);
+-#endif
++
+   for (KeepAliveStateObserver& observer : observers_)
+     observer.OnKeepAliveStateChanged(new_keeping_alive);
+ }
+@@ -169,10 +165,7 @@ void KeepAliveRegistry::OnKeepAliveStateChanged(bool new_keeping_alive) {
+ void KeepAliveRegistry::OnRestartAllowedChanged(bool new_restart_allowed) {
+   DVLOG(1) << "Notifying KeepAliveStateObservers: Restart changed to: "
+            << new_restart_allowed;
+-#if defined(OS_WIN)
+-  browser_watcher::ExtendedCrashReporting::SetDataBool(
+-      browser_watcher::kActivityRestartAllowed, new_restart_allowed);
+-#endif
++
+   for (KeepAliveStateObserver& observer : observers_)
+     observer.OnKeepAliveRestartStateChanged(new_restart_allowed);
+ }

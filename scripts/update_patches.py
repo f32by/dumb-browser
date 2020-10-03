@@ -18,14 +18,17 @@
 import os
 import subprocess
 import sys
+import re
 
-from setuptools._vendor.ordered_set import OrderedSet
+from ordered_set import OrderedSet
 
-from constants import CHROMIUM_SRC_DIR, PATCHES_DIR, PATCHLIST
+from constants import CHROMIUM_SRC_DIR, PATCHES_DIR, PATCH_LIST_FILE
 from utils import get_patch_filename, get_original_filename
 
+GIT_DIFF_PATTERN = 'diff --git '
+
 EXCLUSION_FILES = [
-    # language resources
+    # locale resources
     'chrome/app/chromium_strings.grd',
     'chrome/app/settings_chromium_strings.grdp',
     'chrome/app/settings_strings.grdp',
@@ -36,7 +39,8 @@ EXCLUSION_FILES = [
 
 
 def main(args):
-    ret = subprocess.check_output(['git', 'checkout'], cwd=CHROMIUM_SRC_DIR).decode('utf-8').split('\n')
+    ret = subprocess.check_output(
+        ['git', 'checkout'], cwd=CHROMIUM_SRC_DIR).decode('utf-8').split('\n')
     if len(ret) < 3:
         print('No diff available.')
         exit(0)
@@ -47,31 +51,38 @@ def main(args):
 
     new_patch_list = OrderedSet()
 
+    unified_diff = subprocess.check_output(
+        ['git', 'diff', '--ignore-space-at-eol'],
+        cwd=CHROMIUM_SRC_DIR
+    ).decode('utf-8')
+
+    splitted = unified_diff.split(GIT_DIFF_PATTERN)
+    regex = re.compile('(?<=a/)(.*)(?= b/)')
+
     i = 0
-    for entry in ret:
-        filename = entry.replace('M\t', '')
-        # exclude resource files
-        if filename in EXCLUSION_FILES:
-            total -= 1
+    for entry in splitted:
+        if len(entry) == 0:
             continue
 
         i += 1
-        new_patch_list.add(filename)
 
+        filename = regex.findall(entry)[0]
+
+        if filename in EXCLUSION_FILES:
+            continue
+
+        new_patch_list.add(filename)
         patch_filename = get_patch_filename(filename)
 
         print('[%d/%d]' % (i, total), filename)
 
-        # get patch content
-        # TODO: use unified git diff to increase performance
-        diff = subprocess.check_output(['git', 'diff', filename], cwd=CHROMIUM_SRC_DIR).decode('utf-8')
-
         # write to file
-        with open(os.path.join(PATCHES_DIR, patch_filename), 'w') as f:
-            f.write(diff)
+        with open(os.path.join(PATCHES_DIR, patch_filename), 'w', newline='\n') as f:
+            f.write(GIT_DIFF_PATTERN)
+            f.write(entry)
 
     # remove old patches
-    if os.path.exists(PATCHLIST):
+    if os.path.exists(PATCH_LIST_FILE):
         print('Removing old patches...')
 
         removed_count = 0
@@ -87,7 +98,7 @@ def main(args):
         print('Removed %d unused patch(es).' % removed_count)
 
     print('Writing new patch list...')
-    with open(PATCHLIST, 'w') as f:
+    with open(PATCH_LIST_FILE, 'w') as f:
         f.writelines('\n'.join(new_patch_list))
 
     print('Patches updated.')

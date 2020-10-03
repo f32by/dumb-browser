@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/profile_resetter/resettable_settings_snapshot.cc b/chrome/browser/profile_resetter/resettable_settings_snapshot.cc
+index f3b1c551d203..eb426e0ac172 100644
+--- a/chrome/browser/profile_resetter/resettable_settings_snapshot.cc
++++ b/chrome/browser/profile_resetter/resettable_settings_snapshot.cc
+@@ -318,7 +318,7 @@ std::unique_ptr<base::ListValue> GetReadableFeedbackForSnapshot(
+     for (auto i = shortcuts.begin(); i != shortcuts.end(); ++i) {
+       if (!shortcut_targets.empty())
+         shortcut_targets += base::ASCIIToUTF16("\n");
+-      shortcut_targets += base::ASCIIToUTF16("chrome.exe ");
++      shortcut_targets += base::ASCIIToUTF16("dumb.exe ");
+       shortcut_targets += i->second;
+     }
+     if (!shortcut_targets.empty()) {

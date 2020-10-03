@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/blocklist_state_fetcher.cc b/chrome/browser/extensions/blocklist_state_fetcher.cc
-index f1a75ca84bec..d5a479238b63 100644
+index f1a75ca84bec..a9705e27a8a7 100644
 --- a/chrome/browser/extensions/blocklist_state_fetcher.cc
 +++ b/chrome/browser/extensions/blocklist_state_fetcher.cc
 @@ -8,10 +8,6 @@
@@ -13,7 +13,7 @@ index f1a75ca84bec..d5a479238b63 100644
  #include "content/public/browser/browser_thread.h"
  #include "net/base/escape.h"
  #include "net/traffic_annotation/network_traffic_annotation.h"
-@@ -32,98 +28,12 @@ BlocklistStateFetcher::~BlocklistStateFetcher() {
+@@ -32,98 +28,9 @@ BlocklistStateFetcher::~BlocklistStateFetcher() {
  void BlocklistStateFetcher::Request(const std::string& id,
                                      const RequestCallback& callback) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
@@ -32,7 +32,9 @@ index f1a75ca84bec..d5a479238b63 100644
 -  callbacks_.insert(std::make_pair(id, callback));
 -  if (request_already_sent)
 -    return;
--
++  base::ThreadTaskRunnerHandle::Get()->PostTask(
++    FROM_HERE, base::BindOnce(callback, BLOCKLISTED_UNKNOWN));
+ 
 -  if (g_browser_process && g_browser_process->safe_browsing_service()) {
 -    if (base::FeatureList::IsEnabled(
 -            safe_browsing::kSafeBrowsingRemoveCookies)) {
@@ -44,12 +46,10 @@ index f1a75ca84bec..d5a479238b63 100644
 -  }
 -
 -  SendRequest(id);
-+  base::ThreadTaskRunnerHandle::Get()->PostTask(
-+    FROM_HERE, base::BindOnce(callback, BLOCKLISTED_UNKNOWN));
- }
- 
- void BlocklistStateFetcher::SendRequest(const std::string& id) {
-   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-}
+-
+-void BlocklistStateFetcher::SendRequest(const std::string& id) {
+-  DCHECK_CURRENTLY_ON(BrowserThread::UI);
 -
 -  ClientCRXListInfoRequest request;
 -  request.set_id(id);
@@ -114,17 +114,30 @@ index f1a75ca84bec..d5a479238b63 100644
  }
  
  void BlocklistStateFetcher::OnURLLoaderComplete(
-@@ -161,12 +71,7 @@ void BlocklistStateFetcher::OnURLLoaderCompleteInternal(
+@@ -159,25 +66,7 @@ void BlocklistStateFetcher::OnURLLoaderCompleteInternal(
+   std::string id = it->second.second;
+   requests_.erase(it);
  
-   BlocklistState state;
-   if (net_error == net::OK && response_code == 200) {
+-  BlocklistState state;
+-  if (net_error == net::OK && response_code == 200) {
 -    ClientCRXListInfoResponse response;
 -    if (response.ParseFromString(response_body)) {
 -      state = static_cast<BlocklistState>(response.verdict());
 -    } else {
 -      state = BLOCKLISTED_UNKNOWN;
 -    }
-+    state = BLOCKLISTED_UNKNOWN;
-   } else {
-     if (net_error != net::OK) {
-       VLOG(1) << "Blocklist request for: " << id
+-  } else {
+-    if (net_error != net::OK) {
+-      VLOG(1) << "Blocklist request for: " << id
+-              << " failed with error: " << net_error;
+-    } else {
+-      VLOG(1) << "Blocklist request for: " << id
+-              << " failed with error: " << response_code;
+-    }
+-
+-    state = BLOCKLISTED_UNKNOWN;
+-  }
++  BlocklistState state = BLOCKLISTED_UNKNOWN;
+ 
+   std::pair<CallbackMultiMap::iterator, CallbackMultiMap::iterator> range =
+       callbacks_.equal_range(id);

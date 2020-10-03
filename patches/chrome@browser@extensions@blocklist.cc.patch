@@ -1,14 +1,14 @@
 diff --git a/chrome/browser/extensions/blocklist.cc b/chrome/browser/extensions/blocklist.cc
-index 72b04806b6e0..17b2c09337cf 100644
+index 72b04806b6e0..3c6d2beca2bd 100644
 --- a/chrome/browser/extensions/blocklist.cc
 +++ b/chrome/browser/extensions/blocklist.cc
-@@ -18,141 +18,15 @@
+@@ -18,119 +18,18 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/extensions/blocklist_factory.h"
  #include "chrome/browser/extensions/blocklist_state_fetcher.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
  #include "components/prefs/pref_service.h"
--#include "components/safe_browsing/buildflags.h"
+ #include "components/safe_browsing/buildflags.h"
 -#include "components/safe_browsing/core/db/util.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
@@ -19,8 +19,8 @@ index 72b04806b6e0..17b2c09337cf 100644
  
  namespace extensions {
  
--namespace {
--
+ namespace {
+ 
 -// The safe browsing database manager to use. Make this a global/static variable
 -// rather than a member of Blocklist because Blocklist accesses the real
 -// database manager before it has a chance to get a fake one.
@@ -119,32 +119,10 @@ index 72b04806b6e0..17b2c09337cf 100644
 -  DISALLOW_COPY_AND_ASSIGN(SafeBrowsingClientImpl);
 -};
 -
--void CheckOneExtensionState(const Blocklist::IsBlocklistedCallback& callback,
--                            const Blocklist::BlocklistStateMap& state_map) {
--  callback.Run(state_map.empty() ? NOT_BLOCKLISTED : state_map.begin()->second);
--}
--
--void GetMalwareFromBlocklistStateMap(
--    const Blocklist::GetMalwareIDsCallback& callback,
--    const Blocklist::BlocklistStateMap& state_map) {
--  std::set<std::string> malware;
--  for (const auto& state_pair : state_map) {
--    // TODO(oleg): UNKNOWN is treated as MALWARE for backwards compatibility.
--    // In future GetMalwareIDs will be removed and the caller will have to
--    // deal with BLOCKLISTED_UNKNOWN state returned from GetBlocklistedIDs.
--    if (state_pair.second == BLOCKLISTED_MALWARE ||
--        state_pair.second == BLOCKLISTED_UNKNOWN) {
--      malware.insert(state_pair.first);
--    }
--  }
--  callback.Run(malware);
--}
--
--}  // namespace
- 
- Blocklist::Observer::Observer(Blocklist* blocklist) : blocklist_(blocklist) {
-   blocklist_->AddObserver(this);
-@@ -162,24 +36,7 @@ Blocklist::Observer::~Observer() {
+ void CheckOneExtensionState(const Blocklist::IsBlocklistedCallback& callback,
+                             const Blocklist::BlocklistStateMap& state_map) {
+   callback.Run(state_map.empty() ? NOT_BLOCKLISTED : state_map.begin()->second);
+@@ -162,24 +61,7 @@ Blocklist::Observer::~Observer() {
    blocklist_->RemoveObserver(this);
  }
  
@@ -169,7 +147,7 @@ index 72b04806b6e0..17b2c09337cf 100644
    ObserveNewDatabase();
  }
  
-@@ -194,32 +51,22 @@ void Blocklist::GetBlocklistedIDs(const std::set<std::string>& ids,
+@@ -194,19 +76,11 @@ void Blocklist::GetBlocklistedIDs(const std::set<std::string>& ids,
                                    const GetBlocklistedIDsCallback& callback) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
@@ -179,7 +157,7 @@ index 72b04806b6e0..17b2c09337cf 100644
          FROM_HERE, base::BindOnce(callback, BlocklistStateMap()));
      return;
    }
- 
+-
 -  // Constructing the SafeBrowsingClientImpl begins the process of asking
 -  // safebrowsing for the blocklisted extensions. The set of blocklisted
 -  // extensions returned by SafeBrowsing will then be passed to
@@ -190,20 +168,7 @@ index 72b04806b6e0..17b2c09337cf 100644
  }
  
  void Blocklist::GetMalwareIDs(const std::set<std::string>& ids,
-                               const GetMalwareIDsCallback& callback) {
--  GetBlocklistedIDs(ids,
--                    base::Bind(&GetMalwareFromBlocklistStateMap, callback));
- }
- 
- void Blocklist::IsBlocklisted(const std::string& extension_id,
-                               const IsBlocklistedCallback& callback) {
-   std::set<std::string> check;
-   check.insert(extension_id);
--  GetBlocklistedIDs(check, base::Bind(&CheckOneExtensionState, callback));
- }
- 
- void Blocklist::GetBlocklistStateForIDs(
-@@ -336,29 +183,8 @@ void Blocklist::RemoveObserver(Observer* observer) {
+@@ -336,29 +210,8 @@ void Blocklist::RemoveObserver(Observer* observer) {
    observers_.RemoveObserver(observer);
  }
  

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/blocklist_state_fetcher.h b/chrome/browser/extensions/blocklist_state_fetcher.h
-index 9da2debfcb88..e689d9b68cfb 100644
+index 9da2debfcb88..f30086d866e0 100644
 --- a/chrome/browser/extensions/blocklist_state_fetcher.h
 +++ b/chrome/browser/extensions/blocklist_state_fetcher.h
 @@ -11,10 +11,11 @@
@@ -24,10 +24,12 @@ index 9da2debfcb88..e689d9b68cfb 100644
   protected:
    void OnURLLoaderComplete(network::SimpleURLLoader* url_loader,
                             std::unique_ptr<std::string> response_body);
-@@ -54,7 +53,6 @@ class BlocklistStateFetcher {
+@@ -52,9 +51,6 @@ class BlocklistStateFetcher {
  
-   void SendRequest(const std::string& id);
+   GURL RequestUrl() const;
  
+-  void SendRequest(const std::string& id);
+-
 -  std::unique_ptr<safe_browsing::V4ProtocolConfig> safe_browsing_config_;
    scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
  

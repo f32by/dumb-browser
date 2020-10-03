@@ -1,0 +1,42 @@
+diff --git a/chrome/browser/web_applications/chrome_pwa_launcher/chrome_pwa_launcher_main.cc b/chrome/browser/web_applications/chrome_pwa_launcher/chrome_pwa_launcher_main.cc
+index 807f7f9e0819..5503337a5d3a 100644
+--- a/chrome/browser/web_applications/chrome_pwa_launcher/chrome_pwa_launcher_main.cc
++++ b/chrome/browser/web_applications/chrome_pwa_launcher/chrome_pwa_launcher_main.cc
+@@ -10,13 +10,24 @@
+ #include "base/process/launch.h"
+ #include "base/win/windows_types.h"
+ #include "chrome/browser/web_applications/chrome_pwa_launcher/last_browser_file_util.h"
+-#include "chrome/browser/web_applications/chrome_pwa_launcher/launcher_log.h"
+-#include "chrome/browser/web_applications/chrome_pwa_launcher/launcher_update.h"
+ #include "chrome/common/chrome_switches.h"
+ #include "chrome/install_static/install_details.h"
+ #include "chrome/install_static/product_install_details.h"
+ #include "components/version_info/version_info_values.h"
+ 
++namespace web_app {
++
++// These values are persisted to logs. Entries should not be renumbered and
++// numeric values should never be reused.
++enum class WebAppLauncherLaunchResult {
++  kSuccess = 0,
++  kStarted = 1,
++  kError = 2,
++  kMaxValue = kError
++};
++
++}
++
+ namespace {
+ 
+ // Returns the path to chrome.exe stored in the "Last Browser" file. If the file
+@@ -92,10 +103,6 @@ int WINAPI wWinMain(HINSTANCE instance,
+   install_static::InstallDetails::SetForProcess(
+       install_static::MakeProductDetails(chrome_path.value()));
+ 
+-  web_app::LauncherLog launcher_log;
+-  launcher_log.Log(web_app::WebAppLauncherLaunchResult::kStarted);
+-
+   auto launch_result = LaunchPwa(chrome_path);
+-  launcher_log.Log(launch_result);
+   return static_cast<int>(launch_result);
+ }

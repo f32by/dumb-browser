@@ -22,14 +22,15 @@ PROJECT_DIR = os.path.realpath(os.path.join(CWD, '..'))
 
 CHROMIUM_VERSION_FILE = os.path.join(PROJECT_DIR, 'config', 'VERSION')
 CHROMIUM_SRC_DIR = os.path.join(PROJECT_DIR, 'src')
-DUMB_SRC_DIR = os.path.join(PROJECT_DIR, 'dumb')
+DUMB_SRC_DIR = os.path.join(PROJECT_DIR, 'dumb_src')
 DEPOT_TOOLS_DIR = os.path.join(PROJECT_DIR, 'depot_tools')
-PATCHLIST = os.path.join(PROJECT_DIR, 'config', 'PATCHES')
+PATCH_LIST_FILE = os.path.join(PROJECT_DIR, 'config', 'PATCHES')
 PATCHES_DIR = os.path.join(PROJECT_DIR, 'patches')
 
 
 def get_env():
     current_env = os.environ.copy()
     current_env['PATH'] = DEPOT_TOOLS_DIR + os.pathsep + current_env['PATH']
+    # disable gclient metrics
     current_env['DEPOT_TOOLS_METRICS'] = '0'
     return current_env
