@@ -1,0 +1,45 @@
+diff --git a/services/viz/public/cpp/hit_test/hit_test_region_list_mojom_traits.cc b/services/viz/public/cpp/hit_test/hit_test_region_list_mojom_traits.cc
+index 74a0fe44ebf0..470fc8b492df 100644
+--- a/services/viz/public/cpp/hit_test/hit_test_region_list_mojom_traits.cc
++++ b/services/viz/public/cpp/hit_test/hit_test_region_list_mojom_traits.cc
+@@ -4,8 +4,6 @@
+ 
+ #include "services/viz/public/cpp/hit_test/hit_test_region_list_mojom_traits.h"
+ 
+-#include "services/viz/public/cpp/crash_keys.h"
+-
+ namespace mojo {
+ 
+ // static
+@@ -13,17 +11,12 @@ bool StructTraits<viz::mojom::HitTestRegionDataView, viz::HitTestRegion>::Read(
+     viz::mojom::HitTestRegionDataView data,
+     viz::HitTestRegion* out) {
+   if (!data.ReadFrameSinkId(&out->frame_sink_id)) {
+-    viz::SetDeserializationCrashKeyString(
+-        "Failed read HitTestRegion::frame_sink_id");
+     return false;
+   }
+   if (!data.ReadRect(&out->rect)) {
+-    viz::SetDeserializationCrashKeyString("Failed read HitTestRegion::rect");
+     return false;
+   }
+   if (!data.ReadTransform(&out->transform)) {
+-    viz::SetDeserializationCrashKeyString(
+-        "Failed read HitTestRegion::transform");
+     return false;
+   }
+   out->flags = data.flags();
+@@ -39,13 +32,9 @@ bool StructTraits<
+   if (!data.ReadRegions(&out->regions))
+     return false;
+   if (!data.ReadBounds(&out->bounds)) {
+-    viz::SetDeserializationCrashKeyString(
+-        "Failed read HitTestRegionList::bounds");
+     return false;
+   }
+   if (!data.ReadTransform(&out->transform)) {
+-    viz::SetDeserializationCrashKeyString(
+-        "Failed read HitTestRegionList::transform");
+     return false;
+   }
+   out->flags = data.flags();

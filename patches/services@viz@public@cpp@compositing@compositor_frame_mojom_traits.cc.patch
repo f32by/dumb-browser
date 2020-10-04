@@ -1,0 +1,36 @@
+diff --git a/services/viz/public/cpp/compositing/compositor_frame_mojom_traits.cc b/services/viz/public/cpp/compositing/compositor_frame_mojom_traits.cc
+index 20b9ad3d9042..b2ebc6c52fcf 100644
+--- a/services/viz/public/cpp/compositing/compositor_frame_mojom_traits.cc
++++ b/services/viz/public/cpp/compositing/compositor_frame_mojom_traits.cc
+@@ -4,8 +4,6 @@
+ 
+ #include "services/viz/public/cpp/compositing/compositor_frame_mojom_traits.h"
+ 
+-#include "services/viz/public/cpp/crash_keys.h"
+-
+ namespace mojo {
+ 
+ // static
+@@ -15,13 +13,10 @@ bool StructTraits<viz::mojom::CompositorFrameDataView, viz::CompositorFrame>::
+     return false;
+ 
+   if (out->render_pass_list.empty()) {
+-    viz::SetDeserializationCrashKeyString(
+-        "CompositorFrame::render_pass_list empty");
+     return false;
+   }
+ 
+   if (out->render_pass_list.back()->output_rect.size().IsEmpty()) {
+-    viz::SetDeserializationCrashKeyString("CompositorFrame empty");
+     return false;
+   }
+ 
+@@ -29,8 +24,6 @@ bool StructTraits<viz::mojom::CompositorFrameDataView, viz::CompositorFrame>::
+     return false;
+ 
+   if (!data.ReadResources(&out->resource_list)) {
+-    viz::SetDeserializationCrashKeyString(
+-        "Failed read CompositorFrame::resource_list");
+     return false;
+   }
+ 

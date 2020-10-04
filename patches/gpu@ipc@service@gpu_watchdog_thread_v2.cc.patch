@@ -1,0 +1,27 @@
+diff --git a/gpu/ipc/service/gpu_watchdog_thread_v2.cc b/gpu/ipc/service/gpu_watchdog_thread_v2.cc
+index 3b4754209760..11e3a46e5896 100644
+--- a/gpu/ipc/service/gpu_watchdog_thread_v2.cc
++++ b/gpu/ipc/service/gpu_watchdog_thread_v2.cc
+@@ -26,7 +26,6 @@
+ #include "base/threading/thread_task_runner_handle.h"
+ #include "base/time/time.h"
+ #include "build/build_config.h"
+-#include "gpu/config/gpu_crash_keys.h"
+ #include "gpu/config/gpu_finch_features.h"
+ #include "gpu/ipc/common/result_codes.h"
+ 
+@@ -685,14 +684,6 @@ void GpuWatchdogThreadImplV2::DeliberatelyTerminateToRecoverFromHang() {
+ 
+   GpuWatchdogHistogram(GpuWatchdogThreadEvent::kGpuWatchdogKill);
+ 
+-  crash_keys::gpu_watchdog_crashed_in_gpu_init.Set(
+-      in_gpu_initialization_ ? "1" : "0");
+-
+-  crash_keys::gpu_watchdog_kill_after_power_resume.Set(
+-      WithinOneMinFromPowerResumed() ? "1" : "0");
+-
+-  crash_keys::num_of_processors.Set(base::NumberToString(num_of_processors_));
+-
+   // Check the arm_disarm_counter value one more time.
+   auto last_arm_disarm_counter = ReadArmDisarmCounter();
+   base::debug::Alias(&last_arm_disarm_counter);

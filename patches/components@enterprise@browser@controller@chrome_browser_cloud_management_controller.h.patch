@@ -1,0 +1,45 @@
+diff --git a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
+index ed3bbab37e3c..8682bc48d0e5 100644
+--- a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
++++ b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
+@@ -13,7 +13,6 @@
+ #include "base/memory/ref_counted.h"
+ #include "base/observer_list.h"
+ #include "base/time/time.h"
+-#include "components/enterprise/browser/reporting/reporting_delegate_factory.h"
+ #include "components/policy/core/common/cloud/cloud_policy_client.h"
+ 
+ class PrefService;
+@@ -23,10 +22,6 @@ class NetworkConnectionTracker;
+ class SharedURLLoaderFactory;
+ }  // namespace network
+ 
+-namespace enterprise_reporting {
+-class ReportScheduler;
+-}
+-
+ namespace policy {
+ class ChromeBrowserCloudManagementRegistrar;
+ class ConfigurationPolicyProvider;
+@@ -125,12 +120,6 @@ class ChromeBrowserCloudManagementController
+     virtual scoped_refptr<network::SharedURLLoaderFactory>
+     GetSharedURLLoaderFactory() = 0;
+ 
+-    // Creates and returns a ReportScheduler for enterprise reporting. Delegates
+-    // must pass the platform-specific factory that should be used to
+-    // instantiate the delegates for the reporting objects.
+-    virtual std::unique_ptr<enterprise_reporting::ReportScheduler>
+-    CreateReportScheduler(CloudPolicyClient* client) = 0;
+-
+     // Sets the SharedURLLoaderFactory that this object will use to make
+     // requests to GAIA.
+     virtual void SetGaiaURLLoaderFactory(
+@@ -226,8 +215,6 @@ class ChromeBrowserCloudManagementController
+   // Time at which the enrollment process was started.  Used to log UMA metric.
+   base::Time enrollment_start_time_;
+ 
+-  std::unique_ptr<enterprise_reporting::ReportScheduler> report_scheduler_;
+-
+   std::unique_ptr<policy::CloudPolicyClient> cloud_policy_client_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(ChromeBrowserCloudManagementController);

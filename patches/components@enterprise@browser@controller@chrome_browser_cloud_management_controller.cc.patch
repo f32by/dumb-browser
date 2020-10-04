@@ -1,0 +1,68 @@
+diff --git a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
+index 2a33b3f4e9a4..f3e2a7ec3b53 100644
+--- a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
++++ b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
+@@ -17,8 +17,6 @@
+ #include "build/build_config.h"
+ #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
+ #include "components/enterprise/browser/controller/chrome_browser_cloud_management_helper.h"
+-#include "components/enterprise/browser/reporting/report_generator.h"
+-#include "components/enterprise/browser/reporting/report_scheduler.h"
+ #include "components/policy/core/browser/browser_policy_connector.h"
+ #include "components/policy/core/common/cloud/chrome_browser_cloud_management_metrics.h"
+ #include "components/policy/core/common/cloud/cloud_external_data_manager.h"
+@@ -156,14 +154,6 @@ void ChromeBrowserCloudManagementController::Init(
+     delegate_->InitializeOAuthTokenFactory(url_loader_factory, local_state);
+   }
+ 
+-  base::ThreadPool::PostTask(
+-      FROM_HERE,
+-      {base::TaskPriority::BEST_EFFORT,
+-       base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN},
+-      base::BindOnce(
+-          &ChromeBrowserCloudManagementController::CreateReportSchedulerAsync,
+-          base::Unretained(this), base::ThreadTaskRunnerHandle::Get()));
+-
+   MachineLevelUserCloudPolicyManager* policy_manager =
+       delegate_->GetMachineLevelUserCloudPolicyManager();
+   DeviceManagementService* device_management_service =
+@@ -263,11 +253,6 @@ void ChromeBrowserCloudManagementController::InvalidatePolicies() {
+     policy_fetcher_->RemoveClientObserver(this);
+     policy_fetcher_->Disconnect();
+   }
+-
+-  // This causes the scheduler to stop refreshing itself since the DM token is
+-  // no longer valid.
+-  if (report_scheduler_)
+-    report_scheduler_->OnDMTokenUpdated();
+ }
+ 
+ void ChromeBrowserCloudManagementController::InvalidateDMTokenCallback(
+@@ -310,8 +295,6 @@ void ChromeBrowserCloudManagementController::OnServiceAccountSet(
+ 
+ void ChromeBrowserCloudManagementController::ShutDown() {
+   delegate_->ShutDown();
+-  if (report_scheduler_)
+-    report_scheduler_.reset();
+ }
+ 
+ void ChromeBrowserCloudManagementController::NotifyPolicyRegisterFinished(
+@@ -390,9 +373,6 @@ void ChromeBrowserCloudManagementController::
+   VLOG(1) << "Fetch policy after enrollment.";
+   policy_fetcher_->SetupRegistrationAndFetchPolicy(
+       BrowserDMTokenStorage::Get()->RetrieveDMToken(), client_id);
+-  if (report_scheduler_) {
+-    report_scheduler_->OnDMTokenUpdated();
+-  }
+ 
+   NotifyPolicyRegisterFinished(true);
+ }
+@@ -412,8 +392,6 @@ void ChromeBrowserCloudManagementController::CreateReportScheduler() {
+       delegate_->GetSharedURLLoaderFactory(),
+       CloudPolicyClient::DeviceDMTokenCallback());
+   cloud_policy_client_->AddObserver(this);
+-  report_scheduler_ =
+-      delegate_->CreateReportScheduler(cloud_policy_client_.get());
+ 
+   NotifyCloudReportingLaunched();
+ }

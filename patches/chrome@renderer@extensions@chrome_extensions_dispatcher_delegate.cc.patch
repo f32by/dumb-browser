@@ -1,0 +1,20 @@
+diff --git a/chrome/renderer/extensions/chrome_extensions_dispatcher_delegate.cc b/chrome/renderer/extensions/chrome_extensions_dispatcher_delegate.cc
+index 555a91e6f670..939689966b1d 100644
+--- a/chrome/renderer/extensions/chrome_extensions_dispatcher_delegate.cc
++++ b/chrome/renderer/extensions/chrome_extensions_dispatcher_delegate.cc
+@@ -10,7 +10,6 @@
+ #include "base/strings/string_number_conversions.h"
+ #include "chrome/common/channel_info.h"
+ #include "chrome/common/chrome_switches.h"
+-#include "chrome/common/crash_keys.h"
+ #include "chrome/grit/renderer_resources.h"
+ #include "chrome/renderer/extensions/accessibility_private_hooks_delegate.h"
+ #include "chrome/renderer/extensions/app_hooks_delegate.h"
+@@ -249,7 +248,6 @@ void ChromeExtensionsDispatcherDelegate::OnActiveExtensionsUpdated(
+   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+           ::switches::kSingleProcess))
+     return;
+-  crash_keys::SetActiveExtensions(extension_ids);
+ }
+ 
+ void ChromeExtensionsDispatcherDelegate::InitializeBindingsSystem(

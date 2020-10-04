@@ -1,0 +1,25 @@
+diff --git a/third_party/blink/renderer/bindings/core/v8/script_promise_resolver.cc b/third_party/blink/renderer/bindings/core/v8/script_promise_resolver.cc
+index e170073772dc..aa086b5a1821 100644
+--- a/third_party/blink/renderer/bindings/core/v8/script_promise_resolver.cc
++++ b/third_party/blink/renderer/bindings/core/v8/script_promise_resolver.cc
+@@ -11,7 +11,6 @@
+ 
+ #if DCHECK_IS_ON()
+ #include "base/debug/alias.h"
+-#include "components/crash/core/common/crash_key.h"
+ #endif
+ 
+ namespace blink {
+@@ -42,12 +41,6 @@ void ScriptPromiseResolver::Dispose() {
+       !GetScriptState()->ContextIsValid() || !GetExecutionContext() ||
+       GetExecutionContext()->IsContextDestroyed();
+   if (!is_properly_detached && !suppress_detach_check_) {
+-    // This is here to make it easier to track down which promise resolvers are
+-    // being abandoned. See https://crbug.com/873980.
+-    static crash_reporter::CrashKeyString<1024> trace_key(
+-        "scriptpromiseresolver-trace");
+-    crash_reporter::SetCrashKeyStringToStackTrace(&trace_key,
+-                                                  create_stack_trace_);
+     DCHECK(false)
+         << "ScriptPromiseResolver was not properly detached; created at\n"
+         << create_stack_trace_.ToString();

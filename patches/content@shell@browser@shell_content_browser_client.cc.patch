@@ -1,0 +1,68 @@
+diff --git a/content/shell/browser/shell_content_browser_client.cc b/content/shell/browser/shell_content_browser_client.cc
+index 7ebc20d5c2bb..2a649bd7db2e 100644
+--- a/content/shell/browser/shell_content_browser_client.cc
++++ b/content/shell/browser/shell_content_browser_client.cc
+@@ -63,13 +63,7 @@
+ #include "content/public/browser/context_factory.h"
+ #endif
+ 
+-#if defined(OS_ANDROID)
+-#include "components/crash/content/browser/crash_handler_host_linux.h"
+-#endif
+-
+ #if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ANDROID)
+-#include "components/crash/core/app/crash_switches.h"
+-#include "components/crash/core/app/crashpad.h"
+ #include "content/public/common/content_descriptors.h"
+ #endif
+ 
+@@ -83,18 +77,6 @@ namespace {
+ 
+ ShellContentBrowserClient* g_browser_client;
+ 
+-#if defined(OS_ANDROID)
+-int GetCrashSignalFD(const base::CommandLine& command_line) {
+-  return crashpad::CrashHandlerHost::Get()->GetDeathSignalSocket();
+-}
+-#elif defined(OS_LINUX) || defined(OS_CHROMEOS)
+-int GetCrashSignalFD(const base::CommandLine& command_line) {
+-  int fd;
+-  pid_t pid;
+-  return crash_reporter::GetHandlerSocket(&fd, &pid) ? fd : -1;
+-}
+-#endif
+-
+ class ShellControllerImpl : public mojom::ShellController {
+  public:
+   ShellControllerImpl() = default;
+@@ -223,19 +205,6 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
+   command_line->CopySwitchesFrom(*base::CommandLine::ForCurrentProcess(),
+                                  kForwardSwitches,
+                                  base::size(kForwardSwitches));
+-
+-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+-  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+-          switches::kEnableCrashReporter)) {
+-    int fd;
+-    pid_t pid;
+-    if (crash_reporter::GetHandlerSocket(&fd, &pid)) {
+-      command_line->AppendSwitchASCII(
+-          crash_reporter::switches::kCrashpadHandlerPid,
+-          base::NumberToString(pid));
+-    }
+-  }
+-#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+ }
+ 
+ std::string ShellContentBrowserClient::GetAcceptLangs(BrowserContext* context) {
+@@ -417,10 +386,6 @@ void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
+       base::GlobalDescriptors::GetInstance()->Get(kShellPakDescriptor),
+       base::GlobalDescriptors::GetInstance()->GetRegion(kShellPakDescriptor));
+ #endif
+-  int crash_signal_fd = GetCrashSignalFD(command_line);
+-  if (crash_signal_fd >= 0) {
+-    mappings->Share(service_manager::kCrashDumpSignal, crash_signal_fd);
+-  }
+ }
+ #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ANDROID)
+ 

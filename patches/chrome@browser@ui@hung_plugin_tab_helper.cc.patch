@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/hung_plugin_tab_helper.cc b/chrome/browser/ui/hung_plugin_tab_helper.cc
+index 1bc27ee85fa0..53a4a698b168 100644
+--- a/chrome/browser/ui/hung_plugin_tab_helper.cc
++++ b/chrome/browser/ui/hung_plugin_tab_helper.cc
+@@ -11,7 +11,6 @@
+ #include "base/macros.h"
+ #include "base/process/process.h"
+ #include "build/build_config.h"
+-#include "chrome/browser/hang_monitor/hang_crash_dump.h"
+ #include "chrome/browser/infobars/infobar_service.h"
+ #include "chrome/browser/plugins/hung_plugin_infobar_delegate.h"
+ #include "chrome/common/channel_info.h"
+@@ -39,7 +38,6 @@ void KillPluginOnIOThread(int child_id) {
+   while (!iter.Done()) {
+     const content::ChildProcessData& data = iter.GetData();
+     if (data.id == child_id) {
+-      CrashDumpHungChildProcess(data.GetProcess().Handle());
+       data.GetProcess().Terminate(content::RESULT_CODE_HUNG, false);
+       return;
+     }

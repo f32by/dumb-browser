@@ -1,0 +1,22 @@
+diff --git a/gpu/ipc/service/gpu_init.cc b/gpu/ipc/service/gpu_init.cc
+index 7a4deca1f3e0..0843fdff8d7e 100644
+--- a/gpu/ipc/service/gpu_init.cc
++++ b/gpu/ipc/service/gpu_init.cc
+@@ -187,9 +187,6 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
+   UMA_HISTOGRAM_ENUMERATION("GPU.IntelGpuSeriesType", intel_gpu_series_type);
+ #endif  // OS_WIN
+ 
+-  // Set keys for crash logging based on preliminary gpu info, in case we
+-  // crash during feature collection.
+-  SetKeysForCrashLogging(gpu_info_);
+ #if defined(SUBPIXEL_FONT_RENDERING_DISABLED)
+   gpu_info_.subpixel_font_rendering = false;
+ #else
+@@ -410,7 +407,6 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
+       if (!CollectGraphicsInfo(&gpu_info_))
+         return false;
+ 
+-      SetKeysForCrashLogging(gpu_info_);
+       gpu_feature_info_ = ComputeGpuFeatureInfo(gpu_info_, gpu_preferences_,
+                                                 command_line, nullptr);
+       gl_use_swiftshader_ = EnableSwiftShaderIfNeeded(

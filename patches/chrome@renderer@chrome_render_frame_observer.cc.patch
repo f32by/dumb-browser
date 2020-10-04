@@ -1,0 +1,23 @@
+diff --git a/chrome/renderer/chrome_render_frame_observer.cc b/chrome/renderer/chrome_render_frame_observer.cc
+index 3ea7900b949e..44e0bd2a37fe 100644
+--- a/chrome/renderer/chrome_render_frame_observer.cc
++++ b/chrome/renderer/chrome_render_frame_observer.cc
+@@ -25,7 +25,6 @@
+ #include "chrome/common/render_messages.h"
+ #include "chrome/renderer/media/media_feeds.h"
+ #include "chrome/renderer/web_apps.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/offline_pages/buildflags/buildflags.h"
+ #include "components/prerender/renderer/prerender_helper.h"
+ #include "components/translate/content/renderer/translate_agent.h"
+@@ -240,10 +239,6 @@ void ChromeRenderFrameObserver::DidCommitProvisionalLoad(
+   if (frame->Parent())
+     return;
+ 
+-  static crash_reporter::CrashKeyString<8> view_count_key("view-count");
+-  view_count_key.Set(
+-      base::NumberToString(content::RenderView::GetRenderViewCount()));
+-
+ #if !defined(OS_ANDROID)
+   if (render_frame()->GetEnabledBindings() &
+       content::kWebUIBindingsPolicyMask) {

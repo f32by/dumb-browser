@@ -1,0 +1,53 @@
+diff --git a/gpu/ipc/in_process_command_buffer.cc b/gpu/ipc/in_process_command_buffer.cc
+index 43659617af44..27c8bcf2aa76 100644
+--- a/gpu/ipc/in_process_command_buffer.cc
++++ b/gpu/ipc/in_process_command_buffer.cc
+@@ -56,7 +56,6 @@
+ #include "gpu/command_buffer/service/shared_context_state.h"
+ #include "gpu/command_buffer/service/sync_point_manager.h"
+ #include "gpu/command_buffer/service/webgpu_decoder.h"
+-#include "gpu/config/gpu_crash_keys.h"
+ #include "gpu/config/gpu_feature_info.h"
+ #include "gpu/config/gpu_preferences.h"
+ #include "gpu/config/gpu_switches.h"
+@@ -393,9 +392,6 @@ gpu::ContextResult InProcessCommandBuffer::InitializeOnGpuThread(
+     // See https://crbug.com/914976
+     use_virtualized_gl_context_ = false;
+   }
+-  // TODO(sunnyps): Should this use ScopedCrashKey instead?
+-  crash_keys::gpu_gl_context_is_virtual.Set(use_virtualized_gl_context_ ? "1"
+-                                                                        : "0");
+ 
+   command_buffer_ = std::make_unique<CommandBufferService>(
+       this, context_group_->memory_tracker());
+@@ -681,9 +677,6 @@ bool InProcessCommandBuffer::DestroyOnGpuThread() {
+   if (gpu_channel_manager_delegate_)
+     gpu_channel_manager_delegate_->UnregisterDisplayContext(this);
+ 
+-  // TODO(sunnyps): Should this use ScopedCrashKey instead?
+-  crash_keys::gpu_gl_context_is_virtual.Set(use_virtualized_gl_context_ ? "1"
+-                                                                        : "0");
+   gpu_thread_weak_ptr_factory_.InvalidateWeakPtrs();
+   // Clean up GL resources if possible.
+   bool have_context = context_.get() && context_->MakeCurrent(surface_.get());
+@@ -801,8 +794,7 @@ void InProcessCommandBuffer::OnContextLost() {
+ void InProcessCommandBuffer::RunTaskOnGpuThread(base::OnceClosure task) {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(gpu_sequence_checker_);
+   UpdateActiveUrl();
+-  crash_keys::gpu_gl_context_is_virtual.Set(use_virtualized_gl_context_ ? "1"
+-                                                                        : "0");
++
+   std::move(task).Run();
+ }
+ 
+@@ -907,9 +899,7 @@ void InProcessCommandBuffer::FlushOnGpuThread(
+ void InProcessCommandBuffer::PerformDelayedWorkOnGpuThread() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(gpu_sequence_checker_);
+   delayed_work_pending_ = false;
+-  // TODO(sunnyps): Should this use ScopedCrashKey instead?
+-  crash_keys::gpu_gl_context_is_virtual.Set(use_virtualized_gl_context_ ? "1"
+-                                                                        : "0");
++
+   if (MakeCurrent()) {
+     auto cache_use = CreateCacheUse();
+     decoder_->PerformIdleWork();

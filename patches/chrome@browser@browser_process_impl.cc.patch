@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
-index 2ef25c4a7e59..1a6b1c0fa207 100644
+index 2ef25c4a7e59..e4e6df383e89 100644
 --- a/chrome/browser/browser_process_impl.cc
 +++ b/chrome/browser/browser_process_impl.cc
 @@ -34,7 +34,6 @@
@@ -18,16 +18,17 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  #include "chrome/browser/shell_integration.h"
  #include "chrome/browser/site_isolation/prefs_observer.h"
  #include "chrome/browser/ssl/secure_origin_prefs_observer.h"
-@@ -92,8 +90,6 @@
+@@ -91,9 +89,6 @@
+ #include "chrome/installer/util/google_update_settings.h"
  #include "components/component_updater/component_updater_service.h"
  #include "components/component_updater/timer_update_scheduler.h"
- #include "components/crash/core/common/crash_key.h"
+-#include "components/crash/core/common/crash_key.h"
 -#include "components/federated_learning/floc_blocklist_service.h"
 -#include "components/federated_learning/floc_constants.h"
  #include "components/gcm_driver/gcm_driver.h"
  #include "components/language/core/browser/pref_names.h"
  #include "components/metrics/metrics_pref_names.h"
-@@ -108,13 +104,7 @@
+@@ -108,13 +103,7 @@
  #include "components/prefs/json_pref_store.h"
  #include "components/prefs/pref_registry_simple.h"
  #include "components/prefs/pref_service.h"
@@ -41,7 +42,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  #include "components/translate/core/browser/translate_download_manager.h"
  #include "components/ukm/ukm_service.h"
  #include "components/update_client/update_query_params.h"
-@@ -220,11 +210,6 @@ static constexpr base::TimeDelta kEndSessionTimeout =
+@@ -220,11 +209,6 @@ static constexpr base::TimeDelta kEndSessionTimeout =
  using content::BrowserThread;
  using content::ChildProcessSecurityPolicy;
  
@@ -53,7 +54,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  
  BrowserProcessImpl::BrowserProcessImpl(StartupData* startup_data)
      : startup_data_(startup_data),
-@@ -258,8 +243,6 @@ void BrowserProcessImpl::Init() {
+@@ -258,8 +242,6 @@ void BrowserProcessImpl::Init() {
  
    download_status_updater_ = std::make_unique<DownloadStatusUpdater>();
  
@@ -62,7 +63,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  #if BUILDFLAG(ENABLE_PRINTING)
    // Must be created after the NotificationService.
    print_job_manager_ = std::make_unique<printing::PrintJobManager>();
-@@ -373,8 +356,6 @@ void BrowserProcessImpl::StartTearDown() {
+@@ -373,8 +355,6 @@ void BrowserProcessImpl::StartTearDown() {
  
    metrics_services_manager_.reset();
    intranet_redirect_detector_.reset();
@@ -71,7 +72,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
    network_time_tracker_.reset();
  #if BUILDFLAG(ENABLE_PLUGINS)
    plugins_resource_service_.reset();
-@@ -410,8 +391,6 @@ void BrowserProcessImpl::StartTearDown() {
+@@ -410,8 +390,6 @@ void BrowserProcessImpl::StartTearDown() {
    remote_debugging_server_.reset();
    devtools_auto_opener_.reset();
  
@@ -80,7 +81,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
    // Need to clear profiles (download managers) before the IO thread.
    {
      TRACE_EVENT0("shutdown",
-@@ -655,11 +634,6 @@ metrics::MetricsService* BrowserProcessImpl::metrics_service() {
+@@ -655,11 +633,6 @@ metrics::MetricsService* BrowserProcessImpl::metrics_service() {
    return GetMetricsServicesManager()->GetMetricsService();
  }
  
@@ -92,7 +93,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  SystemNetworkContextManager*
  BrowserProcessImpl::system_network_context_manager() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-@@ -905,15 +879,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
+@@ -905,15 +878,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
    return resource_coordinator_parts_.get();
  }
  
@@ -108,7 +109,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  
  // static
  void BrowserProcessImpl::RegisterPrefs(PrefRegistrySimple* registry) {
-@@ -978,30 +943,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
+@@ -978,30 +942,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
    return status_tray_.get();
  }
  
@@ -139,7 +140,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
  optimization_guide::OptimizationGuideService*
  BrowserProcessImpl::optimization_guide_service() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-@@ -1112,8 +1053,6 @@ void BrowserProcessImpl::PreCreateThreads(
+@@ -1112,8 +1052,6 @@ void BrowserProcessImpl::PreCreateThreads(
        extensions::kExtensionScheme, true);
  #endif
  
@@ -148,7 +149,7 @@ index 2ef25c4a7e59..1a6b1c0fa207 100644
    secure_origin_prefs_observer_ =
        std::make_unique<SecureOriginPrefsObserver>(local_state());
    site_isolation_prefs_observer_ =
-@@ -1245,64 +1184,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
+@@ -1245,64 +1183,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
  #endif
  }
  

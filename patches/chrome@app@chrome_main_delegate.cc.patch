@@ -1,8 +1,23 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index ea8e1d417996..1806f0504375 100644
+index ea8e1d417996..1e09b666341a 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
-@@ -55,7 +55,6 @@
+@@ -40,7 +40,6 @@
+ #include "chrome/common/chrome_paths_internal.h"
+ #include "chrome/common/chrome_result_codes.h"
+ #include "chrome/common/chrome_switches.h"
+-#include "chrome/common/crash_keys.h"
+ #include "chrome/common/logging_chrome.h"
+ #include "chrome/common/url_constants.h"
+ #include "chrome/gpu/chrome_content_gpu_client.h"
+@@ -48,14 +47,10 @@
+ #include "chrome/utility/chrome_content_utility_client.h"
+ #include "components/component_updater/component_updater_paths.h"
+ #include "components/content_settings/core/common/content_settings_pattern.h"
+-#include "components/crash/core/app/crash_reporter_client.h"
+-#include "components/crash/core/common/crash_key.h"
+-#include "components/crash/core/common/crash_keys.h"
+ #include "components/gwp_asan/buildflags/buildflags.h"
  #include "components/heap_profiling/in_process/heap_profiler_controller.h"
  #include "components/nacl/common/buildflags.h"
  #include "components/services/heap_profiling/public/cpp/profiling_client.h"
@@ -10,7 +25,51 @@ index ea8e1d417996..1806f0504375 100644
  #include "components/version_info/version_info.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_constants.h"
-@@ -232,31 +231,6 @@ bool IsSandboxedProcess() {
+@@ -82,11 +77,9 @@
+ #include "base/debug/close_handle_hook_win.h"
+ #include "base/files/important_file_writer_cleaner.h"
+ #include "base/win/atl.h"
+-#include "chrome/child/v8_crashpad_support_win.h"
+ #include "chrome/chrome_elf/chrome_elf_main.h"
+ #include "chrome/common/child_process_logging.h"
+ #include "chrome/install_static/install_util.h"
+-#include "components/browser_watcher/extended_crash_reporting.h"
+ #include "sandbox/win/src/sandbox.h"
+ #include "ui/base/resource/resource_bundle_win.h"
+ #endif
+@@ -97,7 +90,6 @@
+ #include "chrome/browser/chrome_browser_application_mac.h"
+ #include "chrome/browser/mac/relauncher.h"
+ #include "chrome/browser/shell_integration.h"
+-#include "components/crash/core/common/objc_zombie.h"
+ #include "ui/base/l10n/l10n_util_mac.h"
+ #endif
+ 
+@@ -105,7 +97,6 @@
+ #include <locale.h>
+ #include <signal.h>
+ 
+-#include "chrome/app/chrome_crash_reporter_client.h"
+ #include "chrome/app/shutdown_signal_handlers_posix.h"
+ #endif
+ 
+@@ -143,7 +134,6 @@
+ #endif
+ 
+ #if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_ANDROID)
+-#include "components/crash/core/app/breakpad_linux.h"
+ #include "v8/include/v8-wasm-trap-handler-posix.h"
+ #include "v8/include/v8.h"
+ #endif
+@@ -155,7 +145,6 @@
+ #if defined(OS_MAC) || defined(OS_WIN) || defined(OS_ANDROID) || \
+     defined(OS_LINUX) || defined(OS_CHROMEOS)
+ #include "chrome/browser/policy/policy_path_parser.h"
+-#include "components/crash/core/app/crashpad.h"
+ #endif
+ 
+ #if BUILDFLAG(ENABLE_NACL)
+@@ -232,31 +221,6 @@ bool IsSandboxedProcess() {
    return is_sandboxed_process_func && is_sandboxed_process_func();
  }
  
@@ -42,7 +101,7 @@ index ea8e1d417996..1806f0504375 100644
  #endif  // defined(OS_WIN)
  
  #if defined(OS_LINUX) || defined(OS_CHROMEOS)
-@@ -470,46 +444,12 @@ void InitLogging(const std::string& process_type) {
+@@ -470,46 +434,12 @@ void InitLogging(const std::string& process_type) {
  }
  #endif
  
@@ -89,7 +148,7 @@ index ea8e1d417996..1806f0504375 100644
  }
  
  ChromeMainDelegate::~ChromeMainDelegate() {
-@@ -639,7 +579,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -639,7 +569,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
  
  #if defined(OS_WIN)
@@ -97,7 +156,21 @@ index ea8e1d417996..1806f0504375 100644
    base::sequence_manager::internal::ThreadControllerPowerMonitor::
        InitializeOnMainThread();
  #endif
-@@ -700,15 +639,7 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -686,29 +615,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+     return true;
+   }
+ #endif
+-
+-#if defined(OS_MAC)
+-  // Give the browser process a longer treadmill, since crashes
+-  // there have more impact.
+-  const bool is_browser = !command_line.HasSwitch(switches::kProcessType);
+-  ObjcEvilDoers::ZombieEnable(true, is_browser ? 10000 : 1000);
+-#endif
+-
+   content::Profiling::ProcessStarted();
+ 
+   // Setup tracing sampler profiler as early as possible at startup if needed.
    tracing_sampler_profiler_ =
        tracing::TracingSamplerProfiler::CreateOnMainThread();
  
@@ -113,7 +186,72 @@ index ea8e1d417996..1806f0504375 100644
  
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
-@@ -921,16 +852,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -856,81 +769,12 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+   return false;
+ }
+ 
+-#if defined(OS_MAC)
+-void ChromeMainDelegate::InitMacCrashReporter(
+-    const base::CommandLine& command_line,
+-    const std::string& process_type) {
+-  // TODO(mark): Right now, InitializeCrashpad() needs to be called after
+-  // CommandLine::Init() and chrome::RegisterPathProvider().  Ideally, Crashpad
+-  // initialization could occur sooner, preferably even before the framework
+-  // dylib is even loaded, to catch potential early crashes.
+-
+-  const bool browser_process = process_type.empty();
+-  const bool install_from_dmg_relauncher_process =
+-      process_type == switches::kRelauncherProcess &&
+-      command_line.HasSwitch(switches::kRelauncherProcessDMGDevice);
+-
+-  const bool initial_client =
+-      browser_process || install_from_dmg_relauncher_process;
+-
+-  crash_reporter::InitializeCrashpad(initial_client, process_type);
+-
+-  if (!browser_process) {
+-    std::string metrics_client_id =
+-        command_line.GetSwitchValueASCII(switches::kMetricsClientID);
+-    crash_keys::SetMetricsClientIdFromGUID(metrics_client_id);
+-  }
+-
+-  // Mac Chrome is packaged with a main app bundle and a helper app bundle.
+-  // The main app bundle should only be used for the browser process, so it
+-  // should never see a --type switch (switches::kProcessType).  Likewise,
+-  // the helper should always have a --type switch.
+-  //
+-  // This check is done this late so there is already a call to
+-  // base::mac::IsBackgroundOnlyProcess(), so there is no change in
+-  // startup/initialization order.
+-
+-  // The helper's Info.plist marks it as a background only app.
+-  if (base::mac::IsBackgroundOnlyProcess()) {
+-    CHECK(command_line.HasSwitch(switches::kProcessType) &&
+-          !process_type.empty())
+-        << "Helper application requires --type.";
+-  } else if (base::mac::AmIBundled()) {
+-    CHECK(!command_line.HasSwitch(switches::kProcessType) &&
+-          process_type.empty())
+-        << "Main application forbids --type, saw " << process_type;
+-  }
+-}
+-
+-void ChromeMainDelegate::SetUpInstallerPreferences(
+-    const base::CommandLine& command_line) {
+-  const bool uma_setting = command_line.HasSwitch(switches::kEnableUserMetrics);
+-  const bool default_browser_setting =
+-      command_line.HasSwitch(switches::kMakeChromeDefault);
+-
+-  if (uma_setting)
+-    crash_reporter::SetUploadConsent(uma_setting);
+-  if (default_browser_setting)
+-    shell_integration::SetAsDefaultBrowser();
+-}
+-#endif  // defined(OS_MAC)
+-
+ void ChromeMainDelegate::PreSandboxStartup() {
+   const base::CommandLine& command_line =
+       *base::CommandLine::ForCurrentProcess();
    std::string process_type =
        command_line.GetSwitchValueASCII(switches::kProcessType);
  
@@ -130,7 +268,7 @@ index ea8e1d417996..1806f0504375 100644
  
  #if defined(OS_WIN)
    child_process_logging::Init();
-@@ -1055,28 +976,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -1055,28 +899,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
          locale;
    }
  
@@ -159,7 +297,18 @@ index ea8e1d417996..1806f0504375 100644
  
  #if defined(OS_ANDROID)
    CHECK_EQ(base::android::GetLibraryProcessType(),
-@@ -1184,23 +1083,6 @@ void ChromeMainDelegate::ZygoteForked() {
+@@ -1084,10 +906,6 @@ void ChromeMainDelegate::PreSandboxStartup() {
+                                 : base::android::PROCESS_CHILD);
+ #endif  // defined(OS_ANDROID)
+ 
+-  // After all the platform Breakpads have been initialized, store the command
+-  // line for crash reporting.
+-  crash_keys::SetCrashKeysFromCommandLine(command_line);
+-
+ #if BUILDFLAG(ENABLE_PDF)
+   MaybeInitializeGDI();
+ #endif
+@@ -1184,23 +1002,6 @@ void ChromeMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

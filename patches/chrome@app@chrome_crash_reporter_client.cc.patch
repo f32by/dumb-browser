@@ -1,0 +1,20 @@
+diff --git a/chrome/app/chrome_crash_reporter_client.cc b/chrome/app/chrome_crash_reporter_client.cc
+index 14c5f665194d..8189a5dc8489 100644
+--- a/chrome/app/chrome_crash_reporter_client.cc
++++ b/chrome/app/chrome_crash_reporter_client.cc
+@@ -20,7 +20,6 @@
+ #include "chrome/common/chrome_result_codes.h"
+ #include "chrome/common/env_vars.h"
+ #include "chrome/installer/util/google_update_settings.h"
+-#include "components/crash/core/common/crash_keys.h"
+ #include "content/public/common/content_switches.h"
+ #include "services/service_manager/embedder/switches.h"
+ 
+@@ -93,7 +92,6 @@ ChromeCrashReporterClient::~ChromeCrashReporterClient() {}
+ #if !defined(OS_MAC) && !defined(OS_ANDROID)
+ void ChromeCrashReporterClient::SetCrashReporterClientIdFromGUID(
+     const std::string& client_guid) {
+-  crash_keys::SetMetricsClientIdFromGUID(client_guid);
+ }
+ #endif
+ 

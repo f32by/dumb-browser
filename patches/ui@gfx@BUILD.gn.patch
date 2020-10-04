@@ -1,0 +1,29 @@
+diff --git a/ui/gfx/BUILD.gn b/ui/gfx/BUILD.gn
+index c537d2452c65..fd8e7625594c 100644
+--- a/ui/gfx/BUILD.gn
++++ b/ui/gfx/BUILD.gn
+@@ -194,8 +194,6 @@ component("gfx") {
+       "path_win.h",
+       "system_fonts_win.cc",
+       "system_fonts_win.h",
+-      "win/crash_id_helper.cc",
+-      "win/crash_id_helper.h",
+       "win/direct_write.cc",
+       "win/direct_write.h",
+       "win/hwnd_util.cc",
+@@ -372,7 +370,6 @@ component("gfx") {
+       "setupapi.lib",
+       "dwrite.lib",
+     ]
+-    deps += [ "//components/crash/core/common" ]
+   } else {
+     sources -= [
+       "gdi_util.cc",
+@@ -821,7 +818,6 @@ test("gfx_unittests") {
+       "icon_util_unittests.rc",
+       "icon_util_unittests_resource.h",
+       "path_win_unittest.cc",
+-      "win/crash_id_helper_unittest.cc",
+       "win/direct_write_unittest.cc",
+       "win/text_analysis_source_unittest.cc",
+     ]

@@ -1,8 +1,25 @@
 diff --git a/chrome/common/BUILD.gn b/chrome/common/BUILD.gn
-index 16fe306a6097..516523fe0fee 100644
+index 16fe306a6097..4e504e68646c 100644
 --- a/chrome/common/BUILD.gn
 +++ b/chrome/common/BUILD.gn
-@@ -200,7 +200,6 @@ static_library("common") {
+@@ -107,8 +107,6 @@ static_library("common") {
+     "common_message_generator.cc",
+     "common_message_generator.h",
+     "content_restriction.h",
+-    "crash_keys.cc",
+-    "crash_keys.h",
+     "custom_handlers/protocol_handler.cc",
+     "custom_handlers/protocol_handler.h",
+     "google_url_loader_throttle.cc",
+@@ -176,7 +174,6 @@ static_library("common") {
+     "//components/cloud_devices/common",
+     "//components/component_updater",
+     "//components/content_settings/core/common",
+-    "//components/crash/core/common",
+     "//components/dom_distiller/core",
+     "//components/embedder_support/origin_trials",
+     "//components/error_page/common",
+@@ -200,7 +197,6 @@ static_library("common") {
      "//components/policy/core/common",
      "//components/prefs",
      "//components/safe_browsing:buildflags",
@@ -10,7 +27,23 @@ index 16fe306a6097..516523fe0fee 100644
      "//components/services/heap_profiling/public/cpp",
      "//components/strings",
      "//components/translate/content/common",
-@@ -764,10 +763,6 @@ mojom("mojo_bindings") {
+@@ -240,7 +236,6 @@ static_library("common") {
+ 
+   deps = [
+     "//build:branding_buildflags",
+-    "//components/crash/core/app",
+     "//components/google/core/common",
+     "//components/metrics:call_stack_profile_builder",
+     "//components/page_load_metrics/common:common",
+@@ -427,7 +422,6 @@ static_library("common") {
+     deps += [
+       "//chrome/chrome_elf:chrome_elf_main_include",
+       "//chrome/common/win:eventlog_messages",
+-      "//components/crash/core/app:crash_export_thunk_include",
+     ]
+ 
+     public_deps += [
+@@ -764,10 +758,6 @@ mojom("mojo_bindings") {
      public_deps += [ "//components/remote_cocoa/common:mojo" ]
    }
  

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_main_win.cc b/chrome/browser/chrome_browser_main_win.cc
-index e99fe811ffcf..91bc654feba5 100644
+index e99fe811ffcf..5dabf6eec589 100644
 --- a/chrome/browser/chrome_browser_main_win.cc
 +++ b/chrome/browser/chrome_browser_main_win.cc
 @@ -49,9 +49,6 @@
@@ -12,7 +12,49 @@ index e99fe811ffcf..91bc654feba5 100644
  #include "chrome/browser/ui/simple_message_box.h"
  #include "chrome/browser/ui/uninstall_browser_prompt.h"
  #include "chrome/browser/web_applications/chrome_pwa_launcher/last_browser_file_util.h"
-@@ -445,15 +442,6 @@ void ShowCloseBrowserFirstMessageBox() {
+@@ -73,7 +70,6 @@
+ #include "chrome/common/chrome_result_codes.h"
+ #include "chrome/common/chrome_switches.h"
+ #include "chrome/common/conflicts/module_watcher_win.h"
+-#include "chrome/common/crash_keys.h"
+ #include "chrome/common/env_vars.h"
+ #include "chrome/grit/chromium_strings.h"
+ #include "chrome/grit/generated_resources.h"
+@@ -83,9 +79,6 @@
+ #include "chrome/installer/util/installer_util_strings.h"
+ #include "chrome/installer/util/l10n_string_util.h"
+ #include "chrome/installer/util/shell_util.h"
+-#include "components/crash/core/app/crash_export_thunks.h"
+-#include "components/crash/core/app/dump_hung_process_with_ptype.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/os_crypt/os_crypt.h"
+ #include "components/version_info/channel.h"
+ #include "content/public/browser/browser_task_traits.h"
+@@ -103,7 +96,6 @@
+ #include "ui/display/win/dpi.h"
+ #include "ui/gfx/switches.h"
+ #include "ui/gfx/system_fonts_win.h"
+-#include "ui/gfx/win/crash_id_helper.h"
+ #include "ui/strings/grit/app_locale_settings.h"
+ 
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+@@ -117,15 +109,10 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
+     DWORD flags);
+ 
+ void InitializeWindowProcExceptions() {
+-  base::win::WinProcExceptionFilter exception_filter =
+-      base::win::SetWinProcExceptionFilter(&CrashForException_ExportThunk);
+-  DCHECK(!exception_filter);
+ }
+ 
+ // TODO(siggi): Remove once https://crbug.com/806661 is resolved.
+ void DumpHungRendererProcessImpl(const base::Process& renderer) {
+-  // Use a distinguishing process type for these reports.
+-  crash_reporter::DumpHungProcessWithPtype(renderer, "hung-renderer");
+ }
+ 
+ // gfx::Font callbacks
+@@ -445,15 +432,6 @@ void ShowCloseBrowserFirstMessageBox() {
        l10n_util::GetStringUTF16(IDS_UNINSTALL_CLOSE_APP));
  }
  
@@ -28,7 +70,38 @@ index e99fe811ffcf..91bc654feba5 100644
  // Updates all Progressive Web App launchers in |profile_dir| to the latest
  // version.
  void UpdatePwaLaunchersForProfile(const base::FilePath& profile_dir) {
-@@ -652,22 +640,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -552,7 +530,6 @@ ChromeBrowserMainPartsWin::~ChromeBrowserMainPartsWin() = default;
+ 
+ void ChromeBrowserMainPartsWin::ToolkitInitialized() {
+   DCHECK_NE(base::PlatformThread::CurrentId(), base::kInvalidThreadId);
+-  gfx::CrashIdHelper::RegisterMainThread(base::PlatformThread::CurrentId());
+   ChromeBrowserMainParts::ToolkitInitialized();
+   gfx::win::SetAdjustFontCallback(&AdjustUIFont);
+   gfx::win::SetGetMinimumFontSizeCallback(&GetMinimumFontSize);
+@@ -579,22 +556,6 @@ void ChromeBrowserMainPartsWin::PreMainMessageLoopStart() {
+ }
+ 
+ int ChromeBrowserMainPartsWin::PreCreateThreads() {
+-  // Record whether the machine is enterprise managed in a crash key. This will
+-  // be used to better identify whether crashes are from enterprise users.
+-  static crash_reporter::CrashKeyString<4> is_enterprise_managed(
+-      "is-enterprise-managed");
+-  is_enterprise_managed.Set(base::IsMachineExternallyManaged() ? "yes" : "no");
+-
+-  // Set crash keys containing the registry values used to determine Chrome's
+-  // update channel at process startup; see https://crbug.com/579504.
+-  const auto& details = install_static::InstallDetails::Get();
+-
+-  static crash_reporter::CrashKeyString<50> ap_value("ap");
+-  ap_value.Set(base::UTF16ToUTF8(details.update_ap()));
+-
+-  static crash_reporter::CrashKeyString<32> update_cohort_name("cohort-name");
+-  update_cohort_name.Set(base::UTF16ToUTF8(details.update_cohort_name()));
+-
+   if (chrome::GetChannel() == version_info::Channel::CANARY) {
+     content::RenderProcessHost::SetHungRendererAnalysisFunction(
+         &DumpHungRendererProcessImpl);
+@@ -652,22 +613,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
  
    InitializeChromeElf();
  
@@ -51,7 +124,7 @@ index e99fe811ffcf..91bc654feba5 100644
    // Record UMA data about whether the fault-tolerant heap is enabled.
    // Use a delayed task to minimize the impact on startup time.
    content::GetUIThreadTaskRunner({})->PostDelayedTask(
-@@ -702,11 +674,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -702,11 +647,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
          base::BindOnce(&UpdatePwaLaunchersForProfile, profile()->GetPath()));
    }
  

@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/BUILD.gn b/chrome/renderer/BUILD.gn
-index 62747b5714ed..adc2814f2420 100644
+index 62747b5714ed..c349f801c85c 100644
 --- a/chrome/renderer/BUILD.gn
 +++ b/chrome/renderer/BUILD.gn
 @@ -61,12 +61,6 @@ static_library("renderer") {
@@ -29,7 +29,18 @@ index 62747b5714ed..adc2814f2420 100644
      "//components/translate/content/renderer",
      "//components/translate/core/common",
      "//components/translate/core/language_detection",
-@@ -424,8 +415,6 @@ static_library("test_support") {
+@@ -272,10 +263,6 @@ static_library("renderer") {
+     ]
+     deps += [
+       "//chrome/common/safe_browsing:proto",
+-      "//components/safe_browsing/content/renderer",
+-      "//components/safe_browsing/core:client_model_proto",
+-      "//components/safe_browsing/core:csd_proto",
+-      "//components/safe_browsing/core/common",
+       "//third_party/smhasher:murmurhash3",
+     ]
+   }
+@@ -424,8 +411,6 @@ static_library("test_support") {
    sources = [
      "chrome_mock_render_thread.cc",
      "chrome_mock_render_thread.h",

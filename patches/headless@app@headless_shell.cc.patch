@@ -1,0 +1,25 @@
+diff --git a/headless/app/headless_shell.cc b/headless/app/headless_shell.cc
+index 2e2a397fda44..0b5016194354 100644
+--- a/headless/app/headless_shell.cc
++++ b/headless/app/headless_shell.cc
+@@ -51,8 +51,6 @@
+ #include "ui/gfx/geometry/size.h"
+ 
+ #if defined(OS_WIN)
+-#include "components/crash/core/app/crash_switches.h"
+-#include "components/crash/core/app/run_as_crashpad_handler_win.h"
+ #include "sandbox/win/src/sandbox_types.h"
+ #endif
+ 
+@@ -641,11 +639,6 @@ int HeadlessShellMain(HINSTANCE instance,
+   std::string process_type =
+       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+           ::switches::kProcessType);
+-  if (process_type == crash_reporter::switches::kCrashpadHandler) {
+-    return crash_reporter::RunAsCrashpadHandler(
+-        *base::CommandLine::ForCurrentProcess(), base::FilePath(),
+-        ::switches::kProcessType, switches::kUserDataDir);
+-  }
+ #endif  // defined(HEADLESS_USE_CRASHPAD)
+   RunChildProcessIfNeeded(instance, sandbox_info);
+   HeadlessBrowser::Options::Builder builder(0, nullptr);

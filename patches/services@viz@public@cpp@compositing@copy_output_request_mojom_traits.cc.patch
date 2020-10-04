@@ -1,0 +1,35 @@
+diff --git a/services/viz/public/cpp/compositing/copy_output_request_mojom_traits.cc b/services/viz/public/cpp/compositing/copy_output_request_mojom_traits.cc
+index af1dd74b8b3b..d324be4ddb47 100644
+--- a/services/viz/public/cpp/compositing/copy_output_request_mojom_traits.cc
++++ b/services/viz/public/cpp/compositing/copy_output_request_mojom_traits.cc
+@@ -13,7 +13,6 @@
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+ #include "services/viz/public/cpp/compositing/copy_output_result_mojom_traits.h"
+-#include "services/viz/public/cpp/crash_keys.h"
+ 
+ namespace {
+ 
+@@ -117,22 +116,18 @@ bool StructTraits<viz::mojom::CopyOutputRequestDataView,
+   if (!data.ReadScaleFrom(&scale_from))
+     return false;
+   if (scale_from.x() <= 0) {
+-    viz::SetDeserializationCrashKeyString("Invalid readback scale from x");
+     return false;
+   }
+   if (scale_from.y() <= 0) {
+-    viz::SetDeserializationCrashKeyString("Invalid readback scale from y");
+     return false;
+   }
+   gfx::Vector2d scale_to;
+   if (!data.ReadScaleTo(&scale_to))
+     return false;
+   if (scale_to.x() <= 0) {
+-    viz::SetDeserializationCrashKeyString("Invalid readback scale to x");
+     return false;
+   }
+   if (scale_to.y() <= 0) {
+-    viz::SetDeserializationCrashKeyString("Invalid readback scale to y");
+     return false;
+   }
+   request->SetScaleRatio(scale_from, scale_to);

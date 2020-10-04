@@ -1,0 +1,22 @@
+diff --git a/components/variations/synthetic_trials_active_group_id_provider.cc b/components/variations/synthetic_trials_active_group_id_provider.cc
+index 3a515911a849..1f2cb8072dbb 100644
+--- a/components/variations/synthetic_trials_active_group_id_provider.cc
++++ b/components/variations/synthetic_trials_active_group_id_provider.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "base/memory/singleton.h"
+ #include "components/variations/variations_associated_data.h"
+-#include "components/variations/variations_crash_keys.h"
+ 
+ namespace variations {
+ 
+@@ -39,9 +38,6 @@ void SyntheticTrialsActiveGroupIdProvider::OnSyntheticTrialsChanged(
+     for (const auto& group : groups)
+       synthetic_trials_.push_back(group.id);
+   }
+-
+-  // Update the experiments list for crash reports.
+-  UpdateCrashKeysWithSyntheticTrials(groups);
+ }
+ 
+ }  // namespace variations

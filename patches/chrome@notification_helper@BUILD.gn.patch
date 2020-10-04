@@ -1,0 +1,22 @@
+diff --git a/chrome/notification_helper/BUILD.gn b/chrome/notification_helper/BUILD.gn
+index 4a32c96f650b..9cd6f84cd507 100644
+--- a/chrome/notification_helper/BUILD.gn
++++ b/chrome/notification_helper/BUILD.gn
+@@ -11,8 +11,6 @@ executable("notification_helper") {
+   sources = [
+     "notification_helper.cc",
+     "notification_helper.rc",
+-    "notification_helper_crash_reporter_client.cc",
+-    "notification_helper_crash_reporter_client.h",
+   ]
+ 
+   configs -= [ "//build/config/win:console" ]
+@@ -26,8 +24,6 @@ executable("notification_helper") {
+     "//build/win:default_exe_manifest",
+     "//chrome/common:version_header",
+     "//chrome/install_static:primary_module",
+-    "//components/crash/core/app",
+-    "//components/crash/core/app:crash_export_thunks",
+     "//components/version_info:channel",
+   ]
+ 

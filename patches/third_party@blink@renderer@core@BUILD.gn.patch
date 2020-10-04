@@ -1,0 +1,15 @@
+diff --git a/third_party/blink/renderer/core/BUILD.gn b/third_party/blink/renderer/core/BUILD.gn
+index d95886012c43..1149438e2ee8 100644
+--- a/third_party/blink/renderer/core/BUILD.gn
++++ b/third_party/blink/renderer/core/BUILD.gn
+@@ -1010,10 +1010,6 @@ target(core_generated_target_type, "core_generated") {
+       "/wd4702",
+     ]
+   }
+-
+-  if (is_debug || dcheck_always_on) {
+-    deps += [ "//components/crash/core/common:crash_key" ]
+-  }
+ }
+ 
+ # Fuzzer for blink::TextResourceDecoder.

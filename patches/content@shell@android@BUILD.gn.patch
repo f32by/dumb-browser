@@ -1,0 +1,21 @@
+diff --git a/content/shell/android/BUILD.gn b/content/shell/android/BUILD.gn
+index 253a463a8455..eb6be8a2972c 100644
+--- a/content/shell/android/BUILD.gn
++++ b/content/shell/android/BUILD.gn
+@@ -24,7 +24,6 @@ shared_library("libcontent_shell_content_view") {
+   testonly = true
+   deps = [
+     ":content_shell_jni_headers",
+-    "//components/crash/content/browser",
+     "//content/shell:content_shell_app",
+     "//content/shell:content_shell_lib",
+     "//content/shell:pak",
+@@ -195,8 +194,6 @@ template("content_shell_apk_tmpl") {
+       ":content_shell_java",
+       "//base:base_java",
+       "//base:base_java_test_support",
+-      "//components/crash/android:java",
+-      "//components/crash/core/app:chrome_crashpad_handler_named_as_so",
+       "//content/public/android:content_java",
+       "//content/public/test/android:android_test_message_pump_support_java",
+       "//media/capture/video/android:capture_java",

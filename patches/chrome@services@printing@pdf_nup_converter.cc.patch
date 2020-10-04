@@ -1,0 +1,23 @@
+diff --git a/chrome/services/printing/pdf_nup_converter.cc b/chrome/services/printing/pdf_nup_converter.cc
+index 9e6f61a31051..552f199a9cf3 100644
+--- a/chrome/services/printing/pdf_nup_converter.cc
++++ b/chrome/services/printing/pdf_nup_converter.cc
+@@ -8,7 +8,6 @@
+ #include <utility>
+ 
+ #include "base/containers/span.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "pdf/pdf.h"
+ 
+ namespace printing {
+@@ -96,10 +95,6 @@ void PdfNupConverter::NupDocumentConvert(
+ }
+ 
+ void PdfNupConverter::SetWebContentsURL(const GURL& url) {
+-  // Record the most recent url we tried to print. This should be sufficient
+-  // for users using print preview by default.
+-  static crash_reporter::CrashKeyString<1024> crash_key("main-frame-url");
+-  crash_key.Set(url.spec());
+ }
+ 
+ }  // namespace printing

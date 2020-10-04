@@ -1,0 +1,54 @@
+diff --git a/chrome/browser/metrics/thread_watcher.cc b/chrome/browser/metrics/thread_watcher.cc
+index 7d7ff858739a..b7aefaa09217 100644
+--- a/chrome/browser/metrics/thread_watcher.cc
++++ b/chrome/browser/metrics/thread_watcher.cc
+@@ -27,7 +27,6 @@
+ #include "chrome/common/channel_info.h"
+ #include "chrome/common/chrome_switches.h"
+ #include "chrome/common/logging_chrome.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/metrics/call_stack_profile_metrics_provider.h"
+ #include "components/omnibox/browser/omnibox_event_global_tracker.h"
+ #include "components/version_info/version_info.h"
+@@ -432,11 +431,6 @@ void ThreadWatcher::GotNoResponse() {
+     if (!crashed_once) {
+       crashed_once = true;
+ 
+-      // The swap storm that happens under critical memory pressure can cause
+-      // hangs. Add the time since last critical memory pressure signal as a
+-      // crash key to allow filtering of hangs that are likely caused by that.
+-      SetTimeSinceLastCriticalMemoryPressureCrashKey();
+-
+       // Simulate a crash.ou
+       metrics::CrashBecauseThreadWasUnresponsive(thread_id_);
+     }
+@@ -445,29 +439,6 @@ void ThreadWatcher::GotNoResponse() {
+   hung_processing_complete_ = true;
+ }
+ 
+-void ThreadWatcher::SetTimeSinceLastCriticalMemoryPressureCrashKey() {
+-  // The crash key size is large enough to hold the biggest possible return
+-  // value from base::TimeDelta::InSeconds().
+-  constexpr size_t kCrashKeyContentSize = 19;
+-  DCHECK_EQ(kCrashKeyContentSize,
+-            base::NumberToString(std::numeric_limits<int64_t>::max()).size());
+-
+-  static crash_reporter::CrashKeyString<kCrashKeyContentSize> crash_key(
+-      "seconds-since-last-memory-pressure");
+-
+-  if (last_critical_memory_pressure_.is_null()) {
+-    constexpr char kNoMemoryPressureMsg[] = "No memory pressure";
+-    static_assert(base::size(kNoMemoryPressureMsg) <= kCrashKeyContentSize,
+-                  "The crash key is too small to hold \"No memory pressure\".");
+-    crash_key.Set(kNoMemoryPressureMsg);
+-  } else {
+-    base::TimeDelta time_since_last_critical_memory_pressure =
+-        base::TimeTicks::Now() - last_critical_memory_pressure_;
+-    crash_key.Set(base::NumberToString(
+-        time_since_last_critical_memory_pressure.InSeconds()));
+-  }
+-}
+-
+ bool ThreadWatcher::IsVeryUnresponsive() {
+   DCHECK(WatchDogThread::CurrentlyOnWatchDogThread());
+   return unresponsive_count_ >= unresponsive_threshold_;

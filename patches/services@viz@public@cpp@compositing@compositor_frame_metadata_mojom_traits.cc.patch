@@ -1,0 +1,29 @@
+diff --git a/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc b/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc
+index cb57ef4394f2..271e007830a6 100644
+--- a/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc
++++ b/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc
+@@ -8,7 +8,6 @@
+ #include "services/viz/public/cpp/compositing/begin_frame_args_mojom_traits.h"
+ #include "services/viz/public/cpp/compositing/selection_mojom_traits.h"
+ #include "services/viz/public/cpp/compositing/surface_id_mojom_traits.h"
+-#include "services/viz/public/cpp/crash_keys.h"
+ #include "ui/gfx/mojom/display_color_spaces_mojom_traits.h"
+ #include "ui/gfx/mojom/selection_bound_mojom_traits.h"
+ #include "ui/latency/mojom/latency_info_mojom_traits.h"
+@@ -21,7 +20,6 @@ bool StructTraits<viz::mojom::CompositorFrameMetadataDataView,
+     Read(viz::mojom::CompositorFrameMetadataDataView data,
+          viz::CompositorFrameMetadata* out) {
+   if (data.device_scale_factor() <= 0) {
+-    viz::SetDeserializationCrashKeyString("Invalid device scale factor");
+     return false;
+   }
+   out->device_scale_factor = data.device_scale_factor();
+@@ -60,8 +58,6 @@ bool StructTraits<viz::mojom::CompositorFrameMetadataDataView,
+     return false;
+   }
+   if (out->local_surface_id_allocation_time.is_null()) {
+-    viz::SetDeserializationCrashKeyString(
+-        "Null local surface ID allocation time");
+     return false;
+   }
+   return data.ReadPreferredFrameInterval(&out->preferred_frame_interval) &&

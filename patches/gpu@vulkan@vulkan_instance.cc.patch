@@ -1,0 +1,22 @@
+diff --git a/gpu/vulkan/vulkan_instance.cc b/gpu/vulkan/vulkan_instance.cc
+index c68a852d2a49..a071e3ae9821 100644
+--- a/gpu/vulkan/vulkan_instance.cc
++++ b/gpu/vulkan/vulkan_instance.cc
+@@ -10,7 +10,6 @@
+ #include "base/logging.h"
+ #include "base/macros.h"
+ #include "build/build_config.h"
+-#include "gpu/vulkan/vulkan_crash_keys.h"
+ #include "gpu/vulkan/vulkan_device_queue.h"
+ #include "gpu/vulkan/vulkan_function_pointers.h"
+ #include "gpu/vulkan/vulkan_util.h"
+@@ -88,9 +87,6 @@ bool VulkanInstance::Initialize(
+   if (vulkan_info_.api_version < kVulkanRequiredApiVersion)
+     return false;
+ 
+-  gpu::crash_keys::vulkan_api_version.Set(
+-      VkVersionToString(vulkan_info_.api_version));
+-
+   vulkan_info_.used_api_version = kVulkanRequiredApiVersion;
+ 
+   VkApplicationInfo app_info = {};

@@ -1,0 +1,14 @@
+diff --git a/extensions/renderer/BUILD.gn b/extensions/renderer/BUILD.gn
+index 41aed51cd726..aad944b6b089 100644
+--- a/extensions/renderer/BUILD.gn
++++ b/extensions/renderer/BUILD.gn
+@@ -270,9 +270,6 @@ source_set("renderer") {
+     "//third_party/zlib/google:compression_utils",
+   ]
+ 
+-  # Temporarily allow crash_key; see https://crbug.com/1034755
+-  deps += [ "//components/crash/core/common:crash_key" ]
+-
+   if (proprietary_codecs && enable_wifi_display) {
+     sources += [
+       "api/display_source/wifi_display/wifi_display_audio_encoder.cc",

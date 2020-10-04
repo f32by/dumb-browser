@@ -1,0 +1,34 @@
+diff --git a/weblayer/BUILD.gn b/weblayer/BUILD.gn
+index 3570bc922309..f29aa61ed7ce 100644
+--- a/weblayer/BUILD.gn
++++ b/weblayer/BUILD.gn
+@@ -371,9 +371,6 @@ source_set("weblayer_lib_base") {
+     "//components/content_settings/common:mojom",
+     "//components/content_settings/core/browser",
+     "//components/content_settings/renderer",
+-    "//components/crash/content/browser",
+-    "//components/crash/core/app",
+-    "//components/crash/core/common",
+     "//components/embedder_support",
+     "//components/embedder_support/origin_trials",
+     "//components/error_page/common",
+@@ -567,10 +564,6 @@ source_set("weblayer_lib_base") {
+       "browser/weblayer_impl_android.h",
+       "browser/webrtc/media_stream_manager.cc",
+       "browser/webrtc/media_stream_manager.h",
+-      "common/crash_reporter/crash_keys.cc",
+-      "common/crash_reporter/crash_keys.h",
+-      "common/crash_reporter/crash_reporter_client.cc",
+-      "common/crash_reporter/crash_reporter_client.h",
+     ]
+     deps += [
+       "//android_webview:generate_aw_resources",
+@@ -584,8 +577,6 @@ source_set("weblayer_lib_base") {
+       "//components/browser_ui/sms/android",
+       "//components/cdm/browser",
+       "//components/content_settings/android",
+-      "//components/crash/android:crash_android",
+-      "//components/crash/android:crashpad_main",
+       "//components/embedder_support/android:browser_context",
+       "//components/embedder_support/android:context_menu",
+       "//components/embedder_support/android:util",

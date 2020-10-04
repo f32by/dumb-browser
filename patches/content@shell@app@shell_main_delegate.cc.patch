@@ -1,0 +1,103 @@
+diff --git a/content/shell/app/shell_main_delegate.cc b/content/shell/app/shell_main_delegate.cc
+index 44f61774da94..1291a3870f04 100644
+--- a/content/shell/app/shell_main_delegate.cc
++++ b/content/shell/app/shell_main_delegate.cc
+@@ -17,12 +17,10 @@
+ #include "base/path_service.h"
+ #include "base/trace_event/trace_log.h"
+ #include "build/build_config.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "content/common/content_constants_internal.h"
+ #include "content/public/browser/browser_main_runner.h"
+ #include "content/public/common/content_switches.h"
+ #include "content/public/common/url_constants.h"
+-#include "content/shell/app/shell_crash_reporter_client.h"
+ #include "content/shell/browser/shell_content_browser_client.h"
+ #include "content/shell/common/shell_content_client.h"
+ #include "content/shell/common/shell_switches.h"
+@@ -54,10 +52,6 @@
+ #include "content/shell/android/shell_descriptors.h"
+ #endif
+ 
+-#if !defined(OS_FUCHSIA)
+-#include "components/crash/core/app/crashpad.h"  // nogncheck
+-#endif
+-
+ #if defined(OS_MAC)
+ #include "content/shell/app/paths_mac.h"
+ #include "content/shell/app/shell_main_delegate_mac.h"
+@@ -68,7 +62,6 @@
+ 
+ #include <initguid.h>
+ #include "base/logging_win.h"
+-#include "content/shell/common/v8_crashpad_support_win.h"
+ #endif
+ 
+ #if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_ANDROID)
+@@ -81,11 +74,6 @@
+ 
+ namespace {
+ 
+-#if !defined(OS_FUCHSIA)
+-base::LazyInstance<content::ShellCrashReporterClient>::Leaky
+-    g_shell_crash_client = LAZY_INSTANCE_INITIALIZER;
+-#endif
+-
+ #if defined(OS_WIN)
+ // If "Content Shell" doesn't show up in your list of trace providers in
+ // Sawbuck, add these registry entries to your machine (NOTE the optional
+@@ -155,8 +143,6 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
+ #if defined(OS_WIN)
+   // Enable trace control and transport through event tracing for Windows.
+   logging::LogEventProvider::Initialize(kContentShellProviderName);
+-
+-  v8_crashpad_support::SetUp();
+ #endif
+ 
+ #if defined(OS_MAC)
+@@ -193,29 +179,6 @@ void ShellMainDelegate::PreSandboxStartup() {
+   base::CPU cpu_info;
+ #endif
+ 
+-// Disable platform crash handling and initialize the crash reporter, if
+-// requested.
+-// TODO(crbug.com/753619): Implement crash reporter integration for Fuchsia.
+-#if !defined(OS_FUCHSIA)
+-  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+-          switches::kEnableCrashReporter)) {
+-    std::string process_type =
+-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+-            switches::kProcessType);
+-    crash_reporter::SetCrashReporterClient(g_shell_crash_client.Pointer());
+-    // Reporting for sub-processes will be initialized in ZygoteForked.
+-    if (process_type != service_manager::switches::kZygoteProcess) {
+-      crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
+-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+-      crash_reporter::SetFirstChanceExceptionHandler(
+-          v8::TryHandleWebAssemblyTrapPosix);
+-#endif
+-    }
+-  }
+-#endif  // !defined(OS_FUCHSIA)
+-
+-  crash_reporter::InitializeCrashKeys();
+-
+   InitializeResourceBundle();
+ }
+ 
+@@ -266,15 +229,6 @@ int ShellMainDelegate::RunProcess(
+ 
+ #if defined(OS_LINUX) || defined(OS_CHROMEOS)
+ void ShellMainDelegate::ZygoteForked() {
+-  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+-          switches::kEnableCrashReporter)) {
+-    std::string process_type =
+-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+-            switches::kProcessType);
+-    crash_reporter::InitializeCrashpad(false, process_type);
+-    crash_reporter::SetFirstChanceExceptionHandler(
+-        v8::TryHandleWebAssemblyTrapPosix);
+-  }
+ }
+ #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+ 

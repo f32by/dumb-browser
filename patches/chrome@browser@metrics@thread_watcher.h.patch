@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/metrics/thread_watcher.h b/chrome/browser/metrics/thread_watcher.h
+index 962410d47394..b9df58eba25f 100644
+--- a/chrome/browser/metrics/thread_watcher.h
++++ b/chrome/browser/metrics/thread_watcher.h
+@@ -203,9 +203,6 @@ class ThreadWatcher {
+   // It increments |unresponsive_count_| by 1.
+   void GotNoResponse();
+ 
+-  // Sets a crash key with the time since last critical memory pressure signal.
+-  void SetTimeSinceLastCriticalMemoryPressureCrashKey();
+-
+   // This method returns true if the watched thread has not responded with a
+   // pong message for |unresponsive_threshold_| number of ping messages.
+   bool IsVeryUnresponsive();

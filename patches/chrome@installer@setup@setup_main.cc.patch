@@ -1,0 +1,49 @@
+diff --git a/chrome/installer/setup/setup_main.cc b/chrome/installer/setup/setup_main.cc
+index 5a339503a572..ad9a2e3ccc21 100644
+--- a/chrome/installer/setup/setup_main.cc
++++ b/chrome/installer/setup/setup_main.cc
+@@ -61,7 +61,6 @@
+ #include "chrome/installer/setup/install.h"
+ #include "chrome/installer/setup/install_params.h"
+ #include "chrome/installer/setup/install_worker.h"
+-#include "chrome/installer/setup/installer_crash_reporting.h"
+ #include "chrome/installer/setup/installer_state.h"
+ #include "chrome/installer/setup/launch_chrome.h"
+ #include "chrome/installer/setup/modify_params.h"
+@@ -90,8 +89,6 @@
+ #include "chrome/installer/util/self_cleaning_temp_dir.h"
+ #include "chrome/installer/util/shell_util.h"
+ #include "chrome/installer/util/util_constants.h"
+-#include "components/crash/core/app/crash_switches.h"
+-#include "components/crash/core/app/run_as_crashpad_handler_win.h"
+ #include "content/public/common/content_switches.h"
+ 
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+@@ -1300,16 +1297,6 @@ int WINAPI wWinMain(HINSTANCE instance,
+       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+           switches::kProcessType);
+ 
+-  if (process_type == crash_reporter::switches::kCrashpadHandler) {
+-    // Histogram storage is enabled at the very top of this wWinMain. Disable it
+-    // when this process is decicated to crashpad as there is no directory in
+-    // which to write them nor a browser to subsequently upload them.
+-    persistent_histogram_storage.Disable();
+-    return crash_reporter::RunAsCrashpadHandler(
+-        *base::CommandLine::ForCurrentProcess(), base::FilePath(),
+-        switches::kProcessType, switches::kUserDataDir);
+-  }
+-
+   // install_util uses chrome paths.
+   chrome::RegisterPathProvider();
+ 
+@@ -1334,10 +1321,6 @@ int WINAPI wWinMain(HINSTANCE instance,
+   persistent_histogram_storage.set_storage_base_dir(
+       installer_state.target_path());
+ 
+-  installer::ConfigureCrashReporting(installer_state);
+-  installer::SetInitialCrashKeys(installer_state);
+-  installer::SetCrashKeysFromCommandLine(cmd_line);
+-
+   // Make sure the process exits cleanly on unexpected errors.
+   base::EnableTerminationOnHeapCorruption();
+   base::EnableTerminationOnOutOfMemory();

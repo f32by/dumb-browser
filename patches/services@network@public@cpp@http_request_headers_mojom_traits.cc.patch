@@ -1,0 +1,27 @@
+diff --git a/services/network/public/cpp/http_request_headers_mojom_traits.cc b/services/network/public/cpp/http_request_headers_mojom_traits.cc
+index 66bedc183307..769c9023ed70 100644
+--- a/services/network/public/cpp/http_request_headers_mojom_traits.cc
++++ b/services/network/public/cpp/http_request_headers_mojom_traits.cc
+@@ -5,7 +5,6 @@
+ #include "services/network/public/cpp/http_request_headers_mojom_traits.h"
+ 
+ #include "net/http/http_util.h"
+-#include "services/network/public/cpp/crash_keys.h"
+ 
+ namespace mojo {
+ 
+@@ -17,14 +16,12 @@ bool StructTraits<network::mojom::HttpRequestHeaderKeyValuePairDataView,
+   if (!data.ReadKey(&item->key))
+     return false;
+   if (!net::HttpUtil::IsValidHeaderName(item->key)) {
+-    network::debug::SetDeserializationCrashKeyString("header_key");
+     return false;
+   }
+   if (!data.ReadValue(&item->value))
+     return false;
+   item->value = std::string(net::HttpUtil::TrimLWS(item->value));
+   if (!net::HttpUtil::IsValidHeaderValue(item->value)) {
+-    network::debug::SetDeserializationCrashKeyString("header_value");
+     return false;
+   }
+   return true;

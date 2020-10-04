@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/metrics/metrics_reporting_state.cc b/chrome/browser/metrics/metrics_reporting_state.cc
-index 2745f4a40aca..18329c89fb7d 100644
+index 2745f4a40aca..b526d2c83f2e 100644
 --- a/chrome/browser/metrics/metrics_reporting_state.cc
 +++ b/chrome/browser/metrics/metrics_reporting_state.cc
-@@ -30,16 +30,10 @@ enum MetricsReportingChangeHistogramValue {
+@@ -12,7 +12,6 @@
+ #include "chrome/browser/metrics/chrome_metrics_service_accessor.h"
+ #include "chrome/common/pref_names.h"
+ #include "chrome/installer/util/google_update_settings.h"
+-#include "components/crash/core/common/crash_keys.h"
+ #include "components/metrics/entropy_state.h"
+ #include "components/metrics/metrics_pref_names.h"
+ #include "components/metrics/metrics_service.h"
+@@ -30,16 +29,10 @@ enum MetricsReportingChangeHistogramValue {
    METRICS_REPORTING_MAX
  };
  
@@ -20,7 +28,7 @@ index 2745f4a40aca..18329c89fb7d 100644
    bool updated_pref = GoogleUpdateSettings::GetCollectStatsConsent();
    if (enabled != updated_pref)
      DVLOG(1) << "Unable to set metrics reporting status to " << enabled;
-@@ -59,19 +53,13 @@ void SetMetricsReporting(bool to_update_pref,
+@@ -59,19 +52,13 @@ void SetMetricsReporting(bool to_update_pref,
                           OnMetricsReportingCallbackType callback_fn,
                           bool updated_pref) {
    g_browser_process->local_state()->SetBoolean(
@@ -41,7 +49,7 @@ index 2745f4a40aca..18329c89fb7d 100644
    if (!callback_fn.is_null())
      std::move(callback_fn).Run(updated_pref);
  }
-@@ -105,12 +93,6 @@ void ChangeMetricsReportingStateWithReply(
+@@ -105,12 +92,6 @@ void ChangeMetricsReportingStateWithReply(
  }
  
  void UpdateMetricsPrefsOnPermissionChange(bool metrics_enabled) {
@@ -54,10 +62,11 @@ index 2745f4a40aca..18329c89fb7d 100644
      // Clear the client id and low entropy sources pref when opting out.
      // Note: This will not affect the running state (e.g. field trial
      // randomization), as the pref is only read on startup.
-@@ -120,7 +102,6 @@ void UpdateMetricsPrefsOnPermissionChange(bool metrics_enabled) {
+@@ -119,8 +100,6 @@ void UpdateMetricsPrefsOnPermissionChange(bool metrics_enabled) {
+     metrics::EntropyState::ClearPrefs(g_browser_process->local_state());
      g_browser_process->local_state()->ClearPref(
          metrics::prefs::kMetricsReportingEnabledTimestamp);
-     crash_keys::ClearMetricsClientId();
+-    crash_keys::ClearMetricsClientId();
 -  }
  }
  

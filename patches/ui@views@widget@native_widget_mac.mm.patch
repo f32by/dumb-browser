@@ -1,0 +1,30 @@
+diff --git a/ui/views/widget/native_widget_mac.mm b/ui/views/widget/native_widget_mac.mm
+index 4b1cf535a385..2424a245d2f8 100644
+--- a/ui/views/widget/native_widget_mac.mm
++++ b/ui/views/widget/native_widget_mac.mm
+@@ -16,7 +16,6 @@
+ #include "base/no_destructor.h"
+ #include "base/strings/sys_string_conversions.h"
+ #include "base/threading/thread_task_runner_handle.h"
+-#include "components/crash/core/common/crash_key.h"
+ #import "components/remote_cocoa/app_shim/bridged_content_view.h"
+ #import "components/remote_cocoa/app_shim/native_widget_mac_nswindow.h"
+ #import "components/remote_cocoa/app_shim/native_widget_ns_window_bridge.h"
+@@ -920,17 +919,6 @@ void OnDidChangeFocus(View* focused_before, View* focused_now) override {
+     if (![window isKindOfClass:[NativeWidgetMacNSWindow class]])
+       continue;
+ 
+-    // Record a crash key to detect when client code may destroy a
+-    // WidgetObserver without removing it (possibly leaking the Widget).
+-    // A crash can occur in generic Widget teardown paths when trying to notify.
+-    // See http://crbug.com/808318.
+-    static crash_reporter::CrashKeyString<256> window_info_key("windowInfo");
+-    std::string value = base::SysNSStringToUTF8(
+-        [NSString stringWithFormat:@"Closing %@ (%@)", [window title],
+-                                   [window className]]);
+-    crash_reporter::ScopedCrashKeyString scopedWindowKey(&window_info_key,
+-                                                         value);
+-
+     Widget* widget = GetWidgetForNativeWindow(window);
+     if (widget && widget->is_secondary_widget())
+       [window close];

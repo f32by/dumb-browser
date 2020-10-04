@@ -1,0 +1,32 @@
+diff --git a/chrome/utility/printing_handler.cc b/chrome/utility/printing_handler.cc
+index c050cc5e41c8..d4151f8b504b 100644
+--- a/chrome/utility/printing_handler.cc
++++ b/chrome/utility/printing_handler.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "build/build_config.h"
+ #include "chrome/common/chrome_utility_printing_messages.h"
+-#include "components/crash/core/common/crash_keys.h"
+ #include "content/public/utility/utility_thread.h"
+ #include "ipc/ipc_message.h"
+ #include "printing/backend/print_backend.h"
+@@ -48,9 +47,6 @@ void PrintingHandler::OnGetPrinterCapsAndDefaults(
+       PrintBackend::CreateInstance(/*locale=*/std::string());
+   PrinterCapsAndDefaults printer_info;
+ 
+-  crash_keys::ScopedPrinterInfo crash_key(
+-      print_backend->GetPrinterDriverInfo(printer_name));
+-
+   if (print_backend->GetPrinterCapsAndDefaults(printer_name, &printer_info)) {
+     Send(new ChromeUtilityHostMsg_GetPrinterCapsAndDefaults_Succeeded(
+         printer_name, printer_info));
+@@ -67,9 +63,6 @@ void PrintingHandler::OnGetPrinterSemanticCapsAndDefaults(
+       PrintBackend::CreateInstance(/*locale=*/std::string());
+   PrinterSemanticCapsAndDefaults printer_info;
+ 
+-  crash_keys::ScopedPrinterInfo crash_key(
+-      print_backend->GetPrinterDriverInfo(printer_name));
+-
+   if (print_backend->GetPrinterSemanticCapsAndDefaults(printer_name,
+                                                        &printer_info)) {
+     Send(new ChromeUtilityHostMsg_GetPrinterSemanticCapsAndDefaults_Succeeded(

@@ -1,0 +1,20 @@
+diff --git a/components/gwp_asan/client/guarded_page_allocator.cc b/components/gwp_asan/client/guarded_page_allocator.cc
+index fc28cd50b2f8..2d14a70fd450 100644
+--- a/components/gwp_asan/client/guarded_page_allocator.cc
++++ b/components/gwp_asan/client/guarded_page_allocator.cc
+@@ -17,15 +17,9 @@
+ #include "base/strings/stringprintf.h"
+ #include "base/synchronization/lock.h"
+ #include "build/build_config.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/gwp_asan/common/allocator_state.h"
+-#include "components/gwp_asan/common/crash_key_name.h"
+ #include "components/gwp_asan/common/pack_stack_trace.h"
+ 
+-#if defined(OS_ANDROID)
+-#include "components/crash/core/app/crashpad.h"  // nogncheck
+-#endif
+-
+ #if defined(OS_APPLE)
+ #include <pthread.h>
+ #endif

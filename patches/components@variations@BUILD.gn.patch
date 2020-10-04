@@ -1,0 +1,37 @@
+diff --git a/components/variations/BUILD.gn b/components/variations/BUILD.gn
+index 0baea0921fe3..e6071904ac0d 100644
+--- a/components/variations/BUILD.gn
++++ b/components/variations/BUILD.gn
+@@ -62,8 +62,6 @@ static_library("variations") {
+     "variations_associated_data.cc",
+     "variations_associated_data.h",
+     "variations_client.h",
+-    "variations_crash_keys.cc",
+-    "variations_crash_keys.h",
+     "variations_id_collection.cc",
+     "variations_id_collection.h",
+     "variations_ids_provider.cc",
+@@ -105,7 +103,6 @@ static_library("variations") {
+     ":buildflags",
+     "proto",
+     "//base",
+-    "//components/crash/core/common:crash_key",
+     "//components/prefs",
+     "//crypto",
+     "//third_party/protobuf:protobuf_lite",
+@@ -167,7 +164,6 @@ source_set("unit_tests") {
+     "study_filtering_unittest.cc",
+     "synthetic_trial_registry_unittest.cc",
+     "variations_associated_data_unittest.cc",
+-    "variations_crash_keys_unittest.cc",
+     "variations_id_collection_unittest.cc",
+     "variations_ids_provider_unittest.cc",
+     "variations_murmur_hash_unittest.cc",
+@@ -186,7 +182,6 @@ source_set("unit_tests") {
+     "net",
+     "proto",
+     "//base/test:test_support",
+-    "//components/crash/core/common:crash_key",
+     "//components/prefs:test_support",
+     "//components/variations/field_trial_config:field_trial_config",
+     "//services/network/public/cpp:cpp_base",

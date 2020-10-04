@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- coding] = utf-8 -*-
 
 # Copyright (C) 2020 ByTanuky
-# This program is free software: you can redistribute it and/or modify
+# This program is free software] = you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -18,56 +18,56 @@
 import argparse
 import os
 import sys
+from collections import OrderedDict
 
 from constants import CHROMIUM_SRC_DIR
 from utils import run_command
 
-gn_args = {
+gn_args = OrderedDict()
     # release build
-    'is_debug': 'false',
-    'is_official_build': '!is_debug',
+gn_args['is_debug'] = 'false'
+gn_args['is_official_build'] = '!is_debug',
     # no debug symbols
-    'blink_symbol_level': '0',
-    'symbol_level': '0',
+gn_args['blink_symbol_level'] = '0',
+gn_args['symbol_level'] = '0',
     # do not build dawn tests
-    'build_dawn_tests': 'false',
+gn_args['build_dawn_tests'] = 'false',
     # disable click to call
-    'enable_click_to_call': 'false',
-    'enable_dsyms': 'false',
-    'enable_hangout_services_extension': 'false',
-    'enable_iterator_debugging': 'false',
+gn_args['enable_click_to_call'] = 'false',
+gn_args['enable_dsyms'] = 'false',
+gn_args['enable_hangout_services_extension'] = 'false',
+gn_args['enable_iterator_debugging'] = 'false',
     # disable mDNS discovery
-    'enable_mdns': 'false',
-    'enable_media_remoting': 'false',
+gn_args['enable_mdns'] = 'false',
+gn_args['enable_media_remoting'] = 'false',
     # no NaCl
-    'enable_nacl': 'false',
-    'enable_nacl_nonsfi': 'false',
+gn_args['enable_nacl'] = 'false',
+gn_args['enable_nacl_nonsfi'] = 'false',
     # no readling list
-    'enable_reading_list': 'false',
-    'enable_remoting': 'false',
+gn_args['enable_reading_list'] = 'false',
+gn_args['enable_remoting'] = 'false',
     # disable reporting
-    'enable_reporting': 'false',
+gn_args['enable_reporting'] = 'false',
     # disable service discovery
-    'enable_service_discovery': 'false',
+gn_args['enable_service_discovery'] = 'false',
     # enable Widevine DRM
-    'enable_widevine': 'true',
-    'exclude_unwind_tables': 'true',
-    'fieldtrial_testing_like_official_build': 'true',
+gn_args['enable_widevine'] = 'true',
+gn_args['exclude_unwind_tables'] = 'true',
+gn_args['fieldtrial_testing_like_official_build'] = 'true',
     # use proprietary codecs
-    'ffmpeg_branding': '"Chrome"',
-    'proprietary_codecs': 'true',
+gn_args['ffmpeg_branding'] = '"Chrome"',
+gn_args['proprietary_codecs'] = 'true',
     # disable Safe Browsing
-    'safe_browsing_mode': '0',
-    'use_official_google_api_keys': 'false',
+gn_args['safe_browsing_mode'] = '0',
+gn_args['use_official_google_api_keys'] = 'false',
     # use Chromium branding
-    'is_chrome_branded': 'false',
-    'use_unofficial_version_number': 'false',
+gn_args['is_chrome_branded'] = 'false',
+gn_args['use_unofficial_version_number'] = 'false',
     # do not build WebRTC samples
-    'rtc_build_examples': 'false',
+gn_args['rtc_build_examples'] = 'false',
     # enable V8 pointer compression
-    'v8_enable_pointer_compression': 'true',
-    'enable_resource_allowlist_generation': 'is_debug',
-}
+gn_args['v8_enable_pointer_compression'] = 'true',
+gn_args['enable_resource_allowlist_generation'] = 'is_debug'
 
 
 def main(args):

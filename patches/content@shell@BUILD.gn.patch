@@ -1,8 +1,40 @@
 diff --git a/content/shell/BUILD.gn b/content/shell/BUILD.gn
-index 30bda20143bb..358e9b8a118e 100644
+index 30bda20143bb..e4118c8a2d41 100644
 --- a/content/shell/BUILD.gn
 +++ b/content/shell/BUILD.gn
-@@ -571,9 +571,9 @@ if (is_mac) {
+@@ -76,7 +76,6 @@ static_library("content_shell_app") {
+   ]
+   deps = [
+     ":content_shell_lib",
+-    "//components/crash/core/common:crash_key",
+     "//content/public/app",
+     "//v8",
+   ]
+@@ -87,12 +86,6 @@ static_library("content_shell_app") {
+       "//content/web_test:web_test_renderer",
+     ]
+   }
+-  if (!is_fuchsia) {
+-    deps += [
+-      "//components/crash/core/app",
+-      "//components/crash/core/app:test_support",
+-    ]
+-  }
+   defines = [
+     "CONTENT_SHELL_VERSION=\"$content_shell_version\"",
+     "CONTENT_SHELL_MAJOR_VERSION=\"$content_shell_major_version\"",
+@@ -247,10 +240,6 @@ static_library("content_shell_lib") {
+   if (is_fuchsia) {
+     deps += [ "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.policy" ]
+   } else {
+-    deps += [
+-      "//components/crash/content/browser",
+-      "//components/crash/core/app",
+-    ]
+   }
+ 
+   if (enable_plugins) {
+@@ -571,9 +560,9 @@ if (is_mac) {
  
    bundle_data("content_shell_framework_helpers") {
      testonly = true
@@ -14,3 +46,16 @@ index 30bda20143bb..358e9b8a118e 100644
      foreach(helper_params, content_mac_helpers) {
        sources += [
          "$root_out_dir/${content_shell_helper_name}${helper_params[2]}.app",
+@@ -782,12 +771,6 @@ group("content_shell_crash_test") {
+       mac_bin_path + "otool",
+     ]
+   }
+-  if (is_posix) {
+-    data += [
+-      "//components/crash/content/tools/generate_breakpad_symbols.py",
+-      "//components/crash/content/tools/dmp2minidump.py",
+-    ]
+-  }
+   if (is_win) {
+     data_deps += [ "//build/win:copy_cdb_to_output" ]
+   }

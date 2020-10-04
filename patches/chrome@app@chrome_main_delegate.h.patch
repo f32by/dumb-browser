@@ -1,0 +1,17 @@
+diff --git a/chrome/app/chrome_main_delegate.h b/chrome/app/chrome_main_delegate.h
+index 1056536d05ef..be0d2a9f4f6d 100644
+--- a/chrome/app/chrome_main_delegate.h
++++ b/chrome/app/chrome_main_delegate.h
+@@ -69,12 +69,6 @@ class ChromeMainDelegate : public content::ContentMainDelegate {
+   content::ContentRendererClient* CreateContentRendererClient() override;
+   content::ContentUtilityClient* CreateContentUtilityClient() override;
+ 
+-#if defined(OS_MAC)
+-  void InitMacCrashReporter(const base::CommandLine& command_line,
+-                            const std::string& process_type);
+-  void SetUpInstallerPreferences(const base::CommandLine& command_line);
+-#endif  // defined(OS_MAC)
+-
+   ChromeContentClient chrome_content_client_;
+ 
+   std::unique_ptr<ChromeContentBrowserClient> chrome_content_browser_client_;

@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/win/conflicts/module_database.h b/chrome/browser/win/conflicts/module_database.h
+index be0ef0f87c3c..23e0565036ca 100644
+--- a/chrome/browser/win/conflicts/module_database.h
++++ b/chrome/browser/win/conflicts/module_database.h
+@@ -15,7 +15,6 @@
+ #include "base/timer/timer.h"
+ #include "chrome/browser/win/conflicts/module_info.h"
+ #include "chrome/browser/win/conflicts/module_inspector.h"
+-#include "chrome/browser/win/conflicts/third_party_metrics_recorder.h"
+ #include "content/public/common/process_type.h"
+ 
+ class ModuleDatabaseObserver;
+@@ -274,9 +273,6 @@ class ModuleDatabase : public ModuleDatabaseEventSource {
+   std::unique_ptr<ThirdPartyConflictsManager> third_party_conflicts_manager_;
+ #endif
+ 
+-  // Records metrics on third-party modules.
+-  ThirdPartyMetricsRecorder third_party_metrics_;
+-
+   SEQUENCE_CHECKER(sequence_checker_);
+ 
+   DISALLOW_COPY_AND_ASSIGN(ModuleDatabase);

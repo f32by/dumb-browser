@@ -1,0 +1,22 @@
+diff --git a/third_party/blink/renderer/platform/wtf/allocator/partitions.cc b/third_party/blink/renderer/platform/wtf/allocator/partitions.cc
+index 8904a440fbe3..dc2e916597bf 100644
+--- a/third_party/blink/renderer/platform/wtf/allocator/partitions.cc
++++ b/third_party/blink/renderer/platform/wtf/allocator/partitions.cc
+@@ -35,7 +35,6 @@
+ #include "base/allocator/partition_allocator/page_allocator.h"
+ #include "base/debug/alias.h"
+ #include "base/strings/safe_sprintf.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "third_party/blink/renderer/platform/wtf/allocator/partition_allocator.h"
+ #include "third_party/blink/renderer/platform/wtf/wtf.h"
+ 
+@@ -268,9 +267,6 @@ void Partitions::HandleOutOfMemory(size_t size) {
+   // %d works for 64 bit types as well with SafeSPrintf(), see its unit tests
+   // for an example.
+   base::strings::SafeSPrintf(value, "%d", base::GetTotalMappedSize());
+-  static crash_reporter::CrashKeyString<24> g_page_allocator_mapped_size(
+-      "page-allocator-mapped-size");
+-  g_page_allocator_mapped_size.Set(value);
+ 
+   if (total_usage >= 2UL * 1024 * 1024 * 1024)
+     PartitionsOutOfMemoryUsing2G(size);

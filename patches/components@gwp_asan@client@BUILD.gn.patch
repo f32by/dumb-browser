@@ -1,0 +1,26 @@
+diff --git a/components/gwp_asan/client/BUILD.gn b/components/gwp_asan/client/BUILD.gn
+index 6c66092f482c..576970007e4a 100644
+--- a/components/gwp_asan/client/BUILD.gn
++++ b/components/gwp_asan/client/BUILD.gn
+@@ -39,13 +39,8 @@ component("client") {
+   deps = [
+     "//base",
+     "//base/allocator:buildflags",
+-    "//components/crash/core/common:crash_key",
+     "//components/gwp_asan/common",
+   ]
+-
+-  if (is_android) {
+-    deps += [ "//components/crash/core/app" ]
+-  }
+ }
+ 
+ source_set("unit_tests") {
+@@ -67,7 +62,6 @@ source_set("unit_tests") {
+     ":client",
+     "//base/allocator:buildflags",
+     "//base/test:test_support",
+-    "//components/crash/core/common:crash_key",
+     "//components/gwp_asan/common",
+     "//testing/gmock",
+     "//testing/gtest",

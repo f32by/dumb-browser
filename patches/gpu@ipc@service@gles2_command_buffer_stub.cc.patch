@@ -1,0 +1,23 @@
+diff --git a/gpu/ipc/service/gles2_command_buffer_stub.cc b/gpu/ipc/service/gles2_command_buffer_stub.cc
+index 9ccf7efcef64..9f71df44e35b 100644
+--- a/gpu/ipc/service/gles2_command_buffer_stub.cc
++++ b/gpu/ipc/service/gles2_command_buffer_stub.cc
+@@ -35,7 +35,6 @@
+ #include "gpu/command_buffer/service/service_utils.h"
+ #include "gpu/command_buffer/service/sync_point_manager.h"
+ #include "gpu/command_buffer/service/transfer_buffer_manager.h"
+-#include "gpu/config/gpu_crash_keys.h"
+ #include "gpu/ipc/common/gpu_messages.h"
+ #include "gpu/ipc/service/gpu_channel.h"
+ #include "gpu/ipc/service/gpu_channel_manager.h"
+@@ -255,10 +254,6 @@ gpu::ContextResult GLES2CommandBufferStub::Initialize(
+     share_group_ = channel_->share_group();
+   }
+ 
+-  // TODO(sunnyps): Should this use ScopedCrashKey instead?
+-  crash_keys::gpu_gl_context_is_virtual.Set(use_virtualized_gl_context_ ? "1"
+-                                                                        : "0");
+-
+   scoped_refptr<gl::GLContext> context;
+   if (use_virtualized_gl_context_ && share_group_) {
+     context = share_group_->shared_context();

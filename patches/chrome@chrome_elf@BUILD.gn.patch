@@ -1,12 +1,62 @@
 diff --git a/chrome/chrome_elf/BUILD.gn b/chrome/chrome_elf/BUILD.gn
-index 9b08e23e921b..063a7342aa9e 100644
+index 9b08e23e921b..9df1da82f2a2 100644
 --- a/chrome/chrome_elf/BUILD.gn
 +++ b/chrome/chrome_elf/BUILD.gn
-@@ -119,7 +119,6 @@ static_library("crash") {
-     "//components/crash/core/common",  # crash_keys
+@@ -67,14 +67,12 @@ shared_library("chrome_elf") {
+     ":chrome_elf_manifest",
+     ":chrome_elf_resources",
+     ":constants",
+-    ":crash",
+     ":hook_util",
+     ":nt_registry",
+     ":security",
+     ":third_party_dlls",
+     "//chrome/install_static:install_static_util",
+     "//chrome/install_static:primary_module",
+-    "//components/crash/core/app:crash_export_thunks",
+   ]
+ 
+   configs += [ "//build/config/win:windowed" ]
+@@ -115,11 +113,8 @@ static_library("crash") {
+     "//base",  # This needs to go.  DEP of app, crash_keys, client.
+     "//base:base_static",  # pe_image
+     "//chrome/install_static:install_static_util",
+-    "//components/crash/core/app",
+-    "//components/crash/core/common",  # crash_keys
      "//components/version_info:channel",
      "//content/public/common:result_codes",
 -    "//third_party/crashpad/crashpad/client",  # DumpWithoutCrash
    ]
  }
  
+@@ -208,7 +203,6 @@ source_set("third_party_dlls") {
+   ]
+   public_deps = [
+     ":constants",
+-    ":crash",
+     ":hook_util",
+     ":nt_registry",
+     ":pe_image_safe",
+@@ -256,7 +250,6 @@ test("chrome_elf_unittests") {
+   include_dirs = [ "$target_gen_dir" ]
+   deps = [
+     ":constants",
+-    ":crash",
+     ":hook_util",
+     ":hook_util_test_dll",
+     ":nt_registry",
+@@ -270,7 +263,6 @@ test("chrome_elf_unittests") {
+     "//chrome/common:version_header",
+     "//chrome/install_static:install_static_util",
+     "//chrome/install_static/test:test_support",
+-    "//components/crash/core/app:test_support",
+     "//sandbox",
+     "//testing/gtest",
+   ]
+@@ -335,6 +327,5 @@ executable("third_party_dlls_test_exe") {
+     "//base/test:test_support",
+     "//build/win:default_exe_manifest",
+     "//chrome/install_static:install_static_util",
+-    "//components/crash/core/app:crash_export_stubs",
+   ]
+ }

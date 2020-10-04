@@ -1,0 +1,32 @@
+diff --git a/services/network/public/cpp/isolation_info_mojom_traits.cc b/services/network/public/cpp/isolation_info_mojom_traits.cc
+index 8f797b5bd00d..13a13960f242 100644
+--- a/services/network/public/cpp/isolation_info_mojom_traits.cc
++++ b/services/network/public/cpp/isolation_info_mojom_traits.cc
+@@ -5,7 +5,6 @@
+ #include "services/network/public/cpp/isolation_info_mojom_traits.h"
+ 
+ #include "base/notreached.h"
+-#include "services/network/public/cpp/crash_keys.h"
+ #include "services/network/public/cpp/site_for_cookies_mojom_traits.h"
+ 
+ namespace mojo {
+@@ -53,11 +52,9 @@ bool StructTraits<network::mojom::IsolationInfoDataView, net::IsolationInfo>::
+   net::IsolationInfo::RedirectMode redirect_mode;
+ 
+   if (!data.ReadTopFrameOrigin(&top_frame_origin)) {
+-    network::debug::SetDeserializationCrashKeyString("isolation_top_origin");
+     return false;
+   }
+   if (!data.ReadFrameOrigin(&frame_origin)) {
+-    network::debug::SetDeserializationCrashKeyString("isolation_frame_origin");
+     return false;
+   }
+   if (!data.ReadSiteForCookies(&site_for_cookies) ||
+@@ -70,7 +67,6 @@ bool StructTraits<network::mojom::IsolationInfoDataView, net::IsolationInfo>::
+                                              frame_origin, site_for_cookies,
+                                              data.opaque_and_non_transient());
+   if (!isolation_info) {
+-    network::debug::SetDeserializationCrashKeyString("isolation_inconsistent");
+     return false;
+   }
+ 

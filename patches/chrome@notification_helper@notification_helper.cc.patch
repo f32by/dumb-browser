@@ -1,0 +1,23 @@
+diff --git a/chrome/notification_helper/notification_helper.cc b/chrome/notification_helper/notification_helper.cc
+index b0dc4de53b3a..cca34c47ec1e 100644
+--- a/chrome/notification_helper/notification_helper.cc
++++ b/chrome/notification_helper/notification_helper.cc
+@@ -17,7 +17,6 @@
+ #include "chrome/install_static/user_data_dir.h"
+ #include "chrome/notification_helper/com_server_module.h"
+ #include "chrome/notification_helper/notification_helper_constants.h"
+-#include "chrome/notification_helper/notification_helper_crash_reporter_client.h"
+ #include "chrome/notification_helper/notification_helper_util.h"
+ #include "chrome/notification_helper/trace_util.h"
+ 
+@@ -52,10 +51,6 @@ extern "C" int WINAPI wWinMain(HINSTANCE instance,
+ 
+   // Use crashpad embedded in chrome.exe as the crash handler.
+   base::FilePath chrome_exe_path = notification_helper::GetChromeExePath();
+-  if (!chrome_exe_path.empty()) {
+-    NotificationHelperCrashReporterClient::
+-        InitializeCrashReportingForProcessWithHandler(chrome_exe_path);
+-  }
+ 
+   // The histogram storage folder should be under folder "User Data".
+   base::string16 user_data_dir;

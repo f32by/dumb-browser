@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/notification/download_item_notification.cc b/chrome/browser/download/notification/download_item_notification.cc
-index d037f5e397f5..4a5b0a71818a 100644
+index d037f5e397f5..075574326894 100644
 --- a/chrome/browser/download/notification/download_item_notification.cc
 +++ b/chrome/browser/download/notification/download_item_notification.cc
 @@ -27,8 +27,6 @@
@@ -11,7 +11,28 @@ index d037f5e397f5..4a5b0a71818a 100644
  #include "chrome/browser/ui/chrome_pages.h"
  #include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
  #include "chrome/common/url_constants.h"
-@@ -840,15 +838,8 @@ base::string16 DownloadItemNotification::GetWarningStatusString() const {
+@@ -38,7 +36,6 @@
+ #include "components/download/public/common/download_interrupt_reasons.h"
+ #include "components/download/public/common/download_item.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/strings/grit/components_strings.h"
+ #include "components/url_formatter/elide_url.h"
+ #include "content/public/browser/browser_context.h"
+@@ -316,12 +313,6 @@ void DownloadItemNotification::Click(
+     DownloadCommands::Command command = button_actions_->at(*button_index);
+     RecordButtonClickAction(command);
+ 
+-    // Completing Safe Browsing scan early if requested to open.
+-    if (IsScanning() && AllowedToOpenWhileScanning() &&
+-        command == DownloadCommands::OPEN_WHEN_COMPLETE) {
+-      item_->CompleteSafeBrowsingScan();
+-    }
+-
+     DownloadCommands(item_.get()).ExecuteCommand(command);
+ 
+     // ExecuteCommand() might cause |item_| to be destroyed.
+@@ -840,15 +831,8 @@ base::string16 DownloadItemNotification::GetWarningStatusString() const {
                                          elided_filename);
      }
      case download::DOWNLOAD_DANGER_TYPE_UNCOMMON_CONTENT: {

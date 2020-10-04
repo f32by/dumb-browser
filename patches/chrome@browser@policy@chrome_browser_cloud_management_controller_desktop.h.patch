@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h b/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h
+index d7b57dbaa0ee..49253f70dd3e 100644
+--- a/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h
++++ b/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h
+@@ -7,14 +7,8 @@
+ 
+ #include "components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h"
+ 
+-#include "chrome/browser/enterprise/reporting/reporting_delegate_factory_desktop.h"
+-
+ class DeviceIdentityProvider;
+ 
+-namespace enterprise_reporting {
+-class ReportScheduler;
+-}
+-
+ namespace instance_id {
+ class InstanceIDDriver;
+ }
+@@ -63,8 +57,6 @@ class ChromeBrowserCloudManagementControllerDesktop
+   DeviceManagementService* GetDeviceManagementService() override;
+   scoped_refptr<network::SharedURLLoaderFactory> GetSharedURLLoaderFactory()
+       override;
+-  std::unique_ptr<enterprise_reporting::ReportScheduler> CreateReportScheduler(
+-      CloudPolicyClient* client) override;
+   void SetGaiaURLLoaderFactory(scoped_refptr<network::SharedURLLoaderFactory>
+                                    url_loader_factory) override;
+ 
+@@ -77,9 +69,6 @@ class ChromeBrowserCloudManagementControllerDesktop
+   // ready.
+   void AccountInitCallback(const std::string& account_email, bool success);
+ 
+-  enterprise_reporting::ReportingDelegateFactoryDesktop
+-      reporting_delegate_factory_;
+-
+   std::unique_ptr<ChromeBrowserCloudManagementRegisterWatcher>
+       cloud_management_register_watcher_;
+ 

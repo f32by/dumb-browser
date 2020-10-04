@@ -1,0 +1,25 @@
+diff --git a/components/gwp_asan/client/sampling_partitionalloc_shims.cc b/components/gwp_asan/client/sampling_partitionalloc_shims.cc
+index fb9bee0c2f03..a27e6d2dec67 100644
+--- a/components/gwp_asan/client/sampling_partitionalloc_shims.cc
++++ b/components/gwp_asan/client/sampling_partitionalloc_shims.cc
+@@ -9,7 +9,6 @@
+ 
+ #include "base/allocator/partition_allocator/partition_alloc.h"
+ #include "base/partition_alloc_buildflags.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/gwp_asan/client/export.h"
+ #include "components/gwp_asan/client/guarded_page_allocator.h"
+ #include "components/gwp_asan/client/sampling_state.h"
+@@ -72,12 +71,9 @@ void InstallPartitionAllocHooks(
+     size_t total_pages,
+     size_t sampling_frequency,
+     GuardedPageAllocator::OutOfMemoryCallback callback) {
+-  static crash_reporter::CrashKeyString<24> pa_crash_key(
+-      kPartitionAllocCrashKey);
+   gpa = new GuardedPageAllocator();
+   gpa->Init(max_allocated_pages, num_metadata, total_pages, std::move(callback),
+             true);
+-  pa_crash_key.Set(gpa->GetCrashKey());
+   sampling_state.Init(sampling_frequency);
+   // TODO(vtsyrklevich): Allow SetOverrideHooks to be passed in so we can hook
+   // PDFium's PartitionAlloc fork.

@@ -1,0 +1,125 @@
+diff --git a/headless/lib/headless_content_main_delegate.cc b/headless/lib/headless_content_main_delegate.cc
+index 6e6e76a9cb69..bf97b5f879c1 100644
+--- a/headless/lib/headless_content_main_delegate.cc
++++ b/headless/lib/headless_content_main_delegate.cc
+@@ -10,7 +10,6 @@
+ 
+ #include "base/base_switches.h"
+ #include "base/command_line.h"
+-#include "base/debug/crash_logging.h"
+ #include "base/environment.h"
+ #include "base/feature_list.h"
+ #include "base/files/file_path.h"
+@@ -22,7 +21,6 @@
+ #include "base/trace_event/trace_event.h"
+ #include "build/build_config.h"
+ #include "cc/base/switches.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/viz/common/switches.h"
+ #include "content/public/browser/browser_main_runner.h"
+ #include "content/public/common/content_switches.h"
+@@ -30,7 +28,6 @@
+ #include "gpu/config/gpu_switches.h"
+ #include "headless/lib/browser/headless_browser_impl.h"
+ #include "headless/lib/browser/headless_content_browser_client.h"
+-#include "headless/lib/headless_crash_reporter_client.h"
+ #include "headless/lib/headless_macros.h"
+ #include "headless/lib/renderer/headless_content_renderer_client.h"
+ #include "headless/lib/utility/headless_content_utility_client.h"
+@@ -48,14 +45,6 @@
+ #include "headless/embedded_resource_pak.h"
+ #endif
+ 
+-#if defined(OS_MAC) || defined(OS_WIN)
+-#include "components/crash/core/app/crashpad.h"
+-#endif
+-
+-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+-#include "components/crash/core/app/breakpad_linux.h"
+-#endif
+-
+ #if defined(OS_POSIX)
+ #include <signal.h>
+ #endif
+@@ -78,13 +67,7 @@ const int kTraceEventBrowserProcessSortIndex = -6;
+ 
+ HeadlessContentMainDelegate* g_current_headless_content_main_delegate = nullptr;
+ 
+-#if !defined(OS_FUCHSIA)
+-base::LazyInstance<HeadlessCrashReporterClient>::Leaky g_headless_crash_client =
+-    LAZY_INSTANCE_INITIALIZER;
+-#endif
+-
+ const char kLogFileName[] = "CHROME_LOG_FILE";
+-const char kHeadlessCrashKey[] = "headless";
+ 
+ void InitializeResourceBundle(const base::CommandLine& command_line) {
+   const std::string locale =
+@@ -172,14 +155,8 @@ HeadlessContentMainDelegate::HeadlessContentMainDelegate(
+ }
+ 
+ void HeadlessContentMainDelegate::Init() {
+-  headless_crash_key_ = base::debug::AllocateCrashKeyString(
+-      kHeadlessCrashKey, base::debug::CrashKeySize::Size32);
+-
+   DCHECK(!g_current_headless_content_main_delegate);
+   g_current_headless_content_main_delegate = this;
+-
+-  // Mark any bug reports from headless mode as such.
+-  base::debug::SetCrashKeyString(headless_crash_key_, "true");
+ }
+ 
+ HeadlessContentMainDelegate::~HeadlessContentMainDelegate() {
+@@ -319,44 +296,6 @@ void HeadlessContentMainDelegate::InitLogging(
+   DCHECK(success);
+ }
+ 
+-
+-void HeadlessContentMainDelegate::InitCrashReporter(
+-    const base::CommandLine& command_line) {
+-  if (command_line.HasSwitch(::switches::kDisableBreakpad))
+-    return;
+-#if defined(OS_FUCHSIA)
+-  // TODO(fuchsia): Implement this when crash reporting/Breakpad are available
+-  // in Fuchsia. (crbug.com/753619)
+-  NOTIMPLEMENTED();
+-#else
+-  const std::string process_type =
+-      command_line.GetSwitchValueASCII(::switches::kProcessType);
+-  crash_reporter::SetCrashReporterClient(g_headless_crash_client.Pointer());
+-  g_headless_crash_client.Pointer()->set_crash_dumps_dir(
+-      options()->crash_dumps_dir);
+-
+-  crash_reporter::InitializeCrashKeys();
+-
+-#if defined(HEADLESS_USE_BREAKPAD)
+-  if (!options()->enable_crash_reporter) {
+-    DCHECK(!breakpad::IsCrashReporterEnabled());
+-    return;
+-  }
+-  if (process_type != service_manager::switches::kZygoteProcess)
+-    breakpad::InitCrashReporter(process_type);
+-#elif defined(OS_MAC)
+-  crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
+-// Avoid adding this dependency in Windows Chrome non component builds, since
+-// crashpad is already enabled.
+-// TODO(dvallet): Ideally we would also want to avoid this for component builds.
+-#elif defined(OS_WIN)
+-  crash_reporter::InitializeCrashpadWithEmbeddedHandler(
+-      process_type.empty(), process_type, "", base::FilePath());
+-#endif  // defined(HEADLESS_USE_BREAKPAD)
+-#endif  // defined(OS_FUCHSIA)
+-}
+-
+-
+ void HeadlessContentMainDelegate::PreSandboxStartup() {
+   const base::CommandLine& command_line(
+       *base::CommandLine::ForCurrentProcess());
+@@ -369,7 +308,6 @@ void HeadlessContentMainDelegate::PreSandboxStartup() {
+     InitLogging(command_line);
+ #endif  // defined(OS_WIN)
+ 
+-  InitCrashReporter(command_line);
+   InitializeResourceBundle(command_line);
+ 
+   // Even though InitializeResourceBundle() has indirectly done the locale

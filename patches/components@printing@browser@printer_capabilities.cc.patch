@@ -1,0 +1,21 @@
+diff --git a/components/printing/browser/printer_capabilities.cc b/components/printing/browser/printer_capabilities.cc
+index b8e87aa2fb95..79aec403f6b0 100644
+--- a/components/printing/browser/printer_capabilities.cc
++++ b/components/printing/browser/printer_capabilities.cc
+@@ -17,7 +17,6 @@
+ #include "base/values.h"
+ #include "build/build_config.h"
+ #include "build/buildflag.h"
+-#include "components/crash/core/common/crash_keys.h"
+ #include "components/printing/browser/printing_buildflags.h"
+ #include "components/printing/common/cloud_print_cdd_conversion.h"
+ #include "printing/backend/print_backend.h"
+@@ -104,8 +103,6 @@ base::Value GetPrinterCapabilitiesOnBlockingTaskRunner(
+                                                 base::BlockingType::MAY_BLOCK);
+ 
+   VLOG(1) << "Get printer capabilities start for " << device_name;
+-  crash_keys::ScopedPrinterInfo crash_key(
+-      backend->GetPrinterDriverInfo(device_name));
+ 
+   PrinterSemanticCapsAndDefaults info;
+   if (!backend->GetPrinterSemanticCapsAndDefaults(device_name, &info)) {

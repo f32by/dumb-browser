@@ -1,0 +1,20 @@
+diff --git a/weblayer/browser/feature_list_creator.cc b/weblayer/browser/feature_list_creator.cc
+index 4ff04637b63e..b0fc48198f73 100644
+--- a/weblayer/browser/feature_list_creator.cc
++++ b/weblayer/browser/feature_list_creator.cc
+@@ -12,7 +12,6 @@
+ #include "components/metrics/metrics_state_manager.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/variations/service/variations_service.h"
+-#include "components/variations/variations_crash_keys.h"
+ #include "content/public/browser/network_service_instance.h"
+ #include "content/public/common/content_switch_dependent_feature_overrides.h"
+ #include "services/network/public/cpp/shared_url_loader_factory.h"
+@@ -94,7 +93,6 @@ void FeatureListCreator::SetUpFieldTrials() {
+       content::GetSwitchDependentFeatureOverrides(
+           *base::CommandLine::ForCurrentProcess()),
+       std::move(feature_list), &weblayer_field_trials_);
+-  variations::InitCrashKeys();
+ #else
+   // TODO(weblayer-dev): Support variations on desktop.
+ #endif

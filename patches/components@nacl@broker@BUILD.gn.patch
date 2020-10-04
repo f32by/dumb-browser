@@ -1,0 +1,25 @@
+diff --git a/components/nacl/broker/BUILD.gn b/components/nacl/broker/BUILD.gn
+index 2203a44fd504..2ca25460a8ce 100644
+--- a/components/nacl/broker/BUILD.gn
++++ b/components/nacl/broker/BUILD.gn
+@@ -97,12 +97,10 @@ if (current_cpu == "x86") {
+     deps = [
+       ":broker",
+       ":nacl64_content",
+-      ":nacl64_crash_reporter_client",
+       "//base",
+       "//build/win:default_exe_manifest",
+       "//chrome:nacl64_exe_version",
+       "//chrome/install_static:install_static_util",
+-      "//components/crash/content/app:deprecated_breakpad_win",
+       "//components/nacl/loader:nacl_helper_win_64",
+       "//content/public/common:static_features",
+       "//content/public/common:static_switches",
+@@ -157,7 +155,6 @@ if (current_cpu == "x86") {
+       "//chrome/common:constants",
+       "//chrome/install_static:install_static_util",
+       "//chrome/installer/util:with_no_strings",
+-      "//components/browser_watcher:browser_watcher_client",
+       "//components/flags_ui:switches",
+       "//components/policy:generated",
+       "//content/public/common:static_switches",

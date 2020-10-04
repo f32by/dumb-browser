@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc b/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
+index 58e49ef6eb4f..f71c410168dc 100644
+--- a/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
++++ b/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
+@@ -9,7 +9,6 @@
+ #include "base/bind.h"
+ #include "base/no_destructor.h"
+ #include "build/build_config.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "ui/accessibility/aura/aura_window_properties.h"
+ #include "ui/accessibility/ax_action_data.h"
+ #include "ui/accessibility/ax_action_handler_base.h"
+@@ -318,11 +317,6 @@ void AutomationManagerAura::OnSerializeFailure(ax::mojom::Event event_type,
+       checker(current_tree_.get());
+   checker.CheckAndGetErrorString(&error_string);
+ 
+-  // Add a crash key so we can figure out why this is happening.
+-  static crash_reporter::CrashKeyString<256> ax_tree_source_error(
+-      "ax_tree_source_error");
+-  ax_tree_source_error.Set(error_string);
+-
+   LOG(ERROR) << "Unable to serialize accessibility event!\n"
+              << "Event type: " << event_type << "\n"
+              << "Error: " << error_string << "\n"

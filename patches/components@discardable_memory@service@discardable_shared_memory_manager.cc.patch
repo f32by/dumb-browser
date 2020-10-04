@@ -1,0 +1,22 @@
+diff --git a/components/discardable_memory/service/discardable_shared_memory_manager.cc b/components/discardable_memory/service/discardable_shared_memory_manager.cc
+index dc1144f53d23..cfd8f6f3b6df 100644
+--- a/components/discardable_memory/service/discardable_shared_memory_manager.cc
++++ b/components/discardable_memory/service/discardable_shared_memory_manager.cc
+@@ -29,7 +29,6 @@
+ #include "base/trace_event/trace_event.h"
+ #include "build/build_config.h"
+ #include "build/chromecast_buildflags.h"
+-#include "components/crash/core/common/crash_key.h"
+ #include "components/discardable_memory/common/discardable_shared_memory_heap.h"
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+ 
+@@ -614,9 +613,6 @@ void DiscardableSharedMemoryManager::ReleaseMemory(
+ 
+ void DiscardableSharedMemoryManager::BytesAllocatedChanged(
+     size_t new_bytes_allocated) const {
+-  static crash_reporter::CrashKeyString<24> total_discardable_memory(
+-      "total-discardable-memory-allocated");
+-  total_discardable_memory.Set(base::NumberToString(new_bytes_allocated));
+ }
+ 
+ base::Time DiscardableSharedMemoryManager::Now() const {

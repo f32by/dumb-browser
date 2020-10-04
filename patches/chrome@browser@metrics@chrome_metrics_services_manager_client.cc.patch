@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-index 36396922a5cc..11e284636dad 100644
+index 36396922a5cc..207f902631fe 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 @@ -28,7 +28,6 @@
@@ -10,7 +10,16 @@ index 36396922a5cc..11e284636dad 100644
  #include "components/variations/service/variations_service.h"
  #include "components/variations/variations_associated_data.h"
  #include "components/version_info/version_info.h"
-@@ -255,13 +254,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
+@@ -45,8 +44,6 @@
+ #include "base/win/registry.h"
+ #include "chrome/common/chrome_constants.h"
+ #include "chrome/install_static/install_util.h"
+-#include "components/crash/core/app/crash_export_thunks.h"
+-#include "components/crash/core/app/crashpad.h"
+ #endif  // OS_WIN
+ 
+ #if defined(OS_CHROMEOS)
+@@ -255,13 +252,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
    return *enabled_state_provider_;
  }
  
@@ -24,3 +33,15 @@ index 36396922a5cc..11e284636dad 100644
  std::unique_ptr<variations::VariationsService>
  ChromeMetricsServicesManagerClient::CreateVariationsService() {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+@@ -334,11 +324,5 @@ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
+   // First, set the registry value so that Crashpad will have the sampling state
+   // now and for subsequent runs.
+   install_static::SetCollectStatsInSample(IsClientInSample());
+-
+-  // Next, get Crashpad to pick up the sampling state for this session.
+-  // Crashpad will use the kRegUsageStatsInSample registry value to apply
+-  // sampling correctly, but may_record already reflects the sampling state.
+-  // This isn't a problem though, since they will be consistent.
+-  SetUploadConsent_ExportThunk(may_record && may_upload);
+ }
+ #endif  // defined(OS_WIN)

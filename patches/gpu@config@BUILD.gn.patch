@@ -1,0 +1,22 @@
+diff --git a/gpu/config/BUILD.gn b/gpu/config/BUILD.gn
+index 2782315578a8..f13fe17567b7 100644
+--- a/gpu/config/BUILD.gn
++++ b/gpu/config/BUILD.gn
+@@ -124,8 +124,6 @@ source_set("config_sources") {
+     "gpu_blocklist.h",
+     "gpu_control_list.cc",
+     "gpu_control_list.h",
+-    "gpu_crash_keys.cc",
+-    "gpu_crash_keys.h",
+     "gpu_domain_guilt.h",
+     "gpu_driver_bug_list.cc",
+     "gpu_driver_bug_list.h",
+@@ -173,7 +171,7 @@ source_set("config_sources") {
+ 
+   configs += [ "//gpu:gpu_implementation" ]
+ 
+-  public_deps = [ "//components/crash/core/common:crash_key" ]
++  public_deps = []
+ 
+   if (enable_vulkan) {
+     public_deps += [ ":vulkan_info" ]
