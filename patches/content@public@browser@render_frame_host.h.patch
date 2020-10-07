@@ -1,0 +1,26 @@
+diff --git a/content/public/browser/render_frame_host.h b/content/public/browser/render_frame_host.h
+index 7a72e4055265..0679824fda37 100644
+--- a/content/public/browser/render_frame_host.h
++++ b/content/public/browser/render_frame_host.h
+@@ -22,7 +22,6 @@
+ #include "ipc/ipc_sender.h"
+ #include "mojo/public/cpp/bindings/pending_receiver.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/url_loader_factory.mojom-forward.h"
+ #include "third_party/blink/public/common/feature_policy/document_policy.h"
+ #include "third_party/blink/public/common/feature_policy/feature_policy.h"
+@@ -592,13 +591,6 @@ class CONTENT_EXPORT RenderFrameHost : public IPC::Listener,
+   // DidChangeLifecycleState.
+   virtual bool IsInBackForwardCache() = 0;
+ 
+-  // Return the UKM source id for the page load (last committed cross-document
+-  // non-bfcache navigation in the main frame).
+-  // This id typically has an associated PageLoad UKM event.
+-  // Note: this can be called on any frame, but this id for all subframes is the
+-  // same as the id for the main frame.
+-  virtual ukm::SourceId GetPageUkmSourceId() = 0;
+-
+   // Report an inspector issue to devtools due the frame using an excessive
+   // amount of resources (cpu or network).  Invoked only for ad frames.
+   // TODO(crbug.com/1091720): This reporting should be done directly in the

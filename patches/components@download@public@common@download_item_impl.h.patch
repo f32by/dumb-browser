@@ -1,0 +1,23 @@
+diff --git a/components/download/public/common/download_item_impl.h b/components/download/public/common/download_item_impl.h
+index 6417c758e818..34537632935d 100644
+--- a/components/download/public/common/download_item_impl.h
++++ b/components/download/public/common/download_item_impl.h
+@@ -377,8 +377,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadItemImpl
+ 
+   bool fetch_error_body() const { return fetch_error_body_; }
+ 
+-  uint64_t ukm_download_id() const { return ukm_download_id_; }
+-
+   void SetAutoResumeCountForTesting(int32_t auto_resume_count);
+ 
+   // Gets the approximate memory usage of this item.
+@@ -853,9 +851,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadItemImpl
+   DownloadCreationType download_type_ =
+       DownloadCreationType::TYPE_ACTIVE_DOWNLOAD;
+ 
+-  // UKM ID for reporting, default to 0 if uninitialized.
+-  uint64_t ukm_download_id_ = 0;
+-
+   // The MixedContentStatus if determined.
+   MixedContentStatus mixed_content_status_ = MixedContentStatus::UNKNOWN;
+ 

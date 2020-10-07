@@ -1,16 +1,29 @@
 diff --git a/components/download/internal/common/base_file.cc b/components/download/internal/common/base_file.cc
-index 4f4ebe4b752a..2b9cb22c26b8 100644
+index 4f4ebe4b752a..4791916905c7 100644
 --- a/components/download/internal/common/base_file.cc
 +++ b/components/download/internal/common/base_file.cc
-@@ -23,7 +23,6 @@
+@@ -22,8 +22,6 @@
+ #include "build/build_config.h"
  #include "components/download/public/common/download_interrupt_reasons_utils.h"
  #include "components/download/public/common/download_item.h"
- #include "components/download/public/common/download_stats.h"
+-#include "components/download/public/common/download_stats.h"
 -#include "components/download/quarantine/quarantine.h"
  #include "crypto/secure_hash.h"
  
  #if defined(OS_WIN)
-@@ -533,130 +532,12 @@ DownloadInterruptReason BaseFile::PublishDownload() {
+@@ -164,11 +162,6 @@ DownloadInterruptReason BaseFile::AppendDataToFile(const char* data,
+ DownloadInterruptReason BaseFile::WriteDataToFile(int64_t offset,
+                                                   const char* data,
+                                                   size_t data_len) {
+-  // NOTE(benwells): The above DCHECK won't be present in release builds,
+-  // so we log any occurences to see how common this error is in the wild.
+-  if (detached_)
+-    RecordDownloadCount(APPEND_TO_DETACHED_FILE_COUNT);
+-
+   if (!file_.IsValid()) {
+     return LogInterruptReason("No file stream on append", 0,
+                               DOWNLOAD_INTERRUPT_REASON_FILE_FAILED);
+@@ -533,130 +526,12 @@ DownloadInterruptReason BaseFile::PublishDownload() {
  }
  #endif  // defined(OS_ANDROID)
  
@@ -141,7 +154,7 @@ index 4f4ebe4b752a..2b9cb22c26b8 100644
  
  void BaseFile::AnnotateWithSourceInformation(
      const std::string& client_guid,
-@@ -664,30 +545,7 @@ void BaseFile::AnnotateWithSourceInformation(
+@@ -664,30 +539,7 @@ void BaseFile::AnnotateWithSourceInformation(
      const GURL& referrer_url,
      mojo::PendingRemote<quarantine::mojom::Quarantine> remote_quarantine,
      OnAnnotationDoneCallback on_annotation_done_callback) {

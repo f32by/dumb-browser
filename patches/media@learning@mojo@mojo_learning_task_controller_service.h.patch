@@ -1,0 +1,21 @@
+diff --git a/media/learning/mojo/mojo_learning_task_controller_service.h b/media/learning/mojo/mojo_learning_task_controller_service.h
+index eff098fe99cd..e74fa29ee410 100644
+--- a/media/learning/mojo/mojo_learning_task_controller_service.h
++++ b/media/learning/mojo/mojo_learning_task_controller_service.h
+@@ -26,7 +26,6 @@ class COMPONENT_EXPORT(MEDIA_LEARNING_MOJO) MojoLearningTaskControllerService
+   // client to provide the right one.
+   explicit MojoLearningTaskControllerService(
+       const LearningTask& task,
+-      ukm::SourceId source_id,
+       std::unique_ptr<::media::learning::LearningTaskController> impl);
+   ~MojoLearningTaskControllerService() override;
+ 
+@@ -47,8 +46,6 @@ class COMPONENT_EXPORT(MEDIA_LEARNING_MOJO) MojoLearningTaskControllerService
+  protected:
+   const LearningTask task_;
+ 
+-  ukm::SourceId source_id_;
+-
+   // Underlying controller to which we proxy calls.
+   std::unique_ptr<::media::learning::LearningTaskController> impl_;
+ 

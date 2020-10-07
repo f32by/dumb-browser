@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/web_applications/web_app_provider.cc b/chrome/browser/web_applications/web_app_provider.cc
+index 20394a3e750e..bd1ab6bcc5d9 100644
+--- a/chrome/browser/web_applications/web_app_provider.cc
++++ b/chrome/browser/web_applications/web_app_provider.cc
+@@ -10,14 +10,12 @@
+ #include "base/feature_list.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/web_applications/components/externally_installed_web_app_prefs.h"
+-#include "chrome/browser/web_applications/components/install_bounce_metric.h"
+ #include "chrome/browser/web_applications/components/os_integration_manager.h"
+ #include "chrome/browser/web_applications/components/policy/web_app_policy_manager.h"
+ #include "chrome/browser/web_applications/components/web_app_audio_focus_id_map.h"
+ #include "chrome/browser/web_applications/components/web_app_prefs_utils.h"
+ #include "chrome/browser/web_applications/components/web_app_ui_manager.h"
+ #include "chrome/browser/web_applications/components/web_app_utils.h"
+-#include "chrome/browser/web_applications/daily_metrics_helper.h"
+ #include "chrome/browser/web_applications/extensions/bookmark_app_file_handler_manager.h"
+ #include "chrome/browser/web_applications/extensions/bookmark_app_icon_manager.h"
+ #include "chrome/browser/web_applications/extensions/bookmark_app_install_finalizer.h"
+@@ -317,8 +315,6 @@ void WebAppProvider::RegisterProfilePrefs(
+   WebAppPolicyManager::RegisterProfilePrefs(registry);
+   SystemWebAppManager::RegisterProfilePrefs(registry);
+   WebAppPrefsUtilsRegisterProfilePrefs(registry);
+-  RegisterInstallBounceMetricProfilePrefs(registry);
+-  RegisterDailyWebAppMetricsProfilePrefs(registry);
+   WebAppMigrationUserDisplayModeCleanUp::RegisterProfilePrefs(registry);
+ }
+ 

@@ -1,8 +1,53 @@
 diff --git a/content/browser/web_contents/web_contents_impl.h b/content/browser/web_contents/web_contents_impl.h
-index c13cabcf7188..04704f75eb32 100644
+index c13cabcf7188..ee69136d389f 100644
 --- a/content/browser/web_contents/web_contents_impl.h
 +++ b/content/browser/web_contents/web_contents_impl.h
-@@ -944,7 +944,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -27,7 +27,6 @@
+ #include "base/values.h"
+ #include "build/build_config.h"
+ #include "components/download/public/common/download_url_parameters.h"
+-#include "content/browser/accessibility/accessibility_event_recorder.h"
+ #include "content/browser/media/audio_stream_monitor.h"
+ #include "content/browser/media/forwarding_audio_stream_factory.h"
+ #include "content/browser/renderer_host/frame_tree.h"
+@@ -63,7 +62,6 @@
+ #include "net/http/http_response_headers.h"
+ #include "ppapi/buildflags/buildflags.h"
+ #include "services/device/public/mojom/geolocation_context.mojom.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "services/network/public/mojom/fetch_api.mojom-forward.h"
+ #include "third_party/blink/public/common/page/web_drag_operation.h"
+ #include "third_party/blink/public/common/web_preferences/web_preferences.h"
+@@ -612,9 +610,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+       bool internal,
+       std::vector<content::AccessibilityTreeFormatter::PropertyFilter>
+           property_filters) override;
+-  void RecordAccessibilityEvents(
+-      bool start_recording,
+-      base::Optional<AccessibilityEventCallback> callback) override;
+   RenderFrameHost* GetGuestByInstanceID(
+       RenderFrameHost* render_frame_host,
+       int browser_plugin_instance_id) override;
+@@ -698,8 +693,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+                                    int context_id) override;
+   void OnFrameAudioStateChanged(RenderFrameHost* host,
+                                 bool is_audible) override;
+-  media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
+-  GetRecordAggregateWatchTimeCallback() override;
+   RenderFrameHostImpl* GetMainFrameForInnerDelegate(
+       FrameTreeNode* frame_tree_node) override;
+   bool IsFrameLowPriority(const RenderFrameHost* render_frame_host) override;
+@@ -867,9 +860,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+       NavigationRequest* navigation_request_to_exclude) override;
+ 
+   // RenderWidgetHostDelegate --------------------------------------------------
+-
+-  ukm::SourceId GetUkmSourceIdForLastCommittedSourceIncludingSameDocument()
+-      const override;
+   void SetTopControlsShownRatio(RenderWidgetHostImpl* render_widget_host,
+                                 float ratio) override;
+   void SetTopControlsGestureScrollInProgress(bool in_progress) override;
+@@ -944,7 +934,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
    TextInputManager* GetTextInputManager() override;
    bool OnUpdateDragCursor() override;
    bool IsWidgetForMainFrame(RenderWidgetHostImpl* render_widget_host) override;
@@ -10,3 +55,38 @@ index c13cabcf7188..04704f75eb32 100644
    bool IsShowingContextMenuOnPage() const override;
    void DidChangeScreenOrientation() override;
    // The following function is already listed under RenderViewHostDelegate
+@@ -1711,13 +1700,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+   // changes.
+   void UpdateVisibilityAndNotifyPageAndView(Visibility new_visibility);
+ 
+-  // Returns UKM source id for the currently displayed page.
+-  // Intentionally kept private, prefer using
+-  // render_frame_host->GetPageUkmSourceId() if you already have a
+-  // |render_frame_host| reference or GetMainFrame()->GetPageUkmSourceId()
+-  // if you don't.
+-  ukm::SourceId GetCurrentPageUkmSourceId() override;
+-
+   std::set<RenderViewHostImpl*> GetRenderViewHostsIncludingBackForwardCached();
+ 
+   // Sets the hardware-related fields in |prefs| that are slow to compute.  The
+@@ -1830,11 +1812,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+   // The last published background color.
+   base::Optional<SkColor> last_sent_background_color_;
+ 
+-  // SourceId of the last committed navigation, either a cross-document or
+-  // same-document navigation.
+-  ukm::SourceId last_committed_source_id_including_same_document_ =
+-      ukm::kInvalidSourceId;
+-
+   // Data for misc internal state ----------------------------------------------
+ 
+   // When either > 0, the WebContents is currently being captured (e.g.,
+@@ -1995,8 +1972,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+   // is created, and broadcast to all frames when it changes.
+   ui::AXMode accessibility_mode_;
+ 
+-  std::unique_ptr<content::AccessibilityEventRecorder> event_recorder_;
+-
+   // Monitors power levels for audio streams associated with this WebContents.
+   AudioStreamMonitor audio_stream_monitor_;
+ 

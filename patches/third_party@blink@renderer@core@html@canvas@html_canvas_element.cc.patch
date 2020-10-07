@@ -1,0 +1,123 @@
+diff --git a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
+index bd0c13e67cff..295d676045ea 100644
+--- a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
++++ b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
+@@ -38,10 +38,7 @@
+ #include "base/metrics/histogram_macros.h"
+ #include "base/numerics/checked_math.h"
+ #include "build/build_config.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/blink/public/common/features.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metrics.h"
+ #include "third_party/blink/public/common/privacy_budget/identifiability_study_participation.h"
+ #include "third_party/blink/public/common/privacy_budget/identifiable_surface.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+@@ -119,9 +116,7 @@ HTMLCanvasElement::HTMLCanvasElement(Document& document)
+       ExecutionContextLifecycleObserver(GetExecutionContext()),
+       PageVisibilityObserver(document.GetPage()),
+       CanvasRenderingContextHost(
+-          CanvasRenderingContextHost::HostType::kCanvasHost,
+-          base::make_optional<UkmParameters>(
+-              {document.UkmRecorder(), document.UkmSourceID()})),
++          CanvasRenderingContextHost::HostType::kCanvasHost),
+       size_(kDefaultCanvasWidth, kDefaultCanvasHeight),
+       context_creation_was_blocked_(false),
+       ignore_reset_(false),
+@@ -259,57 +254,6 @@ void HTMLCanvasElement::RegisterRenderingContextFactory(
+   RenderingContextFactories()[type] = std::move(rendering_context_factory);
+ }
+ 
+-void HTMLCanvasElement::RecordIdentifiabilityMetric(
+-    const blink::IdentifiableSurface& surface,
+-    int64_t value) const {
+-  blink::IdentifiabilityMetricBuilder(GetDocument().UkmSourceID())
+-      .Set(surface, value)
+-      .Record(GetDocument().UkmRecorder());
+-}
+-
+-void HTMLCanvasElement::IdentifiabilityReportWithDigest(
+-    IdentifiableToken canvas_contents_token) const {
+-  if (IsUserInIdentifiabilityStudy()) {
+-    const uint64_t context_digest =
+-        context_ ? context_->IdentifiableTextToken().ToUkmMetricValue() : 0;
+-    const IdentifiabilityPaintOpDigest* const identifiability_paintop_digest =
+-        ResourceProvider()
+-            ? &(ResourceProvider()->GetIdentifiablityPaintOpDigest())
+-            : nullptr;
+-    const uint64_t canvas_digest =
+-        identifiability_paintop_digest
+-            ? identifiability_paintop_digest->GetToken().ToUkmMetricValue()
+-            : 0;
+-    const uint64_t context_type =
+-        context_ ? context_->GetContextType()
+-                 : CanvasRenderingContext::kContextTypeUnknown;
+-    const bool encountered_skipped_ops =
+-        (context_ && context_->IdentifiabilityEncounteredSkippedOps()) ||
+-        (identifiability_paintop_digest &&
+-         identifiability_paintop_digest->encountered_skipped_ops());
+-    const bool encountered_sensitive_ops =
+-        context_ && context_->IdentifiabilityEncounteredSensitiveOps();
+-    const bool encountered_partially_digested_image =
+-        identifiability_paintop_digest &&
+-        identifiability_paintop_digest->encountered_partially_digested_image();
+-    // Bits [0-3] are the context type, bits [4-6] are skipped ops, sensitive
+-    // ops, and partial image ops bits, respectively. The remaining bits are
+-    // for the canvas digest.
+-    uint64_t final_digest =
+-        ((context_digest ^ canvas_digest) << 7) | context_type;
+-    if (encountered_skipped_ops)
+-      final_digest |= IdentifiableSurface::CanvasTaintBit::kSkipped;
+-    if (encountered_sensitive_ops)
+-      final_digest |= IdentifiableSurface::CanvasTaintBit::kSensitive;
+-    if (encountered_partially_digested_image)
+-      final_digest |= IdentifiableSurface::CanvasTaintBit::kPartiallyDigested;
+-    RecordIdentifiabilityMetric(
+-        blink::IdentifiableSurface::FromTypeAndInput(
+-            blink::IdentifiableSurface::Type::kCanvasReadback, final_digest),
+-        canvas_contents_token.ToUkmMetricValue());
+-  }
+-}
+-
+ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
+     const String& type,
+     const CanvasContextCreationAttributesCore& attributes) {
+@@ -333,14 +277,6 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContextInternal(
+ 
+   // Log the aliased context type used.
+   if (!context_) {
+-    if (IsUserInIdentifiabilityStudy()) {
+-      RecordIdentifiabilityMetric(
+-          blink::IdentifiableSurface::FromTypeAndInput(
+-              blink::IdentifiableSurface::Type::kWebFeature,
+-              static_cast<uint64_t>(
+-                  blink::WebFeature::kCanvasRenderingContext)),
+-          blink::IdentifiabilityDigestHelper(context_type));
+-    }
+     UMA_HISTOGRAM_ENUMERATION("Blink.Canvas.ContextType", context_type);
+   }
+ 
+@@ -1004,7 +940,6 @@ String HTMLCanvasElement::ToDataURLInternal(
+       // Currently we only support three encoding types.
+       NOTREACHED();
+     }
+-    IdentifiabilityReportWithDigest(IdentifiabilityBenignStringToken(data_url));
+     return data_url;
+   }
+ 
+@@ -1070,14 +1005,9 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
+     async_creator = MakeGarbageCollected<CanvasAsyncBlobCreator>(
+         image_bitmap, options,
+         CanvasAsyncBlobCreator::kHTMLCanvasToBlobCallback, callback, start_time,
+-        GetExecutionContext(),
+-        base::make_optional<UkmParameters>(
+-            {GetDocument().UkmRecorder(), GetDocument().UkmSourceID()}));
++        GetExecutionContext());
+   }
+ 
+-  // TODO(crbug.com/973801): Report real digest for toBlob().
+-  IdentifiabilityReportWithDigest(IdentifiableToken(0));
+-
+   if (async_creator) {
+     async_creator->ScheduleAsyncBlobCreation(quality);
+   } else {

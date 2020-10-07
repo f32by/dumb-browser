@@ -1,0 +1,66 @@
+diff --git a/third_party/blink/renderer/core/dom/document.h b/third_party/blink/renderer/core/dom/document.h
+index d36ae4c84658..7c09f042e8fd 100644
+--- a/third_party/blink/renderer/core/dom/document.h
++++ b/third_party/blink/renderer/core/dom/document.h
+@@ -36,7 +36,6 @@
+ 
+ #include "base/memory/scoped_refptr.h"
+ #include "base/timer/elapsed_timer.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/referrer_policy.mojom-blink-forward.h"
+ #include "services/network/public/mojom/web_sandbox_flags.mojom-blink-forward.h"
+ #include "third_party/blink/public/common/metrics/document_update_reason.h"
+@@ -80,10 +79,6 @@ namespace base {
+ class SingleThreadTaskRunner;
+ }
+ 
+-namespace ukm {
+-class UkmRecorder;
+-}  // namespace ukm
+-
+ namespace net {
+ class SiteForCookies;
+ }  // namespace net
+@@ -1465,17 +1460,8 @@ class CORE_EXPORT Document : public ContainerNode,
+   void captureEvents() {}
+   void releaseEvents() {}
+ 
+-  ukm::UkmRecorder* UkmRecorder();
+-  ukm::SourceId UkmSourceID() const;
+-
+-  // Tracks and reports UKM metrics of the number of attempted font family match
+-  // attempts (both successful and not successful) by the page.
+-  FontMatchingMetrics* GetFontMatchingMetrics();
+-
+   scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner(TaskType);
+ 
+-  void RecordUkmOutliveTimeAfterShutdown(int outlive_time_count);
+-
+   bool CurrentFrameHadRAF() const;
+   bool NextFrameHasPendingRAF() const;
+ 
+@@ -1669,11 +1655,6 @@ class CORE_EXPORT Document : public ContainerNode,
+   friend class NthIndexCache;
+   FRIEND_TEST_ALL_PREFIXES(FrameFetchContextSubresourceFilterTest,
+                            DuringOnFreeze);
+-  FRIEND_TEST_ALL_PREFIXES(DocumentTest, FindInPageUkm);
+-  FRIEND_TEST_ALL_PREFIXES(TextFinderSimTest,
+-                           BeforeMatchExpandedHiddenMatchableUkm);
+-  FRIEND_TEST_ALL_PREFIXES(TextFinderSimTest,
+-                           BeforeMatchExpandedHiddenMatchableUkmNoHandler);
+   class NetworkStateObserver;
+ 
+   friend class AXContext;
+@@ -2065,12 +2046,6 @@ class CORE_EXPORT Document : public ContainerNode,
+ 
+   std::unique_ptr<DocumentOutliveTimeReporter> document_outlive_time_reporter_;
+ 
+-  // |ukm_recorder_| and |source_id_| will allow objects that are part of
+-  // the document to record UKM.
+-  std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
+-  const int64_t ukm_source_id_;
+-  bool needs_to_record_ukm_outlive_time_;
+-
+   // Tracks and reports metrics of attempted font match attempts (both
+   // successful and not successful) by the page.
+   std::unique_ptr<FontMatchingMetrics> font_matching_metrics_;

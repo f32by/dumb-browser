@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/public/web/web_widget.h b/third_party/blink/public/web/web_widget.h
+index b17bbeca5fef..cd1af10d1dff 100644
+--- a/third_party/blink/public/web/web_widget.h
++++ b/third_party/blink/public/web/web_widget.h
+@@ -62,7 +62,6 @@ namespace cc {
+ class LayerTreeHost;
+ class LayerTreeSettings;
+ class TaskGraphRunner;
+-class UkmRecorderFactory;
+ }
+ 
+ namespace ui {
+@@ -96,7 +95,6 @@ class WebWidget {
+       cc::TaskGraphRunner* task_graph_runner,
+       bool for_child_local_root_frame,
+       const ScreenInfo& screen_info,
+-      std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory,
+       const cc::LayerTreeSettings* settings) = 0;
+ 
+   // This method closes and deletes the WebWidget. If a |cleanup_task| is

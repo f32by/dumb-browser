@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/resource_coordinator/lifecycle_unit_base.h b/chrome/browser/resource_coordinator/lifecycle_unit_base.h
+index 5cdc9b7074ed..423d09ae9901 100644
+--- a/chrome/browser/resource_coordinator/lifecycle_unit_base.h
++++ b/chrome/browser/resource_coordinator/lifecycle_unit_base.h
+@@ -38,7 +38,6 @@ class LifecycleUnitBase : public LifecycleUnit {
+   size_t GetDiscardCount() const override;
+   void AddObserver(LifecycleUnitObserver* observer) override;
+   void RemoveObserver(LifecycleUnitObserver* observer) override;
+-  ukm::SourceId GetUkmSourceId() const override;
+ 
+   void SetDiscardCountForTesting(size_t discard_count);
+ 

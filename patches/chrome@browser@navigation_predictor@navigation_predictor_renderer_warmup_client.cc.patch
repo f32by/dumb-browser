@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/navigation_predictor/navigation_predictor_renderer_warmup_client.cc b/chrome/browser/navigation_predictor/navigation_predictor_renderer_warmup_client.cc
+index b5261d36b1e9..eb3f3f4c6510 100644
+--- a/chrome/browser/navigation_predictor/navigation_predictor_renderer_warmup_client.cc
++++ b/chrome/browser/navigation_predictor/navigation_predictor_renderer_warmup_client.cc
+@@ -22,9 +22,6 @@
+ #include "content/public/browser/render_process_host.h"
+ #include "content/public/browser/web_contents.h"
+ #include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_source.h"
+ #include "url/gurl.h"
+ #include "url/origin.h"
+ 
+@@ -222,18 +219,6 @@ void NavigationPredictorRendererWarmupClient::RecordMetricsAndMaybeDoWarmup(
+       (eligible_for_cross_origin_warmup || eligible_for_dse_warmup);
+   metrics_->did_warmup = do_warmup;
+ 
+-  // Record metrics in UKM.
+-  ukm::builders::NavigationPredictorRendererWarmup builder(
+-      web_contents->GetMainFrame()->GetPageUkmSourceId());
+-  if (metrics_->cross_origin_links_ratio) {
+-    builder.SetCrossOriginLinksRatio(
+-        static_cast<int>(100.0 * metrics_->cross_origin_links_ratio.value()));
+-  }
+-  builder.SetDidWarmup(metrics_->did_warmup);
+-  builder.SetPageIndependentStatusBitMask(metrics_->page_independent_status);
+-  builder.SetWasDSESRP(metrics_->was_dse_srp);
+-  builder.Record(ukm::UkmRecorder::Get());
+-
+   metrics_.reset();
+ 
+   if (!do_warmup) {

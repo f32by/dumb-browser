@@ -1,0 +1,28 @@
+diff --git a/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py b/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
+index bf33c9242660..5721554dc425 100644
+--- a/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
++++ b/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
+@@ -1723,7 +1723,6 @@ def make_attribute_get_callback_def(cg_context, function_name):
+         EmptyNode(),
+         make_check_security_of_return_value(cg_context),
+         make_v8_set_return_value(cg_context),
+-        make_report_high_entropy(cg_context),
+         make_return_value_cache_update_value(cg_context),
+     ])
+ 
+@@ -1898,7 +1897,6 @@ def make_constant_callback_def(cg_context, function_name):
+         logging_nodes,
+         EmptyNode(),
+         TextNode(v8_set_return_value),
+-        make_report_high_entropy(cg_context),
+     ])
+ 
+     return func_def
+@@ -2209,7 +2207,6 @@ def make_operation_function_def(cg_context, function_name):
+         EmptyNode(),
+         make_check_security_of_return_value(cg_context),
+         make_v8_set_return_value(cg_context),
+-        make_report_high_entropy(cg_context),
+     ])
+ 
+     return func_def

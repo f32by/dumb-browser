@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/chromeos/power/ml/user_activity_manager.cc b/chrome/browser/chromeos/power/ml/user_activity_manager.cc
+index b928e461956d..19ff68742e1a 100644
+--- a/chrome/browser/chromeos/power/ml/user_activity_manager.cc
++++ b/chrome/browser/chromeos/power/ml/user_activity_manager.cc
+@@ -14,7 +14,6 @@
+ #include "chrome/browser/chromeos/power/ml/smart_dim/ml_agent.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+-#include "chrome/browser/resource_coordinator/tab_metrics_logger.h"
+ #include "chrome/browser/tab_contents/form_interaction_tab_helper.h"
+ #include "chrome/browser/ui/browser.h"
+ #include "chrome/browser/ui/browser_list.h"
+@@ -481,8 +480,6 @@ TabProperty UserActivityManager::UpdateOpenTabURL() {
+       // Domain could be empty.
+       property.domain = contents->GetLastCommittedURL().host();
+       // Engagement score could be -1 if engagement service is disabled.
+-      property.engagement_score =
+-          TabMetricsLogger::GetSiteEngagementScore(contents);
+       property.has_form_entry =
+           FormInteractionTabHelper::FromWebContents(contents)
+               ->had_form_interaction();

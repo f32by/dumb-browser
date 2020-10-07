@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view_delegate.h b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view_delegate.h
+index 39e1b9fd855f..0150f6eb3d96 100644
+--- a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view_delegate.h
++++ b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view_delegate.h
+@@ -118,8 +118,7 @@ class LayerTreeViewDelegate {
+   // Submit throughput data to the browser process to store it in case the
+   // renderer process is destroyed via fast shutdown or crashes, at which point
+   // the data can still be submitted to UKM.
+-  virtual void SubmitThroughputData(ukm::SourceId source_id,
+-                                    int aggregated_percent,
++  virtual void SubmitThroughputData(int aggregated_percent,
+                                     int impl_percent,
+                                     base::Optional<int> main_percent) = 0;
+ 

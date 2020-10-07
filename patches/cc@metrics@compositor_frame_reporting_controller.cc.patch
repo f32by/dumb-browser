@@ -1,0 +1,51 @@
+diff --git a/cc/metrics/compositor_frame_reporting_controller.cc b/cc/metrics/compositor_frame_reporting_controller.cc
+index d412fa157601..2da57459b12f 100644
+--- a/cc/metrics/compositor_frame_reporting_controller.cc
++++ b/cc/metrics/compositor_frame_reporting_controller.cc
+@@ -8,7 +8,6 @@
+ 
+ #include "cc/metrics/compositor_frame_reporter.h"
+ #include "cc/metrics/dropped_frame_counter.h"
+-#include "cc/metrics/latency_ukm_reporter.h"
+ #include "components/viz/common/frame_timing_details.h"
+ #include "components/viz/common/quads/compositor_frame_metadata.h"
+ 
+@@ -21,8 +20,7 @@ using FrameTerminationStatus = CompositorFrameReporter::FrameTerminationStatus;
+ 
+ CompositorFrameReportingController::CompositorFrameReportingController(
+     bool should_report_metrics)
+-    : should_report_metrics_(should_report_metrics),
+-      latency_ukm_reporter_(std::make_unique<LatencyUkmReporter>()) {}
++    : should_report_metrics_(should_report_metrics) {}
+ 
+ CompositorFrameReportingController::~CompositorFrameReportingController() {
+   base::TimeTicks now = Now();
+@@ -70,7 +68,7 @@ void CompositorFrameReportingController::WillBeginImplFrame(
+                              reporter->did_not_produce_frame_time());
+   }
+   auto reporter = std::make_unique<CompositorFrameReporter>(
+-      active_trackers_, args, latency_ukm_reporter_.get(),
++      active_trackers_, args,
+       should_report_metrics_, GetSmoothThread());
+   reporter->set_tick_clock(tick_clock_);
+   reporter->StartStage(StageType::kBeginImplFrameToSendBeginMainFrame,
+@@ -97,7 +95,7 @@ void CompositorFrameReportingController::WillBeginMainFrame(
+     // beginMain frame before next BeginImplFrame (Not reached the ImplFrame
+     // deadline yet). So will start a new reporter at BeginMainFrame.
+     auto reporter = std::make_unique<CompositorFrameReporter>(
+-        active_trackers_, args, latency_ukm_reporter_.get(),
++        active_trackers_, args,
+         should_report_metrics_, GetSmoothThread());
+     reporter->set_tick_clock(tick_clock_);
+     reporter->StartStage(StageType::kSendBeginMainFrameToCommit, Now());
+@@ -448,10 +446,6 @@ CompositorFrameReportingController::RestoreReporterAtBeginImpl(
+   return nullptr;
+ }
+ 
+-void CompositorFrameReportingController::SetUkmManager(UkmManager* manager) {
+-  latency_ukm_reporter_->set_ukm_manager(manager);
+-}
+-
+ CompositorFrameReporter::SmoothThread
+ CompositorFrameReportingController::GetSmoothThread() const {
+   if (is_main_thread_driving_smoothness_) {

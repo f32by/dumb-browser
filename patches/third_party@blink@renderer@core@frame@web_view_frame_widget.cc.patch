@@ -1,0 +1,37 @@
+diff --git a/third_party/blink/renderer/core/frame/web_view_frame_widget.cc b/third_party/blink/renderer/core/frame/web_view_frame_widget.cc
+index d190962fe1a3..a95d9b34c9c4 100644
+--- a/third_party/blink/renderer/core/frame/web_view_frame_widget.cc
++++ b/third_party/blink/renderer/core/frame/web_view_frame_widget.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/renderer/core/exported/web_view_impl.h"
+-#include "third_party/blink/renderer/core/frame/local_frame_ukm_aggregator.h"
+ #include "third_party/blink/renderer/core/frame/screen_metrics_emulator.h"
+ #include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
+ #include "third_party/blink/renderer/platform/scheduler/public/thread.h"
+@@ -99,12 +98,6 @@ void WebViewFrameWidget::EndCommitCompositorFrame(
+   DCHECK(commit_compositor_frame_start_time_.has_value());
+ 
+   WebFrameWidgetBase::EndCommitCompositorFrame(commit_start_time);
+-  web_view_->MainFrameImpl()
+-      ->GetFrame()
+-      ->View()
+-      ->EnsureUkmAggregator()
+-      .RecordImplCompositorSample(commit_compositor_frame_start_time_.value(),
+-                                  commit_start_time, base::TimeTicks::Now());
+   commit_compositor_frame_start_time_.reset();
+ }
+ 
+@@ -118,11 +111,6 @@ void WebViewFrameWidget::RecordEndOfFrameMetrics(
+   web_view_->RecordEndOfFrameMetrics(frame_begin_time, trackers);
+ }
+ 
+-std::unique_ptr<cc::BeginMainFrameMetrics>
+-WebViewFrameWidget::GetBeginMainFrameMetrics() {
+-  return web_view_->GetBeginMainFrameMetrics();
+-}
+-
+ void WebViewFrameWidget::UpdateLifecycle(WebLifecycleUpdate requested_update,
+                                          DocumentUpdateReason reason) {
+   web_view_->UpdateLifecycle(requested_update, reason);

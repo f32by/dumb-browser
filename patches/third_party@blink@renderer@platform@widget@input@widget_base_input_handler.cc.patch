@@ -1,0 +1,76 @@
+diff --git a/third_party/blink/renderer/platform/widget/input/widget_base_input_handler.cc b/third_party/blink/renderer/platform/widget/input/widget_base_input_handler.cc
+index 386110fb92c2..de3299c6e544 100644
+--- a/third_party/blink/renderer/platform/widget/input/widget_base_input_handler.cc
++++ b/third_party/blink/renderer/platform/widget/input/widget_base_input_handler.cc
+@@ -10,7 +10,6 @@
+ 
+ #include "base/metrics/histogram_macros.h"
+ #include "build/build_config.h"
+-#include "cc/metrics/event_metrics.h"
+ #include "cc/paint/element_id.h"
+ #include "cc/trees/latency_info_swap_promise_monitor.h"
+ #include "cc/trees/layer_tree_host.h"
+@@ -338,24 +337,6 @@ void WidgetBaseInputHandler::HandleInputEvent(
+       ui::LatencyComponentType::INPUT_EVENT_LATENCY_RENDERER_MAIN_COMPONENT);
+   cc::LatencyInfoSwapPromiseMonitor swap_promise_monitor(
+       &swap_latency_info, widget_->LayerTreeHost()->GetSwapPromiseManager());
+-  base::Optional<cc::EventMetrics::ScrollUpdateType> scroll_update_type;
+-  if (input_event.GetType() == WebInputEvent::Type::kGestureScrollUpdate) {
+-    // TODO(crbug.com/1079116): For now, we use data from `LatencyInfo` to
+-    // determine whether a scroll-update is the first one in a sequence or not.
+-    // This should be determined independent of `LatencyInfo`.
+-    if (coalesced_event.latency_info().FindLatency(
+-            ui::INPUT_EVENT_LATENCY_FIRST_SCROLL_UPDATE_ORIGINAL_COMPONENT,
+-            nullptr)) {
+-      scroll_update_type = cc::EventMetrics::ScrollUpdateType::kStarted;
+-    } else {
+-      scroll_update_type = cc::EventMetrics::ScrollUpdateType::kContinued;
+-    }
+-  }
+-  auto scoped_event_metrics_monitor =
+-      widget_->LayerTreeHost()->GetScopedEventMetricsMonitor(
+-          cc::EventMetrics::Create(input_event.GetTypeAsUiEventType(),
+-                                   scroll_update_type, input_event.TimeStamp(),
+-                                   input_event.GetScrollInputType()));
+ 
+   bool prevent_default = false;
+   bool show_virtual_keyboard_for_mouse = false;
+@@ -441,11 +422,6 @@ void WidgetBaseInputHandler::HandleInputEvent(
+     }
+   }
+ 
+-  // Handling |input_event| is finished and further down, we might start
+-  // handling injected scroll events. So, stop monitoring EventMetrics for
+-  // |input_event| to avoid nested monitors.
+-  scoped_event_metrics_monitor = nullptr;
+-
+   LogAllPassiveEventListenersUma(input_event, processed);
+ 
+   // If this RawKeyDown event corresponds to a browser keyboard shortcut and
+@@ -659,26 +635,6 @@ void WidgetBaseInputHandler::HandleInjectedScrollGestures(
+       cc::LatencyInfoSwapPromiseMonitor swap_promise_monitor(
+           &scrollbar_latency_info,
+           widget_->LayerTreeHost()->GetSwapPromiseManager());
+-      base::Optional<cc::EventMetrics::ScrollUpdateType> scroll_update_type;
+-      if (gesture_event->GetType() ==
+-          WebInputEvent::Type::kGestureScrollUpdate) {
+-        // TODO(crbug.com/1079116): For now, we use data from `LatencyInfo` to
+-        // determine whether a scroll-update is the first one in a sequence or
+-        // not. This should be determined independent of `LatencyInfo`.
+-        if (scrollbar_latency_info.FindLatency(
+-                ui::INPUT_EVENT_LATENCY_FIRST_SCROLL_UPDATE_ORIGINAL_COMPONENT,
+-                nullptr)) {
+-          scroll_update_type = cc::EventMetrics::ScrollUpdateType::kStarted;
+-        } else {
+-          scroll_update_type = cc::EventMetrics::ScrollUpdateType::kContinued;
+-        }
+-      }
+-      auto scoped_event_metrics_monitor =
+-          widget_->LayerTreeHost()->GetScopedEventMetricsMonitor(
+-              cc::EventMetrics::Create(gesture_event->GetTypeAsUiEventType(),
+-                                       scroll_update_type,
+-                                       gesture_event->TimeStamp(),
+-                                       gesture_event->GetScrollInputType()));
+       widget_->client()->HandleInputEvent(
+           WebCoalescedInputEvent(*gesture_event, scrollbar_latency_info));
+     }

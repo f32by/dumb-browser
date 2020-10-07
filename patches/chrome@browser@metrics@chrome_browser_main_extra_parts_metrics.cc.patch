@@ -1,0 +1,45 @@
+diff --git a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
+index b57a994cf996..88585f7c89e0 100644
+--- a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
++++ b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
+@@ -28,7 +28,6 @@
+ #include "chrome/browser/metrics/authenticator_utility.h"
+ #include "chrome/browser/metrics/bluetooth_available_utility.h"
+ #include "chrome/browser/metrics/chrome_metrics_service_accessor.h"
+-#include "chrome/browser/metrics/process_memory_metrics_emitter.h"
+ #include "chrome/browser/shell_integration.h"
+ #include "components/flags_ui/pref_service_flags_storage.h"
+ #include "content/public/browser/browser_task_traits.h"
+@@ -75,24 +74,6 @@
+ 
+ namespace {
+ 
+-void RecordMemoryMetrics();
+-
+-// Records memory metrics after a delay.
+-void RecordMemoryMetricsAfterDelay() {
+-  content::GetUIThreadTaskRunner({})->PostDelayedTask(
+-      FROM_HERE, base::BindOnce(&RecordMemoryMetrics),
+-      memory_instrumentation::GetDelayForNextMemoryLog());
+-}
+-
+-// Records memory metrics, and then triggers memory colleciton after a delay.
+-void RecordMemoryMetrics() {
+-  scoped_refptr<ProcessMemoryMetricsEmitter> emitter(
+-      new ProcessMemoryMetricsEmitter);
+-  emitter->FetchAndEmitProcessMemoryMetrics();
+-
+-  RecordMemoryMetricsAfterDelay();
+-}
+-
+ // These values are written to logs.  New enum values can be added, but existing
+ // enums must never be renumbered or deleted and reused.
+ enum UMALinuxDistro {
+@@ -496,7 +477,6 @@ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
+ }
+ 
+ void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
+-  RecordMemoryMetricsAfterDelay();
+   RecordLinuxGlibcVersion();
+ #if defined(USE_X11)
+   if (!features::IsUsingOzonePlatform()) {

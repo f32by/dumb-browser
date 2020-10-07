@@ -1,0 +1,18 @@
+diff --git a/chrome/browser/performance_manager/observers/metrics_collector.cc b/chrome/browser/performance_manager/observers/metrics_collector.cc
+index 545f731915b2..5322b60c0c89 100644
+--- a/chrome/browser/performance_manager/observers/metrics_collector.cc
++++ b/chrome/browser/performance_manager/observers/metrics_collector.cc
+@@ -112,13 +112,6 @@ MetricsCollector::MetricsReportRecord* MetricsCollector::GetMetricsReportRecord(
+   return &holder->metrics_report_record;
+ }
+ 
+-// static
+-MetricsCollector::UkmCollectionState* MetricsCollector::GetUkmCollectionState(
+-    const PageNode* page_node) {
+-  auto* holder = UkmCollectionStateHolder::GetOrCreate(page_node);
+-  return &holder->ukm_collection_state;
+-}
+-
+ void MetricsCollector::RegisterObservers(Graph* graph) {
+   graph->AddFrameNodeObserver(this);
+   graph->AddPageNodeObserver(this);

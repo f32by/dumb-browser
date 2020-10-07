@@ -1,0 +1,36 @@
+diff --git a/chrome/browser/background_fetch/background_fetch_delegate_impl.h b/chrome/browser/background_fetch/background_fetch_delegate_impl.h
+index d9baa9553137..1a64441ab648 100644
+--- a/chrome/browser/background_fetch/background_fetch_delegate_impl.h
++++ b/chrome/browser/background_fetch/background_fetch_delegate_impl.h
+@@ -19,7 +19,6 @@
+ #include "components/offline_items_collection/core/offline_item.h"
+ #include "components/offline_items_collection/core/update_delta.h"
+ #include "content/public/browser/background_fetch_delegate.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "ui/gfx/image/image.h"
+ #include "url/origin.h"
+ 
+@@ -141,7 +140,6 @@ class BackgroundFetchDelegateImpl
+ 
+  private:
+   FRIEND_TEST_ALL_PREFIXES(BackgroundFetchBrowserTest, ClickEventIsDispatched);
+-  FRIEND_TEST_ALL_PREFIXES(BackgroundFetchDelegateImplTest, RecordUkmEvent);
+   FRIEND_TEST_ALL_PREFIXES(BackgroundFetchDelegateImplTest,
+                            HistoryServiceIntegration);
+   FRIEND_TEST_ALL_PREFIXES(BackgroundFetchDelegateImplTest,
+@@ -257,15 +255,6 @@ class BackgroundFetchDelegateImpl
+   // Returns the client for a given |job_unique_id|.
+   base::WeakPtr<Client> GetClient(const std::string& job_unique_id);
+ 
+-  // Helper methods for recording BackgroundFetchDeletingRegistration UKM event.
+-  // We check with UkmBackgroundRecorderService whether this event for |origin|
+-  // can be recorded.
+-  void RecordBackgroundFetchDeletingRegistrationUkmEvent(
+-      const url::Origin& origin,
+-      bool user_initiated_abort);
+-  void DidGetBackgroundSourceId(bool user_initiated_abort,
+-                                base::Optional<ukm::SourceId> source_id);
+-
+   // The profile this service is being created for.
+   Profile* profile_;
+ 

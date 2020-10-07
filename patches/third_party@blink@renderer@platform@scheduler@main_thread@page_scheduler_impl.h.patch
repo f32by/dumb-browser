@@ -1,0 +1,19 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/main_thread/page_scheduler_impl.h b/third_party/blink/renderer/platform/scheduler/main_thread/page_scheduler_impl.h
+index ad061bd3ff10..893aed14123c 100644
+--- a/third_party/blink/renderer/platform/scheduler/main_thread/page_scheduler_impl.h
++++ b/third_party/blink/renderer/platform/scheduler/main_thread/page_scheduler_impl.h
+@@ -135,14 +135,6 @@ class PLATFORM_EXPORT PageSchedulerImpl : public PageScheduler {
+ 
+   void SetUpIPCTaskDetection();
+ 
+-  // Generally UKMs are associated with the main frame of a page, but the
+-  // implementation allows to request a recorder from any local frame with
+-  // the same result (e.g. for OOPIF support), therefore we need to select
+-  // any frame here.
+-  // Note that selecting main frame doesn't work for OOPIFs where the main
+-  // frame it not a local one.
+-  FrameSchedulerImpl* SelectFrameForUkmAttribution();
+-
+   void AsValueInto(base::trace_event::TracedValue* state) const;
+ 
+   base::WeakPtr<PageSchedulerImpl> GetWeakPtr() {

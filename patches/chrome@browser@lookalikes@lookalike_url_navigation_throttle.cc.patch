@@ -1,0 +1,63 @@
+diff --git a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
+index ed4ff2e76734..6e8b6d225d09 100644
+--- a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
++++ b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
+@@ -31,7 +31,6 @@
+ #include "components/lookalikes/core/lookalike_url_util.h"
+ #include "components/prerender/browser/prerender_contents.h"
+ #include "components/security_interstitials/content/security_interstitial_tab_helper.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "components/url_formatter/spoof_checks/top_domains/top500_domains.h"
+ #include "components/url_formatter/spoof_checks/top_domains/top_domain_util.h"
+ #include "content/public/browser/navigation_handle.h"
+@@ -230,7 +229,6 @@ const char* LookalikeUrlNavigationThrottle::GetNameForLogging() {
+ ThrottleCheckResult LookalikeUrlNavigationThrottle::ShowInterstitial(
+     const GURL& safe_url,
+     const GURL& url,
+-    ukm::SourceId source_id,
+     LookalikeUrlMatchType match_type) {
+   content::NavigationHandle* handle = navigation_handle();
+   content::WebContents* web_contents = handle->GetWebContents();
+@@ -239,7 +237,7 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::ShowInterstitial(
+       web_contents, url, safe_url);
+ 
+   std::unique_ptr<LookalikeUrlBlockingPage> blocking_page(
+-      new LookalikeUrlBlockingPage(web_contents, safe_url, url, source_id,
++      new LookalikeUrlBlockingPage(web_contents, safe_url, url,
+                                    match_type, std::move(controller)));
+ 
+   base::Optional<std::string> error_page_contents =
+@@ -316,9 +314,6 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::PerformChecks(
+     return content::NavigationThrottle::PROCEED;
+   }
+ 
+-  ukm::SourceId source_id = ukm::ConvertToSourceId(
+-      navigation_handle()->GetNavigationId(), ukm::SourceIdType::NAVIGATION_ID);
+-
+   auto* config = GetSafetyTipsRemoteConfigProto();
+   const LookalikeTargetAllowlistChecker in_target_allowlist =
+       base::BindRepeating(&IsTargetHostAllowlistedBySafetyTipsComponent,
+@@ -360,12 +355,9 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::PerformChecks(
+       replace_host.SetHostStr(suggested_domain);
+       const GURL suggested_url =
+           url.ReplaceComponents(replace_host).GetWithEmptyPath();
+-      return ShowInterstitial(suggested_url, url, source_id, match_type);
++      return ShowInterstitial(suggested_url, url, match_type);
+     }
+-    // Interstitial normally records UKM, but still record when it's not shown.
+-    RecordUkmForLookalikeUrlBlockingPage(
+-        source_id, match_type,
+-        LookalikeUrlBlockingPageUserAction::kInterstitialNotShown);
++
+     return content::NavigationThrottle::PROCEED;
+   }
+ 
+@@ -374,7 +366,7 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::PerformChecks(
+       ShouldBlockBySpoofCheckResult(navigated_domain)) {
+     match_type = LookalikeUrlMatchType::kFailedSpoofChecks;
+     RecordUMAFromMatchType(match_type);
+-    return ShowInterstitial(GURL(), url, source_id, match_type);
++    return ShowInterstitial(GURL(), url, match_type);
+   }
+ 
+   return content::NavigationThrottle::PROCEED;

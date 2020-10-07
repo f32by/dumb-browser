@@ -1,0 +1,74 @@
+diff --git a/content/browser/download/save_package.cc b/content/browser/download/save_package.cc
+index 832f69deb266..54a8d2408d8b 100644
+--- a/content/browser/download/save_package.cc
++++ b/content/browser/download/save_package.cc
+@@ -27,9 +27,7 @@
+ #include "base/unguessable_token.h"
+ #include "build/build_config.h"
+ #include "components/download/public/common/download_item_impl.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_task_runner.h"
+-#include "components/download/public/common/download_ukm_helper.h"
+ #include "components/download/public/common/download_utils.h"
+ #include "components/filename_generation/filename_generation.h"
+ #include "components/url_formatter/url_formatter.h"
+@@ -64,7 +62,6 @@
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+ #include "net/base/filename_util.h"
+ #include "net/base/mime_util.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "url/url_constants.h"
+ 
+ namespace content {
+@@ -246,7 +243,6 @@ void SavePackage::Cancel(bool user_action, bool cancel_download_item) {
+       disk_error_occurred_ = true;
+     Stop(cancel_download_item);
+   }
+-  download::RecordSavePackageEvent(download::SAVE_PACKAGE_CANCELLED);
+ }
+ 
+ // Init() can be called directly, or indirectly via GetSaveInfo(). In both
+@@ -261,22 +257,6 @@ void SavePackage::InternalInit() {
+       BrowserContext::GetDownloadManager(
+           web_contents()->GetBrowserContext()));
+   DCHECK(download_manager_);
+-
+-  download::RecordSavePackageEvent(download::SAVE_PACKAGE_STARTED);
+-
+-  // TODO(crbug.com/1061899): The code here should take an explicit reference
+-  // to the corresponding frame instead of using the current main frame.
+-  ukm_source_id_ = static_cast<WebContentsImpl*>(web_contents())
+-                       ->GetMainFrame()
+-                       ->GetPageUkmSourceId();
+-  ukm_download_id_ = download::GetUniqueDownloadId();
+-  download::DownloadUkmHelper::RecordDownloadStarted(
+-      ukm_download_id_, ukm_source_id_, download::DownloadContent::TEXT,
+-      download::DownloadSource::UNKNOWN,
+-      download::CheckDownloadConnectionSecurity(
+-          web_contents()->GetLastCommittedURL(),
+-          std::vector<GURL>{web_contents()->GetLastCommittedURL()}),
+-      true /* is_same_host_download */);
+ }
+ 
+ bool SavePackage::Init(
+@@ -715,20 +695,6 @@ void SavePackage::Finish() {
+   wait_state_ = SUCCESSFUL;
+   finished_ = true;
+ 
+-  // Record finish.
+-  download::RecordSavePackageEvent(download::SAVE_PACKAGE_FINISHED);
+-
+-  // TODO(qinmin): report the actual file size and duration for the download.
+-  download::DownloadUkmHelper::RecordDownloadCompleted(ukm_download_id_, 1,
+-                                                       base::TimeDelta(), 0);
+-
+-  // Record any errors that occurred.
+-  if (wrote_to_completed_file_)
+-    download::RecordSavePackageEvent(download::SAVE_PACKAGE_WRITE_TO_COMPLETED);
+-
+-  if (wrote_to_failed_file_)
+-    download::RecordSavePackageEvent(download::SAVE_PACKAGE_WRITE_TO_FAILED);
+-
+   // This vector contains the save ids of the save files which SaveFileManager
+   // needs to remove from its |save_file_map_|.
+   std::vector<SaveItemId> list_of_failed_save_item_ids;

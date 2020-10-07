@@ -1,0 +1,77 @@
+diff --git a/chrome/browser/download/android/download_controller.cc b/chrome/browser/download/android/download_controller.cc
+index 3f761ebdfb1e..200737cf01df 100644
+--- a/chrome/browser/download/android/download_controller.cc
++++ b/chrome/browser/download/android/download_controller.cc
+@@ -26,7 +26,6 @@
+ #include "chrome/browser/download/android/download_utils.h"
+ #include "chrome/browser/download/download_offline_content_provider.h"
+ #include "chrome/browser/download/download_offline_content_provider_factory.h"
+-#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/flags/android/chrome_feature_list.h"
+ #include "chrome/browser/infobars/infobar_service.h"
+ #include "chrome/browser/offline_pages/android/offline_page_bridge.h"
+@@ -77,9 +76,6 @@ void CreateContextMenuDownload(const content::WebContents::Getter& wc_getter,
+     return;
+ 
+   if (!web_contents) {
+-    DownloadController::RecordStoragePermission(
+-        DownloadController::StoragePermissionType::
+-            STORAGE_PERMISSION_NO_WEB_CONTENTS);
+     return;
+   }
+ 
+@@ -112,7 +108,6 @@ void CreateContextMenuDownload(const content::WebContents::Getter& wc_getter,
+       offline_pages::android::OfflinePageBridge::GetEncodedOriginApp(
+           web_contents));
+   dl_params->set_suggested_name(params.suggested_filename);
+-  RecordDownloadSource(DOWNLOAD_INITIATED_BY_CONTEXT_MENU);
+   dl_params->set_download_source(download::DownloadSource::CONTEXT_MENU);
+   dlm->DownloadUrl(std::move(dl_params));
+ }
+@@ -175,14 +170,6 @@ void OnStoragePermissionDecided(
+     bool granted) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+ 
+-  if (granted) {
+-    DownloadController::RecordStoragePermission(
+-        DownloadController::StoragePermissionType::STORAGE_PERMISSION_GRANTED);
+-  } else {
+-    DownloadController::RecordStoragePermission(
+-        DownloadController::StoragePermissionType::STORAGE_PERMISSION_DENIED);
+-  }
+-
+   std::move(cb).Run(granted);
+ }
+ 
+@@ -223,12 +210,6 @@ void DownloadControllerBase::SetDownloadControllerBase(
+   DownloadControllerBase::download_controller_ = download_controller;
+ }
+ 
+-// static
+-void DownloadController::RecordStoragePermission(StoragePermissionType type) {
+-  UMA_HISTOGRAM_ENUMERATION("MobileDownload.StoragePermission", type,
+-                            STORAGE_PERMISSION_MAX);
+-}
+-
+ // static
+ void DownloadController::CloseTabIfEmpty(content::WebContents* web_contents) {
+   if (!web_contents)
+@@ -258,10 +239,6 @@ void DownloadController::AcquireFileAccessPermission(
+   WebContents* web_contents = web_contents_getter.Run();
+ 
+   if (HasFileAccessPermission()) {
+-    RecordStoragePermission(
+-        StoragePermissionType::STORAGE_PERMISSION_REQUESTED);
+-    RecordStoragePermission(
+-        StoragePermissionType::STORAGE_PERMISSION_NO_ACTION_NEEDED);
+     content::GetUIThreadTaskRunner({})->PostTask(
+         FROM_HERE, base::BindOnce(std::move(cb), true));
+     return;
+@@ -273,7 +250,6 @@ void DownloadController::AcquireFileAccessPermission(
+     return;
+   }
+ 
+-  RecordStoragePermission(StoragePermissionType::STORAGE_PERMISSION_REQUESTED);
+   AcquirePermissionCallback callback(base::BindOnce(
+       &OnRequestFileAccessResult, web_contents_getter,
+       base::BindOnce(&OnStoragePermissionDecided, std::move(cb))));

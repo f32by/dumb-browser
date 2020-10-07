@@ -243,7 +243,8 @@ const std::vector<MatcherRule>& GetMatcherRules() {
        "algo_expid", "algo_pvid", "ns", "abbucket", "ali_refid", "ali_trackid",
        "acm", "utparam", "pos", "abtest", "trackInfo", "utkn", "scene",
        "mytmenu", "turing_bucket", "lygClk", "impid", "bftTag", "bftRwd", "spm",
-       "initiative_id", "sourceId", "ssid", "commend"},
+       "initiative_id", "sourceId", "ssid", "commend", "shareUniqueId",
+       "bxsign", },
       base::nullopt
     },
     // Tmall

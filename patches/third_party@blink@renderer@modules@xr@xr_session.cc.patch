@@ -1,0 +1,33 @@
+diff --git a/third_party/blink/renderer/modules/xr/xr_session.cc b/third_party/blink/renderer/modules/xr/xr_session.cc
+index 596ce8f650b3..4c8037731349 100644
+--- a/third_party/blink/renderer/modules/xr/xr_session.cc
++++ b/third_party/blink/renderer/modules/xr/xr_session.cc
+@@ -12,7 +12,6 @@
+ 
+ #include "base/auto_reset.h"
+ #include "base/metrics/histogram_macros.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
+ #include "third_party/blink/renderer/bindings/modules/v8/v8_xr_frame_request_callback.h"
+ #include "third_party/blink/renderer/bindings/modules/v8/v8_xr_hit_test_options_init.h"
+@@ -717,9 +716,6 @@ void XRSession::cancelAnimationFrame(int id) {
+ 
+ XRInputSourceArray* XRSession::inputSources(ScriptState* script_state) const {
+   if (!did_log_getInputSources_ && script_state->ContextIsValid()) {
+-    ukm::builders::XR_WebXR(xr_->GetSourceId())
+-        .SetDidGetXRInputSources(1)
+-        .Record(LocalDOMWindow::From(script_state)->UkmRecorder());
+     did_log_getInputSources_ = true;
+   }
+ 
+@@ -1697,10 +1693,6 @@ void XRSession::OnFrame(
+ void XRSession::LogGetPose() const {
+   if (!did_log_getViewerPose_ && GetExecutionContext()) {
+     did_log_getViewerPose_ = true;
+-
+-    ukm::builders::XR_WebXR(xr_->GetSourceId())
+-        .SetDidRequestPose(1)
+-        .Record(GetExecutionContext()->UkmRecorder());
+   }
+ }
+ 

@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.h b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.h
+index 62905135abff..a555fdc43fcb 100644
+--- a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.h
++++ b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.h
+@@ -15,7 +15,6 @@
+ #include "chrome/browser/lookalikes/lookalike_url_blocking_page.h"
+ #include "components/url_formatter/url_formatter.h"
+ #include "content/public/browser/navigation_throttle.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ namespace content {
+ class NavigationHandle;
+@@ -77,7 +76,6 @@ class LookalikeUrlNavigationThrottle : public content::NavigationThrottle {
+ 
+   ThrottleCheckResult ShowInterstitial(const GURL& safe_domain,
+                                        const GURL& url,
+-                                       ukm::SourceId source_id,
+                                        LookalikeUrlMatchType match_type);
+ 
+   Profile* profile_;

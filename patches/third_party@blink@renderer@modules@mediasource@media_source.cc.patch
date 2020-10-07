@@ -1,0 +1,36 @@
+diff --git a/third_party/blink/renderer/modules/mediasource/media_source.cc b/third_party/blink/renderer/modules/mediasource/media_source.cc
+index ea74cdbdc556..e8a4e1a228dd 100644
+--- a/third_party/blink/renderer/modules/mediasource/media_source.cc
++++ b/third_party/blink/renderer/modules/mediasource/media_source.cc
+@@ -339,8 +339,6 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
+       MIMETypeRegistry::kIsNotSupported) {
+     DVLOG(1) << __func__ << "(" << type
+              << ") -> false (not supported by HTMLMediaElement)";
+-    if (IsUserInIdentifiabilityStudy())
+-      RecordIdentifiabilityMetric(context, type, false);
+     return false;
+   }
+ 
+@@ -363,22 +361,9 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
+                 MIMETypeRegistry::SupportsMediaSourceMIMEType(
+                     content_type.GetType(), codecs);
+   DVLOG(2) << __func__ << "(" << type << ") -> " << (result ? "true" : "false");
+-  if (IsUserInIdentifiabilityStudy())
+-    RecordIdentifiabilityMetric(context, type, result);
+   return result;
+ }
+ 
+-void MediaSource::RecordIdentifiabilityMetric(ExecutionContext* context,
+-                                              const String& type,
+-                                              bool result) {
+-  blink::IdentifiabilityMetricBuilder(context->UkmSourceID())
+-      .Set(blink::IdentifiableSurface::FromTypeAndToken(
+-               blink::IdentifiableSurface::Type::kMediaSource_IsTypeSupported,
+-               IdentifiabilityBenignStringToken(type)),
+-           result)
+-      .Record(context->UkmRecorder());
+-}
+-
+ const AtomicString& MediaSource::InterfaceName() const {
+   return event_target_names::kMediaSource;
+ }

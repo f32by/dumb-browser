@@ -1,0 +1,13 @@
+diff --git a/content/renderer/render_widget.h b/content/renderer/render_widget.h
+index ffa127917282..4a098500b518 100644
+--- a/content/renderer/render_widget.h
++++ b/content/renderer/render_widget.h
+@@ -282,7 +282,7 @@ class CONTENT_EXPORT RenderWidget
+     return mouse_lock_dispatcher_.get();
+   }
+ 
+-  void DidNavigate(ukm::SourceId source_id, const GURL& url);
++  void DidNavigate(const GURL& url);
+ 
+   void SetActive(bool active);
+ 

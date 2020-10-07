@@ -1,0 +1,21 @@
+diff --git a/weblayer/browser/translate_ranker_factory.cc b/weblayer/browser/translate_ranker_factory.cc
+index 1c24edac45c3..51773a33cdbe 100644
+--- a/weblayer/browser/translate_ranker_factory.cc
++++ b/weblayer/browser/translate_ranker_factory.cc
+@@ -7,7 +7,6 @@
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "components/translate/core/browser/translate_ranker_impl.h"
+ #include "content/public/browser/browser_context.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace weblayer {
+ 
+@@ -35,7 +34,7 @@ KeyedService* TranslateRankerFactory::BuildServiceInstanceFor(
+     content::BrowserContext* browser_context) const {
+   return new translate::TranslateRankerImpl(
+       translate::TranslateRankerImpl::GetModelPath(browser_context->GetPath()),
+-      translate::TranslateRankerImpl::GetModelURL(), ukm::UkmRecorder::Get());
++      translate::TranslateRankerImpl::GetModelURL());
+ }
+ 
+ content::BrowserContext* TranslateRankerFactory::GetBrowserContextToUse(

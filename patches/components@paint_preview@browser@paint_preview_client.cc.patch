@@ -1,0 +1,59 @@
+diff --git a/components/paint_preview/browser/paint_preview_client.cc b/components/paint_preview/browser/paint_preview_client.cc
+index 68db488b0da1..138ff0c9ce4f 100644
+--- a/components/paint_preview/browser/paint_preview_client.cc
++++ b/components/paint_preview/browser/paint_preview_client.cc
+@@ -19,15 +19,12 @@
+ #include "components/paint_preview/common/capture_result.h"
+ #include "components/paint_preview/common/mojom/paint_preview_recorder.mojom-forward.h"
+ #include "components/paint_preview/common/version.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/render_frame_host.h"
+ #include "content/public/browser/render_process_host.h"
+ #include "content/public/browser/web_contents.h"
+ #include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
+ 
+ namespace paint_preview {
+@@ -75,19 +72,6 @@ PaintPreviewCaptureResponseToPaintPreviewFrameProto(
+   return frame_guids;
+ }
+ 
+-// Records UKM data for the capture.
+-// TODO(crbug/1038390): Add more metrics;
+-// - Peak memory during capture (bucketized).
+-// - Compressed on disk size (bucketized).
+-void RecordUkmCaptureData(ukm::SourceId source_id,
+-                          base::TimeDelta blink_recording_time) {
+-  if (source_id == ukm::kInvalidSourceId)
+-    return;
+-  ukm::builders::PaintPreviewCapture(source_id)
+-      .SetBlinkCaptureTime(blink_recording_time.InMilliseconds())
+-      .Record(ukm::UkmRecorder::Get());
+-}
+-
+ base::flat_set<base::UnguessableToken> CreateAcceptedTokenList(
+     content::RenderFrameHost* render_frame_host) {
+   auto rfhs = render_frame_host->GetFramesInSubtree();
+@@ -300,8 +284,6 @@ void PaintPreviewClient::CapturePaintPreview(
+   metadata->set_url(url.spec());
+   metadata->set_version(kPaintPreviewVersion);
+   document_data.callback = std::move(callback);
+-  document_data.source_id =
+-      ukm::GetSourceIdForWebContentsDocument(web_contents());
+   document_data.accepted_tokens = CreateAcceptedTokenList(render_frame_host);
+   document_data.capture_links = params.inner.capture_links;
+   document_data.max_per_capture_size = params.inner.max_capture_size;
+@@ -537,9 +519,6 @@ void PaintPreviewClient::OnFinished(
+         "Browser.PaintPreview.Capture.NumberOfFramesCaptured",
+         document_data->finished_subframes.size());
+ 
+-    RecordUkmCaptureData(document_data->source_id,
+-                         document_data->main_frame_blink_recording_time);
+-
+     // At a minimum one frame was captured successfully, it is up to the
+     // caller to decide if a partial success is acceptable based on what is
+     // contained in the proto.

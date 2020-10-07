@@ -1,0 +1,32 @@
+diff --git a/chrome/browser/extensions/api/cryptotoken_private/cryptotoken_private_api.cc b/chrome/browser/extensions/api/cryptotoken_private/cryptotoken_private_api.cc
+index 3dfa12e3eae9..5f8e2f3bb397 100644
+--- a/chrome/browser/extensions/api/cryptotoken_private/cryptotoken_private_api.cc
++++ b/chrome/browser/extensions/api/cryptotoken_private/cryptotoken_private_api.cc
+@@ -16,7 +16,6 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/common/chrome_features.h"
+ #include "chrome/common/pref_names.h"
+-#include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
+ #include "components/permissions/permission_request_manager.h"
+ #include "components/pref_registry/pref_registry_syncable.h"
+ #include "components/prefs/pref_service.h"
+@@ -302,9 +301,6 @@ CryptotokenPrivateRecordRegisterRequestFunction::Run() {
+     return RespondNow(Error("cannot find specified tab or frame"));
+   }
+ 
+-  page_load_metrics::MetricsWebContentsObserver::RecordFeatureUsage(
+-      frame, page_load_metrics::mojom::PageLoadFeatures(
+-                 {blink::mojom::WebFeature::kU2FCryptotokenRegister}, {}, {}));
+   return RespondNow(NoArguments());
+ }
+ 
+@@ -319,9 +315,6 @@ CryptotokenPrivateRecordSignRequestFunction::Run() {
+     return RespondNow(Error("cannot find specified tab or frame"));
+   }
+ 
+-  page_load_metrics::MetricsWebContentsObserver::RecordFeatureUsage(
+-      frame, page_load_metrics::mojom::PageLoadFeatures(
+-                 {blink::mojom::WebFeature::kU2FCryptotokenSign}, {}, {}));
+   return RespondNow(NoArguments());
+ }
+ 

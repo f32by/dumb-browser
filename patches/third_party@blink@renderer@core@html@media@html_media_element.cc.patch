@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/renderer/core/html/media/html_media_element.cc b/third_party/blink/renderer/core/html/media/html_media_element.cc
+index 173b185a7c68..93b35b83e598 100644
+--- a/third_party/blink/renderer/core/html/media/html_media_element.cc
++++ b/third_party/blink/renderer/core/html/media/html_media_element.cc
+@@ -820,15 +820,6 @@ String HTMLMediaElement::canPlayType(ExecutionContext* context,
+   MIMETypeRegistry::SupportsType support =
+       GetSupportsType(ContentType(mime_type));
+ 
+-  if (IsUserInIdentifiabilityStudy()) {
+-    blink::IdentifiabilityMetricBuilder(context->UkmSourceID())
+-        .Set(
+-            blink::IdentifiableSurface::FromTypeAndToken(
+-                blink::IdentifiableSurface::Type::kHTMLMediaElement_CanPlayType,
+-                IdentifiabilityBenignStringToken(mime_type)),
+-            static_cast<uint64_t>(support))
+-        .Record(context->UkmRecorder());
+-  }
+   String can_play;
+ 
+   // 4.8.12.3

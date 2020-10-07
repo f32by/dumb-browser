@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client_receiver_bindings.cc b/chrome/browser/chrome_content_browser_client_receiver_bindings.cc
-index ab5fda639349..cd2d29a65925 100644
+index ab5fda639349..e29124c8a964 100644
 --- a/chrome/browser/chrome_content_browser_client_receiver_bindings.cc
 +++ b/chrome/browser/chrome_content_browser_client_receiver_bindings.cc
 @@ -27,7 +27,6 @@
@@ -10,10 +10,12 @@ index ab5fda639349..cd2d29a65925 100644
  #include "components/spellcheck/spellcheck_buildflags.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -73,39 +72,6 @@
+@@ -71,43 +70,6 @@
+ #endif
+ #endif
  
- namespace {
- 
+-namespace {
+-
 -// Helper method for ExposeInterfacesToRenderer() that checks the latest
 -// SafeBrowsing pref value on the UI thread before hopping over to the IO
 -// thread.
@@ -47,6 +49,8 @@ index ab5fda639349..cd2d29a65925 100644
 -          std::move(receiver)));
 -}
 -
- }  // namespace
- 
+-}  // namespace
+-
  void ChromeContentBrowserClient::ExposeInterfacesToRenderer(
+     service_manager::BinderRegistry* registry,
+     blink::AssociatedInterfaceRegistry* associated_registry,

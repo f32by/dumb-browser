@@ -1,0 +1,51 @@
+diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.cc b/third_party/blink/renderer/core/workers/worker_global_scope.cc
+index d36918985a90..3acafc1bd36a 100644
+--- a/third_party/blink/renderer/core/workers/worker_global_scope.cc
++++ b/third_party/blink/renderer/core/workers/worker_global_scope.cc
+@@ -29,7 +29,6 @@
+ 
+ #include "base/memory/scoped_refptr.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/web_url_request.h"
+@@ -520,8 +519,7 @@ void WorkerGlobalScope::ReceiveMessage(BlinkTransferableMessage message) {
+ WorkerGlobalScope::WorkerGlobalScope(
+     std::unique_ptr<GlobalScopeCreationParams> creation_params,
+     WorkerThread* thread,
+-    base::TimeTicks time_origin,
+-    ukm::SourceId ukm_source_id)
++    base::TimeTicks time_origin)
+     : WorkerOrWorkletGlobalScope(
+           thread->GetIsolate(),
+           CreateSecurityOrigin(creation_params.get(), GetExecutionContext()),
+@@ -543,8 +541,7 @@ WorkerGlobalScope::WorkerGlobalScope(
+       thread_(thread),
+       time_origin_(time_origin),
+       font_selector_(MakeGarbageCollected<OffscreenFontSelector>(this)),
+-      script_eval_state_(ScriptEvalState::kPauseAfterFetch),
+-      ukm_source_id_(ukm_source_id) {
++      script_eval_state_(ScriptEvalState::kPauseAfterFetch) {
+   InstanceCounters::IncrementCounter(
+       InstanceCounters::kWorkerGlobalScopeCounter);
+ 
+@@ -637,18 +634,6 @@ TrustedTypePolicyFactory* WorkerGlobalScope::GetTrustedTypes() const {
+   return trusted_types_.Get();
+ }
+ 
+-ukm::UkmRecorder* WorkerGlobalScope::UkmRecorder() {
+-  if (ukm_recorder_)
+-    return ukm_recorder_.get();
+-
+-  mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
+-  GetBrowserInterfaceBroker().GetInterface(
+-      recorder.InitWithNewPipeAndPassReceiver());
+-  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
+-
+-  return ukm_recorder_.get();
+-}
+-
+ std::unique_ptr<WorkerMainScriptLoadParameters>
+ WorkerGlobalScope::TakeWorkerMainScriptLoadingParametersForModules() {
+   return std::move(worker_main_script_load_params_for_modules_);

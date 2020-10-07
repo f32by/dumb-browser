@@ -1,8 +1,14 @@
 diff --git a/components/page_info/page_info.cc b/components/page_info/page_info.cc
-index d0172a94ab89..18fcb89026f9 100644
+index d0172a94ab89..e7eefdb3a2ae 100644
 --- a/components/page_info/page_info.cc
 +++ b/components/page_info/page_info.cc
-@@ -45,16 +45,12 @@
+@@ -39,23 +39,17 @@
+ #include "components/permissions/permission_decision_auto_blocker.h"
+ #include "components/permissions/permission_manager.h"
+ #include "components/permissions/permission_result.h"
+-#include "components/permissions/permission_uma_util.h"
+ #include "components/permissions/permission_util.h"
+ #if defined(OS_ANDROID)
  #include "components/resources/android/theme_resources.h"
  #endif
  #include "components/safe_browsing/buildflags.h"
@@ -16,10 +22,20 @@ index d0172a94ab89..18fcb89026f9 100644
  #include "components/strings/grit/components_chromium_strings.h"
  #include "components/strings/grit/components_strings.h"
 -#include "components/subresource_filter/core/browser/subresource_filter_features.h"
- #include "components/ukm/content/source_url_recorder.h"
+-#include "components/ukm/content/source_url_recorder.h"
  #include "components/url_formatter/elide_url.h"
  #include "content/public/browser/browser_context.h"
-@@ -77,8 +73,6 @@ using base::ASCIIToUTF16;
+ #include "content/public/browser/browser_thread.h"
+@@ -67,8 +61,6 @@
+ #include "net/cert/x509_certificate.h"
+ #include "net/ssl/ssl_cipher_suite_names.h"
+ #include "net/ssl/ssl_connection_status_flags.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/boringssl/src/include/openssl/ssl.h"
+ #include "ui/base/l10n/l10n_util.h"
+ #include "url/origin.h"
+@@ -77,8 +69,6 @@ using base::ASCIIToUTF16;
  using base::UTF16ToUTF8;
  using base::UTF8ToUTF16;
  using content::BrowserThread;
@@ -28,7 +44,7 @@ index d0172a94ab89..18fcb89026f9 100644
  
  namespace {
  
-@@ -136,12 +130,7 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
+@@ -136,12 +126,7 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
    // Note |ContentSettingsType::ADS| will show up regardless of its default
    // value when it has been activated on the current origin.
    if (info.type == ContentSettingsType::ADS) {
@@ -42,3 +58,29 @@ index d0172a94ab89..18fcb89026f9 100644
    }
  
    if (info.type == ContentSettingsType::SOUND) {
+@@ -462,13 +447,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
+ 
+   UMA_HISTOGRAM_ENUMERATION("WebsiteSettings.Action", action, PAGE_INFO_COUNT);
+ 
+-  if (web_contents()) {
+-    ukm::builders::PageInfoBubble(
+-        ukm::GetSourceIdForWebContentsDocument(web_contents()))
+-        .SetActionTaken(action)
+-        .Record(ukm::UkmRecorder::Get());
+-  }
+-
+   base::UmaHistogramEnumeration(
+       security_state::GetSafetyTipHistogramName(
+           "Security.SafetyTips.PageInfo.Action", safety_tip_info_.status),
+@@ -554,11 +532,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
+     }
+   }
+ 
+-  permissions::PermissionUmaUtil::ScopedRevocationReporter
+-      scoped_revocation_reporter(web_contents()->GetBrowserContext(), site_url_,
+-                                 site_url_, type,
+-                                 permissions::PermissionSourceUI::OIB);
+-
+   // The permission may have been blocked due to being under embargo, so if it
+   // was changed away from BLOCK, clear embargo status if it exists.
+   if (setting != CONTENT_SETTING_BLOCK) {

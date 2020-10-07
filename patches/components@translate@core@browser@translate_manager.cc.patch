@@ -1,0 +1,185 @@
+diff --git a/components/translate/core/browser/translate_manager.cc b/components/translate/core/browser/translate_manager.cc
+index cc8638b6fdaf..8fd53217d135 100644
+--- a/components/translate/core/browser/translate_manager.cc
++++ b/components/translate/core/browser/translate_manager.cc
+@@ -158,10 +158,6 @@ void TranslateManager::InitiateTranslation(const std::string& page_lang) {
+                                       page_language_code, target_lang);
+ 
+   NotifyTranslateInit(page_language_code, target_lang, decision, ui_shown);
+-
+-  RecordDecisionMetrics(decision, page_language_code, ui_shown);
+-  RecordDecisionRankerEvent(decision, translate_prefs.get(), page_language_code,
+-                            target_lang);
+ }
+ 
+ // static
+@@ -281,12 +277,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
+   if (!TranslateDownloadManager::IsSupportedLanguage(source_lang))
+     source_lang = std::string(translate::kUnknownLanguageCode);
+ 
+-  // Capture the translate event if we were triggered from the menu.
+-  if (triggered_from_menu) {
+-    RecordTranslateEvent(
+-        metrics::TranslateEventProto::USER_CONTEXT_MENU_TRANSLATE);
+-  }
+-
+   if (source_lang == target_lang) {
+     // If the languages are the same, try the translation using the unknown
+     // language code on Desktop. Android and iOS don't support unknown source
+@@ -329,9 +319,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
+ }
+ 
+ void TranslateManager::RevertTranslation() {
+-  // Capture the revert event in the translate metrics
+-  RecordTranslateEvent(metrics::TranslateEventProto::USER_REVERT);
+-
+   // Revert the translation.
+   translate_driver_->RevertTranslation(page_seq_no_);
+   language_state_.SetCurrentLanguage(language_state_.original_language());
+@@ -419,8 +406,6 @@ void TranslateManager::PageTranslated(const std::string& source_lang,
+   // script initialization phase such as translation script failed because of
+   // CSP issues (crbug.com/738277).
+   // Note: NotifyTranslateError and ShowTranslateUI will not log the errors.
+-  if (error_type == TranslateErrors::INITIALIZATION_ERROR)
+-    RecordTranslateEvent(metrics::TranslateEventProto::INITIALIZATION_ERROR);
+   translate_client_->ShowTranslateUI(translate::TRANSLATE_STEP_AFTER_TRANSLATE,
+                                      source_lang, target_lang, error_type,
+                                      false);
+@@ -581,14 +566,9 @@ void TranslateManager::InitTranslateEvent(const std::string& src_lang,
+   // TODO(rogerm): Populate the language list.
+ }
+ 
+-void TranslateManager::RecordTranslateEvent(int event_type) {
+-  translate_ranker_->RecordTranslateEvent(
+-      event_type, translate_driver_->GetUkmSourceId(), translate_event_.get());
+-}
+-
+ bool TranslateManager::ShouldOverrideDecision(int event_type) {
+   return translate_ranker_->ShouldOverrideDecision(
+-      event_type, translate_driver_->GetUkmSourceId(), translate_event_.get());
++      event_type);
+ }
+ 
+ bool TranslateManager::ShouldSuppressBubbleUI(
+@@ -955,121 +935,6 @@ bool TranslateManager::MaterializeDecision(
+   return did_show_ui;
+ }
+ 
+-void TranslateManager::RecordDecisionMetrics(
+-    const TranslateTriggerDecision& decision,
+-    const std::string& page_language_code,
+-    bool ui_shown) {
+-  // For Google navigations, the hrefTranslate hint may trigger a translation
+-  // automatically. Record metrics if there is navigation from Google and a
+-  // |decision.href_translate_target|.
+-  if (language_state_.navigation_from_google() &&
+-      !decision.href_translate_target.empty()) {
+-    if (decision.can_auto_translate() || decision.can_auto_href_translate()) {
+-      if (decision.can_auto_translate() &&
+-          decision.auto_translate_target != decision.href_translate_target) {
+-        TranslateBrowserMetrics::ReportTranslateHrefHintStatus(
+-            TranslateBrowserMetrics::HrefTranslateStatus::
+-                kAutoTranslatedDifferentTargetLanguage);
+-      } else {
+-        TranslateBrowserMetrics::ReportTranslateHrefHintStatus(
+-            TranslateBrowserMetrics::HrefTranslateStatus::kAutoTranslated);
+-      }
+-    } else {
+-      TranslateBrowserMetrics::ReportTranslateHrefHintStatus(
+-          TranslateBrowserMetrics::HrefTranslateStatus::kNotAutoTranslated);
+-    }
+-  }
+-
+-  if (!decision.can_auto_translate() &&
+-      decision.can_show_predefined_language_translate_ui()) {
+-    TranslateBrowserMetrics::ReportInitiationStatus(
+-        TranslateBrowserMetrics::
+-            INITIATION_STATUS_SHOW_UI_PREDEFINED_TARGET_LANGUAGE);
+-
+-    return;
+-  }
+-
+-  // If the chosen outcome is to show the UI or let it be suppressed, log a few
+-  // explicit things.
+-  if (!decision.can_auto_translate() && decision.can_show_ui()) {
+-    // By getting here it's expected that nothing caused the translation to
+-    // be aborted or happen automatically. Because of that,
+-    // |decision.initiation_statuses| should be empty.
+-    DCHECK(decision.initiation_statuses.empty());
+-
+-    if (decision.should_suppress_from_ranker() || !ui_shown) {
+-      TranslateBrowserMetrics::ReportInitiationStatus(
+-          TranslateBrowserMetrics::INITIATION_STATUS_SUPPRESS_INFOBAR);
+-    }
+-
+-    // If the UI was suppressed, log the suppression source.
+-    if (decision.should_suppress_from_ranker()) {
+-      TranslateBrowserMetrics::ReportInitiationStatus(
+-          TranslateBrowserMetrics::INITIATION_STATUS_ABORTED_BY_RANKER);
+-    } else {
+-      // Always log INITIATION_STATUS_SHOW_INFOBAR regardless of whether it's
+-      // being subsequently suppressed or not. It's a measure of how often a
+-      // decision is taken to show it, and other metrics track *actual*
+-      // instances of it being shown.
+-      TranslateBrowserMetrics::ReportInitiationStatus(
+-          TranslateBrowserMetrics::INITIATION_STATUS_SHOW_INFOBAR);
+-    }
+-
+-    // There's nothing else to log if the UI was shown.
+-    return;
+-  }
+-
+-  // To match previous behavior, this function will log the first initiation
+-  // status that was recorded in the vector. This ensures that the histograms
+-  // reflect which conditions were met first to either trigger or prevent
+-  // translate triggering.
+-  if (!decision.initiation_statuses.empty()) {
+-    auto status = decision.initiation_statuses[0];
+-    if (status !=
+-        TranslateBrowserMetrics::INITIATION_STATUS_DOESNT_NEED_TRANSLATION) {
+-      // Don't record INITIATION_STATUS_DOESNT_NEED_TRANSLATION because it's
+-      // very frequent and not important to track.
+-      TranslateBrowserMetrics::ReportInitiationStatus(status);
+-    }
+-
+-    // The following metrics are logged alongside extra info.
+-    if (status ==
+-        TranslateBrowserMetrics::INITIATION_STATUS_LANGUAGE_IS_NOT_SUPPORTED) {
+-      TranslateBrowserMetrics::ReportUnsupportedLanguageAtInitiation(
+-          page_language_code);
+-    }
+-
+-    if (status ==
+-        TranslateBrowserMetrics::INITIATION_STATUS_DISABLED_BY_PREFS) {
+-      const std::string& locale =
+-          TranslateDownloadManager::GetInstance()->application_locale();
+-      TranslateBrowserMetrics::ReportLocalesOnDisabledByPrefs(locale);
+-    }
+-  }
+-}
+-
+-void TranslateManager::RecordDecisionRankerEvent(
+-    const TranslateTriggerDecision& decision,
+-    TranslatePrefs* translate_prefs,
+-    const std::string& page_language_code,
+-    const std::string& target_lang) {
+-  if (!decision.auto_translate_target.empty()) {
+-    translate_event_->set_modified_target_language(
+-        decision.auto_translate_target);
+-  }
+-
+-  if (!decision.ranker_events.empty()) {
+-    auto event = decision.ranker_events[0];
+-    RecordTranslateEvent(event);
+-  }
+-
+-  // Finally, if the decision was to show UI and ranker suppressed it, log that.
+-  if (!decision.can_auto_translate() && decision.can_show_ui() &&
+-      decision.should_suppress_from_ranker()) {
+-    RecordTranslateEvent(metrics::TranslateEventProto::DISABLED_BY_RANKER);
+-  }
+-}
+-
+ void TranslateManager::SetPredefinedTargetLanguage(
+     const std::string& language_code) {
+   language_state_.SetPredefinedTargetLanguage(language_code);

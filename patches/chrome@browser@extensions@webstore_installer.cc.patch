@@ -1,0 +1,52 @@
+diff --git a/chrome/browser/extensions/webstore_installer.cc b/chrome/browser/extensions/webstore_installer.cc
+index 6c16987cfe87..f6e22feabdd5 100644
+--- a/chrome/browser/extensions/webstore_installer.cc
++++ b/chrome/browser/extensions/webstore_installer.cc
+@@ -30,7 +30,6 @@
+ #include "chrome/browser/chrome_notification_types.h"
+ #include "chrome/browser/download/download_crx_util.h"
+ #include "chrome/browser/download/download_prefs.h"
+-#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/extensions/crx_installer.h"
+ #include "chrome/browser/extensions/install_tracker.h"
+ #include "chrome/browser/extensions/install_tracker_factory.h"
+@@ -489,7 +488,6 @@ void WebstoreInstaller::OnDownloadUpdated(DownloadItem* download) {
+       ReportFailure(kDownloadCanceledError, FAILURE_REASON_CANCELLED);
+       break;
+     case DownloadItem::INTERRUPTED:
+-      RecordInterrupt(download);
+       ReportFailure(
+           GetErrorMessageForDownloadInterrupt(download->GetLastReason()),
+           FAILURE_REASON_OTHER);
+@@ -752,31 +750,4 @@ void WebstoreInstaller::ReportSuccess() {
+   Release();  // Balanced in Start().
+ }
+ 
+-void WebstoreInstaller::RecordInterrupt(const DownloadItem* download) const {
+-  base::UmaHistogramSparse("Extensions.WebstoreDownload.InterruptReason",
+-                           download->GetLastReason());
+-
+-  // Use logarithmic bin sizes up to 1 TB.
+-  const int kNumBuckets = 30;
+-  const int64_t kMaxSizeKb = 1 << kNumBuckets;
+-  UMA_HISTOGRAM_CUSTOM_COUNTS(
+-      "Extensions.WebstoreDownload.InterruptReceivedKBytes",
+-      download->GetReceivedBytes() / 1024,
+-      1,
+-      kMaxSizeKb,
+-      kNumBuckets);
+-  int64_t total_bytes = download->GetTotalBytes();
+-  if (total_bytes >= 0) {
+-    UMA_HISTOGRAM_CUSTOM_COUNTS(
+-        "Extensions.WebstoreDownload.InterruptTotalKBytes",
+-        total_bytes / 1024,
+-        1,
+-        kMaxSizeKb,
+-        kNumBuckets);
+-  }
+-  UMA_HISTOGRAM_BOOLEAN(
+-      "Extensions.WebstoreDownload.InterruptTotalSizeUnknown",
+-      total_bytes <= 0);
+-}
+-
+ }  // namespace extensions

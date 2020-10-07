@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/web_applications/components/app_registrar.cc b/chrome/browser/web_applications/components/app_registrar.cc
+index 3d1ab56c48da..a823f844f99c 100644
+--- a/chrome/browser/web_applications/components/app_registrar.cc
++++ b/chrome/browser/web_applications/components/app_registrar.cc
+@@ -9,7 +9,6 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/web_applications/components/app_registrar_observer.h"
+ #include "chrome/browser/web_applications/components/externally_installed_web_app_prefs.h"
+-#include "chrome/browser/web_applications/components/install_bounce_metric.h"
+ #include "chrome/browser/web_applications/components/web_app_helpers.h"
+ #include "chrome/browser/web_applications/components/web_app_prefs_utils.h"
+ #include "chrome/common/chrome_features.h"
+@@ -63,7 +62,6 @@ void AppRegistrar::NotifyWebAppsWillBeUpdatedFromSync(
+ void AppRegistrar::NotifyWebAppUninstalled(const AppId& app_id) {
+   for (AppRegistrarObserver& observer : observers_)
+     observer.OnWebAppUninstalled(app_id);
+-  RecordWebAppUninstallation(profile()->GetPrefs(), app_id);
+ }
+ 
+ void AppRegistrar::NotifyWebAppLocallyInstalledStateChanged(

@@ -1,0 +1,23 @@
+diff --git a/ui/base/ime/text_input_client.h b/ui/base/ime/text_input_client.h
+index e6e900080ff2..482429aeae70 100644
+--- a/ui/base/ime/text_input_client.h
++++ b/ui/base/ime/text_input_client.h
+@@ -17,7 +17,6 @@
+ #include "base/optional.h"
+ #include "base/strings/string16.h"
+ #include "build/build_config.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "ui/base/ime/composition_text.h"
+ #include "ui/base/ime/input_method_delegate.h"
+ #include "ui/base/ime/text_input_mode.h"
+@@ -211,10 +210,6 @@ class COMPONENT_EXPORT(UI_BASE_IME) TextInputClient {
+   // or user-specified, keybindings that may be set up.
+   virtual void SetTextEditCommandForNextKeyEvent(TextEditCommand command) = 0;
+ 
+-  // Returns a UKM source for identifying the input client (e.g. for web input
+-  // clients, the source represents the URL of the page).
+-  virtual ukm::SourceId GetClientSourceForMetrics() const = 0;
+-
+   // Returns whether text entered into this text client should be used to
+   // improve typing suggestions for the user. This should return false for text
+   // fields that are considered 'private' (e.g. in incognito tabs).

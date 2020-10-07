@@ -1,0 +1,17 @@
+diff --git a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
+index 5f62eed60089..58dbfb791ce3 100644
+--- a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
++++ b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
+@@ -236,12 +236,6 @@ void SubresourceRedirectURLLoaderThrottle::WillProcessResponse(
+   if (content_length < 0)
+     return;
+ 
+-  auto* subresource_redirect_hints_agent = GetSubresourceRedirectHintsAgent();
+-  if (subresource_redirect_hints_agent) {
+-    subresource_redirect_hints_agent->RecordMetricsOnLoadFinished(
+-        response_url, content_length, redirect_result_);
+-  }
+-
+   if (!did_redirect_compressed_origin_)
+     return;
+   DCHECK(ShouldCompressionServerRedirectSubresource());

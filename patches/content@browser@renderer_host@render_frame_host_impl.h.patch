@@ -1,0 +1,51 @@
+diff --git a/content/browser/renderer_host/render_frame_host_impl.h b/content/browser/renderer_host/render_frame_host_impl.h
+index 69fd45c2cc2b..4eac6b5b457b 100644
+--- a/content/browser/renderer_host/render_frame_host_impl.h
++++ b/content/browser/renderer_host/render_frame_host_impl.h
+@@ -65,7 +65,6 @@
+ #include "content/public/common/javascript_dialog_type.h"
+ #include "media/mojo/mojom/interface_factory.mojom-forward.h"
+ #include "media/mojo/mojom/media_metrics_provider.mojom-forward.h"
+-#include "media/mojo/services/media_metrics_provider.h"
+ #include "mojo/public/cpp/bindings/associated_receiver.h"
+ #include "mojo/public/cpp/bindings/associated_remote.h"
+ #include "mojo/public/cpp/bindings/message.h"
+@@ -382,7 +381,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+       const url::Origin& effective_origin) override;
+   void SetIsXrOverlaySetup() override;
+   bool IsInBackForwardCache() override;
+-  ukm::SourceId GetPageUkmSourceId() override;
+   StoragePartition* GetStoragePartition() override;
+   BrowserContext* GetBrowserContext() override;
+   void ReportHeavyAdIssue(blink::mojom::HeavyAdResolutionStatus resolution,
+@@ -657,9 +655,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+ 
+   GlobalFrameRoutingId GetGlobalFrameRoutingId();
+ 
+-  media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
+-  GetRecordAggregateWatchTimeCallback();
+-
+   // The unique ID of the latest NavigationEntry that this RenderFrameHost is
+   // showing. This may change even when this frame hasn't committed a page,
+   // such as for a new subframe navigation in a different frame.
+@@ -1415,9 +1410,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+   void BindMediaInterfaceFactoryReceiver(
+       mojo::PendingReceiver<media::mojom::InterfaceFactory> receiver);
+ 
+-  void BindMediaMetricsProviderReceiver(
+-      mojo::PendingReceiver<media::mojom::MediaMetricsProvider> receiver);
+-
+ #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
+   void BindMediaRemoterFactoryReceiver(
+       mojo::PendingReceiver<media::mojom::RemoterFactory> receiver);
+@@ -1513,10 +1505,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+     return appcache_handle_.get();
+   }
+ 
+-  // Returns the BackForwardCacheMetrics associated with the last
+-  // NavigationEntry this RenderFrameHostImpl committed.
+-  BackForwardCacheMetrics* GetBackForwardCacheMetrics();
+-
+   const std::string& GetEncoding() const { return canonical_encoding_; }
+ 
+   // Returns a base salt used to generate frame-specific IDs for media-device

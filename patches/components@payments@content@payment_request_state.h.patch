@@ -1,0 +1,40 @@
+diff --git a/components/payments/content/payment_request_state.h b/components/payments/content/payment_request_state.h
+index 762b8646cbbc..8e9b445269b8 100644
+--- a/components/payments/content/payment_request_state.h
++++ b/components/payments/content/payment_request_state.h
+@@ -19,7 +19,6 @@
+ #include "components/payments/content/payment_response_helper.h"
+ #include "components/payments/content/service_worker_payment_app.h"
+ #include "components/payments/content/service_worker_payment_app_factory.h"
+-#include "components/payments/core/journey_logger.h"
+ #include "components/payments/core/payments_profile_comparator.h"
+ #include "content/public/browser/payment_app_provider.h"
+ #include "content/public/browser/web_contents.h"
+@@ -123,8 +122,7 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
+                       base::WeakPtr<Delegate> delegate,
+                       const std::string& app_locale,
+                       autofill::PersonalDataManager* personal_data_manager,
+-                      ContentPaymentRequestDelegate* payment_request_delegate,
+-                      JourneyLogger* journey_logger);
++                      ContentPaymentRequestDelegate* payment_request_delegate);
+   ~PaymentRequestState() override;
+ 
+   // PaymentAppFactory::Delegate
+@@ -345,9 +343,6 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
+   void OnAddressNormalized(bool success,
+                            const autofill::AutofillProfile& normalized_profile);
+ 
+-  void IncrementSelectionStatus(JourneyLogger::Section section,
+-                                SectionSelectionStatus selection_status);
+-
+   // Returns whether the browser is currently in a TWA.
+   bool IsInTwa() const;
+ 
+@@ -394,7 +389,6 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
+   PaymentRequestSpec* spec_;
+   base::WeakPtr<Delegate> delegate_;
+   autofill::PersonalDataManager* personal_data_manager_;
+-  JourneyLogger* journey_logger_;
+ 
+   StatusCallback can_make_payment_callback_;
+   StatusCallback has_enrolled_instrument_callback_;

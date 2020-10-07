@@ -1,0 +1,44 @@
+diff --git a/chrome/renderer/extensions/resource_request_policy.cc b/chrome/renderer/extensions/resource_request_policy.cc
+index c2ce9619a243..cff44d3527e7 100644
+--- a/chrome/renderer/extensions/resource_request_policy.cc
++++ b/chrome/renderer/extensions/resource_request_policy.cc
+@@ -10,7 +10,6 @@
+ #include "chrome/common/url_constants.h"
+ #include "extensions/common/constants.h"
+ #include "extensions/common/extension.h"
+-#include "extensions/common/identifiability_metrics.h"
+ #include "extensions/common/manifest_constants.h"
+ #include "extensions/common/manifest_handlers/icons_handler.h"
+ #include "extensions/common/manifest_handlers/web_accessible_resources_info.h"
+@@ -117,11 +116,6 @@ bool ResourceRequestPolicy::CanRequestResource(
+   // extensions with web accessible resources, since those are inherently
+   // identifiable.
+   if (!is_dev_tools && !web_accessible_ids_.count(extension_origin.host())) {
+-    // Failures are recorded here, successes will be in the browser.
+-    RecordExtensionResourceAccessResult(
+-        base::UkmSourceId::FromInt64(frame->GetDocument().GetUkmSourceId()),
+-        resource_url, ExtensionResourceAccessResult::kFailure);
+-
+     return false;
+   }
+ 
+@@ -154,9 +148,6 @@ bool ResourceRequestPolicy::CanRequestResource(
+           .ContainsPath(resource_root_relative_path)) {
+     LOG(ERROR) << "Denying load of " << resource_url.spec() << " from "
+                << "hosted app.";
+-    RecordExtensionResourceAccessResult(
+-        base::UkmSourceId::FromInt64(frame->GetDocument().GetUkmSourceId()),
+-        resource_url, ExtensionResourceAccessResult::kFailure);
+     return false;
+   }
+ 
+@@ -175,9 +166,6 @@ bool ResourceRequestPolicy::CanRequestResource(
+     frame->AddMessageToConsole(
+         blink::WebConsoleMessage(blink::mojom::ConsoleMessageLevel::kError,
+                                  blink::WebString::FromUTF8(message)));
+-    RecordExtensionResourceAccessResult(
+-        base::UkmSourceId::FromInt64(frame->GetDocument().GetUkmSourceId()),
+-        resource_url, ExtensionResourceAccessResult::kFailure);
+     return false;
+   }
+ 

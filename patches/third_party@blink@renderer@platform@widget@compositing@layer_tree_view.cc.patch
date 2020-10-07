@@ -1,0 +1,46 @@
+diff --git a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
+index 8ed7bf8a732b..4ac4563d7c33 100644
+--- a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
++++ b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
+@@ -32,7 +32,6 @@
+ #include "cc/trees/layer_tree_mutator.h"
+ #include "cc/trees/render_frame_metadata_observer.h"
+ #include "cc/trees/swap_promise.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "components/viz/common/frame_sinks/begin_frame_args.h"
+ #include "components/viz/common/frame_sinks/begin_frame_source.h"
+ #include "components/viz/common/quads/compositor_frame_metadata.h"
+@@ -66,8 +65,7 @@ LayerTreeView::LayerTreeView(
+ LayerTreeView::~LayerTreeView() = default;
+ 
+ void LayerTreeView::Initialize(
+-    const cc::LayerTreeSettings& settings,
+-    std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory) {
++    const cc::LayerTreeSettings& settings) {
+   DCHECK(delegate_);
+   const bool is_threaded = !!compositor_thread_;
+ 
+@@ -78,7 +76,6 @@ void LayerTreeView::Initialize(
+   params.task_graph_runner = task_graph_runner_;
+   params.main_task_runner = main_thread_;
+   params.mutator_host = animation_host_.get();
+-  params.ukm_recorder_factory = std::move(ukm_recorder_factory);
+   if (base::ThreadPoolInstance::Get()) {
+     // The image worker thread needs to allow waiting since it makes discardable
+     // shared memory allocations which need to make synchronous calls to the
+@@ -334,13 +331,12 @@ void LayerTreeView::NotifyThroughputTrackerResults(
+   NOTREACHED();
+ }
+ 
+-void LayerTreeView::SubmitThroughputData(ukm::SourceId source_id,
+-                                         int aggregated_percent,
++void LayerTreeView::SubmitThroughputData(int aggregated_percent,
+                                          int impl_percent,
+                                          base::Optional<int> main_percent) {
+   if (!delegate_)
+     return;
+-  delegate_->SubmitThroughputData(source_id, aggregated_percent, impl_percent,
++  delegate_->SubmitThroughputData(aggregated_percent, impl_percent,
+                                   main_percent);
+ }
+ 

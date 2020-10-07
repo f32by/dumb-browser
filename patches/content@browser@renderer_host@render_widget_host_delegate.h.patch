@@ -1,8 +1,16 @@
 diff --git a/content/browser/renderer_host/render_widget_host_delegate.h b/content/browser/renderer_host/render_widget_host_delegate.h
-index f56e27d3b0de..2875817ea401 100644
+index f56e27d3b0de..461306afb899 100644
 --- a/content/browser/renderer_host/render_widget_host_delegate.h
 +++ b/content/browser/renderer_host/render_widget_host_delegate.h
-@@ -33,10 +33,6 @@ class Point;
+@@ -15,7 +15,6 @@
+ #include "components/viz/common/vertical_scroll_direction.h"
+ #include "content/common/content_export.h"
+ #include "content/public/common/drop_data.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/blink/public/common/input/web_input_event.h"
+ #include "third_party/blink/public/common/page/web_drag_operation.h"
+ #include "third_party/blink/public/mojom/frame/lifecycle.mojom.h"
+@@ -33,10 +32,6 @@ class Point;
  class Size;
  }
  
@@ -13,7 +21,7 @@ index f56e27d3b0de..2875817ea401 100644
  namespace content {
  
  class BrowserAccessibilityManager;
-@@ -301,11 +297,6 @@ class CONTENT_EXPORT RenderWidgetHostDelegate {
+@@ -301,21 +296,10 @@ class CONTENT_EXPORT RenderWidgetHostDelegate {
    virtual void FocusOwningWebContents(
        RenderWidgetHostImpl* render_widget_host) {}
  
@@ -25,3 +33,13 @@ index f56e27d3b0de..2875817ea401 100644
    // Return this object cast to a WebContents, if it is one. If the object is
    // not a WebContents, returns nullptr.
    virtual WebContents* GetAsWebContents();
+ 
+-  // Get the UKM source ID for current content. This is used for providing
+-  // data about the content to the URL-keyed metrics service.
+-  // Note: Prefer using RenderFrameHost::GetPageUkmSourceId wherever
+-  // possible.
+-  virtual ukm::SourceId GetCurrentPageUkmSourceId();
+-
+   // Returns true if there is context menu shown on page.
+   virtual bool IsShowingContextMenuOnPage() const;
+ 

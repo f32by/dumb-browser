@@ -1,0 +1,32 @@
+diff --git a/components/permissions/permission_request_manager.cc b/components/permissions/permission_request_manager.cc
+index 299ad4bd27d5..44328b61ace2 100644
+--- a/components/permissions/permission_request_manager.cc
++++ b/components/permissions/permission_request_manager.cc
+@@ -488,8 +488,6 @@ void PermissionRequestManager::ShowBubble() {
+     return;
+ 
+   if (!current_request_view_shown_to_user_) {
+-    PermissionUmaUtil::PermissionPromptShown(requests_);
+-
+     if (ShouldCurrentRequestUseQuietUI()) {
+       switch (ReasonForUsingQuietUi()) {
+         case QuietUiReason::kEnabledInPrefs:
+@@ -538,10 +536,6 @@ void PermissionRequestManager::FinalizeBubble(
+     PermissionAction permission_action) {
+   DCHECK(IsRequestInProgress());
+ 
+-  PermissionUmaUtil::PermissionPromptResolved(
+-      requests_, web_contents(), permission_action,
+-      DetermineCurrentRequestUIDispositionForUMA());
+-
+   content::BrowserContext* browser_context =
+       web_contents()->GetBrowserContext();
+   PermissionDecisionAutoBlocker* autoblocker =
+@@ -574,7 +568,6 @@ void PermissionRequestManager::FinalizeBubble(
+         embargo_status = PermissionEmbargoStatus::REPEATED_IGNORES;
+       }
+     }
+-    PermissionUmaUtil::RecordEmbargoStatus(embargo_status);
+   }
+   std::vector<PermissionRequest*>::iterator requests_iter;
+   for (requests_iter = requests_.begin(); requests_iter != requests_.end();

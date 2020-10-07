@@ -1,0 +1,15 @@
+diff --git a/third_party/blink/public/mojom/worker/shared_worker_factory.mojom b/third_party/blink/public/mojom/worker/shared_worker_factory.mojom
+index dcf0850780cf..db4359b71959 100644
+--- a/third_party/blink/public/mojom/worker/shared_worker_factory.mojom
++++ b/third_party/blink/public/mojom/worker/shared_worker_factory.mojom
+@@ -86,9 +86,5 @@ interface SharedWorkerFactory {
+ 
+       // BrowserInterfaceBroker for providing browser interfaces.
+       pending_remote<blink.mojom.BrowserInterfaceBroker>
+-          browser_interface_broker,
+-
+-      // The UKM SourceId associated with the SharedWorkerHost. This is distinct
+-      // from the IDs that are associated with the connected clients.
+-      int64 ukm_source_id);
++          browser_interface_broker);
+ };

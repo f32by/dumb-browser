@@ -1,0 +1,17 @@
+diff --git a/ui/views/controls/textfield/textfield.cc b/ui/views/controls/textfield/textfield.cc
+index 3319ab5d20ba..bd48eb437153 100644
+--- a/ui/views/controls/textfield/textfield.cc
++++ b/ui/views/controls/textfield/textfield.cc
+@@ -1809,12 +1809,6 @@ void Textfield::SetTextEditCommandForNextKeyEvent(ui::TextEditCommand command) {
+   scheduled_text_edit_command_ = command;
+ }
+ 
+-ukm::SourceId Textfield::GetClientSourceForMetrics() const {
+-  // TODO(shend): Implement this method.
+-  NOTIMPLEMENTED_LOG_ONCE();
+-  return ukm::SourceId();
+-}
+-
+ bool Textfield::ShouldDoLearning() {
+   if (should_do_learning_.has_value())
+     return should_do_learning_.value();

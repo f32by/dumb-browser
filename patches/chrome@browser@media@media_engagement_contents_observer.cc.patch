@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/media/media_engagement_contents_observer.cc b/chrome/browser/media/media_engagement_contents_observer.cc
+index 024211778ce5..a6ac242accfd 100644
+--- a/chrome/browser/media/media_engagement_contents_observer.cc
++++ b/chrome/browser/media/media_engagement_contents_observer.cc
+@@ -647,7 +647,5 @@ MediaEngagementContentsObserver::GetOrCreateSession(
+           : MediaEngagementSession::RestoreType::kRestored;
+ 
+   return new MediaEngagementSession(
+-      service_, origin, restore_type,
+-      ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
+-                             ukm::SourceIdType::NAVIGATION_ID));
++      service_, origin, restore_type);
+ }

@@ -1,0 +1,162 @@
+diff --git a/chrome/browser/reputation/reputation_web_contents_observer.cc b/chrome/browser/reputation/reputation_web_contents_observer.cc
+index 2810e11bf6c9..155a2e59d9df 100644
+--- a/chrome/browser/reputation/reputation_web_contents_observer.cc
++++ b/chrome/browser/reputation/reputation_web_contents_observer.cc
+@@ -17,10 +17,7 @@
+ #include "components/lookalikes/core/lookalike_url_util.h"
+ #include "components/security_state/core/features.h"
+ #include "components/security_state/core/security_state.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "content/public/browser/navigation_entry.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "url/gurl.h"
+ 
+ namespace {
+@@ -29,35 +26,8 @@ namespace {
+ const base::FeatureParam<bool> kEnableSuspiciousSiteChecks{
+     &security_state::features::kSafetyTipUI, "suspicioussites", true};
+ 
+-void RecordHeuristicsUKMData(ReputationCheckResult result,
+-                             ukm::SourceId navigation_source_id,
+-                             SafetyTipInteraction action) {
+-  // If we didn't trigger any heuristics at all, we don't want to record UKM
+-  // data.
+-  if (!result.triggered_heuristics.triggered_any()) {
+-    return;
+-  }
+-
+-  ukm::builders::Security_SafetyTip(navigation_source_id)
+-      .SetSafetyTipStatus(static_cast<int64_t>(result.safety_tip_status))
+-      .SetSafetyTipInteraction(static_cast<int64_t>(action))
+-      .SetTriggeredKeywordsHeuristics(
+-          result.triggered_heuristics.keywords_heuristic_triggered)
+-      .SetTriggeredLookalikeHeuristics(
+-          result.triggered_heuristics.lookalike_heuristic_triggered)
+-      .SetTriggeredServerSideBlocklist(
+-          result.triggered_heuristics.blocklist_heuristic_triggered)
+-      .SetUserPreviouslyIgnored(
+-          result.safety_tip_status ==
+-              security_state::SafetyTipStatus::kBadReputationIgnored ||
+-          result.safety_tip_status ==
+-              security_state::SafetyTipStatus::kLookalikeIgnored)
+-      .Record(ukm::UkmRecorder::Get());
+-}
+-
+ void OnSafetyTipClosed(ReputationCheckResult result,
+                        base::Time start_time,
+-                       ukm::SourceId navigation_source_id,
+                        SafetyTipInteraction action) {
+   std::string action_suffix;
+   bool warning_dismissed = false;
+@@ -108,8 +78,6 @@ void OnSafetyTipClosed(ReputationCheckResult result,
+           result.safety_tip_status),
+       base::Time::Now() - start_time, base::TimeDelta::FromMilliseconds(1),
+       base::TimeDelta::FromHours(1), 100);
+-
+-  RecordHeuristicsUKMData(result, navigation_source_id, action);
+ }
+ 
+ // Safety Tips does not use starts_active (since flagged sites are so rare to
+@@ -194,17 +162,12 @@ void ReputationWebContentsObserver::DidFinishNavigation(
+   last_committed_url_ = navigation_handle->GetURL();
+ 
+   MaybeShowSafetyTip(
+-      ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
+-                             ukm::SourceIdType::NAVIGATION_ID),
+-      /*called_from_visibility_check=*/false,
+-      /*record_ukm_if_tip_not_shown=*/true);
++      /*called_from_visibility_check=*/false);
+ }
+ 
+ void ReputationWebContentsObserver::OnVisibilityChanged(
+     content::Visibility visibility) {
+-  MaybeShowSafetyTip(ukm::GetSourceIdForWebContentsDocument(web_contents()),
+-                     /*called_from_visibility_check=*/true,
+-                     /*record_ukm_if_tip_not_shown=*/false);
++  MaybeShowSafetyTip(/*called_from_visibility_check=*/true);
+ }
+ 
+ security_state::SafetyTipInfo
+@@ -235,9 +198,7 @@ ReputationWebContentsObserver::ReputationWebContentsObserver(
+ }
+ 
+ void ReputationWebContentsObserver::MaybeShowSafetyTip(
+-    ukm::SourceId navigation_source_id,
+-    bool called_from_visibility_check,
+-    bool record_ukm_if_tip_not_shown) {
++    bool called_from_visibility_check) {
+   if (web_contents()->GetMainFrame()->GetVisibilityState() !=
+       content::PageVisibilityState::kVisible) {
+     MaybeCallReputationCheckCallback(false);
+@@ -261,14 +222,12 @@ void ReputationWebContentsObserver::MaybeShowSafetyTip(
+   service->GetReputationStatus(
+       url, base::BindOnce(
+                &ReputationWebContentsObserver::HandleReputationCheckResult,
+-               weak_factory_.GetWeakPtr(), navigation_source_id,
+-               called_from_visibility_check, record_ukm_if_tip_not_shown));
++               weak_factory_.GetWeakPtr(),
++               called_from_visibility_check));
+ }
+ 
+ void ReputationWebContentsObserver::HandleReputationCheckResult(
+-    ukm::SourceId navigation_source_id,
+     bool called_from_visibility_check,
+-    bool record_ukm_if_tip_not_shown,
+     ReputationCheckResult result) {
+   UMA_HISTOGRAM_ENUMERATION("Security.SafetyTips.SafetyTipShown",
+                             result.safety_tip_status);
+@@ -303,8 +262,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+   if (result.safety_tip_status == security_state::SafetyTipStatus::kNone ||
+       result.safety_tip_status ==
+           security_state::SafetyTipStatus::kBadKeyword) {
+-    FinalizeReputationCheckWhenTipNotShown(record_ukm_if_tip_not_shown, result,
+-                                           navigation_source_id);
++    FinalizeReputationCheckWhenTipNotShown(result);
+     return;
+   }
+ 
+@@ -314,8 +272,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+           security_state::SafetyTipStatus::kBadReputationIgnored) {
+     UMA_HISTOGRAM_ENUMERATION("Security.SafetyTips.SafetyTipIgnoredPageLoad",
+                               result.safety_tip_status);
+-    FinalizeReputationCheckWhenTipNotShown(record_ukm_if_tip_not_shown, result,
+-                                           navigation_source_id);
++    FinalizeReputationCheckWhenTipNotShown(result);
+     return;
+   }
+ 
+@@ -332,8 +289,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+     }
+ 
+     RecordPostFlagCheckHistogram(result.safety_tip_status);
+-    FinalizeReputationCheckWhenTipNotShown(record_ukm_if_tip_not_shown, result,
+-                                           navigation_source_id);
++    FinalizeReputationCheckWhenTipNotShown(result);
+     return;
+   }
+ 
+@@ -341,7 +297,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+   ShowSafetyTipDialog(web_contents(), result.safety_tip_status, result.url,
+                       result.suggested_url,
+                       base::BindOnce(OnSafetyTipClosed, result,
+-                                     base::Time::Now(), navigation_source_id));
++                                     base::Time::Now()));
+   MaybeCallReputationCheckCallback(true);
+ }
+ 
+@@ -355,13 +311,7 @@ void ReputationWebContentsObserver::MaybeCallReputationCheckCallback(
+ }
+ 
+ void ReputationWebContentsObserver::FinalizeReputationCheckWhenTipNotShown(
+-    bool record_ukm,
+-    ReputationCheckResult result,
+-    ukm::SourceId navigation_source_id) {
+-  if (record_ukm) {
+-    RecordHeuristicsUKMData(result, navigation_source_id,
+-                            SafetyTipInteraction::kNotShown);
+-  }
++    ReputationCheckResult result) {
+   MaybeCallReputationCheckCallback(true);
+ }
+ 

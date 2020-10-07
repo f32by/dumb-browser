@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/platform/loader/fetch/resource_request.cc b/third_party/blink/renderer/platform/loader/fetch/resource_request.cc
+index 305d2a7f5ece..77277acbe203 100644
+--- a/third_party/blink/renderer/platform/loader/fetch/resource_request.cc
++++ b/third_party/blink/renderer/platform/loader/fetch/resource_request.cc
+@@ -190,7 +190,6 @@ std::unique_ptr<ResourceRequest> ResourceRequestHead::CreateRedirectRequest(
+   request->SetRequestedWithHeader(GetRequestedWithHeader());
+   request->SetClientDataHeader(GetClientDataHeader());
+   request->SetPurposeHeader(GetPurposeHeader());
+-  request->SetUkmSourceId(GetUkmSourceId());
+   request->SetInspectorId(InspectorId());
+   request->SetFromOriginDirtyStyleSheet(IsFromOriginDirtyStyleSheet());
+   request->SetSignedExchangePrefetchCacheEnabled(

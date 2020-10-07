@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/core/frame/local_frame.h b/third_party/blink/renderer/core/frame/local_frame.h
+index 213f430dcf0f..af14339ea484 100644
+--- a/third_party/blink/renderer/core/frame/local_frame.h
++++ b/third_party/blink/renderer/core/frame/local_frame.h
+@@ -719,8 +719,6 @@ class CORE_EXPORT LocalFrame final
+                    float maximum_shrink_ratio);
+ 
+   // FrameScheduler::Delegate overrides:
+-  ukm::UkmRecorder* GetUkmRecorder() override;
+-  ukm::SourceId GetUkmSourceId() override;
+   void UpdateTaskTime(base::TimeDelta time) override;
+   void UpdateActiveSchedulerTrackedFeatures(uint64_t features_mask) override;
+   const base::UnguessableToken& GetAgentClusterId() const override;

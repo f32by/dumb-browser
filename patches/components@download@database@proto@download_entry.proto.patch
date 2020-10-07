@@ -1,0 +1,43 @@
+diff --git a/components/download/database/proto/download_entry.proto b/components/download/database/proto/download_entry.proto
+index af788572287e..85f97f219a12 100644
+--- a/components/download/database/proto/download_entry.proto
++++ b/components/download/database/proto/download_entry.proto
+@@ -8,8 +8,6 @@ option optimize_for = LITE_RUNTIME;
+ 
+ package download_pb;
+ 
+-import "download_source.proto";
+-
+ message HttpRequestHeader {
+   optional string key = 1;
+   optional string value = 2;
+@@ -26,8 +24,6 @@ message ReceivedSlice {
+ message DownloadEntry {
+   optional string guid = 1;
+   optional string request_origin = 2;
+-  optional DownloadSource download_source = 3;
+-  optional int64 ukm_download_id = 4;
+   optional int64 bytes_wasted = 5;
+   optional bool fetch_error_body = 6;
+   repeated HttpRequestHeader request_headers = 7;
+@@ -38,12 +34,6 @@ message DownloadEntries {
+   repeated DownloadEntry entries = 1;
+ }
+ 
+-// Information for ukm reporting
+-message UkmInfo {
+-  optional DownloadSource download_source = 1;
+-  optional int64 ukm_download_id = 2;
+-}
+-
+ // Information about when to start the download, used by download later feature.
+ message DownloadSchedule {
+   optional int64 start_time = 1;
+@@ -86,7 +76,6 @@ message InProgressInfo {
+ message DownloadInfo {
+   optional string guid = 1;
+   optional int32 id = 2;
+-  optional UkmInfo ukm_info = 3;
+   optional InProgressInfo in_progress_info = 4;
+ }
+ 

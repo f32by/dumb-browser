@@ -1,8 +1,353 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.cc b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-index 132619a0f0af..6b9a0ba73ba0 100644
+index 132619a0f0af..e832e1b97a3a 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-@@ -1269,7 +1269,9 @@ void RenderViewContextMenu::AppendLinkItems() {
+@@ -40,7 +40,6 @@
+ #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
+ #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
+ #include "chrome/browser/devtools/devtools_window.h"
+-#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/language/language_model_manager_factory.h"
+ #include "chrome/browser/media/router/media_router_dialog_controller.h"
+ #include "chrome/browser/media/router/media_router_feature.h"
+@@ -246,227 +245,6 @@ base::OnceCallback<void(RenderViewContextMenu*)>* GetMenuShownCallback() {
+   return callback.get();
+ }
+ 
+-enum class UmaEnumIdLookupType {
+-  GeneralEnumId,
+-  ContextSpecificEnumId,
+-};
+-
+-const std::map<int, int>& GetIdcToUmaMap(UmaEnumIdLookupType type) {
+-  // These maps are from IDC_* -> UMA value. Never alter UMA ids. You may remove
+-  // items, but add a line to keep the old value from being reused.
+-
+-  // These UMA values are for the the RenderViewContextMenuItem enum, used for
+-  // the RenderViewContextMenu.Shown and RenderViewContextMenu.Used histograms.
+-  static base::NoDestructor<std::map<int, int>> general_map(
+-      {// NB: UMA values for 0 and 1 are detected using
+-       // RenderViewContextMenu::IsContentCustomCommandId() and
+-       // ContextMenuMatcher::IsExtensionsCustomCommandId()
+-       {IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_FIRST, 2},
+-       {IDC_CONTENT_CONTEXT_OPENLINKNEWTAB, 3},
+-       {IDC_CONTENT_CONTEXT_OPENLINKNEWWINDOW, 4},
+-       {IDC_CONTENT_CONTEXT_OPENLINKOFFTHERECORD, 5},
+-       {IDC_CONTENT_CONTEXT_SAVELINKAS, 6},
+-       {IDC_CONTENT_CONTEXT_SAVEAVAS, 7},
+-       {IDC_CONTENT_CONTEXT_SAVEIMAGEAS, 8},
+-       {IDC_CONTENT_CONTEXT_COPYLINKLOCATION, 9},
+-       {IDC_CONTENT_CONTEXT_COPYIMAGELOCATION, 10},
+-       {IDC_CONTENT_CONTEXT_COPYAVLOCATION, 11},
+-       {IDC_CONTENT_CONTEXT_COPYIMAGE, 12},
+-       {IDC_CONTENT_CONTEXT_OPENIMAGENEWTAB, 13},
+-       {IDC_CONTENT_CONTEXT_OPENAVNEWTAB, 14},
+-       {IDC_CONTENT_CONTEXT_PLAYPAUSE, 15},
+-       {IDC_CONTENT_CONTEXT_MUTE, 16},
+-       {IDC_CONTENT_CONTEXT_LOOP, 17},
+-       {IDC_CONTENT_CONTEXT_CONTROLS, 18},
+-       {IDC_CONTENT_CONTEXT_ROTATECW, 19},
+-       {IDC_CONTENT_CONTEXT_ROTATECCW, 20},
+-       {IDC_BACK, 21},
+-       {IDC_FORWARD, 22},
+-       {IDC_SAVE_PAGE, 23},
+-       {IDC_RELOAD, 24},
+-       {IDC_CONTENT_CONTEXT_RELOAD_PACKAGED_APP, 25},
+-       {IDC_CONTENT_CONTEXT_RESTART_PACKAGED_APP, 26},
+-       {IDC_PRINT, 27},
+-       {IDC_VIEW_SOURCE, 28},
+-       {IDC_CONTENT_CONTEXT_INSPECTELEMENT, 29},
+-       {IDC_CONTENT_CONTEXT_INSPECTBACKGROUNDPAGE, 30},
+-       {IDC_CONTENT_CONTEXT_VIEWPAGEINFO, 31},
+-       {IDC_CONTENT_CONTEXT_TRANSLATE, 32},
+-       {IDC_CONTENT_CONTEXT_RELOADFRAME, 33},
+-       {IDC_CONTENT_CONTEXT_VIEWFRAMESOURCE, 34},
+-       {IDC_CONTENT_CONTEXT_VIEWFRAMEINFO, 35},
+-       {IDC_CONTENT_CONTEXT_UNDO, 36},
+-       {IDC_CONTENT_CONTEXT_REDO, 37},
+-       {IDC_CONTENT_CONTEXT_CUT, 38},
+-       {IDC_CONTENT_CONTEXT_COPY, 39},
+-       {IDC_CONTENT_CONTEXT_PASTE, 40},
+-       {IDC_CONTENT_CONTEXT_PASTE_AND_MATCH_STYLE, 41},
+-       {IDC_CONTENT_CONTEXT_DELETE, 42},
+-       {IDC_CONTENT_CONTEXT_SELECTALL, 43},
+-       {IDC_CONTENT_CONTEXT_SEARCHWEBFOR, 44},
+-       {IDC_CONTENT_CONTEXT_GOTOURL, 45},
+-       {IDC_CONTENT_CONTEXT_LANGUAGE_SETTINGS, 46},
+-       {IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_SETTINGS, 47},
+-       {IDC_CONTENT_CONTEXT_OPENLINKWITH, 52},
+-       {IDC_CHECK_SPELLING_WHILE_TYPING, 53},
+-       {IDC_SPELLCHECK_MENU, 54},
+-       {IDC_CONTENT_CONTEXT_SPELLING_TOGGLE, 55},
+-       {IDC_SPELLCHECK_LANGUAGES_FIRST, 56},
+-       {IDC_CONTENT_CONTEXT_SEARCHWEBFORIMAGE, 57},
+-       {IDC_SPELLCHECK_SUGGESTION_0, 58},
+-       {IDC_SPELLCHECK_ADD_TO_DICTIONARY, 59},
+-       {IDC_SPELLPANEL_TOGGLE, 60},
+-       {IDC_CONTENT_CONTEXT_OPEN_ORIGINAL_IMAGE_NEW_TAB, 61},
+-       {IDC_WRITING_DIRECTION_MENU, 62},
+-       {IDC_WRITING_DIRECTION_DEFAULT, 63},
+-       {IDC_WRITING_DIRECTION_LTR, 64},
+-       {IDC_WRITING_DIRECTION_RTL, 65},
+-       {IDC_CONTENT_CONTEXT_LOAD_IMAGE, 66},
+-       {IDC_ROUTE_MEDIA, 68},
+-       {IDC_CONTENT_CONTEXT_COPYLINKTEXT, 69},
+-       {IDC_CONTENT_CONTEXT_OPENLINKINPROFILE, 70},
+-       {IDC_OPEN_LINK_IN_PROFILE_FIRST, 71},
+-       {IDC_CONTENT_CONTEXT_GENERATEPASSWORD, 72},
+-       {IDC_SPELLCHECK_MULTI_LINGUAL, 73},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH1, 74},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH2, 75},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH3, 76},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH4, 77},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH5, 78},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH6, 79},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH7, 80},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH8, 81},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH9, 82},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH10, 83},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH11, 84},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH12, 85},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH13, 86},
+-       {IDC_CONTENT_CONTEXT_OPEN_WITH14, 87},
+-       {IDC_CONTENT_CONTEXT_EXIT_FULLSCREEN, 88},
+-       {IDC_CONTENT_CONTEXT_OPENLINKBOOKMARKAPP, 89},
+-       {IDC_CONTENT_CONTEXT_SHOWALLSAVEDPASSWORDS, 90},
+-       {IDC_CONTENT_CONTEXT_PICTUREINPICTURE, 91},
+-       {IDC_CONTENT_CONTEXT_EMOJI, 92},
+-       {IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION1, 93},
+-       {IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION2, 94},
+-       {IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION3, 95},
+-       {IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION4, 96},
+-       {IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION5, 97},
+-       {IDC_CONTENT_CONTEXT_LOOK_UP, 98},
+-       {IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_TOGGLE, 99},
+-       {IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_TOGGLE_ONCE, 100},
+-       {IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS, 101},
+-       {IDC_SEND_TAB_TO_SELF, 102},
+-       {IDC_CONTENT_LINK_SEND_TAB_TO_SELF, 103},
+-       {IDC_SEND_TAB_TO_SELF_SINGLE_TARGET, 104},
+-       {IDC_CONTENT_LINK_SEND_TAB_TO_SELF_SINGLE_TARGET, 105},
+-       {IDC_CONTENT_CONTEXT_SHARING_CLICK_TO_CALL_SINGLE_DEVICE, 106},
+-       {IDC_CONTENT_CONTEXT_SHARING_CLICK_TO_CALL_MULTIPLE_DEVICES, 107},
+-       {IDC_CONTENT_CONTEXT_SHARING_SHARED_CLIPBOARD_SINGLE_DEVICE, 108},
+-       {IDC_CONTENT_CONTEXT_SHARING_SHARED_CLIPBOARD_MULTIPLE_DEVICES, 109},
+-       {IDC_CONTENT_CONTEXT_GENERATE_QR_CODE, 110},
+-       // To add new items:
+-       //   - Add one more line above this comment block, using the UMA value
+-       //     from the line below this comment block.
+-       //   - Increment the UMA value in that latter line.
+-       //   - Add the new item to the RenderViewContextMenuItem enum in
+-       //     tools/metrics/histograms/enums.xml.
+-       {0, 111}});
+-
+-  // These UMA values are for the the ContextMenuOptionDesktop enum, used for
+-  // the ContextMenu.SelectedOptionDesktop histograms.
+-  static base::NoDestructor<std::map<int, int>> specific_map(
+-      {{IDC_CONTENT_CONTEXT_OPENLINKNEWTAB, 0},
+-       {IDC_CONTENT_CONTEXT_OPENLINKOFFTHERECORD, 1},
+-       {IDC_CONTENT_CONTEXT_COPYLINKLOCATION, 2},
+-       {IDC_CONTENT_CONTEXT_COPY, 3},
+-       {IDC_CONTENT_CONTEXT_SAVELINKAS, 4},
+-       {IDC_CONTENT_CONTEXT_SAVEIMAGEAS, 5},
+-       {IDC_CONTENT_CONTEXT_OPENIMAGENEWTAB, 6},
+-       {IDC_CONTENT_CONTEXT_COPYIMAGE, 7},
+-       {IDC_CONTENT_CONTEXT_COPYIMAGELOCATION, 8},
+-       {IDC_CONTENT_CONTEXT_SEARCHWEBFORIMAGE, 9},
+-       {IDC_CONTENT_CONTEXT_OPENLINKNEWWINDOW, 10},
+-       {IDC_PRINT, 11},
+-       {IDC_CONTENT_CONTEXT_SEARCHWEBFOR, 12},
+-       {IDC_CONTENT_CONTEXT_SAVEAVAS, 13},
+-       {IDC_SPELLCHECK_SUGGESTION_0, 14},
+-       {IDC_SPELLCHECK_ADD_TO_DICTIONARY, 15},
+-       {IDC_CONTENT_CONTEXT_SPELLING_TOGGLE, 16},
+-       {IDC_CONTENT_CONTEXT_CUT, 17},
+-       {IDC_CONTENT_CONTEXT_PASTE, 18},
+-       {IDC_CONTENT_CONTEXT_GOTOURL, 19},
+-       // To add new items:
+-       //   - Add one more line above this comment block, using the UMA value
+-       //     from the line below this comment block.
+-       //   - Increment the UMA value in that latter line.
+-       //   - Add the new item to the ContextMenuOptionDesktop enum in
+-       //     tools/metrics/histograms/enums.xml.
+-       {0, 20}});
+-
+-  return *(type == UmaEnumIdLookupType::GeneralEnumId ? general_map
+-                                                      : specific_map);
+-}
+-
+-int GetUmaValueMax(UmaEnumIdLookupType type) {
+-  // The IDC_ "value" of 0 is really a sentinel for the UMA max value.
+-  return GetIdcToUmaMap(type).find(0)->second;
+-}
+-
+-// Collapses large ranges of ids before looking for UMA enum.
+-int CollapseCommandsForUMA(int id) {
+-  DCHECK(!RenderViewContextMenu::IsContentCustomCommandId(id));
+-  DCHECK(!ContextMenuMatcher::IsExtensionsCustomCommandId(id));
+-
+-  if (id >= IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_FIRST &&
+-      id <= IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_LAST) {
+-    return IDC_CONTENT_CONTEXT_PROTOCOL_HANDLER_FIRST;
+-  }
+-
+-  if (id >= IDC_SPELLCHECK_LANGUAGES_FIRST &&
+-      id <= IDC_SPELLCHECK_LANGUAGES_LAST) {
+-    return IDC_SPELLCHECK_LANGUAGES_FIRST;
+-  }
+-
+-  if (id >= IDC_SPELLCHECK_SUGGESTION_0 &&
+-      id <= IDC_SPELLCHECK_SUGGESTION_LAST) {
+-    return IDC_SPELLCHECK_SUGGESTION_0;
+-  }
+-
+-  if (id >= IDC_OPEN_LINK_IN_PROFILE_FIRST &&
+-      id <= IDC_OPEN_LINK_IN_PROFILE_LAST) {
+-    return IDC_OPEN_LINK_IN_PROFILE_FIRST;
+-  }
+-
+-  return id;
+-}
+-
+-// Returns UMA enum value for command specified by |id| or -1 if not found.
+-int FindUMAEnumValueForCommand(int id, UmaEnumIdLookupType type) {
+-  if (RenderViewContextMenu::IsContentCustomCommandId(id))
+-    return 0;
+-
+-  if (ContextMenuMatcher::IsExtensionsCustomCommandId(id))
+-    return 1;
+-
+-  id = CollapseCommandsForUMA(id);
+-  const auto& map = GetIdcToUmaMap(type);
+-  auto it = map.find(id);
+-  if (it == map.end())
+-    return -1;
+-
+-  return it->second;
+-}
+-
+-// Returns true if the command id is for opening a link.
+-bool IsCommandForOpenLink(int id) {
+-  return id == IDC_CONTENT_CONTEXT_OPENLINKNEWTAB ||
+-         id == IDC_CONTENT_CONTEXT_OPENLINKNEWWINDOW ||
+-         id == IDC_CONTENT_CONTEXT_OPENLINKOFFTHERECORD ||
+-         (id >= IDC_OPEN_LINK_IN_PROFILE_FIRST &&
+-          id <= IDC_OPEN_LINK_IN_PROFILE_LAST);
+-}
+-
+ // Returns the preference of the profile represented by the |context|.
+ PrefService* GetPrefs(content::BrowserContext* context) {
+   return user_prefs::UserPrefs::Get(context);
+@@ -946,108 +724,6 @@ Profile* RenderViewContextMenu::GetProfile() const {
+   return Profile::FromBrowserContext(browser_context_);
+ }
+ 
+-void RenderViewContextMenu::RecordUsedItem(int id) {
+-  // Log general ID.
+-
+-  int enum_id =
+-      FindUMAEnumValueForCommand(id, UmaEnumIdLookupType::GeneralEnumId);
+-  if (enum_id == -1) {
+-    NOTREACHED() << "Update kUmaEnumToControlId. Unhanded IDC: " << id;
+-    return;
+-  }
+-
+-  UMA_HISTOGRAM_EXACT_LINEAR(
+-      "RenderViewContextMenu.Used", enum_id,
+-      GetUmaValueMax(UmaEnumIdLookupType::GeneralEnumId));
+-
+-  // Log other situations.
+-
+-  if (content_type_->SupportsGroup(ContextMenuContentType::ITEM_GROUP_LINK) &&
+-      // Ignore link-related commands that don't actually open a link.
+-      IsCommandForOpenLink(id) &&
+-      // Ignore using right click + open in new tab for internal links.
+-      !params_.link_url.SchemeIs(content::kChromeUIScheme)) {
+-    const GURL doc_url = GetDocumentURL(params_);
+-    const GURL history_url = GURL(chrome::kChromeUIHistoryURL);
+-    if (doc_url == history_url.Resolve(chrome::kChromeUIHistorySyncedTabs)) {
+-      UMA_HISTOGRAM_ENUMERATION(
+-          "HistoryPage.OtherDevicesMenu",
+-          browser_sync::SyncedTabsHistogram::OPENED_LINK_VIA_CONTEXT_MENU,
+-          browser_sync::SyncedTabsHistogram::LIMIT);
+-    } else if (doc_url == GURL(chrome::kChromeUIDownloadsURL)) {
+-      base::RecordAction(base::UserMetricsAction(
+-          "Downloads_OpenUrlOfDownloadedItemFromContextMenu"));
+-    } else if (doc_url == GURL(chrome::kChromeSearchLocalNtpUrl)) {
+-      base::RecordAction(
+-          base::UserMetricsAction("NTP_LinkOpenedFromContextMenu"));
+-    } else if (doc_url.GetOrigin() == chrome::kChromeSearchMostVisitedUrl) {
+-      base::RecordAction(
+-          base::UserMetricsAction("MostVisited_ClickedFromContextMenu"));
+-    } else if (doc_url.GetOrigin() == GURL(chrome::kChromeUINewTabPageURL) ||
+-               doc_url.GetOrigin() ==
+-                   GURL(chrome::kChromeUIUntrustedNewTabPageUrl)) {
+-      base::RecordAction(base::UserMetricsAction(
+-          "NewTabPage.LinkOpenedFromContextMenu.WebUI"));
+-    }
+-  }
+-
+-  // Log for specific contexts. Note that since the menu is displayed for
+-  // contexts (all of the ContextMenuContentType::SupportsXXX() functions),
+-  // these UMA metrics are necessarily best-effort in distilling into a context.
+-
+-  enum_id = FindUMAEnumValueForCommand(
+-      id, UmaEnumIdLookupType::ContextSpecificEnumId);
+-  if (enum_id == -1)
+-    return;
+-
+-  if (content_type_->SupportsGroup(
+-          ContextMenuContentType::ITEM_GROUP_MEDIA_VIDEO)) {
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "ContextMenu.SelectedOptionDesktop.Video", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::ContextSpecificEnumId));
+-  } else if (content_type_->SupportsGroup(
+-                 ContextMenuContentType::ITEM_GROUP_LINK) &&
+-             content_type_->SupportsGroup(
+-                 ContextMenuContentType::ITEM_GROUP_MEDIA_IMAGE)) {
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "ContextMenu.SelectedOptionDesktop.ImageLink", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::ContextSpecificEnumId));
+-  } else if (content_type_->SupportsGroup(
+-                 ContextMenuContentType::ITEM_GROUP_MEDIA_IMAGE)) {
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "ContextMenu.SelectedOptionDesktop.Image", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::ContextSpecificEnumId));
+-  } else if (!params_.misspelled_word.empty()) {
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "ContextMenu.SelectedOptionDesktop.MisspelledWord", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::ContextSpecificEnumId));
+-  } else if (!params_.selection_text.empty() &&
+-             params_.media_type == ContextMenuDataMediaType::kNone) {
+-    // Probably just text.
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "ContextMenu.SelectedOptionDesktop.SelectedText", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::ContextSpecificEnumId));
+-  } else {
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "ContextMenu.SelectedOptionDesktop.Other", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::ContextSpecificEnumId));
+-  }
+-}
+-
+-void RenderViewContextMenu::RecordShownItem(int id) {
+-  int enum_id =
+-      FindUMAEnumValueForCommand(id, UmaEnumIdLookupType::GeneralEnumId);
+-  if (enum_id != -1) {
+-    UMA_HISTOGRAM_EXACT_LINEAR(
+-        "RenderViewContextMenu.Shown", enum_id,
+-        GetUmaValueMax(UmaEnumIdLookupType::GeneralEnumId));
+-  } else {
+-    // Just warning here. It's harder to maintain list of all possibly
+-    // visible items than executable items.
+-    DLOG(ERROR) << "Update kUmaEnumToControlId. Unhanded IDC: " << id;
+-  }
+-}
+-
+ bool RenderViewContextMenu::IsHTML5Fullscreen() const {
+   Browser* browser = chrome::FindBrowserWithWebContents(source_web_contents_);
+   if (!browser)
+@@ -1269,7 +945,9 @@ void RenderViewContextMenu::AppendLinkItems() {
        }
      }
  
@@ -12,7 +357,7 @@ index 132619a0f0af..6b9a0ba73ba0 100644
  
      menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
      menu_model_.AddItemWithStringId(IDC_CONTENT_CONTEXT_SAVELINKAS,
-@@ -1807,7 +1809,9 @@ void RenderViewContextMenu::AppendSharingItems() {
+@@ -1807,7 +1485,9 @@ void RenderViewContextMenu::AppendSharingItems() {
    int items_before_sharing = menu_model_.GetItemCount();
    bool starting_separator_added = items_before_sharing > items_initial;
  
@@ -22,7 +367,7 @@ index 132619a0f0af..6b9a0ba73ba0 100644
    AppendSharedClipboardItem();
  
    // Add an ending separator if there are sharing items, otherwise remove the
-@@ -1819,6 +1823,7 @@ void RenderViewContextMenu::AppendSharingItems() {
+@@ -1819,6 +1499,7 @@ void RenderViewContextMenu::AppendSharingItems() {
      menu_model_.RemoveItemAt(items_initial);
  }
  
@@ -30,7 +375,7 @@ index 132619a0f0af..6b9a0ba73ba0 100644
  void RenderViewContextMenu::AppendClickToCallItem() {
    SharingClickToCallEntryPoint entry_point;
    base::Optional<std::string> phone_number;
-@@ -1845,6 +1850,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
+@@ -1845,6 +1526,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
    click_to_call_context_menu_observer_->BuildMenu(*phone_number, selection_text,
                                                    entry_point);
  }
@@ -38,3 +383,46 @@ index 132619a0f0af..6b9a0ba73ba0 100644
  
  void RenderViewContextMenu::AppendSharedClipboardItem() {
    if (!ShouldOfferSharedClipboard(browser_context_, params_.selection_text))
+@@ -2264,16 +1946,12 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
+     case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
+       send_tab_to_self::ShareToSingleTarget(
+           GetBrowser()->tab_strip_model()->GetActiveWebContents());
+-      send_tab_to_self::RecordSendTabToSelfClickResult(
+-          send_tab_to_self::kContentMenu, SendTabToSelfClickResult::kClickItem);
+       break;
+ 
+     case IDC_CONTENT_LINK_SEND_TAB_TO_SELF_SINGLE_TARGET:
+       send_tab_to_self::ShareToSingleTarget(
+           GetBrowser()->tab_strip_model()->GetActiveWebContents(),
+           params_.link_url);
+-      send_tab_to_self::RecordSendTabToSelfClickResult(
+-          send_tab_to_self::kLinkMenu, SendTabToSelfClickResult::kClickItem);
+       break;
+ 
+     case IDC_CONTENT_CONTEXT_GENERATE_QR_CODE: {
+@@ -2801,8 +2479,6 @@ void RenderViewContextMenu::ExecSaveLinkAs() {
+   if (!render_frame_host)
+     return;
+ 
+-  RecordDownloadSource(DOWNLOAD_INITIATED_BY_CONTEXT_MENU);
+-
+   const GURL& url = params_.link_url;
+ 
+   net::NetworkTrafficAnnotationTag traffic_annotation =
+@@ -2852,7 +2528,6 @@ void RenderViewContextMenu::ExecSaveAs() {
+     if (frame_host)
+       frame_host->SaveImageAt(params_.x, params_.y);
+   } else {
+-    RecordDownloadSource(DOWNLOAD_INITIATED_BY_CONTEXT_MENU);
+     const GURL& url = params_.src_url;
+     content::Referrer referrer = CreateReferrer(url, params_);
+     std::string headers;
+@@ -3007,8 +2682,6 @@ void RenderViewContextMenu::ExecRouteMedia() {
+ 
+   dialog_controller->ShowMediaRouterDialog(
+       media_router::MediaRouterDialogOpenOrigin::CONTEXTUAL_MENU);
+-  media_router::MediaRouterMetrics::RecordMediaRouterDialogOrigin(
+-      media_router::MediaRouterDialogOpenOrigin::CONTEXTUAL_MENU);
+ }
+ 
+ void RenderViewContextMenu::ExecTranslate() {

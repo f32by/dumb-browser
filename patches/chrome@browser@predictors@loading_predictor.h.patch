@@ -1,0 +1,54 @@
+diff --git a/chrome/browser/predictors/loading_predictor.h b/chrome/browser/predictors/loading_predictor.h
+index 60993658e890..13798fe60f8a 100644
+--- a/chrome/browser/predictors/loading_predictor.h
++++ b/chrome/browser/predictors/loading_predictor.h
+@@ -16,7 +16,6 @@
+ #include "base/memory/weak_ptr.h"
+ #include "base/optional.h"
+ #include "base/time/time.h"
+-#include "chrome/browser/predictors/loading_data_collector.h"
+ #include "chrome/browser/predictors/navigation_id.h"
+ #include "chrome/browser/predictors/preconnect_manager.h"
+ #include "chrome/browser/predictors/prefetch_manager.h"
+@@ -31,7 +30,6 @@ class Profile;
+ namespace predictors {
+ 
+ class ResourcePrefetchPredictor;
+-class LoadingStatsCollector;
+ 
+ // Entry point for the Loading predictor.
+ // From a high-level request (GURL and motivation) and a database of historical
+@@ -70,7 +68,6 @@ class LoadingPredictor : public KeyedService,
+ 
+   // Don't use, internal only.
+   ResourcePrefetchPredictor* resource_prefetch_predictor();
+-  LoadingDataCollector* loading_data_collector();
+   PreconnectManager* preconnect_manager();
+   PrefetchManager* prefetch_manager();
+ 
+@@ -150,17 +147,9 @@ class LoadingPredictor : public KeyedService,
+     preconnect_manager_ = std::move(preconnect_manager);
+   }
+ 
+-  // For testing.
+-  void set_mock_loading_data_collector(
+-      std::unique_ptr<LoadingDataCollector> loading_data_collector) {
+-    loading_data_collector_ = std::move(loading_data_collector);
+-  }
+-
+   LoadingPredictorConfig config_;
+   Profile* profile_;
+   std::unique_ptr<ResourcePrefetchPredictor> resource_prefetch_predictor_;
+-  std::unique_ptr<LoadingStatsCollector> stats_collector_;
+-  std::unique_ptr<LoadingDataCollector> loading_data_collector_;
+   std::unique_ptr<PreconnectManager> preconnect_manager_;
+   std::unique_ptr<PrefetchManager> prefetch_manager_;
+   std::map<GURL, base::TimeTicks> active_hints_;
+@@ -176,7 +165,6 @@ class LoadingPredictor : public KeyedService,
+   friend class LoadingPredictorTest;
+   friend class LoadingPredictorPreconnectTest;
+   friend class LoadingPredictorTabHelperTest;
+-  friend class LoadingPredictorTabHelperTestCollectorTest;
+   FRIEND_TEST_ALL_PREFIXES(LoadingPredictorTest,
+                            TestMainFrameResponseCancelsHint);
+   FRIEND_TEST_ALL_PREFIXES(LoadingPredictorTest,

@@ -1,0 +1,29 @@
+diff --git a/chrome/browser/resource_coordinator/tab_helper.h b/chrome/browser/resource_coordinator/tab_helper.h
+index d7619e4b86fb..07f3434c0814 100644
+--- a/chrome/browser/resource_coordinator/tab_helper.h
++++ b/chrome/browser/resource_coordinator/tab_helper.h
+@@ -16,7 +16,6 @@
+ #include "content/public/browser/web_contents.h"
+ #include "content/public/browser/web_contents_observer.h"
+ #include "content/public/browser/web_contents_user_data.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "url/gurl.h"
+ 
+ namespace resource_coordinator {
+@@ -39,16 +38,9 @@ class ResourceCoordinatorTabHelper
+   void DidFinishNavigation(
+       content::NavigationHandle* navigation_handle) override;
+ 
+-  void UpdateUkmRecorder(int64_t navigation_id);
+-  ukm::SourceId ukm_source_id() const { return ukm_source_id_; }
+-  void SetUkmSourceIdForTest(ukm::SourceId id) { ukm_source_id_ = id; }
+-
+  private:
+   explicit ResourceCoordinatorTabHelper(content::WebContents* web_contents);
+ 
+-  // TODO(siggi): This is used by the TabLifecycleUnit, remove this with it.
+-  ukm::SourceId ukm_source_id_ = ukm::kInvalidSourceId;
+-
+   friend class content::WebContentsUserData<ResourceCoordinatorTabHelper>;
+ 
+   WEB_CONTENTS_USER_DATA_KEY_DECL();

@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/common/dummy_schedulers.cc b/third_party/blink/renderer/platform/scheduler/common/dummy_schedulers.cc
+index cb4442a8c774..71e9f1f108b8 100644
+--- a/third_party/blink/renderer/platform/scheduler/common/dummy_schedulers.cc
++++ b/third_party/blink/renderer/platform/scheduler/common/dummy_schedulers.cc
+@@ -69,7 +69,6 @@ class DummyFrameScheduler : public FrameScheduler {
+       WebSchedulingPriority) override {
+     return nullptr;
+   }
+-  ukm::SourceId GetUkmSourceId() override { return ukm::kInvalidSourceId; }
+   void OnStartedUsingFeature(SchedulingPolicy::Feature feature,
+                              const SchedulingPolicy& policy) override {}
+   void OnStoppedUsingFeature(SchedulingPolicy::Feature feature,

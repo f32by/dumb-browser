@@ -1,0 +1,41 @@
+diff --git a/chrome/browser/resource_coordinator/tab_manager.h b/chrome/browser/resource_coordinator/tab_manager.h
+index d09f7fed135e..0f14735b5ee1 100644
+--- a/chrome/browser/resource_coordinator/tab_manager.h
++++ b/chrome/browser/resource_coordinator/tab_manager.h
+@@ -49,7 +49,6 @@ class BackgroundTabNavigationThrottle;
+ #if defined(OS_CHROMEOS)
+ class TabManagerDelegate;
+ #endif
+-class TabManagerStatsCollector;
+ 
+ // TabManager is responsible for triggering tab lifecycle state transitions.
+ //
+@@ -163,8 +162,6 @@ class TabManager : public LifecycleUnitObserver,
+   static bool IsTabRestoredInForeground(content::WebContents* web_contents);
+ 
+  private:
+-  friend class TabManagerStatsCollectorTest;
+-
+   FRIEND_TEST_ALL_PREFIXES(TabManagerTest, AutoDiscardable);
+   FRIEND_TEST_ALL_PREFIXES(TabManagerTest, BackgroundTabLoadingMode);
+   FRIEND_TEST_ALL_PREFIXES(TabManagerTest, BackgroundTabLoadingSlots);
+@@ -326,8 +323,6 @@ class TabManager : public LifecycleUnitObserver,
+     memory_pressure_listener_.reset();
+   }
+ 
+-  TabManagerStatsCollector* stats_collector() { return stats_collector_.get(); }
+-
+   // Returns true if the background tab force load timer is running.
+   bool IsForceLoadTimerRunning() const;
+ 
+@@ -375,10 +370,6 @@ class TabManager : public LifecycleUnitObserver,
+   // in parallel.
+   size_t loading_slots_;
+ 
+-  // Records UMAs for tab and system-related events and properties during
+-  // session restore.
+-  std::unique_ptr<TabManagerStatsCollector> stats_collector_;
+-
+   // A clock that advances when Chrome is in use.
+   UsageClock usage_clock_;
+ 

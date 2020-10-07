@@ -1,0 +1,29 @@
+diff --git a/content/renderer/render_frame_impl.cc b/content/renderer/render_frame_impl.cc
+index bcac6e71666b..522a87627f4a 100644
+--- a/content/renderer/render_frame_impl.cc
++++ b/content/renderer/render_frame_impl.cc
+@@ -2338,12 +2338,11 @@ void RenderFrameImpl::OnAssociatedInterfaceRequest(
+   }
+ }
+ 
+-void RenderFrameImpl::SubmitThroughputData(ukm::SourceId source_id,
+-                                           int aggregated_percent,
++void RenderFrameImpl::SubmitThroughputData(int aggregated_percent,
+                                            int impl_percent,
+                                            base::Optional<int> main_percent) {
+   for (auto& observer : observers_) {
+-    observer.OnThroughputDataAvailable(source_id, aggregated_percent,
++    observer.OnThroughputDataAvailable(aggregated_percent,
+                                        impl_percent, main_percent);
+   }
+ }
+@@ -4391,8 +4390,7 @@ void RenderFrameImpl::DidCommitNavigation(
+   // track of that on the widget to help the browser process detect when stale
+   // compositor frames are being shown after a commit.
+   if (is_main_frame_) {
+-    GetLocalRootRenderWidget()->DidNavigate(
+-        frame_->GetDocument().GetUkmSourceId(), GetLoadingUrl());
++    GetLocalRootRenderWidget()->DidNavigate(GetLoadingUrl());
+   }
+ 
+   mojo::PendingReceiver<service_manager::mojom::InterfaceProvider>

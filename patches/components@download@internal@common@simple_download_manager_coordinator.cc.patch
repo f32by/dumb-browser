@@ -1,0 +1,24 @@
+diff --git a/components/download/internal/common/simple_download_manager_coordinator.cc b/components/download/internal/common/simple_download_manager_coordinator.cc
+index 2ae0e442b5bd..e30b4d17bbe5 100644
+--- a/components/download/internal/common/simple_download_manager_coordinator.cc
++++ b/components/download/internal/common/simple_download_manager_coordinator.cc
+@@ -8,7 +8,6 @@
+ 
+ #include "components/download/public/common/all_download_event_notifier.h"
+ #include "components/download/public/common/download_item.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/simple_download_manager.h"
+ 
+ namespace download {
+@@ -47,11 +46,6 @@ void SimpleDownloadManagerCoordinator::SetSimpleDownloadManager(
+   current_manager_has_all_history_downloads_ = manages_all_history_downloads;
+   simple_download_manager_ = simple_download_manager;
+   simple_download_manager_->AddObserver(this);
+-
+-  if (manages_all_history_downloads && !creation_time_ticks_.is_null()) {
+-    RecordDownloadManagerCreationTimeSinceStartup(base::TimeTicks::Now() -
+-                                                  creation_time_ticks_);
+-  }
+ }
+ 
+ void SimpleDownloadManagerCoordinator::AddObserver(Observer* observer) {

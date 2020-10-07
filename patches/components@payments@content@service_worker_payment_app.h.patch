@@ -1,0 +1,21 @@
+diff --git a/components/payments/content/service_worker_payment_app.h b/components/payments/content/service_worker_payment_app.h
+index a7ab79d38bf8..435c03354dcd 100644
+--- a/components/payments/content/service_worker_payment_app.h
++++ b/components/payments/content/service_worker_payment_app.h
+@@ -101,7 +101,6 @@ class ServiceWorkerPaymentApp : public PaymentApp,
+   bool HandlesPayerName() const override;
+   bool HandlesPayerEmail() const override;
+   bool HandlesPayerPhone() const override;
+-  ukm::SourceId UkmSourceId() override;
+   void SetPaymentHandlerHost(
+       base::WeakPtr<PaymentHandlerHost> payment_handler_host) override;
+   bool IsWaitingForPaymentDetailsUpdate() const override;
+@@ -165,8 +164,6 @@ class ServiceWorkerPaymentApp : public PaymentApp,
+   std::string account_balance_;
+   bool can_show_own_ui_ = true;
+ 
+-  ukm::SourceId ukm_source_id_ = ukm::kInvalidSourceId;
+-
+   base::WeakPtrFactory<ServiceWorkerPaymentApp> weak_ptr_factory_{this};
+ 
+   DISALLOW_COPY_AND_ASSIGN(ServiceWorkerPaymentApp);

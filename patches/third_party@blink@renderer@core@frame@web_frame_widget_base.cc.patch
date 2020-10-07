@@ -1,0 +1,58 @@
+diff --git a/third_party/blink/renderer/core/frame/web_frame_widget_base.cc b/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
+index 33c470559748..3d364d13d21f 100644
+--- a/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
++++ b/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
+@@ -13,7 +13,6 @@
+ #include "build/build_config.h"
+ #include "cc/trees/layer_tree_host.h"
+ #include "cc/trees/swap_promise.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "third_party/blink/public/mojom/input/input_handler.mojom-blink.h"
+ #include "third_party/blink/public/mojom/input/touch_event.mojom-blink.h"
+ #include "third_party/blink/public/platform/platform.h"
+@@ -29,7 +28,6 @@
+ #include "third_party/blink/renderer/core/events/web_input_event_conversion.h"
+ #include "third_party/blink/renderer/core/events/wheel_event.h"
+ #include "third_party/blink/renderer/core/exported/web_view_impl.h"
+-#include "third_party/blink/renderer/core/frame/local_frame_ukm_aggregator.h"
+ #include "third_party/blink/renderer/core/frame/local_frame_view.h"
+ #include "third_party/blink/renderer/core/frame/remote_frame_client.h"
+ #include "third_party/blink/renderer/core/frame/screen_metrics_emulator.h"
+@@ -700,11 +698,10 @@ void WebFrameWidgetBase::WillBeginMainFrame() {
+ }
+ 
+ void WebFrameWidgetBase::SubmitThroughputData(
+-    ukm::SourceId source_id,
+     int aggregated_percent,
+     int impl_percent,
+     base::Optional<int> main_percent) {
+-  local_root_->Client()->SubmitThroughputData(source_id, aggregated_percent,
++  local_root_->Client()->SubmitThroughputData(aggregated_percent,
+                                               impl_percent, main_percent);
+ }
+ 
+@@ -1034,11 +1031,10 @@ cc::LayerTreeHost* WebFrameWidgetBase::InitializeCompositing(
+     cc::TaskGraphRunner* task_graph_runner,
+     bool for_child_local_root_frame,
+     const ScreenInfo& screen_info,
+-    std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory,
+     const cc::LayerTreeSettings* settings) {
+   widget_base_->InitializeCompositing(
+       main_thread_scheduler, task_graph_runner, for_child_local_root_frame,
+-      screen_info, std::move(ukm_recorder_factory), settings);
++      screen_info, settings);
+   GetPage()->AnimationHostInitialized(*AnimationHost(),
+                                       GetLocalFrameViewForAnimationScrolling());
+   return widget_base_->LayerTreeHost();
+@@ -1055,11 +1051,6 @@ void WebFrameWidgetBase::RecordTimeToFirstActivePaint(
+ 
+ void WebFrameWidgetBase::RecordDispatchRafAlignedInputTime(
+     base::TimeTicks raf_aligned_input_start_time) {
+-  if (LocalRootImpl()) {
+-    LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator().RecordSample(
+-        LocalFrameUkmAggregator::kHandleInputEvents,
+-        raf_aligned_input_start_time, base::TimeTicks::Now());
+-  }
+ }
+ 
+ bool WebFrameWidgetBase::WillHandleGestureEvent(const WebGestureEvent& event) {

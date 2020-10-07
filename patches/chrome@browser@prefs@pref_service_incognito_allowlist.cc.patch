@@ -1,16 +1,18 @@
 diff --git a/chrome/browser/prefs/pref_service_incognito_allowlist.cc b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
-index 7fd7ea081c4e..6f7e1344d339 100644
+index 7fd7ea081c4e..a5648e7f2af0 100644
 --- a/chrome/browser/prefs/pref_service_incognito_allowlist.cc
 +++ b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
-@@ -12,7 +12,6 @@
+@@ -12,9 +12,7 @@
  #include "components/bookmarks/common/bookmark_pref_names.h"
  #include "components/content_settings/core/common/pref_names.h"
  #include "components/metrics/metrics_pref_names.h"
 -#include "components/rappor/rappor_pref_names.h"
  #include "components/reading_list/core/reading_list_pref_names.h"
- #include "components/ukm/ukm_pref_names.h"
+-#include "components/ukm/ukm_pref_names.h"
  
-@@ -141,12 +140,6 @@ const char* const kPersistentPrefNames[] = {
+ #if !defined(OS_ANDROID)
+ #include "chrome/browser/accessibility/animation_policy_prefs.h"
+@@ -141,22 +139,9 @@ const char* const kPersistentPrefNames[] = {
      prefs::kUseCustomChromeFrame,
  #endif
  
@@ -23,3 +25,13 @@ index 7fd7ea081c4e..6f7e1344d339 100644
      // Reading list preferences are common between incognito and regular mode.
      reading_list::prefs::kReadingListHasUnseenEntries,
  
+-    // Although UKMs are not collected in incognito, theses preferences may be
+-    // changed by UMA/Sync/Unity consent, and need to be the same between
+-    // incognito and regular modes.
+-    ukm::prefs::kUkmClientId,
+-    ukm::prefs::kUkmUnsentLogStore,
+-    ukm::prefs::kUkmSessionId,
+-
+     // Cookie controls preference is, as in an initial release, surfaced only in
+     // the incognito mode and therefore should be persisted between incognito
+     // sessions.

@@ -1,0 +1,46 @@
+diff --git a/content/browser/renderer_host/render_frame_host_delegate.h b/content/browser/renderer_host/render_frame_host_delegate.h
+index da5a5a62b20a..25c7fc8da5dc 100644
+--- a/content/browser/renderer_host/render_frame_host_delegate.h
++++ b/content/browser/renderer_host/render_frame_host_delegate.h
+@@ -24,7 +24,6 @@
+ #include "content/public/browser/site_instance.h"
+ #include "content/public/browser/visibility.h"
+ #include "content/public/common/javascript_dialog_type.h"
+-#include "media/mojo/services/media_metrics_provider.h"
+ #include "mojo/public/cpp/bindings/pending_receiver.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+ #include "mojo/public/cpp/bindings/scoped_interface_endpoint_handle.h"
+@@ -32,7 +31,6 @@
+ #include "net/http/http_response_headers.h"
+ #include "services/device/public/mojom/geolocation_context.mojom.h"
+ #include "services/device/public/mojom/wake_lock.mojom.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/common/mediastream/media_stream_request.h"
+ #include "third_party/blink/public/mojom/choosers/popup_menu.mojom.h"
+ #include "third_party/blink/public/mojom/devtools/console_message.mojom.h"
+@@ -482,15 +480,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
+   // Returns the visibility of the delegate.
+   virtual Visibility GetVisibility();
+ 
+-  // Get the UKM source ID for current content from the last committed
+-  // navigation, either a cross-document or same-document navigation. This is
+-  // for providing data about the content to the URL-keyed metrics service.
+-  // Use this method if UKM events should be attributed to the latest
+-  // navigation, that is, attribute events to the new source after each
+-  // same-document navigation, if any.
+-  virtual ukm::SourceId
+-  GetUkmSourceIdForLastCommittedSourceIncludingSameDocument() const;
+-
+   // Notify observers if WebAudio AudioContext has started (or stopped) playing
+   // audible sounds.
+   virtual void AudioContextPlaybackStarted(RenderFrameHost* host,
+@@ -530,9 +519,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
+                                    int32_t offset,
+                                    bool has_user_gesture) {}
+ 
+-  virtual media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
+-  GetRecordAggregateWatchTimeCallback();
+-
+   // Determines if a clipboard paste using |data| of type |data_type| is allowed
+   // in this renderer frame.  Possible data types supported for paste can be
+   // seen in the ClipboardHostImpl class.  Text based formats will use the

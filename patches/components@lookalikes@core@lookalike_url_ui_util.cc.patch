@@ -1,0 +1,40 @@
+diff --git a/components/lookalikes/core/lookalike_url_ui_util.cc b/components/lookalikes/core/lookalike_url_ui_util.cc
+index 7f90a141f299..89c65b563f2d 100644
+--- a/components/lookalikes/core/lookalike_url_ui_util.cc
++++ b/components/lookalikes/core/lookalike_url_ui_util.cc
+@@ -8,35 +8,8 @@
+ #include "components/lookalikes/core/lookalike_url_util.h"
+ #include "components/security_interstitials/core/common_string_util.h"
+ #include "components/strings/grit/components_strings.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "ui/base/l10n/l10n_util.h"
+ 
+-void RecordUkmForLookalikeUrlBlockingPage(
+-    ukm::SourceId source_id,
+-    LookalikeUrlMatchType match_type,
+-    LookalikeUrlBlockingPageUserAction user_action) {
+-  ukm::UkmRecorder* ukm_recorder = ukm::UkmRecorder::Get();
+-  CHECK(ukm_recorder);
+-
+-  ukm::builders::LookalikeUrl_NavigationSuggestion(source_id)
+-      .SetMatchType(static_cast<int>(match_type))
+-      .SetUserAction(static_cast<int>(user_action))
+-      .Record(ukm_recorder);
+-}
+-
+-void ReportUkmForLookalikeUrlBlockingPageIfNeeded(
+-    ukm::SourceId& source_id,
+-    LookalikeUrlMatchType match_type,
+-    LookalikeUrlBlockingPageUserAction action) {
+-  // Rely on the saved SourceId because deconstruction happens after the next
+-  // navigation occurs, so web contents points to the new destination.
+-  if (source_id != ukm::kInvalidSourceId) {
+-    RecordUkmForLookalikeUrlBlockingPage(source_id, match_type, action);
+-    source_id = ukm::kInvalidSourceId;
+-  }
+-}
+-
+ void PopulateLookalikeUrlBlockingPageStrings(
+     base::DictionaryValue* load_time_data,
+     const GURL& safe_url,

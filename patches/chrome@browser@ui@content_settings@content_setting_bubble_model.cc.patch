@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
-index 4cd70fbf11ac..771163accffe 100644
+index 4cd70fbf11ac..d683d2c6da41 100644
 --- a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
 +++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
 @@ -34,7 +34,6 @@
@@ -10,7 +10,12 @@ index 4cd70fbf11ac..771163accffe 100644
  #include "chrome/browser/ui/collected_cookies_infobar_delegate.h"
  #include "chrome/browser/ui/content_settings/content_setting_bubble_model_delegate.h"
  #include "chrome/common/chrome_features.h"
-@@ -59,8 +58,6 @@
+@@ -54,13 +53,10 @@
+ #include "components/permissions/permission_manager.h"
+ #include "components/permissions/permission_request_manager.h"
+ #include "components/permissions/permission_result.h"
+-#include "components/permissions/permission_uma_util.h"
+ #include "components/permissions/permission_util.h"
  #include "components/permissions/permissions_client.h"
  #include "components/prefs/pref_service.h"
  #include "components/strings/grit/components_strings.h"
@@ -19,7 +24,7 @@ index 4cd70fbf11ac..771163accffe 100644
  #include "components/url_formatter/elide_url.h"
  #include "components/vector_icons/vector_icons.h"
  #include "content/public/browser/notification_service.h"
-@@ -375,7 +372,6 @@ void ContentSettingMixedScriptBubbleModel::OnLearnMoreClicked() {
+@@ -375,7 +371,6 @@ void ContentSettingMixedScriptBubbleModel::OnLearnMoreClicked() {
  }
  
  void ContentSettingMixedScriptBubbleModel::OnCustomLinkClicked() {
@@ -27,7 +32,29 @@ index 4cd70fbf11ac..771163accffe 100644
    MixedContentSettingsTabHelper* mixed_content_settings =
        MixedContentSettingsTabHelper::FromWebContents(web_contents());
    if (mixed_content_settings) {
-@@ -1386,8 +1382,6 @@ ContentSettingSubresourceFilterBubbleModel::
+@@ -1116,21 +1111,11 @@ void ContentSettingMediaStreamBubbleModel::UpdateSettings(
+   HostContentSettingsMap* map =
+       HostContentSettingsMapFactory::GetForProfile(GetProfile());
+   if (MicrophoneAccessed()) {
+-    permissions::PermissionUmaUtil::ScopedRevocationReporter
+-        scoped_revocation_reporter(
+-            GetProfile(), page_content_settings->media_stream_access_origin(),
+-            GURL(), ContentSettingsType::MEDIASTREAM_MIC,
+-            permissions::PermissionSourceUI::PAGE_ACTION);
+     map->SetContentSettingDefaultScope(
+         page_content_settings->media_stream_access_origin(), GURL(),
+         ContentSettingsType::MEDIASTREAM_MIC, std::string(), setting);
+   }
+   if (CameraAccessed()) {
+-    permissions::PermissionUmaUtil::ScopedRevocationReporter
+-        scoped_revocation_reporter(
+-            GetProfile(), page_content_settings->media_stream_access_origin(),
+-            GURL(), ContentSettingsType::MEDIASTREAM_CAMERA,
+-            permissions::PermissionSourceUI::PAGE_ACTION);
+     map->SetContentSettingDefaultScope(
+         page_content_settings->media_stream_access_origin(), GURL(),
+         ContentSettingsType::MEDIASTREAM_CAMERA, std::string(), setting);
+@@ -1386,8 +1371,6 @@ ContentSettingSubresourceFilterBubbleModel::
    SetManageText();
    set_done_button_text(l10n_util::GetStringUTF16(IDS_OK));
    set_show_learn_more(true);
@@ -36,7 +63,7 @@ index 4cd70fbf11ac..771163accffe 100644
  }
  
  ContentSettingSubresourceFilterBubbleModel::
-@@ -1415,16 +1409,10 @@ void ContentSettingSubresourceFilterBubbleModel::OnManageCheckboxChecked(
+@@ -1415,16 +1398,10 @@ void ContentSettingSubresourceFilterBubbleModel::OnManageCheckboxChecked(
  
  void ContentSettingSubresourceFilterBubbleModel::OnLearnMoreClicked() {
    DCHECK(delegate());
@@ -53,7 +80,7 @@ index 4cd70fbf11ac..771163accffe 100644
  }
  
  ContentSettingSubresourceFilterBubbleModel*
-@@ -1743,8 +1731,7 @@ ContentSettingBubbleModel::ContentSettingBubbleModel(Delegate* delegate,
+@@ -1743,8 +1720,7 @@ ContentSettingBubbleModel::ContentSettingBubbleModel(Delegate* delegate,
                                                       WebContents* web_contents)
      : web_contents_(web_contents),
        owner_(nullptr),

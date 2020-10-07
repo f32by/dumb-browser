@@ -1,0 +1,30 @@
+diff --git a/third_party/blink/renderer/modules/xr/navigator_xr.cc b/third_party/blink/renderer/modules/xr/navigator_xr.cc
+index 781c90ba4792..df6ca120956e 100644
+--- a/third_party/blink/renderer/modules/xr/navigator_xr.cc
++++ b/third_party/blink/renderer/modules/xr/navigator_xr.cc
+@@ -4,7 +4,6 @@
+ 
+ #include "third_party/blink/renderer/modules/xr/navigator_xr.h"
+ 
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/renderer/core/dom/document.h"
+ #include "third_party/blink/renderer/core/frame/local_dom_window.h"
+ #include "third_party/blink/renderer/core/frame/local_frame.h"
+@@ -58,16 +57,11 @@ XRSystem* NavigatorXR::xr() {
+     return nullptr;
+ 
+   if (!did_log_navigator_xr_) {
+-    ukm::builders::XR_WebXR(document->UkmSourceID())
+-        .SetDidUseNavigatorXR(1)
+-        .Record(document->UkmRecorder());
+-
+     did_log_navigator_xr_ = true;
+   }
+ 
+   if (!xr_) {
+-    xr_ = MakeGarbageCollected<XRSystem>(*document->GetFrame(),
+-                                         document->UkmSourceID());
++    xr_ = MakeGarbageCollected<XRSystem>(*document->GetFrame());
+   }
+ 
+   return xr_;

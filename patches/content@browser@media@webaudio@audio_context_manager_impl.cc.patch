@@ -1,0 +1,68 @@
+diff --git a/content/browser/media/webaudio/audio_context_manager_impl.cc b/content/browser/media/webaudio/audio_context_manager_impl.cc
+index 24ee4ea4775a..e7a7649aabca 100644
+--- a/content/browser/media/webaudio/audio_context_manager_impl.cc
++++ b/content/browser/media/webaudio/audio_context_manager_impl.cc
+@@ -11,24 +11,9 @@
+ #include "content/browser/web_contents/web_contents_impl.h"
+ #include "content/public/browser/render_frame_host.h"
+ #include "content/public/browser/web_contents.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace content {
+ 
+-namespace {
+-
+-// Returns the time in milleseconds following these rules:
+-//  - if the time is below 10 seconds, return the raw value;
+-//  - otherwise, return the value rounded to the closes second.
+-int64_t GetBucketedTimeInMilliseconds(const base::TimeDelta& time) {
+-  if (time.InMilliseconds() < 10 * base::Time::kMillisecondsPerSecond)
+-    return time.InMilliseconds();
+-  return time.InSeconds() * base::Time::kMillisecondsPerSecond;
+-}
+-
+-}  // namespace
+-
+ void AudioContextManagerImpl::Create(
+     RenderFrameHost* render_frame_host,
+     mojo::PendingReceiver<blink::mojom::AudioContextManager> receiver) {
+@@ -51,11 +36,6 @@ AudioContextManagerImpl::AudioContextManagerImpl(
+ 
+ AudioContextManagerImpl::~AudioContextManagerImpl() {
+   // Takes care pending "audible start" times.
+-  base::TimeTicks now = clock_->NowTicks();
+-  for (const auto& entry : pending_audible_durations_) {
+-    if (!entry.second.is_null())
+-      RecordAudibleTime(now - entry.second);
+-  }
+   pending_audible_durations_.clear();
+ }
+ 
+@@ -74,26 +54,10 @@ void AudioContextManagerImpl::AudioContextAudiblePlaybackStopped(
+   base::TimeTicks then = pending_audible_durations_[audio_context_id];
+   DCHECK(!then.is_null());
+ 
+-  RecordAudibleTime(clock_->NowTicks() - then);
+-
+   // Resets the context slot because the context is not audible.
+   pending_audible_durations_[audio_context_id] = base::TimeTicks();
+ 
+   render_frame_host_impl_->AudioContextPlaybackStopped(audio_context_id);
+ }
+ 
+-void AudioContextManagerImpl::RecordAudibleTime(base::TimeDelta audible_time) {
+-  DCHECK(!audible_time.is_zero());
+-
+-  ukm::UkmRecorder* ukm_recorder = ukm::UkmRecorder::Get();
+-  DCHECK(ukm_recorder);
+-
+-  ukm::builders::Media_WebAudio_AudioContext_AudibleTime(
+-      render_frame_host_impl_->GetPageUkmSourceId())
+-      .SetIsMainFrame(WebContents::FromRenderFrameHost(render_frame_host())
+-                          ->GetMainFrame() == render_frame_host_impl_)
+-      .SetAudibleTime(GetBucketedTimeInMilliseconds(audible_time))
+-      .Record(ukm_recorder);
+-}
+-
+ }  // namespace content

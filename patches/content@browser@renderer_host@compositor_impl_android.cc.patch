@@ -1,0 +1,16 @@
+diff --git a/content/browser/renderer_host/compositor_impl_android.cc b/content/browser/renderer_host/compositor_impl_android.cc
+index 2df65b0b6f70..c2443d799768 100644
+--- a/content/browser/renderer_host/compositor_impl_android.cc
++++ b/content/browser/renderer_host/compositor_impl_android.cc
+@@ -704,11 +704,6 @@ void CompositorImpl::DidCommit(base::TimeTicks) {
+   root_window_->OnCompositingDidCommit();
+ }
+ 
+-std::unique_ptr<cc::BeginMainFrameMetrics>
+-CompositorImpl::GetBeginMainFrameMetrics() {
+-  return nullptr;
+-}
+-
+ std::unique_ptr<ui::WindowAndroidCompositor::ReadbackRef>
+ CompositorImpl::TakeReadbackRef() {
+   ++pending_readbacks_;

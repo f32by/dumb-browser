@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/resource_coordinator/lifecycle_unit_base.cc b/chrome/browser/resource_coordinator/lifecycle_unit_base.cc
+index 3079e1d9e6e1..edfe5d3fd371 100644
+--- a/chrome/browser/resource_coordinator/lifecycle_unit_base.cc
++++ b/chrome/browser/resource_coordinator/lifecycle_unit_base.cc
+@@ -67,10 +67,6 @@ void LifecycleUnitBase::RemoveObserver(LifecycleUnitObserver* observer) {
+   observers_.RemoveObserver(observer);
+ }
+ 
+-ukm::SourceId LifecycleUnitBase::GetUkmSourceId() const {
+-  return ukm::kInvalidSourceId;
+-}
+-
+ void LifecycleUnitBase::SetDiscardCountForTesting(size_t discard_count) {
+   discard_count_ = discard_count;
+ }

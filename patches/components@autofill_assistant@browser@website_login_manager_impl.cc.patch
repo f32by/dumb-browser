@@ -1,0 +1,42 @@
+diff --git a/components/autofill_assistant/browser/website_login_manager_impl.cc b/components/autofill_assistant/browser/website_login_manager_impl.cc
+index 6e21c380c48f..64afa7690bc7 100644
+--- a/components/autofill_assistant/browser/website_login_manager_impl.cc
++++ b/components/autofill_assistant/browser/website_login_manager_impl.cc
+@@ -8,7 +8,6 @@
+ #include "base/strings/utf_string_conversions.h"
+ #include "components/password_manager/core/browser/form_fetcher_impl.h"
+ #include "components/password_manager/core/browser/form_parsing/form_parser.h"
+-#include "components/password_manager/core/browser/password_form_metrics_recorder.h"
+ #include "components/password_manager/core/browser/password_generation_frame_helper.h"
+ #include "components/password_manager/core/browser/password_manager_client.h"
+ #include "components/password_manager/core/browser/password_manager_driver.h"
+@@ -174,11 +173,6 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
+         presaving_completed_callback_(std::move(presaving_completed_callback)),
+         password_save_manager_(password_manager::PasswordSaveManagerImpl::
+                                    CreatePasswordSaveManagerImpl(client)),
+-        metrics_recorder_(
+-            base::MakeRefCounted<password_manager::PasswordFormMetricsRecorder>(
+-                client->IsCommittedMainFrameSecure(),
+-                client->GetUkmSourceId(),
+-                client->GetPrefs())),
+         votes_uploader_(client, true /* is_possible_change_password_form */) {
+     DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+ 
+@@ -203,7 +197,7 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
+   // password_manager::FormFetcher::Consumer
+   void OnFetchCompleted() override {
+     password_save_manager_->Init(client_, form_fetcher_.get(),
+-                                 metrics_recorder_, &votes_uploader_);
++                                 &votes_uploader_);
+     password_save_manager_->PresaveGeneratedPassword(password_form_);
+     password_save_manager_->CreatePendingCredentials(
+         password_form_, &form_data_ /* observed_form */,
+@@ -223,8 +217,6 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
+   base::OnceCallback<void()> presaving_completed_callback_;
+   const std::unique_ptr<password_manager::PasswordSaveManager>
+       password_save_manager_;
+-  scoped_refptr<password_manager::PasswordFormMetricsRecorder>
+-      metrics_recorder_;
+   password_manager::VotesUploader votes_uploader_;
+   std::unique_ptr<password_manager::FormFetcher> form_fetcher_;
+ };

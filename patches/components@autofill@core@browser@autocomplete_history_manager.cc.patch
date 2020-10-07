@@ -1,0 +1,53 @@
+diff --git a/components/autofill/core/browser/autocomplete_history_manager.cc b/components/autofill/core/browser/autocomplete_history_manager.cc
+index 364ee0988716..1b0f8ab5e3a5 100644
+--- a/components/autofill/core/browser/autocomplete_history_manager.cc
++++ b/components/autofill/core/browser/autocomplete_history_manager.cc
+@@ -14,7 +14,6 @@
+ #include "base/strings/string16.h"
+ #include "base/strings/utf_string_conversions.h"
+ #include "components/autofill/core/browser/autofill_experiments.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/ui/suggestion.h"
+ #include "components/autofill/core/browser/validation.h"
+ #include "components/autofill/core/browser/webdata/autofill_entry.h"
+@@ -53,7 +52,6 @@ void AutocompleteHistoryManager::UMARecorder::OnGetAutocompleteSuggestions(
+   bool should_log_query = measuring_name_ != name;
+ 
+   if (should_log_query) {
+-    AutofillMetrics::LogAutocompleteQuery(pending_query_handle /* created */);
+     measuring_name_ = name;
+   }
+   // We should track the query and log the suggestions, only if
+@@ -74,7 +72,6 @@ void AutocompleteHistoryManager::UMARecorder::OnWebDataServiceRequestDone(
+   measuring_query_handle_ = 0;
+   if (was_already_logged)
+     return;
+-  AutofillMetrics::LogAutocompleteSuggestions(has_suggestion);
+ }
+ 
+ AutocompleteHistoryManager::QueryHandler::QueryHandler(
+@@ -213,11 +210,6 @@ void AutocompleteHistoryManager::OnAutocompleteEntrySelected(
+     NOTREACHED();
+     return;
+   }
+-
+-  // The AutofillEntry was found, use it to log the DaysSinceLastUsed.
+-  const AutofillEntry& entry = last_entries_iter->second;
+-  base::TimeDelta time_delta = AutofillClock::Now() - entry.date_last_used();
+-  AutofillMetrics::LogAutocompleteDaysSinceLastUse(time_delta.InDays());
+ }
+ 
+ void AutocompleteHistoryManager::CancelPendingQueries(
+@@ -320,12 +312,6 @@ void AutocompleteHistoryManager::OnAutofillCleanupReturned(
+   DCHECK(result);
+   DCHECK_EQ(AUTOFILL_CLEANUP_RESULT, result->GetType());
+ 
+-  const WDResult<size_t>* cleanup_wdresult =
+-      static_cast<const WDResult<size_t>*>(result.get());
+-
+-  AutofillMetrics::LogNumberOfAutocompleteEntriesCleanedUp(
+-      cleanup_wdresult->GetValue());
+-
+   // Cleanup was successful, update the latest run milestone.
+   pref_service_->SetInteger(prefs::kAutocompleteLastVersionRetentionPolicy,
+                             CHROME_VERSION_MAJOR);

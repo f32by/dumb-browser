@@ -1,0 +1,15 @@
+diff --git a/content/browser/browser_interface_binders.cc b/content/browser/browser_interface_binders.cc
+index 6a54d0c1135d..50644edd2a75 100644
+--- a/content/browser/browser_interface_binders.cc
++++ b/content/browser/browser_interface_binders.cc
+@@ -670,10 +670,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+       &RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver,
+       base::Unretained(host)));
+ 
+-  map->Add<media::mojom::MediaMetricsProvider>(base::BindRepeating(
+-      &RenderFrameHostImpl::BindMediaMetricsProviderReceiver,
+-      base::Unretained(host)));
+-
+ #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
+   map->Add<media::mojom::RemoterFactory>(
+       base::BindRepeating(&RenderFrameHostImpl::BindMediaRemoterFactoryReceiver,

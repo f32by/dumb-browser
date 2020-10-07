@@ -1,0 +1,22 @@
+diff --git a/components/download/database/download_info.h b/components/download/database/download_info.h
+index 483115fb72e5..d4a3db45a927 100644
+--- a/components/download/database/download_info.h
++++ b/components/download/database/download_info.h
+@@ -9,7 +9,6 @@
+ 
+ #include "base/optional.h"
+ #include "components/download/database/in_progress/in_progress_info.h"
+-#include "components/download/database/in_progress/ukm_info.h"
+ 
+ namespace download {
+ 
+@@ -29,9 +28,6 @@ struct DownloadInfo {
+   // Deprecated, only kept for the purpose of download extension API.
+   int id = -1;
+ 
+-  // UKM information for reporting.
+-  base::Optional<UkmInfo> ukm_info;
+-
+   // In progress information for active download.
+   base::Optional<InProgressInfo> in_progress_info;
+ };

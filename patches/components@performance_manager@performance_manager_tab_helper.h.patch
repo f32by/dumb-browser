@@ -1,0 +1,29 @@
+diff --git a/components/performance_manager/performance_manager_tab_helper.h b/components/performance_manager/performance_manager_tab_helper.h
+index 8ffb2c7e9ae4..891ccb26c4ff 100644
+--- a/components/performance_manager/performance_manager_tab_helper.h
++++ b/components/performance_manager/performance_manager_tab_helper.h
+@@ -17,7 +17,6 @@
+ #include "components/performance_manager/web_contents_proxy_impl.h"
+ #include "content/public/browser/web_contents_observer.h"
+ #include "content/public/browser/web_contents_user_data.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/mojom/favicon/favicon_url.mojom-forward.h"
+ 
+ namespace performance_manager {
+@@ -88,8 +87,6 @@ class PerformanceManagerTabHelper
+       content::RenderFrameHost* render_frame_host,
+       mojo::PendingReceiver<mojom::DocumentCoordinationUnit> receiver);
+ 
+-  void SetUkmSourceIdForTesting(ukm::SourceId id) { ukm_source_id_ = id; }
+-
+   // Retrieves the frame node associated with |render_frame_host|. Returns
+   // nullptr if none exist for that frame.
+   FrameNodeImpl* GetFrameNode(content::RenderFrameHost* render_frame_host);
+@@ -120,7 +117,6 @@ class PerformanceManagerTabHelper
+   void OnMainFrameNavigation(int64_t navigation_id, bool same_doc);
+ 
+   std::unique_ptr<PageNodeImpl> page_node_;
+-  ukm::SourceId ukm_source_id_ = ukm::kInvalidSourceId;
+ 
+   // Favicon and title are set when a page is loaded, we only want to send
+   // signals to the page node about title and favicon update from the previous

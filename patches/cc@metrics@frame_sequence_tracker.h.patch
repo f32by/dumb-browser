@@ -1,0 +1,14 @@
+diff --git a/cc/metrics/frame_sequence_tracker.h b/cc/metrics/frame_sequence_tracker.h
+index 3c59aea3df9f..7b74f8a6e0f9 100644
+--- a/cc/metrics/frame_sequence_tracker.h
++++ b/cc/metrics/frame_sequence_tracker.h
+@@ -113,8 +113,7 @@ class CC_EXPORT FrameSequenceTracker {
+   friend class FrameSequenceTrackerTest;
+ 
+   // Constructs a tracker for a typed sequence other than kCustom.
+-  FrameSequenceTracker(FrameSequenceTrackerType type,
+-                       ThroughputUkmReporter* throughput_ukm_reporter);
++  FrameSequenceTracker(FrameSequenceTrackerType type);
+   // Constructs a tracker for a kCustom typed sequence.
+   FrameSequenceTracker(int custom_sequence_id,
+                        FrameSequenceMetrics::CustomReporter custom_reporter);

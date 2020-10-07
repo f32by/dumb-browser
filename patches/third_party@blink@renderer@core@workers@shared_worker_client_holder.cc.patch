@@ -1,0 +1,24 @@
+diff --git a/third_party/blink/renderer/core/workers/shared_worker_client_holder.cc b/third_party/blink/renderer/core/workers/shared_worker_client_holder.cc
+index 9968508ac33b..42d2f133ffdf 100644
+--- a/third_party/blink/renderer/core/workers/shared_worker_client_holder.cc
++++ b/third_party/blink/renderer/core/workers/shared_worker_client_holder.cc
+@@ -86,8 +86,7 @@ void SharedWorkerClientHolder::Connect(
+     MessagePortChannel port,
+     const KURL& url,
+     mojo::PendingRemote<mojom::blink::BlobURLToken> blob_url_token,
+-    mojom::blink::WorkerOptionsPtr options,
+-    ukm::SourceId client_ukm_source_id) {
++    mojom::blink::WorkerOptionsPtr options) {
+   DCHECK(IsMainThread());
+   DCHECK(options);
+ 
+@@ -138,8 +137,7 @@ void SharedWorkerClientHolder::Connect(
+           : mojom::SharedWorkerCreationContextType::kNonsecure,
+       port.ReleaseHandle(),
+       mojo::PendingRemote<mojom::blink::BlobURLToken>(
+-          blob_url_token.PassPipe(), mojom::blink::BlobURLToken::Version_),
+-      client_ukm_source_id);
++          blob_url_token.PassPipe(), mojom::blink::BlobURLToken::Version_));
+ }
+ 
+ void SharedWorkerClientHolder::Trace(Visitor* visitor) const {

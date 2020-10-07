@@ -1,0 +1,16 @@
+diff --git a/chrome/browser/resource_coordinator/tab_ranker/tab_features.h b/chrome/browser/resource_coordinator/tab_ranker/tab_features.h
+index 35192118bac4..9130ebfd0e94 100644
+--- a/chrome/browser/resource_coordinator/tab_ranker/tab_features.h
++++ b/chrome/browser/resource_coordinator/tab_ranker/tab_features.h
+@@ -68,11 +68,6 @@ struct TabFeatures {
+ // Populates |tab| features to ranker example for inference.
+ void PopulateTabFeaturesToRankerExample(const TabFeatures& tab,
+                                         assist_ranker::RankerExample* example);
+-
+-// Populates |tab| features to ukm |entry| for logging.
+-void PopulateTabFeaturesToUkmEntry(const TabFeatures& tab,
+-                                   ukm::builders::TabManager_TabMetrics* entry);
+-
+ }  // namespace tab_ranker
+ 
+ #endif  // CHROME_BROWSER_RESOURCE_COORDINATOR_TAB_RANKER_TAB_FEATURES_H_

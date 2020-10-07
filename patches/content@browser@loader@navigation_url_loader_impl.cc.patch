@@ -1,0 +1,31 @@
+diff --git a/content/browser/loader/navigation_url_loader_impl.cc b/content/browser/loader/navigation_url_loader_impl.cc
+index d31d70bda7aa..81724305551d 100644
+--- a/content/browser/loader/navigation_url_loader_impl.cc
++++ b/content/browser/loader/navigation_url_loader_impl.cc
+@@ -19,7 +19,6 @@
+ #include "base/stl_util.h"
+ #include "base/trace_event/trace_event.h"
+ #include "build/build_config.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "content/browser/about_url_loader_factory.h"
+ #include "content/browser/appcache/appcache_navigation_handle.h"
+ #include "content/browser/appcache/appcache_request_handler.h"
+@@ -1173,8 +1172,6 @@ NavigationURLLoaderImpl::NavigationURLLoaderImpl(
+         ->browser()
+         ->RegisterNonNetworkNavigationURLLoaderFactories(
+             frame_tree_node_id_,
+-            base::UkmSourceId::FromInt64(frame_tree_node->navigation_request()
+-                                             ->GetNextPageUkmSourceId()),
+             &non_network_uniquely_owned_factories_,
+             &non_network_url_loader_factories_);
+ 
+@@ -1286,9 +1283,6 @@ void NavigationURLLoaderImpl::NotifyResponseStarted(
+   TRACE_EVENT_ASYNC_END2("navigation", "Navigation timeToResponseStarted", this,
+                          "&NavigationURLLoaderImpl", this, "success", true);
+ 
+-  if (is_download)
+-    download_policy_.RecordHistogram();
+-
+   // TODO(scottmg): This needs to do more of what
+   // NavigationResourceHandler::OnResponseStarted() does.
+   delegate_->OnResponseStarted(

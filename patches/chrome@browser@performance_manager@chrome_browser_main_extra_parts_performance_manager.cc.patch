@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
+index da4053892a24..41b30d5d95eb 100644
+--- a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
++++ b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
+@@ -17,7 +17,6 @@
+ #include "chrome/browser/performance_manager/decorators/process_metrics_decorator.h"
+ #include "chrome/browser/performance_manager/metrics/memory_pressure_metrics.h"
+ #include "chrome/browser/performance_manager/observers/isolation_context_metrics.h"
+-#include "chrome/browser/performance_manager/observers/metrics_collector.h"
+ #include "chrome/browser/performance_manager/policies/background_tab_loading_policy.h"
+ #include "chrome/browser/performance_manager/policies/high_pmf_discard_policy.h"
+ #include "chrome/browser/performance_manager/policies/policy_features.h"
+@@ -83,7 +82,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::CreatePoliciesAndDecorators(
+       std::make_unique<performance_manager::FrozenFrameAggregator>());
+   graph->PassToGraph(
+       std::make_unique<performance_manager::IsolationContextMetrics>());
+-  graph->PassToGraph(std::make_unique<performance_manager::MetricsCollector>());
+   graph->PassToGraph(
+       std::make_unique<performance_manager::ProcessMetricsDecorator>());
+ 

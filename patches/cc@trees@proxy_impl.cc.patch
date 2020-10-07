@@ -1,0 +1,65 @@
+diff --git a/cc/trees/proxy_impl.cc b/cc/trees/proxy_impl.cc
+index 0cdc6c623fdb..aca4a0a254fd 100644
+--- a/cc/trees/proxy_impl.cc
++++ b/cc/trees/proxy_impl.cc
+@@ -32,7 +32,6 @@
+ #include "components/viz/common/frame_timing_details.h"
+ #include "components/viz/common/gpu/context_provider.h"
+ #include "gpu/command_buffer/client/gles2_interface.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace cc {
+ 
+@@ -84,9 +83,7 @@ ProxyImpl::ProxyImpl(base::WeakPtr<ProxyMain> proxy_main_weak_ptr,
+   std::unique_ptr<CompositorTimingHistory> compositor_timing_history(
+       new CompositorTimingHistory(
+           scheduler_settings.using_synchronous_renderer_compositor,
+-          CompositorTimingHistory::RENDERER_UMA,
+-          layer_tree_host->rendering_stats_instrumentation(),
+-          host_impl_->compositor_frame_reporting_controller()));
++          layer_tree_host->rendering_stats_instrumentation()));
+   scheduler_.reset(new Scheduler(this, scheduler_settings, layer_tree_host_id_,
+                                  task_runner_provider_->ImplThreadTaskRunner(),
+                                  std::move(compositor_timing_history)));
+@@ -390,11 +387,6 @@ void ProxyImpl::RenewTreePriority() {
+       host_impl_->page_scale_animation_active() ||
+       host_impl_->IsActivelyPrecisionScrolling();
+ 
+-  if (host_impl_->ukm_manager()) {
+-    host_impl_->ukm_manager()->SetUserInteractionInProgress(
+-        user_interaction_in_progress);
+-  }
+-
+   // Schedule expiration if smoothness currently takes priority.
+   if (user_interaction_in_progress)
+     smoothness_priority_expiration_notifier_.Schedule();
+@@ -523,15 +515,14 @@ void ProxyImpl::NotifyThroughputTrackerResults(CustomTrackerResults results) {
+                                 proxy_main_weak_ptr_, std::move(results)));
+ }
+ 
+-void ProxyImpl::SubmitThroughputData(ukm::SourceId source_id,
+-                                     int aggregated_percent,
++void ProxyImpl::SubmitThroughputData(int aggregated_percent,
+                                      int impl_percent,
+                                      base::Optional<int> main_percent) {
+   DCHECK(IsImplThread());
+   MainThreadTaskRunner()->PostTask(
+       FROM_HERE,
+       base::BindOnce(&ProxyMain::SubmitThroughputData, proxy_main_weak_ptr_,
+-                     source_id, aggregated_percent, impl_percent,
++                     aggregated_percent, impl_percent,
+                      main_percent));
+ }
+ 
+@@ -783,9 +774,9 @@ base::SingleThreadTaskRunner* ProxyImpl::MainThreadTaskRunner() {
+   return task_runner_provider_->MainThreadTaskRunner();
+ }
+ 
+-void ProxyImpl::SetSourceURL(ukm::SourceId source_id, const GURL& url) {
++void ProxyImpl::SetSourceURL(const GURL& url) {
+   DCHECK(IsImplThread());
+-  host_impl_->SetActiveURL(url, source_id);
++  host_impl_->SetActiveURL(url);
+ }
+ 
+ void ProxyImpl::ClearHistory() {

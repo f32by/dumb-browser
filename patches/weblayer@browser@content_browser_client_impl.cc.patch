@@ -1,0 +1,17 @@
+diff --git a/weblayer/browser/content_browser_client_impl.cc b/weblayer/browser/content_browser_client_impl.cc
+index 4878761d9f61..bbb697e65e81 100644
+--- a/weblayer/browser/content_browser_client_impl.cc
++++ b/weblayer/browser/content_browser_client_impl.cc
+@@ -912,12 +912,4 @@ ContentBrowserClientImpl::CreateSpeechRecognitionManagerDelegate() {
+   return new WebLayerSpeechRecognitionManagerDelegate();
+ }
+ 
+-ukm::UkmService* ContentBrowserClientImpl::GetUkmService() {
+-#if defined(OS_ANDROID)
+-  return WebLayerMetricsServiceClient::GetInstance()->GetUkmService();
+-#else
+-  return nullptr;
+-#endif
+-}
+-
+ }  // namespace weblayer

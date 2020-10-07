@@ -1,0 +1,23 @@
+diff --git a/components/download/public/common/download_response_handler.h b/components/download/public/common/download_response_handler.h
+index 7736c274a2fc..38ee708b3424 100644
+--- a/components/download/public/common/download_response_handler.h
++++ b/components/download/public/common/download_response_handler.h
+@@ -53,8 +53,7 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadResponseHandler
+       const DownloadUrlParameters::RequestHeadersType& request_headers,
+       const std::string& request_origin,
+       DownloadSource download_source,
+-      std::vector<GURL> url_chain,
+-      bool is_background_mode);
++      std::vector<GURL> url_chain);
+   ~DownloadResponseHandler() override;
+ 
+   // network::mojom::URLLoaderClient
+@@ -108,8 +107,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadResponseHandler
+   // Mojo interface remote to send the completion status to the download sink.
+   mojo::Remote<mojom::DownloadStreamClient> client_remote_;
+ 
+-  // Whether the download is running in background mode.
+-  bool is_background_mode_;
+   DISALLOW_COPY_AND_ASSIGN(DownloadResponseHandler);
+ };
+ 

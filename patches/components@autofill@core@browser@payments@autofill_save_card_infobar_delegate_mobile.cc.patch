@@ -1,0 +1,63 @@
+diff --git a/components/autofill/core/browser/payments/autofill_save_card_infobar_delegate_mobile.cc b/components/autofill/core/browser/payments/autofill_save_card_infobar_delegate_mobile.cc
+index 8fdc3912d203..512f93986725 100644
+--- a/components/autofill/core/browser/payments/autofill_save_card_infobar_delegate_mobile.cc
++++ b/components/autofill/core/browser/payments/autofill_save_card_infobar_delegate_mobile.cc
+@@ -68,7 +68,6 @@ AutofillSaveCardInfoBarDelegateMobile::
+   if (!had_user_interaction_) {
+     RunSaveCardPromptCallback(AutofillClient::IGNORED,
+                               /*user_provided_details=*/{});
+-    LogUserAction(AutofillMetrics::INFOBAR_IGNORED);
+   }
+ }
+ 
+@@ -146,13 +145,11 @@ bool AutofillSaveCardInfoBarDelegateMobile::ShouldExpire(
+ void AutofillSaveCardInfoBarDelegateMobile::InfoBarDismissed() {
+   RunSaveCardPromptCallback(AutofillClient::DECLINED,
+                             /*user_provided_details=*/{});
+-  LogUserAction(AutofillMetrics::INFOBAR_DENIED);
+ }
+ 
+ bool AutofillSaveCardInfoBarDelegateMobile::Cancel() {
+   RunSaveCardPromptCallback(AutofillClient::DECLINED,
+                             /*user_provided_details=*/{});
+-  LogUserAction(AutofillMetrics::INFOBAR_DENIED);
+   return true;
+ }
+ 
+@@ -185,7 +182,6 @@ base::string16 AutofillSaveCardInfoBarDelegateMobile::GetButtonLabel(
+ bool AutofillSaveCardInfoBarDelegateMobile::Accept() {
+   RunSaveCardPromptCallback(AutofillClient::ACCEPTED,
+                             /*user_provided_details=*/{});
+-  LogUserAction(AutofillMetrics::INFOBAR_ACCEPTED);
+   return true;
+ }
+ 
+@@ -199,7 +195,6 @@ bool AutofillSaveCardInfoBarDelegateMobile::UpdateAndAccept(
+   user_provided_details.expiration_date_month = expiration_date_month;
+   user_provided_details.expiration_date_year = expiration_date_year;
+   RunSaveCardPromptCallback(AutofillClient::ACCEPTED, user_provided_details);
+-  LogUserAction(AutofillMetrics::INFOBAR_ACCEPTED);
+   return true;
+ }
+ #endif  // defined(OS_IOS)
+@@ -215,20 +210,4 @@ void AutofillSaveCardInfoBarDelegateMobile::RunSaveCardPromptCallback(
+   }
+ }
+ 
+-void AutofillSaveCardInfoBarDelegateMobile::LogUserAction(
+-    AutofillMetrics::InfoBarMetric user_action) {
+-  DCHECK(!had_user_interaction_);
+-
+-  AutofillMetrics::LogCreditCardInfoBarMetric(
+-      user_action, upload_, options_,
+-      pref_service_->GetInteger(
+-          prefs::kAutofillAcceptSaveCreditCardPromptState));
+-  pref_service_->SetInteger(
+-      prefs::kAutofillAcceptSaveCreditCardPromptState,
+-      user_action == AutofillMetrics::INFOBAR_ACCEPTED
+-          ? prefs::PREVIOUS_SAVE_CREDIT_CARD_PROMPT_USER_DECISION_ACCEPTED
+-          : prefs::PREVIOUS_SAVE_CREDIT_CARD_PROMPT_USER_DECISION_DENIED);
+-  had_user_interaction_ = true;
+-}
+-
+ }  // namespace autofill

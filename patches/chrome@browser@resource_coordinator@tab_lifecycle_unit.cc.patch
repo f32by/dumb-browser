@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/resource_coordinator/tab_lifecycle_unit.cc b/chrome/browser/resource_coordinator/tab_lifecycle_unit.cc
+index 020f430ba626..ce4247e2cb98 100644
+--- a/chrome/browser/resource_coordinator/tab_lifecycle_unit.cc
++++ b/chrome/browser/resource_coordinator/tab_lifecycle_unit.cc
+@@ -430,15 +430,6 @@ bool TabLifecycleUnitSource::TabLifecycleUnit::CanDiscard(
+   return decision_details->IsPositive();
+ }
+ 
+-ukm::SourceId TabLifecycleUnitSource::TabLifecycleUnit::GetUkmSourceId() const {
+-  resource_coordinator::ResourceCoordinatorTabHelper* observer =
+-      resource_coordinator::ResourceCoordinatorTabHelper::FromWebContents(
+-          web_contents());
+-  if (!observer)
+-    return ukm::kInvalidSourceId;
+-  return observer->ukm_source_id();
+-}
+-
+ bool TabLifecycleUnitSource::TabLifecycleUnit::IsAutoDiscardable() const {
+   return auto_discardable_;
+ }

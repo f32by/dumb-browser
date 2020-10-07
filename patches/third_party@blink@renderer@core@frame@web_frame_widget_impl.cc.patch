@@ -1,0 +1,81 @@
+diff --git a/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc b/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
+index 572dda86dfc1..d519aff63e87 100644
+--- a/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
++++ b/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
+@@ -60,7 +60,6 @@
+ #include "third_party/blink/renderer/core/exported/web_remote_frame_impl.h"
+ #include "third_party/blink/renderer/core/exported/web_view_impl.h"
+ #include "third_party/blink/renderer/core/frame/local_frame.h"
+-#include "third_party/blink/renderer/core/frame/local_frame_ukm_aggregator.h"
+ #include "third_party/blink/renderer/core/frame/local_frame_view.h"
+ #include "third_party/blink/renderer/core/frame/remote_frame.h"
+ #include "third_party/blink/renderer/core/frame/settings.h"
+@@ -303,9 +302,6 @@ void WebFrameWidgetImpl::BeginMainFrame(base::TimeTicks last_frame_time) {
+   DocumentLifecycle::AllowThrottlingScope throttling_scope(
+       LocalRootImpl()->GetFrame()->GetDocument()->Lifecycle());
+   if (WidgetBase::ShouldRecordBeginMainFrameMetrics()) {
+-    SCOPED_UMA_AND_UKM_TIMER(
+-        LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator(),
+-        LocalFrameUkmAggregator::kAnimate);
+     PageWidgetDelegate::Animate(*GetPage(), last_frame_time);
+   } else {
+     PageWidgetDelegate::Animate(*GetPage(), last_frame_time);
+@@ -340,9 +336,6 @@ void WebFrameWidgetImpl::BeginUpdateLayers() {
+ void WebFrameWidgetImpl::EndUpdateLayers() {
+   if (LocalRootImpl()) {
+     DCHECK(update_layers_start_time_);
+-    LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator().RecordSample(
+-        LocalFrameUkmAggregator::kUpdateLayers,
+-        update_layers_start_time_.value(), base::TimeTicks::Now());
+     probe::LayerTreeDidChange(LocalRootImpl()->GetFrame());
+   }
+   update_layers_start_time_.reset();
+@@ -356,22 +349,12 @@ void WebFrameWidgetImpl::BeginCommitCompositorFrame() {
+ 
+ void WebFrameWidgetImpl::EndCommitCompositorFrame(
+     base::TimeTicks commit_start_time) {
+-  if (LocalRootImpl()) {
+-    LocalRootImpl()
+-        ->GetFrame()
+-        ->View()
+-        ->EnsureUkmAggregator()
+-        .RecordImplCompositorSample(commit_compositor_frame_start_time_.value(),
+-                                    commit_start_time, base::TimeTicks::Now());
+-  }
+   commit_compositor_frame_start_time_.reset();
+ }
+ 
+ void WebFrameWidgetImpl::RecordStartOfFrameMetrics() {
+   if (!LocalRootImpl())
+     return;
+-
+-  LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator().BeginMainFrame();
+ }
+ 
+ void WebFrameWidgetImpl::RecordEndOfFrameMetrics(
+@@ -379,25 +362,6 @@ void WebFrameWidgetImpl::RecordEndOfFrameMetrics(
+     cc::ActiveFrameSequenceTrackers trackers) {
+   if (!LocalRootImpl())
+     return;
+-
+-  LocalRootImpl()
+-      ->GetFrame()
+-      ->View()
+-      ->EnsureUkmAggregator()
+-      .RecordEndOfFrameMetrics(frame_begin_time, base::TimeTicks::Now(),
+-                               trackers);
+-}
+-
+-std::unique_ptr<cc::BeginMainFrameMetrics>
+-WebFrameWidgetImpl::GetBeginMainFrameMetrics() {
+-  if (!LocalRootImpl())
+-    return nullptr;
+-
+-  return LocalRootImpl()
+-      ->GetFrame()
+-      ->View()
+-      ->EnsureUkmAggregator()
+-      .GetBeginMainFrameMetrics();
+ }
+ 
+ void WebFrameWidgetImpl::UpdateLifecycle(WebLifecycleUpdate requested_update,

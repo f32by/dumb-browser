@@ -1,0 +1,136 @@
+diff --git a/cc/trees/layer_tree_host_impl.cc b/cc/trees/layer_tree_host_impl.cc
+index dcc20fa96edd..89eb0b296945 100644
+--- a/cc/trees/layer_tree_host_impl.cc
++++ b/cc/trees/layer_tree_host_impl.cc
+@@ -118,7 +118,6 @@
+ #include "gpu/command_buffer/client/raster_interface.h"
+ #include "gpu/command_buffer/client/shared_image_interface.h"
+ #include "gpu/command_buffer/common/shared_image_usage.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/perfetto/protos/perfetto/trace/track_event/chrome_latency_info.pbzero.h"
+ #include "third_party/skia/include/gpu/GrDirectContext.h"
+ #include "ui/events/types/scroll_input_type.h"
+@@ -247,30 +246,6 @@ void ApplyFirstScrollTracking(const ui::LatencyInfo* latency,
+       frame_token, std::move(presentation_callback));
+ }
+ 
+-// These values are persisted to logs. Entries should not be renumbered and
+-// numeric values should never be reused.
+-enum class SourceIdConsistency : int {
+-  kConsistent = 0,
+-  kContainsInvalid = 1,
+-  kNonUnique = 2,
+-  kInvalidAndNonUnique = 3,
+-  kMaxValue = kInvalidAndNonUnique,
+-};
+-
+-void RecordSourceIdConsistency(bool all_valid, bool all_unique) {
+-  SourceIdConsistency consistency =
+-      all_unique ? (all_valid ? SourceIdConsistency::kConsistent
+-                              : SourceIdConsistency::kContainsInvalid)
+-                 : (all_valid ? SourceIdConsistency::kNonUnique
+-                              : SourceIdConsistency::kInvalidAndNonUnique);
+-
+-  // TODO(crbug.com/1062764): we're sometimes seeing unexpected values for the
+-  // ukm::SourceId. We'll use this histogram to track how often it happens so
+-  // we can properly (de-)prioritize a fix.
+-  UMA_HISTOGRAM_ENUMERATION("Event.LatencyInfo.Debug.SourceIdConsistency",
+-                            consistency);
+-}
+-
+ }  // namespace
+ 
+ DEFINE_SCOPED_UMA_HISTOGRAM_TIMER(PendingTreeRasterDurationHistogramTimer,
+@@ -418,8 +393,7 @@ LayerTreeHostImpl::LayerTreeHostImpl(
+                                   this,
+                                   settings_.enable_image_animation_resync),
+       paint_image_generator_client_id_(PaintImage::GetNextGeneratorClientId()),
+-      frame_trackers_(settings.single_thread_proxy_scheduler,
+-                      compositor_frame_reporting_controller_.get()),
++      frame_trackers_(settings.single_thread_proxy_scheduler),
+       lcd_text_metrics_reporter_(LCDTextMetricsReporter::CreateIfNeeded(this)),
+       frame_rate_estimator_(GetTaskRunner()) {
+   DCHECK(mutator_host_);
+@@ -494,10 +468,6 @@ LayerTreeHostImpl::~LayerTreeHostImpl() {
+ 
+   mutator_host_->ClearMutators();
+   mutator_host_->SetMutatorHostClient(nullptr);
+-
+-  // Clear the UKM Manager so that we do not try to report when the
+-  // UKM System has shut down.
+-  compositor_frame_reporting_controller_->SetUkmManager(nullptr);
+ }
+ 
+ ThreadedInputHandler& LayerTreeHostImpl::GetInputHandler() {
+@@ -642,8 +612,6 @@ void LayerTreeHostImpl::UpdateSyncTreeAfterCommitOrImplSideInvalidation() {
+   // and the updated data for the image from the main frame.
+   PaintImageIdFlatSet images_to_invalidate =
+       tile_manager_.TakeImagesToInvalidateOnSyncTree();
+-  if (ukm_manager_)
+-    ukm_manager_->AddCheckerboardedImages(images_to_invalidate.size());
+ 
+   const auto& animated_images =
+       image_animation_controller_.AnimateForSyncTree(CurrentBeginFrameArgs());
+@@ -1367,13 +1335,6 @@ DrawResult LayerTreeHostImpl::CalculateRenderPasses(FrameData* frame) {
+   frame->has_missing_content =
+       num_missing_tiles > 0 || num_incomplete_tiles > 0;
+ 
+-  if (ukm_manager_) {
+-    ukm_manager_->AddCheckerboardStatsForFrame(
+-        checkerboarded_no_recording_content_area +
+-            checkerboarded_needs_raster_content_area,
+-        num_missing_tiles, total_visible_area);
+-  }
+-
+   if (active_tree_->has_ever_been_drawn()) {
+     UMA_HISTOGRAM_COUNTS_100(
+         "Compositing.RenderPass.AppendQuadData.NumMissingTiles",
+@@ -2473,19 +2434,12 @@ viz::CompositorFrame LayerTreeHostImpl::GenerateCompositorFrame(
+   if (!CommitToActiveTree() && !metadata.latency_info.empty()) {
+     base::TimeTicks draw_time = base::TimeTicks::Now();
+ 
+-    ukm::SourceId exemplar = metadata.latency_info.front().ukm_source_id();
+     ApplyFirstScrollTracking(&metadata.latency_info.front(),
+                              metadata.frame_token, this);
+-    bool all_valid = true;
+-    bool all_unique = true;
+     for (auto& latency : metadata.latency_info) {
+       latency.AddLatencyNumberWithTimestamp(
+           ui::INPUT_EVENT_LATENCY_RENDERER_SWAP_COMPONENT, draw_time);
+-      all_valid &= latency.ukm_source_id() != ukm::kInvalidSourceId;
+-      all_unique &= latency.ukm_source_id() == exemplar;
+     }
+-
+-    RecordSourceIdConsistency(all_valid, all_unique);
+   }
+   ui::LatencyInfo::TraceIntermediateFlowEvents(
+       metadata.latency_info,
+@@ -4765,27 +4719,9 @@ void LayerTreeHostImpl::ShowScrollbarsForImplScroll(ElementId element_id) {
+     animation_controller->DidScrollUpdate();
+ }
+ 
+-void LayerTreeHostImpl::InitializeUkm(
+-    std::unique_ptr<ukm::UkmRecorder> recorder) {
+-  DCHECK(!ukm_manager_);
+-  ukm_manager_ = std::make_unique<UkmManager>(std::move(recorder));
+-  frame_trackers_.SetUkmManager(ukm_manager_.get());
+-  compositor_frame_reporting_controller_->SetUkmManager(ukm_manager_.get());
+-}
+-
+-void LayerTreeHostImpl::SetActiveURL(const GURL& url, ukm::SourceId source_id) {
++void LayerTreeHostImpl::SetActiveURL(const GURL& url) {
+   tile_manager_.set_active_url(url);
+   has_observed_first_scroll_delay_ = false;
+-  // The active tree might still be from content for the previous page when the
+-  // recorder is updated here, since new content will be pushed with the next
+-  // main frame. But we should only get a few impl frames wrong here in that
+-  // case. Also, since checkerboard stats are only recorded with user
+-  // interaction, it must be in progress when the navigation commits for this
+-  // case to occur.
+-  if (ukm_manager_) {
+-    // The source id has already been associated to the URL.
+-    ukm_manager_->SetSourceId(source_id);
+-  }
+   total_frame_counter_.Reset();
+   dropped_frame_counter_.Reset();
+   is_measuring_smoothness_ = false;

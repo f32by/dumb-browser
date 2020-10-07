@@ -1,0 +1,52 @@
+diff --git a/weblayer/browser/tab_impl.cc b/weblayer/browser/tab_impl.cc
+index c84ec5a15be6..9b7d01a7b0c2 100644
+--- a/weblayer/browser/tab_impl.cc
++++ b/weblayer/browser/tab_impl.cc
+@@ -19,7 +19,6 @@
+ #include "components/blocked_content/popup_blocker.h"
+ #include "components/blocked_content/popup_blocker_tab_helper.h"
+ #include "components/blocked_content/popup_opener_tab_helper.h"
+-#include "components/blocked_content/popup_tracker.h"
+ #include "components/captive_portal/core/buildflags.h"
+ #include "components/content_settings/browser/page_specific_content_settings.h"
+ #include "components/find_in_page/find_tab_helper.h"
+@@ -33,7 +32,6 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/sessions/content/session_tab_helper.h"
+ #include "components/translate/core/browser/translate_manager.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "components/webrtc/media_stream_devices_controller.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -63,7 +61,6 @@
+ #include "weblayer/browser/js_communication/web_message_host_factory_wrapper.h"
+ #include "weblayer/browser/navigation_controller_impl.h"
+ #include "weblayer/browser/no_state_prefetch/prerender_tab_helper.h"
+-#include "weblayer/browser/page_load_metrics_initialize.h"
+ #include "weblayer/browser/page_specific_content_settings_delegate.h"
+ #include "weblayer/browser/password_manager_driver_factory.h"
+ #include "weblayer/browser/permissions/permission_manager_factory.h"
+@@ -319,9 +316,6 @@ TabImpl::TabImpl(ProfileImpl* profile,
+           web_contents_->GetBrowserContext()));
+   PasswordManagerDriverFactory::CreateForWebContents(web_contents_.get());
+ 
+-  InitializePageLoadMetricsForWebContents(web_contents_.get());
+-  ukm::InitializeSourceUrlRecorderForWebContents(web_contents_.get());
+-
+ #if defined(OS_ANDROID)
+   InfoBarService::CreateForWebContents(web_contents_.get());
+   javascript_dialogs::TabModalDialogManager::CreateForWebContents(
+@@ -1087,13 +1081,6 @@ void TabImpl::AddNewContents(content::WebContents* source,
+     return;
+   }
+ 
+-  // At this point the |new_contents| is beyond the popup blocker, but we use
+-  // the same logic for determining if the popup tracker needs to be attached.
+-  if (source && blocked_content::ConsiderForPopupBlocking(disposition)) {
+-    blocked_content::PopupTracker::CreateForWebContents(new_contents.get(),
+-                                                        source, disposition);
+-  }
+-
+   new_tab_delegate_->OnNewTab(browser_->CreateTab(std::move(new_contents)),
+                               NewTabTypeFromWindowDisposition(disposition));
+ }

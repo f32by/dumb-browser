@@ -1,0 +1,33 @@
+diff --git a/third_party/blink/renderer/core/execution_context/execution_context.h b/third_party/blink/renderer/core/execution_context/execution_context.h
+index f1ff5a611976..d61dbd24438d 100644
+--- a/third_party/blink/renderer/core/execution_context/execution_context.h
++++ b/third_party/blink/renderer/core/execution_context/execution_context.h
+@@ -33,7 +33,6 @@
+ 
+ #include "base/macros.h"
+ #include "base/optional.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/ip_address_space.mojom-blink-forward.h"
+ #include "services/network/public/mojom/referrer_policy.mojom-blink-forward.h"
+ #include "third_party/blink/public/common/tokens/tokens.h"
+@@ -63,10 +62,6 @@ class SingleThreadTaskRunner;
+ class UnguessableToken;
+ }
+ 
+-namespace ukm {
+-class UkmRecorder;
+-}  // namespace ukm
+-
+ namespace blink {
+ 
+ class Agent;
+@@ -376,9 +371,6 @@ class CORE_EXPORT ExecutionContext : public Supplementable<ExecutionContext>,
+   // Implementation of WindowOrWorkerGlobalScope.crossOriginIsolated.
+   bool IsCrossOriginIsolated() const;
+ 
+-  virtual ukm::UkmRecorder* UkmRecorder() { return nullptr; }
+-  virtual ukm::SourceId UkmSourceID() const { return ukm::kInvalidSourceId; }
+-
+   // Returns the token that uniquely identifies this ExecutionContext.
+   virtual ExecutionContextToken GetExecutionContextToken() const = 0;
+ 

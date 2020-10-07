@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/resource_coordinator/tab_manager_stats_collector.h b/chrome/browser/resource_coordinator/tab_manager_stats_collector.h
+index 6b2972ffbc3e..c748cdfef2e2 100644
+--- a/chrome/browser/resource_coordinator/tab_manager_stats_collector.h
++++ b/chrome/browser/resource_coordinator/tab_manager_stats_collector.h
+@@ -19,7 +19,6 @@
+ #include "chrome/browser/resource_coordinator/lifecycle_unit.h"
+ #include "chrome/browser/resource_coordinator/time.h"
+ #include "chrome/browser/sessions/session_restore_observer.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ namespace content {
+ class SwapMetricsDriver;
+@@ -187,12 +186,6 @@ class TabManagerStatsCollector final : public SessionRestoreObserver {
+   // Update session and sequence information for UKM recording.
+   void UpdateSessionAndSequence();
+ 
+-  // Helper function for RecordSampledTabData. Records a single UKM entry for
+-  // the provided DecisionDetails and destination lifecycle state.
+-  static void RecordDecisionDetails(LifecycleUnit* lifecycle_unit,
+-                                    const DecisionDetails& decision_details,
+-                                    LifecycleUnitState new_state);
+-
+   static const char kHistogramSessionRestoreSwitchToTab[];
+   static const char kHistogramBackgroundTabOpeningSwitchToTab[];
+   static const char kHistogramSessionRestoreTabSwitchLoadTime[];

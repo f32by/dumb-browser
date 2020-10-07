@@ -1,10 +1,12 @@
 diff --git a/chrome/browser/download/download_item_model.cc b/chrome/browser/download/download_item_model.cc
-index 9f509889ba6f..34a088de0b0b 100644
+index 9f509889ba6f..c84da145fc33 100644
 --- a/chrome/browser/download/download_item_model.cc
 +++ b/chrome/browser/download/download_item_model.cc
-@@ -24,19 +24,13 @@
+@@ -22,21 +22,14 @@
+ #include "chrome/browser/download/download_crx_util.h"
+ #include "chrome/browser/download/download_history.h"
  #include "chrome/browser/download/download_prefs.h"
- #include "chrome/browser/download/download_stats.h"
+-#include "chrome/browser/download/download_stats.h"
  #include "chrome/browser/download/offline_item_utils.h"
 -#include "chrome/browser/enterprise/connectors/common.h"
 -#include "chrome/browser/enterprise/connectors/connectors_manager.h"
@@ -22,7 +24,7 @@ index 9f509889ba6f..34a088de0b0b 100644
  #include "content/public/browser/download_item_utils.h"
  #include "ui/base/l10n/l10n_util.h"
  #include "ui/base/l10n/time_format.h"
-@@ -49,7 +43,6 @@
+@@ -49,7 +42,6 @@
  using base::TimeDelta;
  using download::DownloadItem;
  using MixedContentStatus = download::DownloadItem::MixedContentStatus;
@@ -30,7 +32,7 @@ index 9f509889ba6f..34a088de0b0b 100644
  
  namespace {
  
-@@ -79,10 +72,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
+@@ -79,10 +71,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
    // for the file type.
    bool should_prefer_opening_in_browser_;
  
@@ -41,7 +43,7 @@ index 9f509889ba6f..34a088de0b0b 100644
    // Whether the download is currently being revived.
    bool is_being_revived_;
  
-@@ -118,7 +107,6 @@ DownloadItemModelData::DownloadItemModelData()
+@@ -118,7 +106,6 @@ DownloadItemModelData::DownloadItemModelData()
      : should_show_in_shelf_(true),
        was_ui_notified_(false),
        should_prefer_opening_in_browser_(false),
@@ -49,7 +51,7 @@ index 9f509889ba6f..34a088de0b0b 100644
        is_being_revived_(false) {}
  
  } // namespace
-@@ -268,14 +256,7 @@ bool DownloadItemModel::IsMixedContent() const {
+@@ -268,14 +255,7 @@ bool DownloadItemModel::IsMixedContent() const {
  }
  
  bool DownloadItemModel::ShouldAllowDownloadFeedback() const {
@@ -64,7 +66,7 @@ index 9f509889ba6f..34a088de0b0b 100644
  }
  
  bool DownloadItemModel::ShouldRemoveFromShelfWhenComplete() const {
-@@ -372,17 +353,6 @@ void DownloadItemModel::SetShouldPreferOpeningInBrowser(bool preference) {
+@@ -372,17 +352,6 @@ void DownloadItemModel::SetShouldPreferOpeningInBrowser(bool preference) {
    data->should_prefer_opening_in_browser_ = preference;
  }
  
@@ -82,7 +84,15 @@ index 9f509889ba6f..34a088de0b0b 100644
  download::DownloadItem::MixedContentStatus
  DownloadItemModel::GetMixedContentStatus() const {
    return download_->GetMixedContentStatus();
-@@ -539,9 +509,6 @@ bool DownloadItemModel::IsCommandEnabled(
+@@ -518,7 +487,6 @@ void DownloadItemModel::OpenUsingPlatformHandler() {
+   if (!delegate)
+     return;
+   delegate->OpenDownloadUsingPlatformHandler(download_);
+-  RecordDownloadOpenMethod(DOWNLOAD_OPEN_METHOD_USER_PLATFORM);
+ }
+ 
+ #if !defined(OS_ANDROID)
+@@ -539,9 +507,6 @@ bool DownloadItemModel::IsCommandEnabled(
        // filename. Don't base an "Always open" decision based on it. Also
        // exclude extensions.
        return download_->CanOpenDownload() &&
@@ -92,7 +102,7 @@ index 9f509889ba6f..34a088de0b0b 100644
               !download_crx_util::IsExtensionDownload(*download_);
      case DownloadCommands::PAUSE:
        return !download_->IsSavePackageDownload() &&
-@@ -702,31 +669,6 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
+@@ -702,31 +667,6 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
        DownloadUIModel::ExecuteCommand(download_commands, command);
        break;
      case DownloadCommands::DEEP_SCAN:

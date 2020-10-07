@@ -1,0 +1,37 @@
+diff --git a/ash/keyboard/ui/BUILD.gn b/ash/keyboard/ui/BUILD.gn
+index 9ab4d1a74375..21df0ae85411 100644
+--- a/ash/keyboard/ui/BUILD.gn
++++ b/ash/keyboard/ui/BUILD.gn
+@@ -35,8 +35,6 @@ component("ui") {
+     "keyboard_ui_factory.h",
+     "keyboard_ui_model.cc",
+     "keyboard_ui_model.h",
+-    "keyboard_ukm_recorder.cc",
+-    "keyboard_ukm_recorder.h",
+     "keyboard_util.cc",
+     "keyboard_util.h",
+     "notification_manager.cc",
+@@ -57,7 +55,6 @@ component("ui") {
+     ":resources",
+     "//ash/public/cpp",
+     "//base",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//ui/aura",
+     "//ui/base",
+     "//ui/base/ime",
+@@ -141,7 +138,6 @@ test("keyboard_unittests") {
+     "keyboard_event_handler_unittest.cc",
+     "keyboard_ui_controller_unittest.cc",
+     "keyboard_ui_model_unittest.cc",
+-    "keyboard_ukm_recorder_unittest.cc",
+     "keyboard_util_unittest.cc",
+     "notification_manager_unittest.cc",
+     "test/run_all_unittests.cc",
+@@ -153,7 +149,6 @@ test("keyboard_unittests") {
+     "//ash/public/cpp",
+     "//base",
+     "//base/test:test_support",
+-    "//components/ukm:test_support",
+     "//mojo/core/embedder",
+     "//testing/gmock",
+     "//testing/gtest",

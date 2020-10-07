@@ -1,0 +1,43 @@
+diff --git a/components/permissions/BUILD.gn b/components/permissions/BUILD.gn
+index 98d12ba2fcde..3381604b1492 100644
+--- a/components/permissions/BUILD.gn
++++ b/components/permissions/BUILD.gn
+@@ -35,8 +35,6 @@ source_set("permissions") {
+     "permission_request_manager.h",
+     "permission_result.cc",
+     "permission_result.h",
+-    "permission_uma_util.cc",
+-    "permission_uma_util.h",
+     "permission_util.cc",
+     "permission_util.h",
+     "permissions_client.cc",
+@@ -54,12 +52,10 @@ source_set("permissions") {
+     "//components/content_settings/core/browser",
+     "//components/keyed_service/content",
+     "//components/strings:components_strings_grit",
+-    "//components/ukm/content",
+     "//components/url_formatter",
+     "//components/variations",
+     "//components/vector_icons",
+     "//content/public/browser",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//third_party/blink/public/common",
+     "//ui/base",
+     "//url",
+@@ -110,7 +106,6 @@ source_set("test_support") {
+     "//base",
+     "//components/content_settings/core/browser",
+     "//components/sync_preferences:test_support",
+-    "//components/ukm/content",
+     "//components/vector_icons",
+     "//content/public/browser",
+     "//testing/gmock",
+@@ -144,8 +139,6 @@ source_set("unit_tests") {
+     "//components/content_settings/core/browser",
+     "//components/keyed_service/content",
+     "//components/prefs:test_support",
+-    "//components/ukm:test_support",
+-    "//components/ukm/content",
+     "//components/variations",
+     "//content/test:test_support",
+     "//testing/gtest",

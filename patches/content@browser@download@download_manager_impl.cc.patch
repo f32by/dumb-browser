@@ -1,0 +1,115 @@
+diff --git a/content/browser/download/download_manager_impl.cc b/content/browser/download/download_manager_impl.cc
+index af9c5ca773f0..3ab5c9716508 100644
+--- a/content/browser/download/download_manager_impl.cc
++++ b/content/browser/download/download_manager_impl.cc
+@@ -33,7 +33,6 @@
+ #include "components/download/public/common/download_interrupt_reasons.h"
+ #include "components/download/public/common/download_item_factory.h"
+ #include "components/download/public/common/download_item_impl.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_task_runner.h"
+ #include "components/download/public/common/download_url_parameters.h"
+ #include "components/download/public/common/download_utils.h"
+@@ -73,7 +72,6 @@
+ #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+ #include "net/base/request_priority.h"
+ #include "net/base/upload_bytes_element_reader.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/cpp/shared_url_loader_factory.h"
+ #include "services/network/public/cpp/wrapper_shared_url_loader_factory.h"
+@@ -282,32 +280,6 @@ CreatePendingSharedURLLoaderFactoryFromURLLoaderFactory(
+       std::move(factory_remote));
+ }
+ 
+-void RecordDownloadOpenerType(RenderFrameHost* current,
+-                              RenderFrameHost* opener) {
+-  DCHECK(current);
+-  DCHECK(opener);
+-  if (!opener->GetLastCommittedURL().SchemeIsHTTPOrHTTPS() ||
+-      !current->GetLastCommittedURL().SchemeIsHTTPOrHTTPS()) {
+-    UMA_HISTOGRAM_ENUMERATION("Download.InitiatedByWindowOpener",
+-                              InitiatedByWindowOpenerType::kNonHTTPOrHTTPS);
+-    return;
+-  }
+-  if (opener->GetLastCommittedOrigin() == current->GetLastCommittedOrigin()) {
+-    UMA_HISTOGRAM_ENUMERATION("Download.InitiatedByWindowOpener",
+-                              InitiatedByWindowOpenerType::kSameOrigin);
+-    return;
+-  }
+-  if (net::registry_controlled_domains::SameDomainOrHost(
+-          opener->GetLastCommittedOrigin(), current->GetLastCommittedOrigin(),
+-          net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES)) {
+-    UMA_HISTOGRAM_ENUMERATION("Download.InitiatedByWindowOpener",
+-                              InitiatedByWindowOpenerType::kSameSite);
+-    return;
+-  }
+-  UMA_HISTOGRAM_ENUMERATION("Download.InitiatedByWindowOpener",
+-                            InitiatedByWindowOpenerType::kCrossOrigin);
+-}
+-
+ }  // namespace
+ 
+ DownloadManagerImpl::DownloadManagerImpl(BrowserContext* browser_context)
+@@ -831,12 +803,6 @@ void DownloadManagerImpl::DownloadRemoved(
+ 
+ void DownloadManagerImpl::DownloadInterrupted(
+     download::DownloadItemImpl* download) {
+-  WebContents* web_contents = DownloadItemUtils::GetWebContents(download);
+-  if (!web_contents) {
+-    download::RecordDownloadCountWithSource(
+-        download::INTERRUPTED_WITHOUT_WEBCONTENTS,
+-        download->GetDownloadSource());
+-  }
+ }
+ 
+ bool DownloadManagerImpl::IsOffTheRecord() const {
+@@ -930,9 +896,6 @@ void DownloadManagerImpl::DownloadUrl(
+   if (delegate_)
+     delegate_->SanitizeDownloadParameters(params.get());
+ 
+-  download::RecordDownloadCountWithSource(
+-      download::DownloadCountTypes::DOWNLOAD_TRIGGERED_COUNT,
+-      params->download_source());
+   auto* rfh = RenderFrameHost::FromID(params->render_process_host_id(),
+                                       params->render_frame_host_routing_id());
+   if (rfh)
+@@ -1117,11 +1080,6 @@ void DownloadManagerImpl::OnDownloadManagerInitialized() {
+   in_progress_manager_->OnAllInprogressDownloadsLoaded();
+   for (auto& observer : observers_)
+     observer.OnManagerInitialized();
+-  size_t size = 0;
+-  for (const auto& it : downloads_)
+-    size += it.second->GetApproximateMemoryUsage();
+-  if (!IsOffTheRecord() && size > 0)
+-    download::RecordDownloadManagerMemoryUsage(size);
+ }
+ 
+ bool DownloadManagerImpl::IsManagerInitialized() {
+@@ -1194,7 +1152,6 @@ void DownloadManagerImpl::OpenDownload(download::DownloadItemImpl* download) {
+         !item->GetOpened())
+       ++num_unopened;
+   }
+-  download::RecordOpensOutstanding(num_unopened);
+ 
+   if (delegate_)
+     delegate_->OpenDownload(download);
+@@ -1207,7 +1164,6 @@ void DownloadManagerImpl::ShowDownloadInShell(
+ }
+ 
+ void DownloadManagerImpl::DropDownload() {
+-  download::RecordDownloadCount(download::DOWNLOAD_DROPPED_COUNT);
+   for (auto& observer : observers_)
+     observer.OnDownloadDropped(this);
+ }
+@@ -1244,10 +1200,6 @@ void DownloadManagerImpl::InterceptNavigationOnChecksComplete(
+       tab_url = entry->GetURL();
+       tab_referrer_url = entry->GetReferrer().url;
+     }
+-    RenderFrameHost* opener = web_contents->GetOpener();
+-    if (opener) {
+-      RecordDownloadOpenerType(render_frame_host, opener);
+-    }
+   }
+   StoragePartitionImpl* storage_partition =
+       GetStoragePartition(browser_context_, render_process_id, render_frame_id);

@@ -1,0 +1,22 @@
+diff --git a/components/download/public/common/download_create_info.h b/components/download/public/common/download_create_info.h
+index b8c6e21b1b78..7e1f9d9d8628 100644
+--- a/components/download/public/common/download_create_info.h
++++ b/components/download/public/common/download_create_info.h
+@@ -24,7 +24,6 @@
+ #include "components/download/public/common/download_url_parameters.h"
+ #include "net/http/http_response_info.h"
+ #include "net/url_request/referrer_policy.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "ui/base/page_transition_types.h"
+ #include "url/gurl.h"
+ #include "url/origin.h"
+@@ -163,9 +162,6 @@ struct COMPONENTS_DOWNLOAD_EXPORT DownloadCreateInfo {
+   // The request headers that has been sent in the download request.
+   DownloadUrlParameters::RequestHeadersType request_headers;
+ 
+-  // Source ID generated for UKM.
+-  ukm::SourceId ukm_source_id;
+-
+   // For downloads originating from custom tabs, this records the origin
+   // of the custom tab.
+   std::string request_origin;

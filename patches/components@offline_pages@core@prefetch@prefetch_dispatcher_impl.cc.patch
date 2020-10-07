@@ -1,0 +1,32 @@
+diff --git a/components/offline_pages/core/prefetch/prefetch_dispatcher_impl.cc b/components/offline_pages/core/prefetch/prefetch_dispatcher_impl.cc
+index 219491e81980..1ae74697adca 100644
+--- a/components/offline_pages/core/prefetch/prefetch_dispatcher_impl.cc
++++ b/components/offline_pages/core/prefetch/prefetch_dispatcher_impl.cc
+@@ -18,7 +18,6 @@
+ #include "components/offline_pages/core/offline_event_logger.h"
+ #include "components/offline_pages/core/offline_page_feature.h"
+ #include "components/offline_pages/core/offline_page_model.h"
+-#include "components/offline_pages/core/prefetch/offline_metrics_collector.h"
+ #include "components/offline_pages/core/prefetch/prefetch_background_task.h"
+ #include "components/offline_pages/core/prefetch/prefetch_background_task_handler.h"
+ #include "components/offline_pages/core/prefetch/prefetch_downloader.h"
+@@ -124,9 +123,6 @@ void PrefetchDispatcherImpl::AddCandidatePrefetchURLs(
+   std::unique_ptr<Task> add_task = std::make_unique<AddUniqueUrlsTask>(
+       this, prefetch_store, name_space, prefetch_urls);
+   task_queue_.AddTask(std::move(add_task));
+-
+-  // Report the 'enabled' day if we receive URLs and Prefetch is enabled.
+-  service_->GetOfflineMetricsCollector()->OnPrefetchEnabled();
+ }
+ 
+ void PrefetchDispatcherImpl::NewSuggestionsAvailable(
+@@ -426,9 +422,6 @@ void PrefetchDispatcherImpl::ArchiveImported(int64_t offline_id, bool success) {
+                                         std::to_string(offline_id) +
+                                         (success ? "succeeded" : "failed"));
+ 
+-  if (success)
+-    service_->GetOfflineMetricsCollector()->OnSuccessfulPagePrefetch();
+-
+   task_queue_.AddTask(std::make_unique<ImportCompletedTask>(
+       this, service_->GetPrefetchStore(), service_->GetPrefetchImporter(),
+       offline_id, success));

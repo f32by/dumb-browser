@@ -1,0 +1,65 @@
+diff --git a/chrome/browser/touch_to_fill/touch_to_fill_controller.cc b/chrome/browser/touch_to_fill/touch_to_fill_controller.cc
+index 8403d994b86d..631678a8bece 100644
+--- a/chrome/browser/touch_to_fill/touch_to_fill_controller.cc
++++ b/chrome/browser/touch_to_fill/touch_to_fill_controller.cc
+@@ -15,11 +15,7 @@
+ #include "components/password_manager/core/browser/origin_credential_store.h"
+ #include "components/password_manager/core/browser/password_manager_driver.h"
+ #include "components/password_manager/core/browser/password_manager_metrics_util.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "components/url_formatter/elide_url.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/is_potentially_trustworthy.h"
+ 
+ using ShowVirtualKeyboard =
+@@ -32,9 +28,7 @@ TouchToFillController::TouchToFillController(
+ 
+ TouchToFillController::TouchToFillController(
+     ChromePasswordManagerClient* password_client)
+-    : password_client_(password_client),
+-      source_id_(ukm::GetSourceIdForWebContentsDocument(
+-          password_client_->web_contents())) {}
++    : password_client_(password_client) {}
+ 
+ TouchToFillController::~TouchToFillController() = default;
+ 
+@@ -69,15 +63,9 @@ void TouchToFillController::OnCredentialSelected(
+   if (!driver_)
+     return;
+ 
+-  password_manager::metrics_util::LogFilledCredentialIsFromAndroidApp(
+-      credential.is_affiliation_based_match().value());
+   driver_->TouchToFillClosed(ShowVirtualKeyboard(false));
+   std::exchange(driver_, nullptr)
+       ->FillSuggestion(credential.username(), credential.password());
+-
+-  ukm::builders::TouchToFill_Shown(source_id_)
+-      .SetUserAction(static_cast<int64_t>(UserAction::kSelectedCredential))
+-      .Record(ukm::UkmRecorder::Get());
+ }
+ 
+ void TouchToFillController::OnManagePasswordsSelected() {
+@@ -88,10 +76,6 @@ void TouchToFillController::OnManagePasswordsSelected() {
+       ->TouchToFillClosed(ShowVirtualKeyboard(false));
+   password_client_->NavigateToManagePasswordsPage(
+       password_manager::ManagePasswordsReferrer::kTouchToFill);
+-
+-  ukm::builders::TouchToFill_Shown(source_id_)
+-      .SetUserAction(static_cast<int64_t>(UserAction::kSelectedManagePasswords))
+-      .Record(ukm::UkmRecorder::Get());
+ }
+ 
+ void TouchToFillController::OnDismiss() {
+@@ -99,10 +83,6 @@ void TouchToFillController::OnDismiss() {
+     return;
+ 
+   std::exchange(driver_, nullptr)->TouchToFillClosed(ShowVirtualKeyboard(true));
+-
+-  ukm::builders::TouchToFill_Shown(source_id_)
+-      .SetUserAction(static_cast<int64_t>(UserAction::kDismissed))
+-      .Record(ukm::UkmRecorder::Get());
+ }
+ 
+ gfx::NativeView TouchToFillController::GetNativeView() {

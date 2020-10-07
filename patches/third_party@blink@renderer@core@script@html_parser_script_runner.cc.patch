@@ -1,0 +1,26 @@
+diff --git a/third_party/blink/renderer/core/script/html_parser_script_runner.cc b/third_party/blink/renderer/core/script/html_parser_script_runner.cc
+index 9d2e2ddccee8..4749c26b625d 100644
+--- a/third_party/blink/renderer/core/script/html_parser_script_runner.cc
++++ b/third_party/blink/renderer/core/script/html_parser_script_runner.cc
+@@ -27,7 +27,6 @@
+ 
+ #include <inttypes.h>
+ #include <memory>
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/renderer/core/dom/document_parser_timing.h"
+@@ -681,13 +680,6 @@ void HTMLParserScriptRunner::RecordMetricsAtParseEnd() const {
+       UMA_HISTOGRAM_COUNTS_100(
+           "Blink.Script.ForceDeferredScripts.Mainframe.External",
+           force_deferred_external_script_count);
+-      if (document_->UkmRecorder()) {
+-        ukm::builders::PreviewsDeferAllScript(document_->UkmSourceID())
+-            .Setforce_deferred_scripts_mainframe(force_deferred_scripts_.size())
+-            .Setforce_deferred_scripts_mainframe_external(
+-                force_deferred_external_script_count)
+-            .Record(document_->UkmRecorder());
+-      }
+     } else {
+       UMA_HISTOGRAM_COUNTS_100("Blink.Script.ForceDeferredScripts.Subframe",
+                                force_deferred_scripts_.size());

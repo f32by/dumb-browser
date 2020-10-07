@@ -1,0 +1,49 @@
+diff --git a/media/mojo/services/BUILD.gn b/media/mojo/services/BUILD.gn
+index f14406826bae..30626d52e34d 100644
+--- a/media/mojo/services/BUILD.gn
++++ b/media/mojo/services/BUILD.gn
+@@ -14,8 +14,6 @@ component("services") {
+     "gpu_mojo_media_client.h",
+     "interface_factory_impl.cc",
+     "interface_factory_impl.h",
+-    "media_metrics_provider.cc",
+-    "media_metrics_provider.h",
+     "media_mojo_export.h",
+     "media_resource_shim.cc",
+     "media_resource_shim.h",
+@@ -61,10 +59,6 @@ component("services") {
+     "test_mojo_media_client.h",
+     "video_decode_perf_history.cc",
+     "video_decode_perf_history.h",
+-    "video_decode_stats_recorder.cc",
+-    "video_decode_stats_recorder.h",
+-    "watch_time_recorder.cc",
+-    "watch_time_recorder.h",
+   ]
+ 
+   defines = [ "MEDIA_MOJO_IMPLEMENTATION" ]
+@@ -96,8 +90,6 @@ component("services") {
+     "//media/learning/mojo:impl",
+     "//media/mojo/common",
+     "//media/mojo/common:mojo_shared_buffer_video_frame",
+-    "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//services/service_manager/public/mojom",
+   ]
+ 
+@@ -168,7 +160,6 @@ source_set("unit_tests") {
+     ":services",
+     "//base",
+     "//base/test:test_support",
+-    "//components/ukm:test_support",
+     "//media:test_support",
+     "//media/cdm:cdm_paths",
+     "//media/learning/common",
+@@ -178,7 +169,6 @@ source_set("unit_tests") {
+     "//media/mojo/mojom",
+     "//mojo/core/embedder",
+     "//mojo/public/interfaces/bindings/tests:test_interfaces",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//services/service_manager/public/cpp",
+     "//services/service_manager/public/cpp/test:test_support",
+     "//testing/gmock",

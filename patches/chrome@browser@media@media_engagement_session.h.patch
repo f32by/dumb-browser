@@ -1,0 +1,43 @@
+diff --git a/chrome/browser/media/media_engagement_session.h b/chrome/browser/media/media_engagement_session.h
+index 26920aec555e..7edc750e8ce0 100644
+--- a/chrome/browser/media/media_engagement_session.h
++++ b/chrome/browser/media/media_engagement_session.h
+@@ -6,7 +6,6 @@
+ #define CHROME_BROWSER_MEDIA_MEDIA_ENGAGEMENT_SESSION_H_
+ 
+ #include "base/memory/ref_counted.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "url/origin.h"
+ 
+ class MediaEngagementService;
+@@ -28,8 +27,7 @@ class MediaEngagementSession : public base::RefCounted<MediaEngagementSession> {
+ 
+   MediaEngagementSession(MediaEngagementService* service,
+                          const url::Origin& origin,
+-                         RestoreType restore_status,
+-                         ukm::SourceId ukm_source_id);
++                         RestoreType restore_status);
+ 
+   // Returns whether the session's origin is same origin with |origin|.
+   bool IsSameOriginWith(const url::Origin& origin) const;
+@@ -68,9 +66,6 @@ class MediaEngagementSession : public base::RefCounted<MediaEngagementSession> {
+   // context playback.
+   void RecordSignificantPlayback();
+ 
+-  // Record the score and change in score to UKM.
+-  void RecordUkmMetrics();
+-
+   // Returns whether the session has a pending playback that needs to be
+   // committed into the database.
+   bool HasPendingPlaybackToCommit() const;
+@@ -88,10 +83,6 @@ class MediaEngagementSession : public base::RefCounted<MediaEngagementSession> {
+   // Origin associated with the session.
+   url::Origin origin_;
+ 
+-  // UKM source ID associated with the session. It will be used by all the
+-  // session clients.
+-  ukm::SourceId ukm_source_id_;
+-
+   // Delta counts are counts to be added to the score while total counts are
+   // the sum of all the changes that happened during the session lifetime. The
+   // total count is recorded as delta with regards to UKM.

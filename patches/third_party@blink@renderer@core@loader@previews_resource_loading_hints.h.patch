@@ -1,0 +1,49 @@
+diff --git a/third_party/blink/renderer/core/loader/previews_resource_loading_hints.h b/third_party/blink/renderer/core/loader/previews_resource_loading_hints.h
+index ecefad6ce830..51f2d47add4c 100644
+--- a/third_party/blink/renderer/core/loader/previews_resource_loading_hints.h
++++ b/third_party/blink/renderer/core/loader/previews_resource_loading_hints.h
+@@ -15,10 +15,6 @@
+ #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+ #include "third_party/blink/renderer/platform/wtf/vector.h"
+ 
+-namespace ukm {
+-class UkmRecorder;
+-}
+-
+ namespace blink {
+ 
+ class ExecutionContext;
+@@ -31,7 +27,6 @@ class CORE_EXPORT PreviewsResourceLoadingHints final
+  public:
+   static PreviewsResourceLoadingHints* Create(
+       ExecutionContext& execution_context,
+-      int64_t ukm_source_id,
+       const WebVector<WebString>& subresource_patterns_to_block);
+ 
+   static PreviewsResourceLoadingHints* CreateFromLoadingHintsProvider(
+@@ -40,7 +35,6 @@ class CORE_EXPORT PreviewsResourceLoadingHints final
+ 
+   PreviewsResourceLoadingHints(
+       ExecutionContext* execution_context,
+-      int64_t ukm_source_id,
+       const WebVector<WebString>& subresource_patterns_to_block);
+   ~PreviewsResourceLoadingHints();
+ 
+@@ -53,17 +47,11 @@ class CORE_EXPORT PreviewsResourceLoadingHints final
+ 
+   virtual void Trace(Visitor*) const;
+ 
+-  // Records UKM on the utilization of patterns to block during the document
+-  // load. This is expected to be called once after the document finishes
+-  // loading.
+-  void RecordUKM(ukm::UkmRecorder* ukm_recorder) const;
+-
+  private:
+   // Reports to console when loading of |resource_url| is blocked.
+   void ReportBlockedLoading(const KURL& resource_url) const;
+ 
+   Member<ExecutionContext> execution_context_;
+-  const int64_t ukm_source_id_;
+ 
+   // |subresource_patterns_to_block_| is a collection of subresource patterns
+   // for resources whose loading should be blocked. Each pattern is a

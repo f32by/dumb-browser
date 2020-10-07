@@ -1,0 +1,23 @@
+diff --git a/components/viz/service/main/viz_main_impl.h b/components/viz/service/main/viz_main_impl.h
+index a0ab8317e863..78c7675cf3de 100644
+--- a/components/viz/service/main/viz_main_impl.h
++++ b/components/viz/service/main/viz_main_impl.h
+@@ -41,10 +41,6 @@ class SyncPointManager;
+ class SharedImageManager;
+ }  // namespace gpu
+ 
+-namespace ukm {
+-class MojoUkmRecorder;
+-}
+-
+ namespace viz {
+ #if defined(OS_WIN)
+ class InfoCollectionGpuServiceImpl;
+@@ -93,7 +89,6 @@ class VizMainImpl : public mojom::VizMain,
+     gpu::SharedImageManager* shared_image_manager = nullptr;
+     base::WaitableEvent* shutdown_event = nullptr;
+     scoped_refptr<base::SingleThreadTaskRunner> io_thread_task_runner;
+-    std::unique_ptr<ukm::MojoUkmRecorder> ukm_recorder;
+     VizCompositorThreadRunner* viz_compositor_thread_runner = nullptr;
+ 
+    private:

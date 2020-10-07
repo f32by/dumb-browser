@@ -1,0 +1,236 @@
+diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
+index 3c9277ec1df9..7d8dbdd752e9 100644
+--- a/third_party/blink/renderer/core/dom/document.cc
++++ b/third_party/blink/renderer/core/dom/document.cc
+@@ -49,10 +49,6 @@
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "mojo/public/mojom/base/text_direction.mojom-blink.h"
+ #include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+-#include "services/metrics/public/mojom/ukm_interface.mojom-blink.h"
+ #include "services/network/public/mojom/ip_address_space.mojom-blink.h"
+ #include "services/network/public/mojom/trust_tokens.mojom-blink.h"
+ #include "services/network/public/mojom/web_sandbox_flags.mojom-blink.h"
+@@ -66,7 +62,6 @@
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
+ #include "third_party/blink/public/mojom/insecure_input/insecure_input_service.mojom-blink.h"
+-#include "third_party/blink/public/mojom/ukm/ukm.mojom-blink.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/public/platform/web_battery_savings.h"
+@@ -308,7 +303,6 @@
+ #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
+ #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
+ #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
+-#include "third_party/blink/renderer/platform/fonts/font_matching_metrics.h"
+ #include "third_party/blink/renderer/platform/geometry/length_functions.h"
+ #include "third_party/blink/renderer/platform/heap/heap.h"
+ #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
+@@ -440,11 +434,6 @@ class DocumentOutliveTimeReporter : public BlinkGCObserver {
+       else
+         NOTREACHED();
+     }
+-
+-    if (outlive_time_count == 5 || outlive_time_count == 10 ||
+-        outlive_time_count == 20 || outlive_time_count == 50) {
+-      document_->RecordUkmOutliveTimeAfterShutdown(outlive_time_count);
+-    }
+   }
+ 
+  private:
+@@ -786,8 +775,6 @@ Document::Document(const DocumentInit& initializer,
+               : kAllowAsynchronousParsing),
+       node_count_(0),
+       logged_field_edit_(false),
+-      ukm_source_id_(ukm::UkmRecorder::GetNewSourceID()),
+-      needs_to_record_ukm_outlive_time_(false),
+       viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
+       is_for_external_handler_(initializer.IsForExternalHandler()),
+       fragment_directive_(MakeGarbageCollected<FragmentDirective>()),
+@@ -2714,12 +2701,6 @@ void Document::MarkHasFindInPageRequest() {
+   if (had_find_in_page_request_ || !IsInMainFrame())
+     return;
+ 
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  ukm::builders::Blink_FindInPage(UkmSourceID())
+-      .SetDidSearch(true)
+-      .Record(recorder);
+   had_find_in_page_request_ = true;
+ }
+ 
+@@ -2730,13 +2711,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
+   if (had_find_in_page_render_subtree_active_match_ || !IsInMainFrame())
+     return;
+ 
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  // TODO(vmpstr): Rename UKM values if possible.
+-  ukm::builders::Blink_FindInPage(UkmSourceID())
+-      .SetDidHaveRenderSubtreeMatch(true)
+-      .Record(recorder);
+   had_find_in_page_render_subtree_active_match_ = true;
+ }
+ 
+@@ -2748,12 +2722,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
+       !IsInMainFrame())
+     return;
+ 
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  ukm::builders::Blink_FindInPage(UkmSourceID())
+-      .SetBeforematchExpandedHiddenMatchable(true)
+-      .Record(recorder);
+   had_find_in_page_beforematch_expanded_hidden_matchable_ = true;
+ }
+ 
+@@ -3097,8 +3065,6 @@ void Document::Shutdown() {
+   if (num_canvases_ > 0)
+     UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
+ 
+-  GetFontMatchingMetrics()->PublishAllMetrics();
+-
+   GetViewportData().Shutdown();
+ 
+   View()->Dispose();
+@@ -3209,18 +3175,6 @@ void Document::Shutdown() {
+   lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
+   DCHECK(!View()->IsAttached());
+ 
+-  needs_to_record_ukm_outlive_time_ = IsInMainFrame();
+-  if (needs_to_record_ukm_outlive_time_) {
+-    // Ensure |ukm_recorder_| and |ukm_source_id_|.
+-    UkmRecorder();
+-  }
+-
+-  // Don't create a |ukm_recorder_| and |ukm_source_id_| unless necessary.
+-  if (IdentifiabilityStudySettings::Get()->IsActive()) {
+-    IdentifiabilitySampleCollector::Get()->FlushSource(UkmRecorder(),
+-                                                       UkmSourceID());
+-  }
+-
+   mime_handler_view_before_unload_event_listener_ = nullptr;
+ 
+   resource_coordinator_.reset();
+@@ -3937,17 +3891,6 @@ bool Document::CheckCompletedInternal() {
+     if (!GetFrame())
+       return false;
+ 
+-    // Send the source ID of the document to the browser.
+-    if (GetFrame()->Client()->GetRemoteNavigationAssociatedInterfaces()) {
+-      mojo::AssociatedRemote<mojom::blink::UkmSourceIdFrameHost> ukm_binding;
+-      GetFrame()
+-          ->Client()
+-          ->GetRemoteNavigationAssociatedInterfaces()
+-          ->GetInterface(&ukm_binding);
+-      DCHECK(ukm_binding.is_bound());
+-      ukm_binding->SetDocumentSourceId(ukm_source_id_);
+-    }
+-
+     GetFrame()->GetFrameScheduler()->RegisterStickyFeature(
+         SchedulingPolicy::Feature::kDocumentLoaded,
+         {SchedulingPolicy::RecordMetricsForBackForwardCache()});
+@@ -3955,15 +3898,6 @@ bool Document::CheckCompletedInternal() {
+ 
+     AnchorElementMetrics::NotifyOnLoad(*this);
+     DetectJavascriptFrameworksOnLoad(*this);
+-
+-    // If this is a document associated with a resource loading hints based
+-    // preview, then record the resource loading hints UKM now that the load is
+-    // finished.
+-    PreviewsResourceLoadingHints* hints =
+-        Loader()->GetPreviewsResourceLoadingHints();
+-    if (hints) {
+-      hints->RecordUKM(UkmRecorder());
+-    }
+   }
+ 
+   if (auto* view = View()) {
+@@ -4422,11 +4356,6 @@ void Document::SetURL(const KURL& url) {
+   UpdateBaseURL();
+   GetContextFeatures().UrlDidChange(this);
+ 
+-  // TODO(crbug/795354): Move handling of URL recording out of the renderer.
+-  // URL must only be recorded from the main frame.
+-  if (ukm_recorder_ && IsInMainFrame())
+-    ukm_recorder_->UpdateSourceURL(ukm_source_id_, url_);
+-
+   if (GetFrame()) {
+     if (FrameScheduler* frame_scheduler = GetFrame()->GetFrameScheduler())
+       frame_scheduler->TraceUrlChange(url_.GetString());
+@@ -6795,14 +6724,6 @@ void Document::RecordAsyncScriptCount() {
+   // Only record async script count for mainframe documents, as per UKM policy.
+   if (!IsInMainFrame())
+     return;
+-
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  ukm::builders::Blink_Script_AsyncScripts(UkmSourceID())
+-      .SetAsyncScriptCount(
+-          ukm::GetExponentialBucketMin(async_script_count_, 1.3))
+-      .Record(recorder);
+ }
+ 
+ void Document::MaybeExecuteDelayedAsyncScripts() {
+@@ -7153,35 +7074,6 @@ bool Document::AllowedToUseDynamicMarkUpInsertion(
+   return false;
+ }
+ 
+-ukm::UkmRecorder* Document::UkmRecorder() {
+-  if (ukm_recorder_)
+-    return ukm_recorder_.get();
+-
+-  mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
+-  Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
+-      recorder.InitWithNewPipeAndPassReceiver());
+-  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
+-
+-  // TODO(crbug/795354): Move handling of URL recording out of the renderer.
+-  // URL must only be recorded from the main frame.
+-  if (IsInMainFrame())
+-    ukm_recorder_->UpdateSourceURL(ukm_source_id_, url_);
+-  return ukm_recorder_.get();
+-}
+-
+-ukm::SourceId Document::UkmSourceID() const {
+-  return ukm_source_id_;
+-}
+-
+-FontMatchingMetrics* Document::GetFontMatchingMetrics() {
+-  if (font_matching_metrics_)
+-    return font_matching_metrics_.get();
+-  font_matching_metrics_ = std::make_unique<FontMatchingMetrics>(
+-      IsInMainFrame(), UkmRecorder(), UkmSourceID(),
+-      GetTaskRunner(TaskType::kInternalDefault));
+-  return font_matching_metrics_.get();
+-}
+-
+ bool Document::AllowInlineEventHandler(Node* node,
+                                        EventListener* listener,
+                                        const String& context_url,
+@@ -8219,18 +8111,6 @@ void Document::Trace(Visitor* visitor) const {
+   ContainerNode::Trace(visitor);
+ }
+ 
+-void Document::RecordUkmOutliveTimeAfterShutdown(int outlive_time_count) {
+-  if (!needs_to_record_ukm_outlive_time_)
+-    return;
+-
+-  DCHECK(ukm_recorder_);
+-  DCHECK(ukm_source_id_ != ukm::kInvalidSourceId);
+-
+-  ukm::builders::Document_OutliveTimeAfterShutdown(ukm_source_id_)
+-      .SetGCCount(outlive_time_count)
+-      .Record(ukm_recorder_.get());
+-}
+-
+ bool Document::CurrentFrameHadRAF() const {
+   return scripted_animation_controller_->CurrentFrameHadRAF();
+ }

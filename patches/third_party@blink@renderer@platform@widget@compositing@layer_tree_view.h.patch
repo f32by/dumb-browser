@@ -1,0 +1,34 @@
+diff --git a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h
+index 25eedd050b6e..eb6298421ef9 100644
+--- a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h
++++ b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h
+@@ -29,7 +29,6 @@ class LayerTreeHost;
+ class LayerTreeSettings;
+ class RenderFrameMetadataObserver;
+ class TaskGraphRunner;
+-class UkmRecorderFactory;
+ }  // namespace cc
+ 
+ namespace blink {
+@@ -54,10 +53,7 @@ class PLATFORM_EXPORT LayerTreeView
+                 scheduler::WebThreadScheduler* scheduler);
+   ~LayerTreeView() override;
+ 
+-  // The |ukm_recorder_factory| may be null to disable recording (in tests
+-  // only).
+-  void Initialize(const cc::LayerTreeSettings& settings,
+-                  std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory);
++  void Initialize(const cc::LayerTreeSettings& settings);
+ 
+   // Drops any references back to the delegate in preparation for being
+   // destroyed.
+@@ -104,8 +100,7 @@ class PLATFORM_EXPORT LayerTreeView
+       override;
+   void NotifyThroughputTrackerResults(
+       cc::CustomTrackerResults results) override;
+-  void SubmitThroughputData(ukm::SourceId source_id,
+-                            int aggregated_percent,
++  void SubmitThroughputData(int aggregated_percent,
+                             int impl_percent,
+                             base::Optional<int> main_percent) override;
+   void DidObserveFirstScrollDelay(

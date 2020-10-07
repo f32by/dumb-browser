@@ -1,0 +1,69 @@
+diff --git a/chrome/browser/media/media_engagement_session.cc b/chrome/browser/media/media_engagement_session.cc
+index 32fa3777308e..7c19723c7568 100644
+--- a/chrome/browser/media/media_engagement_session.cc
++++ b/chrome/browser/media/media_engagement_session.cc
+@@ -7,17 +7,12 @@
+ #include "chrome/browser/media/media_engagement_score.h"
+ #include "chrome/browser/media/media_engagement_service.h"
+ #include "media/base/media_switches.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_entry_builder.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ MediaEngagementSession::MediaEngagementSession(MediaEngagementService* service,
+                                                const url::Origin& origin,
+-                                               RestoreType restore_status,
+-                                               ukm::SourceId ukm_source_id)
++                                               RestoreType restore_status)
+     : service_(service),
+       origin_(origin),
+-      ukm_source_id_(ukm_source_id),
+       restore_status_(restore_status) {
+   if (restore_status_ == RestoreType::kRestored)
+     pending_data_to_commit_.visit = false;
+@@ -46,13 +41,6 @@ void MediaEngagementSession::RecordSignificantAudioContextPlayback() {
+ }
+ 
+ void MediaEngagementSession::RecordShortPlaybackIgnored(int length_msec) {
+-  ukm::UkmRecorder* ukm_recorder = ukm::UkmRecorder::Get();
+-  if (!ukm_recorder)
+-    return;
+-
+-  ukm::builders::Media_Engagement_ShortPlaybackIgnored(ukm_source_id_)
+-      .SetLength(length_msec)
+-      .Record(ukm_recorder);
+ }
+ 
+ void MediaEngagementSession::RegisterAudiblePlayers(
+@@ -93,8 +81,6 @@ MediaEngagementSession::~MediaEngagementSession() {
+ 
+   if (HasPendingDataToCommit())
+     CommitPendingData();
+-
+-  RecordUkmMetrics();
+ }
+ 
+ void MediaEngagementSession::RecordSignificantPlayback() {
+@@ -112,22 +98,6 @@ void MediaEngagementSession::RecordSignificantPlayback() {
+     pending_data_to_commit_.visit = true;
+ }
+ 
+-void MediaEngagementSession::RecordUkmMetrics() {
+-  ukm::UkmRecorder* ukm_recorder = ukm::UkmRecorder::Get();
+-  if (!ukm_recorder)
+-    return;
+-
+-  MediaEngagementScore score = service_->CreateEngagementScore(origin_);
+-  ukm::builders::Media_Engagement_SessionFinished(ukm_source_id_)
+-      .SetPlaybacks_Total(score.media_playbacks())
+-      .SetVisits_Total(score.visits())
+-      .SetEngagement_Score(round(score.actual_score() * 100))
+-      .SetEngagement_IsHigh(score.high_score())
+-      .SetPlayer_Audible_Delta(audible_players_total_)
+-      .SetPlayer_Significant_Delta(significant_players_total_)
+-      .Record(ukm_recorder);
+-}
+-
+ bool MediaEngagementSession::HasPendingPlaybackToCommit() const {
+   return pending_data_to_commit_.audio_context_playback ||
+          pending_data_to_commit_.media_element_playback;

@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/web_applications/web_app_provider_factory.cc b/chrome/browser/web_applications/web_app_provider_factory.cc
+index 6da1a5a02e16..daf6535f5598 100644
+--- a/chrome/browser/web_applications/web_app_provider_factory.cc
++++ b/chrome/browser/web_applications/web_app_provider_factory.cc
+@@ -4,7 +4,6 @@
+ 
+ #include "chrome/browser/web_applications/web_app_provider_factory.h"
+ 
+-#include "chrome/browser/metrics/ukm_background_recorder_service.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/sync/model_type_store_service_factory.h"
+ #include "chrome/browser/web_applications/components/web_app_utils.h"
+@@ -35,7 +34,6 @@ WebAppProviderFactory::WebAppProviderFactory()
+   DependsOn(
+       extensions::ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
+   DependsOn(ModelTypeStoreServiceFactory::GetInstance());
+-  DependsOn(ukm::UkmBackgroundRecorderFactory::GetInstance());
+ }
+ 
+ WebAppProviderFactory::~WebAppProviderFactory() {

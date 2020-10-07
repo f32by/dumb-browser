@@ -1,0 +1,18 @@
+diff --git a/content/browser/renderer_host/compositor_impl_android.h b/content/browser/renderer_host/compositor_impl_android.h
+index dc76a7cd1258..46bbda76d7eb 100644
+--- a/content/browser/renderer_host/compositor_impl_android.h
++++ b/content/browser/renderer_host/compositor_impl_android.h
+@@ -143,12 +143,9 @@ class CONTENT_EXPORT CompositorImpl
+   void RecordEndOfFrameMetrics(
+       base::TimeTicks frame_begin_time,
+       cc::ActiveFrameSequenceTrackers trackers) override {}
+-  std::unique_ptr<cc::BeginMainFrameMetrics> GetBeginMainFrameMetrics()
+-      override;
+   void NotifyThroughputTrackerResults(
+       cc::CustomTrackerResults results) override {}
+-  void SubmitThroughputData(ukm::SourceId source_id,
+-                            int aggregated_percent,
++  void SubmitThroughputData(int aggregated_percent,
+                             int impl_percent,
+                             base::Optional<int> main_percent) override {}
+   void DidObserveFirstScrollDelay(

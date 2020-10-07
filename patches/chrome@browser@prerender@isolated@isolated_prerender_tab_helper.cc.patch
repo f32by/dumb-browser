@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc b/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc
+index 69ea90a3249f..c1c57fd99d2c 100644
+--- a/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc
++++ b/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc
+@@ -89,17 +89,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
+   return end - start;
+ }
+ 
+-void InformPLMOfLikelyPrefetching(content::WebContents* web_contents) {
+-  page_load_metrics::MetricsWebContentsObserver* metrics_web_contents_observer =
+-      page_load_metrics::MetricsWebContentsObserver::FromWebContents(
+-          web_contents);
+-  if (!metrics_web_contents_observer)
+-    return;
+-
+-  metrics_web_contents_observer->BroadcastEventToObservers(
+-      IsolatedPrerenderTabHelper::PrefetchingLikelyEventKey());
+-}
+-
+ void OnGotCookieList(
+     const GURL& url,
+     IsolatedPrerenderTabHelper::OnEligibilityResultCallback result_callback,
+@@ -988,10 +977,6 @@ void IsolatedPrerenderTabHelper::OnPredictionUpdated(
+     return;
+   }
+ 
+-  // It's very likely we'll prefetch something at this point, so inform PLM to
+-  // start tracking metrics.
+-  InformPLMOfLikelyPrefetching(web_contents());
+-
+   page_->srp_metrics_->predicted_urls_count_ +=
+       prediction.value().sorted_predicted_urls().size();
+ 

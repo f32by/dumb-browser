@@ -1,0 +1,47 @@
+diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.h b/third_party/blink/renderer/core/workers/worker_global_scope.h
+index d4b5f097d1d2..a5d007bfea72 100644
+--- a/third_party/blink/renderer/core/workers/worker_global_scope.h
++++ b/third_party/blink/renderer/core/workers/worker_global_scope.h
+@@ -118,7 +118,6 @@ class CORE_EXPORT WorkerGlobalScope
+   const UserAgentMetadata& GetUserAgentMetadata() const { return ua_metadata_; }
+   HttpsState GetHttpsState() const override { return https_state_; }
+   scheduler::WorkerScheduler* GetScheduler() final;
+-  ukm::UkmRecorder* UkmRecorder() final;
+ 
+   void AddConsoleMessageImpl(ConsoleMessage*, bool discard_duplicates) final;
+   BrowserInterfaceBrokerProxy& GetBrowserInterfaceBroker() final;
+@@ -211,8 +210,6 @@ class CORE_EXPORT WorkerGlobalScope
+   std::unique_ptr<WorkerMainScriptLoadParameters>
+   TakeWorkerMainScriptLoadingParametersForModules();
+ 
+-  ukm::SourceId UkmSourceID() const override { return ukm_source_id_; }
+-
+   // Returns the token uniquely identifying this worker. The token type will
+   // match the actual worker type.
+   virtual WorkerToken GetWorkerToken() const = 0;
+@@ -220,8 +217,7 @@ class CORE_EXPORT WorkerGlobalScope
+  protected:
+   WorkerGlobalScope(std::unique_ptr<GlobalScopeCreationParams>,
+                     WorkerThread*,
+-                    base::TimeTicks time_origin,
+-                    ukm::SourceId);
++                    base::TimeTicks time_origin);
+ 
+   // ExecutionContext
+   void ExceptionThrown(ErrorEvent*) override;
+@@ -302,15 +298,11 @@ class CORE_EXPORT WorkerGlobalScope
+ 
+   HttpsState https_state_;
+ 
+-  std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
+-
+   // |worker_main_script_load_params_for_modules_| is used to load a root module
+   // script for dedicated workers (when PlzDedicatedWorker is enabled) and
+   // shared workers.
+   std::unique_ptr<WorkerMainScriptLoadParameters>
+       worker_main_script_load_params_for_modules_;
+-
+-  const ukm::SourceId ukm_source_id_;
+ };
+ 
+ template <>

@@ -1,0 +1,44 @@
+diff --git a/components/download/internal/common/download_response_handler.cc b/components/download/internal/common/download_response_handler.cc
+index a14cb9d18088..f4dde1e1223d 100644
+--- a/components/download/internal/common/download_response_handler.cc
++++ b/components/download/internal/common/download_response_handler.cc
+@@ -7,7 +7,6 @@
+ #include <memory>
+ 
+ #include "base/metrics/histogram_functions.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_url_parameters.h"
+ #include "components/download/public/common/download_utils.h"
+ #include "net/http/http_status_code.h"
+@@ -58,8 +57,7 @@ DownloadResponseHandler::DownloadResponseHandler(
+     const DownloadUrlParameters::RequestHeadersType& request_headers,
+     const std::string& request_origin,
+     DownloadSource download_source,
+-    std::vector<GURL> url_chain,
+-    bool is_background_mode)
++    std::vector<GURL> url_chain)
+     : delegate_(delegate),
+       started_(false),
+       save_info_(std::move(save_info)),
+@@ -77,11 +75,7 @@ DownloadResponseHandler::DownloadResponseHandler(
+       has_strong_validators_(false),
+       is_partial_request_(save_info_->offset > 0),
+       completed_(false),
+-      abort_reason_(DOWNLOAD_INTERRUPT_REASON_NONE),
+-      is_background_mode_(is_background_mode) {
+-  if (!is_parallel_request) {
+-    RecordDownloadCountWithSource(UNTHROTTLED_COUNT, download_source);
+-  }
++      abort_reason_(DOWNLOAD_INTERRUPT_REASON_NONE) {
+   if (resource_request->request_initiator.has_value())
+     request_initiator_ = resource_request->request_initiator;
+ }
+@@ -96,8 +90,6 @@ void DownloadResponseHandler::OnReceiveResponse(
+   // TODO(xingliu): Do not use http cache.
+   if (head->headers) {
+     has_strong_validators_ = head->headers->HasStrongValidators();
+-    RecordDownloadHttpResponseCode(head->headers->response_code(),
+-                                   is_background_mode_);
+   }
+ 
+   // Blink verifies that the requester of this download is allowed to set a

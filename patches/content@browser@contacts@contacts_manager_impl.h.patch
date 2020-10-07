@@ -1,0 +1,22 @@
+diff --git a/content/browser/contacts/contacts_manager_impl.h b/content/browser/contacts/contacts_manager_impl.h
+index 39f7185e7544..dbdd606aafc7 100644
+--- a/content/browser/contacts/contacts_manager_impl.h
++++ b/content/browser/contacts/contacts_manager_impl.h
+@@ -7,7 +7,6 @@
+ 
+ #include "content/browser/contacts/contacts_provider.h"
+ #include "content/common/content_export.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/mojom/contacts/contacts_manager.mojom.h"
+ 
+ namespace content {
+@@ -35,9 +34,6 @@ class CONTENT_EXPORT ContactsManagerImpl
+  private:
+   std::unique_ptr<ContactsProvider> contacts_provider_;
+ 
+-  // The source id to use when reporting back UKM statistics.
+-  ukm::SourceId source_id_ = ukm::kInvalidSourceId;
+-
+   DISALLOW_COPY_AND_ASSIGN(ContactsManagerImpl);
+ };
+ 

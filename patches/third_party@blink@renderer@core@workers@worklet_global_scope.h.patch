@@ -1,0 +1,21 @@
+diff --git a/third_party/blink/renderer/core/workers/worklet_global_scope.h b/third_party/blink/renderer/core/workers/worklet_global_scope.h
+index ec097be5fa3b..ddedebc6d635 100644
+--- a/third_party/blink/renderer/core/workers/worklet_global_scope.h
++++ b/third_party/blink/renderer/core/workers/worklet_global_scope.h
+@@ -64,7 +64,6 @@ class CORE_EXPORT WorkletGlobalScope
+   CoreProbeSink* GetProbeSink() final;
+   scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner(TaskType) final;
+   FrameOrWorkerScheduler* GetScheduler() final;
+-  ukm::UkmRecorder* UkmRecorder() final;
+ 
+   // WorkerOrWorkletGlobalScope
+   void Dispose() override;
+@@ -182,8 +181,6 @@ class CORE_EXPORT WorkletGlobalScope
+ 
+   // The token identifying the LocalFrame that caused this scope to be created.
+   const LocalFrameToken frame_token_;
+-
+-  std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
+ };
+ 
+ template <>

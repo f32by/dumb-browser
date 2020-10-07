@@ -1,16 +1,19 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.cc b/chrome/browser/metrics/chrome_metrics_service_client.cc
-index 8436c832d66a..866e709534ad 100644
+index 8436c832d66a..99c84ffa00f7 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
-@@ -53,7 +53,6 @@
- #include "chrome/browser/privacy_budget/privacy_budget_prefs.h"
- #include "chrome/browser/privacy_budget/privacy_budget_ukm_entry_filter.h"
+@@ -50,10 +50,7 @@
+ #include "chrome/browser/metrics/metrics_reporting_state.h"
+ #include "chrome/browser/metrics/network_quality_estimator_provider_impl.h"
+ #include "chrome/browser/metrics/sampling_metrics_provider.h"
+-#include "chrome/browser/privacy_budget/privacy_budget_prefs.h"
+-#include "chrome/browser/privacy_budget/privacy_budget_ukm_entry_filter.h"
  #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_metrics_provider.h"
  #include "chrome/browser/sync/device_info_sync_service_factory.h"
  #include "chrome/browser/sync/profile_sync_service_factory.h"
  #include "chrome/browser/tracing/background_tracing_metrics_provider.h"
-@@ -65,7 +64,6 @@
+@@ -65,7 +62,6 @@
  #include "chrome/common/chrome_paths_internal.h"
  #include "chrome/common/chrome_switches.h"
  #include "chrome/common/pref_names.h"
@@ -18,7 +21,7 @@ index 8436c832d66a..866e709534ad 100644
  #include "components/history/core/browser/history_service.h"
  #include "components/metrics/call_stack_profile_metrics_provider.h"
  #include "components/metrics/component_metrics_provider.h"
-@@ -87,7 +85,6 @@
+@@ -87,7 +83,6 @@
  #include "components/metrics/net/cellular_logic_helper.h"
  #include "components/metrics/net/net_metrics_log_uploader.h"
  #include "components/metrics/net/network_metrics_provider.h"
@@ -26,7 +29,16 @@ index 8436c832d66a..866e709534ad 100644
  #include "components/metrics/stability_metrics_helper.h"
  #include "components/metrics/ui/screen_info_metrics_provider.h"
  #include "components/metrics/url_constants.h"
-@@ -166,9 +163,6 @@
+@@ -99,8 +94,6 @@
+ #include "components/sync/driver/passphrase_type_metrics_provider.h"
+ #include "components/sync/driver/sync_service.h"
+ #include "components/sync_device_info/device_count_metrics_provider.h"
+-#include "components/ukm/field_trials_provider_helper.h"
+-#include "components/ukm/ukm_service.h"
+ #include "components/version_info/version_info.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -166,9 +159,6 @@
  #include "content/public/browser/system_connector.h"
  #endif
  
@@ -36,7 +48,7 @@ index 8436c832d66a..866e709534ad 100644
  
  #if !defined(OS_CHROMEOS)
  #include "chrome/browser/metrics/accessibility_metrics_provider.h"
-@@ -186,25 +180,11 @@
+@@ -186,25 +176,11 @@
  
  namespace {
  
@@ -62,7 +74,7 @@ index 8436c832d66a..866e709534ad 100644
  // A serialized environment (SystemProfileProto) that was registered with the
  // crash reporter, or the empty string if no environment was registered yet.
  // Ownership must be maintained after registration as the crash reporter does
-@@ -213,145 +193,6 @@ const uint32_t kSystemProfileMinidumpStreamType = 0x4B6B0003;
+@@ -213,145 +189,6 @@ const uint32_t kSystemProfileMinidumpStreamType = 0x4B6B0003;
  base::LazyInstance<std::string>::Leaky g_environment_for_crash_reporter;
  #endif  // defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
  
@@ -208,7 +220,7 @@ index 8436c832d66a..866e709534ad 100644
  ChromeMetricsServiceClient::IsProcessRunningFunction g_is_process_running =
      nullptr;
  
-@@ -419,13 +260,6 @@ class ProfileClientImpl
+@@ -419,13 +256,6 @@ class ProfileClientImpl
    DISALLOW_COPY_AND_ASSIGN(ProfileClientImpl);
  };
  
@@ -222,26 +234,35 @@ index 8436c832d66a..866e709534ad 100644
  }  // namespace
  
  ChromeMetricsServiceClient::ChromeMetricsServiceClient(
-@@ -461,10 +295,6 @@ void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
+@@ -457,13 +287,7 @@ std::unique_ptr<ChromeMetricsServiceClient> ChromeMetricsServiceClient::Create(
+ // static
+ void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
+   metrics::MetricsService::RegisterPrefs(registry);
+-  ukm::UkmService::RegisterPrefs(registry);
    metrics::StabilityMetricsHelper::RegisterPrefs(registry);
-   prefs::RegisterPrivacyBudgetPrefs(registry);
- 
+-  prefs::RegisterPrivacyBudgetPrefs(registry);
+-
 -  RegisterFileMetricsPreferences(registry);
 -
 -  metrics::RegisterMetricsReportingStatePrefs(registry);
--
+ 
  #if BUILDFLAG(ENABLE_PLUGINS)
    PluginMetricsProvider::RegisterPrefs(registry);
- #endif  // BUILDFLAG(ENABLE_PLUGINS)
-@@ -480,7 +310,6 @@ ukm::UkmService* ChromeMetricsServiceClient::GetUkmService() {
+@@ -474,13 +298,8 @@ metrics::MetricsService* ChromeMetricsServiceClient::GetMetricsService() {
+   return metrics_service_.get();
+ }
  
+-ukm::UkmService* ChromeMetricsServiceClient::GetUkmService() {
+-  return ukm_service_.get();
+-}
+-
  void ChromeMetricsServiceClient::SetMetricsClientId(
      const std::string& client_id) {
 -  crash_keys::SetMetricsClientIdFromGUID(client_id);
  }
  
  int32_t ChromeMetricsServiceClient::GetProduct() {
-@@ -520,11 +349,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
+@@ -520,11 +339,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
  
    g_environment_for_crash_reporter.Get() = std::move(*environment);
  
@@ -253,7 +274,7 @@ index 8436c832d66a..866e709534ad 100644
  #endif  // OS_WIN || OS_MAC || OS_ANDROID
  }
  
-@@ -577,25 +401,7 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -577,25 +391,7 @@ void ChromeMetricsServiceClient::Initialize() {
    metrics_service_ = std::make_unique<metrics::MetricsService>(
        metrics_state_manager_, this, local_state);
  
@@ -280,7 +301,7 @@ index 8436c832d66a..866e709534ad 100644
  
  #if defined(OS_CHROMEOS)
    metrics::structured::Recorder::GetInstance()->SetUiTaskRunner(
-@@ -603,176 +409,6 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -603,202 +399,6 @@ void ChromeMetricsServiceClient::Initialize() {
  #endif
  }
  
@@ -454,6 +475,87 @@ index 8436c832d66a..866e709534ad 100644
 -#endif
 -}
 -
- void ChromeMetricsServiceClient::RegisterUKMProviders() {
-   // Note: if you make changes here please also consider whether they should go
-   // in AndroidMetricsServiceClient::CreateUkmService().
+-void ChromeMetricsServiceClient::RegisterUKMProviders() {
+-  // Note: if you make changes here please also consider whether they should go
+-  // in AndroidMetricsServiceClient::CreateUkmService().
+-  ukm_service_->RegisterMetricsProvider(
+-      std::make_unique<metrics::NetworkMetricsProvider>(
+-          content::CreateNetworkConnectionTrackerAsyncGetter(),
+-          std::make_unique<metrics::NetworkQualityEstimatorProviderImpl>()));
+-
+-#if defined(OS_CHROMEOS)
+-  ukm_service_->RegisterMetricsProvider(
+-      std::make_unique<ChromeOSMetricsProvider>(
+-          metrics::MetricsLogUploader::UKM));
+-#endif  // !defined(OS_CHROMEOS)
+-
+-  ukm_service_->RegisterMetricsProvider(
+-      std::make_unique<metrics::GPUMetricsProvider>());
+-
+-  ukm_service_->RegisterMetricsProvider(
+-      std::make_unique<metrics::CPUMetricsProvider>());
+-
+-  ukm_service_->RegisterMetricsProvider(
+-      std::make_unique<metrics::ScreenInfoMetricsProvider>());
+-
+-  ukm_service_->RegisterMetricsProvider(ukm::CreateFieldTrialsProviderForUkm());
+-}
+-
+ void ChromeMetricsServiceClient::CollectFinalHistograms() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+ 
+@@ -969,13 +569,10 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
+     return false;
+   }
+ 
+-  ObserveServiceForDeletions(history_service);
+-
+   syncer::SyncService* sync = ProfileSyncServiceFactory::GetForProfile(profile);
+   if (!sync) {
+     return false;
+   }
+-  StartObserving(sync, profile->GetPrefs());
+   return true;
+ }
+ 
+@@ -1018,25 +615,6 @@ bool ChromeMetricsServiceClient::IsUMACellularUploadLogicEnabled() {
+   return metrics::ShouldUseCellularUploadInterval();
+ }
+ 
+-void ChromeMetricsServiceClient::OnHistoryDeleted() {
+-  if (ukm_service_)
+-    ukm_service_->Purge();
+-}
+-
+-void ChromeMetricsServiceClient::OnUkmAllowedStateChanged(bool must_purge) {
+-  if (!ukm_service_)
+-    return;
+-  if (must_purge) {
+-    ukm_service_->Purge();
+-    ukm_service_->ResetClientState(ukm::ResetReason::kOnUkmAllowedStateChanged);
+-  } else if (!IsUkmAllowedWithExtensionsForAllProfiles()) {
+-    ukm_service_->PurgeExtensions();
+-  }
+-
+-  // Signal service manager to enable/disable UKM based on new state.
+-  UpdateRunningServices();
+-}
+-
+ // static
+ bool ChromeMetricsServiceClient::IsWebstoreExtension(base::StringPiece id) {
+ #if BUILDFLAG(ENABLE_EXTENSIONS)
+@@ -1091,14 +669,6 @@ void ChromeMetricsServiceClient::SetIsProcessRunningForTesting(
+   g_is_process_running = func;
+ }
+ 
+-bool ChromeMetricsServiceClient::IsUkmAllowedForAllProfiles() {
+-  return UkmConsentStateObserver::IsUkmAllowedForAllProfiles();
+-}
+-
+-bool ChromeMetricsServiceClient::IsUkmAllowedWithExtensionsForAllProfiles() {
+-  return UkmConsentStateObserver::IsUkmAllowedWithExtensionsForAllProfiles();
+-}
+-
+ bool g_notification_listeners_failed = false;
+ void ChromeMetricsServiceClient::SetNotificationListenerSetupFailedForTesting(
+     bool simulate_failure) {

@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/resource_coordinator/tab_manager_web_contents_data.cc b/chrome/browser/resource_coordinator/tab_manager_web_contents_data.cc
+index b0788d433142..1542027e2ff7 100644
+--- a/chrome/browser/resource_coordinator/tab_manager_web_contents_data.cc
++++ b/chrome/browser/resource_coordinator/tab_manager_web_contents_data.cc
+@@ -7,7 +7,6 @@
+ #include "base/metrics/histogram_macros.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/resource_coordinator/tab_manager.h"
+-#include "chrome/browser/resource_coordinator/tab_manager_stats_collector.h"
+ #include "chrome/browser/resource_coordinator/time.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/navigation_handle.h"
+@@ -32,10 +31,6 @@ void TabManager::WebContentsData::DidStartNavigation(
+       navigation_handle->IsSameDocument()) {
+     return;
+   }
+-
+-  g_browser_process->GetTabManager()
+-      ->stats_collector()
+-      ->OnDidStartMainFrameNavigation(web_contents());
+ }
+ 
+ void TabManager::WebContentsData::DidFinishNavigation(

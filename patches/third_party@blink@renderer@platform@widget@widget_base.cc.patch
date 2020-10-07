@@ -1,0 +1,43 @@
+diff --git a/third_party/blink/renderer/platform/widget/widget_base.cc b/third_party/blink/renderer/platform/widget/widget_base.cc
+index 913aafa6a9de..da2e72a46484 100644
+--- a/third_party/blink/renderer/platform/widget/widget_base.cc
++++ b/third_party/blink/renderer/platform/widget/widget_base.cc
+@@ -9,7 +9,6 @@
+ #include "build/build_config.h"
+ #include "cc/trees/layer_tree_host.h"
+ #include "cc/trees/layer_tree_settings.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "mojo/public/cpp/bindings/pending_associated_receiver.h"
+ #include "mojo/public/cpp/bindings/pending_associated_remote.h"
+ #include "third_party/blink/public/common/features.h"
+@@ -125,7 +124,6 @@ void WidgetBase::InitializeCompositing(
+     cc::TaskGraphRunner* task_graph_runner,
+     bool for_child_local_root_frame,
+     const ScreenInfo& screen_info,
+-    std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory,
+     const cc::LayerTreeSettings* settings) {
+   scoped_refptr<base::SingleThreadTaskRunner> main_thread_task_runner =
+       main_thread_scheduler->CompositorTaskRunner();
+@@ -149,7 +147,7 @@ void WidgetBase::InitializeCompositing(
+     settings = &default_settings.value();
+   }
+   screen_info_ = screen_info;
+-  layer_tree_view_->Initialize(*settings, std::move(ukm_recorder_factory));
++  layer_tree_view_->Initialize(*settings);
+ 
+   FrameWidget* frame_widget = client_->FrameWidget();
+ 
+@@ -510,11 +508,10 @@ void WidgetBase::WillBeginMainFrame() {
+   UpdateTextInputState();
+ }
+ 
+-void WidgetBase::SubmitThroughputData(ukm::SourceId source_id,
+-                                      int aggregated_percent,
++void WidgetBase::SubmitThroughputData(int aggregated_percent,
+                                       int impl_percent,
+                                       base::Optional<int> main_percent) {
+-  client_->SubmitThroughputData(source_id, aggregated_percent, impl_percent,
++  client_->SubmitThroughputData(aggregated_percent, impl_percent,
+                                 main_percent);
+ }
+ 

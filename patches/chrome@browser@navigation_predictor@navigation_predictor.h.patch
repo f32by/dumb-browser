@@ -1,0 +1,40 @@
+diff --git a/chrome/browser/navigation_predictor/navigation_predictor.h b/chrome/browser/navigation_predictor/navigation_predictor.h
+index ca9c196e9c44..2fc080d4f71a 100644
+--- a/chrome/browser/navigation_predictor/navigation_predictor.h
++++ b/chrome/browser/navigation_predictor/navigation_predictor.h
+@@ -19,8 +19,6 @@
+ #include "content/public/browser/visibility.h"
+ #include "content/public/browser/web_contents_observer.h"
+ #include "mojo/public/cpp/bindings/pending_receiver.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/mojom/loader/navigation_predictor.mojom.h"
+ #include "ui/gfx/geometry/size.h"
+ #include "url/origin.h"
+@@ -186,13 +184,6 @@ class NavigationPredictor : public blink::mojom::AnchorElementMetricsHost,
+   // Records metrics on which action the predictor is taking.
+   void RecordAction(Action log_action);
+ 
+-  // Sends metrics to the UKM id at |ukm_source_id_|.
+-  void MaybeSendMetricsToUkm() const;
+-
+-  // After an in-page click, sends the index of the url that was clicked to the
+-  // UKM id at |ukm_source_id_|.
+-  void MaybeSendClickMetricsToUkm(const std::string& clicked_url) const;
+-
+   // Returns the minimum of the bucket that |value| belongs in, for page-wide
+   // metrics, excluding |median_link_location_|.
+   int GetBucketMinForPageMetrics(int value) const;
+@@ -312,12 +303,6 @@ class NavigationPredictor : public blink::mojom::AnchorElementMetricsHost,
+   // next navigation.
+   std::set<GURL> partial_prerfetches_;
+ 
+-  // UKM ID for navigation
+-  ukm::SourceId ukm_source_id_;
+-
+-  // UKM recorder
+-  ukm::UkmRecorder* ukm_recorder_ = nullptr;
+-
+   // The URL of the current page.
+   GURL document_url_;
+ 

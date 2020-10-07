@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/touch_to_fill/touch_to_fill_controller.h b/chrome/browser/touch_to_fill/touch_to_fill_controller.h
+index 5742783e1251..be62ba43aa49 100644
+--- a/chrome/browser/touch_to_fill/touch_to_fill_controller.h
++++ b/chrome/browser/touch_to_fill/touch_to_fill_controller.h
+@@ -14,7 +14,6 @@
+ #include "base/util/type_safety/pass_key.h"
+ #include "chrome/browser/touch_to_fill/touch_to_fill_view.h"
+ #include "chrome/browser/touch_to_fill/touch_to_fill_view_factory.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "ui/gfx/native_widget_types.h"
+ 
+ namespace password_manager {
+@@ -82,8 +81,6 @@ class TouchToFillController {
+   // OnCredentialSelected() or OnDismissed() gets called.
+   base::WeakPtr<password_manager::PasswordManagerDriver> driver_;
+ 
+-  ukm::SourceId source_id_ = ukm::kInvalidSourceId;
+-
+   // View used to communicate with the Android frontend. Lazily instantiated so
+   // that it can be injected by tests.
+   std::unique_ptr<TouchToFillView> view_;

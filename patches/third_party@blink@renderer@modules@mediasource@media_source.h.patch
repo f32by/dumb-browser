@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/modules/mediasource/media_source.h b/third_party/blink/renderer/modules/mediasource/media_source.h
+index f39e0a3370ef..5ef1e2d7f620 100644
+--- a/third_party/blink/renderer/modules/mediasource/media_source.h
++++ b/third_party/blink/renderer/modules/mediasource/media_source.h
+@@ -125,9 +125,6 @@ class MediaSource final : public EventTargetWithInlineData,
+                                                          const String& codecs,
+                                                          ExceptionState&);
+   void ScheduleEvent(const AtomicString& event_name);
+-  static void RecordIdentifiabilityMetric(ExecutionContext* context,
+-                                          const String& type,
+-                                          bool result);
+ 
+   // Implements the duration change algorithm.
+   // http://w3c.github.io/media-source/#duration-change-algorithm

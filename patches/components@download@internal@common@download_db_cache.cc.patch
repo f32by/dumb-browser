@@ -1,0 +1,33 @@
+diff --git a/components/download/internal/common/download_db_cache.cc b/components/download/internal/common/download_db_cache.cc
+index 9ff1755ad452..adaebf87ef7d 100644
+--- a/components/download/internal/common/download_db_cache.cc
++++ b/components/download/internal/common/download_db_cache.cc
+@@ -9,7 +9,6 @@
+ #include "components/download/database/download_db_conversions.h"
+ #include "components/download/database/download_db_entry.h"
+ #include "components/download/public/common/download_features.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_utils.h"
+ 
+ namespace download {
+@@ -196,12 +195,10 @@ void DownloadDBCache::OnDownloadDBInitialized(
+     InitializeCallback callback,
+     bool success) {
+   if (success) {
+-    RecordInProgressDBCount(kInitializationSucceededCount);
+     download_db_->LoadEntries(
+         base::BindOnce(&DownloadDBCache::OnDownloadDBEntriesLoaded,
+                        weak_factory_.GetWeakPtr(), std::move(callback)));
+   } else {
+-    RecordInProgressDBCount(kInitializationFailedCount);
+     std::move(callback).Run(false,
+                             std::make_unique<std::vector<DownloadDBEntry>>());
+   }
+@@ -212,7 +209,6 @@ void DownloadDBCache::OnDownloadDBEntriesLoaded(
+     bool success,
+     std::unique_ptr<std::vector<DownloadDBEntry>> entries) {
+   initialized_ = success;
+-  RecordInProgressDBCount(success ? kLoadSucceededCount : kLoadFailedCount);
+   for (auto& entry : *entries) {
+     // If the entry is from the metadata cache migration, just remove it from
+     // DB as the data is not being cleaned up properly.

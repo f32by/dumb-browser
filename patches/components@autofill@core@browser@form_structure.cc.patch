@@ -1,0 +1,451 @@
+diff --git a/components/autofill/core/browser/form_structure.cc b/components/autofill/core/browser/form_structure.cc
+index b108c471c2a7..c82fc07ab0dc 100644
+--- a/components/autofill/core/browser/form_structure.cc
++++ b/components/autofill/core/browser/form_structure.cc
+@@ -31,7 +31,6 @@
+ #include "base/strings/utf_string_conversions.h"
+ #include "base/time/time.h"
+ #include "components/autofill/core/browser/autofill_data_util.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/autofill_type.h"
+ #include "components/autofill/core/browser/field_types.h"
+ #include "components/autofill/core/browser/form_parsing/field_candidates.h"
+@@ -618,7 +617,6 @@ FormStructure::FormStructure(const FormData& form)
+       form_parsed_timestamp_(AutofillTickClock::NowTicks()),
+       passwords_were_revealed_(false),
+       password_symbol_vote_(0),
+-      developer_engagement_metrics_(0),
+       unique_renderer_id_(form.unique_renderer_id) {
+   // Copy the form fields.
+   std::map<base::string16, size_t> unique_names;
+@@ -656,9 +654,6 @@ FormStructure::FormStructure(
+ FormStructure::~FormStructure() = default;
+ 
+ void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
+-  const auto determine_heuristic_types_start_time =
+-      AutofillTickClock::NowTicks();
+-
+   // First, try to detect field types based on each field's |autocomplete|
+   // attribute value.
+   if (!was_parsed_for_autocomplete_attributes_)
+@@ -681,27 +676,7 @@ void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
+   UpdateAutofillCount();
+   IdentifySections(has_author_specified_sections_);
+ 
+-  developer_engagement_metrics_ = 0;
+-  if (IsAutofillable()) {
+-    AutofillMetrics::DeveloperEngagementMetric metric =
+-        has_author_specified_types_
+-            ? AutofillMetrics::FILLABLE_FORM_PARSED_WITH_TYPE_HINTS
+-            : AutofillMetrics::FILLABLE_FORM_PARSED_WITHOUT_TYPE_HINTS;
+-    developer_engagement_metrics_ |= 1 << metric;
+-    AutofillMetrics::LogDeveloperEngagementMetric(metric);
+-  }
+-
+-  if (has_author_specified_upi_vpa_hint_) {
+-    AutofillMetrics::LogDeveloperEngagementMetric(
+-        AutofillMetrics::FORM_CONTAINS_UPI_VPA_HINT);
+-    developer_engagement_metrics_ |=
+-        1 << AutofillMetrics::FORM_CONTAINS_UPI_VPA_HINT;
+-  }
+-
+   RationalizeFieldTypePredictions();
+-
+-  AutofillMetrics::LogDetermineHeuristicTypesTiming(
+-      AutofillTickClock::NowTicks() - determine_heuristic_types_start_time);
+ }
+ 
+ bool FormStructure::EncodeUploadRequest(
+@@ -801,11 +776,7 @@ bool FormStructure::EncodeQueryRequest(
+ void FormStructure::ParseQueryResponse(
+     std::string payload,
+     const std::vector<FormStructure*>& forms,
+-    const FormAndFieldSignatures& encoded_signatures,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
+-  AutofillMetrics::LogServerQueryMetric(
+-      AutofillMetrics::QUERY_RESPONSE_RECEIVED);
+-
++    const FormAndFieldSignatures& encoded_signatures) {
+   // Parse the response.
+   AutofillQueryResponseContents response;
+   if (!response.ParseFromString(payload))
+@@ -813,18 +784,13 @@ void FormStructure::ParseQueryResponse(
+ 
+   VLOG(1) << "Autofill query response was successfully parsed:\n" << response;
+ 
+-  ProcessQueryResponse(response, forms, encoded_signatures,
+-                       form_interactions_ukm_logger);
++  ProcessQueryResponse(response, forms, encoded_signatures);
+ }
+ 
+ void FormStructure::ParseApiQueryResponse(
+     base::StringPiece payload,
+     const std::vector<FormStructure*>& forms,
+-    const FormAndFieldSignatures& encoded_signatures,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
+-  AutofillMetrics::LogServerQueryMetric(
+-      AutofillMetrics::QUERY_RESPONSE_RECEIVED);
+-
++    const FormAndFieldSignatures& encoded_signatures) {
+   std::string decoded_payload;
+   if (!base::Base64Decode(payload, &decoded_payload)) {
+     VLOG(1) << "Could not decode payload from base64 to bytes";
+@@ -840,17 +806,14 @@ void FormStructure::ParseApiQueryResponse(
+           << response;
+ 
+   ProcessQueryResponse(CreateLegacyResponseFromApiResponse(response), forms,
+-                       encoded_signatures, form_interactions_ukm_logger);
++                       encoded_signatures);
+ }
+ 
+ // static
+ void FormStructure::ProcessQueryResponse(
+     const AutofillQueryResponseContents& response,
+     const std::vector<FormStructure*>& forms,
+-    const FormAndFieldSignatures& encoded_signatures,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
+-  AutofillMetrics::LogServerQueryMetric(AutofillMetrics::QUERY_RESPONSE_PARSED);
+-
++    const FormAndFieldSignatures& encoded_signatures) {
+   bool heuristics_detected_fillable_field = false;
+   bool query_response_overrode_heuristics = false;
+ 
+@@ -912,27 +875,12 @@ void FormStructure::ProcessQueryResponse(
+         field->SetPasswordRequirements(current_field.password_requirements());
+     }
+ 
+-    AutofillMetrics::LogServerResponseHasDataForForm(
+-        !query_response_has_no_server_data);
+-
+     form->UpdateAutofillCount();
+-    form->RationalizeRepeatedFields(form_interactions_ukm_logger);
++    form->RationalizeRepeatedFields();
+     form->RationalizeFieldTypePredictions();
+     form->OverrideServerPredictionsWithHeuristics();
+     form->IdentifySections(false);
+   }
+-
+-  AutofillMetrics::ServerQueryMetric metric;
+-  if (query_response_overrode_heuristics) {
+-    if (heuristics_detected_fillable_field) {
+-      metric = AutofillMetrics::QUERY_RESPONSE_OVERRODE_LOCAL_HEURISTICS;
+-    } else {
+-      metric = AutofillMetrics::QUERY_RESPONSE_WITH_NO_LOCAL_HEURISTICS;
+-    }
+-  } else {
+-    metric = AutofillMetrics::QUERY_RESPONSE_MATCHED_LOCAL_HEURISTICS;
+-  }
+-  AutofillMetrics::LogServerQueryMetric(metric);
+ }
+ 
+ // static
+@@ -1194,148 +1142,6 @@ void FormStructure::RetrieveFromCache(
+   form_signature_ = cached_form.form_signature_;
+ }
+ 
+-void FormStructure::LogQualityMetrics(
+-    const base::TimeTicks& load_time,
+-    const base::TimeTicks& interaction_time,
+-    const base::TimeTicks& submission_time,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger,
+-    bool did_show_suggestions,
+-    bool observed_submission) const {
+-  // Use the same timestamp on UKM Metrics generated within this method's scope.
+-  AutofillMetrics::UkmTimestampPin timestamp_pin(form_interactions_ukm_logger);
+-
+-  size_t num_detected_field_types = 0;
+-  size_t num_edited_autofilled_fields = 0;
+-  bool did_autofill_all_possible_fields = true;
+-  bool did_autofill_some_possible_fields = false;
+-  bool is_for_credit_card = IsCompleteCreditCardForm();
+-  bool has_upi_vpa_field = false;
+-
+-  // Determine the correct suffix for the metric, depending on whether or
+-  // not a submission was observed.
+-  const AutofillMetrics::QualityMetricType metric_type =
+-      observed_submission ? AutofillMetrics::TYPE_SUBMISSION
+-                          : AutofillMetrics::TYPE_NO_SUBMISSION;
+-
+-  for (size_t i = 0; i < field_count(); ++i) {
+-    auto* const field = this->field(i);
+-    if (IsUPIVirtualPaymentAddress(field->value)) {
+-      has_upi_vpa_field = true;
+-      AutofillMetrics::LogUserHappinessMetric(
+-          AutofillMetrics::USER_DID_ENTER_UPI_VPA, field->Type().group(),
+-          security_state::SecurityLevel::SECURITY_LEVEL_COUNT,
+-          data_util::DetermineGroups(*this));
+-    }
+-
+-    form_interactions_ukm_logger->LogFieldFillStatus(*this, *field,
+-                                                     metric_type);
+-
+-    AutofillMetrics::LogHeuristicPredictionQualityMetrics(
+-        form_interactions_ukm_logger, *this, *field, metric_type);
+-    AutofillMetrics::LogServerPredictionQualityMetrics(
+-        form_interactions_ukm_logger, *this, *field, metric_type);
+-    AutofillMetrics::LogOverallPredictionQualityMetrics(
+-        form_interactions_ukm_logger, *this, *field, metric_type);
+-    // We count fields that were autofilled but later modified, regardless of
+-    // whether the data now in the field is recognized.
+-    if (field->previously_autofilled())
+-      num_edited_autofilled_fields++;
+-
+-    const ServerFieldTypeSet& field_types = field->possible_types();
+-    DCHECK(!field_types.empty());
+-    if (field_types.count(EMPTY_TYPE) || field_types.count(UNKNOWN_TYPE)) {
+-      DCHECK_EQ(field_types.size(), 1u);
+-      continue;
+-    }
+-
+-    ++num_detected_field_types;
+-    if (field->is_autofilled)
+-      did_autofill_some_possible_fields = true;
+-    else if (!field->only_fill_when_focused())
+-      did_autofill_all_possible_fields = false;
+-
+-    // If the form was submitted, record if field types have been filled and
+-    // subsequently edited by the user.
+-    if (observed_submission) {
+-      if (field->is_autofilled || field->previously_autofilled()) {
+-        AutofillMetrics::LogEditedAutofilledFieldAtSubmission(
+-            form_interactions_ukm_logger, *this, *field);
+-      }
+-    }
+-  }
+-
+-  AutofillMetrics::LogNumberOfEditedAutofilledFields(
+-      num_edited_autofilled_fields, observed_submission);
+-
+-  // We log "submission" and duration metrics if we are here after observing a
+-  // submission event.
+-  if (observed_submission) {
+-    AutofillMetrics::AutofillFormSubmittedState state;
+-    if (num_detected_field_types < MinRequiredFieldsForHeuristics() &&
+-        num_detected_field_types < MinRequiredFieldsForQuery()) {
+-      state = AutofillMetrics::NON_FILLABLE_FORM_OR_NEW_DATA;
+-    } else {
+-      if (did_autofill_all_possible_fields) {
+-        state = AutofillMetrics::FILLABLE_FORM_AUTOFILLED_ALL;
+-      } else if (did_autofill_some_possible_fields) {
+-        state = AutofillMetrics::FILLABLE_FORM_AUTOFILLED_SOME;
+-      } else if (!did_show_suggestions) {
+-        state = AutofillMetrics::
+-            FILLABLE_FORM_AUTOFILLED_NONE_DID_NOT_SHOW_SUGGESTIONS;
+-      } else {
+-        state =
+-            AutofillMetrics::FILLABLE_FORM_AUTOFILLED_NONE_DID_SHOW_SUGGESTIONS;
+-      }
+-
+-      // Unlike the other times, the |submission_time| should always be
+-      // available.
+-      DCHECK(!submission_time.is_null());
+-
+-      // The |load_time| might be unset, in the case that the form was
+-      // dynamically added to the DOM.
+-      if (!load_time.is_null()) {
+-        // Submission should always chronologically follow form load.
+-        DCHECK_GE(submission_time, load_time);
+-        base::TimeDelta elapsed = submission_time - load_time;
+-        if (did_autofill_some_possible_fields)
+-          AutofillMetrics::LogFormFillDurationFromLoadWithAutofill(elapsed);
+-        else
+-          AutofillMetrics::LogFormFillDurationFromLoadWithoutAutofill(elapsed);
+-      }
+-
+-      // The |interaction_time| might be unset, in the case that the user
+-      // submitted a blank form.
+-      if (!interaction_time.is_null()) {
+-        // Submission should always chronologically follow interaction.
+-        DCHECK(submission_time > interaction_time);
+-        base::TimeDelta elapsed = submission_time - interaction_time;
+-        AutofillMetrics::LogFormFillDurationFromInteraction(
+-            GetFormTypes(), did_autofill_some_possible_fields, elapsed);
+-      }
+-    }
+-
+-    AutofillMetrics::LogAutofillFormSubmittedState(
+-        state, is_for_credit_card, has_upi_vpa_field, GetFormTypes(),
+-        form_parsed_timestamp_, form_signature(), form_interactions_ukm_logger);
+-  }
+-}
+-
+-void FormStructure::LogQualityMetricsBasedOnAutocomplete(
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger)
+-    const {
+-  const AutofillMetrics::QualityMetricType metric_type =
+-      AutofillMetrics::TYPE_AUTOCOMPLETE_BASED;
+-  for (const auto& field : fields_) {
+-    if (field->html_type() != HTML_TYPE_UNSPECIFIED &&
+-        field->html_type() != HTML_TYPE_UNRECOGNIZED) {
+-      AutofillMetrics::LogHeuristicPredictionQualityMetrics(
+-          form_interactions_ukm_logger, *this, *field, metric_type);
+-      AutofillMetrics::LogServerPredictionQualityMetrics(
+-          form_interactions_ukm_logger, *this, *field, metric_type);
+-    }
+-  }
+-}
+-
+ void FormStructure::ParseFieldTypesFromAutocompleteAttributes() {
+   has_author_specified_types_ = false;
+   has_author_specified_sections_ = false;
+@@ -1678,21 +1484,14 @@ void FormStructure::RationalizePhoneNumbersInSection(std::string section) {
+ 
+ void FormStructure::ApplyRationalizationsToFieldAndLog(
+     size_t field_index,
+-    ServerFieldType new_type,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
++    ServerFieldType new_type) {
+   if (field_index >= fields_.size())
+     return;
+-  auto old_type = fields_[field_index]->Type().GetStorableType();
+   fields_[field_index]->SetTypeTo(AutofillType(new_type));
+-  if (form_interactions_ukm_logger) {
+-    form_interactions_ukm_logger->LogRepeatedServerTypePredictionRationalized(
+-        form_signature_, *fields_[field_index], old_type);
+-  }
+ }
+ 
+ void FormStructure::RationalizeAddressLineFields(
+-    SectionedFieldsIndexes* sections_of_address_indexes,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
++    SectionedFieldsIndexes* sections_of_address_indexes) {
+   // The rationalization happens within sections.
+   for (sections_of_address_indexes->Reset();
+        !sections_of_address_indexes->IsFinished();
+@@ -1709,16 +1508,13 @@ void FormStructure::RationalizeAddressLineFields(
+     for (auto field_index : current_section) {
+       switch (nb_address_rationalized) {
+         case 0:
+-          ApplyRationalizationsToFieldAndLog(field_index, ADDRESS_HOME_LINE1,
+-                                             form_interactions_ukm_logger);
++          ApplyRationalizationsToFieldAndLog(field_index, ADDRESS_HOME_LINE1);
+           break;
+         case 1:
+-          ApplyRationalizationsToFieldAndLog(field_index, ADDRESS_HOME_LINE2,
+-                                             form_interactions_ukm_logger);
++          ApplyRationalizationsToFieldAndLog(field_index, ADDRESS_HOME_LINE2);
+           break;
+         case 2:
+-          ApplyRationalizationsToFieldAndLog(field_index, ADDRESS_HOME_LINE3,
+-                                             form_interactions_ukm_logger);
++          ApplyRationalizationsToFieldAndLog(field_index, ADDRESS_HOME_LINE3);
+           break;
+         default:
+           NOTREACHED();
+@@ -1731,8 +1527,7 @@ void FormStructure::RationalizeAddressLineFields(
+ 
+ void FormStructure::ApplyRationalizationsToHiddenSelects(
+     size_t field_index,
+-    ServerFieldType new_type,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
++    ServerFieldType new_type) {
+   ServerFieldType old_type = fields_[field_index]->Type().GetStorableType();
+ 
+   // Walk on the hidden select fields right after the field_index which share
+@@ -1744,8 +1539,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
+         fields_[current_index]->form_control_type != "select-one" ||
+         fields_[current_index]->Type().GetStorableType() != old_type)
+       break;
+-    ApplyRationalizationsToFieldAndLog(current_index, new_type,
+-                                       form_interactions_ukm_logger);
++    ApplyRationalizationsToFieldAndLog(current_index, new_type);
+   }
+ 
+   // Same for the fields coming right before the field_index. (No need to check
+@@ -1757,8 +1551,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
+         fields_[current_index]->form_control_type != "select-one" ||
+         fields_[current_index]->Type().GetStorableType() != old_type)
+       break;
+-    ApplyRationalizationsToFieldAndLog(current_index, new_type,
+-                                       form_interactions_ukm_logger);
++    ApplyRationalizationsToFieldAndLog(current_index, new_type);
+     if (current_index == 0)
+       break;
+   }
+@@ -1786,22 +1579,17 @@ void FormStructure::ApplyRationalizationsToFields(
+     size_t upper_index,
+     size_t lower_index,
+     ServerFieldType upper_type,
+-    ServerFieldType lower_type,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
++    ServerFieldType lower_type) {
+   // Hidden fields are ignored during the rationalization, but 'select' hidden
+   // fields also get autofilled to support their corresponding visible
+   // 'synthetic fields'. So, if a field's type is rationalized, we should make
+   // sure that the rationalization is also applied to its corresponding hidden
+   // fields, if any.
+-  ApplyRationalizationsToHiddenSelects(upper_index, upper_type,
+-                                       form_interactions_ukm_logger);
+-  ApplyRationalizationsToFieldAndLog(upper_index, upper_type,
+-                                     form_interactions_ukm_logger);
++  ApplyRationalizationsToHiddenSelects(upper_index, upper_type);
++  ApplyRationalizationsToFieldAndLog(upper_index, upper_type);
+ 
+-  ApplyRationalizationsToHiddenSelects(lower_index, lower_type,
+-                                       form_interactions_ukm_logger);
+-  ApplyRationalizationsToFieldAndLog(lower_index, lower_type,
+-                                     form_interactions_ukm_logger);
++  ApplyRationalizationsToHiddenSelects(lower_index, lower_type);
++  ApplyRationalizationsToFieldAndLog(lower_index, lower_type);
+ }
+ 
+ bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
+@@ -1821,8 +1609,7 @@ bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
+ 
+ void FormStructure::RationalizeAddressStateCountry(
+     SectionedFieldsIndexes* sections_of_state_indexes,
+-    SectionedFieldsIndexes* sections_of_country_indexes,
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
++    SectionedFieldsIndexes* sections_of_country_indexes) {
+   // Walk on the sections of state and country indexes simultaneously. If they
+   // both point to the same section, it means that that section includes both
+   // the country and the state type. This means that no that rationalization is
+@@ -1884,18 +1671,16 @@ void FormStructure::RationalizeAddressStateCountry(
+                                            ADDRESS_HOME_COUNTRY)) {
+       ApplyRationalizationsToFields(
+           upper_index, lower_index, fields_[upper_index]->heuristic_type(),
+-          fields_[lower_index]->heuristic_type(), form_interactions_ukm_logger);
++          fields_[lower_index]->heuristic_type());
+       continue;
+     }
+ 
+     if (FieldShouldBeRationalizedToCountry(upper_index)) {
+       ApplyRationalizationsToFields(upper_index, lower_index,
+-                                    ADDRESS_HOME_COUNTRY, ADDRESS_HOME_STATE,
+-                                    form_interactions_ukm_logger);
++                                    ADDRESS_HOME_COUNTRY, ADDRESS_HOME_STATE);
+     } else {
+       ApplyRationalizationsToFields(upper_index, lower_index,
+-                                    ADDRESS_HOME_STATE, ADDRESS_HOME_COUNTRY,
+-                                    form_interactions_ukm_logger);
++                                    ADDRESS_HOME_STATE, ADDRESS_HOME_COUNTRY);
+     }
+   }
+ }
+@@ -1919,8 +1704,7 @@ void FormStructure::OverrideServerPredictionsWithHeuristics() {
+   }
+ }
+ 
+-void FormStructure::RationalizeRepeatedFields(
+-    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
++void FormStructure::RationalizeRepeatedFields() {
+   // The type of every field whose index is in
+   // sectioned_field_indexes_by_type[|type|] is predicted by server as |type|.
+   // Example: sectioned_field_indexes_by_type[FULL_NAME] is a sectioned fields
+@@ -1949,14 +1733,12 @@ void FormStructure::RationalizeRepeatedFields(
+   }
+ 
+   RationalizeAddressLineFields(
+-      &(sectioned_field_indexes_by_type[ADDRESS_HOME_STREET_ADDRESS]),
+-      form_interactions_ukm_logger);
++      &(sectioned_field_indexes_by_type[ADDRESS_HOME_STREET_ADDRESS]));
+   // Since the billing types are mapped to the non-billing ones, no need to
+   // take care of ADDRESS_BILLING_STATE and .. .
+   RationalizeAddressStateCountry(
+       &(sectioned_field_indexes_by_type[ADDRESS_HOME_STATE]),
+-      &(sectioned_field_indexes_by_type[ADDRESS_HOME_COUNTRY]),
+-      form_interactions_ukm_logger);
++      &(sectioned_field_indexes_by_type[ADDRESS_HOME_COUNTRY]));
+ }
+ 
+ void FormStructure::RationalizeFieldTypePredictions() {

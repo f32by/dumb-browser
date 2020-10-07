@@ -1,0 +1,75 @@
+diff --git a/third_party/blink/renderer/core/html/media/autoplay_uma_helper.cc b/third_party/blink/renderer/core/html/media/autoplay_uma_helper.cc
+index f53e8aa9bdb0..233b5b37f5bc 100644
+--- a/third_party/blink/renderer/core/html/media/autoplay_uma_helper.cc
++++ b/third_party/blink/renderer/core/html/media/autoplay_uma_helper.cc
+@@ -5,8 +5,6 @@
+ #include "third_party/blink/renderer/core/html/media/autoplay_uma_helper.h"
+ 
+ #include "base/metrics/histogram_functions.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/blink/renderer/core/dom/document.h"
+ #include "third_party/blink/renderer/core/dom/events/event.h"
+ #include "third_party/blink/renderer/core/frame/local_frame.h"
+@@ -28,25 +26,6 @@ constexpr base::TimeDelta kMaxOffscreenDurationUma =
+     base::TimeDelta::FromHours(1);
+ constexpr int32_t kOffscreenDurationUmaBucketCount = 50;
+ 
+-// Returns a int64_t with the following structure:
+-// 0b0001 set if there is a user gesture on the stack.
+-// 0b0010 set if there was a user gesture on the page.
+-// 0b0100 set if there was a user gesture propagated after navigation.
+-int64_t GetUserGestureStatusForUkmMetric(LocalFrame* frame) {
+-  DCHECK(frame);
+-
+-  int64_t result = 0;
+-
+-  if (LocalFrame::HasTransientUserActivation(frame))
+-    result |= 0x01;
+-  if (frame->HasStickyUserActivation())
+-    result |= 0x02;
+-  if (frame->HadStickyUserActivationBeforeNavigation())
+-    result |= 0x04;
+-
+-  return result;
+-}
+-
+ }  // namespace
+ 
+ AutoplayUmaHelper::AutoplayUmaHelper(HTMLMediaElement* element)
+@@ -93,20 +72,6 @@ void AutoplayUmaHelper::OnAutoplayInitiated(AutoplaySource source) {
+   LocalFrame* frame = element_->GetDocument().GetFrame();
+   DCHECK(frame);
+   DCHECK(element_->GetDocument().GetPage());
+-
+-  ukm::UkmRecorder* ukm_recorder = element_->GetDocument().UkmRecorder();
+-  DCHECK(ukm_recorder);
+-  ukm::builders::Media_Autoplay_Attempt(element_->GetDocument().UkmSourceID())
+-      .SetSource(source == AutoplaySource::kMethod)
+-      .SetAudioTrack(element_->HasAudio())
+-      .SetVideoTrack(element_->HasVideo())
+-      .SetUserGestureRequired(
+-          element_->GetAutoplayPolicy().IsGestureNeededForPlayback())
+-      .SetMuted(element_->muted())
+-      .SetHighMediaEngagement(AutoplayPolicy::DocumentHasHighMediaEngagement(
+-          element_->GetDocument()))
+-      .SetUserGestureStatus(GetUserGestureStatusForUkmMetric(frame))
+-      .Record(ukm_recorder);
+ }
+ 
+ void AutoplayUmaHelper::RecordAutoplayUnmuteStatus(
+@@ -122,14 +87,6 @@ void AutoplayUmaHelper::RecordAutoplayUnmuteStatus(
+     } else if (sources_.Contains(AutoplaySource::kMethod)) {
+       source = static_cast<int>(AutoplaySource::kAttribute);
+     }
+-
+-    ukm::UkmRecorder* ukm_recorder = element_->GetDocument().UkmRecorder();
+-    DCHECK(ukm_recorder);
+-    ukm::builders::Media_Autoplay_Muted_UnmuteAction(
+-        element_->GetDocument().UkmSourceID())
+-        .SetSource(source)
+-        .SetResult(status == AutoplayUnmuteActionStatus::kSuccess)
+-        .Record(ukm_recorder);
+   }
+ }
+ 

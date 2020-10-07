@@ -1,0 +1,51 @@
+diff --git a/chrome/browser/web_applications/web_app_install_task.cc b/chrome/browser/web_applications/web_app_install_task.cc
+index 9faa11fb9d24..8162a7f963d9 100644
+--- a/chrome/browser/web_applications/web_app_install_task.cc
++++ b/chrome/browser/web_applications/web_app_install_task.cc
+@@ -202,8 +202,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
+   install_source_ = install_source;
+   background_installation_ = true;
+ 
+-  RecordInstallEvent(for_installable_site);
+-
+   InstallFinalizer::FinalizeOptions options;
+   options.install_source = install_source;
+   options.locally_installed = true;
+@@ -314,16 +312,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
+   initiated_ = true;
+ }
+ 
+-void WebAppInstallTask::RecordInstallEvent(
+-    ForInstallableSite for_installable_site) {
+-  DCHECK(install_source_ != kNoInstallSource);
+-
+-  if (InstallableMetrics::IsReportableInstallSource(install_source_) &&
+-      for_installable_site == ForInstallableSite::kYes) {
+-    InstallableMetrics::TrackInstallEvent(install_source_);
+-  }
+-}
+-
+ void WebAppInstallTask::CallInstallCallback(const AppId& app_id,
+                                             InstallResultCode code) {
+   Observe(nullptr);
+@@ -713,9 +701,6 @@ void WebAppInstallTask::OnDialogCompleted(
+ 
+   WebApplicationInfo web_app_info_copy = *web_app_info;
+ 
+-  // This metric is recorded regardless of the installation result.
+-  RecordInstallEvent(for_installable_site);
+-
+   InstallFinalizer::FinalizeOptions finalize_options;
+   finalize_options.install_source = install_source_;
+   finalize_options.locally_installed = true;
+@@ -770,10 +755,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+     return;
+   }
+ 
+-  RecordAppBanner(web_contents(), web_app_info->start_url);
+-  RecordWebAppInstallationTimestamp(profile_->GetPrefs(), app_id,
+-                                    install_source_);
+-
+   InstallOsHooksOptions options;
+ 
+   options.os_hooks[OsHookType::kShortcuts] = true;

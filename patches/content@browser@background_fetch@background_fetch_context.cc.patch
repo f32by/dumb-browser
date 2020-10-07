@@ -1,0 +1,35 @@
+diff --git a/content/browser/background_fetch/background_fetch_context.cc b/content/browser/background_fetch/background_fetch_context.cc
+index 6dd0a312ee36..166c9d2b0db0 100644
+--- a/content/browser/background_fetch/background_fetch_context.cc
++++ b/content/browser/background_fetch/background_fetch_context.cc
+@@ -11,7 +11,6 @@
+ #include "base/task/post_task.h"
+ #include "content/browser/background_fetch/background_fetch_data_manager.h"
+ #include "content/browser/background_fetch/background_fetch_job_controller.h"
+-#include "content/browser/background_fetch/background_fetch_metrics.h"
+ #include "content/browser/background_fetch/background_fetch_registration_id.h"
+ #include "content/browser/background_fetch/background_fetch_registration_notifier.h"
+ #include "content/browser/background_fetch/background_fetch_registration_service_impl.h"
+@@ -83,8 +82,6 @@ void BackgroundFetchContext::DidGetInitializationData(
+   if (error != blink::mojom::BackgroundFetchError::NONE)
+     return;
+ 
+-  background_fetch::RecordRegistrationsOnStartup(initialization_data.size());
+-
+   for (auto& data : initialization_data) {
+     for (auto& observer : data_manager_->observers()) {
+       observer.OnRegistrationLoadedAtStartup(
+@@ -177,13 +174,6 @@ void BackgroundFetchContext::DidGetPermission(
+     BackgroundFetchPermission permission) {
+   DCHECK_CURRENTLY_ON(ServiceWorkerContext::GetCoreThreadId());
+ 
+-  RunOrPostTaskOnThread(
+-      FROM_HERE, BrowserThread::UI,
+-      base::BindOnce(&background_fetch::RecordBackgroundFetchUkmEvent,
+-                     registration_id.origin(), requests.size(), options.Clone(),
+-                     icon, std::move(ukm_data), frame_tree_node_id,
+-                     permission));
+-
+   if (permission != BackgroundFetchPermission::BLOCKED) {
+     data_manager_->CreateRegistration(
+         registration_id, std::move(requests), std::move(options), icon,

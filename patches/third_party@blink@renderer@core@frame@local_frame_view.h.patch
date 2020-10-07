@@ -1,0 +1,30 @@
+diff --git a/third_party/blink/renderer/core/frame/local_frame_view.h b/third_party/blink/renderer/core/frame/local_frame_view.h
+index 72eb54b5b32f..7f02706a579d 100644
+--- a/third_party/blink/renderer/core/frame/local_frame_view.h
++++ b/third_party/blink/renderer/core/frame/local_frame_view.h
+@@ -100,7 +100,6 @@ class ScrollingCoordinator;
+ class ScrollingCoordinatorContext;
+ class TracedValue;
+ class TransformState;
+-class LocalFrameUkmAggregator;
+ class WebPluginContainerImpl;
+ struct AnnotatedRegionValue;
+ struct IntrinsicSizingInfo;
+@@ -676,9 +675,6 @@ class CORE_EXPORT LocalFrameView final
+     return *paint_timing_detector_;
+   }
+ 
+-  // Return the UKM aggregator for this frame, creating it if necessary.
+-  LocalFrameUkmAggregator& EnsureUkmAggregator();
+-
+   // Report the First Contentful Paint signal to the LocalFrameView.
+   // This causes Deferred Commits to be restarted and tells the UKM
+   // aggregator that FCP has been reached.
+@@ -1032,7 +1028,6 @@ class CORE_EXPORT LocalFrameView final
+ 
+   MainThreadScrollingReasons main_thread_scrolling_reasons_;
+ 
+-  scoped_refptr<LocalFrameUkmAggregator> ukm_aggregator_;
+   unsigned forced_layout_stack_depth_;
+   base::TimeTicks forced_layout_start_time_;
+ 

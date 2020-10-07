@@ -1,0 +1,17 @@
+diff --git a/components/renderer_context_menu/render_view_context_menu_base.h b/components/renderer_context_menu/render_view_context_menu_base.h
+index 4fe4c2821dc5..e3442ca445c8 100644
+--- a/components/renderer_context_menu/render_view_context_menu_base.h
++++ b/components/renderer_context_menu/render_view_context_menu_base.h
+@@ -139,12 +139,6 @@ class RenderViewContextMenuBase : public ui::SimpleMenuModel::Delegate,
+   // Menu Construction.
+   virtual void InitMenu();
+ 
+-  // Increments histogram value for used items specified by |id|.
+-  virtual void RecordUsedItem(int id) = 0;
+-
+-  // Increments histogram value for visible context menu item specified by |id|.
+-  virtual void RecordShownItem(int id) = 0;
+-
+ #if BUILDFLAG(ENABLE_PLUGINS)
+   virtual void HandleAuthorizeAllPlugins() = 0;
+ #endif

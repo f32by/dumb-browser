@@ -1,8 +1,62 @@
 diff --git a/content/renderer/render_thread_impl.cc b/content/renderer/render_thread_impl.cc
-index 671d6851e160..e944618d90d1 100644
+index 671d6851e160..bf9e74c7298f 100644
 --- a/content/renderer/render_thread_impl.cc
 +++ b/content/renderer/render_thread_impl.cc
-@@ -2141,24 +2141,6 @@ bool RenderThreadImpl::RendererIsBackgrounded() const {
+@@ -50,7 +50,6 @@
+ #include "cc/raster/task_graph_runner.h"
+ #include "cc/trees/layer_tree_frame_sink.h"
+ #include "cc/trees/layer_tree_settings.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "components/discardable_memory/client/client_discardable_shared_memory_manager.h"
+ #include "components/metrics/public/mojom/single_sample_metrics.mojom.h"
+ #include "components/metrics/single_sample_metrics.h"
+@@ -115,7 +114,6 @@
+ #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+ #include "net/base/url_util.h"
+ #include "ppapi/buildflags/buildflags.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+ #include "services/network/public/cpp/network_switches.h"
+ #include "services/service_manager/public/cpp/interface_provider.h"
+ #include "services/viz/public/cpp/gpu/context_provider_command_buffer.h"
+@@ -359,25 +357,6 @@ void CreateSingleSampleMetricsProvider(
+   process_host->BindHostReceiver(std::move(receiver));
+ }
+ 
+-// This factory is used to defer binding of the InterfacePtr to the compositor
+-// thread.
+-class UkmRecorderFactoryImpl : public cc::UkmRecorderFactory {
+- public:
+-  explicit UkmRecorderFactoryImpl(
+-      mojo::SharedRemote<mojom::ChildProcessHost> process_host)
+-      : process_host_(std::move(process_host)) {}
+-  ~UkmRecorderFactoryImpl() override = default;
+-
+-  std::unique_ptr<ukm::UkmRecorder> CreateRecorder() override {
+-    mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
+-    process_host_->BindHostReceiver(recorder.InitWithNewPipeAndPassReceiver());
+-    return std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
+-  }
+-
+- private:
+-  const mojo::SharedRemote<mojom::ChildProcessHost> process_host_;
+-};
+-
+ }  // namespace
+ 
+ RenderThreadImpl::HistogramCustomizer::HistogramCustomizer() {
+@@ -1358,11 +1337,6 @@ bool RenderThreadImpl::IsScrollAnimatorEnabled() {
+   return is_scroll_animator_enabled_;
+ }
+ 
+-std::unique_ptr<cc::UkmRecorderFactory>
+-RenderThreadImpl::CreateUkmRecorderFactory() {
+-  return std::make_unique<UkmRecorderFactoryImpl>(child_process_host());
+-}
+-
+ bool RenderThreadImpl::IsMainThread() {
+   return !!current();
+ }
+@@ -2141,24 +2115,6 @@ bool RenderThreadImpl::RendererIsBackgrounded() const {
  void RenderThreadImpl::OnRendererBackgrounded() {
    main_thread_scheduler_->SetRendererBackgrounded(true);
    needs_to_record_first_active_paint_ = false;

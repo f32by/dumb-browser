@@ -1,0 +1,26 @@
+diff --git a/content/browser/renderer_host/render_frame_host_delegate.cc b/content/browser/renderer_host/render_frame_host_delegate.cc
+index d92eeba66f87..09122a2b00a6 100644
+--- a/content/browser/renderer_host/render_frame_host_delegate.cc
++++ b/content/browser/renderer_host/render_frame_host_delegate.cc
+@@ -144,21 +144,11 @@ Visibility RenderFrameHostDelegate::GetVisibility() {
+   return Visibility::HIDDEN;
+ }
+ 
+-ukm::SourceId RenderFrameHostDelegate::
+-    GetUkmSourceIdForLastCommittedSourceIncludingSameDocument() const {
+-  return ukm::kInvalidSourceId;
+-}
+-
+ RenderFrameHostImpl* RenderFrameHostDelegate::GetMainFrameForInnerDelegate(
+     FrameTreeNode* frame_tree_node) {
+   return nullptr;
+ }
+ 
+-media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
+-RenderFrameHostDelegate::GetRecordAggregateWatchTimeCallback() {
+-  return base::NullCallback();
+-}
+-
+ bool RenderFrameHostDelegate::IsFrameLowPriority(
+     const RenderFrameHost* render_frame_host) {
+   return false;

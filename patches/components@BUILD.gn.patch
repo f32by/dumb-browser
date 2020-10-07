@@ -1,5 +1,5 @@
 diff --git a/components/BUILD.gn b/components/BUILD.gn
-index 020764dfebf9..cee227163bfe 100644
+index 020764dfebf9..e589a0d51dde 100644
 --- a/components/BUILD.gn
 +++ b/components/BUILD.gn
 @@ -78,7 +78,6 @@ test("components_unittests") {
@@ -18,7 +18,39 @@ index 020764dfebf9..cee227163bfe 100644
      "//components/reading_list/core:unit_tests",
      "//components/safe_search_api:unit_tests",
      "//components/scheduling_metrics:unit_tests",
-@@ -274,12 +272,6 @@ test("components_unittests") {
+@@ -161,7 +159,6 @@ test("components_unittests") {
+     "//components/translate/core/browser:unit_tests",
+     "//components/translate/core/common:unit_tests",
+     "//components/translate/core/language_detection:unit_tests",
+-    "//components/ukm:unit_tests",
+     "//components/undo:unit_tests",
+     "//components/unified_consent:unit_tests",
+     "//components/upload_list:unit_tests",
+@@ -218,14 +215,12 @@ test("components_unittests") {
+       "//components/security_state/ios:unit_tests",
+       "//components/signin/ios/browser:unit_tests",
+       "//components/translate/ios/browser:unit_tests",
+-      "//components/ukm/ios:unit_tests",
+     ]
+   } else {  # !iOS
+     deps += [
+       "//components/autofill/content/browser:unit_tests",
+       "//components/autofill/content/renderer:unit_tests",
+       "//components/autofill/core/common/mojom:unit_tests",
+-      "//components/blocked_content:unit_tests",
+       "//components/browsing_data/content:unit_tests",
+       "//components/captive_portal/content:unit_tests",
+       "//components/cast_certificate:unit_tests",
+@@ -259,8 +254,6 @@ test("components_unittests") {
+       "//components/optimization_guide:unit_tests",
+       "//components/page_image_annotation/content/renderer:unit_tests",
+       "//components/page_image_annotation/core:unit_tests",
+-      "//components/page_load_metrics/browser:unit_tests",
+-      "//components/page_load_metrics/renderer:unit_tests",
+       "//components/paint_preview/browser:unit_tests",
+       "//components/paint_preview/common:unit_tests",
+       "//components/paint_preview/player:unit_tests",
+@@ -274,12 +267,6 @@ test("components_unittests") {
        "//components/prerender/browser:unit_tests",
        "//components/previews/content:unit_tests",
        "//components/query_tiles:unit_tests",
@@ -31,7 +63,15 @@ index 020764dfebf9..cee227163bfe 100644
        "//components/security_interstitials/content:unit_tests",
        "//components/security_state/content:unit_tests",
        "//components/services/heap_profiling:unit_tests",
-@@ -304,9 +296,6 @@ test("components_unittests") {
+@@ -295,7 +282,6 @@ test("components_unittests") {
+       "//components/tracing:unit_tests",
+       "//components/translate/content/browser:unit_tests",
+       "//components/translate/content/renderer:unit_tests",
+-      "//components/ukm/content:unit_tests",
+       "//components/visitedlink/test:unit_tests",
+       "//components/web_cache/browser:unit_tests",
+       "//components/web_package:unit_tests",
+@@ -304,9 +290,6 @@ test("components_unittests") {
  
      if (!is_fuchsia) {  # !iOS and !Fuchsia
        deps += [
@@ -41,7 +81,7 @@ index 020764dfebf9..cee227163bfe 100644
          "//components/data_reduction_proxy/core/browser:unit_tests",
          "//components/data_reduction_proxy/core/common:unit_tests",
        ]
-@@ -332,8 +321,6 @@ test("components_unittests") {
+@@ -332,8 +315,6 @@ test("components_unittests") {
        "//base:base_java_unittest_support",
        "//components/autofill_assistant/browser:unit_tests",
        "//components/cdm/browser:unit_tests",
@@ -50,7 +90,7 @@ index 020764dfebf9..cee227163bfe 100644
        "//components/download/internal/common:internal_java",
        "//components/embedder_support/android:native_java_unittests_java",
        "//components/embedder_support/android/metrics:test_support_java",
-@@ -408,10 +395,6 @@ test("components_unittests") {
+@@ -408,10 +389,6 @@ test("components_unittests") {
      deps += [ "//components/constrained_window:unit_tests" ]
    }
  
@@ -61,7 +101,7 @@ index 020764dfebf9..cee227163bfe 100644
    if (enable_basic_printing) {
      deps += [
        "//components/printing/browser:unit_tests",
-@@ -439,7 +422,6 @@ test("components_unittests") {
+@@ -439,7 +416,6 @@ test("components_unittests") {
  
    if (!is_ios) {
      deps += [
@@ -69,7 +109,24 @@ index 020764dfebf9..cee227163bfe 100644
        "//components/webrtc_logging/browser:unit_tests",
        "//components/webrtc_logging/common:unit_tests",
      ]
-@@ -760,9 +742,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -575,7 +551,6 @@ if (!is_ios && !is_fuchsia) {
+       "offline_pages/content/renovations/test/page_renovator_browsertest.cc",
+       "paint_preview/renderer/paint_preview_recorder_browsertest.cc",
+       "security_state/content/content_utils_browsertest.cc",
+-      "ukm/content/source_url_recorder_browsertest.cc",
+     ]
+ 
+     data = [
+@@ -613,8 +588,6 @@ if (!is_ios && !is_fuchsia) {
+       "//components/security_state/content",
+       "//components/security_state/core",
+       "//components/strings",
+-      "//components/ukm:test_support",
+-      "//components/ukm/content",
+       "//content/public/browser",
+       "//content/shell:content_shell_lib",
+       "//content/test:browsertest_support",
+@@ -760,9 +733,6 @@ if (!is_ios && !is_fuchsia) {
      if (!is_android) {
        sources += [ "safe_browsing/core/db/v4_store_perftest.cc" ]
        deps += [

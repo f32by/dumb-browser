@@ -1,9 +1,13 @@
 diff --git a/components/blocked_content/BUILD.gn b/components/blocked_content/BUILD.gn
-index 4f86ea0ffcf6..b755588b784c 100644
+index 4f86ea0ffcf6..a9f84aa617bb 100644
 --- a/components/blocked_content/BUILD.gn
 +++ b/components/blocked_content/BUILD.gn
-@@ -17,8 +17,6 @@ source_set("blocked_content") {
-     "popup_tracker.h",
+@@ -13,12 +13,8 @@ source_set("blocked_content") {
+     "popup_navigation_delegate.h",
+     "popup_opener_tab_helper.cc",
+     "popup_opener_tab_helper.h",
+-    "popup_tracker.cc",
+-    "popup_tracker.h",
      "pref_names.cc",
      "pref_names.h",
 -    "safe_browsing_triggered_popup_blocker.cc",
@@ -11,13 +15,17 @@ index 4f86ea0ffcf6..b755588b784c 100644
      "url_list_manager.cc",
      "url_list_manager.h",
    ]
-@@ -29,9 +27,6 @@ source_set("blocked_content") {
+@@ -29,13 +25,8 @@ source_set("blocked_content") {
      "//components/embedder_support",
      "//components/pref_registry",
      "//components/prefs",
 -    "//components/safe_browsing/content/triggers:ad_popup_trigger",
 -    "//components/safe_browsing/core/db:util",
 -    "//components/subresource_filter/content/browser",
-     "//components/ukm/content",
+-    "//components/ukm/content",
      "//components/user_prefs",
      "//content/public/browser",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//third_party/blink/public/common",
+   ]
+   if (is_android) {

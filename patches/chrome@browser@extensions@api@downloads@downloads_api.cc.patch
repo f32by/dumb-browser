@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/downloads/downloads_api.cc b/chrome/browser/extensions/api/downloads/downloads_api.cc
-index 9c28cf32230f..893cac38a179 100644
+index 9c28cf32230f..08159ec687f2 100644
 --- a/chrome/browser/extensions/api/downloads/downloads_api.cc
 +++ b/chrome/browser/extensions/api/downloads/downloads_api.cc
-@@ -38,7 +38,6 @@
+@@ -38,13 +38,11 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/download/download_core_service.h"
  #include "chrome/browser/download/download_core_service_factory.h"
@@ -10,7 +10,82 @@ index 9c28cf32230f..893cac38a179 100644
  #include "chrome/browser/download/download_file_icon_extractor.h"
  #include "chrome/browser/download/download_open_prompt.h"
  #include "chrome/browser/download/download_prefs.h"
-@@ -1327,9 +1326,6 @@ DownloadsAcceptDangerFunction::DownloadsAcceptDangerFunction() {}
+ #include "chrome/browser/download/download_query.h"
+ #include "chrome/browser/download/download_shelf.h"
+-#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/extensions/chrome_extension_function_details.h"
+ #include "chrome/browser/icon_loader.h"
+ #include "chrome/browser/icon_manager.h"
+@@ -499,12 +497,6 @@ enum DownloadsFunctionName {
+   DOWNLOADS_FUNCTION_LAST
+ };
+ 
+-void RecordApiFunctions(DownloadsFunctionName function) {
+-  UMA_HISTOGRAM_ENUMERATION("Download.ApiFunctions",
+-                            function,
+-                            DOWNLOADS_FUNCTION_LAST);
+-}
+-
+ void CompileDownloadQueryOrderBy(
+     const std::vector<std::string>& order_by_strs,
+     std::string* error,
+@@ -1114,7 +1106,6 @@ ExtensionFunction::ResponseAction DownloadsDownloadFunction::Run() {
+       BrowserContext::GetDownloadManager(browser_context());
+ 
+   manager->DownloadUrl(std::move(download_params));
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_DOWNLOAD);
+   return RespondLater();
+ }
+ 
+@@ -1193,7 +1184,6 @@ ExtensionFunction::ResponseAction DownloadsSearchFunction::Run() {
+                                            : profile->GetOriginalProfile()));
+     json_results->Append(std::move(json_item));
+   }
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_SEARCH);
+   return RespondNow(OneArgument(std::move(json_results)));
+ }
+ 
+@@ -1216,7 +1206,6 @@ ExtensionFunction::ResponseAction DownloadsPauseFunction::Run() {
+   // If the item is already paused, this is a no-op and the operation will
+   // silently succeed.
+   download_item->Pause();
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_PAUSE);
+   return RespondNow(NoArguments());
+ }
+ 
+@@ -1239,7 +1228,6 @@ ExtensionFunction::ResponseAction DownloadsResumeFunction::Run() {
+   // Note that if the item isn't paused, this will be a no-op, and the extension
+   // call will seem successful.
+   download_item->Resume(user_gesture());
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_RESUME);
+   return RespondNow(NoArguments());
+ }
+ 
+@@ -1258,7 +1246,6 @@ ExtensionFunction::ResponseAction DownloadsCancelFunction::Run() {
+     download_item->Cancel(true);
+   // |download_item| can be NULL if the download ID was invalid or if the
+   // download is not currently active.  Either way, it's not a failure.
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_CANCEL);
+   return RespondNow(NoArguments());
+ }
+ 
+@@ -1285,7 +1272,6 @@ ExtensionFunction::ResponseAction DownloadsEraseFunction::Run() {
+     json_results->AppendInteger(static_cast<int>((*it)->GetId()));
+     (*it)->Remove();
+   }
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_ERASE);
+   return RespondNow(OneArgument(std::move(json_results)));
+ }
+ 
+@@ -1308,7 +1294,6 @@ ExtensionFunction::ResponseAction DownloadsRemoveFileFunction::Run() {
+       Fault(download_item->GetFileExternallyRemoved(),
+             download_extension_errors::kFileAlreadyDeleted, &error))
+     return RespondNow(Error(std::move(error)));
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_REMOVE_FILE);
+   download_item->DeleteFile(
+       base::BindOnce(&DownloadsRemoveFileFunction::Done, this));
+   return RespondLater();
+@@ -1327,9 +1312,6 @@ DownloadsAcceptDangerFunction::DownloadsAcceptDangerFunction() {}
  
  DownloadsAcceptDangerFunction::~DownloadsAcceptDangerFunction() {}
  
@@ -20,7 +95,7 @@ index 9c28cf32230f..893cac38a179 100644
  ExtensionFunction::ResponseAction DownloadsAcceptDangerFunction::Run() {
    std::unique_ptr<downloads::AcceptDanger::Params> params(
        downloads::AcceptDanger::Params::Create(*args_));
-@@ -1366,44 +1362,7 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
+@@ -1366,44 +1348,7 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
      Respond(Error(download_extension_errors::kInvisibleContext));
      return;
    }
@@ -66,3 +141,51 @@ index 9c28cf32230f..893cac38a179 100644
  }
  
  DownloadsShowFunction::DownloadsShowFunction() {}
+@@ -1420,7 +1365,6 @@ ExtensionFunction::ResponseAction DownloadsShowFunction::Run() {
+   if (InvalidId(download_item, &error))
+     return RespondNow(Error(std::move(error)));
+   download_item->ShowDownloadInShell();
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_SHOW);
+   return RespondNow(NoArguments());
+ }
+ 
+@@ -1437,7 +1381,6 @@ ExtensionFunction::ResponseAction DownloadsShowDefaultFolderFunction::Run() {
+       Profile::FromBrowserContext(browser_context()),
+       DownloadPrefs::FromDownloadManager(manager)->DownloadPath(),
+       platform_util::OPEN_FOLDER, platform_util::OpenOperationCallback());
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_SHOW_DEFAULT_FOLDER);
+   return RespondNow(NoArguments());
+ }
+ 
+@@ -1492,7 +1435,6 @@ ExtensionFunction::ResponseAction DownloadsOpenFunction::Run() {
+                          params->download_id));
+   if (on_prompt_created_cb_)
+     std::move(*on_prompt_created_cb_).Run(download_open_prompt);
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_OPEN);
+   return RespondLater();
+ }
+ 
+@@ -1528,7 +1470,6 @@ ExtensionFunction::ResponseAction DownloadsSetShelfEnabledFunction::Run() {
+     return RespondNow(Error(download_extension_errors::kShelfPermission));
+   }
+ 
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_SET_SHELF_ENABLED);
+   DownloadManager* manager = NULL;
+   DownloadManager* incognito_manager = NULL;
+   GetManagers(browser_context(), include_incognito_information(), &manager,
+@@ -1624,7 +1565,6 @@ void DownloadsGetFileIconFunction::OnIconURLExtracted(const std::string& url) {
+     Respond(Error(std::move(error)));
+     return;
+   }
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_GET_FILE_ICON);
+   Respond(OneArgument(std::make_unique<base::Value>(url)));
+ }
+ 
+@@ -1781,7 +1721,6 @@ bool ExtensionDownloadsEventRouter::DetermineFilename(
+     downloads::FilenameConflictAction conflict_action,
+     std::string* error) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-  RecordApiFunctions(DOWNLOADS_FUNCTION_DETERMINE_FILENAME);
+   DownloadItem* item =
+       GetDownload(browser_context, include_incognito, download_id);
+   ExtensionDownloadsEventRouterData* data =

@@ -1,0 +1,20 @@
+diff --git a/extensions/browser/extension_protocols.h b/extensions/browser/extension_protocols.h
+index 31f7bcedf819..b95b223a4fca 100644
+--- a/extensions/browser/extension_protocols.h
++++ b/extensions/browser/extension_protocols.h
+@@ -10,7 +10,6 @@
+ 
+ #include "base/callback.h"
+ #include "base/memory/ref_counted.h"
+-#include "base/metrics/ukm_source_id.h"
+ #include "services/network/public/mojom/url_loader_factory.mojom.h"
+ 
+ namespace base {
+@@ -49,7 +48,6 @@ void SetExtensionProtocolTestHandler(ExtensionProtocolTestHandler* handler);
+ std::unique_ptr<network::mojom::URLLoaderFactory>
+ CreateExtensionNavigationURLLoaderFactory(
+     content::BrowserContext* browser_context,
+-    base::UkmSourceId ukm_source_id,
+     bool is_web_view_request);
+ 
+ // Creates a new network::mojom::URLLoaderFactory implementation suitable for

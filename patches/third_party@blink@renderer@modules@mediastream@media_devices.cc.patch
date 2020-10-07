@@ -1,0 +1,44 @@
+diff --git a/third_party/blink/renderer/modules/mediastream/media_devices.cc b/third_party/blink/renderer/modules/mediastream/media_devices.cc
+index 5a2adbb4956b..07cc875d543a 100644
+--- a/third_party/blink/renderer/modules/mediastream/media_devices.cc
++++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc
+@@ -257,30 +257,6 @@ void MediaDevices::StopObserving() {
+   receiver_.reset();
+ }
+ 
+-namespace {
+-
+-void RecordEnumeratedDevices(ScriptPromiseResolver* resolver,
+-                             const MediaDeviceInfoVector& media_devices) {
+-  if (!IdentifiabilityStudySettings::Get()->IsActive())
+-    return;
+-  Document* document = LocalDOMWindow::From(resolver->GetScriptState())
+-                           ->GetFrame()
+-                           ->GetDocument();
+-  IdentifiableTokenBuilder builder;
+-  for (const auto& device_info : media_devices) {
+-    builder.AddToken(IdentifiabilityBenignStringToken(device_info->deviceId()));
+-    builder.AddToken(IdentifiabilityBenignStringToken(device_info->kind()));
+-    builder.AddToken(IdentifiabilityBenignStringToken(device_info->label()));
+-    builder.AddToken(IdentifiabilityBenignStringToken(device_info->groupId()));
+-  }
+-  IdentifiabilityMetricBuilder(document->UkmSourceID())
+-      .SetWebfeature(WebFeature::kMediaDevicesEnumerateDevices,
+-                     builder.GetToken())
+-      .Record(document->UkmRecorder());
+-}
+-
+-}  // namespace
+-
+ void MediaDevices::DevicesEnumerated(
+     ScriptPromiseResolver* resolver,
+     const Vector<Vector<WebMediaDeviceInfo>>& enumeration,
+@@ -351,8 +327,6 @@ void MediaDevices::DevicesEnumerated(
+     }
+   }
+ 
+-  RecordEnumeratedDevices(resolver, media_devices);
+-
+   if (enumerate_devices_test_callback_)
+     std::move(enumerate_devices_test_callback_).Run(media_devices);
+ 

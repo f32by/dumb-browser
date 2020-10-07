@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/notifications/non_persistent_notification_handler.cc b/chrome/browser/notifications/non_persistent_notification_handler.cc
+index 3c97d3ab4062..3651c675681d 100644
+--- a/chrome/browser/notifications/non_persistent_notification_handler.cc
++++ b/chrome/browser/notifications/non_persistent_notification_handler.cc
+@@ -96,10 +96,6 @@ void NonPersistentNotificationHandler::DidDispatchClickEvent(
+ void NonPersistentNotificationHandler::DisableNotifications(
+     Profile* profile,
+     const GURL& origin) {
+-  permissions::PermissionUmaUtil::ScopedRevocationReporter
+-      scoped_revocation_reporter(
+-          profile, origin, origin, ContentSettingsType::NOTIFICATIONS,
+-          permissions::PermissionSourceUI::INLINE_SETTINGS);
+   NotificationPermissionContext::UpdatePermission(profile, origin,
+                                                   CONTENT_SETTING_BLOCK);
+ }

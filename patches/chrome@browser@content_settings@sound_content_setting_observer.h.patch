@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/content_settings/sound_content_setting_observer.h b/chrome/browser/content_settings/sound_content_setting_observer.h
+index 0844f68b055a..334e16992d1a 100644
+--- a/chrome/browser/content_settings/sound_content_setting_observer.h
++++ b/chrome/browser/content_settings/sound_content_setting_observer.h
+@@ -52,9 +52,6 @@ class SoundContentSettingObserver
+   // Records SiteMuted UKM event if site is muted and sound is playing.
+   void CheckSoundBlocked(bool is_audible);
+ 
+-  // Record a UKM event that audio was blocked on the page.
+-  void RecordSiteMutedUKM();
+-
+   // Determine the reason why audio was blocked on the page.
+   MuteReason GetSiteMutedReason();
+ 
+@@ -66,9 +63,6 @@ class SoundContentSettingObserver
+   PrefChangeRegistrar pref_change_registrar_;
+ #endif
+ 
+-  // True if we have already logged a SiteMuted UKM event since last navigation.
+-  bool logged_site_muted_ukm_;
+-
+   HostContentSettingsMap* host_content_settings_map_;
+ 
+   ScopedObserver<HostContentSettingsMap, content_settings::Observer> observer_{

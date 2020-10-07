@@ -1,0 +1,12 @@
+diff --git a/ui/base/ime/dummy_text_input_client.h b/ui/base/ime/dummy_text_input_client.h
+index ac6156433673..fb213721ff69 100644
+--- a/ui/base/ime/dummy_text_input_client.h
++++ b/ui/base/ime/dummy_text_input_client.h
+@@ -53,7 +53,6 @@ class DummyTextInputClient : public TextInputClient {
+   void EnsureCaretNotInRect(const gfx::Rect& rect) override;
+   bool IsTextEditCommandEnabled(TextEditCommand command) const override;
+   void SetTextEditCommandForNextKeyEvent(TextEditCommand command) override;
+-  ukm::SourceId GetClientSourceForMetrics() const override;
+   bool ShouldDoLearning() override;
+ 
+ #if defined(OS_WIN) || defined(OS_CHROMEOS)

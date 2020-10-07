@@ -1,0 +1,19 @@
+diff --git a/ui/latency/latency_tracker.h b/ui/latency/latency_tracker.h
+index 88f56c4a41bf..8d5403f96474 100644
+--- a/ui/latency/latency_tracker.h
++++ b/ui/latency/latency_tracker.h
+@@ -38,14 +38,6 @@ class LatencyTracker {
+   void OnGpuSwapBuffersCompleted(const LatencyInfo& latency,
+                                  bool top_controls_visible_height_changed);
+ 
+-  void ReportUkmScrollLatency(
+-      const InputMetricEvent& metric_event,
+-      base::TimeTicks start_timestamp,
+-      base::TimeTicks time_to_scroll_update_swap_begin_timestamp,
+-      base::TimeTicks time_to_handled_timestamp,
+-      bool is_main_thread,
+-      const ukm::SourceId ukm_source_id);
+-
+   void ComputeEndToEndLatencyHistograms(
+       base::TimeTicks gpu_swap_begin_timestamp,
+       base::TimeTicks gpu_swap_end_timestamp,

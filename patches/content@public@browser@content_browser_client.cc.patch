@@ -1,0 +1,21 @@
+diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
+index cd9087339015..6c9da43980e8 100644
+--- a/content/public/browser/content_browser_client.cc
++++ b/content/public/browser/content_browser_client.cc
+@@ -753,7 +753,6 @@ ContentBrowserClient::CreateURLLoaderThrottles(
+ 
+ void ContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
+     int frame_tree_node_id,
+-    base::UkmSourceId ukm_source_id,
+     NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
+     NonNetworkURLLoaderFactoryMap* factories) {}
+ 
+@@ -1132,8 +1131,4 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+   return false;
+ }
+ 
+-ukm::UkmService* ContentBrowserClient::GetUkmService() {
+-  return nullptr;
+-}
+-
+ }  // namespace content

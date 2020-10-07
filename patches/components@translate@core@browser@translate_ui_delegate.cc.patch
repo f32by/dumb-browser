@@ -1,0 +1,66 @@
+diff --git a/components/translate/core/browser/translate_ui_delegate.cc b/components/translate/core/browser/translate_ui_delegate.cc
+index ec67ee836cd5..7ee9b89cf29c 100644
+--- a/components/translate/core/browser/translate_ui_delegate.cc
++++ b/components/translate/core/browser/translate_ui_delegate.cc
+@@ -233,8 +233,6 @@ void TranslateUIDelegate::Translate() {
+   }
+ 
+   if (translate_manager_) {
+-    translate_manager_->RecordTranslateEvent(
+-        metrics::TranslateEventProto::USER_ACCEPT);
+     translate_manager_->TranslatePage(GetOriginalLanguageCode(),
+                                       GetTargetLanguageCode(), false);
+     UMA_HISTOGRAM_BOOLEAN(kPerformTranslate, true);
+@@ -268,9 +266,6 @@ void TranslateUIDelegate::TranslationDeclined(bool explicitly_closed) {
+   // stops. That could happen multiple times, including after the user already
+   // declined the translation.)
+   if (translate_manager_) {
+-    translate_manager_->RecordTranslateEvent(
+-        explicitly_closed ? metrics::TranslateEventProto::USER_DECLINE
+-                          : metrics::TranslateEventProto::USER_IGNORE);
+     if (explicitly_closed)
+       translate_manager_->GetLanguageState().set_translation_declined(true);
+   }
+@@ -290,13 +285,6 @@ void TranslateUIDelegate::SetLanguageBlocked(bool value) {
+   if (value) {
+     prefs_->AddToLanguageList(GetOriginalLanguageCode(),
+                               /*force_blocked=*/true);
+-    if (translate_manager_) {
+-      // Translation has been blocked for this language. Capture that in the
+-      // metrics. Note that we don't capture a language being unblocked... which
+-      // is not the same as accepting a given translation for this language.
+-      translate_manager_->RecordTranslateEvent(
+-          metrics::TranslateEventProto::USER_NEVER_TRANSLATE_LANGUAGE);
+-    }
+   } else {
+     prefs_->UnblockLanguage(GetOriginalLanguageCode());
+   }
+@@ -320,13 +308,6 @@ void TranslateUIDelegate::SetSiteBlacklist(bool value) {
+ 
+   if (value) {
+     prefs_->BlacklistSite(host);
+-    if (translate_manager_) {
+-      // Translation has been blocked for this site. Capture that in the metrics
+-      // Note that we don't capture a language being unblocked... which is not
+-      // the same as accepting a given translation for this site.
+-      translate_manager_->RecordTranslateEvent(
+-          metrics::TranslateEventProto::USER_NEVER_TRANSLATE_SITE);
+-    }
+   } else {
+     prefs_->RemoveSiteFromBlacklist(host);
+   }
+@@ -360,14 +341,6 @@ void TranslateUIDelegate::SetAlwaysTranslate(bool value) {
+   const std::string& target_lang = GetTargetLanguageCode();
+   if (value) {
+     prefs_->WhitelistLanguagePair(original_lang, target_lang);
+-    // A default translation mapping has been accepted for this language.
+-    // Capture that in the metrics. Note that we don't capture a language being
+-    // unmapped... which is not the same as accepting some other translation
+-    // for this language.
+-    if (translate_manager_) {
+-      translate_manager_->RecordTranslateEvent(
+-          metrics::TranslateEventProto::USER_ALWAYS_TRANSLATE_LANGUAGE);
+-    }
+   } else {
+     prefs_->RemoveLanguagePairFromWhitelist(original_lang, target_lang);
+   }

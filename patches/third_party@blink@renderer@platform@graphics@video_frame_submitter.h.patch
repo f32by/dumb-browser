@@ -1,0 +1,21 @@
+diff --git a/third_party/blink/renderer/platform/graphics/video_frame_submitter.h b/third_party/blink/renderer/platform/graphics/video_frame_submitter.h
+index f1d5fb758e82..60ce89f6f390 100644
+--- a/third_party/blink/renderer/platform/graphics/video_frame_submitter.h
++++ b/third_party/blink/renderer/platform/graphics/video_frame_submitter.h
+@@ -13,7 +13,6 @@
+ #include "base/threading/thread_checker.h"
+ #include "base/time/time.h"
+ #include "base/timer/timer.h"
+-#include "cc/metrics/frame_sequence_tracker_collection.h"
+ #include "cc/metrics/video_playback_roughness_reporter.h"
+ #include "components/viz/client/shared_bitmap_reporter.h"
+ #include "components/viz/common/gpu/context_provider.h"
+@@ -186,8 +185,6 @@ class PLATFORM_EXPORT VideoFrameSubmitter
+ 
+   base::Optional<int> last_frame_id_;
+ 
+-  cc::FrameSequenceTrackerCollection frame_trackers_;
+-
+   // The BeginFrameArgs passed to the most recent call of OnBeginFrame().
+   // Required for FrameSequenceTrackerCollection::NotifySubmitFrame
+   viz::BeginFrameArgs last_begin_frame_args_;

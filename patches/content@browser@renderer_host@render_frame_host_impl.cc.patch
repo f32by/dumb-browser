@@ -1,0 +1,178 @@
+diff --git a/content/browser/renderer_host/render_frame_host_impl.cc b/content/browser/renderer_host/render_frame_host_impl.cc
+index 0ccc34e11925..9c46c734e190 100644
+--- a/content/browser/renderer_host/render_frame_host_impl.cc
++++ b/content/browser/renderer_host/render_frame_host_impl.cc
+@@ -195,7 +195,6 @@
+ #include "services/device/public/mojom/sensor_provider.mojom.h"
+ #include "services/device/public/mojom/wake_lock.mojom.h"
+ #include "services/device/public/mojom/wake_lock_context.mojom.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/cpp/is_potentially_trustworthy.h"
+ #include "services/network/public/cpp/trust_token_operation_authorization.h"
+@@ -3064,10 +3063,6 @@ void RenderFrameHostImpl::ProcessBeforeUnloadCompletedFromFrame(
+         (renderer_before_unload_end_time - renderer_before_unload_start_time);
+     UMA_HISTOGRAM_TIMES("Navigation.OnBeforeUnloadOverheadTime",
+                         on_before_unload_overhead_time);
+-
+-    frame_tree_node_->navigator().LogBeforeUnloadTime(
+-        renderer_before_unload_start_time, renderer_before_unload_end_time,
+-        send_before_unload_start_time_);
+   }
+ 
+   // Resets beforeunload waiting state.
+@@ -3460,15 +3455,6 @@ void RenderFrameHostImpl::ReportNoBinderForInterface(const std::string& error) {
+   broker_receiver_.ReportBadMessage(error + " for the frame/document scope");
+ }
+ 
+-ukm::SourceId RenderFrameHostImpl::GetPageUkmSourceId() {
+-  int64_t navigation_id =
+-      GetMainFrame()->last_committed_cross_document_navigation_id_;
+-  if (navigation_id == -1)
+-    return ukm::kInvalidSourceId;
+-  return ukm::ConvertToSourceId(navigation_id,
+-                                ukm::SourceIdType::NAVIGATION_ID);
+-}
+-
+ BrowserContext* RenderFrameHostImpl::GetBrowserContext() {
+   return GetProcess()->GetBrowserContext();
+ }
+@@ -4240,19 +4226,9 @@ void RenderFrameHostImpl::EvictFromBackForwardCacheWithReasons(
+     DCHECK_EQ(top_document->IsInBackForwardCache(), in_back_forward_cache);
+   }
+ 
+-  // TODO(hajimehoshi): Record the 'race condition' by JavaScript execution when
+-  // |in_back_forward_cache| is false.
+-  BackForwardCacheMetrics* metrics = top_document->GetBackForwardCacheMetrics();
+-  if (in_back_forward_cache && metrics)
+-    metrics->MarkNotRestoredWithReason(can_store);
+-
+   if (!in_back_forward_cache) {
+     TRACE_EVENT0("navigation", "BackForwardCache_EvictAfterDocumentRestored");
+ 
+-    BackForwardCacheMetrics::RecordEvictedAfterDocumentRestored(
+-        BackForwardCacheMetrics::EvictedAfterDocumentRestoredReason::
+-            kByJavaScript);
+-
+     // A document is evicted from the BackForwardCache, but it has already been
+     // restored. The current document should be reloaded, because it is not
+     // salvageable.
+@@ -5409,11 +5385,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
+   }
+ }
+ 
+-media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
+-RenderFrameHostImpl::GetRecordAggregateWatchTimeCallback() {
+-  return delegate_->GetRecordAggregateWatchTimeCallback();
+-}
+-
+ void RenderFrameHostImpl::ResetWaitingState() {
+   // We don't allow resetting waiting state when the RenderFrameHost is either
+   // in BackForwardCache or in pending deletion state, as we don't allow
+@@ -6310,32 +6281,6 @@ void RenderFrameHostImpl::CommitNavigation(
+     mojom::NavigationClient* navigation_client =
+         navigation_request->GetCommitNavigationClient();
+ 
+-    // Record the metrics about the state of the old main frame at the moment
+-    // when we navigate away from it as it matters for whether the page
+-    // is eligible for being put into back-forward cache.
+-    //
+-    // Ideally we would do this when we are just about to swap out the old
+-    // render frame and swap in the new one, but we can't do this for
+-    // same-process navigations yet as we are reusing the RenderFrameHost and
+-    // as the local frame navigates it overrides the values that we are
+-    // interested in. The cross-process navigation case is handled in
+-    // RenderFrameHostManager::UnloadOldFrame.
+-    //
+-    // Here we are recording the metrics for same-process navigations at the
+-    // point just before the navigation commits.
+-    // TODO(altimin, crbug.com/933147): Remove this logic after we are done with
+-    // implementing back-forward cache.
+-    if (!GetParent() && frame_tree_node_->current_frame_host() == this) {
+-      if (NavigationEntryImpl* last_committed_entry =
+-              NavigationEntryImpl::FromNavigationEntry(
+-                  frame_tree()->controller()->GetLastCommittedEntry())) {
+-        if (last_committed_entry->back_forward_cache_metrics()) {
+-          last_committed_entry->back_forward_cache_metrics()
+-              ->RecordFeatureUsage(this);
+-        }
+-      }
+-    }
+-
+     // about:srcdoc "inherits" loaders from its parent in the renderer process,
+     // There are no need to provide new ones here.
+     // TODO(arthursonzogni): What about about:blank URLs?
+@@ -7411,58 +7356,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
+   media_interface_proxy_->Bind(std::move(receiver));
+ }
+ 
+-void RenderFrameHostImpl::BindMediaMetricsProviderReceiver(
+-    mojo::PendingReceiver<media::mojom::MediaMetricsProvider> receiver) {
+-  // Only save decode stats when BrowserContext provides a VideoPerfHistory.
+-  // Off-the-record contexts will internally use an ephemeral history DB.
+-  media::VideoDecodePerfHistory::SaveCallback save_stats_cb;
+-  if (GetSiteInstance()->GetBrowserContext()->GetVideoDecodePerfHistory()) {
+-    save_stats_cb = GetSiteInstance()
+-                        ->GetBrowserContext()
+-                        ->GetVideoDecodePerfHistory()
+-                        ->GetSaveCallback();
+-  }
+-
+-  media::MediaMetricsProvider::Create(
+-      GetProcess()->GetBrowserContext()->IsOffTheRecord()
+-          ? media::MediaMetricsProvider::BrowsingMode::kIncognito
+-          : media::MediaMetricsProvider::BrowsingMode::kNormal,
+-      frame_tree_node_->IsMainFrame()
+-          ? media::MediaMetricsProvider::FrameStatus::kTopFrame
+-          : media::MediaMetricsProvider::FrameStatus::kNotTopFrame,
+-      base::BindRepeating(
+-          &RenderFrameHostDelegate::
+-              GetUkmSourceIdForLastCommittedSourceIncludingSameDocument,
+-          // This callback is only executed when Create() is called, during
+-          // which the lifetime of the |delegate_| is guaranteed.
+-          base::Unretained(delegate_)),
+-      base::BindRepeating(
+-          [](RenderFrameHostImpl* frame) {
+-            return ::media::learning::FeatureValue(
+-                frame->GetLastCommittedOrigin().host());
+-          },
+-          // Same as above.
+-          base::Unretained(this)),
+-      std::move(save_stats_cb),
+-      base::BindRepeating(
+-          [](base::WeakPtr<RenderFrameHostImpl> frame)
+-              -> media::learning::LearningSession* {
+-            if (!base::FeatureList::IsEnabled(media::kMediaLearningFramework) ||
+-                !frame) {
+-              return nullptr;
+-            }
+-
+-            return frame->GetProcess()
+-                ->GetBrowserContext()
+-                ->GetLearningSession();
+-          },
+-          weak_ptr_factory_.GetWeakPtr()),
+-      base::BindRepeating(
+-          &RenderFrameHostImpl::GetRecordAggregateWatchTimeCallback,
+-          base::Unretained(this)),
+-      std::move(receiver));
+-}
+-
+ #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
+ void RenderFrameHostImpl::BindMediaRemoterFactoryReceiver(
+     mojo::PendingReceiver<media::mojom::RemoterFactory> receiver) {
+@@ -9212,14 +9105,6 @@ void RenderFrameHostImpl::EnableMojoJsBindings() {
+   GetFrameBindingsControl()->EnableMojoJsBindings();
+ }
+ 
+-BackForwardCacheMetrics* RenderFrameHostImpl::GetBackForwardCacheMetrics() {
+-  NavigationEntryImpl* navigation_entry =
+-      frame_tree()->controller()->GetEntryWithUniqueID(nav_entry_id());
+-  if (!navigation_entry)
+-    return nullptr;
+-  return navigation_entry->back_forward_cache_metrics();
+-}
+-
+ bool RenderFrameHostImpl::IsBackForwardCacheDisabled() const {
+   return back_forward_cache_disabled_reasons_.size();
+ }

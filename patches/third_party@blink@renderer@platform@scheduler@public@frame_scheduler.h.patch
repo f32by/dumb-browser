@@ -1,0 +1,43 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h b/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h
+index f458a4aee04c..32e04ba7c248 100644
+--- a/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h
++++ b/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h
+@@ -10,7 +10,6 @@
+ #include "base/memory/scoped_refptr.h"
+ #include "base/single_thread_task_runner.h"
+ #include "base/unguessable_token.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/mojom/loader/pause_subresource_loading_handle.mojom-blink.h"
+ #include "third_party/blink/public/platform/scheduler/web_resource_loading_task_runner_handle.h"
+ #include "third_party/blink/public/platform/scheduler/web_scoped_virtual_time_pauser.h"
+@@ -21,10 +20,6 @@
+ #include "third_party/blink/renderer/platform/wtf/hash_set.h"
+ #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+ 
+-namespace ukm {
+-class UkmRecorder;
+-}
+-
+ namespace blink {
+ 
+ class PageScheduler;
+@@ -36,9 +31,6 @@ class FrameScheduler : public FrameOrWorkerScheduler {
+    public:
+     virtual ~Delegate() = default;
+ 
+-    virtual ukm::UkmRecorder* GetUkmRecorder() = 0;
+-    virtual ukm::SourceId GetUkmSourceId() = 0;
+-
+     // Called when a frame has exceeded a total task time threshold (100ms).
+     virtual void UpdateTaskTime(base::TimeDelta time) = 0;
+ 
+@@ -164,9 +156,6 @@ class FrameScheduler : public FrameOrWorkerScheduler {
+   // of the page.
+   virtual bool IsExemptFromBudgetBasedThrottling() const = 0;
+ 
+-  // Returns UKM source id for recording metrics associated with this frame.
+-  virtual ukm::SourceId GetUkmSourceId() = 0;
+-
+   FrameScheduler* ToFrameScheduler() override { return this; }
+ 
+   // Returns a handle that prevents resource loading as long as the handle

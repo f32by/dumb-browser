@@ -1,0 +1,23 @@
+diff --git a/content/browser/download/save_package.h b/content/browser/download/save_package.h
+index 783be9798779..eb0528e2eead 100644
+--- a/content/browser/download/save_package.h
++++ b/content/browser/download/save_package.h
+@@ -31,7 +31,6 @@
+ #include "content/public/common/referrer.h"
+ #include "net/base/net_errors.h"
+ #include "services/data_decoder/public/mojom/web_bundler.mojom.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "url/gurl.h"
+ 
+ class GURL;
+@@ -429,10 +428,6 @@ class CONTENT_EXPORT SavePackage
+   // Unique ID for this SavePackage.
+   const SavePackageId unique_id_;
+ 
+-  // UKM IDs for reporting.
+-  ukm::SourceId ukm_source_id_;
+-  uint64_t ukm_download_id_;
+-
+   DISALLOW_COPY_AND_ASSIGN(SavePackage);
+ };
+ 

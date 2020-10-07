@@ -1,0 +1,29 @@
+diff --git a/third_party/blink/renderer/core/page/create_window.cc b/third_party/blink/renderer/core/page/create_window.cc
+index 8b023d40c421..9fb22ec2b323 100644
+--- a/third_party/blink/renderer/core/page/create_window.cc
++++ b/third_party/blink/renderer/core/page/create_window.cc
+@@ -28,7 +28,6 @@
+ 
+ #include "base/feature_list.h"
+ #include "base/metrics/histogram_macros.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/common/dom_storage/session_storage_namespace_id.h"
+ #include "third_party/blink/public/common/features.h"
+ #include "third_party/blink/public/common/frame/from_ad_state.h"
+@@ -211,16 +210,6 @@ static void MaybeLogWindowOpen(LocalFrame& opener_frame) {
+ 
+   // Log to UMA.
+   UMA_HISTOGRAM_ENUMERATION("Blink.WindowOpen.FromAdState", state);
+-
+-  // Log to UKM.
+-  ukm::UkmRecorder* ukm_recorder = opener_frame.GetDocument()->UkmRecorder();
+-  ukm::SourceId source_id = opener_frame.GetDocument()->UkmSourceID();
+-  if (source_id != ukm::kInvalidSourceId) {
+-    ukm::builders::AbusiveExperienceHeuristic_WindowOpen(source_id)
+-        .SetFromAdSubframe(is_ad_subframe)
+-        .SetFromAdScript(is_ad_script_in_stack)
+-        .Record(ukm_recorder);
+-  }
+ }
+ 
+ Frame* CreateNewWindow(LocalFrame& opener_frame,

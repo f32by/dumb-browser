@@ -5,6 +5,10 @@ Current version: `87.0.4270.0`.
 
 **Some patches are experimental and build may fail.**
 
+# Warning
+
+This branch (dev) is for reference use only. Patches may update frequently and some features may not work.
+
 # Features
 
 > All patches are in `patches` folder.
@@ -23,8 +27,9 @@ Following components are removed/disabled:
 12. Field trails fetching
 13. Promotions in New Tab Page
 14. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
-16. Installer and Updater
+16. Updater
 17. Subresource filter (which is used by Chrome's integrated AdBlocking feature.)
+18. [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
 
 Other changes / optimizations:
 1. [UI] Change web controls' color to gray (Microsoft Edge style)

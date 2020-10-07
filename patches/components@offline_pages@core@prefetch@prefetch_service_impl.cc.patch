@@ -1,0 +1,15 @@
+diff --git a/components/offline_pages/core/prefetch/prefetch_service_impl.cc b/components/offline_pages/core/prefetch/prefetch_service_impl.cc
+index 1d022ff1bb18..11ece36b93de 100644
+--- a/components/offline_pages/core/prefetch/prefetch_service_impl.cc
++++ b/components/offline_pages/core/prefetch/prefetch_service_impl.cc
+@@ -107,10 +107,6 @@ void PrefetchServiceImpl::RemoveSuggestion(GURL url) {
+   prefetch_dispatcher_->RemoveSuggestion(std::move(url));
+ }
+ 
+-OfflineMetricsCollector* PrefetchServiceImpl::GetOfflineMetricsCollector() {
+-  return offline_metrics_collector_.get();
+-}
+-
+ PrefetchDispatcher* PrefetchServiceImpl::GetPrefetchDispatcher() {
+   return prefetch_dispatcher_.get();
+ }

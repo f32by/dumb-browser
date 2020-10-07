@@ -1,0 +1,26 @@
+diff --git a/components/payments/content/service_worker_payment_app.cc b/components/payments/content/service_worker_payment_app.cc
+index 6d51dcaca5db..c9ded8ab298a 100644
+--- a/components/payments/content/service_worker_payment_app.cc
++++ b/components/payments/content/service_worker_payment_app.cc
+@@ -553,21 +553,6 @@ void ServiceWorkerPaymentApp::OnPaymentAppIdentity(const url::Origin& origin,
+   }
+ }
+ 
+-ukm::SourceId ServiceWorkerPaymentApp::UkmSourceId() {
+-  if (ukm_source_id_ == ukm::kInvalidSourceId) {
+-    GURL sw_scope = needs_installation_
+-                        ? GURL(installable_web_app_info_->sw_scope)
+-                        : stored_payment_app_info_->scope;
+-    // At this point we know that the payment handler window is open for this
+-    // app since this getter is called for the invoked app inside the
+-    // PaymentRequest::OnPaymentHandlerOpenWindowCalled function.
+-    ukm_source_id_ =
+-        content::PaymentAppProvider::GetInstance()
+-            ->GetSourceIdForPaymentAppFromScope(sw_scope.GetOrigin());
+-  }
+-  return ukm_source_id_;
+-}
+-
+ void ServiceWorkerPaymentApp::SetPaymentHandlerHost(
+     base::WeakPtr<PaymentHandlerHost> payment_handler_host) {
+   payment_handler_host_ = payment_handler_host;

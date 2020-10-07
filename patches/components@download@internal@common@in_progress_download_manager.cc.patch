@@ -1,0 +1,50 @@
+diff --git a/components/download/internal/common/in_progress_download_manager.cc b/components/download/internal/common/in_progress_download_manager.cc
+index 1b802400fe24..3619a747919b 100644
+--- a/components/download/internal/common/in_progress_download_manager.cc
++++ b/components/download/internal/common/in_progress_download_manager.cc
+@@ -18,7 +18,6 @@
+ #include "components/download/public/common/download_file.h"
+ #include "components/download/public/common/download_item_impl.h"
+ #include "components/download/public/common/download_start_observer.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_task_runner.h"
+ #include "components/download/public/common/download_url_parameters.h"
+ #include "components/download/public/common/download_utils.h"
+@@ -173,10 +172,6 @@ void OnPathReserved(DownloadItemImplDelegate::DownloadTargetCallback callback,
+     }
+   }
+ 
+-  RecordBackgroundTargetDeterminationResult(
+-      intermediate_path.empty()
+-          ? BackgroudTargetDeterminationResultTypes::kPathReservationFailed
+-          : BackgroudTargetDeterminationResultTypes::kSuccess);
+   std::move(callback).Run(
+       target_path, DownloadItem::TARGET_DISPOSITION_OVERWRITE, danger_type,
+       mixed_content_status, intermediate_path, std::move(download_schedule),
+@@ -395,8 +390,6 @@ void InProgressDownloadManager::DetermineDownloadTarget(
+         download->GetDangerType(), download->GetMixedContentStatus(),
+         target_path, download->GetDownloadSchedule(),
+         DOWNLOAD_INTERRUPT_REASON_FILE_FAILED);
+-    RecordBackgroundTargetDeterminationResult(
+-        BackgroudTargetDeterminationResultTypes::kTargetPathMissing);
+     return;
+   }
+ 
+@@ -408,8 +401,6 @@ void InProgressDownloadManager::DetermineDownloadTarget(
+         download->GetDangerType(), download->GetMixedContentStatus(),
+         target_path, download->GetDownloadSchedule(),
+         DOWNLOAD_INTERRUPT_REASON_NONE);
+-    RecordBackgroundTargetDeterminationResult(
+-        BackgroudTargetDeterminationResultTypes::kSuccess);
+     return;
+   }
+ 
+@@ -629,8 +620,6 @@ void InProgressDownloadManager::OnDownloadNamesRetrieved(
+     in_progress_downloads_.emplace_back(std::move(item));
+     download_ids.insert(download_id);
+   }
+-  if (num_duplicates > 0)
+-    RecordDuplicateInProgressDownloadIdCount(num_duplicates);
+   OnInitialized();
+   OnDownloadsInitialized();
+ }

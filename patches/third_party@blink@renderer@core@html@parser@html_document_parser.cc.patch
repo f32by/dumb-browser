@@ -1,0 +1,44 @@
+diff --git a/third_party/blink/renderer/core/html/parser/html_document_parser.cc b/third_party/blink/renderer/core/html/parser/html_document_parser.cc
+index 4c1969e47f5e..eb9cb1a8239d 100644
+--- a/third_party/blink/renderer/core/html/parser/html_document_parser.cc
++++ b/third_party/blink/renderer/core/html/parser/html_document_parser.cc
+@@ -309,16 +309,6 @@ HTMLDocumentParser::HTMLDocumentParser(Document& document,
+   DCHECK(!RuntimeEnabledFeatures::ForceSynchronousHTMLParsingEnabled() ||
+          !CanParseAsynchronously());
+ 
+-  // Report metrics for async document parsing only. The document
+-  // must be main frame to meet UKM requirements, and must have a high
+-  // resolution clock for high quality data.
+-  if (sync_policy == kAllowAsynchronousParsing && document.GetFrame() &&
+-      document.GetFrame()->IsMainFrame() &&
+-      base::TimeTicks::IsHighResolution()) {
+-    metrics_reporter_ = std::make_unique<HTMLParserMetrics>(
+-        document.UkmSourceID(), document.UkmRecorder());
+-  }
+-
+   max_tokenization_budget_ = base::GetFieldTrialParamByFeatureAsInt(
+       features::kForceSynchronousHTMLParsing, "MaxTokenizationBudget",
+       kDefaultMaxTokenizationBudget);
+@@ -510,8 +500,6 @@ void HTMLDocumentParser::ResumeParsingAfterYield() {
+   DCHECK(have_background_parser_);
+   DCHECK(!RuntimeEnabledFeatures::ForceSynchronousHTMLParsingEnabled());
+ 
+-  ScopedYieldTimer(&yield_timer_, metrics_reporter_.get());
+-
+   CheckIfBlockingStylesheetAdded();
+   if (IsStopped() || IsPaused())
+     return;
+@@ -847,13 +835,6 @@ void HTMLDocumentParser::PumpPendingSpeculations() {
+             session, speculations_.front()->starting_script))
+       break;
+   }
+-
+-  if (metrics_reporter_) {
+-    metrics_reporter_->AddChunk(session.ElapsedTime(),
+-                                session.ProcessedElementTokens());
+-    if (reached_end_of_file)
+-      metrics_reporter_->ReportMetricsAtParseEnd();
+-  }
+ }
+ 
+ void HTMLDocumentParser::ForcePlaintextForTextDocument() {

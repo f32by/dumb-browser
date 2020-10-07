@@ -1,0 +1,18 @@
+diff --git a/third_party/blink/public/platform/web_loading_hints_provider.h b/third_party/blink/public/platform/web_loading_hints_provider.h
+index 042397a25099..9a2f32b5e25f 100644
+--- a/third_party/blink/public/platform/web_loading_hints_provider.h
++++ b/third_party/blink/public/platform/web_loading_hints_provider.h
+@@ -13,12 +13,9 @@ namespace blink {
+ 
+ struct WebLoadingHintsProvider {
+   WebLoadingHintsProvider(
+-      int64_t ukm_source_id,
+       const blink::WebVector<blink::WebString>& subresource_patterns_to_block)
+-      : ukm_source_id(ukm_source_id),
+-        subresource_patterns_to_block(subresource_patterns_to_block) {}
++      : subresource_patterns_to_block(subresource_patterns_to_block) {}
+ 
+-  const int64_t ukm_source_id;
+   const blink::WebVector<blink::WebString> subresource_patterns_to_block;
+ };
+ 

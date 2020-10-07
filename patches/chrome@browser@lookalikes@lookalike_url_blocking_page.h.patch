@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/lookalikes/lookalike_url_blocking_page.h b/chrome/browser/lookalikes/lookalike_url_blocking_page.h
+index f82f2920e823..a0ca2ae80f0c 100644
+--- a/chrome/browser/lookalikes/lookalike_url_blocking_page.h
++++ b/chrome/browser/lookalikes/lookalike_url_blocking_page.h
+@@ -12,7 +12,6 @@
+ #include "base/time/time.h"
+ #include "components/lookalikes/core/lookalike_url_util.h"
+ #include "components/security_interstitials/content/security_interstitial_page.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ class GURL;
+ 
+@@ -30,7 +29,6 @@ class LookalikeUrlBlockingPage
+       content::WebContents* web_contents,
+       const GURL& safe_url,
+       const GURL& request_url,
+-      ukm::SourceId source_id,
+       LookalikeUrlMatchType match_type,
+       std::unique_ptr<
+           security_interstitials::SecurityInterstitialControllerClient>
+@@ -57,7 +55,6 @@ class LookalikeUrlBlockingPage
+   // The URL suggested to the user as the safe URL. Can be empty, in which case
+   // the default action on the interstitial takes the user to the new tab page.
+   const GURL safe_url_;
+-  ukm::SourceId source_id_;
+   LookalikeUrlMatchType match_type_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(LookalikeUrlBlockingPage);

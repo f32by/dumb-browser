@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/accessibility/accessibility_ui.cc b/chrome/browser/accessibility/accessibility_ui.cc
+index 63dcc09dc00d..a1781ee191e3 100644
+--- a/chrome/browser/accessibility/accessibility_ui.cc
++++ b/chrome/browser/accessibility/accessibility_ui.cc
+@@ -652,7 +652,6 @@ void AccessibilityUIMessageHandler::Callback(const std::string& str) {
+ 
+ void AccessibilityUIMessageHandler::StopRecording(
+     content::WebContents* web_contents) {
+-  web_contents->RecordAccessibilityEvents(false, base::nullopt);
+   observer_.reset(nullptr);
+ }
+ 
+@@ -680,9 +679,6 @@ void AccessibilityUIMessageHandler::RequestAccessibilityEvents(
+     if (observer_) {
+       return;
+     }
+-    web_contents->RecordAccessibilityEvents(
+-        true, base::BindRepeating(&AccessibilityUIMessageHandler::Callback,
+-                                  base::Unretained(this)));
+     observer_ =
+         std::make_unique<AccessibilityUIObserver>(web_contents, &event_logs_);
+   } else {

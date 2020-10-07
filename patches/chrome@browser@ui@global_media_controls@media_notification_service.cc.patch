@@ -1,0 +1,85 @@
+diff --git a/chrome/browser/ui/global_media_controls/media_notification_service.cc b/chrome/browser/ui/global_media_controls/media_notification_service.cc
+index e8778b5da0d1..9e7ef7dcdf47 100644
+--- a/chrome/browser/ui/global_media_controls/media_notification_service.cc
++++ b/chrome/browser/ui/global_media_controls/media_notification_service.cc
+@@ -24,20 +24,14 @@
+ #include "components/media_message_center/media_notification_item.h"
+ #include "components/media_message_center/media_notification_util.h"
+ #include "components/media_message_center/media_session_notification_item.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "content/public/browser/audio_service.h"
+ #include "content/public/browser/media_session.h"
+ #include "content/public/browser/media_session_service.h"
+ #include "media/base/media_switches.h"
+ #include "services/media_session/public/mojom/media_session.mojom.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace {
+ 
+-// The maximum number of actions we will record to UKM for a specific source.
+-constexpr int kMaxActionsRecordedToUKM = 100;
+-
+ constexpr int kAutoDismissTimerInMinutesDefault = 60;  // minutes
+ 
+ constexpr const char kAutoDismissTimerInMinutesParamName[] = "timer_in_minutes";
+@@ -64,26 +58,6 @@ base::TimeDelta GetAutoDismissTimerValue() {
+       kAutoDismissTimerInMinutesParamName, kAutoDismissTimerInMinutesDefault));
+ }
+ 
+-// Here we check to see if the WebContents is focused. Note that since Session
+-// is a WebContentsObserver, we could in theory listen for
+-// |OnWebContentsFocused()| and |OnWebContentsLostFocus()|. However, this won't
+-// actually work since focusing the MediaDialogView causes the WebContents to
+-// "lose focus", so we'd never be focused.
+-bool IsWebContentsFocused(content::WebContents* web_contents) {
+-  DCHECK(web_contents);
+-  Browser* browser = chrome::FindBrowserWithWebContents(web_contents);
+-  if (!browser)
+-    return false;
+-
+-  // If the given WebContents is not in the focused window, then it's not
+-  // focused. Note that we know a Browser is focused because otherwise the user
+-  // could not interact with the MediaDialogView.
+-  if (BrowserList::GetInstance()->GetLastActive() != browser)
+-    return false;
+-
+-  return browser->tab_strip_model()->GetActiveWebContents() == web_contents;
+-}
+-
+ base::WeakPtr<media_router::WebContentsPresentationManager>
+ GetPresentationManager(content::WebContents* web_contents) {
+   return web_contents
+@@ -495,32 +469,6 @@ void MediaNotificationService::RemoveItem(const std::string& id) {
+     observer.OnNotificationListChanged();
+ }
+ 
+-void MediaNotificationService::LogMediaSessionActionButtonPressed(
+-    const std::string& id,
+-    media_session::mojom::MediaSessionAction action) {
+-  auto it = sessions_.find(id);
+-  if (it == sessions_.end())
+-    return;
+-
+-  content::WebContents* web_contents = it->second.web_contents();
+-  if (!web_contents)
+-    return;
+-
+-  base::UmaHistogramBoolean("Media.GlobalMediaControls.UserActionFocus",
+-                            IsWebContentsFocused(web_contents));
+-
+-  ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
+-  ukm::SourceId source_id =
+-      ukm::GetSourceIdForWebContentsDocument(web_contents);
+-
+-  if (++actions_recorded_to_ukm_[source_id] > kMaxActionsRecordedToUKM)
+-    return;
+-
+-  ukm::builders::Media_GlobalMediaControls_ActionButtonPressed(source_id)
+-      .SetMediaSessionAction(static_cast<int64_t>(action))
+-      .Record(recorder);
+-}
+-
+ void MediaNotificationService::OnContainerClicked(const std::string& id) {
+   auto it = sessions_.find(id);
+   if (it == sessions_.end())

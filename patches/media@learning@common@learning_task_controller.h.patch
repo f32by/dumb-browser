@@ -1,0 +1,22 @@
+diff --git a/media/learning/common/learning_task_controller.h b/media/learning/common/learning_task_controller.h
+index 64ba5a2cbc77..357b708fcc15 100644
+--- a/media/learning/common/learning_task_controller.h
++++ b/media/learning/common/learning_task_controller.h
+@@ -13,7 +13,6 @@
+ #include "media/learning/common/labelled_example.h"
+ #include "media/learning/common/learning_task.h"
+ #include "media/learning/common/target_histogram.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ namespace media {
+ namespace learning {
+@@ -68,8 +67,7 @@ class COMPONENT_EXPORT(LEARNING_COMMON) LearningTaskController {
+   virtual void BeginObservation(
+       base::UnguessableToken id,
+       const FeatureVector& features,
+-      const base::Optional<TargetValue>& default_target = base::nullopt,
+-      const base::Optional<ukm::SourceId>& source_id = base::nullopt) = 0;
++      const base::Optional<TargetValue>& default_target = base::nullopt) = 0;
+ 
+   // Complete an observation by sending a completion.
+   virtual void CompleteObservation(base::UnguessableToken id,

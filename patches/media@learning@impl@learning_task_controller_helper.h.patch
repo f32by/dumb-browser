@@ -1,0 +1,40 @@
+diff --git a/media/learning/impl/learning_task_controller_helper.h b/media/learning/impl/learning_task_controller_helper.h
+index 69e59a1de21f..37f184949328 100644
+--- a/media/learning/impl/learning_task_controller_helper.h
++++ b/media/learning/impl/learning_task_controller_helper.h
+@@ -16,7 +16,6 @@
+ #include "base/threading/sequence_bound.h"
+ #include "media/learning/common/learning_task_controller.h"
+ #include "media/learning/impl/feature_provider.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ namespace media {
+ namespace learning {
+@@ -37,7 +36,7 @@ class COMPONENT_EXPORT(LEARNING_IMPL) LearningTaskControllerHelper
+  public:
+   // Callback to add labelled examples as training data.
+   using AddExampleCB =
+-      base::RepeatingCallback<void(LabelledExample, ukm::SourceId)>;
++      base::RepeatingCallback<void(LabelledExample)>;
+ 
+   // TODO(liberato): Consider making the FP not optional.
+   LearningTaskControllerHelper(const LearningTask& task,
+@@ -48,8 +47,7 @@ class COMPONENT_EXPORT(LEARNING_IMPL) LearningTaskControllerHelper
+ 
+   // See LearningTaskController::BeginObservation.
+   void BeginObservation(base::UnguessableToken id,
+-                        FeatureVector features,
+-                        base::Optional<ukm::SourceId> source_id);
++                        FeatureVector features);
+   void CompleteObservation(base::UnguessableToken id,
+                            const ObservationCompletion& completion);
+   void CancelObservation(base::UnguessableToken id);
+@@ -65,8 +63,6 @@ class COMPONENT_EXPORT(LEARNING_IMPL) LearningTaskControllerHelper
+     // Has the client added a TargetValue?
+     // TODO(liberato): Should it provide a weight with the target value?
+     bool target_done = false;
+-
+-    ukm::SourceId source_id = ukm::kInvalidSourceId;
+   };
+ 
+   // [non-repeating int] = example

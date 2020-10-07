@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser.cc b/chrome/browser/ui/browser.cc
-index 2d26d60ad629..8312e8978bac 100644
+index 2d26d60ad629..87f74b34590f 100644
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
 @@ -73,7 +73,6 @@
@@ -18,7 +18,20 @@ index 2d26d60ad629..8312e8978bac 100644
  #include "chrome/browser/tab_contents/tab_util.h"
  #include "chrome/browser/task_manager/web_contents_tags.h"
  #include "chrome/browser/themes/theme_service.h"
-@@ -177,15 +175,12 @@
+@@ -158,7 +156,6 @@
+ #include "components/blocked_content/list_item_position.h"
+ #include "components/blocked_content/popup_blocker.h"
+ #include "components/blocked_content/popup_blocker_tab_helper.h"
+-#include "components/blocked_content/popup_tracker.h"
+ #include "components/bookmarks/browser/bookmark_model.h"
+ #include "components/bookmarks/browser/bookmark_utils.h"
+ #include "components/bookmarks/common/bookmark_pref_names.h"
+@@ -172,20 +169,15 @@
+ #include "components/keep_alive_registry/keep_alive_types.h"
+ #include "components/keep_alive_registry/scoped_keep_alive.h"
+ #include "components/omnibox/browser/location_bar_model_impl.h"
+-#include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
+-#include "components/page_load_metrics/common/page_load_metrics.mojom.h"
  #include "components/paint_preview/buildflags/buildflags.h"
  #include "components/permissions/permission_request_manager.h"
  #include "components/prefs/pref_service.h"
@@ -34,7 +47,7 @@ index 2d26d60ad629..8312e8978bac 100644
  #include "components/translate/core/browser/language_state.h"
  #include "components/user_manager/user_manager.h"
  #include "components/viz/common/surfaces/surface_id.h"
-@@ -496,8 +491,6 @@ Browser::Browser(const CreateParams& params)
+@@ -496,8 +488,6 @@ Browser::Browser(const CreateParams& params)
  
    UpdateBookmarkBarState(BOOKMARK_BAR_STATE_CHANGE_INIT);
  
@@ -43,7 +56,7 @@ index 2d26d60ad629..8312e8978bac 100644
    if (params.skip_window_init_for_testing)
      return;
  
-@@ -1492,10 +1485,6 @@ void Browser::OnDidBlockNavigation(
+@@ -1492,10 +1482,6 @@ void Browser::OnDidBlockNavigation(
        framebust_helper->AddBlockedUrl(blocked_url, base::BindOnce(on_click));
      }
    }
@@ -54,7 +67,7 @@ index 2d26d60ad629..8312e8978bac 100644
  }
  
  content::PictureInPictureResult Browser::EnterPictureInPicture(
-@@ -1570,10 +1559,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
+@@ -1570,10 +1556,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
  bool Browser::IsFrameLowPriority(
      const content::WebContents* web_contents,
      const content::RenderFrameHost* render_frame_host) {
@@ -66,7 +79,7 @@ index 2d26d60ad629..8312e8978bac 100644
  }
  
  void Browser::MediaWatchTimeChanged(
-@@ -1597,7 +1583,6 @@ void Browser::OnWindowDidShow() {
+@@ -1597,7 +1580,6 @@ void Browser::OnWindowDidShow() {
      return;
    window_has_shown_ = true;
  
@@ -74,3 +87,62 @@ index 2d26d60ad629..8312e8978bac 100644
  
    // Nothing to do for non-tabbed windows.
    if (!is_type_normal())
+@@ -1654,12 +1636,6 @@ WebContents* Browser::OpenURLFromTab(WebContents* source,
+ 
+   content::WebContents* navigated_or_inserted_contents =
+       popup_delegate->nav_params()->navigated_or_inserted_contents;
+-  if (is_popup && navigated_or_inserted_contents) {
+-    auto* tracker = blocked_content::PopupTracker::CreateForWebContents(
+-        navigated_or_inserted_contents, source, params.disposition);
+-    tracker->set_is_trusted(params.triggering_event_info !=
+-                            blink::TriggeringEventInfo::kFromUntrustedEvent);
+-  }
+ 
+   return navigated_or_inserted_contents;
+ }
+@@ -1713,13 +1689,6 @@ void Browser::AddNewContents(WebContents* source,
+   }
+ #endif
+ 
+-  // At this point the |new_contents| is beyond the popup blocker, but we use
+-  // the same logic for determining if the popup tracker needs to be attached.
+-  if (source && blocked_content::ConsiderForPopupBlocking(disposition)) {
+-    blocked_content::PopupTracker::CreateForWebContents(new_contents.get(),
+-                                                        source, disposition);
+-  }
+-
+   chrome::AddWebContents(this, source, std::move(new_contents), target_url,
+                          disposition, initial_rect);
+ }
+@@ -1749,18 +1718,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
+   if (is_type_normal())
+     return;
+ 
+-  page_load_metrics::mojom::PageLoadFeatures features;
+-  features.features.push_back(blink::mojom::WebFeature::kMovedOrResizedPopup);
+-  if (creation_timer_.Elapsed() > base::TimeDelta::FromSeconds(2)) {
+-    // Additionally measure whether a popup was moved after creation, to
+-    // distinguish between popups that reposition themselves after load and
+-    // those which move popups continuously.
+-    features.features.push_back(
+-        blink::mojom::WebFeature::kMovedOrResizedPopup2sAfterCreation);
+-  }
+-
+-  page_load_metrics::MetricsWebContentsObserver::RecordFeatureUsage(
+-      source->GetMainFrame(), features);
+   window_->SetBounds(bounds);
+ }
+ 
+@@ -2400,12 +2357,6 @@ void Browser::OnTabClosing(WebContents* contents) {
+   // associated with their tab is still valid.
+   WebContentsModalDialogManager::FromWebContents(contents)->CloseAllDialogs();
+ 
+-  // Page load metrics need to be informed that the WebContents will soon be
+-  // destroyed, so that upcoming visibility changes can be ignored.
+-  page_load_metrics::MetricsWebContentsObserver* metrics_observer =
+-      page_load_metrics::MetricsWebContentsObserver::FromWebContents(contents);
+-  metrics_observer->WebContentsWillSoonBeDestroyed();
+-
+   exclusive_access_manager_->OnTabClosing(contents);
+   SessionService* session_service =
+       SessionServiceFactory::GetForProfile(profile_);

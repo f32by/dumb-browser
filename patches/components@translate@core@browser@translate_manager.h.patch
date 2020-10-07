@@ -1,0 +1,34 @@
+diff --git a/components/translate/core/browser/translate_manager.h b/components/translate/core/browser/translate_manager.h
+index 4af8de596197..1fce737c277d 100644
+--- a/components/translate/core/browser/translate_manager.h
++++ b/components/translate/core/browser/translate_manager.h
+@@ -160,11 +160,6 @@ class TranslateManager {
+   // Gets the LanguageState associated with the TranslateManager
+   LanguageState& GetLanguageState();
+ 
+-  // Record an event of the given |event_type| using the currently saved
+-  // |translate_event_| as context. |event_type| must be one of the values
+-  // defined by metrics::TranslateEventProto::EventType.
+-  void RecordTranslateEvent(int event_type);
+-
+   // By default, don't offer to translate in builds lacking an API key. For
+   // testing, set to true to offer anyway.
+   static void SetIgnoreMissingKeyForTesting(bool ignore);
+@@ -279,17 +274,6 @@ class TranslateManager {
+                            const std::string& page_language_code,
+                            const std::string target_lang);
+ 
+-  // Records all UMA metrics related to the current |decision|.
+-  void RecordDecisionMetrics(const TranslateTriggerDecision& decision,
+-                             const std::string& page_language_code,
+-                             bool ui_shown);
+-
+-  // Records the RankerEvent associated with the current |decision|.
+-  void RecordDecisionRankerEvent(const TranslateTriggerDecision& decision,
+-                                 TranslatePrefs* translate_prefs,
+-                                 const std::string& page_language_code,
+-                                 const std::string& target_lang);
+-
+   // Sequence number of the current page.
+   int page_seq_no_;
+ 

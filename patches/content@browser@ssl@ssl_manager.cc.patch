@@ -1,0 +1,108 @@
+diff --git a/content/browser/ssl/ssl_manager.cc b/content/browser/ssl/ssl_manager.cc
+index e7abd879face..1e72ce769079 100644
+--- a/content/browser/ssl/ssl_manager.cc
++++ b/content/browser/ssl/ssl_manager.cc
+@@ -10,7 +10,6 @@
+ #include "base/bind.h"
+ #include "base/macros.h"
+ #include "base/metrics/histogram_macros.h"
+-#include "base/metrics/ukm_source_id.h"
+ #include "base/strings/utf_string_conversions.h"
+ #include "base/supports_user_data.h"
+ #include "base/task/post_task.h"
+@@ -28,8 +27,6 @@
+ #include "content/public/browser/navigation_details.h"
+ #include "content/public/browser/ssl_host_state_delegate.h"
+ #include "content/public/common/content_client.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/blink/public/mojom/devtools/console_message.mojom.h"
+ 
+ namespace content {
+@@ -95,15 +92,6 @@ class SSLManagerSet : public base::SupportsUserData::Data {
+   DISALLOW_COPY_AND_ASSIGN(SSLManagerSet);
+ };
+ 
+-void LogMixedContentMetrics(MixedContentType type,
+-                            ukm::SourceId source_id,
+-                            ukm::UkmRecorder* recorder) {
+-  UMA_HISTOGRAM_ENUMERATION("SSL.MixedContentShown", type);
+-  ukm::builders::SSL_MixedContentShown(source_id)
+-      .SetType(static_cast<int64_t>(type))
+-      .Record(recorder);
+-}
+-
+ }  // namespace
+ 
+ // static
+@@ -207,28 +195,10 @@ void SSLManager::DidCommitProvisionalLoad(const LoadCommittedDetails& details) {
+ }
+ 
+ void SSLManager::DidDisplayMixedContent() {
+-  NavigationEntryImpl* entry = controller_->GetLastCommittedEntry();
+-  if (entry && entry->GetURL().SchemeIsCryptographic() &&
+-      entry->GetSSL().certificate) {
+-    WebContentsImpl* contents = static_cast<WebContentsImpl*>(
+-        controller_->delegate()->GetWebContents());
+-    ukm::SourceId source_id = contents->GetMainFrame()->GetPageUkmSourceId();
+-    LogMixedContentMetrics(MixedContentType::kDisplayMixedContent, source_id,
+-                           ukm::UkmRecorder::Get());
+-  }
+   UpdateLastCommittedEntry(SSLStatus::DISPLAYED_INSECURE_CONTENT, 0);
+ }
+ 
+ void SSLManager::DidContainInsecureFormAction() {
+-  NavigationEntryImpl* entry = controller_->GetLastCommittedEntry();
+-  if (entry && entry->GetURL().SchemeIsCryptographic() &&
+-      entry->GetSSL().certificate) {
+-    WebContentsImpl* contents = static_cast<WebContentsImpl*>(
+-        controller_->delegate()->GetWebContents());
+-    ukm::SourceId source_id = contents->GetMainFrame()->GetPageUkmSourceId();
+-    LogMixedContentMetrics(MixedContentType::kMixedForm, source_id,
+-                           ukm::UkmRecorder::Get());
+-  }
+   UpdateLastCommittedEntry(SSLStatus::DISPLAYED_FORM_WITH_INSECURE_ACTION, 0);
+ }
+ 
+@@ -239,11 +209,6 @@ void SSLManager::DidDisplayContentWithCertErrors() {
+   // Only record information about subresources with cert errors if the
+   // main page is HTTPS with a certificate.
+   if (entry->GetURL().SchemeIsCryptographic() && entry->GetSSL().certificate) {
+-    WebContentsImpl* contents = static_cast<WebContentsImpl*>(
+-        controller_->delegate()->GetWebContents());
+-    ukm::SourceId source_id = contents->GetMainFrame()->GetPageUkmSourceId();
+-    LogMixedContentMetrics(MixedContentType::kDisplayWithCertErrors, source_id,
+-                           ukm::UkmRecorder::Get());
+     UpdateLastCommittedEntry(SSLStatus::DISPLAYED_CONTENT_WITH_CERT_ERRORS, 0);
+   }
+ }
+@@ -253,14 +218,6 @@ void SSLManager::DidRunMixedContent(const GURL& security_origin) {
+   if (!entry)
+     return;
+ 
+-  if (entry->GetURL().SchemeIsCryptographic() && entry->GetSSL().certificate) {
+-    WebContentsImpl* contents = static_cast<WebContentsImpl*>(
+-        controller_->delegate()->GetWebContents());
+-    ukm::SourceId source_id = contents->GetMainFrame()->GetPageUkmSourceId();
+-    LogMixedContentMetrics(MixedContentType::kScriptingMixedContent, source_id,
+-                           ukm::UkmRecorder::Get());
+-  }
+-
+   SiteInstance* site_instance = entry->site_instance();
+   if (!site_instance)
+     return;
+@@ -279,14 +236,6 @@ void SSLManager::DidRunContentWithCertErrors(const GURL& security_origin) {
+   if (!entry)
+     return;
+ 
+-  if (entry->GetURL().SchemeIsCryptographic() && entry->GetSSL().certificate) {
+-    WebContentsImpl* contents = static_cast<WebContentsImpl*>(
+-        controller_->delegate()->GetWebContents());
+-    ukm::SourceId source_id = contents->GetMainFrame()->GetPageUkmSourceId();
+-    LogMixedContentMetrics(MixedContentType::kScriptingWithCertErrors,
+-                           source_id, ukm::UkmRecorder::Get());
+-  }
+-
+   SiteInstance* site_instance = entry->site_instance();
+   if (!site_instance)
+     return;

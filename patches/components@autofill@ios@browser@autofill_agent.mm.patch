@@ -1,0 +1,23 @@
+diff --git a/components/autofill/ios/browser/autofill_agent.mm b/components/autofill/ios/browser/autofill_agent.mm
+index bf858c321257..7df15aae3534 100644
+--- a/components/autofill/ios/browser/autofill_agent.mm
++++ b/components/autofill/ios/browser/autofill_agent.mm
+@@ -21,10 +21,8 @@
+ #include "base/values.h"
+ #include "components/autofill/core/browser/autofill_field.h"
+ #include "components/autofill/core/browser/autofill_manager.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/data_model/autofill_profile.h"
+ #include "components/autofill/core/browser/data_model/credit_card.h"
+-#include "components/autofill/core/browser/keyboard_accessory_metrics_logger.h"
+ #include "components/autofill/core/browser/ui/popup_item_ids.h"
+ #include "components/autofill/core/common/autofill_constants.h"
+ #include "components/autofill/core/common/autofill_features.h"
+@@ -270,7 +268,6 @@ - (void)notifyAutofillManager:(autofill::AutofillManager*)autofillManager
+   autofill::FormData form = forms[0];
+   autofillManager->OnFormSubmitted(
+       form, false, autofill::mojom::SubmissionSource::FORM_SUBMISSION);
+-  autofill::KeyboardAccessoryMetricsLogger::OnFormSubmitted();
+ }
+ 
+ // Invokes the form extraction script in |frame| and loads the output into the

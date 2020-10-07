@@ -1,0 +1,23 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/main_thread/frame_scheduler_impl.cc b/third_party/blink/renderer/platform/scheduler/main_thread/frame_scheduler_impl.cc
+index f924537d8569..f21038d15b33 100644
+--- a/third_party/blink/renderer/platform/scheduler/main_thread/frame_scheduler_impl.cc
++++ b/third_party/blink/renderer/platform/scheduler/main_thread/frame_scheduler_impl.cc
+@@ -1186,18 +1186,6 @@ void FrameSchedulerImpl::RemovePauseSubresourceLoadingHandle() {
+   }
+ }
+ 
+-ukm::UkmRecorder* FrameSchedulerImpl::GetUkmRecorder() {
+-  if (!delegate_)
+-    return nullptr;
+-  return delegate_->GetUkmRecorder();
+-}
+-
+-ukm::SourceId FrameSchedulerImpl::GetUkmSourceId() {
+-  if (!delegate_)
+-    return ukm::kInvalidSourceId;
+-  return delegate_->GetUkmSourceId();
+-}
+-
+ void FrameSchedulerImpl::OnTaskQueueCreated(
+     MainThreadTaskQueue* task_queue,
+     base::sequence_manager::TaskQueue::QueueEnabledVoter* voter) {

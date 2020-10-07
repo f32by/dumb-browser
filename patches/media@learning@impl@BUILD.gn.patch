@@ -1,0 +1,21 @@
+diff --git a/media/learning/impl/BUILD.gn b/media/learning/impl/BUILD.gn
+index 2b70ebc46a1b..fb48e9684558 100644
+--- a/media/learning/impl/BUILD.gn
++++ b/media/learning/impl/BUILD.gn
+@@ -47,8 +47,6 @@ component("impl") {
+ 
+   deps = [
+     "//base",
+-    "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+   ]
+ 
+   public_deps = [ "//media/learning/common" ]
+@@ -76,7 +74,6 @@ source_set("unit_tests") {
+   deps = [
+     ":impl",
+     "//base/test:test_support",
+-    "//components/ukm:test_support",
+     "//media:test_support",
+     "//media/learning/impl",
+     "//testing/gtest",

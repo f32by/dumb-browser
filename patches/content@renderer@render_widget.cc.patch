@@ -1,0 +1,35 @@
+diff --git a/content/renderer/render_widget.cc b/content/renderer/render_widget.cc
+index 545ff6317cf6..98482b3e0de2 100644
+--- a/content/renderer/render_widget.cc
++++ b/content/renderer/render_widget.cc
+@@ -30,7 +30,6 @@
+ #include "cc/base/switches.h"
+ #include "cc/trees/layer_tree_frame_sink.h"
+ #include "cc/trees/layer_tree_host.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "components/viz/common/features.h"
+ #include "components/viz/common/frame_sinks/begin_frame_source.h"
+ #include "components/viz/common/frame_sinks/copy_output_request.h"
+@@ -635,7 +634,7 @@ void RenderWidget::InitCompositing(const blink::ScreenInfo& screen_info) {
+   layer_tree_host_ = webwidget_->InitializeCompositing(
+       compositor_deps_->GetWebMainThreadScheduler(),
+       compositor_deps_->GetTaskGraphRunner(), for_child_local_root_frame_,
+-      screen_info, compositor_deps_->CreateUkmRecorderFactory(),
++      screen_info,
+       /*settings=*/nullptr);
+   DCHECK(layer_tree_host_);
+   webwidget_->UpdateScreenInfo(screen_info);
+@@ -962,11 +961,8 @@ bool RenderWidget::IsPointerLocked() {
+       webwidget_mouse_lock_target_.get());
+ }
+ 
+-void RenderWidget::DidNavigate(ukm::SourceId source_id, const GURL& url) {
+-  // Update the URL and the document source id used to key UKM metrics in the
+-  // compositor. Note that the metrics for all frames are keyed to the main
+-  // frame's URL.
+-  layer_tree_host_->SetSourceURL(source_id, url);
++void RenderWidget::DidNavigate(const GURL& url) {
++  layer_tree_host_->SetSourceURL(url);
+ }
+ 
+ blink::WebInputMethodController* RenderWidget::GetInputMethodController()

@@ -1,0 +1,121 @@
+diff --git a/media/mojo/services/video_decode_perf_history.cc b/media/mojo/services/video_decode_perf_history.cc
+index 23517fd56d17..9053b5ae40e8 100644
+--- a/media/mojo/services/video_decode_perf_history.cc
++++ b/media/mojo/services/video_decode_perf_history.cc
+@@ -17,8 +17,6 @@
+ #include "media/base/video_codecs.h"
+ #include "media/capabilities/learning_helper.h"
+ #include "media/mojo/mojom/media_types.mojom.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace media {
+ 
+@@ -236,8 +234,7 @@ VideoDecodePerfHistory::SaveCallback VideoDecodePerfHistory::GetSaveCallback() {
+                              weak_ptr_factory_.GetWeakPtr());
+ }
+ 
+-void VideoDecodePerfHistory::SavePerfRecord(ukm::SourceId source_id,
+-                                            learning::FeatureValue origin,
++void VideoDecodePerfHistory::SavePerfRecord(learning::FeatureValue origin,
+                                             bool is_top_frame,
+                                             mojom::PredictionFeatures features,
+                                             mojom::PredictionTargets targets,
+@@ -262,7 +259,7 @@ void VideoDecodePerfHistory::SavePerfRecord(ukm::SourceId source_id,
+   if (db_init_status_ != COMPLETE) {
+     init_deferred_api_calls_.push_back(base::BindOnce(
+         &VideoDecodePerfHistory::SavePerfRecord, weak_ptr_factory_.GetWeakPtr(),
+-        source_id, origin, is_top_frame, std::move(features),
++        origin, is_top_frame, std::move(features),
+         std::move(targets), player_id, std::move(save_done_cb)));
+     InitDatabase();
+     return;
+@@ -283,12 +280,11 @@ void VideoDecodePerfHistory::SavePerfRecord(ukm::SourceId source_id,
+   db_->GetDecodeStats(
+       video_key,
+       base::BindOnce(&VideoDecodePerfHistory::OnGotStatsForSave,
+-                     weak_ptr_factory_.GetWeakPtr(), source_id, is_top_frame,
++                     weak_ptr_factory_.GetWeakPtr(), is_top_frame,
+                      player_id, video_key, new_stats, std::move(save_done_cb)));
+ }
+ 
+ void VideoDecodePerfHistory::OnGotStatsForSave(
+-    ukm::SourceId source_id,
+     bool is_top_frame,
+     uint64_t player_id,
+     const VideoDecodeStatsDB::VideoDescKey& video_key,
+@@ -306,9 +302,6 @@ void VideoDecodePerfHistory::OnGotStatsForSave(
+     return;
+   }
+ 
+-  ReportUkmMetrics(source_id, is_top_frame, player_id, video_key, new_stats,
+-                   past_stats.get());
+-
+   db_->AppendDecodeStats(
+       video_key, new_stats,
+       base::BindOnce(&VideoDecodePerfHistory::OnSaveDone,
+@@ -330,64 +323,6 @@ void VideoDecodePerfHistory::OnSaveDone(base::OnceClosure save_done_cb,
+     std::move(save_done_cb).Run();
+ }
+ 
+-void VideoDecodePerfHistory::ReportUkmMetrics(
+-    ukm::SourceId source_id,
+-    bool is_top_frame,
+-    uint64_t player_id,
+-    const VideoDecodeStatsDB::VideoDescKey& video_key,
+-    const VideoDecodeStatsDB::DecodeStatsEntry& new_stats,
+-    VideoDecodeStatsDB::DecodeStatsEntry* past_stats) {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-
+-  // UKM may be unavailable in content_shell or other non-chrome/ builds; it
+-  // may also be unavailable if browser shutdown has started; so this may be a
+-  // nullptr. If it's unavailable, UKM reporting will be skipped.
+-  ukm::UkmRecorder* ukm_recorder = ukm::UkmRecorder::Get();
+-  if (!ukm_recorder)
+-    return;
+-
+-  ukm::builders::Media_VideoDecodePerfRecord builder(source_id);
+-  builder.SetVideo_InTopFrame(is_top_frame);
+-  builder.SetVideo_PlayerID(player_id);
+-
+-  builder.SetVideo_CodecProfile(video_key.codec_profile);
+-  builder.SetVideo_FramesPerSecond(video_key.frame_rate);
+-  builder.SetVideo_NaturalHeight(video_key.size.height());
+-  builder.SetVideo_NaturalWidth(video_key.size.width());
+-
+-  if (!video_key.key_system.empty()) {
+-    builder.SetVideo_EME_KeySystem(GetKeySystemIntForUKM(video_key.key_system));
+-    builder.SetVideo_EME_UseHwSecureCodecs(video_key.use_hw_secure_codecs);
+-  }
+-
+-  bool past_is_smooth = false;
+-  bool past_is_efficient = false;
+-  AssessStats(video_key, past_stats, &past_is_smooth, &past_is_efficient);
+-  builder.SetPerf_ApiWouldClaimIsSmooth(past_is_smooth);
+-  builder.SetPerf_ApiWouldClaimIsPowerEfficient(past_is_efficient);
+-  if (past_stats) {
+-    builder.SetPerf_PastVideoFramesDecoded(past_stats->frames_decoded);
+-    builder.SetPerf_PastVideoFramesDropped(past_stats->frames_dropped);
+-    builder.SetPerf_PastVideoFramesPowerEfficient(
+-        past_stats->frames_power_efficient);
+-  } else {
+-    builder.SetPerf_PastVideoFramesDecoded(0);
+-    builder.SetPerf_PastVideoFramesDropped(0);
+-    builder.SetPerf_PastVideoFramesPowerEfficient(0);
+-  }
+-
+-  bool new_is_smooth = false;
+-  bool new_is_efficient = false;
+-  AssessStats(video_key, &new_stats, &new_is_smooth, &new_is_efficient);
+-  builder.SetPerf_RecordIsSmooth(new_is_smooth);
+-  builder.SetPerf_RecordIsPowerEfficient(new_is_efficient);
+-  builder.SetPerf_VideoFramesDecoded(new_stats.frames_decoded);
+-  builder.SetPerf_VideoFramesDropped(new_stats.frames_dropped);
+-  builder.SetPerf_VideoFramesPowerEfficient(new_stats.frames_power_efficient);
+-
+-  builder.Record(ukm_recorder);
+-}
+-
+ void VideoDecodePerfHistory::ClearHistory(base::OnceClosure clear_done_cb) {
+   DVLOG(2) << __func__;
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);

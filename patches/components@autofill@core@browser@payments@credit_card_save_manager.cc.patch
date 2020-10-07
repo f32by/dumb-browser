@@ -1,0 +1,340 @@
+diff --git a/components/autofill/core/browser/payments/credit_card_save_manager.cc b/components/autofill/core/browser/payments/credit_card_save_manager.cc
+index e9e8c203a209..d6e77bf2b25a 100644
+--- a/components/autofill/core/browser/payments/credit_card_save_manager.cc
++++ b/components/autofill/core/browser/payments/credit_card_save_manager.cc
+@@ -27,7 +27,6 @@
+ #include "build/build_config.h"
+ #include "components/autofill/core/browser/autofill_client.h"
+ #include "components/autofill/core/browser/autofill_experiments.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/autofill_type.h"
+ #include "components/autofill/core/browser/data_model/autofill_profile.h"
+ #include "components/autofill/core/browser/data_model/credit_card.h"
+@@ -174,22 +173,6 @@ void CreditCardSaveManager::AttemptToOfferCardUploadSave(
+ 
+   pending_upload_request_origin_ = submitted_form.main_frame_origin();
+ 
+-  if (has_non_focusable_field_) {
+-    upload_decision_metrics_ |=
+-        AutofillMetrics::UPLOAD_OFFERED_FROM_NON_FOCUSABLE_FIELD;
+-  }
+-  if (submitted_form.value_from_dynamic_change_form()) {
+-    upload_decision_metrics_ |=
+-        AutofillMetrics::UPLOAD_OFFERED_FROM_DYNAMIC_CHANGE_FORM;
+-  }
+-  if (upload_request_.cvc.empty()) {
+-    // Apply the CVC decision to |upload_decision_metrics_| to denote a problem
+-    // was found.
+-    upload_decision_metrics_ |= GetCVCCardUploadDecisionMetric();
+-  }
+-
+-  // Add active Chrome experiments to the request payload here (currently none).
+-
+   // We store the detected values in the upload request, because the addresses
+   // are being possibly modified in the next code block, and we want the
+   // detected values to reflect addresses *before* they are modified.
+@@ -199,8 +182,6 @@ void CreditCardSaveManager::AttemptToOfferCardUploadSave(
+   // for it.
+   should_request_name_from_user_ = false;
+   if (upload_request_.detected_values & DetectedValue::USER_PROVIDED_NAME) {
+-    upload_decision_metrics_ |=
+-        AutofillMetrics::USER_REQUESTED_TO_PROVIDE_CARDHOLDER_NAME;
+     should_request_name_from_user_ = true;
+   }
+ 
+@@ -210,21 +191,6 @@ void CreditCardSaveManager::AttemptToOfferCardUploadSave(
+   should_request_expiration_date_from_user_ = false;
+   if (upload_request_.detected_values &
+       DetectedValue::USER_PROVIDED_EXPIRATION_DATE) {
+-    upload_decision_metrics_ |=
+-        AutofillMetrics::USER_REQUESTED_TO_PROVIDE_EXPIRATION_DATE;
+-#if defined(OS_IOS)
+-    // iOS should always provide a valid expiration date when attempting to
+-    // upload a Saved Card. Calling LogSaveCardRequestExpirationDateReasonMetric
+-    // would trigger a DCHECK.
+-    if (!(base::FeatureList::IsEnabled(
+-              features::kAutofillSaveCardInfobarEditSupport) &&
+-          base::FeatureList::IsEnabled(kIOSInfobarUIReboot))) {
+-      // Remove once both flags are deleted.
+-      LogSaveCardRequestExpirationDateReasonMetric();
+-    }
+-#else
+-    LogSaveCardRequestExpirationDateReasonMetric();
+-#endif
+     should_request_expiration_date_from_user_ = true;
+   }
+ 
+@@ -252,7 +218,6 @@ void CreditCardSaveManager::AttemptToOfferCardUploadSave(
+       (should_request_expiration_date_from_user_ &&
+        personal_data_manager_->GetSyncSigninState() ==
+            AutofillSyncSigninState::kSignedInAndWalletSyncTransportEnabled)) {
+-    LogCardUploadDecisions(upload_decision_metrics_);
+     pending_upload_request_origin_ = url::Origin();
+     return;
+   }
+@@ -306,12 +271,6 @@ void CreditCardSaveManager::OnDidUploadCard(
+   if (observer_for_testing_)
+     observer_for_testing_->OnReceivedUploadCardResponse();
+ 
+-  if (result == AutofillClient::SUCCESS &&
+-      upload_request_.card.HasFirstAndLastName()) {
+-    AutofillMetrics::LogSaveCardWithFirstAndLastNameComplete(
+-        /*is_local=*/false);
+-  }
+-
+   if (result == AutofillClient::SUCCESS) {
+     // Log how many strikes the card had when it was saved.
+     LogStrikesPresentWhenCardSaved(
+@@ -385,9 +344,6 @@ void CreditCardSaveManager::OnDidGetUploadDetails(
+                                     has_non_focusable_field_,
+                                     upload_request_.card);
+       }
+-      upload_decision_metrics_ |=
+-          AutofillMetrics::UPLOAD_NOT_OFFERED_INVALID_LEGAL_MESSAGE;
+-      LogCardUploadDecisions(upload_decision_metrics_);
+       return;
+     }
+ 
+@@ -402,9 +358,6 @@ void CreditCardSaveManager::OnDidGetUploadDetails(
+                                     has_non_focusable_field_,
+                                     upload_request_.card);
+       }
+-      upload_decision_metrics_ |=
+-          AutofillMetrics::UPLOAD_NOT_OFFERED_UNSUPPORTED_BIN_RANGE;
+-      LogCardUploadDecisions(upload_decision_metrics_);
+       return;
+     }
+     upload_request_.context_token = context_token;
+@@ -436,9 +389,6 @@ void CreditCardSaveManager::OnDidGetUploadDetails(
+                                   has_non_focusable_field_,
+                                   upload_request_.card);
+     }
+-    upload_decision_metrics_ |=
+-        AutofillMetrics::UPLOAD_NOT_OFFERED_GET_UPLOAD_DETAILS_FAILED;
+-    LogCardUploadDecisions(upload_decision_metrics_);
+   }
+ }
+ 
+@@ -463,15 +413,6 @@ void CreditCardSaveManager::OfferCardLocalSave() {
+             .with_has_non_focusable_field(has_non_focusable_field_),
+         base::BindOnce(&CreditCardSaveManager::OnUserDidDecideOnLocalSave,
+                        weak_ptr_factory_.GetWeakPtr()));
+-
+-    // Log metrics.
+-    if (local_card_save_candidate_.HasFirstAndLastName())
+-      AutofillMetrics::LogSaveCardWithFirstAndLastNameOffered(
+-          /*is_local=*/true);
+-  }
+-  if (show_save_prompt_.has_value() && !show_save_prompt_.value()) {
+-    AutofillMetrics::LogCreditCardSaveNotOfferedDueToMaxStrikesMetric(
+-        AutofillMetrics::SaveTypeMetric::LOCAL);
+   }
+ }
+ 
+@@ -500,27 +441,6 @@ void CreditCardSaveManager::OfferCardUploadSave() {
+     client_->LoadRiskData(
+         base::BindOnce(&CreditCardSaveManager::OnDidGetUploadRiskData,
+                        weak_ptr_factory_.GetWeakPtr()));
+-
+-    // Log metrics.
+-    AutofillMetrics::LogUploadOfferedCardOriginMetric(
+-        uploading_local_card_ ? AutofillMetrics::OFFERING_UPLOAD_OF_LOCAL_CARD
+-                              : AutofillMetrics::OFFERING_UPLOAD_OF_NEW_CARD);
+-    if (upload_request_.card.HasFirstAndLastName()) {
+-      AutofillMetrics::LogSaveCardWithFirstAndLastNameOffered(
+-          /*is_local=*/false);
+-    }
+-    // Set that upload was offered.
+-    upload_decision_metrics_ |= AutofillMetrics::UPLOAD_OFFERED;
+-  } else {
+-    // Set that upload was abandoned due to the Autofill StrikeDatabase
+-    // returning too many strikes for a mobile infobar to be displayed.
+-    upload_decision_metrics_ |=
+-        AutofillMetrics::UPLOAD_NOT_OFFERED_MAX_STRIKES_ON_MOBILE;
+-  }
+-  LogCardUploadDecisions(upload_decision_metrics_);
+-  if (show_save_prompt_.has_value() && !show_save_prompt_.value()) {
+-    AutofillMetrics::LogCreditCardSaveNotOfferedDueToMaxStrikesMetric(
+-        AutofillMetrics::SaveTypeMetric::SERVER);
+   }
+ }
+ 
+@@ -528,14 +448,6 @@ void CreditCardSaveManager::OnUserDidDecideOnLocalSave(
+     AutofillClient::SaveCardOfferUserDecision user_decision) {
+   switch (user_decision) {
+     case AutofillClient::ACCEPTED:
+-      if (local_card_save_candidate_.HasFirstAndLastName())
+-        AutofillMetrics::LogSaveCardWithFirstAndLastNameComplete(
+-            /*is_local=*/true);
+-      // Log how many CreditCardSave strikes the card had when it was saved.
+-      LogStrikesPresentWhenCardSaved(
+-          /*is_local=*/true,
+-          GetCreditCardSaveStrikeDatabase()->GetStrikes(
+-              base::UTF16ToUTF8(local_card_save_candidate_.LastFourDigits())));
+       // Clear all CreditCardSave strikes for this card, in case it is later
+       // removed.
+       GetCreditCardSaveStrikeDatabase()->ClearStrikes(
+@@ -574,8 +486,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+   std::vector<AutofillProfile> candidate_profiles;
+   const base::Time now = AutofillClock::Now();
+   const base::TimeDelta fifteen_minutes = base::TimeDelta::FromMinutes(15);
+-  // Reset |upload_decision_metrics_| to begin logging detected problems.
+-  upload_decision_metrics_ = 0;
+   bool has_profile = false;
+ 
+   // First, collect all of the addresses used or modified recently.
+@@ -587,13 +497,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+     }
+   }
+ 
+-  if (candidate_profiles.empty()) {
+-    upload_decision_metrics_ |=
+-        has_profile
+-            ? AutofillMetrics::UPLOAD_NOT_OFFERED_NO_RECENTLY_USED_ADDRESS
+-            : AutofillMetrics::UPLOAD_NOT_OFFERED_NO_ADDRESS_PROFILE;
+-  }
+-
+   // If any of the names on the card or the addresses don't match the
+   // candidate set is invalid. This matches the rules for name matching applied
+   // server-side by Google Payments and ensures that we don't send upload
+@@ -619,16 +522,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+         break;
+       }
+     }
+-    if (found_conflicting_names) {
+-      upload_decision_metrics_ |=
+-          AutofillMetrics::UPLOAD_NOT_OFFERED_CONFLICTING_NAMES;
+-    }
+-  }
+-
+-  // If neither the card nor any of the addresses have a name associated with
+-  // them, the candidate set is invalid.
+-  if (verified_name.empty()) {
+-    upload_decision_metrics_ |= AutofillMetrics::UPLOAD_NOT_OFFERED_NO_NAME;
+   }
+ 
+   // If any of the candidate addresses have a non-empty zip that doesn't match
+@@ -652,8 +545,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+         // likely to fail.
+         if (!(StartsWith(verified_zip, zip, base::CompareCase::SENSITIVE) ||
+               StartsWith(zip, verified_zip, base::CompareCase::SENSITIVE))) {
+-          upload_decision_metrics_ |=
+-              AutofillMetrics::UPLOAD_NOT_OFFERED_CONFLICTING_ZIPS;
+           break;
+         }
+       }
+@@ -663,8 +554,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+   // If none of the candidate addresses have a zip, the candidate set is
+   // invalid.
+   if (verified_zip.empty() && !candidate_profiles.empty())
+-    upload_decision_metrics_ |= AutofillMetrics::UPLOAD_NOT_OFFERED_NO_ZIP_CODE;
+-
+   // Set up |upload_request->profiles|.
+   upload_request->profiles.assign(candidate_profiles.begin(),
+                                   candidate_profiles.end());
+@@ -682,9 +571,7 @@ int CreditCardSaveManager::GetDetectedValues() const {
+   // UPLOAD_NOT_OFFERED_CONFLICTING_NAMES was not set.
+   if (!upload_request_.card
+            .GetInfo(AutofillType(CREDIT_CARD_NAME_FULL), app_locale_)
+-           .empty() &&
+-      !(upload_decision_metrics_ &
+-        AutofillMetrics::UPLOAD_NOT_OFFERED_CONFLICTING_NAMES)) {
++           .empty()) {
+     detected_values |= DetectedValue::CARDHOLDER_NAME;
+   }
+ 
+@@ -694,14 +581,10 @@ int CreditCardSaveManager::GetDetectedValues() const {
+   //  - POSTAL_CODE, as long as UPLOAD_NOT_OFFERED_CONFLICTING_ZIPS was not set
+   //  - Any other address fields found on any addresses, regardless of conflicts
+   for (const AutofillProfile& profile : upload_request_.profiles) {
+-    if (!profile.GetInfo(NAME_FULL, app_locale_).empty() &&
+-        !(upload_decision_metrics_ &
+-          AutofillMetrics::UPLOAD_NOT_OFFERED_CONFLICTING_NAMES)) {
++    if (!profile.GetInfo(NAME_FULL, app_locale_).empty()) {
+       detected_values |= DetectedValue::ADDRESS_NAME;
+     }
+-    if (!profile.GetInfo(ADDRESS_HOME_ZIP, app_locale_).empty() &&
+-        !(upload_decision_metrics_ &
+-          AutofillMetrics::UPLOAD_NOT_OFFERED_CONFLICTING_ZIPS)) {
++    if (!profile.GetInfo(ADDRESS_HOME_ZIP, app_locale_).empty()) {
+       detected_values |= DetectedValue::POSTAL_CODE;
+     }
+     if (!profile.GetInfo(ADDRESS_HOME_LINE1, app_locale_).empty()) {
+@@ -908,10 +791,6 @@ void CreditCardSaveManager::SendUploadCardRequest() {
+   upload_request_.billing_customer_number =
+       payments::GetBillingCustomerId(personal_data_manager_);
+ 
+-  AutofillMetrics::LogUploadAcceptedCardOriginMetric(
+-      uploading_local_card_
+-          ? AutofillMetrics::USER_ACCEPTED_UPLOAD_OF_LOCAL_CARD
+-          : AutofillMetrics::USER_ACCEPTED_UPLOAD_OF_NEW_CARD);
+   payments_client_->UploadCard(
+       upload_request_, base::BindOnce(&CreditCardSaveManager::OnDidUploadCard,
+                                       weak_ptr_factory_.GetWeakPtr()));
+@@ -934,66 +813,4 @@ void CreditCardSaveManager::OnStrikeChangeComplete(const int num_strikes) {
+     observer_for_testing_->OnStrikeChangeComplete();
+ }
+ 
+-AutofillMetrics::CardUploadDecisionMetric
+-CreditCardSaveManager::GetCVCCardUploadDecisionMetric() const {
+-  // This function assumes a valid CVC was not found.
+-  if (found_cvc_field_) {
+-    return found_value_in_cvc_field_ ? AutofillMetrics::INVALID_CVC_VALUE
+-                                     : AutofillMetrics::CVC_VALUE_NOT_FOUND;
+-  }
+-  return found_cvc_value_in_non_cvc_field_
+-             ? AutofillMetrics::FOUND_POSSIBLE_CVC_VALUE_IN_NON_CVC_FIELD
+-             : AutofillMetrics::CVC_FIELD_NOT_FOUND;
+-}
+-
+-void CreditCardSaveManager::LogCardUploadDecisions(
+-    int upload_decision_metrics) {
+-  AutofillMetrics::LogCardUploadDecisionMetrics(upload_decision_metrics);
+-  AutofillMetrics::LogCardUploadDecisionsUkm(
+-      client_->GetUkmRecorder(), client_->GetUkmSourceId(),
+-      pending_upload_request_origin_.GetURL(), upload_decision_metrics);
+-  pending_upload_request_origin_ = url::Origin();
+-}
+-
+-void CreditCardSaveManager::LogSaveCardRequestExpirationDateReasonMetric() {
+-  bool is_month_empty =
+-      upload_request_.card
+-          .GetInfo(AutofillType(CREDIT_CARD_EXP_MONTH), app_locale_)
+-          .empty();
+-  bool is_year_empty =
+-      upload_request_.card
+-          .GetInfo(AutofillType(CREDIT_CARD_EXP_4_DIGIT_YEAR), app_locale_)
+-          .empty();
+-
+-  if (is_month_empty && is_year_empty) {
+-    AutofillMetrics::LogSaveCardRequestExpirationDateReasonMetric(
+-        AutofillMetrics::SaveCardRequestExpirationDateReasonMetric::
+-            kMonthAndYearMissing);
+-  } else if (is_month_empty) {
+-    AutofillMetrics::LogSaveCardRequestExpirationDateReasonMetric(
+-        AutofillMetrics::SaveCardRequestExpirationDateReasonMetric::
+-            kMonthMissingOnly);
+-  } else if (is_year_empty) {
+-    AutofillMetrics::LogSaveCardRequestExpirationDateReasonMetric(
+-        AutofillMetrics::SaveCardRequestExpirationDateReasonMetric::
+-            kYearMissingOnly);
+-  } else {
+-    int month = 0, year = 0;
+-    bool parsable =
+-        base::StringToInt(
+-            upload_request_.card.GetInfo(
+-                AutofillType(CREDIT_CARD_EXP_4_DIGIT_YEAR), app_locale_),
+-            &year) &&
+-        base::StringToInt(upload_request_.card.GetInfo(
+-                              AutofillType(CREDIT_CARD_EXP_MONTH), app_locale_),
+-                          &month);
+-    DCHECK(parsable);
+-    // Month and year are not empty, so they must be expired.
+-    DCHECK(!IsValidCreditCardExpirationDate(year, month, AutofillClock::Now()));
+-    AutofillMetrics::LogSaveCardRequestExpirationDateReasonMetric(
+-        AutofillMetrics::SaveCardRequestExpirationDateReasonMetric::
+-            kExpirationDatePresentButExpired);
+-  }
+-}
+-
+ }  // namespace autofill

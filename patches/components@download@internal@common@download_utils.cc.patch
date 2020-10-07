@@ -1,0 +1,39 @@
+diff --git a/components/download/internal/common/download_utils.cc b/components/download/internal/common/download_utils.cc
+index ecd6e62990d9..03e2cf2b154f 100644
+--- a/components/download/internal/common/download_utils.cc
++++ b/components/download/internal/common/download_utils.cc
+@@ -20,7 +20,6 @@
+ #include "components/download/public/common/download_features.h"
+ #include "components/download/public/common/download_interrupt_reasons_utils.h"
+ #include "components/download/public/common/download_save_info.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_task_runner.h"
+ #include "components/download/public/common/download_url_parameters.h"
+ #include "net/base/isolation_info.h"
+@@ -432,8 +431,6 @@ DownloadDBEntry CreateDownloadDBEntryFromItem(const DownloadItemImpl& item) {
+ 
+   download_info.in_progress_info = in_progress_info;
+ 
+-  download_info.ukm_info =
+-      UkmInfo(item.GetDownloadSource(), item.ukm_download_id());
+   entry.download_info = download_info;
+   return entry;
+ }
+@@ -445,14 +442,12 @@ std::unique_ptr<DownloadEntry> CreateDownloadEntryFromDownloadDBEntry(
+ 
+   base::Optional<InProgressInfo> in_progress_info =
+       entry->download_info->in_progress_info;
+-  base::Optional<UkmInfo> ukm_info = entry->download_info->ukm_info;
+-  if (!ukm_info || !in_progress_info)
++  if (!in_progress_info)
+     return nullptr;
+ 
+   return std::make_unique<DownloadEntry>(
+-      entry->download_info->guid, std::string(), ukm_info->download_source,
+-      in_progress_info->fetch_error_body, in_progress_info->request_headers,
+-      ukm_info->ukm_download_id);
++      entry->download_info->guid, std::string(),
++      in_progress_info->fetch_error_body, in_progress_info->request_headers);
+ }
+ 
+ uint64_t GetUniqueDownloadId() {

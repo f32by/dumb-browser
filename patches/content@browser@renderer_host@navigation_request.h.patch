@@ -1,0 +1,44 @@
+diff --git a/content/browser/renderer_host/navigation_request.h b/content/browser/renderer_host/navigation_request.h
+index f5fc71cd7755..181247b8c163 100644
+--- a/content/browser/renderer_host/navigation_request.h
++++ b/content/browser/renderer_host/navigation_request.h
+@@ -43,7 +43,6 @@
+ #include "mojo/public/cpp/system/data_pipe.h"
+ #include "net/base/proxy_server.h"
+ #include "net/dns/public/resolve_error_info.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/origin_policy.h"
+ #include "services/network/public/mojom/blocked_by_response_reason.mojom-shared.h"
+ #include "services/network/public/mojom/content_security_policy.mojom.h"
+@@ -248,7 +247,6 @@ class CONTENT_EXPORT NavigationRequest
+ 
+   // NavigationHandle implementation:
+   int64_t GetNavigationId() override;
+-  ukm::SourceId GetNextPageUkmSourceId() override;
+   const GURL& GetURL() override;
+   SiteInstanceImpl* GetStartingSiteInstance() override;
+   SiteInstanceImpl* GetSourceSiteInstance() override;
+@@ -639,13 +637,6 @@ class CONTENT_EXPORT NavigationRequest
+ 
+   std::unique_ptr<CrossOriginEmbedderPolicyReporter> TakeCoepReporter();
+ 
+-  // Returns UKM SourceId for the page we are navigating away from.
+-  // Equal to GetRenderFrameHost()->GetPageUkmSourceId() for subframe
+-  // and same-document navigations and to
+-  // RenderFrameHost::FromID(GetPreviousRenderFrameHostId())
+-  //     ->GetPageUkmSourceId() for main-frame cross-document navigations.
+-  ukm::SourceId GetPreviousPageUkmSourceId();
+-
+   // Returns the NavigationEntry associated with this, which may be null.
+   NavigationEntry* GetNavigationEntry();
+ 
+@@ -1441,9 +1432,6 @@ class CONTENT_EXPORT NavigationRequest
+   bool is_safe_to_delete_ = true;
+ #endif
+ 
+-  // UKM source associated with the page we are navigated away from.
+-  const ukm::SourceId previous_page_ukm_source_id_;
+-
+   // If true, changes to the user-agent override require a reload. If false, a
+   // reload is not necessary.
+   bool ua_change_requires_reload_ = true;

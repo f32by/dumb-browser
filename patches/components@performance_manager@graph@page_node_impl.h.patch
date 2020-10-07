@@ -1,0 +1,40 @@
+diff --git a/components/performance_manager/graph/page_node_impl.h b/components/performance_manager/graph/page_node_impl.h
+index 91197591060c..37bff32de17d 100644
+--- a/components/performance_manager/graph/page_node_impl.h
++++ b/components/performance_manager/graph/page_node_impl.h
+@@ -48,7 +48,6 @@ class PageNodeImpl
+   void SetIsVisible(bool is_visible);
+   void SetIsAudible(bool is_audible);
+   void SetIsLoading(bool is_loading);
+-  void SetUkmSourceId(ukm::SourceId ukm_source_id);
+   void OnFaviconUpdated();
+   void OnTitleUpdated();
+   void OnMainFrameNavigationCommitted(bool same_document,
+@@ -78,7 +77,6 @@ class PageNodeImpl
+   bool is_visible() const;
+   bool is_audible() const;
+   bool is_loading() const;
+-  ukm::SourceId ukm_source_id() const;
+   LifecycleState lifecycle_state() const;
+   InterventionPolicy origin_trial_freeze_policy() const;
+   bool is_holding_weblock() const;
+@@ -133,7 +131,6 @@ class PageNodeImpl
+   base::TimeDelta GetTimeSinceLastVisibilityChange() const override;
+   bool IsAudible() const override;
+   bool IsLoading() const override;
+-  ukm::SourceId GetUkmSourceID() const override;
+   LifecycleState GetLifecycleState() const override;
+   InterventionPolicy GetOriginTrialFreezePolicy() const override;
+   bool IsHoldingWebLock() const override;
+@@ -230,11 +227,6 @@ class PageNodeImpl
+   ObservedProperty::NotifiesOnlyOnChanges<bool,
+                                           &PageNodeObserver::OnIsLoadingChanged>
+       is_loading_{false};
+-  // The UKM source ID associated with the URL of the main frame of this page.
+-  ObservedProperty::NotifiesOnlyOnChanges<
+-      ukm::SourceId,
+-      &PageNodeObserver::OnUkmSourceIdChanged>
+-      ukm_source_id_{ukm::kInvalidSourceId};
+   // The lifecycle state of this page. This is aggregated from the lifecycle
+   // state of each frame in the frame tree.
+   ObservedProperty::NotifiesOnlyOnChanges<

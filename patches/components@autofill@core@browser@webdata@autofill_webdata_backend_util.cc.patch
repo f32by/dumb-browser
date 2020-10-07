@@ -1,0 +1,30 @@
+diff --git a/components/autofill/core/browser/webdata/autofill_webdata_backend_util.cc b/components/autofill/core/browser/webdata/autofill_webdata_backend_util.cc
+index e931d4cc7f45..2c5649233f3b 100644
+--- a/components/autofill/core/browser/webdata/autofill_webdata_backend_util.cc
++++ b/components/autofill/core/browser/webdata/autofill_webdata_backend_util.cc
+@@ -8,7 +8,6 @@
+ #include "base/location.h"
+ #include "base/single_thread_task_runner.h"
+ #include "base/strings/utf_string_conversions.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/data_model/autofill_profile.h"
+ #include "components/autofill/core/browser/data_model/autofill_profile_comparator.h"
+ #include "components/autofill/core/browser/data_model/credit_card.h"
+@@ -45,8 +44,6 @@ std::string MergeServerAddressesIntoProfilesAndUpdateDb(
+         local_profile->SaveAdditionalInfo(server_address, app_locale)) {
+       local_profile->set_modification_date(AutofillClock::Now());
+       backend->UpdateAutofillProfile(*local_profile, db);
+-      AutofillMetrics::LogWalletAddressConversionType(
+-          AutofillMetrics::CONVERTED_ADDRESS_MERGED);
+       return local_profile->guid();
+     }
+   }
+@@ -66,8 +63,6 @@ std::string MergeServerAddressesIntoProfilesAndUpdateDb(
+     existing_profiles->back()->SetRawInfo(EMAIL_ADDRESS, email);
+ 
+   backend->AddAutofillProfile(*existing_profiles->back(), db);
+-  AutofillMetrics::LogWalletAddressConversionType(
+-      AutofillMetrics::CONVERTED_ADDRESS_ADDED);
+ 
+   return existing_profiles->back()->guid();
+ }

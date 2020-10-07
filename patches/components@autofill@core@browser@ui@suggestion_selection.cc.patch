@@ -1,0 +1,29 @@
+diff --git a/components/autofill/core/browser/ui/suggestion_selection.cc b/components/autofill/core/browser/ui/suggestion_selection.cc
+index 1281ad65ae9c..2ff078313f89 100644
+--- a/components/autofill/core/browser/ui/suggestion_selection.cc
++++ b/components/autofill/core/browser/ui/suggestion_selection.cc
+@@ -12,7 +12,6 @@
+ #include "base/time/time.h"
+ #include "build/build_config.h"
+ #include "components/autofill/core/browser/autofill_data_util.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/autofill_type.h"
+ #include "components/autofill/core/browser/data_model/autofill_profile.h"
+ #include "components/autofill/core/browser/data_model/autofill_profile_comparator.h"
+@@ -248,16 +247,12 @@ bool IsValidSuggestionForFieldContents(base::string16 suggestion_canon,
+ void RemoveProfilesNotUsedSinceTimestamp(
+     base::Time min_last_used,
+     std::vector<AutofillProfile*>* profiles) {
+-  const size_t original_size = profiles->size();
+   profiles->erase(
+       std::stable_partition(profiles->begin(), profiles->end(),
+                             [min_last_used](const AutofillDataModel* m) {
+                               return m->use_date() > min_last_used;
+                             }),
+       profiles->end());
+-  const size_t num_profiles_supressed = original_size - profiles->size();
+-  AutofillMetrics::LogNumberOfAddressesSuppressedForDisuse(
+-      num_profiles_supressed);
+ }
+ 
+ void PrepareSuggestions(const std::vector<base::string16>& labels,

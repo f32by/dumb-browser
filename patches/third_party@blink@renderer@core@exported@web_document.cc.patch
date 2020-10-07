@@ -1,0 +1,15 @@
+diff --git a/third_party/blink/renderer/core/exported/web_document.cc b/third_party/blink/renderer/core/exported/web_document.cc
+index 137b8fa123f9..6d6ed6a2251f 100644
+--- a/third_party/blink/renderer/core/exported/web_document.cc
++++ b/third_party/blink/renderer/core/exported/web_document.cc
+@@ -142,10 +142,6 @@ WebURL WebDocument::BaseURL() const {
+   return ConstUnwrap<Document>()->BaseURL();
+ }
+ 
+-ukm::SourceId WebDocument::GetUkmSourceId() const {
+-  return ConstUnwrap<Document>()->UkmSourceID();
+-}
+-
+ net::SiteForCookies WebDocument::SiteForCookies() const {
+   return ConstUnwrap<Document>()->SiteForCookies();
+ }

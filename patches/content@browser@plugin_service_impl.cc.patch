@@ -1,0 +1,34 @@
+diff --git a/content/browser/plugin_service_impl.cc b/content/browser/plugin_service_impl.cc
+index e9cb48e03f17..78b6ed96bb50 100644
+--- a/content/browser/plugin_service_impl.cc
++++ b/content/browser/plugin_service_impl.cc
+@@ -69,18 +69,6 @@ void WillLoadPluginsCallback(base::SequenceChecker* sequence_checker) {
+ 
+ }  // namespace
+ 
+-// static
+-void PluginServiceImpl::RecordBrokerUsage(int render_process_id,
+-                                          int render_frame_id) {
+-  RenderFrameHostImpl* rfh =
+-      RenderFrameHostImpl::FromID(render_process_id, render_frame_id);
+-  if (!rfh)
+-    return;
+-
+-  ukm::SourceId source_id = rfh->GetPageUkmSourceId();
+-  ukm::builders::Pepper_Broker(source_id).Record(ukm::UkmRecorder::Get());
+-}
+-
+ // static
+ PluginService* PluginService::GetInstance() {
+   return PluginServiceImpl::GetInstance();
+@@ -314,10 +302,6 @@ void PluginServiceImpl::OpenChannelToPpapiBroker(
+     int render_frame_id,
+     const base::FilePath& path,
+     PpapiPluginProcessHost::BrokerClient* client) {
+-  GetUIThreadTaskRunner({})->PostTask(
+-      FROM_HERE, base::BindOnce(&PluginServiceImpl::RecordBrokerUsage,
+-                                render_process_id, render_frame_id));
+-
+   PpapiPluginProcessHost* plugin_host = FindOrStartPpapiBrokerProcess(
+       render_process_id, path);
+   if (plugin_host) {

@@ -1,0 +1,14 @@
+diff --git a/cc/test/fake_layer_tree_host_impl_client.h b/cc/test/fake_layer_tree_host_impl_client.h
+index 9729cdeeeefb..97bcbf67e5c6 100644
+--- a/cc/test/fake_layer_tree_host_impl_client.h
++++ b/cc/test/fake_layer_tree_host_impl_client.h
+@@ -52,8 +52,7 @@ class FakeLayerTreeHostImplClient : public LayerTreeHostImplClient {
+   void NotifyPaintWorkletStateChange(
+       Scheduler::PaintWorkletState state) override {}
+   void NotifyThroughputTrackerResults(CustomTrackerResults results) override {}
+-  void SubmitThroughputData(ukm::SourceId source_id,
+-                            int aggregated_percent,
++  void SubmitThroughputData(int aggregated_percent,
+                             int impl_percent,
+                             base::Optional<int> main_percent) override {}
+   void DidObserveFirstScrollDelay(

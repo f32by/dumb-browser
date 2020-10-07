@@ -1,0 +1,12 @@
+diff --git a/content/renderer/render_thread_impl.h b/content/renderer/render_thread_impl.h
+index 0c3b3d01ea32..47954207a51c 100644
+--- a/content/renderer/render_thread_impl.h
++++ b/content/renderer/render_thread_impl.h
+@@ -199,7 +199,6 @@ class CONTENT_EXPORT RenderThreadImpl
+   blink::scheduler::WebThreadScheduler* GetWebMainThreadScheduler() override;
+   cc::TaskGraphRunner* GetTaskGraphRunner() override;
+   bool IsScrollAnimatorEnabled() override;
+-  std::unique_ptr<cc::UkmRecorderFactory> CreateUkmRecorderFactory() override;
+   void RequestNewLayerTreeFrameSink(
+       RenderWidget* render_widget,
+       const GURL& url,

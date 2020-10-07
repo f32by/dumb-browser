@@ -1,0 +1,20 @@
+diff --git a/components/download/internal/common/base_file_win.cc b/components/download/internal/common/base_file_win.cc
+index ac50ce55cee9..7df321bb1f78 100644
+--- a/components/download/internal/common/base_file_win.cc
++++ b/components/download/internal/common/base_file_win.cc
+@@ -15,7 +15,6 @@
+ #include "base/threading/scoped_blocking_call.h"
+ #include "base/win/com_init_util.h"
+ #include "components/download/public/common/download_interrupt_reasons_utils.h"
+-#include "components/download/public/common/download_stats.h"
+ 
+ namespace download {
+ namespace {
+@@ -130,7 +129,6 @@ DownloadInterruptReason HRESULTToDownloadInterruptReason(HRESULT hr) {
+   }
+ 
+   if (reason != DOWNLOAD_INTERRUPT_REASON_NONE) {
+-    RecordWinFileMoveError(HRESULT_CODE(hr));
+     return reason;
+   }
+ 

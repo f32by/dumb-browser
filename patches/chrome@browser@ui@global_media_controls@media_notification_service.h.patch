@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/ui/global_media_controls/media_notification_service.h b/chrome/browser/ui/global_media_controls/media_notification_service.h
+index 3bf7bd66829b..e5bfc0ba020e 100644
+--- a/chrome/browser/ui/global_media_controls/media_notification_service.h
++++ b/chrome/browser/ui/global_media_controls/media_notification_service.h
+@@ -28,7 +28,6 @@
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "services/media_session/public/mojom/audio_focus.mojom.h"
+ #include "services/media_session/public/mojom/media_controller.mojom-forward.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ namespace content {
+ class StartPresentationContext;
+@@ -72,9 +71,6 @@ class MediaNotificationService
+   void HideNotification(const std::string& id) override;
+   void RemoveItem(const std::string& id) override;
+   scoped_refptr<base::SequencedTaskRunner> GetTaskRunner() const override;
+-  void LogMediaSessionActionButtonPressed(
+-      const std::string& id,
+-      media_session::mojom::MediaSessionAction action) override;
+ 
+   // MediaNotificationContainerObserver implementation.
+   void OnContainerSizeChanged() override {}
+@@ -341,10 +337,6 @@ class MediaNotificationService
+ 
+   base::ObserverList<MediaNotificationServiceObserver> observers_;
+ 
+-  // Tracks the number of times we have recorded an action for a specific
+-  // source. We use this to cap the number of UKM recordings per site.
+-  std::map<ukm::SourceId, int> actions_recorded_to_ukm_;
+-
+   std::unique_ptr<MediaNotificationDeviceProvider> device_provider_;
+ 
+   base::WeakPtrFactory<MediaNotificationService> weak_ptr_factory_{this};

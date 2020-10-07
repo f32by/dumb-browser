@@ -1,0 +1,39 @@
+diff --git a/third_party/blink/common/privacy_budget/BUILD.gn b/third_party/blink/common/privacy_budget/BUILD.gn
+index 718c0376e450..0486fbd3c901 100644
+--- a/third_party/blink/common/privacy_budget/BUILD.gn
++++ b/third_party/blink/common/privacy_budget/BUILD.gn
+@@ -28,7 +28,6 @@ component("privacy_budget") {
+   deps = [
+     "//base",
+     "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//services/metrics/public/mojom",
+     "//third_party/blink/public/common:common_export",
+     "//third_party/blink/public/common/privacy_budget:privacy_budget",
+@@ -48,8 +47,6 @@ source_set("unit_tests") {
+     "identifiable_surface_unittest.cc",
+     "identifiable_token_builder_unittest.cc",
+     "identifiable_token_unittest.cc",
+-    "test_ukm_recorder.cc",
+-    "test_ukm_recorder.h",
+   ]
+ 
+   deps = [
+@@ -57,9 +54,7 @@ source_set("unit_tests") {
+     ":test_support",
+     "//base",
+     "//base/test:test_support",
+-    "//components/ukm:test_support",
+     "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//testing/gmock",
+     "//testing/gtest",
+     "//third_party/blink/public/common",
+@@ -81,7 +76,6 @@ component("test_support") {
+   deps = [
+     ":privacy_budget",
+     "//base",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//services/metrics/public/mojom:mojom",
+     "//third_party/blink/public/common:common",
+     "//third_party/blink/public/common/privacy_budget:test_support",

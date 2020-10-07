@@ -1,0 +1,19 @@
+diff --git a/third_party/blink/renderer/core/frame/local_dom_window.cc b/third_party/blink/renderer/core/frame/local_dom_window.cc
+index b2c724001af5..a199e80d8210 100644
+--- a/third_party/blink/renderer/core/frame/local_dom_window.cc
++++ b/third_party/blink/renderer/core/frame/local_dom_window.cc
+@@ -2046,14 +2046,4 @@ void LocalDOMWindow::Trace(Visitor* visitor) const {
+   Supplementable<LocalDOMWindow>::Trace(visitor);
+ }
+ 
+-ukm::UkmRecorder* LocalDOMWindow::UkmRecorder() {
+-  DCHECK(document_);
+-  return document_->UkmRecorder();
+-}
+-
+-ukm::SourceId LocalDOMWindow::UkmSourceID() const {
+-  DCHECK(document_);
+-  return document_->UkmSourceID();
+-}
+-
+ }  // namespace blink

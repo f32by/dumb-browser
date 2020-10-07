@@ -1,0 +1,154 @@
+diff --git a/components/autofill/core/browser/form_structure.h b/components/autofill/core/browser/form_structure.h
+index 788f8b7621d1..ee6e3b54061d 100644
+--- a/components/autofill/core/browser/form_structure.h
++++ b/components/autofill/core/browser/form_structure.h
+@@ -19,7 +19,6 @@
+ #include "base/optional.h"
+ #include "base/strings/string_piece.h"
+ #include "components/autofill/core/browser/autofill_field.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/autofill_type.h"
+ #include "components/autofill/core/browser/field_types.h"
+ #include "components/autofill/core/browser/form_types.h"
+@@ -96,14 +95,12 @@ class FormStructure {
+   static void ParseQueryResponse(
+       std::string response,
+       const std::vector<FormStructure*>& forms,
+-      const FormAndFieldSignatures& encoded_signatures,
+-      AutofillMetrics::FormInteractionsUkmLogger*);
++      const FormAndFieldSignatures& encoded_signatures);
+ 
+   static void ParseApiQueryResponse(
+       base::StringPiece payload,
+       const std::vector<FormStructure*>& forms,
+-      const FormAndFieldSignatures& encoded_signatures,
+-      AutofillMetrics::FormInteractionsUkmLogger*);
++      const FormAndFieldSignatures& encoded_signatures);
+ 
+   // Returns predictions using the details from the given |form_structures| and
+   // their fields' predicted types.
+@@ -163,31 +160,6 @@ class FormStructure {
+                          const bool should_keep_cached_value,
+                          const bool only_server_and_autofill_state);
+ 
+-  // Logs quality metrics for |this|, which should be a user-submitted form.
+-  // This method should only be called after the possible field types have been
+-  // set for each field.  |interaction_time| should be a timestamp corresponding
+-  // to the user's first interaction with the form.  |submission_time| should be
+-  // a timestamp corresponding to the form's submission. |observed_submission|
+-  // indicates whether this method is called as a result of observing a
+-  // submission event (otherwise, it may be that an upload was triggered after
+-  // a form was unfocused or a navigation occurred).
+-  // TODO(sebsg): We log more than quality metrics. Maybe rename or split
+-  // function?
+-  void LogQualityMetrics(
+-      const base::TimeTicks& load_time,
+-      const base::TimeTicks& interaction_time,
+-      const base::TimeTicks& submission_time,
+-      AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger,
+-      bool did_show_suggestions,
+-      bool observed_submission) const;
+-
+-  // Log the quality of the heuristics and server predictions for this form
+-  // structure, if autocomplete attributes are present on the fields (they are
+-  // used as golden truths).
+-  void LogQualityMetricsBasedOnAutocomplete(
+-      AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger)
+-      const;
+-
+   // Classifies each field in |fields_| based upon its |autocomplete| attribute,
+   // if the attribute is available.  The association is stored into the field's
+   // |heuristic_type|.
+@@ -365,8 +337,6 @@ class FormStructure {
+   // - Name for Autofill of first field
+   base::string16 GetIdentifierForRefill() const;
+ 
+-  int developer_engagement_metrics() { return developer_engagement_metrics_; }
+-
+   void set_randomized_encoder(std::unique_ptr<RandomizedEncoder> encoder);
+ 
+   void set_is_rich_query_enabled(bool v) { is_rich_query_enabled_ = v; }
+@@ -394,11 +364,8 @@ class FormStructure {
+   static void ProcessQueryResponseForTesting(
+       const AutofillQueryResponseContents& response,
+       const std::vector<FormStructure*>& forms,
+-      const FormAndFieldSignatures& encoded_signatures,
+-      AutofillMetrics::FormInteractionsUkmLogger*
+-          form_interactions_ukm_logger) {
+-    ProcessQueryResponse(response, forms, encoded_signatures,
+-                         form_interactions_ukm_logger);
++      const FormAndFieldSignatures& encoded_signatures) {
++    ProcessQueryResponse(response, forms, encoded_signatures);
+   }
+ 
+  private:
+@@ -464,8 +431,7 @@ class FormStructure {
+   static void ProcessQueryResponse(
+       const AutofillQueryResponseContents& response,
+       const std::vector<FormStructure*>& forms,
+-      const FormAndFieldSignatures& encoded_signatures,
+-      AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger);
++      const FormAndFieldSignatures& encoded_signatures);
+ 
+   FormStructure(FormSignature form_signature,
+                 const std::vector<FieldSignature>& field_signatures);
+@@ -480,8 +446,7 @@ class FormStructure {
+   // also autofilled to take care of the synthetic fields.
+   void ApplyRationalizationsToHiddenSelects(
+       size_t field_index,
+-      ServerFieldType new_type,
+-      AutofillMetrics::FormInteractionsUkmLogger*);
++      ServerFieldType new_type);
+ 
+   // Returns true if we can replace server predictions with the heuristics one.
+   bool HeuristicsPredictionsAreApplicable(size_t upper_index,
+@@ -495,8 +460,7 @@ class FormStructure {
+       size_t upper_index,
+       size_t lower_index,
+       ServerFieldType upper_type,
+-      ServerFieldType lower_type,
+-      AutofillMetrics::FormInteractionsUkmLogger*);
++      ServerFieldType lower_type);
+ 
+   // Returns true if the fields_[index] server type should be rationalized to
+   // ADDRESS_HOME_COUNTRY.
+@@ -505,23 +469,20 @@ class FormStructure {
+   // Set fields_[|field_index|] to |new_type| and log this change.
+   void ApplyRationalizationsToFieldAndLog(
+       size_t field_index,
+-      ServerFieldType new_type,
+-      AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger);
++      ServerFieldType new_type);
+ 
+   // Two or three fields predicted as the whole address should be address lines
+   // 1, 2 and 3 instead.
+   void RationalizeAddressLineFields(
+-      SectionedFieldsIndexes* sections_of_address_indexes,
+-      AutofillMetrics::FormInteractionsUkmLogger*);
++      SectionedFieldsIndexes* sections_of_address_indexes);
+ 
+   // Rationalize state and country interdependently.
+   void RationalizeAddressStateCountry(
+       SectionedFieldsIndexes* sections_of_state_indexes,
+-      SectionedFieldsIndexes* sections_of_country_indexes,
+-      AutofillMetrics::FormInteractionsUkmLogger*);
++      SectionedFieldsIndexes* sections_of_country_indexes);
+ 
+   // Tunes the fields with identical predictions.
+-  void RationalizeRepeatedFields(AutofillMetrics::FormInteractionsUkmLogger*);
++  void RationalizeRepeatedFields();
+ 
+   // Filters out fields that don't meet the relationship ruleset for their type
+   // defined in |type_relationships_rules_|.
+@@ -693,11 +654,6 @@ class FormStructure {
+   // has no value, |password_length_vote_| should be ignored.
+   size_t password_length_vote_;
+ 
+-  // Used to record whether developer has used autocomplete markup or
+-  // UPI-VPA hints, This is a bitmask of DeveloperEngagementMetric and set in
+-  // DetermineHeuristicTypes().
+-  int developer_engagement_metrics_ = 0;
+-
+   mojom::SubmissionSource submission_source_ = mojom::SubmissionSource::NONE;
+ 
+   // The randomized encoder to use to encode form metadata during upload.

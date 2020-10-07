@@ -1,0 +1,73 @@
+diff --git a/components/page_load_metrics/browser/BUILD.gn b/components/page_load_metrics/browser/BUILD.gn
+index c27d2e445735..080afc7d75ec 100644
+--- a/components/page_load_metrics/browser/BUILD.gn
++++ b/components/page_load_metrics/browser/BUILD.gn
+@@ -6,40 +6,8 @@ import("//testing/test.gni")
+ 
+ source_set("browser") {
+   sources = [
+-    "metrics_navigation_throttle.cc",
+-    "metrics_navigation_throttle.h",
+-    "metrics_web_contents_observer.cc",
+-    "metrics_web_contents_observer.h",
+-    "observers/back_forward_cache_page_load_metrics_observer.cc",
+-    "observers/back_forward_cache_page_load_metrics_observer.h",
+-    "observers/click_input_tracker.cc",
+-    "observers/click_input_tracker.h",
+-    "observers/core_page_load_metrics_observer.cc",
+-    "observers/core_page_load_metrics_observer.h",
+-    "observers/largest_contentful_paint_handler.cc",
+-    "observers/largest_contentful_paint_handler.h",
+-    "observers/layout_page_load_metrics_observer.cc",
+-    "observers/layout_page_load_metrics_observer.h",
+-    "observers/use_counter/ukm_features.cc",
+-    "observers/use_counter_page_load_metrics_observer.cc",
+-    "observers/use_counter_page_load_metrics_observer.h",
+-    "page_load_metrics_embedder_base.cc",
+-    "page_load_metrics_embedder_base.h",
+-    "page_load_metrics_embedder_interface.h",
+-    "page_load_metrics_observer.cc",
+-    "page_load_metrics_observer.h",
+-    "page_load_metrics_observer_delegate.cc",
+-    "page_load_metrics_observer_delegate.h",
+-    "page_load_metrics_update_dispatcher.cc",
+-    "page_load_metrics_update_dispatcher.h",
+     "page_load_metrics_util.cc",
+     "page_load_metrics_util.h",
+-    "page_load_tracker.cc",
+-    "page_load_tracker.h",
+-    "protocol_util.cc",
+-    "protocol_util.h",
+-    "resource_tracker.cc",
+-    "resource_tracker.h",
+   ]
+   deps = [
+     "//components/data_reduction_proxy/core/browser",
+@@ -48,7 +16,6 @@ source_set("browser") {
+     "//content/public/browser",
+     "//content/public/common",
+     "//net",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//ui/base",
+   ]
+ }
+@@ -71,7 +38,6 @@ source_set("test_support") {
+     "//base/test:test_support",
+     "//components/page_load_metrics/common:page_load_metrics_mojom",
+     "//components/page_load_metrics/common:test_support",
+-    "//components/ukm:test_support",
+     "//content/public/browser",
+     "//content/public/common",
+     "//content/test:test_support",
+@@ -98,11 +64,8 @@ source_set("unit_tests") {
+     "//base/test:test_support",
+     "//components/page_load_metrics/common:page_load_metrics_mojom",
+     "//components/page_load_metrics/common:test_support",
+-    "//components/ukm:test_support",
+-    "//components/ukm/content",
+     "//content/public/browser",
+     "//content/test:test_support",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//testing/gtest",
+     "//url",
+   ]

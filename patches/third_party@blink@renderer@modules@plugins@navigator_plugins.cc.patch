@@ -1,0 +1,46 @@
+diff --git a/third_party/blink/renderer/modules/plugins/navigator_plugins.cc b/third_party/blink/renderer/modules/plugins/navigator_plugins.cc
+index c1b446b16cf4..aa1db1c380ca 100644
+--- a/third_party/blink/renderer/modules/plugins/navigator_plugins.cc
++++ b/third_party/blink/renderer/modules/plugins/navigator_plugins.cc
+@@ -52,41 +52,11 @@ bool NavigatorPlugins::javaEnabled(Navigator& navigator) {
+   return false;
+ }
+ 
+-namespace {
+-
+-void RecordPlugins(LocalFrame* frame, DOMPluginArray* plugins) {
+-  if (!IdentifiabilityStudySettings::Get()->IsActive() || !frame)
+-    return;
+-  if (Document* document = frame->GetDocument()) {
+-    IdentifiableTokenBuilder builder;
+-    for (unsigned i = 0; i < plugins->length(); i++) {
+-      DOMPlugin* plugin = plugins->item(i);
+-      builder.AddToken(IdentifiabilityBenignStringToken(plugin->name()));
+-      builder.AddToken(IdentifiabilityBenignStringToken(plugin->description()));
+-      builder.AddToken(IdentifiabilityBenignStringToken(plugin->filename()));
+-      for (unsigned j = 0; j < plugin->length(); j++) {
+-        DOMMimeType* mimeType = plugin->item(j);
+-        builder.AddToken(IdentifiabilityBenignStringToken(mimeType->type()));
+-        builder.AddToken(
+-            IdentifiabilityBenignStringToken(mimeType->description()));
+-        builder.AddToken(
+-            IdentifiabilityBenignStringToken(mimeType->suffixes()));
+-      }
+-    }
+-    IdentifiabilityMetricBuilder(document->UkmSourceID())
+-        .SetWebfeature(WebFeature::kNavigatorPlugins, builder.GetToken())
+-        .Record(document->UkmRecorder());
+-  }
+-}
+-
+-}  // namespace
+-
+ DOMPluginArray* NavigatorPlugins::plugins(LocalFrame* frame) const {
+   if (!plugins_)
+     plugins_ = MakeGarbageCollected<DOMPluginArray>(frame);
+ 
+   DOMPluginArray* result = plugins_.Get();
+-  RecordPlugins(frame, result);
+   return result;
+ }
+ 

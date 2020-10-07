@@ -1,0 +1,24 @@
+diff --git a/third_party/blink/public/common/BUILD.gn b/third_party/blink/public/common/BUILD.gn
+index 7763cbbae5ea..ef0d81ad28e6 100644
+--- a/third_party/blink/public/common/BUILD.gn
++++ b/third_party/blink/public/common/BUILD.gn
+@@ -15,7 +15,6 @@ component("common") {
+   output_name = "blink_common"
+ 
+   public_deps = [
+-    "//third_party/blink/common/privacy_budget:privacy_budget",
+     "//third_party/blink/public/common:headers",
+     "//third_party/blink/public/mojom:mojom_modules",
+     "//third_party/blink/public/mojom:web_bluetooth_mojo_bindings",
+@@ -194,11 +193,9 @@ source_set("headers") {
+ 
+   public_deps = [
+     "//mojo/public/cpp/bindings",
+-    "//services/metrics/public/cpp:metrics_cpp",
+     "//services/network/public/cpp:cpp",
+     "//skia",
+     "//skia/public/mojom:shared_typemap_traits",
+-    "//third_party/blink/public/common/privacy_budget",
+     "//third_party/blink/public/mojom:mojom_modules_headers",
+     "//third_party/blink/public/mojom:mojom_platform_shared",
+     "//third_party/blink/public/mojom:web_bluetooth_mojo_bindings_headers",

@@ -1,0 +1,16 @@
+diff --git a/content/test/fake_compositor_dependencies.cc b/content/test/fake_compositor_dependencies.cc
+index 3d1abaf6ac7f..94f662d7cb05 100644
+--- a/content/test/fake_compositor_dependencies.cc
++++ b/content/test/fake_compositor_dependencies.cc
+@@ -57,11 +57,6 @@ bool FakeCompositorDependencies::IsScrollAnimatorEnabled() {
+   return false;
+ }
+ 
+-std::unique_ptr<cc::UkmRecorderFactory>
+-FakeCompositorDependencies::CreateUkmRecorderFactory() {
+-  return std::make_unique<cc::TestUkmRecorderFactory>();
+-}
+-
+ void FakeCompositorDependencies::RequestNewLayerTreeFrameSink(
+     RenderWidget* render_widget,
+     const GURL& url,

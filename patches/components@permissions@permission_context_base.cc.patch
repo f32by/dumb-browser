@@ -1,0 +1,25 @@
+diff --git a/components/permissions/permission_context_base.cc b/components/permissions/permission_context_base.cc
+index ed1521d781a1..179dedbad438 100644
+--- a/components/permissions/permission_context_base.cc
++++ b/components/permissions/permission_context_base.cc
+@@ -181,7 +181,6 @@ void PermissionContextBase::RequestPermission(
+ 
+     // If we are under embargo, record the embargo reason for which we have
+     // suppressed the prompt.
+-    PermissionUmaUtil::RecordEmbargoPromptSuppressionFromSource(result.source);
+     NotifyPermissionSet(id, requesting_origin, embedding_origin,
+                         std::move(callback), false /* persist */,
+                         result.content_setting);
+@@ -198,12 +197,6 @@ void PermissionContextBase::RequestPermission(
+     return;
+   }
+ 
+-  // We are going to show a prompt now.
+-  PermissionUmaUtil::PermissionRequested(content_settings_type_,
+-                                         requesting_origin);
+-  PermissionUmaUtil::RecordEmbargoPromptSuppression(
+-      PermissionEmbargoStatus::NOT_EMBARGOED);
+-
+   DecidePermission(web_contents, id, requesting_origin, embedding_origin,
+                    user_gesture, std::move(callback));
+ }

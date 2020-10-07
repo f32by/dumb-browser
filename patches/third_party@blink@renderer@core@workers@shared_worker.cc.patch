@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/core/workers/shared_worker.cc b/third_party/blink/renderer/core/workers/shared_worker.cc
+index c4586bb4f5eb..b40973b0ccee 100644
+--- a/third_party/blink/renderer/core/workers/shared_worker.cc
++++ b/third_party/blink/renderer/core/workers/shared_worker.cc
+@@ -141,7 +141,7 @@ SharedWorker* SharedWorker::Create(ExecutionContext* context,
+ 
+   SharedWorkerClientHolder::From(*window)->Connect(
+       worker, std::move(remote_port), script_url, std::move(blob_url_token),
+-      std::move(options), context->UkmSourceID());
++      std::move(options));
+ 
+   return worker;
+ }

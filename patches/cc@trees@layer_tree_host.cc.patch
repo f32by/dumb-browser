@@ -1,0 +1,60 @@
+diff --git a/cc/trees/layer_tree_host.cc b/cc/trees/layer_tree_host.cc
+index 71a49127392f..abd76afd0da8 100644
+--- a/cc/trees/layer_tree_host.cc
++++ b/cc/trees/layer_tree_host.cc
+@@ -61,8 +61,6 @@
+ #include "cc/trees/swap_promise_manager.h"
+ #include "cc/trees/transform_node.h"
+ #include "cc/trees/tree_synchronizer.h"
+-#include "cc/trees/ukm_manager.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "services/tracing/public/cpp/perfetto/flow_event_utils.h"
+ #include "services/tracing/public/cpp/perfetto/macros.h"
+ #include "ui/gfx/geometry/size_conversions.h"
+@@ -129,7 +127,6 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::CreateSingleThreaded(
+ LayerTreeHost::LayerTreeHost(InitParams params, CompositorMode mode)
+     : micro_benchmark_controller_(this),
+       image_worker_task_runner_(std::move(params.image_worker_task_runner)),
+-      ukm_recorder_factory_(std::move(params.ukm_recorder_factory)),
+       compositor_mode_(mode),
+       ui_resource_manager_(std::make_unique<UIResourceManager>()),
+       client_(params.client),
+@@ -546,10 +543,6 @@ std::unique_ptr<LayerTreeHostImpl> LayerTreeHost::CreateLayerTreeHostImpl(
+       rendering_stats_instrumentation_.get(), task_graph_runner_,
+       std::move(mutator_host_impl), id_, std::move(image_worker_task_runner_),
+       scheduling_client_);
+-  if (ukm_recorder_factory_) {
+-    host_impl->InitializeUkm(ukm_recorder_factory_->CreateRecorder());
+-    ukm_recorder_factory_.reset();
+-  }
+ 
+   task_graph_runner_ = nullptr;
+   compositor_delegate_weak_ptr_ = host_impl->AsWeakPtr();
+@@ -1041,11 +1034,10 @@ void LayerTreeHost::NotifyThroughputTrackerResults(
+   client_->NotifyThroughputTrackerResults(std::move(results));
+ }
+ 
+-void LayerTreeHost::SubmitThroughputData(ukm::SourceId source_id,
+-                                         int aggregated_percent,
++void LayerTreeHost::SubmitThroughputData(int aggregated_percent,
+                                          int impl_percent,
+                                          base::Optional<int> main_percent) {
+-  client_->SubmitThroughputData(source_id, aggregated_percent, impl_percent,
++  client_->SubmitThroughputData(aggregated_percent, impl_percent,
+                                 main_percent);
+ }
+ 
+@@ -1876,11 +1868,11 @@ void LayerTreeHost::RequestBeginMainFrameNotExpected(bool new_state) {
+   proxy_->RequestBeginMainFrameNotExpected(new_state);
+ }
+ 
+-void LayerTreeHost::SetSourceURL(ukm::SourceId source_id, const GURL& url) {
++void LayerTreeHost::SetSourceURL(const GURL& url) {
+   // Clears image caches and resets the scheduling history for the content
+   // produced by this host so far.
+   clear_caches_on_next_commit_ = true;
+-  proxy_->SetSourceURL(source_id, url);
++  proxy_->SetSourceURL(url);
+ }
+ 
+ void LayerTreeHost::SetRenderFrameObserver(

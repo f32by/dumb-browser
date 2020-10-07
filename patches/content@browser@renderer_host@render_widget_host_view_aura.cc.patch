@@ -1,0 +1,19 @@
+diff --git a/content/browser/renderer_host/render_widget_host_view_aura.cc b/content/browser/renderer_host/render_widget_host_view_aura.cc
+index 934ab262a578..f38db484ad7d 100644
+--- a/content/browser/renderer_host/render_widget_host_view_aura.cc
++++ b/content/browser/renderer_host/render_widget_host_view_aura.cc
+@@ -1444,14 +1444,6 @@ bool RenderWidgetHostViewAura::IsTextEditCommandEnabled(
+ void RenderWidgetHostViewAura::SetTextEditCommandForNextKeyEvent(
+     ui::TextEditCommand command) {}
+ 
+-ukm::SourceId RenderWidgetHostViewAura::GetClientSourceForMetrics() const {
+-  RenderFrameHostImpl* frame = GetFocusedFrame();
+-  if (frame) {
+-    return frame->GetPageUkmSourceId();
+-  }
+-  return ukm::SourceId();
+-}
+-
+ bool RenderWidgetHostViewAura::ShouldDoLearning() {
+   return GetTextInputManager() && GetTextInputManager()->should_do_learning();
+ }

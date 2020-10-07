@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/pdf/chrome_pdf_web_contents_helper_client.cc b/chrome/browser/ui/pdf/chrome_pdf_web_contents_helper_client.cc
+index 6cd178ce47d3..90069db97973 100644
+--- a/chrome/browser/ui/pdf/chrome_pdf_web_contents_helper_client.cc
++++ b/chrome/browser/ui/pdf/chrome_pdf_web_contents_helper_client.cc
+@@ -4,7 +4,6 @@
+ 
+ #include "chrome/browser/ui/pdf/chrome_pdf_web_contents_helper_client.h"
+ 
+-#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/ui/tab_contents/core_tab_helper.h"
+ #include "chrome/common/content_restriction.h"
+ #include "extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.h"
+@@ -63,7 +62,6 @@ void ChromePDFWebContentsHelperClient::OnPDFHasUnsupportedFeature(
+ 
+ void ChromePDFWebContentsHelperClient::OnSaveURL(
+     content::WebContents* contents) {
+-  RecordDownloadSource(DOWNLOAD_INITIATED_BY_PDF_SAVE);
+ }
+ 
+ void ChromePDFWebContentsHelperClient::SetPluginCanSave(

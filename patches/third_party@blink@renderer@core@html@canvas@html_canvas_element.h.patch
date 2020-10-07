@@ -1,0 +1,21 @@
+diff --git a/third_party/blink/renderer/core/html/canvas/html_canvas_element.h b/third_party/blink/renderer/core/html/canvas/html_canvas_element.h
+index b12e4ff6d7b3..0b70f927536d 100644
+--- a/third_party/blink/renderer/core/html/canvas/html_canvas_element.h
++++ b/third_party/blink/renderer/core/html/canvas/html_canvas_element.h
+@@ -320,16 +320,6 @@ class CORE_EXPORT HTMLCanvasElement final
+  private:
+   void Dispose();
+ 
+-  void RecordIdentifiabilityMetric(const blink::IdentifiableSurface& surface,
+-                                   int64_t value) const;
+-
+-  // If the user is enrolled in the identifiability study, report the canvas
+-  // type, and if applicable, canvas digest, taint bits, and
+-  // |canvas_contents_token|, which represents the current bitmap displayed by
+-  // this canvas.
+-  void IdentifiabilityReportWithDigest(
+-      IdentifiableToken canvas_contents_token) const;
+-
+   void PaintInternal(GraphicsContext&, const PhysicalRect&);
+   void UpdateFilterQuality(SkFilterQuality filter_quality);
+ 

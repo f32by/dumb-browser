@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/BUILD.gn b/chrome/browser/extensions/BUILD.gn
-index 4dd8bc6cd96d..c97ee7540a2a 100644
+index 4dd8bc6cd96d..91c86cebb895 100644
 --- a/chrome/browser/extensions/BUILD.gn
 +++ b/chrome/browser/extensions/BUILD.gn
 @@ -302,14 +302,6 @@ static_library("extensions") {
@@ -26,7 +26,16 @@ index 4dd8bc6cd96d..c97ee7540a2a 100644
      "forced_extensions/force_installed_tracker.cc",
      "forced_extensions/force_installed_tracker.h",
      "forced_extensions/install_stage_tracker.cc",
-@@ -729,9 +719,6 @@ static_library("extensions") {
+@@ -625,8 +615,6 @@ static_library("extensions") {
+     "launch_util.h",
+     "load_error_reporter.cc",
+     "load_error_reporter.h",
+-    "media_router_extension_access_logger_impl.cc",
+-    "media_router_extension_access_logger_impl.h",
+     "menu_manager.cc",
+     "menu_manager.h",
+     "menu_manager_factory.cc",
+@@ -729,9 +717,6 @@ static_library("extensions") {
  
      # TODO(crbug.com/1065748): Remove this circular dependency.
      "//chrome/browser/web_applications/extensions",
@@ -36,7 +45,7 @@ index 4dd8bc6cd96d..c97ee7540a2a 100644
    ]
  
    # Since browser and browser_extensions actually depend on each other,
-@@ -743,9 +730,6 @@ static_library("extensions") {
+@@ -743,9 +728,6 @@ static_library("extensions") {
      "//chrome/browser/extensions/api:api_registration",
      "//chrome/common",
      "//chrome/common/extensions/api",
@@ -46,7 +55,7 @@ index 4dd8bc6cd96d..c97ee7540a2a 100644
      "//components/signin/core/browser",
      "//content/public/browser",
      "//mojo/public/cpp/bindings",
-@@ -772,14 +756,12 @@ static_library("extensions") {
+@@ -772,14 +754,12 @@ static_library("extensions") {
      "//chrome/browser/media/router/discovery",
      "//chrome/browser/resource_coordinator:intervention_policy_database_proto",
      "//chrome/browser/resource_coordinator:mojo_bindings",
@@ -61,7 +70,15 @@ index 4dd8bc6cd96d..c97ee7540a2a 100644
      "//chrome/services/removable_storage_writer/public/mojom",
      "//components/autofill/content/browser",
      "//components/bookmarks/browser",
-@@ -825,14 +807,7 @@ static_library("extensions") {
+@@ -812,7 +792,6 @@ static_library("extensions") {
+     "//components/net_log",
+     "//components/omnibox/browser",
+     "//components/onc",
+-    "//components/page_load_metrics/browser:browser",
+     "//components/password_manager/core/browser",
+     "//components/password_manager/core/browser:affiliation",
+     "//components/password_manager/core/browser/leak_detection",
+@@ -825,14 +804,7 @@ static_library("extensions") {
      "//components/pref_registry",
      "//components/prerender/browser",
      "//components/proxy_config",
@@ -76,3 +93,11 @@ index 4dd8bc6cd96d..c97ee7540a2a 100644
      "//components/search_engines",
      "//components/services/app_service/public/mojom",
      "//components/services/patch/content",
+@@ -879,7 +851,6 @@ static_library("extensions") {
+     "//services/audio/public/cpp",
+     "//services/data_decoder/public/cpp",
+     "//services/device/public/mojom",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//services/network/public/mojom",
+     "//services/service_manager/public/cpp",
+     "//services/service_manager/public/mojom",

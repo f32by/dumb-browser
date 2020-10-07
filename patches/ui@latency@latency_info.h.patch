@@ -1,0 +1,31 @@
+diff --git a/ui/latency/latency_info.h b/ui/latency/latency_info.h
+index ac41fa7750b2..50115f9cb90b 100644
+--- a/ui/latency/latency_info.h
++++ b/ui/latency/latency_info.h
+@@ -15,7 +15,6 @@
+ 
+ #include "base/containers/flat_map.h"
+ #include "base/time/time.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/perfetto/protos/perfetto/trace/track_event/chrome_latency_info.pbzero.h"
+ #include "ui/gfx/geometry/point_f.h"
+ 
+@@ -179,8 +178,6 @@ class LatencyInfo {
+   bool coalesced() const { return coalesced_; }
+   int64_t trace_id() const { return trace_id_; }
+   void set_trace_id(int64_t trace_id) { trace_id_ = trace_id; }
+-  ukm::SourceId ukm_source_id() const { return ukm_source_id_; }
+-  void set_ukm_source_id(ukm::SourceId id) { ukm_source_id_ = id; }
+   void set_scroll_update_delta(float delta) { scroll_update_delta_ = delta; }
+   float scroll_update_delta() const { return scroll_update_delta_; }
+   void set_predicted_scroll_update_delta(float delta) {
+@@ -201,9 +198,6 @@ class LatencyInfo {
+ 
+   // The unique id for matching the ASYNC_BEGIN/END trace event.
+   int64_t trace_id_;
+-  // UKM Source id to be used for recording UKM metrics associated with this
+-  // event.
+-  ukm::SourceId ukm_source_id_;
+   // Whether this event has been coalesced into another event.
+   bool coalesced_;
+   // Whether a begin component has been added.

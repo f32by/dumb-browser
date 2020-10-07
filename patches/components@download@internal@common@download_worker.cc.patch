@@ -1,0 +1,20 @@
+diff --git a/components/download/internal/common/download_worker.cc b/components/download/internal/common/download_worker.cc
+index 1ac51d791573..7fab8cb3f902 100644
+--- a/components/download/internal/common/download_worker.cc
++++ b/components/download/internal/common/download_worker.cc
+@@ -8,7 +8,6 @@
+ #include "components/download/internal/common/resource_downloader.h"
+ #include "components/download/public/common/download_create_info.h"
+ #include "components/download/public/common/download_interrupt_reasons.h"
+-#include "components/download/public/common/download_stats.h"
+ #include "components/download/public/common/download_task_runner.h"
+ #include "components/download/public/common/download_utils.h"
+ #include "components/download/public/common/input_stream.h"
+@@ -129,7 +128,6 @@ void DownloadWorker::OnUrlDownloadStarted(
+     create_info->result = DOWNLOAD_INTERRUPT_REASON_SERVER_NO_RANGE;
+ 
+   if (create_info->result != DOWNLOAD_INTERRUPT_REASON_NONE) {
+-    RecordParallelRequestCreationFailure(create_info->result);
+     VLOG(kWorkerVerboseLevel)
+         << "Parallel download sub-request failed. reason = "
+         << create_info->result;

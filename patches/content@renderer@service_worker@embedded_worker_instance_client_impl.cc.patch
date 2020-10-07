@@ -1,0 +1,12 @@
+diff --git a/content/renderer/service_worker/embedded_worker_instance_client_impl.cc b/content/renderer/service_worker/embedded_worker_instance_client_impl.cc
+index 00a5cb5121bd..903dc8d50ed6 100644
+--- a/content/renderer/service_worker/embedded_worker_instance_client_impl.cc
++++ b/content/renderer/service_worker/embedded_worker_instance_client_impl.cc
+@@ -177,7 +177,6 @@ EmbeddedWorkerInstanceClientImpl::BuildStartData(
+           : blink::WebEmbeddedWorkerStartData::kDontWaitForDebugger;
+   start_data->devtools_worker_token = params.devtools_worker_token;
+   start_data->service_worker_token = params.service_worker_token;
+-  start_data->ukm_source_id = params.ukm_source_id;
+ 
+   return start_data;
+ }

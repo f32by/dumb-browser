@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/previews/resource_loading_hints_agent.h b/chrome/renderer/previews/resource_loading_hints_agent.h
-index 3e7be2c1f693..583d2cc7867d 100644
+index 3e7be2c1f693..36106aeb3304 100644
 --- a/chrome/renderer/previews/resource_loading_hints_agent.h
 +++ b/chrome/renderer/previews/resource_loading_hints_agent.h
 @@ -11,7 +11,6 @@
@@ -19,3 +19,11 @@ index 3e7be2c1f693..583d2cc7867d 100644
    void SetBlinkOptimizationGuideHints(
        blink::mojom::BlinkOptimizationGuideHintsPtr hints) override;
    void StopThrottlingMediaRequests() override;
+@@ -78,7 +75,6 @@ class ResourceLoadingHintsAgent
+   bool IsMainFrame() const;
+ 
+   std::vector<std::string> subresource_patterns_to_block_;
+-  base::Optional<int64_t> ukm_source_id_;
+ 
+   mojo::AssociatedReceiver<blink::mojom::PreviewsResourceLoadingHintsReceiver>
+       receiver_{this};

@@ -1,0 +1,33 @@
+diff --git a/third_party/blink/renderer/platform/loader/fetch/resource_request.h b/third_party/blink/renderer/platform/loader/fetch/resource_request.h
+index 7630c3dafe1c..783f8bf1e58d 100644
+--- a/third_party/blink/renderer/platform/loader/fetch/resource_request.h
++++ b/third_party/blink/renderer/platform/loader/fetch/resource_request.h
+@@ -35,7 +35,6 @@
+ #include "base/time/time.h"
+ #include "base/unguessable_token.h"
+ #include "net/cookies/site_for_cookies.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/chunked_data_pipe_getter.mojom-blink.h"
+ #include "services/network/public/mojom/cors.mojom-blink-forward.h"
+ #include "services/network/public/mojom/fetch_api.mojom-blink-forward.h"
+@@ -397,11 +396,6 @@ class PLATFORM_EXPORT ResourceRequestHead {
+   void SetPurposeHeader(const String& value) { purpose_header_ = value; }
+   const String& GetPurposeHeader() const { return purpose_header_; }
+ 
+-  void SetUkmSourceId(ukm::SourceId ukm_source_id) {
+-    ukm_source_id_ = ukm_source_id;
+-  }
+-  ukm::SourceId GetUkmSourceId() const { return ukm_source_id_; }
+-
+   // https://fetch.spec.whatwg.org/#concept-request-window
+   // See network::ResourceRequest::fetch_window_id for details.
+   void SetFetchWindowId(const base::UnguessableToken& id) {
+@@ -539,8 +533,6 @@ class PLATFORM_EXPORT ResourceRequestHead {
+   String client_data_header_;
+   String purpose_header_;
+ 
+-  ukm::SourceId ukm_source_id_ = ukm::kInvalidSourceId;
+-
+   base::UnguessableToken fetch_window_id_;
+ 
+   uint64_t inspector_id_ = 0;

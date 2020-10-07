@@ -1,0 +1,27 @@
+diff --git a/components/renderer_context_menu/render_view_context_menu_base.cc b/components/renderer_context_menu/render_view_context_menu_base.cc
+index 8c079b6ffde1..e87ac2f7f3c8 100644
+--- a/components/renderer_context_menu/render_view_context_menu_base.cc
++++ b/components/renderer_context_menu/render_view_context_menu_base.cc
+@@ -353,7 +353,6 @@ bool RenderViewContextMenuBase::IsCommandIdChecked(int id) const {
+ 
+ void RenderViewContextMenuBase::ExecuteCommand(int id, int event_flags) {
+   command_executed_ = true;
+-  RecordUsedItem(id);
+ 
+   // Notify all observers the command to be executed.
+   for (auto& observer : observers_)
+@@ -381,14 +380,6 @@ void RenderViewContextMenuBase::ExecuteCommand(int id, int event_flags) {
+ }
+ 
+ void RenderViewContextMenuBase::OnMenuWillShow(ui::SimpleMenuModel* source) {
+-  for (int i = 0; i < source->GetItemCount(); ++i) {
+-    if (source->IsVisibleAt(i) &&
+-        source->GetTypeAt(i) != ui::MenuModel::TYPE_SEPARATOR &&
+-        source->GetTypeAt(i) != ui::MenuModel::TYPE_SUBMENU) {
+-      RecordShownItem(source->GetCommandIdAt(i));
+-    }
+-  }
+-
+   // Ignore notifications from submenus.
+   if (source != &menu_model_)
+     return;

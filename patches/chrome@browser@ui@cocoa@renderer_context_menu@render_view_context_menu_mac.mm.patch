@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac.mm b/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac.mm
+index 72ec84f5c645..0ceb30cafdda 100644
+--- a/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac.mm
++++ b/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac.mm
+@@ -85,8 +85,6 @@
+   content::RenderViewHost* view_host = GetRenderViewHost();
+   view_host->GetWidget()->UpdateTextDirection(direction);
+   view_host->GetWidget()->NotifyTextDirection();
+-
+-  RenderViewContextMenu::RecordUsedItem(command_id);
+ }
+ 
+ void RenderViewContextMenuMac::AppendPlatformEditableItems() {

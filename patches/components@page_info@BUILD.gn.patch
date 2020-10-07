@@ -1,5 +1,5 @@
 diff --git a/components/page_info/BUILD.gn b/components/page_info/BUILD.gn
-index 102b85b1bca4..24ab6d6e93bb 100644
+index 102b85b1bca4..025d58379996 100644
 --- a/components/page_info/BUILD.gn
 +++ b/components/page_info/BUILD.gn
 @@ -23,9 +23,6 @@ static_library("page_info") {
@@ -12,11 +12,17 @@ index 102b85b1bca4..24ab6d6e93bb 100644
      "//components/security_interstitials/content:security_interstitial_page",
      "//components/security_interstitials/core",
      "//components/security_state/core",
-@@ -33,7 +30,6 @@ static_library("page_info") {
+@@ -33,13 +30,10 @@ static_library("page_info") {
      "//components/ssl_errors:ssl_errors",
      "//components/strings:components_chromium_strings_grit",
      "//components/strings:components_strings_grit",
 -    "//components/subresource_filter/core/browser",
-     "//components/ukm/content",
+-    "//components/ukm/content",
      "//components/url_formatter",
      "//components/vector_icons:vector_icons",
+     "//content/public/browser:browser",
+     "//services/device/public/cpp:device_features",
+-    "//services/metrics/public/cpp:ukm_builders",
+   ]
+ 
+   if (is_android) {

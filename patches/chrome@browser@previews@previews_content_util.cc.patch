@@ -1,0 +1,27 @@
+diff --git a/chrome/browser/previews/previews_content_util.cc b/chrome/browser/previews/previews_content_util.cc
+index c803abc67ce8..6b17e3268902 100644
+--- a/chrome/browser/previews/previews_content_util.cc
++++ b/chrome/browser/previews/previews_content_util.cc
+@@ -38,10 +38,6 @@
+ #include "net/base/ip_address.h"
+ #include "net/base/url_util.h"
+ #include "net/nqe/effective_connection_type.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_source.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ namespace previews {
+ 
+@@ -168,11 +164,6 @@ void UpdatePreviewsUserDataAndRecordCoinFlipResult(
+   }
+ 
+   previews_user_data->set_coin_flip_holdback_result(result);
+-
+-  ukm::builders::PreviewsCoinFlip builder(ukm::ConvertToSourceId(
+-      navigation_handle->GetNavigationId(), ukm::SourceIdType::NAVIGATION_ID));
+-  builder.Setcoin_flip_result(static_cast<int>(result));
+-  builder.Record(ukm::UkmRecorder::Get());
+ }
+ 
+ blink::PreviewsState DetermineCommittedClientPreviewsState(

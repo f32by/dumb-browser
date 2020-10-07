@@ -1,0 +1,13 @@
+diff --git a/content/renderer/compositor/compositor_dependencies.h b/content/renderer/compositor/compositor_dependencies.h
+index 47a4eed2606c..efd668e9e17b 100644
+--- a/content/renderer/compositor/compositor_dependencies.h
++++ b/content/renderer/compositor/compositor_dependencies.h
+@@ -48,8 +48,6 @@ class CONTENT_EXPORT CompositorDependencies {
+   virtual blink::scheduler::WebThreadScheduler* GetWebMainThreadScheduler() = 0;
+   virtual cc::TaskGraphRunner* GetTaskGraphRunner() = 0;
+   virtual bool IsScrollAnimatorEnabled() = 0;
+-  virtual std::unique_ptr<cc::UkmRecorderFactory>
+-  CreateUkmRecorderFactory() = 0;
+ 
+   using LayerTreeFrameSinkCallback = base::OnceCallback<void(
+       std::unique_ptr<cc::LayerTreeFrameSink>,

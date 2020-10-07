@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/download/download_prefs.cc b/chrome/browser/download/download_prefs.cc
-index 1837e4c98e56..da352ae858d1 100644
+index 1837e4c98e56..8240b9dd178d 100644
 --- a/chrome/browser/download/download_prefs.cc
 +++ b/chrome/browser/download/download_prefs.cc
-@@ -41,7 +41,6 @@
+@@ -28,7 +28,6 @@
+ #include "chrome/browser/download/download_core_service_impl.h"
+ #include "chrome/browser/download/download_dir_util.h"
+ #include "chrome/browser/download/download_prompt_status.h"
+-#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/download/download_target_determiner.h"
+ #include "chrome/browser/download/trusted_sources_manager.h"
+ #include "chrome/browser/profiles/profile.h"
+@@ -41,7 +40,6 @@
  #include "components/policy/core/browser/url_blocklist_manager.h"
  #include "components/pref_registry/pref_registry_syncable.h"
  #include "components/prefs/pref_service.h"
@@ -10,7 +18,7 @@ index 1837e4c98e56..da352ae858d1 100644
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/download_manager.h"
  #include "content/public/browser/save_page_type.h"
-@@ -60,7 +59,6 @@
+@@ -60,7 +58,6 @@
  using content::BrowserContext;
  using content::BrowserThread;
  using content::DownloadManager;
@@ -18,7 +26,20 @@ index 1837e4c98e56..da352ae858d1 100644
  
  namespace {
  
-@@ -220,8 +218,6 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+@@ -199,12 +196,8 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+   prompt_for_download_.Init(prefs::kPromptForDownload, prefs);
+ #if defined(OS_ANDROID)
+   prompt_for_download_android_.Init(prefs::kPromptForDownloadAndroid, prefs);
+-  RecordDownloadPromptStatus(
+-      static_cast<DownloadPromptStatus>(*prompt_for_download_android_));
+   if (base::FeatureList::IsEnabled(download::features::kDownloadLater)) {
+     prompt_for_download_later_.Init(prefs::kDownloadLaterPromptStatus, prefs);
+-    RecordDownloadLaterPromptStatus(
+-        static_cast<DownloadLaterPromptStatus>(*prompt_for_download_later_));
+   }
+ 
+   // If |kDownloadsLocationChange| is not enabled, always uses the default
+@@ -220,8 +213,6 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
    download_path_.Init(prefs::kDownloadDefaultDirectory, prefs);
    save_file_path_.Init(prefs::kSaveFileDefaultDirectory, prefs);
    save_file_type_.Init(prefs::kSaveFileType, prefs);
@@ -27,7 +48,7 @@ index 1837e4c98e56..da352ae858d1 100644
    download_restriction_.Init(prefs::kDownloadRestrictions, prefs);
  
    pref_change_registrar_.Add(
-@@ -265,14 +261,7 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+@@ -265,14 +256,7 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
          base::FilePath::StringType(1, base::FilePath::kExtensionSeparator) +
          extension);
  
@@ -43,7 +64,7 @@ index 1837e4c98e56..da352ae858d1 100644
    }
  }
  
-@@ -292,8 +281,6 @@ void DownloadPrefs::RegisterProfilePrefs(
+@@ -292,8 +276,6 @@ void DownloadPrefs::RegisterProfilePrefs(
    registry->RegisterIntegerPref(prefs::kSaveFileType,
                                  content::SAVE_PAGE_TYPE_AS_COMPLETE_HTML);
    registry->RegisterIntegerPref(prefs::kDownloadRestrictions, 0);
@@ -52,7 +73,7 @@ index 1837e4c98e56..da352ae858d1 100644
  
    const base::FilePath& default_download_path = GetDefaultDownloadDirectory();
    registry->RegisterFilePathPref(prefs::kDownloadDefaultDirectory,
-@@ -461,10 +448,6 @@ bool DownloadPrefs::IsAutoOpenByPolicy(const GURL& url,
+@@ -461,10 +443,6 @@ bool DownloadPrefs::IsAutoOpenByPolicy(const GURL& url,
  bool DownloadPrefs::EnableAutoOpenByUserBasedOnExtension(
      const base::FilePath& file_name) {
    base::FilePath::StringType extension = file_name.Extension();

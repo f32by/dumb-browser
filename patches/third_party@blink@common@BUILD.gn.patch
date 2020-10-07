@@ -1,0 +1,33 @@
+diff --git a/third_party/blink/common/BUILD.gn b/third_party/blink/common/BUILD.gn
+index b9517d68fbb8..2060a46c4640 100644
+--- a/third_party/blink/common/BUILD.gn
++++ b/third_party/blink/common/BUILD.gn
+@@ -169,7 +169,6 @@ source_set("common") {
+   public_deps = [
+     ":make_generated_document_policy_features",
+     ":make_generated_feature_policy_features",
+-    "//third_party/blink/common/privacy_budget:privacy_budget",
+     "//third_party/blink/public/common:headers",
+   ]
+ 
+@@ -179,9 +178,6 @@ source_set("common") {
+     "//media/capture/mojom:video_capture_mojom_support",
+     "//mojo/public/cpp/system",
+     "//net",
+-    "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+-    "//services/metrics/public/mojom:mojom",
+     "//services/network/public/cpp:cpp",
+     "//ui/events:events_base",
+   ]
+@@ -211,10 +207,6 @@ test("blink_common_unittests") {
+   visibility = [ "*" ]
+   deps = [
+     ":common_unittests_sources",
+-    "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+-    "//services/metrics/public/mojom:mojom",
+-    "//third_party/blink/common/privacy_budget:unit_tests",
+     "//third_party/blink/public/common",
+     "//ui/gfx:test_support",
+   ]

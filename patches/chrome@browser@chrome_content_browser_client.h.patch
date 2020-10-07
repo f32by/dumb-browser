@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index 0e025853ca66..8328c1f6e2c4 100644
+index 0e025853ca66..9d4b6006a978 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
 @@ -62,12 +62,6 @@ class PreviewsDecider;
@@ -24,7 +24,23 @@ index 0e025853ca66..8328c1f6e2c4 100644
    scoped_refptr<network::SharedURLLoaderFactory>
    GetSystemSharedURLLoaderFactory() override;
    network::mojom::NetworkContext* GetSystemNetworkContext() override;
-@@ -732,34 +724,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -462,7 +454,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+       int frame_tree_node_id) override;
+   void RegisterNonNetworkNavigationURLLoaderFactories(
+       int frame_tree_node_id,
+-      base::UkmSourceId ukm_source_id,
+       NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
+       NonNetworkURLLoaderFactoryMap* factories) override;
+   void RegisterNonNetworkWorkerMainResourceURLLoaderFactories(
+@@ -691,7 +682,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+   bool ShouldAllowInsecurePrivateNetworkRequests(
+       content::BrowserContext* browser_context,
+       const GURL& url) override;
+-  ukm::UkmService* GetUkmService() override;
+ 
+  protected:
+   static bool HandleWebUI(GURL* url, content::BrowserContext* browser_context);
+@@ -732,34 +722,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  

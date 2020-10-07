@@ -1,0 +1,23 @@
+diff --git a/chrome/renderer/extensions/chrome_extensions_renderer_client.h b/chrome/renderer/extensions/chrome_extensions_renderer_client.h
+index 1bddddbba500..ee1e2f7ad372 100644
+--- a/chrome/renderer/extensions/chrome_extensions_renderer_client.h
++++ b/chrome/renderer/extensions/chrome_extensions_renderer_client.h
+@@ -44,10 +44,6 @@ namespace url {
+ class Origin;
+ }
+ 
+-namespace ukm {
+-class MojoUkmRecorder;
+-}
+-
+ namespace v8 {
+ class Isolate;
+ template <typename T>
+@@ -121,7 +117,6 @@ class ChromeExtensionsRendererClient
+   }
+ 
+  private:
+-  std::unique_ptr<ukm::MojoUkmRecorder> ukm_recorder_;
+   std::unique_ptr<extensions::Dispatcher> extension_dispatcher_;
+   std::unique_ptr<extensions::RendererPermissionsPolicyDelegate>
+       permissions_policy_delegate_;

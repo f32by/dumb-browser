@@ -1,0 +1,22 @@
+diff --git a/third_party/blink/public/web/web_shared_worker.h b/third_party/blink/public/web/web_shared_worker.h
+index d744c1bb54f9..03c146acb64c 100644
+--- a/third_party/blink/public/web/web_shared_worker.h
++++ b/third_party/blink/public/web/web_shared_worker.h
+@@ -34,7 +34,6 @@
+ #include <memory>
+ 
+ #include "base/unguessable_token.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/content_security_policy.mojom-shared.h"
+ #include "services/network/public/mojom/fetch_api.mojom-shared.h"
+ #include "services/network/public/mojom/ip_address_space.mojom-shared.h"
+@@ -90,8 +89,7 @@ class BLINK_EXPORT WebSharedWorker {
+           worker_main_script_load_params,
+       scoped_refptr<WebWorkerFetchContext> web_worker_fetch_context,
+       CrossVariantMojoRemote<mojom::SharedWorkerHostInterfaceBase>,
+-      WebSharedWorkerClient*,
+-      ukm::SourceId ukm_source_id);
++      WebSharedWorkerClient*);
+ 
+   // Sends a connect event to the SharedWorker context.
+   virtual void Connect(int connection_request_id,

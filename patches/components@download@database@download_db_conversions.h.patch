@@ -1,0 +1,38 @@
+diff --git a/components/download/database/download_db_conversions.h b/components/download/database/download_db_conversions.h
+index 39ad586d0928..1260aec63d5d 100644
+--- a/components/download/database/download_db_conversions.h
++++ b/components/download/database/download_db_conversions.h
+@@ -11,9 +11,7 @@
+ #include "components/download/database/download_namespace.h"
+ #include "components/download/database/in_progress/download_entry.h"
+ #include "components/download/database/in_progress/in_progress_info.h"
+-#include "components/download/database/in_progress/ukm_info.h"
+ #include "components/download/database/proto/download_entry.pb.h"
+-#include "components/download/database/proto/download_source.pb.h"
+ #include "components/download/public/common/download_schedule.h"
+ 
+ namespace download {
+@@ -26,12 +24,6 @@ class DownloadDBConversions {
+   static download_pb::DownloadEntry DownloadEntryToProto(
+       const DownloadEntry& entry);
+ 
+-  static DownloadSource DownloadSourceFromProto(
+-      download_pb::DownloadSource download_source);
+-
+-  static download_pb::DownloadSource DownloadSourceToProto(
+-      DownloadSource download_source);
+-
+   static std::vector<DownloadEntry> DownloadEntriesFromProto(
+       const download_pb::DownloadEntries& proto);
+ 
+@@ -50,10 +42,6 @@ class DownloadDBConversions {
+   static InProgressInfo InProgressInfoFromProto(
+       const download_pb::InProgressInfo& proto);
+ 
+-  static download_pb::UkmInfo UkmInfoToProto(const UkmInfo& ukm_info);
+-
+-  static UkmInfo UkmInfoFromProto(const download_pb::UkmInfo& proto);
+-
+   static download_pb::DownloadSchedule DownloadScheduleToProto(
+       const DownloadSchedule& download_schedule);
+ 

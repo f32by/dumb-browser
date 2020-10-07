@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/resource_coordinator/decision_details.h b/chrome/browser/resource_coordinator/decision_details.h
+index 4b6e118553fd..63f2aeb08539 100644
+--- a/chrome/browser/resource_coordinator/decision_details.h
++++ b/chrome/browser/resource_coordinator/decision_details.h
+@@ -10,12 +10,6 @@
+ 
+ #include "base/macros.h"
+ 
+-namespace ukm {
+-namespace builders {
+-class TabManager_LifecycleStateChange;
+-}
+-}  // namespace ukm
+-
+ namespace resource_coordinator {
+ 
+ // An enumeration of reasons why a particular intervention or lifecycle state
+@@ -205,10 +199,6 @@ class DecisionDetails {
+   // Returns whether or not the chain of reasons has toggled.
+   bool toggled() const { return toggled_; }
+ 
+-  // Populates the provided "TabManager.LifecycleStateChange" UKM builder with
+-  // information from this object.
+-  void Populate(ukm::builders::TabManager_LifecycleStateChange* ukm) const;
+-
+   // Returns a collection of failure reason strings, from most important failure
+   // reason to least important. This is empty if the outcome is positive, and
+   // will only be populated with failure reasons that are not overridden by any

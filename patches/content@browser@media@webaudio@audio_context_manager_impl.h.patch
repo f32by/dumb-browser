@@ -1,0 +1,14 @@
+diff --git a/content/browser/media/webaudio/audio_context_manager_impl.h b/content/browser/media/webaudio/audio_context_manager_impl.h
+index ffd7fb63e736..86bbf82932a0 100644
+--- a/content/browser/media/webaudio/audio_context_manager_impl.h
++++ b/content/browser/media/webaudio/audio_context_manager_impl.h
+@@ -45,9 +45,6 @@ class CONTENT_EXPORT AudioContextManagerImpl final
+   void set_clock_for_testing(base::TickClock* clock) { clock_ = clock; }
+ 
+  private:
+-  // Send measured audible duration to UKM database.
+-  void RecordAudibleTime(base::TimeDelta);
+-
+   RenderFrameHostImpl* const render_frame_host_impl_;
+ 
+   // To track pending audible time. Stores ID of AudioContext (int32_t) and

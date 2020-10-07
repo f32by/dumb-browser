@@ -1,0 +1,50 @@
+diff --git a/cc/trees/layer_tree_host_impl.h b/cc/trees/layer_tree_host_impl.h
+index c2d9d41300a7..10348b96a6e4 100644
+--- a/cc/trees/layer_tree_host_impl.h
++++ b/cc/trees/layer_tree_host_impl.h
+@@ -60,7 +60,6 @@
+ #include "cc/trees/presentation_time_callback_buffer.h"
+ #include "cc/trees/render_frame_metadata.h"
+ #include "cc/trees/task_runner_provider.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "components/viz/client/client_resource_provider.h"
+ #include "components/viz/common/frame_sinks/begin_frame_args.h"
+ #include "components/viz/common/gpu/context_cache_controller.h"
+@@ -177,8 +176,7 @@ class LayerTreeHostImplClient {
+ 
+   // Send the throughput data to the main thread's LayerTreeHostClient, which
+   // then send the data to the browser process and eventually report to UKM.
+-  virtual void SubmitThroughputData(ukm::SourceId source_id,
+-                                    int aggregated_percent,
++  virtual void SubmitThroughputData(int aggregated_percent,
+                                     int impl_percent,
+                                     base::Optional<int> main_percent) = 0;
+ 
+@@ -767,9 +765,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+       base::flat_map<PaintImage::Id, PaintImage::DecodingMode>
+           decoding_mode_map);
+ 
+-  void InitializeUkm(std::unique_ptr<ukm::UkmRecorder> recorder);
+-  UkmManager* ukm_manager() { return ukm_manager_.get(); }
+-
+   ActiveFrameSequenceTrackers FrameSequenceTrackerActiveTypes() {
+     return frame_trackers_.FrameSequenceTrackerActiveTypes();
+   }
+@@ -779,7 +774,7 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+   void SetRenderFrameObserver(
+       std::unique_ptr<RenderFrameMetadataObserver> observer);
+ 
+-  void SetActiveURL(const GURL& url, ukm::SourceId source_id);
++  void SetActiveURL(const GURL& url);
+ 
+   CompositorFrameReportingController* compositor_frame_reporting_controller()
+       const {
+@@ -1108,8 +1103,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+ 
+   ImageAnimationController image_animation_controller_;
+ 
+-  std::unique_ptr<UkmManager> ukm_manager_;
+-
+   // Provides RenderFrameMetadata to the Browser process upon the submission of
+   // each CompositorFrame.
+   std::unique_ptr<RenderFrameMetadataObserver> render_frame_metadata_observer_;

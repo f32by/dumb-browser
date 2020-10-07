@@ -1,0 +1,35 @@
+diff --git a/components/browser_ui/site_settings/android/website_preference_bridge.cc b/components/browser_ui/site_settings/android/website_preference_bridge.cc
+index 308b9a2dd503..1a4af8f08f7c 100644
+--- a/components/browser_ui/site_settings/android/website_preference_bridge.cc
++++ b/components/browser_ui/site_settings/android/website_preference_bridge.cc
+@@ -32,7 +32,6 @@
+ #include "components/permissions/chooser_context_base.h"
+ #include "components/permissions/permission_decision_auto_blocker.h"
+ #include "components/permissions/permission_manager.h"
+-#include "components/permissions/permission_uma_util.h"
+ #include "components/permissions/permission_util.h"
+ #include "components/permissions/permissions_client.h"
+ #include "components/user_prefs/user_prefs.h"
+@@ -242,10 +241,6 @@ void SetSettingForOrigin(JNIEnv* env,
+     return;
+   }
+ 
+-  permissions::PermissionUmaUtil::ScopedRevocationReporter
+-      scoped_revocation_reporter(
+-          browser_context, origin_url, embedder_url, content_type,
+-          permissions::PermissionSourceUI::SITE_SETTINGS);
+   GetHostContentSettingsMap(browser_context)
+       ->SetContentSettingDefaultScope(origin_url, embedder_url, content_type,
+                                       std::string(), setting);
+@@ -532,11 +527,6 @@ static void JNI_WebsitePreferenceBridge_SetNotificationSettingForOrigin(
+     return;
+   }
+ 
+-  permissions::PermissionUmaUtil::ScopedRevocationReporter
+-      scoped_revocation_reporter(
+-          browser_context, url, GURL(), ContentSettingsType::NOTIFICATIONS,
+-          permissions::PermissionSourceUI::SITE_SETTINGS);
+-
+   GetHostContentSettingsMap(browser_context)
+       ->SetContentSettingDefaultScope(
+           url, GURL(), ContentSettingsType::NOTIFICATIONS,

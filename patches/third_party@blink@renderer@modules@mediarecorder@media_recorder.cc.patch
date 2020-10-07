@@ -1,0 +1,29 @@
+diff --git a/third_party/blink/renderer/modules/mediarecorder/media_recorder.cc b/third_party/blink/renderer/modules/mediarecorder/media_recorder.cc
+index 161cdf8acc2e..b71c56a4f856 100644
+--- a/third_party/blink/renderer/modules/mediarecorder/media_recorder.cc
++++ b/third_party/blink/renderer/modules/mediarecorder/media_recorder.cc
+@@ -6,7 +6,6 @@
+ 
+ #include <algorithm>
+ #include <limits>
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+ #include "third_party/blink/public/common/privacy_budget/identifiability_study_participation.h"
+ #include "third_party/blink/public/common/privacy_budget/identifiable_surface.h"
+ #include "third_party/blink/public/platform/platform.h"
+@@ -331,16 +330,6 @@ bool MediaRecorder::isTypeSupported(ExecutionContext* context,
+   ContentType content_type(type);
+   bool result = handler->CanSupportMimeType(content_type.GetType(),
+                                             content_type.Parameter("codecs"));
+-  if (IsUserInIdentifiabilityStudy()) {
+-    blink::IdentifiabilityMetricBuilder(context->UkmSourceID())
+-        .Set(blink::IdentifiableSurface::FromTypeAndToken(
+-                 blink::IdentifiableSurface::Type::
+-                     kMediaRecorder_IsTypeSupported,
+-                 IdentifiabilityBenignStringToken(type)),
+-             result)
+-        .Record(context->UkmRecorder());
+-  }
+-
+   return result;
+ }
+ 

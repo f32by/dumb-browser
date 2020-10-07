@@ -1,0 +1,55 @@
+diff --git a/cc/metrics/compositor_timing_history.h b/cc/metrics/compositor_timing_history.h
+index 93a06913241d..409013f661b3 100644
+--- a/cc/metrics/compositor_timing_history.h
++++ b/cc/metrics/compositor_timing_history.h
+@@ -28,25 +28,13 @@ struct FrameTimingDetails;
+ }
+ 
+ namespace cc {
+-struct BeginMainFrameMetrics;
+-class CompositorFrameReportingController;
+ class RenderingStatsInstrumentation;
+ 
+ class CC_EXPORT CompositorTimingHistory {
+  public:
+-  enum UMACategory {
+-    RENDERER_UMA,
+-    BROWSER_UMA,
+-    NULL_UMA,
+-  };
+-  class UMAReporter;
+-
+   CompositorTimingHistory(
+       bool using_synchronous_renderer_compositor,
+-      UMACategory uma_category,
+-      RenderingStatsInstrumentation* rendering_stats_instrumentation,
+-      CompositorFrameReportingController*
+-          compositor_frame_reporting_controller);
++      RenderingStatsInstrumentation* rendering_stats_instrumentation);
+   CompositorTimingHistory(const CompositorTimingHistory&) = delete;
+   virtual ~CompositorTimingHistory();
+ 
+@@ -123,7 +111,6 @@ class CC_EXPORT CompositorTimingHistory {
+ 
+   void SetCompositorDrawingContinuously(bool active);
+ 
+-  static std::unique_ptr<UMAReporter> CreateUMAReporter(UMACategory category);
+   virtual base::TimeTicks Now() const;
+ 
+   bool using_synchronous_renderer_compositor_;
+@@ -161,15 +148,9 @@ class CC_EXPORT CompositorTimingHistory {
+ 
+   bool pending_tree_is_impl_side_;
+ 
+-  std::unique_ptr<UMAReporter> uma_reporter_;
+-
+   // Owned by LayerTreeHost and is destroyed when LayerTreeHost is destroyed.
+   RenderingStatsInstrumentation* rendering_stats_instrumentation_;
+ 
+-  // Owned by LayerTreeHostImpl and is destroyed when LayerTreeHostImpl is
+-  // destroyed.
+-  CompositorFrameReportingController* compositor_frame_reporting_controller_;
+-
+   // Used only for reporting animation targeted UMA.
+   bool previous_frame_had_custom_property_animations_ = false;
+ 

@@ -1,0 +1,21 @@
+diff --git a/components/autofill/core/browser/payments/autofill_credit_card_filling_infobar_delegate_mobile.h b/components/autofill/core/browser/payments/autofill_credit_card_filling_infobar_delegate_mobile.h
+index 721af6e24917..26095acdc0b7 100644
+--- a/components/autofill/core/browser/payments/autofill_credit_card_filling_infobar_delegate_mobile.h
++++ b/components/autofill/core/browser/payments/autofill_credit_card_filling_infobar_delegate_mobile.h
+@@ -10,7 +10,6 @@
+ #include "base/callback.h"
+ #include "base/macros.h"
+ #include "base/strings/string16.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/infobars/core/confirm_infobar_delegate.h"
+ 
+ namespace autofill {
+@@ -44,8 +43,6 @@ class AutofillCreditCardFillingInfoBarDelegateMobile
+   infobars::InfoBarDelegate::InfoBarIdentifier GetIdentifier() const override;
+   base::string16 GetButtonLabel(InfoBarButton button) const override;
+ 
+-  void LogUserAction(AutofillMetrics::InfoBarMetric user_action);
+-
+   // The callback after having accepted the infobar; will initiate filling the
+   // credit card information.
+   base::OnceClosure card_filling_callback_;

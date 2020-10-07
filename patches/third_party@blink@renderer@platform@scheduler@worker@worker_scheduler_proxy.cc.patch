@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/worker/worker_scheduler_proxy.cc b/third_party/blink/renderer/platform/scheduler/worker/worker_scheduler_proxy.cc
+index 3ff3afde1c68..44f41c0c2581 100644
+--- a/third_party/blink/renderer/platform/scheduler/worker/worker_scheduler_proxy.cc
++++ b/third_party/blink/renderer/platform/scheduler/worker/worker_scheduler_proxy.cc
+@@ -20,7 +20,6 @@ WorkerSchedulerProxy::WorkerSchedulerProxy(FrameOrWorkerScheduler* scheduler) {
+   if (FrameScheduler* frame_scheduler = scheduler->ToFrameScheduler()) {
+     parent_frame_type_ = GetFrameOriginType(frame_scheduler);
+     initial_frame_status_ = GetFrameStatus(frame_scheduler);
+-    ukm_source_id_ = frame_scheduler->GetUkmSourceId();
+   }
+ }
+ 

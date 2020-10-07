@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/public/web/web_local_frame_client.h b/third_party/blink/public/web/web_local_frame_client.h
+index eecf846eabce..a3812e2215c2 100644
+--- a/third_party/blink/public/web/web_local_frame_client.h
++++ b/third_party/blink/public/web/web_local_frame_client.h
+@@ -664,8 +664,7 @@ class BLINK_EXPORT WebLocalFrameClient {
+   // Called by WebFrameWidgetBase, it submits throughput data to the browser
+   // process. The browser process aggregates the data and eventually reports to
+   // the UKM.
+-  virtual void SubmitThroughputData(ukm::SourceId source_id,
+-                                    int aggregated_percent,
++  virtual void SubmitThroughputData(int aggregated_percent,
+                                     int impl_percent,
+                                     base::Optional<int> main_percent) {}
+ 

@@ -1,0 +1,17 @@
+diff --git a/components/media_message_center/media_notification_controller.h b/components/media_message_center/media_notification_controller.h
+index 344bf9e70bf8..f72e3c5eb75d 100644
+--- a/components/media_message_center/media_notification_controller.h
++++ b/components/media_message_center/media_notification_controller.h
+@@ -36,12 +36,6 @@ class COMPONENT_EXPORT(MEDIA_MESSAGE_CENTER) MediaNotificationController {
+   // It typically returns null except in tests.
+   virtual scoped_refptr<base::SequencedTaskRunner> GetTaskRunner() const = 0;
+ 
+-  // Notifies the MediaNotificationController that a media button was pressed on
+-  // the MediaNotificationView.
+-  virtual void LogMediaSessionActionButtonPressed(
+-      const std::string& id,
+-      media_session::mojom::MediaSessionAction action) = 0;
+-
+  protected:
+   virtual ~MediaNotificationController() = default;
+ };
