@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/chrome_browser_interface_binders.cc b/chrome/browser/chrome_browser_interface_binders.cc
-index bef488002d43..413cee4303d1 100644
+index 379e7fd26a1b..771396b5f198 100644
 --- a/chrome/browser/chrome_browser_interface_binders.cc
 +++ b/chrome/browser/chrome_browser_interface_binders.cc
-@@ -112,7 +112,6 @@
+@@ -107,7 +107,6 @@
  #include "chrome/browser/media/kaleidoscope/mojom/kaleidoscope.mojom.h"
  #include "chrome/browser/payments/payment_credential_factory.h"
  #include "chrome/browser/payments/payment_request_factory.h"
 -#include "chrome/browser/promo_browser_command/promo_browser_command.mojom.h"
+ #include "chrome/browser/search/ntp_features.h"
+ #include "chrome/browser/search/shopping_tasks/shopping_tasks.mojom.h"
  #include "chrome/browser/speech/speech_recognition_service.h"
- #include "chrome/browser/speech/speech_recognition_service_factory.h"
- #include "chrome/browser/ui/webui/downloads/downloads.mojom.h"
-@@ -606,8 +605,6 @@ void PopulateChromeWebUIFrameBinders(
+@@ -600,8 +599,6 @@ void PopulateChromeWebUIFrameBinders(
    RegisterWebUIControllerInterfaceBinder<
        new_tab_page::mojom::PageHandlerFactory, NewTabPageUI>(map);
  

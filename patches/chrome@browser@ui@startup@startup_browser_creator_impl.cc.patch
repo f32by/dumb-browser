@@ -1,15 +1,13 @@
 diff --git a/chrome/browser/ui/startup/startup_browser_creator_impl.cc b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-index 47ddd90ab37c..a222b78e230f 100644
+index 393a018c135a..3e4628b66756 100644
 --- a/chrome/browser/ui/startup/startup_browser_creator_impl.cc
 +++ b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-@@ -902,10 +902,6 @@ void StartupBrowserCreatorImpl::AddInfoBarsIfNecessary(
+@@ -752,8 +752,6 @@ void StartupBrowserCreatorImpl::AddInfoBarsIfNecessary(
  
      InfoBarService* infobar_service =
          InfoBarService::FromWebContents(web_contents);
--    if (!google_apis::HasAPIKeyConfigured() ||
--        !google_apis::HasOAuthClientConfigured()) {
+-    if (!google_apis::HasAPIKeyConfigured())
 -      GoogleApiKeysInfoBarDelegate::Create(infobar_service);
--    }
  
      if (ObsoleteSystem::IsObsoleteNowOrSoon()) {
        PrefService* local_state = g_browser_process->local_state();

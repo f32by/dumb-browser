@@ -1,0 +1,16 @@
+diff --git a/components/omnibox/browser/search_provider.cc b/components/omnibox/browser/search_provider.cc
+index bd5cdb82b58b..bd50b87beb08 100644
+--- a/components/omnibox/browser/search_provider.cc
++++ b/components/omnibox/browser/search_provider.cc
+@@ -1628,11 +1628,6 @@ void SearchProvider::PrefetchImages(SearchSuggestionParser::Results* results) {
+       suggestion.answer()->AddImageURLsTo(&prefetch_image_urls);
+   }
+ 
+-  UMA_HISTOGRAM_EXACT_LINEAR(
+-      "Omnibox.SuggestRequest.Success.PrefetchImagesCount",
+-      prefetch_image_urls.size(),
+-      AutocompleteResult::kMaxAutocompletePositionValue);
+-
+   for (const GURL& url : prefetch_image_urls)
+     client()->PrefetchImage(url);
+ }

@@ -1,5 +1,5 @@
 diff --git a/content/browser/renderer_host/navigation_request.h b/content/browser/renderer_host/navigation_request.h
-index f5fc71cd7755..181247b8c163 100644
+index c985c048fed8..7f1fa76d3210 100644
 --- a/content/browser/renderer_host/navigation_request.h
 +++ b/content/browser/renderer_host/navigation_request.h
 @@ -43,7 +43,6 @@
@@ -18,7 +18,7 @@ index f5fc71cd7755..181247b8c163 100644
    const GURL& GetURL() override;
    SiteInstanceImpl* GetStartingSiteInstance() override;
    SiteInstanceImpl* GetSourceSiteInstance() override;
-@@ -639,13 +637,6 @@ class CONTENT_EXPORT NavigationRequest
+@@ -641,13 +639,6 @@ class CONTENT_EXPORT NavigationRequest
  
    std::unique_ptr<CrossOriginEmbedderPolicyReporter> TakeCoepReporter();
  
@@ -29,10 +29,10 @@ index f5fc71cd7755..181247b8c163 100644
 -  //     ->GetPageUkmSourceId() for main-frame cross-document navigations.
 -  ukm::SourceId GetPreviousPageUkmSourceId();
 -
-   // Returns the NavigationEntry associated with this, which may be null.
-   NavigationEntry* GetNavigationEntry();
+   void OnServiceWorkerAccessed(const GURL& scope,
+                                AllowServiceWorkerResult allowed);
  
-@@ -1441,9 +1432,6 @@ class CONTENT_EXPORT NavigationRequest
+@@ -1445,9 +1436,6 @@ class CONTENT_EXPORT NavigationRequest
    bool is_safe_to_delete_ = true;
  #endif
  

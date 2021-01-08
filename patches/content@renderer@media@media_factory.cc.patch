@@ -1,0 +1,32 @@
+diff --git a/content/renderer/media/media_factory.cc b/content/renderer/media/media_factory.cc
+index e328190798e2..584bf00879a9 100644
+--- a/content/renderer/media/media_factory.cc
++++ b/content/renderer/media/media_factory.cc
+@@ -46,6 +46,8 @@
+ #include "media/renderers/default_decoder_factory.h"
+ #include "media/renderers/default_renderer_factory.h"
+ #include "media/video/gpu_video_accelerator_factories.h"
++#include "mojo/public/cpp/bindings/generic_pending_receiver.h"
++#include "mojo/public/cpp/bindings/pending_receiver.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+ #include "services/device/public/mojom/battery_monitor.mojom.h"
+ #include "services/service_manager/public/cpp/connect.h"
+@@ -434,10 +436,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
+   DCHECK_EQ(static_cast<FrameFetchContext*>(fetch_context_.get())->frame(),
+             web_frame);
+ 
+-  mojo::PendingRemote<media::mojom::MediaMetricsProvider> metrics_provider;
+-  interface_broker_->GetInterface(
+-      metrics_provider.InitWithNewPipeAndPassReceiver());
+-
+   std::unique_ptr<media::PowerStatusHelper> power_status_helper;
+   if (base::FeatureList::IsEnabled(media::kMediaPowerExperiment)) {
+     // The battery monitor is only available through the blink provider.
+@@ -489,7 +487,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
+               base::Unretained(blink::MainThreadIsolate())),
+           initial_cdm, request_routing_token_cb_, media_observer,
+           enable_instant_source_buffer_gc, embedded_media_experience_enabled,
+-          std::move(metrics_provider),
+           base::BindOnce(&blink::WebSurfaceLayerBridge::Create,
+                          parent_frame_sink_id,
+                          blink::WebSurfaceLayerBridge::ContainsVideo::kYes),

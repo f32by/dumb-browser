@@ -1,0 +1,73 @@
+diff --git a/third_party/blink/renderer/modules/media/webmediaplayer_util.cc b/third_party/blink/renderer/modules/media/webmediaplayer_util.cc
+index 9a5ec4231256..cbc8c9b1c21f 100644
+--- a/third_party/blink/renderer/modules/media/webmediaplayer_util.cc
++++ b/third_party/blink/renderer/modules/media/webmediaplayer_util.cc
+@@ -42,39 +42,6 @@ void RunSetSinkIdCallback(blink::WebSetSinkIdCompleteCallback callback,
+ 
+ namespace blink {
+ 
+-media::mojom::MediaURLScheme GetMediaURLScheme(const WebURL& url) {
+-  if (!url.GetParsed().scheme.is_valid())
+-    return media::mojom::MediaURLScheme::kMissing;
+-  if (url.ProtocolIs(url::kHttpScheme))
+-    return media::mojom::MediaURLScheme::kHttp;
+-  if (url.ProtocolIs(url::kHttpsScheme))
+-    return media::mojom::MediaURLScheme::kHttps;
+-  if (url.ProtocolIs(url::kFtpScheme))
+-    return media::mojom::MediaURLScheme::kFtp;
+-  if (url.ProtocolIs(url::kJavaScriptScheme))
+-    return media::mojom::MediaURLScheme::kJavascript;
+-  if (url.ProtocolIs(url::kFileScheme))
+-    return media::mojom::MediaURLScheme::kFile;
+-  if (url.ProtocolIs(url::kBlobScheme))
+-    return media::mojom::MediaURLScheme::kBlob;
+-  if (url.ProtocolIs(url::kDataScheme))
+-    return media::mojom::MediaURLScheme::kData;
+-  if (url.ProtocolIs(url::kFileSystemScheme))
+-    return media::mojom::MediaURLScheme::kFileSystem;
+-  if (url.ProtocolIs(url::kContentScheme))
+-    return media::mojom::MediaURLScheme::kContent;
+-  if (url.ProtocolIs(url::kContentIDScheme))
+-    return media::mojom::MediaURLScheme::kContentId;
+-
+-  // Some internals pages and extension pages play media.
+-  if (url.ProtocolIs("chrome"))
+-    return media::mojom::MediaURLScheme::kChrome;
+-  if (url.ProtocolIs("chrome-extension"))
+-    return media::mojom::MediaURLScheme::kChromeExtension;
+-
+-  return media::mojom::MediaURLScheme::kUnknown;
+-}
+-
+ WebTimeRanges ConvertToWebTimeRanges(
+     const media::Ranges<base::TimeDelta>& ranges) {
+   WebTimeRanges result(ranges.size());
+@@ -117,28 +84,6 @@ WebMediaPlayer::NetworkState PipelineErrorToNetworkState(
+   return WebMediaPlayer::kNetworkStateFormatError;
+ }
+ 
+-void ReportMetrics(WebMediaPlayer::LoadType load_type,
+-                   const WebURL& url,
+-                   const WebLocalFrame& frame,
+-                   media::MediaLog* media_log) {
+-  DCHECK(media_log);
+-
+-  // Report URL scheme, such as http, https, file, blob etc. Only do this for
+-  // URL based loads, otherwise it's not very useful.
+-  if (load_type == WebMediaPlayer::kLoadTypeURL)
+-    UMA_HISTOGRAM_ENUMERATION("Media.URLScheme2", GetMediaURLScheme(url));
+-
+-  // Report load type, such as URL, MediaSource or MediaStream.
+-  UMA_HISTOGRAM_ENUMERATION("Media.LoadType", load_type,
+-                            WebMediaPlayer::kLoadTypeMax + 1);
+-
+-  // Report load type separately for ad frames.
+-  if (frame.IsAdSubframe()) {
+-    UMA_HISTOGRAM_ENUMERATION("Ads.Media.LoadType", load_type,
+-                              WebMediaPlayer::kLoadTypeMax + 1);
+-  }
+-}
+-
+ media::OutputDeviceStatusCB ConvertToOutputDeviceStatusCB(
+     WebSetSinkIdCompleteCallback callback) {
+   return media::BindToCurrentLoop(

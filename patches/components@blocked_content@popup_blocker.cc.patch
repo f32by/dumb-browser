@@ -1,5 +1,5 @@
 diff --git a/components/blocked_content/popup_blocker.cc b/components/blocked_content/popup_blocker.cc
-index a1d92268b4dd..bc646b959a2e 100644
+index 44cc72e2625b..25f2e5ed0f3c 100644
 --- a/components/blocked_content/popup_blocker.cc
 +++ b/components/blocked_content/popup_blocker.cc
 @@ -10,11 +10,9 @@
@@ -14,7 +14,7 @@ index a1d92268b4dd..bc646b959a2e 100644
  #include "content/public/browser/page_navigator.h"
  #include "content/public/browser/render_frame_host.h"
  #include "content/public/browser/web_contents.h"
-@@ -58,12 +56,6 @@ PopupBlockType ShouldBlockPopup(content::WebContents* web_contents,
+@@ -64,37 +62,9 @@ PopupBlockType ShouldBlockPopup(content::WebContents* web_contents,
      return PopupBlockType::kNotBlocked;
    }
  
@@ -27,10 +27,39 @@ index a1d92268b4dd..bc646b959a2e 100644
    return PopupBlockType::kNotBlocked;
  }
  
-@@ -127,10 +119,6 @@ std::unique_ptr<PopupNavigationDelegate> MaybeBlockPopup(
-       GetSourceFrameForPopup(delegate.get(), open_url_params, web_contents);
-   popup_blocker->AddBlockedPopup(source_frame, std::move(delegate),
-                                  window_features, block_type);
+-// Tries to get the opener from either the |params| or |open_url_params|,
+-// otherwise uses the focused frame from |web_contents| as a proxy.
+-content::RenderFrameHost* GetSourceFrameForPopup(
+-    PopupNavigationDelegate* params,
+-    const content::OpenURLParams* open_url_params,
+-    content::WebContents* web_contents) {
+-  if (params->GetOpener())
+-    return params->GetOpener();
+-  // Make sure the source render frame host is alive before we attempt to
+-  // retrieve it from |open_url_params|.
+-  if (open_url_params) {
+-    content::RenderFrameHost* source = content::RenderFrameHost::FromID(
+-        open_url_params->source_render_frame_id,
+-        open_url_params->source_render_process_id);
+-    if (source)
+-      return source;
+-  }
+-  // The focused frame is not always the frame initiating the popup navigation
+-  // and is used as a fallback in case opener information is not available.
+-  return web_contents->GetFocusedFrame();
+-}
+-
+ }  // namespace
+ 
+ bool ConsiderForPopupBlocking(WindowOpenDisposition disposition) {
+@@ -129,14 +99,8 @@ std::unique_ptr<PopupNavigationDelegate> MaybeBlockPopup(
+ 
+   // AddBlockedPopup() takes ownership of the delegate, so grab the source frame
+   // first.
+-  content::RenderFrameHost* source_frame =
+-      GetSourceFrameForPopup(delegate.get(), open_url_params, web_contents);
+   popup_blocker->AddBlockedPopup(std::move(delegate), window_features,
+                                  block_type);
 -  auto* trigger = safe_browsing::AdPopupTrigger::FromWebContents(web_contents);
 -  if (trigger) {
 -    trigger->PopupWasBlocked(source_frame);

@@ -1,16 +1,16 @@
 diff --git a/third_party/blink/renderer/core/workers/worklet_global_scope.h b/third_party/blink/renderer/core/workers/worklet_global_scope.h
-index ec097be5fa3b..ddedebc6d635 100644
+index b57faf0491c2..c82222a86fa3 100644
 --- a/third_party/blink/renderer/core/workers/worklet_global_scope.h
 +++ b/third_party/blink/renderer/core/workers/worklet_global_scope.h
-@@ -64,7 +64,6 @@ class CORE_EXPORT WorkletGlobalScope
-   CoreProbeSink* GetProbeSink() final;
+@@ -65,7 +65,6 @@ class CORE_EXPORT WorkletGlobalScope
    scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner(TaskType) final;
    FrameOrWorkerScheduler* GetScheduler() final;
+   bool CrossOriginIsolatedCapability() const final { return false; }
 -  ukm::UkmRecorder* UkmRecorder() final;
  
    // WorkerOrWorkletGlobalScope
    void Dispose() override;
-@@ -182,8 +181,6 @@ class CORE_EXPORT WorkletGlobalScope
+@@ -183,8 +182,6 @@ class CORE_EXPORT WorkletGlobalScope
  
    // The token identifying the LocalFrame that caused this scope to be created.
    const LocalFrameToken frame_token_;

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/widget/widget_base.cc b/third_party/blink/renderer/platform/widget/widget_base.cc
-index 913aafa6a9de..da2e72a46484 100644
+index 59a70580ded0..feeab1a7cff4 100644
 --- a/third_party/blink/renderer/platform/widget/widget_base.cc
 +++ b/third_party/blink/renderer/platform/widget/widget_base.cc
 @@ -9,7 +9,6 @@
@@ -26,18 +26,4 @@ index 913aafa6a9de..da2e72a46484 100644
 +  layer_tree_view_->Initialize(*settings);
  
    FrameWidget* frame_widget = client_->FrameWidget();
- 
-@@ -510,11 +508,10 @@ void WidgetBase::WillBeginMainFrame() {
-   UpdateTextInputState();
- }
- 
--void WidgetBase::SubmitThroughputData(ukm::SourceId source_id,
--                                      int aggregated_percent,
-+void WidgetBase::SubmitThroughputData(int aggregated_percent,
-                                       int impl_percent,
-                                       base::Optional<int> main_percent) {
--  client_->SubmitThroughputData(source_id, aggregated_percent, impl_percent,
-+  client_->SubmitThroughputData(aggregated_percent, impl_percent,
-                                 main_percent);
- }
  

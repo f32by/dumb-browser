@@ -1,5 +1,5 @@
 diff --git a/cc/trees/layer_tree_host_impl.h b/cc/trees/layer_tree_host_impl.h
-index c2d9d41300a7..10348b96a6e4 100644
+index c0c6166c5f61..cbc84389e3a8 100644
 --- a/cc/trees/layer_tree_host_impl.h
 +++ b/cc/trees/layer_tree_host_impl.h
 @@ -60,7 +60,6 @@
@@ -10,17 +10,7 @@ index c2d9d41300a7..10348b96a6e4 100644
  #include "components/viz/client/client_resource_provider.h"
  #include "components/viz/common/frame_sinks/begin_frame_args.h"
  #include "components/viz/common/gpu/context_cache_controller.h"
-@@ -177,8 +176,7 @@ class LayerTreeHostImplClient {
- 
-   // Send the throughput data to the main thread's LayerTreeHostClient, which
-   // then send the data to the browser process and eventually report to UKM.
--  virtual void SubmitThroughputData(ukm::SourceId source_id,
--                                    int aggregated_percent,
-+  virtual void SubmitThroughputData(int aggregated_percent,
-                                     int impl_percent,
-                                     base::Optional<int> main_percent) = 0;
- 
-@@ -767,9 +765,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -760,9 +759,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
        base::flat_map<PaintImage::Id, PaintImage::DecodingMode>
            decoding_mode_map);
  
@@ -30,16 +20,19 @@ index c2d9d41300a7..10348b96a6e4 100644
    ActiveFrameSequenceTrackers FrameSequenceTrackerActiveTypes() {
      return frame_trackers_.FrameSequenceTrackerActiveTypes();
    }
-@@ -779,7 +774,7 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -772,10 +768,7 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
    void SetRenderFrameObserver(
        std::unique_ptr<RenderFrameMetadataObserver> observer);
  
 -  void SetActiveURL(const GURL& url, ukm::SourceId source_id);
+-
+-  void SetUkmSmoothnessDestination(
+-      base::WritableSharedMemoryMapping ukm_smoothness_data);
 +  void SetActiveURL(const GURL& url);
  
    CompositorFrameReportingController* compositor_frame_reporting_controller()
        const {
-@@ -1108,8 +1103,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -1104,8 +1097,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
  
    ImageAnimationController image_animation_controller_;
  
@@ -48,3 +41,12 @@ index c2d9d41300a7..10348b96a6e4 100644
    // Provides RenderFrameMetadata to the Browser process upon the submission of
    // each CompositorFrame.
    std::unique_ptr<RenderFrameMetadataObserver> render_frame_metadata_observer_;
+@@ -1176,8 +1167,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+   // DroppedFrameCounter. Currently true when first contentful paint is done.
+   bool is_measuring_smoothness_ = false;
+ 
+-  base::WritableSharedMemoryMapping ukm_smoothness_mapping_;
+-
+   // Must be the last member to ensure this is destroyed first in the
+   // destruction order and invalidates all weak pointers.
+   base::WeakPtrFactory<LayerTreeHostImpl> weak_factory_{this};

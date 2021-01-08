@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/platform/graphics/canvas_resource_provider.cc b/third_party/blink/renderer/platform/graphics/canvas_resource_provider.cc
-index abd8322e6404..5194aec71948 100644
+index d91bdb42a01f..fa024c80f053 100644
 --- a/third_party/blink/renderer/platform/graphics/canvas_resource_provider.cc
 +++ b/third_party/blink/renderer/platform/graphics/canvas_resource_provider.cc
-@@ -1122,8 +1122,7 @@ CanvasResourceProvider::CanvasResourceProvider(
+@@ -1144,8 +1144,7 @@ CanvasResourceProvider::CanvasResourceProvider(
        filter_quality_(filter_quality),
        color_params_(color_params),
        is_origin_top_left_(is_origin_top_left),
@@ -12,7 +12,7 @@ index abd8322e6404..5194aec71948 100644
    if (context_provider_wrapper_)
      context_provider_wrapper_->AddObserver(this);
    CanvasMemoryDumpProvider::Instance()->RegisterClient(this);
-@@ -1274,9 +1273,6 @@ GrDirectContext* CanvasResourceProvider::GetGrContext() const {
+@@ -1294,9 +1293,6 @@ GrDirectContext* CanvasResourceProvider::GetGrContext() const {
  sk_sp<cc::PaintRecord> CanvasResourceProvider::FlushCanvas() {
    if (!HasRecordedDrawOps())
      return nullptr;
@@ -22,7 +22,7 @@ index abd8322e6404..5194aec71948 100644
    sk_sp<cc::PaintRecord> last_recording = recorder_->finishRecordingAsPicture();
    RasterRecord(last_recording);
    needs_flush_ = false;
-@@ -1284,12 +1280,6 @@ sk_sp<cc::PaintRecord> CanvasResourceProvider::FlushCanvas() {
+@@ -1304,12 +1300,6 @@ sk_sp<cc::PaintRecord> CanvasResourceProvider::FlushCanvas() {
        recorder_->beginRecording(Size().Width(), Size().Height());
    if (restore_clip_stack_callback_)
      restore_clip_stack_callback_.Run(canvas);
@@ -35,7 +35,7 @@ index abd8322e6404..5194aec71948 100644
    return last_recording;
  }
  
-@@ -1401,12 +1391,6 @@ void CanvasResourceProvider::OnDestroyResource() {
+@@ -1417,12 +1407,6 @@ void CanvasResourceProvider::OnDestroyResource() {
    --num_inflight_resources_;
  }
  

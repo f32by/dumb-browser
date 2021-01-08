@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-index 36396922a5cc..207f902631fe 100644
+index 5bc58e3dd54d..db68f6b0a326 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-@@ -28,7 +28,6 @@
+@@ -27,7 +27,6 @@
  #include "components/metrics/enabled_state_provider.h"
  #include "components/metrics/metrics_state_manager.h"
  #include "components/prefs/pref_service.h"
@@ -10,7 +10,7 @@ index 36396922a5cc..207f902631fe 100644
  #include "components/variations/service/variations_service.h"
  #include "components/variations/variations_associated_data.h"
  #include "components/version_info/version_info.h"
-@@ -45,8 +44,6 @@
+@@ -46,8 +45,6 @@
  #include "base/win/registry.h"
  #include "chrome/common/chrome_constants.h"
  #include "chrome/install_static/install_util.h"
@@ -19,7 +19,7 @@ index 36396922a5cc..207f902631fe 100644
  #endif  // OS_WIN
  
  #if defined(OS_CHROMEOS)
-@@ -255,13 +252,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
+@@ -256,13 +253,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
    return *enabled_state_provider_;
  }
  
@@ -33,7 +33,7 @@ index 36396922a5cc..207f902631fe 100644
  std::unique_ptr<variations::VariationsService>
  ChromeMetricsServicesManagerClient::CreateVariationsService() {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-@@ -334,11 +324,5 @@ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
+@@ -335,11 +325,5 @@ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
    // First, set the registry value so that Crashpad will have the sampling state
    // now and for subsequent runs.
    install_static::SetCollectStatsInSample(IsClientInSample());

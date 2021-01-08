@@ -1,8 +1,8 @@
 diff --git a/chromecast/browser/cast_content_browser_client.cc b/chromecast/browser/cast_content_browser_client.cc
-index 5597ec9cbf7e..46f1d8f5a8d5 100644
+index 6763a870727d..3d0096c9fc34 100644
 --- a/chromecast/browser/cast_content_browser_client.cc
 +++ b/chromecast/browser/cast_content_browser_client.cc
-@@ -867,7 +867,6 @@ CastContentBrowserClient::CreateThrottlesForNavigation(
+@@ -866,7 +866,6 @@ CastContentBrowserClient::CreateThrottlesForNavigation(
  
  void CastContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
      int frame_tree_node_id,
@@ -10,12 +10,12 @@ index 5597ec9cbf7e..46f1d8f5a8d5 100644
      NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
      NonNetworkURLLoaderFactoryMap* factories) {
  #if BUILDFLAG(ENABLE_CHROMECAST_EXTENSIONS)
-@@ -876,7 +875,7 @@ void CastContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
+@@ -875,7 +874,7 @@ void CastContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
    auto* browser_context = web_contents->GetBrowserContext();
    auto extension_factory =
        extensions::CreateExtensionNavigationURLLoaderFactory(
 -          browser_context, ukm_source_id,
 +          browser_context,
            !!extensions::WebViewGuest::FromWebContents(web_contents));
-   uniquely_owned_factories->emplace(
-       extensions::kExtensionScheme,
+   factories->emplace(extensions::kExtensionScheme,
+                      CastExtensionURLLoaderFactory::Create(

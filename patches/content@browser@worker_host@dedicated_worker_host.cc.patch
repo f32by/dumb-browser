@@ -1,0 +1,13 @@
+diff --git a/content/browser/worker_host/dedicated_worker_host.cc b/content/browser/worker_host/dedicated_worker_host.cc
+index ae127006d0b6..f47fcf321879 100644
+--- a/content/browser/worker_host/dedicated_worker_host.cc
++++ b/content/browser/worker_host/dedicated_worker_host.cc
+@@ -318,8 +318,6 @@ DedicatedWorkerHost::CreateNetworkFactoryForSubresources(
+       /*frame=*/nullptr, worker_process_host_->GetID(),
+       ContentBrowserClient::URLLoaderFactoryType::kWorkerSubResource,
+       worker_origin_, /*navigation_id=*/base::nullopt,
+-      base::UkmSourceId::FromInt64(
+-          ancestor_render_frame_host->GetPageUkmSourceId()),
+       &default_factory_receiver, &factory_params->header_client,
+       bypass_redirect_checks,
+       /*disable_secure_dns=*/nullptr, &factory_params->factory_override);

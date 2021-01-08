@@ -243,7 +243,7 @@ AlertIndicatorButton::AlertIndicatorButton(Tab* parent_tab)
 
   // Disable animations of hover state change, to be consistent with the
   // behavior of the tab close button.
-  set_animate_on_state_change(false);
+  SetAnimateOnStateChange(false);
 }
 
 AlertIndicatorButton::~AlertIndicatorButton() {}

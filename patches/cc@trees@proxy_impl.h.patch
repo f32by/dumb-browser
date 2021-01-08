@@ -1,23 +1,15 @@
 diff --git a/cc/trees/proxy_impl.h b/cc/trees/proxy_impl.h
-index e031aefa22f9..bebad33a3f1e 100644
+index e8578e8abf9c..2b36c6af3688 100644
 --- a/cc/trees/proxy_impl.h
 +++ b/cc/trees/proxy_impl.h
-@@ -63,7 +63,7 @@ class CC_EXPORT ProxyImpl : public LayerTreeHostImplClient,
+@@ -63,9 +63,7 @@ class CC_EXPORT ProxyImpl : public LayerTreeHostImplClient,
                                   base::TimeTicks main_thread_start_time,
                                   const viz::BeginFrameArgs& commit_args,
                                   bool hold_commit_for_activation);
 -  void SetSourceURL(ukm::SourceId source_id, const GURL& url);
+-  void SetUkmSmoothnessDestination(
+-      base::WritableSharedMemoryMapping ukm_smoothness_data);
 +  void SetSourceURL(const GURL& url);
    void ClearHistory();
    void SetRenderFrameObserver(
        std::unique_ptr<RenderFrameMetadataObserver> observer);
-@@ -120,8 +120,7 @@ class CC_EXPORT ProxyImpl : public LayerTreeHostImplClient,
-   void NotifyPaintWorkletStateChange(
-       Scheduler::PaintWorkletState state) override;
-   void NotifyThroughputTrackerResults(CustomTrackerResults results) override;
--  void SubmitThroughputData(ukm::SourceId source_id,
--                            int aggregated_percent,
-+  void SubmitThroughputData(int aggregated_percent,
-                             int impl_percent,
-                             base::Optional<int> main_percent) override;
-   void DidObserveFirstScrollDelay(

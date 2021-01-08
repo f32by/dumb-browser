@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/reputation/reputation_web_contents_observer.cc b/chrome/browser/reputation/reputation_web_contents_observer.cc
-index 2810e11bf6c9..155a2e59d9df 100644
+index b4b14acac906..d88e4740bdce 100644
 --- a/chrome/browser/reputation/reputation_web_contents_observer.cc
 +++ b/chrome/browser/reputation/reputation_web_contents_observer.cc
 @@ -17,10 +17,7 @@
@@ -46,19 +46,45 @@ index 2810e11bf6c9..155a2e59d9df 100644
  void OnSafetyTipClosed(ReputationCheckResult result,
                         base::Time start_time,
 -                       ukm::SourceId navigation_source_id,
-                        SafetyTipInteraction action) {
-   std::string action_suffix;
-   bool warning_dismissed = false;
-@@ -108,8 +78,6 @@ void OnSafetyTipClosed(ReputationCheckResult result,
-           result.safety_tip_status),
-       base::Time::Now() - start_time, base::TimeDelta::FromMilliseconds(1),
-       base::TimeDelta::FromHours(1), 100);
+                        Profile* profile,
+                        const GURL& url,
+                        security_state::SafetyTipStatus status,
+@@ -109,34 +79,7 @@ void OnSafetyTipClosed(ReputationCheckResult result,
+   }
+   if (warning_dismissed) {
+     ReputationService::Get(profile)->SetUserIgnore(url);
+-
+-    // Record that the user dismissed the safety tip. kDismiss is recorded in
+-    // all dismiss-like cases, which makes it easier to track overall dismissals
+-    // without having to re-constitute from each bucket on how the user
+-    // dismissed the safety tip. We additionally record a more specific action
+-    // below (e.g. kDismissWithEsc).
+-    base::UmaHistogramEnumeration(
+-        security_state::GetSafetyTipHistogramName(
+-            "Security.SafetyTips.Interaction", status),
+-        SafetyTipInteraction::kDismiss);
+-    base::UmaHistogramCustomTimes(
+-        security_state::GetSafetyTipHistogramName(
+-            std::string("Security.SafetyTips.OpenTime.Dismiss"),
+-            result.safety_tip_status),
+-        base::Time::Now() - start_time, base::TimeDelta::FromMilliseconds(1),
+-        base::TimeDelta::FromHours(1), 100);
+   }
+-  base::UmaHistogramEnumeration(security_state::GetSafetyTipHistogramName(
+-                                    "Security.SafetyTips.Interaction", status),
+-                                action);
+-  base::UmaHistogramCustomTimes(
+-      security_state::GetSafetyTipHistogramName(
+-          std::string("Security.SafetyTips.OpenTime.") + action_suffix,
+-          result.safety_tip_status),
+-      base::Time::Now() - start_time, base::TimeDelta::FromMilliseconds(1),
+-      base::TimeDelta::FromHours(1), 100);
 -
 -  RecordHeuristicsUKMData(result, navigation_source_id, action);
- }
  
- // Safety Tips does not use starts_active (since flagged sites are so rare to
-@@ -194,17 +162,12 @@ void ReputationWebContentsObserver::DidFinishNavigation(
+   if (!safety_tip_close_callback_for_testing.is_null()) {
+     std::move(safety_tip_close_callback_for_testing).Run();
+@@ -233,17 +176,12 @@ void ReputationWebContentsObserver::DidFinishNavigation(
    last_committed_url_ = navigation_handle->GetURL();
  
    MaybeShowSafetyTip(
@@ -78,7 +104,7 @@ index 2810e11bf6c9..155a2e59d9df 100644
  }
  
  security_state::SafetyTipInfo
-@@ -235,9 +198,7 @@ ReputationWebContentsObserver::ReputationWebContentsObserver(
+@@ -279,9 +217,7 @@ ReputationWebContentsObserver::ReputationWebContentsObserver(
  }
  
  void ReputationWebContentsObserver::MaybeShowSafetyTip(
@@ -89,7 +115,7 @@ index 2810e11bf6c9..155a2e59d9df 100644
    if (web_contents()->GetMainFrame()->GetVisibilityState() !=
        content::PageVisibilityState::kVisible) {
      MaybeCallReputationCheckCallback(false);
-@@ -261,14 +222,12 @@ void ReputationWebContentsObserver::MaybeShowSafetyTip(
+@@ -305,14 +241,12 @@ void ReputationWebContentsObserver::MaybeShowSafetyTip(
    service->GetReputationStatus(
        url, base::BindOnce(
                 &ReputationWebContentsObserver::HandleReputationCheckResult,
@@ -106,7 +132,7 @@ index 2810e11bf6c9..155a2e59d9df 100644
      ReputationCheckResult result) {
    UMA_HISTOGRAM_ENUMERATION("Security.SafetyTips.SafetyTipShown",
                              result.safety_tip_status);
-@@ -303,8 +262,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+@@ -347,8 +281,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
    if (result.safety_tip_status == security_state::SafetyTipStatus::kNone ||
        result.safety_tip_status ==
            security_state::SafetyTipStatus::kBadKeyword) {
@@ -116,7 +142,7 @@ index 2810e11bf6c9..155a2e59d9df 100644
      return;
    }
  
-@@ -314,8 +272,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+@@ -358,8 +291,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
            security_state::SafetyTipStatus::kBadReputationIgnored) {
      UMA_HISTOGRAM_ENUMERATION("Security.SafetyTips.SafetyTipIgnoredPageLoad",
                                result.safety_tip_status);
@@ -126,7 +152,7 @@ index 2810e11bf6c9..155a2e59d9df 100644
      return;
    }
  
-@@ -332,8 +289,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+@@ -376,8 +308,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
      }
  
      RecordPostFlagCheckHistogram(result.safety_tip_status);
@@ -136,16 +162,16 @@ index 2810e11bf6c9..155a2e59d9df 100644
      return;
    }
  
-@@ -341,7 +297,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
-   ShowSafetyTipDialog(web_contents(), result.safety_tip_status, result.url,
-                       result.suggested_url,
-                       base::BindOnce(OnSafetyTipClosed, result,
--                                     base::Time::Now(), navigation_source_id));
-+                                     base::Time::Now()));
+@@ -385,7 +316,7 @@ void ReputationWebContentsObserver::HandleReputationCheckResult(
+   ShowSafetyTipDialog(
+       web_contents(), result.safety_tip_status, result.suggested_url,
+       base::BindOnce(OnSafetyTipClosed, result, base::Time::Now(),
+-                     navigation_source_id, profile_, result.url,
++                     profile_, result.url,
+                      result.safety_tip_status,
+                      std::move(safety_tip_close_callback_for_testing_)));
    MaybeCallReputationCheckCallback(true);
- }
- 
-@@ -355,13 +311,7 @@ void ReputationWebContentsObserver::MaybeCallReputationCheckCallback(
+@@ -401,13 +332,7 @@ void ReputationWebContentsObserver::MaybeCallReputationCheckCallback(
  }
  
  void ReputationWebContentsObserver::FinalizeReputationCheckWhenTipNotShown(

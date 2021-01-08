@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/BUILD.gn b/chrome/renderer/BUILD.gn
-index 62747b5714ed..f6ed9960e5dc 100644
+index ce49b5924986..622142ac5961 100644
 --- a/chrome/renderer/BUILD.gn
 +++ b/chrome/renderer/BUILD.gn
-@@ -61,12 +61,6 @@ static_library("renderer") {
+@@ -68,12 +68,6 @@ static_library("renderer") {
      "chrome_render_thread_observer.h",
      "custom_menu_commands.h",
      "instant_restricted_id_cache.h",
@@ -15,7 +15,7 @@ index 62747b5714ed..f6ed9960e5dc 100644
      "loadtimes_extension_bindings.cc",
      "loadtimes_extension_bindings.h",
      "media/chrome_key_systems.cc",
-@@ -150,19 +144,15 @@ static_library("renderer") {
+@@ -157,19 +151,15 @@ static_library("renderer") {
      "//components/network_hints/renderer",
      "//components/omnibox/common",
      "//components/page_image_annotation/content/renderer",
@@ -35,7 +35,7 @@ index 62747b5714ed..f6ed9960e5dc 100644
      "//components/translate/content/renderer",
      "//components/translate/core/common",
      "//components/translate/core/language_detection",
-@@ -179,8 +169,6 @@ static_library("renderer") {
+@@ -186,8 +176,6 @@ static_library("renderer") {
      "//net",
      "//ppapi/buildflags",
      "//printing/buildflags",
@@ -44,23 +44,11 @@ index 62747b5714ed..f6ed9960e5dc 100644
      "//services/service_manager/public/cpp",
      "//skia",
      "//storage/common",
-@@ -272,10 +260,6 @@ static_library("renderer") {
-     ]
-     deps += [
-       "//chrome/common/safe_browsing:proto",
--      "//components/safe_browsing/content/renderer",
--      "//components/safe_browsing/core:client_model_proto",
--      "//components/safe_browsing/core:csd_proto",
--      "//components/safe_browsing/core/common",
-       "//third_party/smhasher:murmurhash3",
-     ]
-   }
-@@ -424,8 +408,6 @@ static_library("test_support") {
-   sources = [
-     "chrome_mock_render_thread.cc",
-     "chrome_mock_render_thread.h",
--    "safe_browsing/test_utils.cc",
--    "safe_browsing/test_utils.h",
-   ]
- 
+@@ -435,7 +423,6 @@ static_library("test_support") {
    deps = [
+     ":renderer",
+     "//chrome/common/search:mojo_bindings",
+-    "//components/safe_browsing/content/renderer/phishing_classifier:unit_tests_support",
+     "//content/test:test_support",
+     "//extensions/buildflags",
+     "//testing/gmock",

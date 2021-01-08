@@ -1,5 +1,5 @@
 diff --git a/content/browser/web_contents/web_contents_impl.h b/content/browser/web_contents/web_contents_impl.h
-index c13cabcf7188..ee69136d389f 100644
+index 49ef29f9a725..851e7f20fc79 100644
 --- a/content/browser/web_contents/web_contents_impl.h
 +++ b/content/browser/web_contents/web_contents_impl.h
 @@ -27,7 +27,6 @@
@@ -16,19 +16,19 @@ index c13cabcf7188..ee69136d389f 100644
  #include "services/device/public/mojom/geolocation_context.mojom.h"
 -#include "services/metrics/public/cpp/ukm_recorder.h"
  #include "services/network/public/mojom/fetch_api.mojom-forward.h"
- #include "third_party/blink/public/common/page/web_drag_operation.h"
- #include "third_party/blink/public/common/web_preferences/web_preferences.h"
-@@ -612,9 +610,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+ #include "third_party/blink/public/common/frame/transient_allow_fullscreen.h"
+ #include "third_party/blink/public/common/page/drag_operation.h"
+@@ -613,9 +611,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
        bool internal,
        std::vector<content::AccessibilityTreeFormatter::PropertyFilter>
            property_filters) override;
 -  void RecordAccessibilityEvents(
 -      bool start_recording,
 -      base::Optional<AccessibilityEventCallback> callback) override;
-   RenderFrameHost* GetGuestByInstanceID(
-       RenderFrameHost* render_frame_host,
-       int browser_plugin_instance_id) override;
-@@ -698,8 +693,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+   device::mojom::GeolocationContext* GetGeolocationContext() override;
+   device::mojom::WakeLockContext* GetWakeLockContext() override;
+ #if defined(OS_ANDROID)
+@@ -696,8 +691,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
                                     int context_id) override;
    void OnFrameAudioStateChanged(RenderFrameHost* host,
                                  bool is_audible) override;
@@ -37,7 +37,7 @@ index c13cabcf7188..ee69136d389f 100644
    RenderFrameHostImpl* GetMainFrameForInnerDelegate(
        FrameTreeNode* frame_tree_node) override;
    bool IsFrameLowPriority(const RenderFrameHost* render_frame_host) override;
-@@ -867,9 +860,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -864,9 +857,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
        NavigationRequest* navigation_request_to_exclude) override;
  
    // RenderWidgetHostDelegate --------------------------------------------------
@@ -47,7 +47,7 @@ index c13cabcf7188..ee69136d389f 100644
    void SetTopControlsShownRatio(RenderWidgetHostImpl* render_widget_host,
                                  float ratio) override;
    void SetTopControlsGestureScrollInProgress(bool in_progress) override;
-@@ -944,7 +934,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -941,7 +931,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
    TextInputManager* GetTextInputManager() override;
    bool OnUpdateDragCursor() override;
    bool IsWidgetForMainFrame(RenderWidgetHostImpl* render_widget_host) override;
@@ -55,7 +55,7 @@ index c13cabcf7188..ee69136d389f 100644
    bool IsShowingContextMenuOnPage() const override;
    void DidChangeScreenOrientation() override;
    // The following function is already listed under RenderViewHostDelegate
-@@ -1711,13 +1700,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -1708,13 +1697,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
    // changes.
    void UpdateVisibilityAndNotifyPageAndView(Visibility new_visibility);
  
@@ -69,7 +69,7 @@ index c13cabcf7188..ee69136d389f 100644
    std::set<RenderViewHostImpl*> GetRenderViewHostsIncludingBackForwardCached();
  
    // Sets the hardware-related fields in |prefs| that are slow to compute.  The
-@@ -1830,11 +1812,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -1827,11 +1809,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
    // The last published background color.
    base::Optional<SkColor> last_sent_background_color_;
  
@@ -81,7 +81,7 @@ index c13cabcf7188..ee69136d389f 100644
    // Data for misc internal state ----------------------------------------------
  
    // When either > 0, the WebContents is currently being captured (e.g.,
-@@ -1995,8 +1972,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -1992,8 +1969,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
    // is created, and broadcast to all frames when it changes.
    ui::AXMode accessibility_mode_;
  

@@ -340,7 +340,7 @@
   <message name="IDS_SETTINGS_CHECK_PASSWORDS_CANCELED" desc="Message for when the password check was canceled by the user.">
     Canceled
   </message>
-  <message name="IDS_SETTINGS_CHECKED_PASSWORDS" desc="Title above amount of found compromised passwords after password bulk check.">
+  <message name="IDS_SETTINGS_CHECKED_PASSWORDS" desc="Title above amount of found insecure passwords after password bulk check.">
     Checked passwords
   </message>
   <message name="IDS_SETTINGS_CHECK_PASSWORDS_DESCRIPTION" desc="Explanation of the passwords bulk check feature found within the password settings.">
@@ -351,6 +351,18 @@
       =0 {No compromised passwords found}
       =1 {{COUNT} compromised password}
       other {{COUNT} compromised passwords}}
+  </message>
+  <message name="IDS_SETTINGS_INSECURE_PASSWORDS_COUNT" desc="Number of insecure passwords present in the database">
+    {COUNT, plural,
+      =0 {No security issues found}
+      =1 {Found {COUNT} security issue}
+      other {Found {COUNT} security issues}}
+  </message>
+  <message name="IDS_SETTINGS_WEAK_PASSWORDS_COUNT" desc="Number of weak passwords present in the database. Displayed when the user is signed out and no compromised passwords exist">
+    {COUNT, plural,
+      =0 {No weak passwords found}
+      =1 {Found {COUNT} weak password}
+      other {Found {COUNT} weak passwords}}
   </message>
   <message name="IDS_SETTINGS_CHECK_PASSWORDS_AGAIN" desc="Button to start bulk password check manually in passwords check section.">
     Check again
@@ -372,6 +384,12 @@
   </message>
   <message name="IDS_SETTINGS_COMPROMISED_PASSWORDS_ADVICE" desc="Description of what user should do after compromised passwords are found.">
     Change these passwords immediately to keep your account safe:
+  </message>
+  <message name="IDS_SETTINGS_WEAK_PASSWORDS" desc="Title for list of weak credentials after passwords bulk check.">
+    Weak passwords
+  </message>
+  <message name="IDS_SETTINGS_WEAK_PASSWORDS_DESCRIPTION" desc="Information about why weak passwords are a security issue and what user should do to fix the problem. Has a link.">
+    Weak passwords are easy to guess. Make sure you're creating strong passwords. <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>See more security tips.<ph name="END_LINK">&lt;/a&gt;</ph>
   </message>
   <message name="IDS_SETTINGS_CHANGE_PASSWORD_BUTTON" desc="Button inside password check section which opens url for changing leaked password.">
     Change password
@@ -468,6 +486,9 @@
   </message>
   <message name="IDS_SETTINGS_PASSWORD_EDIT_FOOTNOTE" desc="A footnote for the dialog which allows the user to edit a saved password.">
     Make sure the password you are saving matches your password for <ph name="WEBSITE">$1<ex>airbnb.com</ex></ph>
+  </message>
+  <message name="IDS_SETTINGS_PASSWORD_USERNAME_ALREADY_USED" desc="An error message when user tried editing the username to a value which is already used for the same site.">
+    You already saved this username for this site
   </message>
   <message name="IDS_SETTINGS_PASSWORD_COPY" desc="Label for a context menu item that allows to copy the selected password into clipboard.">
     Copy password
@@ -1370,7 +1391,7 @@
     Security
   </message>
   <message name="IDS_SETTINGS_SECURITY_DESCRIPTION" desc="Description of the controls available on the security settings page">
-    Safe Browsing (protection from dangerous sites) and other security settings
+    Other security settings
   </message>
   <message name="IDS_SETTINGS_ADVANCED_PROTECTION_PROGRAM" desc="Name of the link which takes users
     to the Google Advanced Protection Program external webpage">
@@ -2367,10 +2388,10 @@
   <message name="IDS_SETTINGS_SITE_SETTINGS_ALLOWLISTED" desc="A subtitle for the ‘Allowlisted’ setting, shown if a WebUI's permission is internally allowlisted by Chrome.">
     Allowlisted internally
   </message>
-  <message name="IDS_SETTINGS_SITE_SETTINGS_ADS_BLOCK_BLACKLISTED_SINGULAR" desc="A subtitle for the ‘Ads’ setting, shown if a website is known to show ads that have a poor user experience (intrusive, misleading) and is blocked from showing ads by Chrome.">
+  <message name="IDS_SETTINGS_SITE_SETTINGS_ADS_BLOCK_BLOCKLISTED_SINGULAR" desc="A subtitle for the ‘Ads’ setting, shown if a website is known to show ads that have a poor user experience (intrusive, misleading) and is blocked from showing ads by Chrome.">
     Site shows intrusive or misleading ads
   </message>
-  <message name="IDS_SETTINGS_SITE_SETTINGS_ADS_BLOCK_NOT_BLACKLISTED_SINGULAR" desc="A subtitle for the ‘Ads’ setting, shown if user chooses to Block ads. ‘Block’ refers to the blocking of ads.">
+  <message name="IDS_SETTINGS_SITE_SETTINGS_ADS_BLOCK_NOT_BLOCKLISTED_SINGULAR" desc="A subtitle for the ‘Ads’ setting, shown if user chooses to Block ads. ‘Block’ refers to the blocking of ads.">
     Block if site shows intrusive or misleading ads
   </message>
   <message name="IDS_SETTINGS_SITE_SETTINGS_SOURCE_KILL_SWITCH" desc="A label shown when a permission on the Site Details page is temporarily blocked for the user's safety.">

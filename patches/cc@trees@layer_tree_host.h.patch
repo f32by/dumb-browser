@@ -1,16 +1,16 @@
 diff --git a/cc/trees/layer_tree_host.h b/cc/trees/layer_tree_host.h
-index 280732d35e38..24d0421c6cc0 100644
+index c528a84e40b3..d06d6159507d 100644
 --- a/cc/trees/layer_tree_host.h
 +++ b/cc/trees/layer_tree_host.h
-@@ -54,7 +54,6 @@
+@@ -55,7 +55,6 @@
  #include "components/viz/common/delegated_ink_metadata.h"
  #include "components/viz/common/resources/resource_format.h"
- #include "components/viz/common/surfaces/local_surface_id_allocation.h"
+ #include "components/viz/common/surfaces/local_surface_id.h"
 -#include "services/metrics/public/cpp/ukm_source_id.h"
  #include "ui/gfx/geometry/rect.h"
  #include "ui/gfx/overlay_transform.h"
  
-@@ -79,7 +78,6 @@ class RenderingStatsInstrumentation;
+@@ -80,7 +79,6 @@ class RenderingStatsInstrumentation;
  struct OverscrollBehavior;
  class TaskGraphRunner;
  class UIResourceManager;
@@ -18,7 +18,7 @@ index 280732d35e38..24d0421c6cc0 100644
  struct RenderingStats;
  struct CompositorCommitData;
  
-@@ -114,8 +112,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
+@@ -115,8 +113,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
      // compositor thread may make sync calls to this thread, analogous to the
      // raster worker threads.
      scoped_refptr<base::SequencedTaskRunner> image_worker_task_runner;
@@ -27,26 +27,17 @@ index 280732d35e38..24d0421c6cc0 100644
    };
  
    // Constructs a LayerTreeHost with a compositor thread where scrolling and
-@@ -616,8 +612,7 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
-   void RecordEndOfFrameMetrics(base::TimeTicks frame_begin_time,
-                                ActiveFrameSequenceTrackers trackers);
-   void NotifyThroughputTrackerResults(CustomTrackerResults results);
--  void SubmitThroughputData(ukm::SourceId source_id,
--                            int aggregated_percent,
-+  void SubmitThroughputData(int aggregated_percent,
-                             int impl_percent,
-                             base::Optional<int> main_percent);
- 
-@@ -698,7 +693,7 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
+@@ -693,8 +689,7 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
  
    float recording_scale_factor() const { return recording_scale_factor_; }
  
 -  void SetSourceURL(ukm::SourceId source_id, const GURL& url);
+-  base::ReadOnlySharedMemoryRegion CreateSharedMemoryForSmoothnessUkm();
 +  void SetSourceURL(const GURL& url);
  
    void SetRenderFrameObserver(
        std::unique_ptr<RenderFrameMetadataObserver> observer);
-@@ -763,7 +758,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
+@@ -759,7 +754,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
    base::WeakPtr<CompositorDelegateForInput> compositor_delegate_weak_ptr_;
  
    scoped_refptr<base::SequencedTaskRunner> image_worker_task_runner_;

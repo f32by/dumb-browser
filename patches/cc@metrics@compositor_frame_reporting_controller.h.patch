@@ -1,5 +1,5 @@
 diff --git a/cc/metrics/compositor_frame_reporting_controller.h b/cc/metrics/compositor_frame_reporting_controller.h
-index 714c60f6cbc3..37a775ece715 100644
+index aa24c8f4123c..0194f0511b50 100644
 --- a/cc/metrics/compositor_frame_reporting_controller.h
 +++ b/cc/metrics/compositor_frame_reporting_controller.h
 @@ -21,7 +21,6 @@ struct FrameTimingDetails;
@@ -10,7 +10,7 @@ index 714c60f6cbc3..37a775ece715 100644
  struct BeginMainFrameMetrics;
  
  // This is used for managing simultaneous CompositorFrameReporter instances
-@@ -74,8 +73,6 @@ class CC_EXPORT CompositorFrameReportingController {
+@@ -75,8 +74,6 @@ class CC_EXPORT CompositorFrameReportingController {
    void SetBlinkBreakdown(std::unique_ptr<BeginMainFrameMetrics> details,
                           base::TimeTicks main_thread_start_time);
  
@@ -19,7 +19,7 @@ index 714c60f6cbc3..37a775ece715 100644
    void AddActiveTracker(FrameSequenceTrackerType type);
    void RemoveActiveTracker(FrameSequenceTrackerType type);
  
-@@ -127,12 +124,6 @@ class CC_EXPORT CompositorFrameReportingController {
+@@ -130,12 +127,6 @@ class CC_EXPORT CompositorFrameReportingController {
    bool is_compositor_thread_driving_smoothness_ = false;
    bool is_main_thread_driving_smoothness_ = false;
  

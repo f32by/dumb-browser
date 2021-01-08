@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/form_data_importer.cc b/components/autofill/core/browser/form_data_importer.cc
-index b9e2436bfa6e..ae540c3491cc 100644
+index 203fbe516abf..39f0c73eb4dc 100644
 --- a/components/autofill/core/browser/form_data_importer.cc
 +++ b/components/autofill/core/browser/form_data_importer.cc
 @@ -20,7 +20,6 @@
@@ -20,7 +20,7 @@ index b9e2436bfa6e..ae540c3491cc 100644
  // Return true if the |field_type| and |value| are valid within the context
  // of importing a form.
  bool IsValidFieldTypeAndValue(const std::set<ServerFieldType>& types_seen,
-@@ -187,31 +183,6 @@ bool IsMinimumAddress(const AutofillProfile& profile,
+@@ -188,31 +184,6 @@ bool IsMinimumAddress(const AutofillProfile& profile,
      is_zip_or_state_requirement_violated = true;
    }
  
@@ -52,7 +52,7 @@ index b9e2436bfa6e..ae540c3491cc 100644
    // Return true if all requirements are fulfilled.
    return !(is_line1_missing || is_city_missing || is_state_missing ||
             is_zip_missing || is_zip_or_state_requirement_violated);
-@@ -376,22 +347,6 @@ bool FormDataImporter::IsValidLearnableProfile(
+@@ -377,22 +348,6 @@ bool FormDataImporter::IsValidLearnableProfile(
      is_zip_invalid = true;
    }
  
@@ -75,7 +75,7 @@ index b9e2436bfa6e..ae540c3491cc 100644
    // Return true if none of the requirements is violated.
    return !(is_not_minimum_address || is_email_invalid || is_state_invalid ||
             is_zip_invalid);
-@@ -472,24 +427,14 @@ bool FormDataImporter::ImportAddressProfiles(const FormStructure& form) {
+@@ -473,24 +428,14 @@ bool FormDataImporter::ImportAddressProfiles(const FormStructure& form) {
      // TODO(crbug.com/1097125): Remove feature test.
      // Run the import on the union of the section if the import was not
      // successful and if there is more than one section.
@@ -101,7 +101,7 @@ index b9e2436bfa6e..ae540c3491cc 100644
    }
    import_log_buffer << LogMessage::kImportAddressProfileFromFormNumberOfImports
                      << num_saved_profiles << CTag{};
-@@ -651,34 +596,6 @@ bool FormDataImporter::ImportAddressProfileForSection(
+@@ -652,34 +597,6 @@ bool FormDataImporter::ImportAddressProfileForSection(
          has_invalid_country || has_invalid_phone_number ||
          is_invalid_learnable_profile);
  
@@ -136,7 +136,7 @@ index b9e2436bfa6e..ae540c3491cc 100644
    if (!all_fullfilled)
      return false;
  
-@@ -708,20 +625,6 @@ bool FormDataImporter::ImportCreditCard(
+@@ -709,20 +626,6 @@ bool FormDataImporter::ImportCreditCard(
    if (has_duplicate_field_type)
      return false;
  
@@ -157,7 +157,7 @@ index b9e2436bfa6e..ae540c3491cc 100644
    // Cards with invalid expiration dates can be uploaded due to the existence of
    // the expiration date fix flow. However, cards with invalid card numbers must
    // still be ignored.
-@@ -790,17 +693,6 @@ bool FormDataImporter::ImportCreditCard(
+@@ -788,17 +691,6 @@ bool FormDataImporter::ImportCreditCard(
        if (candidate_credit_card.expiration_month() ==
                card->expiration_month() &&
            candidate_credit_card.expiration_year() == card->expiration_year()) {

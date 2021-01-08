@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/location_bar/location_bar_view.cc b/chrome/browser/ui/views/location_bar/location_bar_view.cc
-index 2889d7f988f2..f3b3be152c46 100644
+index c5859e342846..df7cca33f0ed 100644
 --- a/chrome/browser/ui/views/location_bar/location_bar_view.cc
 +++ b/chrome/browser/ui/views/location_bar/location_bar_view.cc
-@@ -255,8 +255,10 @@ void LocationBarView::Init() {
+@@ -257,8 +257,10 @@ void LocationBarView::Init() {
      // The send tab to self icon is intentionally the first one added so it is
      // the left most icon.
      params.types_enabled.push_back(PageActionIconType::kSendTabToSelf);
@@ -13,7 +13,7 @@ index 2889d7f988f2..f3b3be152c46 100644
      if (base::FeatureList::IsEnabled(kSharingQRCodeGenerator))
        params.types_enabled.push_back(PageActionIconType::kQRCodeGenerator);
      if (base::FeatureList::IsEnabled(kSharedClipboardUI))
-@@ -334,8 +336,7 @@ SkColor LocationBarView::GetOpaqueBorderColor() const {
+@@ -336,8 +338,7 @@ SkColor LocationBarView::GetOpaqueBorderColor() const {
  }
  
  int LocationBarView::GetBorderRadius() const {

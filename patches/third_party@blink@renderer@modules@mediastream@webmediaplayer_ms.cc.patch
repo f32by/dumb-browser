@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/modules/mediastream/webmediaplayer_ms.cc b/third_party/blink/renderer/modules/mediastream/webmediaplayer_ms.cc
+index 48206460a62b..ad6c5982a3a1 100644
+--- a/third_party/blink/renderer/modules/mediastream/webmediaplayer_ms.cc
++++ b/third_party/blink/renderer/modules/mediastream/webmediaplayer_ms.cc
+@@ -453,9 +453,6 @@ WebMediaPlayer::LoadTiming WebMediaPlayerMS::Load(
+ 
+   if (internal_frame_->web_frame()) {
+     WebURL url = source.GetAsURL();
+-    // Report UMA and RAPPOR metrics.
+-    ReportMetrics(load_type, url, *internal_frame_->web_frame(),
+-                  media_log_.get());
+   }
+ 
+   audio_renderer_ = renderer_factory_->GetAudioRenderer(

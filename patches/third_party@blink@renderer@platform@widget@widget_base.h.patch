@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/platform/widget/widget_base.h b/third_party/blink/renderer/platform/widget/widget_base.h
-index f75282716452..0a4c5aed042b 100644
+index 651459636d91..1ac23567603c 100644
 --- a/third_party/blink/renderer/platform/widget/widget_base.h
 +++ b/third_party/blink/renderer/platform/widget/widget_base.h
-@@ -29,7 +29,6 @@ class AnimationHost;
+@@ -31,7 +31,6 @@ class AnimationHost;
  class LayerTreeHost;
  class LayerTreeSettings;
  class TaskGraphRunner;
@@ -10,7 +10,7 @@ index f75282716452..0a4c5aed042b 100644
  }  // namespace cc
  
  namespace ui {
-@@ -73,7 +72,6 @@ class PLATFORM_EXPORT WidgetBase : public mojom::blink::Widget,
+@@ -77,7 +76,6 @@ class PLATFORM_EXPORT WidgetBase : public mojom::blink::Widget,
        cc::TaskGraphRunner* task_graph_runner,
        bool for_child_local_root_frame,
        const ScreenInfo& screen_info,
@@ -18,13 +18,3 @@ index f75282716452..0a4c5aed042b 100644
        const cc::LayerTreeSettings* settings);
  
    // Shutdown the compositor.
-@@ -137,8 +135,7 @@ class PLATFORM_EXPORT WidgetBase : public mojom::blink::Widget,
-   void EndUpdateLayers() override;
-   void UpdateVisualState() override;
-   void WillBeginMainFrame() override;
--  void SubmitThroughputData(ukm::SourceId source_id,
--                            int aggregated_percent,
-+  void SubmitThroughputData(int aggregated_percent,
-                             int impl_percent,
-                             base::Optional<int> main_percent) override;
- 

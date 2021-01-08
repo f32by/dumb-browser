@@ -1,8 +1,8 @@
 diff --git a/content/browser/BUILD.gn b/content/browser/BUILD.gn
-index 57ebc3f40892..8a7a661637d6 100644
+index b3115bab5c08..a326f7d6ff03 100644
 --- a/content/browser/BUILD.gn
 +++ b/content/browser/BUILD.gn
-@@ -60,7 +60,6 @@ source_set("browser") {
+@@ -68,7 +68,6 @@ source_set("browser") {
      "//components/discardable_memory/service",
      "//components/download/database",
      "//components/download/public/common:public",
@@ -10,7 +10,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "//components/filename_generation",
      "//components/link_header_util",
      "//components/metrics",
-@@ -73,7 +72,6 @@ source_set("browser") {
+@@ -81,7 +80,6 @@ source_set("browser") {
      "//components/payments/core",
      "//components/payments/core:error_strings",
      "//components/payments/mojom",
@@ -18,7 +18,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "//components/services/filesystem:lib",
      "//components/services/quarantine:quarantine",
      "//components/services/storage",
-@@ -84,8 +82,6 @@ source_set("browser") {
+@@ -92,8 +90,6 @@ source_set("browser") {
      "//components/system_media_controls",
      "//components/tracing:startup_tracing",
      "//components/ui_devtools",
@@ -27,7 +27,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "//components/url_formatter",
      "//components/variations",
      "//components/variations/net",
-@@ -172,8 +168,6 @@ source_set("browser") {
+@@ -180,8 +176,6 @@ source_set("browser") {
      "//services/media_session:lib",
      "//services/media_session/public/cpp",
      "//services/media_session/public/mojom",
@@ -36,7 +36,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "//services/network:network_service",
      "//services/network/public/cpp",
      "//services/network/public/mojom",
-@@ -466,8 +460,6 @@ source_set("browser") {
+@@ -475,8 +469,6 @@ source_set("browser") {
      "background_fetch/background_fetch_event_dispatcher.h",
      "background_fetch/background_fetch_job_controller.cc",
      "background_fetch/background_fetch_job_controller.h",
@@ -45,7 +45,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "background_fetch/background_fetch_registration_id.cc",
      "background_fetch/background_fetch_registration_id.h",
      "background_fetch/background_fetch_registration_notifier.cc",
-@@ -520,8 +512,6 @@ source_set("browser") {
+@@ -529,8 +521,6 @@ source_set("browser") {
      "background_sync/background_sync_launcher.h",
      "background_sync/background_sync_manager.cc",
      "background_sync/background_sync_manager.h",
@@ -54,7 +54,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "background_sync/background_sync_network_observer.cc",
      "background_sync/background_sync_network_observer.h",
      "background_sync/background_sync_proxy.cc",
-@@ -685,8 +675,6 @@ source_set("browser") {
+@@ -694,8 +684,6 @@ source_set("browser") {
      "content_index/content_index_context_impl.h",
      "content_index/content_index_database.cc",
      "content_index/content_index_database.h",
@@ -63,7 +63,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "content_index/content_index_service_impl.cc",
      "content_index/content_index_service_impl.h",
      "content_service_delegate_impl.cc",
-@@ -1231,6 +1219,10 @@ source_set("browser") {
+@@ -1240,6 +1228,10 @@ source_set("browser") {
      "net/browser_online_state_observer.cc",
      "net/browser_online_state_observer.h",
      "net/cookie_store_factory.cc",
@@ -74,7 +74,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "net/network_errors_listing_ui.cc",
      "net/network_errors_listing_ui.h",
      "net/network_quality_observer_impl.cc",
-@@ -1322,8 +1314,6 @@ source_set("browser") {
+@@ -1336,8 +1328,6 @@ source_set("browser") {
      "renderer_host/back_forward_cache_can_store_document_result.h",
      "renderer_host/back_forward_cache_impl.cc",
      "renderer_host/back_forward_cache_impl.h",
@@ -83,7 +83,16 @@ index 57ebc3f40892..8a7a661637d6 100644
      "renderer_host/blocked_scheme_navigation_throttle.cc",
      "renderer_host/blocked_scheme_navigation_throttle.h",
      "renderer_host/clipboard_host_impl.cc",
-@@ -1892,8 +1882,6 @@ source_set("browser") {
+@@ -1822,8 +1812,6 @@ source_set("browser") {
+     "site_instance_impl.h",
+     "sms/sms_fetcher_impl.cc",
+     "sms/sms_fetcher_impl.h",
+-    "sms/sms_metrics.cc",
+-    "sms/sms_metrics.h",
+     "sms/sms_parser.cc",
+     "sms/sms_parser.h",
+     "sms/sms_provider.cc",
+@@ -1906,8 +1894,6 @@ source_set("browser") {
      "tracing/tracing_service_controller.h",
      "tracing/tracing_ui.cc",
      "tracing/tracing_ui.h",
@@ -92,7 +101,7 @@ index 57ebc3f40892..8a7a661637d6 100644
      "url_loader_factory_getter.cc",
      "url_loader_factory_getter.h",
      "url_loader_factory_params_helper.cc",
-@@ -2813,7 +2801,6 @@ source_set("browser") {
+@@ -2831,7 +2817,6 @@ source_set("browser") {
      deps += [
        "//device/vr/buildflags",
        "//device/vr/orientation",

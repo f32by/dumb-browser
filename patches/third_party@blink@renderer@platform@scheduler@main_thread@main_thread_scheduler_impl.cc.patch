@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
-index a5c96ab02f6e..48f7a6974db0 100644
+index 202b73ef105a..5bf2184e7371 100644
 --- a/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
 +++ b/third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_impl.cc
 @@ -23,7 +23,6 @@
@@ -10,7 +10,7 @@ index a5c96ab02f6e..48f7a6974db0 100644
  #include "third_party/blink/public/common/input/web_input_event_attribution.h"
  #include "third_party/blink/public/common/input/web_mouse_wheel_event.h"
  #include "third_party/blink/public/common/input/web_touch_event.h"
-@@ -61,7 +60,6 @@ const double kShortIdlePeriodDurationPercentile = 50;
+@@ -63,7 +62,6 @@ const double kShortIdlePeriodDurationPercentile = 50;
  // Amount of idle time left in a frame (as a ratio of the vsync interval) above
  // which main thread compositing can be considered fast.
  const double kFastCompositingIdleTimeThreshold = .2;
@@ -18,7 +18,7 @@ index a5c96ab02f6e..48f7a6974db0 100644
  
  // Name of the finch study that enables using resource fetch priorities to
  // schedule tasks on Blink.
-@@ -2506,8 +2504,6 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
+@@ -2553,8 +2551,6 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
    // Unset the state of |task_priority_for_tracing|.
    main_thread_only().task_priority_for_tracing = base::nullopt;
  
@@ -27,8 +27,8 @@ index a5c96ab02f6e..48f7a6974db0 100644
    main_thread_only().compositor_priority_experiments.OnTaskCompleted(
        queue.get(), main_thread_only().compositor_priority, task_timing);
  
-@@ -2519,95 +2515,6 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
-   AgentGroupSchedulerImpl::SetCurrent(nullptr);
+@@ -2566,95 +2562,6 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
+   SetCurrentAgentGroupScheduler(nullptr);
  }
  
 -void MainThreadSchedulerImpl::RecordTaskUkm(

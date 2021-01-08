@@ -1,12 +1,13 @@
 diff --git a/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h b/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
-index 1a97de918e08..f1bbfc9281ea 100644
+index e2bc1639a37c..fdd8d7d8ae5a 100644
 --- a/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
 +++ b/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
-@@ -10,12 +10,10 @@
+@@ -9,13 +9,10 @@
+ 
  #include "base/location.h"
- #include "base/optional.h"
  #include "base/single_thread_task_runner.h"
 -#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiable_token.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_blob_callback.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_image_encode_options.h"
@@ -15,32 +16,35 @@ index 1a97de918e08..f1bbfc9281ea 100644
  #include "third_party/blink/renderer/core/typed_arrays/dom_typed_array.h"
  #include "third_party/blink/renderer/platform/geometry/int_size.h"
  #include "third_party/blink/renderer/platform/graphics/graphics_types.h"
-@@ -63,7 +61,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+@@ -63,8 +60,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
                           ToBlobFunctionType function_type,
                           base::TimeTicks start_time,
                           ExecutionContext*,
--                         base::Optional<UkmParameters> ukm_params,
+-                         UkmParameters ukm_params,
+-                         const IdentifiableToken& input_digest,
                           ScriptPromiseResolver*);
    CanvasAsyncBlobCreator(scoped_refptr<StaticBitmapImage>,
                           const ImageEncodeOptions*,
-@@ -71,7 +68,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+@@ -72,8 +67,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
                           V8BlobCallback*,
                           base::TimeTicks start_time,
                           ExecutionContext*,
--                         base::Optional<UkmParameters> ukm_params,
+-                         UkmParameters ukm_params,
+-                         const IdentifiableToken& input_digest,
                           ScriptPromiseResolver* = nullptr);
    virtual ~CanvasAsyncBlobCreator();
  
-@@ -137,8 +133,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+@@ -139,9 +132,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
    // Used for HTMLCanvasElement only
    Member<V8BlobCallback> callback_;
  
--  base::Optional<UkmParameters> ukm_params_;
+-  UkmParameters ukm_params_;
+-  IdentifiableToken input_digest_;
 -
    // Used for OffscreenCanvas only
    Member<ScriptPromiseResolver> script_promise_resolver_;
  
-@@ -154,8 +148,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+@@ -157,8 +147,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
  
    void IdleTaskStartTimeoutEvent(double quality);
    void IdleTaskCompleteTimeoutEvent();

@@ -1,8 +1,8 @@
 diff --git a/cc/BUILD.gn b/cc/BUILD.gn
-index e8c251295442..a02ffbc84a75 100644
+index acc0b7db8728..91de148e37d0 100644
 --- a/cc/BUILD.gn
 +++ b/cc/BUILD.gn
-@@ -178,12 +178,8 @@ cc_component("cc") {
+@@ -178,15 +178,10 @@ cc_component("cc") {
      "metrics/frame_sequence_tracker_collection.h",
      "metrics/jank_metrics.cc",
      "metrics/jank_metrics.h",
@@ -14,8 +14,11 @@ index e8c251295442..a02ffbc84a75 100644
 -    "metrics/throughput_ukm_reporter.h",
      "metrics/total_frame_counter.cc",
      "metrics/total_frame_counter.h",
+-    "metrics/ukm_smoothness_data.h",
      "metrics/video_playback_roughness_reporter.cc",
-@@ -397,8 +393,6 @@ cc_component("cc") {
+     "metrics/video_playback_roughness_reporter.h",
+     "raster/bitmap_raster_buffer_provider.cc",
+@@ -398,8 +393,6 @@ cc_component("cc") {
      "trees/transform_node.h",
      "trees/tree_synchronizer.cc",
      "trees/tree_synchronizer.h",
@@ -24,7 +27,7 @@ index e8c251295442..a02ffbc84a75 100644
      "trees/viewport_layers.cc",
      "trees/viewport_layers.h",
    ]
-@@ -420,8 +414,6 @@ cc_component("cc") {
+@@ -422,8 +415,6 @@ cc_component("cc") {
      "//gpu/vulkan:buildflags",
      "//media",  # For VideoLayerImpl.
      "//mojo/public/cpp/bindings:struct_traits",
@@ -33,7 +36,7 @@ index e8c251295442..a02ffbc84a75 100644
      "//services/tracing/public/cpp:cpp",
      "//ui/events:events_base",
      "//ui/gfx",
-@@ -569,8 +561,6 @@ cc_test_static_library("test_support") {
+@@ -571,8 +562,6 @@ cc_test_static_library("test_support") {
      "test/test_tile_task_runner.h",
      "test/test_types.cc",
      "test/test_types.h",
@@ -42,7 +45,7 @@ index e8c251295442..a02ffbc84a75 100644
      "test/transfer_cache_test_helper.cc",
      "test/transfer_cache_test_helper.h",
    ]
-@@ -586,8 +576,6 @@ cc_test_static_library("test_support") {
+@@ -588,8 +577,6 @@ cc_test_static_library("test_support") {
      "//base/test:test_support",
      "//base/third_party/dynamic_annotations",
      "//cc/paint",
@@ -51,7 +54,7 @@ index e8c251295442..a02ffbc84a75 100644
      "//components/viz/client",
      "//components/viz/common",
      "//components/viz/service",
-@@ -676,18 +664,6 @@ cc_test("cc_unittests") {
+@@ -678,18 +665,6 @@ cc_test("cc_unittests") {
      "layers/video_frame_provider_client_impl_unittest.cc",
      "layers/video_layer_impl_unittest.cc",
      "layers/viewport_unittest.cc",
@@ -70,7 +73,7 @@ index e8c251295442..a02ffbc84a75 100644
      "mojo_embedder/async_layer_tree_frame_sink_unittest.cc",
      "paint/clear_for_opaque_raster_unittest.cc",
      "paint/discardable_image_map_unittest.cc",
-@@ -764,7 +740,6 @@ cc_test("cc_unittests") {
+@@ -766,7 +741,6 @@ cc_test("cc_unittests") {
      "trees/property_tree_unittest.cc",
      "trees/swap_promise_manager_unittest.cc",
      "trees/tree_synchronizer_unittest.cc",
@@ -78,7 +81,7 @@ index e8c251295442..a02ffbc84a75 100644
  
      # Animation test files.
      "animation/animation_host_unittest.cc",
-@@ -795,7 +770,6 @@ cc_test("cc_unittests") {
+@@ -797,7 +771,6 @@ cc_test("cc_unittests") {
      "//base/test:test_support",
      "//cc/mojo_embedder",
      "//cc/paint",

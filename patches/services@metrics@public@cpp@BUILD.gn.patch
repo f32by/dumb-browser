@@ -1,5 +1,5 @@
 diff --git a/services/metrics/public/cpp/BUILD.gn b/services/metrics/public/cpp/BUILD.gn
-index 68bfc8ee1522..d0a432bdd596 100644
+index 68bfc8ee1522..2b866a06b9c9 100644
 --- a/services/metrics/public/cpp/BUILD.gn
 +++ b/services/metrics/public/cpp/BUILD.gn
 @@ -6,23 +6,9 @@ import("//mojo/public/tools/bindings/mojom.gni")
@@ -26,7 +26,15 @@ index 68bfc8ee1522..d0a432bdd596 100644
    ]
  
    configs += [ "//build/config/compiler:wexit_time_destructors" ]
-@@ -46,7 +32,6 @@ source_set("tests") {
+@@ -37,7 +23,6 @@ component("metrics_cpp") {
+ 
+   deps = [
+     "//mojo/public/cpp/bindings",
+-    "//third_party/metrics_proto",
+   ]
+ }
+ 
+@@ -46,7 +31,6 @@ source_set("tests") {
  
    sources = [
      "metrics_utils_unittest.cc",

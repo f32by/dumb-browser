@@ -19,10 +19,11 @@ import os
 import subprocess
 import sys
 import re
+from shutil import copyfile
 
 from ordered_set import OrderedSet
 
-from constants import CHROMIUM_SRC_DIR, PATCHES_DIR, PATCH_LIST_FILE
+from constants import CHROMIUM_SRC_DIR, DUMB_SRC_DIR, PATCHES_DIR, PATCH_LIST_FILE
 from utils import get_patch_filename, get_original_filename
 
 GIT_DIFF_PATTERN = 'diff --git '
@@ -67,7 +68,11 @@ def main(args):
         filename = regex.findall(entry)[0]
 
         if filename in EXCLUSION_FILES:
-            total -= 1
+            # copy file to dumb_src
+            print(f'Copying {filename} ...')
+            copyfile(os.path.join(CHROMIUM_SRC_DIR, filename), os.path.join(DUMB_SRC_DIR, filename))
+
+            i += 1
             continue
 
         new_patch_list.add(filename)

@@ -1,8 +1,8 @@
 diff --git a/cc/metrics/compositor_frame_reporter.h b/cc/metrics/compositor_frame_reporter.h
-index 56f9faa8ffc3..6071a44d7f6c 100644
+index d7abf2950efb..aaa5e1475c72 100644
 --- a/cc/metrics/compositor_frame_reporter.h
 +++ b/cc/metrics/compositor_frame_reporter.h
-@@ -28,7 +28,6 @@ struct FrameTimingDetails;
+@@ -29,7 +29,6 @@ struct FrameTimingDetails;
  
  namespace cc {
  class DroppedFrameCounter;
@@ -10,15 +10,15 @@ index 56f9faa8ffc3..6071a44d7f6c 100644
  
  // This is used for tracing and reporting the duration of pipeline stages within
  // a single frame.
-@@ -145,7 +144,6 @@ class CC_EXPORT CompositorFrameReporter {
+@@ -146,7 +145,6 @@ class CC_EXPORT CompositorFrameReporter {
  
    CompositorFrameReporter(const ActiveTrackers& active_trackers,
                            const viz::BeginFrameArgs& args,
 -                          LatencyUkmReporter* latency_ukm_reporter,
                            bool should_report_metrics,
-                           SmoothThread smooth_thread);
-   ~CompositorFrameReporter();
-@@ -304,8 +302,6 @@ class CC_EXPORT CompositorFrameReporter {
+                           SmoothThread smooth_thread,
+                           int layer_tree_host_id);
+@@ -306,8 +304,6 @@ class CC_EXPORT CompositorFrameReporter {
  
    const ActiveTrackers active_trackers_;
  

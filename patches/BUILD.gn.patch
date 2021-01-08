@@ -1,8 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 5b0fa041820f..c56f203ef140 100644
+index 39b9075b1267..085c4a88bf23 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -114,7 +114,6 @@ group("gn_all") {
+@@ -113,7 +113,6 @@ group("gn_all") {
        "//chrome/test:interactive_ui_tests",
        "//chrome/test:sync_integration_tests",
        "//chrome/test/chromedriver:chromedriver_unittests",
@@ -10,7 +10,7 @@ index 5b0fa041820f..c56f203ef140 100644
        "//components/zucchini:zucchini",
        "//components/zucchini:zucchini_unittests",
        "//gpu/gles2_conform_support:gles2_conform_test",
-@@ -244,7 +243,6 @@ group("gn_all") {
+@@ -243,7 +242,6 @@ group("gn_all") {
    } else if (is_ios) {
      deps += [
        "//ios:all",
@@ -18,7 +18,7 @@ index 5b0fa041820f..c56f203ef140 100644
      ]
    } else if (is_fuchsia) {
      deps += [
-@@ -454,14 +452,6 @@ group("gn_all") {
+@@ -448,14 +446,6 @@ group("gn_all") {
      ]
    }
  
@@ -33,7 +33,7 @@ index 5b0fa041820f..c56f203ef140 100644
    if (is_linux || is_chromeos) {
      # The following are definitely linux-only.
      deps += [
-@@ -635,7 +625,6 @@ group("gn_all") {
+@@ -630,7 +620,6 @@ group("gn_all") {
    if (is_win) {
      deps += [
        "//base:pe_image_test",
@@ -41,7 +41,7 @@ index 5b0fa041820f..c56f203ef140 100644
        "//chrome/chrome_elf:chrome_elf_unittests",
        "//chrome/chrome_elf:dll_hash_main",
        "//chrome/elevation_service:elevation_service_unittests",
-@@ -683,14 +672,6 @@ group("gn_all") {
+@@ -678,14 +667,6 @@ group("gn_all") {
      }
    }
  
@@ -56,7 +56,7 @@ index 5b0fa041820f..c56f203ef140 100644
    if (use_openh264) {
      deps += [
        "//third_party/openh264:common",
-@@ -727,7 +708,6 @@ group("gn_all") {
+@@ -722,7 +703,6 @@ group("gn_all") {
        "//chrome/tools/convert_dict",
        "//components/constrained_window:unit_tests",
        "//components/metrics:serialization",
@@ -64,7 +64,7 @@ index 5b0fa041820f..c56f203ef140 100644
        "//components/services/filesystem:filesystem_service_unittests",
        "//components/sessions:unit_tests",
        "//media/blink:media_blink_unittests",
-@@ -853,10 +833,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
+@@ -848,10 +828,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
        "//remoting/host:host",
        "//tools/traffic_annotation/summary:annotations_xml",
      ]
@@ -75,7 +75,7 @@ index 5b0fa041820f..c56f203ef140 100644
    }
  }
  
-@@ -1235,7 +1211,6 @@ if (!is_ios) {
+@@ -1230,7 +1206,6 @@ if (!is_ios) {
    group("blink_python_tests") {
      data = [
        "//build/android/",
@@ -83,7 +83,7 @@ index 5b0fa041820f..c56f203ef140 100644
        "//testing/scripts/common.py",
        "//testing/scripts/run_isolated_script_test.py",
        "//testing/test_env.py",
-@@ -1377,7 +1352,6 @@ if (enable_js_type_check) {
+@@ -1372,7 +1347,6 @@ if (enable_js_type_check) {
        "components/neterror/resources:closure_compile",
        "components/security_interstitials/core/common/resources:closure_compile",
        "components/sync/driver/resources:closure_compile",

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/ash/system_tray_client.cc b/chrome/browser/ui/ash/system_tray_client.cc
-index fab566468588..61a5d74c9576 100644
+index 71ca6b16a624..a2d420fdbeb2 100644
 --- a/chrome/browser/ui/ash/system_tray_client.cc
 +++ b/chrome/browser/ui/ash/system_tray_client.cc
 @@ -36,7 +36,6 @@
@@ -8,9 +8,9 @@ index fab566468588..61a5d74c9576 100644
  #include "chrome/browser/ui/webui/settings/chromeos/constants/routes.mojom.h"
 -#include "chrome/browser/upgrade_detector/upgrade_detector.h"
  #include "chrome/common/url_constants.h"
+ #include "chromeos/constants/chromeos_features.h"
  #include "chromeos/constants/chromeos_switches.h"
- #include "chromeos/dbus/dbus_thread_manager.h"
-@@ -119,8 +118,6 @@ SystemTrayClient::SystemTrayClient()
+@@ -120,8 +119,6 @@ SystemTrayClient::SystemTrayClient()
    g_browser_process->platform_part()->GetSystemClock()->AddObserver(this);
  
    // If an upgrade is available at startup then tell ash about it.
@@ -19,7 +19,7 @@ index fab566468588..61a5d74c9576 100644
  
    // If the device is enterprise managed then send ash the enterprise domain.
    policy::BrowserPolicyConnectorChromeOS* policy_connector =
-@@ -135,7 +132,6 @@ SystemTrayClient::SystemTrayClient()
+@@ -136,7 +133,6 @@ SystemTrayClient::SystemTrayClient()
  
    DCHECK(!g_system_tray_client_instance);
    g_system_tray_client_instance = this;
@@ -27,7 +27,7 @@ index fab566468588..61a5d74c9576 100644
  }
  
  SystemTrayClient::~SystemTrayClient() {
-@@ -152,7 +148,6 @@ SystemTrayClient::~SystemTrayClient() {
+@@ -153,7 +149,6 @@ SystemTrayClient::~SystemTrayClient() {
      policy_manager->core()->store()->RemoveObserver(this);
  
    g_browser_process->platform_part()->GetSystemClock()->RemoveObserver(this);
@@ -35,7 +35,7 @@ index fab566468588..61a5d74c9576 100644
  }
  
  // static
-@@ -458,35 +453,6 @@ void SystemTrayClient::SetLocaleAndExit(const std::string& locale_iso_code) {
+@@ -463,35 +458,6 @@ void SystemTrayClient::SetLocaleAndExit(const std::string& locale_iso_code) {
  }
  
  void SystemTrayClient::HandleUpdateAvailable() {

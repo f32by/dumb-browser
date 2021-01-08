@@ -1,14 +1,59 @@
 diff --git a/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc b/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
-index e40b408b99b7..84d5b738ef11 100644
+index 6ca96f58319e..4fa8130a5473 100644
 --- a/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
 +++ b/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
-@@ -44,8 +44,7 @@ namespace blink {
+@@ -8,9 +8,6 @@
+ #include <utility>
+ 
+ #include "base/metrics/histogram_functions.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metrics.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/renderer/core/css/css_font_selector.h"
+ #include "third_party/blink/renderer/core/css/offscreen_font_selector.h"
+@@ -25,7 +22,6 @@
+ #include "third_party/blink/renderer/core/html/canvas/canvas_rendering_context.h"
+ #include "third_party/blink/renderer/core/html/canvas/canvas_rendering_context_factory.h"
+ #include "third_party/blink/renderer/core/html/canvas/image_data.h"
+-#include "third_party/blink/renderer/core/html/canvas/ukm_parameters.h"
+ #include "third_party/blink/renderer/core/imagebitmap/image_bitmap.h"
+ #include "third_party/blink/renderer/core/workers/dedicated_worker_global_scope.h"
+ #include "third_party/blink/renderer/platform/bindings/microtask.h"
+@@ -47,8 +43,7 @@ namespace blink {
  
  OffscreenCanvas::OffscreenCanvas(ExecutionContext* context, const IntSize& size)
      : CanvasRenderingContextHost(
 -          CanvasRenderingContextHost::HostType::kOffscreenCanvasHost,
--          base::make_optional<UkmParameters>()),
+-          {context->UkmRecorder(), context->UkmSourceID()}),
 +          CanvasRenderingContextHost::HostType::kOffscreenCanvasHost),
        execution_context_(context),
        size_(size) {
    // Other code in Blink watches for destruction of the context; be
+@@ -222,26 +217,9 @@ ImageBitmap* OffscreenCanvas::transferToImageBitmap(
+                                       "ImageBitmap construction failed");
+   }
+ 
+-  RecordIdentifiabilityMetric(
+-      blink::IdentifiableSurface::FromTypeAndToken(
+-          blink::IdentifiableSurface::Type::kCanvasReadback,
+-          context_ ? context_->GetContextType()
+-                   : CanvasRenderingContext::kContextTypeUnknown),
+-      0);
+-
+   return image;
+ }
+ 
+-void OffscreenCanvas::RecordIdentifiabilityMetric(
+-    const blink::IdentifiableSurface& surface,
+-    const IdentifiableToken& token) const {
+-  if (!IdentifiabilityStudySettings::Get()->ShouldSample(surface))
+-    return;
+-  blink::IdentifiabilityMetricBuilder(GetExecutionContext()->UkmSourceID())
+-      .Set(surface, token)
+-      .Record(GetExecutionContext()->UkmRecorder());
+-}
+-
+ scoped_refptr<Image> OffscreenCanvas::GetSourceImageForCanvas(
+     SourceImageStatus* status,
+     const FloatSize& size) {

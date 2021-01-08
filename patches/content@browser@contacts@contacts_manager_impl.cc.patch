@@ -1,16 +1,16 @@
 diff --git a/content/browser/contacts/contacts_manager_impl.cc b/content/browser/contacts/contacts_manager_impl.cc
-index fd419c1e2f4e..50e54499b25b 100644
+index 62899148c416..445e14cd934d 100644
 --- a/content/browser/contacts/contacts_manager_impl.cc
 +++ b/content/browser/contacts/contacts_manager_impl.cc
-@@ -15,7 +15,6 @@
- #include "content/public/browser/web_contents.h"
+@@ -14,7 +14,6 @@
+ #include "content/public/browser/contacts_picker_properties_requested.h"
  #include "mojo/public/cpp/bindings/self_owned_receiver.h"
  #include "services/metrics/public/cpp/metrics_utils.h"
 -#include "services/metrics/public/cpp/ukm_builders.h"
  
  #if defined(OS_ANDROID)
  #include "content/browser/contacts/contacts_provider_android.h"
-@@ -38,18 +37,9 @@ std::unique_ptr<ContactsProvider> CreateProvider(
+@@ -37,18 +36,9 @@ std::unique_ptr<ContactsProvider> CreateProvider(
  
  void OnContactsSelected(
      blink::mojom::ContactsManager::SelectCallback callback,
@@ -29,16 +29,17 @@ index fd419c1e2f4e..50e54499b25b 100644
    std::move(callback).Run(std::move(contacts));
  }
  
-@@ -70,8 +60,6 @@ ContactsManagerImpl::ContactsManagerImpl(RenderFrameHostImpl* render_frame_host)
-       WebContents::FromRenderFrameHost(render_frame_host);
-   if (!web_contents || !web_contents->GetTopLevelNativeWindow())
-     return;
--
--  source_id_ = render_frame_host->GetPageUkmSourceId();
+@@ -64,8 +54,7 @@ void ContactsManagerImpl::Create(
  }
  
+ ContactsManagerImpl::ContactsManagerImpl(RenderFrameHostImpl* render_frame_host)
+-    : contacts_provider_(CreateProvider(render_frame_host)),
+-      source_id_(render_frame_host->GetPageUkmSourceId()) {}
++    : contacts_provider_(CreateProvider(render_frame_host)) {}
+ 
  ContactsManagerImpl::~ContactsManagerImpl() = default;
-@@ -87,8 +75,7 @@ void ContactsManagerImpl::Select(bool multiple,
+ 
+@@ -80,8 +69,7 @@ void ContactsManagerImpl::Select(bool multiple,
      contacts_provider_->Select(
          multiple, include_names, include_emails, include_tel, include_addresses,
          include_icons,

@@ -1,5 +1,5 @@
 diff --git a/content/browser/browser_child_process_host_impl.cc b/content/browser/browser_child_process_host_impl.cc
-index 6ab1651c22e1..556f8c158aca 100644
+index 1252731a0833..05c89f574cbf 100644
 --- a/content/browser/browser_child_process_host_impl.cc
 +++ b/content/browser/browser_child_process_host_impl.cc
 @@ -48,7 +48,6 @@
@@ -8,9 +8,9 @@ index 6ab1651c22e1..556f8c158aca 100644
  #include "content/public/common/sandboxed_process_launcher_delegate.h"
 -#include "mojo/public/cpp/bindings/scoped_message_error_crash_key.h"
  #include "mojo/public/cpp/system/platform_handle.h"
- #include "services/service_manager/embedder/switches.h"
  #include "services/tracing/public/cpp/trace_startup.h"
-@@ -710,7 +709,6 @@ void BrowserChildProcessHostImpl::OnMojoError(
+ 
+@@ -709,7 +708,6 @@ void BrowserChildProcessHostImpl::OnMojoError(
    // It is important to call DumpWithoutCrashing synchronously - this will help
    // to preserve the callstack and the crash keys present when the bad mojo
    // message was received.

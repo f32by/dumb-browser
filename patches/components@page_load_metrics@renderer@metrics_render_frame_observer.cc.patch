@@ -1,28 +1,8 @@
 diff --git a/components/page_load_metrics/renderer/metrics_render_frame_observer.cc b/components/page_load_metrics/renderer/metrics_render_frame_observer.cc
-index 6b143f2c557c..d54ad509b693 100644
+index 7a2faa6efde5..076b1017ce29 100644
 --- a/components/page_load_metrics/renderer/metrics_render_frame_observer.cc
 +++ b/components/page_load_metrics/renderer/metrics_render_frame_observer.cc
-@@ -65,18 +65,10 @@ class MojoPageTimingSender : public PageTimingSender {
-         std::move(new_deferred_resource_data), std::move(input_timing_delta));
-   }
- 
--  void SubmitThroughputData(ukm::SourceId source_id,
--                            int aggregated_percent,
-+  void SubmitThroughputData(int aggregated_percent,
-                             int impl_percent,
-                             base::Optional<int> main_percent) {
-     DCHECK(page_load_metrics_);
--    mojom::PercentOptionalPtr main_ptr =
--        main_percent.has_value()
--            ? mojom::PercentOptional::New(main_percent.value())
--            : nullptr;
--    mojom::ThroughputUkmDataPtr throughput_data = mojom::ThroughputUkmData::New(
--        source_id, aggregated_percent, impl_percent, std::move(main_ptr));
--    page_load_metrics_->SubmitThroughputData(std::move(throughput_data));
-   }
- 
-  private:
-@@ -96,8 +88,7 @@ class MojoPageTimingSender : public PageTimingSender {
+@@ -89,8 +89,7 @@ class MojoPageTimingSender : public PageTimingSender {
  
  MetricsRenderFrameObserver::MetricsRenderFrameObserver(
      content::RenderFrame* render_frame)
@@ -32,8 +12,8 @@ index 6b143f2c557c..d54ad509b693 100644
  
  MetricsRenderFrameObserver::~MetricsRenderFrameObserver() {
    if (page_timing_metrics_sender_)
-@@ -337,20 +328,6 @@ void MetricsRenderFrameObserver::DidCommitProvisionalLoad(
-       std::move(provisional_frame_resource_data_use_));
+@@ -338,20 +337,6 @@ void MetricsRenderFrameObserver::DidCommitProvisionalLoad(
+   }
  }
  
 -void MetricsRenderFrameObserver::SetAdResourceTracker(
@@ -53,19 +33,3 @@ index 6b143f2c557c..d54ad509b693 100644
  
  void MetricsRenderFrameObserver::OnMainFrameIntersectionChanged(
      const blink::WebRect& main_frame_intersection) {
-@@ -360,14 +337,13 @@ void MetricsRenderFrameObserver::OnMainFrameIntersectionChanged(
- }
- 
- void MetricsRenderFrameObserver::OnThroughputDataAvailable(
--    ukm::SourceId source_id,
-     int aggregated_percent,
-     int impl_percent,
-     base::Optional<int> main_percent) {
-   std::unique_ptr<MojoPageTimingSender> sender =
-       std::make_unique<MojoPageTimingSender>(render_frame(),
-                                              false /* limited_sending_mode */);
--  sender->SubmitThroughputData(source_id, aggregated_percent, impl_percent,
-+  sender->SubmitThroughputData(aggregated_percent, impl_percent,
-                                main_percent);
- }
- 

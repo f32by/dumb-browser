@@ -1,0 +1,56 @@
+diff --git a/content/browser/sms/sms_service.cc b/content/browser/sms/sms_service.cc
+index cde54af07f93..53966f94573a 100644
+--- a/content/browser/sms/sms_service.cc
++++ b/content/browser/sms/sms_service.cc
+@@ -26,7 +26,6 @@
+ #include "content/public/browser/web_contents_delegate.h"
+ #include "content/public/common/content_features.h"
+ #include "content/public/common/content_switches.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/mojom/sms/sms_receiver.mojom-shared.h"
+ 
+ using blink::SmsReceiverDestroyedReason;
+@@ -133,10 +132,6 @@ void SmsService::OnReceive(const std::string& one_time_code) {
+   DCHECK(!start_time_.is_null());
+ 
+   receive_time_ = base::TimeTicks::Now();
+-  RecordSmsReceiveTime(receive_time_ - start_time_,
+-                       render_frame_host()->GetPageUkmSourceId());
+-  RecordSmsParsingStatus(SmsParsingStatus::kParsed,
+-                         render_frame_host()->GetPageUkmSourceId());
+ 
+   one_time_code_ = one_time_code;
+ 
+@@ -164,7 +159,6 @@ void SmsService::OnFailure(FailureType failure_type) {
+       break;
+   }
+   DCHECK(status != SmsParsingStatus::kParsed);
+-  RecordSmsParsingStatus(status, render_frame_host()->GetPageUkmSourceId());
+ }
+ 
+ void SmsService::Abort() {
+@@ -176,13 +170,10 @@ void SmsService::NavigationEntryCommitted(
+     const content::LoadCommittedDetails& load_details) {
+   switch (load_details.type) {
+     case NavigationType::NAVIGATION_TYPE_NEW_PAGE:
+-      RecordDestroyedReason(SmsReceiverDestroyedReason::kNavigateNewPage);
+       break;
+     case NavigationType::NAVIGATION_TYPE_EXISTING_PAGE:
+-      RecordDestroyedReason(SmsReceiverDestroyedReason::kNavigateExistingPage);
+       break;
+     case NavigationType::NAVIGATION_TYPE_SAME_PAGE:
+-      RecordDestroyedReason(SmsReceiverDestroyedReason::kNavigateSamePage);
+       break;
+     default:
+       // Ignore cases we don't care about.
+@@ -204,10 +195,8 @@ void SmsService::CompleteRequest(blink::mojom::SmsStatus status) {
+   if (consent_handler_->is_async()) {
+     if (status == SmsStatus::kSuccess) {
+       DCHECK(!receive_time_.is_null());
+-      RecordContinueOnSuccessTime(base::TimeTicks::Now() - receive_time_);
+     } else if (status == SmsStatus::kCancelled) {
+       DCHECK(!receive_time_.is_null());
+-      RecordCancelOnSuccessTime(base::TimeTicks::Now() - receive_time_);
+     }
+   }
+ 

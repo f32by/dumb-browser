@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/autofill_manager.h b/components/autofill/core/browser/autofill_manager.h
-index 387029bbda51..dc5eb8af12ed 100644
+index fc6e8bc4714b..c07e0c6274d2 100644
 --- a/components/autofill/core/browser/autofill_manager.h
 +++ b/components/autofill/core/browser/autofill_manager.h
 @@ -27,11 +27,8 @@
@@ -11,10 +11,10 @@ index 387029bbda51..dc5eb8af12ed 100644
  #include "components/autofill/core/browser/form_types.h"
 -#include "components/autofill/core/browser/metrics/address_form_event_logger.h"
 -#include "components/autofill/core/browser/metrics/credit_card_form_event_logger.h"
+ #include "components/autofill/core/browser/payments/autofill_offer_manager.h"
  #include "components/autofill/core/browser/payments/card_unmask_delegate.h"
  #include "components/autofill/core/browser/payments/credit_card_access_manager.h"
- #include "components/autofill/core/browser/payments/full_card_request.h"
-@@ -298,13 +295,6 @@ class AutofillManager : public AutofillHandler,
+@@ -295,13 +292,6 @@ class AutofillManager : public AutofillHandler,
      return MakeFrontendID(cc_backend_id, profile_backend_id);
    }
  
@@ -28,7 +28,7 @@ index 387029bbda51..dc5eb8af12ed 100644
    // A public wrapper that calls |ShouldTriggerRefill| for testing purposes
    // only.
    bool ShouldTriggerRefillForTest(const FormStructure& form_structure) {
-@@ -379,10 +369,6 @@ class AutofillManager : public AutofillHandler,
+@@ -376,10 +366,6 @@ class AutofillManager : public AutofillHandler,
    void OnFormsParsed(const std::vector<const FormData*>& forms,
                       const base::TimeTicks timestamp) override;
  
@@ -39,7 +39,7 @@ index 387029bbda51..dc5eb8af12ed 100644
    // Exposed for testing.
    void set_download_manager(AutofillDownloadManager* manager) {
      download_manager_.reset(manager);
-@@ -614,11 +600,6 @@ class AutofillManager : public AutofillHandler,
+@@ -611,11 +597,6 @@ class AutofillManager : public AutofillHandler,
    bool ShouldShowVirtualCardOption(FormStructure* form_structure);
  #endif
  
@@ -51,7 +51,7 @@ index 387029bbda51..dc5eb8af12ed 100644
    void SetDataList(const std::vector<base::string16>& values,
                     const std::vector<base::string16>& labels);
    AutofillClient* const client_;
-@@ -646,14 +627,6 @@ class AutofillManager : public AutofillHandler,
+@@ -643,14 +624,6 @@ class AutofillManager : public AutofillHandler,
    // May be NULL.  NULL indicates OTR.
    base::WeakPtr<AutocompleteHistoryManager> autocomplete_history_manager_;
  

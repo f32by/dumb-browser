@@ -1,8 +1,8 @@
 diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index e561fed130ff..9e41c8cbeb42 100644
+index 7913e9c6bd0a..e22c1fc6d602 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
-@@ -107,7 +107,7 @@ if (!is_android && !is_mac) {
+@@ -115,7 +115,7 @@ if (!is_android && !is_mac) {
      public_deps = [ ":chrome_initial" ]
      data_deps = [ ":chrome_initial" ]
      if (is_win) {
@@ -11,7 +11,7 @@ index e561fed130ff..9e41c8cbeb42 100644
        data_deps += [ ":reorder_imports" ]
      }
      if (is_chromeos) {
-@@ -143,8 +143,6 @@ if (!is_android && !is_mac) {
+@@ -151,8 +151,6 @@ if (!is_android && !is_mac) {
          "app/chrome_exe_main_win.cc",
          "app/main_dll_loader_win.cc",
          "app/main_dll_loader_win.h",
@@ -20,25 +20,28 @@ index e561fed130ff..9e41c8cbeb42 100644
        ]
  
        deps += [
-@@ -162,9 +160,6 @@ if (!is_android && !is_mac) {
+@@ -172,10 +170,6 @@ if (!is_android && !is_mac) {
          "//chrome/install_static:secondary_module",
          "//chrome/installer/util:constants",
          "//chrome/installer/util:did_run_support",
 -        "//components/browser_watcher:browser_watcher_client",
+-        "//components/crash/core/app",
 -        "//components/crash/core/app:run_as_crashpad_handler",
 -        "//components/crash/core/common",
          "//components/flags_ui:switches",
          "//content:sandbox_helper_win",
          "//content/public/common:static_switches",
-@@ -173,7 +168,6 @@ if (!is_android && !is_mac) {
+@@ -183,9 +177,6 @@ if (!is_android && !is_mac) {
+         "//gpu/command_buffer/service",
+         "//sandbox",
          "//sandbox/policy",
-         "//third_party/breakpad:breakpad_handler",
-         "//third_party/breakpad:breakpad_sender",
+-        "//third_party/breakpad:breakpad_handler",
+-        "//third_party/breakpad:breakpad_sender",
 -        "//third_party/crashpad/crashpad/util",
+         "//ui/gl",
        ]
        data_deps = [
-         "//chrome/app/version_assembly:version_assembly_manifest",
-@@ -322,8 +316,6 @@ if (is_win) {
+@@ -335,8 +326,6 @@ if (is_win) {
        "//chrome/common/profiler",
        "//chrome/install_static:install_static_util",
        "//chrome/install_static:secondary_module",
@@ -47,7 +50,7 @@ index e561fed130ff..9e41c8cbeb42 100644
        "//components/policy:generated",
        "//content/app/resources",
        "//content/public/common:service_names",
-@@ -696,14 +688,12 @@ if (is_win) {
+@@ -713,14 +702,12 @@ if (is_win) {
    bundle_data("chrome_framework_helpers") {
      sources = [
        "$root_out_dir/app_mode_loader",
@@ -62,7 +65,7 @@ index e561fed130ff..9e41c8cbeb42 100644
      ]
  
      foreach(helper_params, content_mac_helpers) {
-@@ -917,9 +907,6 @@ if (is_win) {
+@@ -934,9 +921,6 @@ if (is_win) {
      ]
  
      sources = [
@@ -72,7 +75,7 @@ index e561fed130ff..9e41c8cbeb42 100644
        "app/chrome_dll_resource.h",
        "app/chrome_main.cc",
        "app/chrome_main_delegate.cc",
-@@ -935,7 +922,6 @@ if (is_win) {
+@@ -951,7 +935,6 @@ if (is_win) {
        "//chrome/app:command_ids",
        "//chrome/common:buildflags",
        "//chrome/common/profiler",
@@ -80,7 +83,7 @@ index e561fed130ff..9e41c8cbeb42 100644
        "//components/policy:generated",
        "//content/public/app",
        "//content/public/common:service_names",
-@@ -1068,7 +1054,6 @@ if (is_win) {
+@@ -1084,7 +1067,6 @@ if (is_win) {
      _chrome_symbols_sources = [
        "$root_out_dir/$chrome_product_full_name.app/Contents/MacOS/$chrome_product_full_name",
        "$root_out_dir/AlertNotificationService.xpc/Contents/MacOS/AlertNotificationService",
@@ -88,7 +91,7 @@ index e561fed130ff..9e41c8cbeb42 100644
        "$root_out_dir/libswiftshader_libEGL.dylib",
        "$root_out_dir/libswiftshader_libGLESv2.dylib",
        _framework_binary_path,
-@@ -1100,7 +1085,6 @@ if (is_win) {
+@@ -1116,7 +1098,6 @@ if (is_win) {
          ":chrome_app",
          ":chrome_framework",
          "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
@@ -96,7 +99,7 @@ index e561fed130ff..9e41c8cbeb42 100644
          "//third_party/breakpad:dump_syms",
          "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
          "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
-@@ -1122,7 +1106,6 @@ if (is_win) {
+@@ -1138,7 +1119,6 @@ if (is_win) {
          "$root_out_dir/AlertNotificationService.dSYM",
          "$root_out_dir/$chrome_framework_name.dSYM",
          "$root_out_dir/$chrome_product_full_name.dSYM",
@@ -104,7 +107,7 @@ index e561fed130ff..9e41c8cbeb42 100644
          "$root_out_dir/libswiftshader_libEGL.dylib.dSYM",
          "$root_out_dir/libswiftshader_libGLESv2.dylib.dSYM",
        ]
-@@ -1131,7 +1114,6 @@ if (is_win) {
+@@ -1147,7 +1127,6 @@ if (is_win) {
          ":chrome_app",
          ":chrome_framework",
          "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
@@ -112,7 +115,7 @@ index e561fed130ff..9e41c8cbeb42 100644
          "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
          "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2",
        ]
-@@ -1241,7 +1223,7 @@ group("child_dependencies") {
+@@ -1282,7 +1261,7 @@ group("child_dependencies") {
  
  if (is_win) {
    process_version_rc_template("chrome_exe_version") {
@@ -121,15 +124,16 @@ index e561fed130ff..9e41c8cbeb42 100644
      output = "$target_gen_dir/chrome_exe_version.rc"
    }
  
-@@ -1502,7 +1484,6 @@ if (is_android) {
+@@ -1545,8 +1524,6 @@ if (is_android) {
        "//components/heap_profiling/in_process",
        "//components/minidump_uploader",
        "//components/safe_browsing:buildflags",
+-      "//components/safe_browsing/android:safe_browsing_api_handler",
 -      "//components/safe_browsing/android:safe_browsing_mobile",
        "//components/services/heap_profiling",
        "//content/public/app",
        "//content/public/common:service_names",
-@@ -1550,7 +1531,6 @@ if (is_linux || is_chromeos) {
+@@ -1594,7 +1571,6 @@ if (is_linux || is_chromeos) {
          ":angle_egl_symbols",
          ":angle_gles_symbols",
          ":chrome_symbols",
@@ -137,7 +141,7 @@ index e561fed130ff..9e41c8cbeb42 100644
          ":swiftshader_egl_symbols",
          ":swiftshader_gles_symbols",
        ]
-@@ -1567,18 +1547,6 @@ if (is_linux || is_chromeos) {
+@@ -1611,18 +1587,6 @@ if (is_linux || is_chromeos) {
  
        deps = [ ":chrome" ]
      }

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/frame/web_frame_widget_base.cc b/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
-index 33c470559748..3d364d13d21f 100644
+index 7ca299353f3b..6dbce42dc8da 100644
 --- a/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
 +++ b/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
 @@ -13,7 +13,6 @@
@@ -18,20 +18,7 @@ index 33c470559748..3d364d13d21f 100644
  #include "third_party/blink/renderer/core/frame/local_frame_view.h"
  #include "third_party/blink/renderer/core/frame/remote_frame_client.h"
  #include "third_party/blink/renderer/core/frame/screen_metrics_emulator.h"
-@@ -700,11 +698,10 @@ void WebFrameWidgetBase::WillBeginMainFrame() {
- }
- 
- void WebFrameWidgetBase::SubmitThroughputData(
--    ukm::SourceId source_id,
-     int aggregated_percent,
-     int impl_percent,
-     base::Optional<int> main_percent) {
--  local_root_->Client()->SubmitThroughputData(source_id, aggregated_percent,
-+  local_root_->Client()->SubmitThroughputData(aggregated_percent,
-                                               impl_percent, main_percent);
- }
- 
-@@ -1034,11 +1031,10 @@ cc::LayerTreeHost* WebFrameWidgetBase::InitializeCompositing(
+@@ -1048,11 +1046,10 @@ cc::LayerTreeHost* WebFrameWidgetBase::InitializeCompositing(
      cc::TaskGraphRunner* task_graph_runner,
      bool for_child_local_root_frame,
      const ScreenInfo& screen_info,
@@ -44,7 +31,7 @@ index 33c470559748..3d364d13d21f 100644
    GetPage()->AnimationHostInitialized(*AnimationHost(),
                                        GetLocalFrameViewForAnimationScrolling());
    return widget_base_->LayerTreeHost();
-@@ -1055,11 +1051,6 @@ void WebFrameWidgetBase::RecordTimeToFirstActivePaint(
+@@ -1069,11 +1066,6 @@ void WebFrameWidgetBase::RecordTimeToFirstActivePaint(
  
  void WebFrameWidgetBase::RecordDispatchRafAlignedInputTime(
      base::TimeTicks raf_aligned_input_start_time) {

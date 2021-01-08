@@ -1,8 +1,26 @@
 diff --git a/third_party/blink/renderer/modules/mediastream/media_devices.cc b/third_party/blink/renderer/modules/mediastream/media_devices.cc
-index 5a2adbb4956b..07cc875d543a 100644
+index 4958db291d80..68c45c08f751 100644
 --- a/third_party/blink/renderer/modules/mediastream/media_devices.cc
 +++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc
-@@ -257,30 +257,6 @@ void MediaDevices::StopObserving() {
+@@ -8,9 +8,6 @@
+ 
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiable_token_builder.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/renderer/bindings/core/v8/script_promise.h"
+ #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
+@@ -30,7 +27,6 @@
+ #include "third_party/blink/renderer/platform/bindings/script_state.h"
+ #include "third_party/blink/renderer/platform/heap/heap.h"
+ #include "third_party/blink/renderer/platform/mediastream/webrtc_uma_histograms.h"
+-#include "third_party/blink/renderer/platform/privacy_budget/identifiability_digest_helpers.h"
+ #include "third_party/blink/renderer/platform/wtf/functional.h"
+ 
+ namespace blink {
+@@ -257,32 +253,6 @@ void MediaDevices::StopObserving() {
    receiver_.reset();
  }
  
@@ -10,8 +28,10 @@ index 5a2adbb4956b..07cc875d543a 100644
 -
 -void RecordEnumeratedDevices(ScriptPromiseResolver* resolver,
 -                             const MediaDeviceInfoVector& media_devices) {
--  if (!IdentifiabilityStudySettings::Get()->IsActive())
+-  if (!IdentifiabilityStudySettings::Get()->IsWebFeatureAllowed(
+-          WebFeature::kMediaDevicesEnumerateDevices)) {
 -    return;
+-  }
 -  Document* document = LocalDOMWindow::From(resolver->GetScriptState())
 -                           ->GetFrame()
 -                           ->GetDocument();
@@ -33,7 +53,7 @@ index 5a2adbb4956b..07cc875d543a 100644
  void MediaDevices::DevicesEnumerated(
      ScriptPromiseResolver* resolver,
      const Vector<Vector<WebMediaDeviceInfo>>& enumeration,
-@@ -351,8 +327,6 @@ void MediaDevices::DevicesEnumerated(
+@@ -353,8 +323,6 @@ void MediaDevices::DevicesEnumerated(
      }
    }
  

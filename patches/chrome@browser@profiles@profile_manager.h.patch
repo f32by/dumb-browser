@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/profile_manager.h b/chrome/browser/profiles/profile_manager.h
-index f27f42540638..0c05fbaaa6ed 100644
+index 8d0793739a72..6099fe16bcee 100644
 --- a/chrome/browser/profiles/profile_manager.h
 +++ b/chrome/browser/profiles/profile_manager.h
 @@ -21,7 +21,6 @@
@@ -8,9 +8,9 @@ index f27f42540638..0c05fbaaa6ed 100644
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
  #include "chrome/browser/profiles/profile_shortcut_manager.h"
- #include "chrome/browser/ui/browser_list_observer.h"
  #include "chrome/common/buildflags.h"
-@@ -204,8 +203,7 @@ class ProfileManager : public content::NotificationObserver,
+ #include "content/public/browser/notification_observer.h"
+@@ -207,8 +206,7 @@ class ProfileManager : public content::NotificationObserver,
    // profile is either scheduling or marked for deletion.
    void MaybeScheduleProfileForDeletion(
        const base::FilePath& profile_dir,

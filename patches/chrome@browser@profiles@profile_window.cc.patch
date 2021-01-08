@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_window.cc b/chrome/browser/profiles/profile_window.cc
-index 40727a5e29dd..0ad148f1f3b7 100644
+index e41d9e945806..fcab1859a6b4 100644
 --- a/chrome/browser/profiles/profile_window.cc
 +++ b/chrome/browser/profiles/profile_window.cc
-@@ -288,8 +288,7 @@ bool HasProfileSwitchTargets(Profile* profile) {
+@@ -291,8 +291,7 @@ bool HasProfileSwitchTargets(Profile* profile) {
    return number_of_profiles >= min_profiles;
  }
  
@@ -12,7 +12,7 @@ index 40727a5e29dd..0ad148f1f3b7 100644
    ProfileAttributesStorage& storage =
        g_browser_process->profile_manager()->GetProfileAttributesStorage();
  
-@@ -299,7 +298,6 @@ void CreateAndSwitchToNewProfile(ProfileManager::CreateCallback callback,
+@@ -302,7 +301,6 @@ void CreateAndSwitchToNewProfile(ProfileManager::CreateCallback callback,
        profiles::GetDefaultAvatarIconUrl(placeholder_avatar_index),
        base::Bind(&profiles::OpenBrowserWindowForProfile, callback, true, true,
                   false));

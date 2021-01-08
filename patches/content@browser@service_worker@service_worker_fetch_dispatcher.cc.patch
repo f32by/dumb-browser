@@ -1,0 +1,13 @@
+diff --git a/content/browser/service_worker/service_worker_fetch_dispatcher.cc b/content/browser/service_worker/service_worker_fetch_dispatcher.cc
+index db190f1972ec..96dc97421ee3 100644
+--- a/content/browser/service_worker/service_worker_fetch_dispatcher.cc
++++ b/content/browser/service_worker/service_worker_fetch_dispatcher.cc
+@@ -325,8 +325,6 @@ void CreateNetworkFactoryForNavigationPreloadOnUI(
+       frame_tree_node->current_frame_host()->GetProcess()->GetID(),
+       ContentBrowserClient::URLLoaderFactoryType::kNavigation, url::Origin(),
+       frame_tree_node->navigation_request()->GetNavigationId(),
+-      base::UkmSourceId::FromInt64(
+-          frame_tree_node->navigation_request()->GetNextPageUkmSourceId()),
+       &receiver, &header_client, &bypass_redirect_checks_unused,
+       /*disable_secure_dns=*/nullptr, /*factory_override=*/nullptr);
+ 

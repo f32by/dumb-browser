@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index 0e025853ca66..9d4b6006a978 100644
+index 457d9eee22f0..455bc7940027 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
 @@ -62,12 +62,6 @@ class PreviewsDecider;
@@ -12,19 +12,10 @@ index 0e025853ca66..9d4b6006a978 100644
 -class UrlCheckerDelegate;
 -}  // namespace safe_browsing
 -
- namespace ui {
- class NativeTheme;
- }
-@@ -284,8 +278,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
- #if defined(OS_CHROMEOS)
-   void OnTrustAnchorUsed(content::BrowserContext* browser_context) override;
- #endif
--  void OnSCTReportReady(content::BrowserContext* browser_context,
--                        const std::string& cache_key) override;
-   scoped_refptr<network::SharedURLLoaderFactory>
-   GetSystemSharedURLLoaderFactory() override;
-   network::mojom::NetworkContext* GetSystemNetworkContext() override;
-@@ -462,7 +454,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+ namespace sandbox {
+ class SeatbeltExecClient;
+ }  // namespace sandbox
+@@ -466,7 +460,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        int frame_tree_node_id) override;
    void RegisterNonNetworkNavigationURLLoaderFactories(
        int frame_tree_node_id,
@@ -32,15 +23,23 @@ index 0e025853ca66..9d4b6006a978 100644
        NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
        NonNetworkURLLoaderFactoryMap* factories) override;
    void RegisterNonNetworkWorkerMainResourceURLLoaderFactories(
-@@ -691,7 +682,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -487,7 +480,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+       URLLoaderFactoryType type,
+       const url::Origin& request_initiator,
+       base::Optional<int64_t> navigation_id,
+-      base::UkmSourceId ukm_source_id,
+       mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
+       mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
+           header_client,
+@@ -701,7 +693,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    bool ShouldAllowInsecurePrivateNetworkRequests(
        content::BrowserContext* browser_context,
        const GURL& url) override;
 -  ukm::UkmService* GetUkmService() override;
  
-  protected:
-   static bool HandleWebUI(GURL* url, content::BrowserContext* browser_context);
-@@ -732,34 +722,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+ #if defined(OS_MAC)
+   bool SetupEmbedderSandboxParameters(
+@@ -748,34 +739,10 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  

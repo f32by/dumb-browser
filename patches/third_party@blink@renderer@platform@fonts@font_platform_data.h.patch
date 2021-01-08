@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/fonts/font_platform_data.h b/third_party/blink/renderer/platform/fonts/font_platform_data.h
-index c5836d9beb97..2eec687062f6 100644
+index b10ff2e8be62..3f95f91460f0 100644
 --- a/third_party/blink/renderer/platform/fonts/font_platform_data.h
 +++ b/third_party/blink/renderer/platform/fonts/font_platform_data.h
 @@ -33,7 +33,6 @@
@@ -24,6 +24,6 @@ index c5836d9beb97..2eec687062f6 100644
 -  // the fingerprinting algorithm.
 -  IdentifiableToken ComputeTypefaceDigest() const;
 -
-  private:
- #if !defined(OS_WIN) && !defined(OS_MAC)
-   WebFontRenderStyle QuerySystemRenderStyle(const std::string& family,
+   // Gets the postscript name from the typeface.
+   String GetPostScriptName() const;
+ 

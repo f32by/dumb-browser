@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc b/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
-index 309323009dfd..4072f8f723b7 100644
+index 7a51d0953051..6261af5f45c1 100644
 --- a/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
 +++ b/third_party/blink/renderer/platform/graphics/video_frame_submitter.cc
-@@ -35,8 +35,7 @@ VideoFrameSubmitter::VideoFrameSubmitter(
+@@ -36,8 +36,7 @@ VideoFrameSubmitter::VideoFrameSubmitter(
        resource_provider_(std::move(resource_provider)),
        rotation_(media::VIDEO_ROTATION_0),
        roughness_reporter_(std::make_unique<cc::VideoPlaybackRoughnessReporter>(
@@ -12,7 +12,7 @@ index 309323009dfd..4072f8f723b7 100644
    DETACH_FROM_THREAD(thread_checker_);
  }
  
-@@ -65,8 +64,6 @@ void VideoFrameSubmitter::StartRendering() {
+@@ -66,8 +65,6 @@ void VideoFrameSubmitter::StartRendering() {
    if (compositor_frame_sink_) {
      compositor_frame_sink_->SetNeedsBeginFrame(IsDrivingFrameUpdates());
    }
@@ -21,15 +21,16 @@ index 309323009dfd..4072f8f723b7 100644
  }
  
  void VideoFrameSubmitter::StopRendering() {
-@@ -76,7 +73,6 @@ void VideoFrameSubmitter::StopRendering() {
+@@ -77,8 +74,6 @@ void VideoFrameSubmitter::StopRendering() {
  
    is_rendering_ = false;
  
 -  frame_trackers_.StopSequence(cc::FrameSequenceTrackerType::kVideo);
-   roughness_reporter_->Reset();
- 
+-
    UpdateSubmissionState();
-@@ -205,10 +201,6 @@ void VideoFrameSubmitter::OnBeginFrame(
+ }
+ 
+@@ -202,10 +197,6 @@ void VideoFrameSubmitter::OnBeginFrame(
  #endif
      if (!presentation_failure &&
          !ignorable_submitted_frames_.contains(pair.key)) {
@@ -40,7 +41,7 @@ index 309323009dfd..4072f8f723b7 100644
        // We assume that presentation feedback is reliable if
        // 1. (kHWCompletion) OS told us that the frame was shown at that time
        //  or
-@@ -226,11 +218,7 @@ void VideoFrameSubmitter::OnBeginFrame(
+@@ -223,11 +214,7 @@ void VideoFrameSubmitter::OnBeginFrame(
          "media", "VideoFrameSubmitter", TRACE_ID_LOCAL(pair.key),
          feedback.timestamp);
    }
@@ -52,7 +53,7 @@ index 309323009dfd..4072f8f723b7 100644
    base::ScopedClosureRunner roughness_processing(
        base::BindOnce(&cc::VideoPlaybackRoughnessReporter::ProcessFrameWindow,
                       base::Unretained(roughness_reporter_.get())));
-@@ -240,7 +228,6 @@ void VideoFrameSubmitter::OnBeginFrame(
+@@ -237,7 +224,6 @@ void VideoFrameSubmitter::OnBeginFrame(
    viz::BeginFrameAck current_begin_frame_ack(args, false);
    if (args.type == viz::BeginFrameArgs::MISSED || !is_rendering_) {
      compositor_frame_sink_->DidNotProduceFrame(current_begin_frame_ack);
@@ -60,7 +61,7 @@ index 309323009dfd..4072f8f723b7 100644
      return;
    }
  
-@@ -252,7 +239,6 @@ void VideoFrameSubmitter::OnBeginFrame(
+@@ -249,7 +235,6 @@ void VideoFrameSubmitter::OnBeginFrame(
                                      args.frame_time + args.interval,
                                      args.frame_time + 2 * args.interval)) {
      compositor_frame_sink_->DidNotProduceFrame(current_begin_frame_ack);
@@ -68,7 +69,7 @@ index 309323009dfd..4072f8f723b7 100644
      return;
    }
  
-@@ -261,7 +247,6 @@ void VideoFrameSubmitter::OnBeginFrame(
+@@ -258,7 +243,6 @@ void VideoFrameSubmitter::OnBeginFrame(
    auto video_frame = video_frame_provider_->GetCurrentFrame();
    if (!SubmitFrame(current_begin_frame_ack, std::move(video_frame))) {
      compositor_frame_sink_->DidNotProduceFrame(current_begin_frame_ack);
@@ -76,18 +77,18 @@ index 309323009dfd..4072f8f723b7 100644
      return;
    }
  
-@@ -498,8 +483,6 @@ bool VideoFrameSubmitter::SubmitFrame(
-       child_local_surface_id_allocator_.GetCurrentLocalSurfaceIdAllocation()
-           .local_surface_id(),
+@@ -500,8 +484,6 @@ bool VideoFrameSubmitter::SubmitFrame(
+   compositor_frame_sink_->SubmitCompositorFrame(
+       child_local_surface_id_allocator_.GetCurrentLocalSurfaceId(),
        std::move(compositor_frame), base::nullopt, 0);
 -  frame_trackers_.NotifySubmitFrame(frame_token, false, begin_frame_ack,
 -                                    last_begin_frame_args_);
    resource_provider_->ReleaseFrameResources();
  
    waiting_for_compositor_ack_ = true;
-@@ -527,8 +510,6 @@ void VideoFrameSubmitter::SubmitEmptyFrame() {
-       child_local_surface_id_allocator_.GetCurrentLocalSurfaceIdAllocation()
-           .local_surface_id(),
+@@ -528,8 +510,6 @@ void VideoFrameSubmitter::SubmitEmptyFrame() {
+   compositor_frame_sink_->SubmitCompositorFrame(
+       child_local_surface_id_allocator_.GetCurrentLocalSurfaceId(),
        std::move(compositor_frame), base::nullopt, 0);
 -  frame_trackers_.NotifySubmitFrame(frame_token, false, begin_frame_ack,
 -                                    last_begin_frame_args_);

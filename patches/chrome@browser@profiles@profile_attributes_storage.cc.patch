@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/profiles/profile_attributes_storage.cc b/chrome/browser/profiles/profile_attributes_storage.cc
-index feeee6cfa4d0..f53929adb22b 100644
+index a520ff8a4b50..576d4e66ec8a 100644
 --- a/chrome/browser/profiles/profile_attributes_storage.cc
 +++ b/chrome/browser/profiles/profile_attributes_storage.cc
-@@ -22,7 +22,6 @@
- #include "build/build_config.h"
+@@ -21,7 +21,6 @@
+ #include "base/threading/scoped_blocking_call.h"
  #include "chrome/browser/profiles/profile_avatar_downloader.h"
  #include "chrome/browser/profiles/profile_avatar_icon_util.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
  #include "chrome/grit/generated_resources.h"
  #include "components/policy/core/browser/browser_policy_connector.h"
  #include "components/profile_metrics/state.h"
-@@ -147,79 +146,6 @@ bool ProfileAttributesSortComparator::operator()(
+@@ -150,83 +149,6 @@ bool ProfileAttributesSortComparator::operator()(
    return a->GetPath().value() < b->GetPath().value();
  }
  
@@ -83,6 +83,10 @@ index feeee6cfa4d0..f53929adb22b 100644
 -  profile_metrics::LogProfileName(GetNameState(entry), suffix);
 -  profile_metrics::LogProfileAccountType(
 -      GetUnconsentedPrimaryAccountType(entry), suffix);
+-  profile_metrics::LogProfileSyncEnabled(
+-      entry->GetSigninState() ==
+-          SigninState::kSignedInWithConsentedPrimaryAccount,
+-      suffix);
 -  profile_metrics::LogProfileDaysSinceLastUse(
 -      (base::Time::Now() - entry->GetActiveTime()).InDays(), suffix);
 -}
@@ -90,8 +94,16 @@ index feeee6cfa4d0..f53929adb22b 100644
  }  // namespace
  
  ProfileAttributesStorage::ProfileAttributesStorage(PrefService* prefs)
-@@ -384,37 +310,6 @@ void ProfileAttributesStorage::RemoveObserver(Observer* obs) {
- }
+@@ -394,7 +316,6 @@ void ProfileAttributesStorage::RemoveObserver(Observer* obs) {
+ void ProfileAttributesStorage::RecordDeletedProfileState(
+     ProfileAttributesEntry* entry) {
+   DCHECK(entry);
+-  RecordProfileState(entry, profile_metrics::StateSuffix::kUponDeletion);
+   bool is_last_profile = GetNumberOfProfiles() <= 1u;
+   // If the profile has windows opened, they are still open at this moment.
+   // Thus, this really means that only the profile manager is open.
+@@ -405,37 +326,6 @@ void ProfileAttributesStorage::RecordDeletedProfileState(
+ #endif
  
  void ProfileAttributesStorage::RecordProfilesState() {
 -  std::vector<ProfileAttributesEntry*> entries = GetAllProfilesAttributes();

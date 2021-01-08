@@ -1,5 +1,5 @@
 diff --git a/weblayer/browser/tab_impl.cc b/weblayer/browser/tab_impl.cc
-index c84ec5a15be6..9b7d01a7b0c2 100644
+index 98d19f83b064..e36cf708653a 100644
 --- a/weblayer/browser/tab_impl.cc
 +++ b/weblayer/browser/tab_impl.cc
 @@ -19,7 +19,6 @@
@@ -18,7 +18,7 @@ index c84ec5a15be6..9b7d01a7b0c2 100644
  #include "components/webrtc/media_stream_devices_controller.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -63,7 +61,6 @@
+@@ -64,7 +62,6 @@
  #include "weblayer/browser/js_communication/web_message_host_factory_wrapper.h"
  #include "weblayer/browser/navigation_controller_impl.h"
  #include "weblayer/browser/no_state_prefetch/prerender_tab_helper.h"
@@ -26,7 +26,7 @@ index c84ec5a15be6..9b7d01a7b0c2 100644
  #include "weblayer/browser/page_specific_content_settings_delegate.h"
  #include "weblayer/browser/password_manager_driver_factory.h"
  #include "weblayer/browser/permissions/permission_manager_factory.h"
-@@ -319,9 +316,6 @@ TabImpl::TabImpl(ProfileImpl* profile,
+@@ -328,9 +325,6 @@ TabImpl::TabImpl(ProfileImpl* profile,
            web_contents_->GetBrowserContext()));
    PasswordManagerDriverFactory::CreateForWebContents(web_contents_.get());
  
@@ -36,7 +36,7 @@ index c84ec5a15be6..9b7d01a7b0c2 100644
  #if defined(OS_ANDROID)
    InfoBarService::CreateForWebContents(web_contents_.get());
    javascript_dialogs::TabModalDialogManager::CreateForWebContents(
-@@ -1087,13 +1081,6 @@ void TabImpl::AddNewContents(content::WebContents* source,
+@@ -1059,13 +1053,6 @@ void TabImpl::AddNewContents(content::WebContents* source,
      return;
    }
  

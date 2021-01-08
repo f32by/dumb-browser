@@ -244,7 +244,7 @@ const std::vector<MatcherRule>& GetMatcherRules() {
        "acm", "utparam", "pos", "abtest", "trackInfo", "utkn", "scene",
        "mytmenu", "turing_bucket", "lygClk", "impid", "bftTag", "bftRwd", "spm",
        "initiative_id", "sourceId", "ssid", "commend", "shareUniqueId",
-       "bxsign", },
+       "bxsign", "app_pvid", "ptl", "union_lens" },
       base::nullopt
     },
     // Tmall
@@ -321,7 +321,13 @@ const std::vector<MatcherRule>& GetMatcherRules() {
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?weibo\\.(com|cn)",
       {"sourceType", "from", "wm"},
       base::nullopt
-    }
+    },
+    // Weixin
+    {
+      "^https?:\\/\\/mp.weixin.qq\\.com",
+      {"mpshare", "chksm"},
+      base::nullopt
+    },
   });
 
   return kMatcherRules;

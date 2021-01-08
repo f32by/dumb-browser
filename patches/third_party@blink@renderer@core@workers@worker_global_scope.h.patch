@@ -1,16 +1,24 @@
 diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.h b/third_party/blink/renderer/core/workers/worker_global_scope.h
-index d4b5f097d1d2..a5d007bfea72 100644
+index 033762b86e86..3d7fc1e0fbee 100644
 --- a/third_party/blink/renderer/core/workers/worker_global_scope.h
 +++ b/third_party/blink/renderer/core/workers/worker_global_scope.h
-@@ -118,7 +118,6 @@ class CORE_EXPORT WorkerGlobalScope
+@@ -54,7 +54,6 @@ struct BlinkTransferableMessage;
+ class ConsoleMessage;
+ class FetchClientSettingsObjectSnapshot;
+ class FontFaceSet;
+-class FontMatchingMetrics;
+ class InstalledScriptsManager;
+ class OffscreenFontSelector;
+ class WorkerResourceTimingNotifier;
+@@ -119,7 +118,6 @@ class CORE_EXPORT WorkerGlobalScope
    const UserAgentMetadata& GetUserAgentMetadata() const { return ua_metadata_; }
    HttpsState GetHttpsState() const override { return https_state_; }
    scheduler::WorkerScheduler* GetScheduler() final;
 -  ukm::UkmRecorder* UkmRecorder() final;
+   ScriptWrappable* ToScriptWrappable() final { return this; }
  
    void AddConsoleMessageImpl(ConsoleMessage*, bool discard_duplicates) final;
-   BrowserInterfaceBrokerProxy& GetBrowserInterfaceBroker() final;
-@@ -211,8 +210,6 @@ class CORE_EXPORT WorkerGlobalScope
+@@ -213,21 +211,14 @@ class CORE_EXPORT WorkerGlobalScope
    std::unique_ptr<WorkerMainScriptLoadParameters>
    TakeWorkerMainScriptLoadingParametersForModules();
  
@@ -19,7 +27,11 @@ index d4b5f097d1d2..a5d007bfea72 100644
    // Returns the token uniquely identifying this worker. The token type will
    // match the actual worker type.
    virtual WorkerToken GetWorkerToken() const = 0;
-@@ -220,8 +217,7 @@ class CORE_EXPORT WorkerGlobalScope
+ 
+-  // Tracks and reports metrics of attempted font match attempts (both
+-  // successful and not successful) by the worker.
+-  FontMatchingMetrics* GetFontMatchingMetrics();
+-
   protected:
    WorkerGlobalScope(std::unique_ptr<GlobalScopeCreationParams>,
                      WorkerThread*,
@@ -29,7 +41,18 @@ index d4b5f097d1d2..a5d007bfea72 100644
  
    // ExecutionContext
    void ExceptionThrown(ErrorEvent*) override;
-@@ -302,15 +298,11 @@ class CORE_EXPORT WorkerGlobalScope
+@@ -287,10 +278,6 @@ class CORE_EXPORT WorkerGlobalScope
+ 
+   Member<OffscreenFontSelector> font_selector_;
+ 
+-  // Tracks and reports UKM metrics of the number of attempted font family match
+-  // attempts (both successful and not successful) by the worker.
+-  std::unique_ptr<FontMatchingMetrics> font_matching_metrics_;
+-
+   blink::BrowserInterfaceBrokerProxy browser_interface_broker_proxy_;
+ 
+   // State transition about worker top-level script evaluation.
+@@ -312,15 +299,11 @@ class CORE_EXPORT WorkerGlobalScope
  
    HttpsState https_state_;
  

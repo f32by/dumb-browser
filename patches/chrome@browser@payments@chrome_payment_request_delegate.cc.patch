@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/payments/chrome_payment_request_delegate.cc b/chrome/browser/payments/chrome_payment_request_delegate.cc
-index bc50c3851e55..5428625baa81 100644
+index edc94bd7c755..873eb859c3e1 100644
 --- a/chrome/browser/payments/chrome_payment_request_delegate.cc
 +++ b/chrome/browser/payments/chrome_payment_request_delegate.cc
-@@ -35,7 +35,6 @@
- #include "components/payments/core/payment_prefs.h"
- #include "components/signin/public/identity_manager/identity_manager.h"
+@@ -37,7 +37,6 @@
+ #include "content/public/browser/render_frame_host.h"
+ #include "content/public/browser/render_process_host.h"
  #include "content/public/browser/web_contents.h"
 -#include "services/metrics/public/cpp/ukm_recorder.h"
  #include "services/network/public/cpp/shared_url_loader_factory.h"
  #include "third_party/libaddressinput/chromium/chrome_metadata_source.h"
  #include "third_party/libaddressinput/chromium/chrome_storage_impl.h"
-@@ -154,10 +153,6 @@ ChromePaymentRequestDelegate::GetAddressNormalizer() {
+@@ -169,10 +168,6 @@ ChromePaymentRequestDelegate::GetAddressNormalizer() {
    return autofill::AddressNormalizerFactory::GetInstance();
  }
  
@@ -19,5 +19,5 @@ index bc50c3851e55..5428625baa81 100644
 -}
 -
  std::string ChromePaymentRequestDelegate::GetAuthenticatedEmail() const {
-   // Check if the profile is authenticated.  Guest profiles or incognito
-   // windows may not have a sign in manager, and are considered not
+   auto* rfh = content::RenderFrameHost::FromID(frame_routing_id_);
+   if (!rfh)

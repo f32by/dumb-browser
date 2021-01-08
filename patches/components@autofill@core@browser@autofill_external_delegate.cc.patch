@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/autofill_external_delegate.cc b/components/autofill/core/browser/autofill_external_delegate.cc
-index b06b5944a251..f4a4da574a8c 100644
+index 3b1c49daf947..87225fede4c6 100644
 --- a/components/autofill/core/browser/autofill_external_delegate.cc
 +++ b/components/autofill/core/browser/autofill_external_delegate.cc
 @@ -21,7 +21,6 @@
@@ -10,7 +10,7 @@ index b06b5944a251..f4a4da574a8c 100644
  #include "components/autofill/core/browser/ui/popup_item_ids.h"
  #include "components/autofill/core/common/autofill_features.h"
  #include "components/autofill/core/common/autofill_payments_features.h"
-@@ -209,11 +208,6 @@ void AutofillExternalDelegate::OnPopupShown() {
+@@ -213,11 +212,6 @@ void AutofillExternalDelegate::OnPopupShown() {
                                  : mojom::AutofillState::kAutocompleteAvailable);
    manager_->DidShowSuggestions(has_autofill_suggestions_, query_form_,
                                 query_field_);
@@ -22,7 +22,7 @@ index b06b5944a251..f4a4da574a8c 100644
  }
  
  void AutofillExternalDelegate::OnPopupHidden() {
-@@ -243,7 +237,6 @@ void AutofillExternalDelegate::DidAcceptSuggestion(const base::string16& value,
+@@ -247,7 +241,6 @@ void AutofillExternalDelegate::DidAcceptSuggestion(const base::string16& value,
      manager_->ShowAutofillSettings(popup_type_ == PopupType::kCreditCards);
    } else if (identifier == POPUP_ITEM_ID_CLEAR_FORM) {
      // User selected 'Clear form'.
@@ -30,7 +30,7 @@ index b06b5944a251..f4a4da574a8c 100644
      driver_->RendererShouldClearFilledSection();
    } else if (identifier == POPUP_ITEM_ID_PASSWORD_ENTRY ||
               identifier == POPUP_ITEM_ID_USERNAME_ENTRY ||
-@@ -255,7 +248,6 @@ void AutofillExternalDelegate::DidAcceptSuggestion(const base::string16& value,
+@@ -259,7 +252,6 @@ void AutofillExternalDelegate::DidAcceptSuggestion(const base::string16& value,
    } else if (identifier == POPUP_ITEM_ID_AUTOCOMPLETE_ENTRY) {
      // User selected an Autocomplete, so we fill directly.
      driver_->RendererShouldFillFieldWithValue(value);
@@ -38,7 +38,7 @@ index b06b5944a251..f4a4da574a8c 100644
      manager_->OnAutocompleteEntrySelected(value);
    } else if (identifier == POPUP_ITEM_ID_SCAN_CREDIT_CARD) {
      manager_->client()->ScanCreditCard(base::BindOnce(
-@@ -274,20 +266,9 @@ void AutofillExternalDelegate::DidAcceptSuggestion(const base::string16& value,
+@@ -278,20 +270,9 @@ void AutofillExternalDelegate::DidAcceptSuggestion(const base::string16& value,
      NOTREACHED();
  #endif
    } else {

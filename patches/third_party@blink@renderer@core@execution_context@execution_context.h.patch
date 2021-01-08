@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/execution_context/execution_context.h b/third_party/blink/renderer/core/execution_context/execution_context.h
-index f1ff5a611976..d61dbd24438d 100644
+index da9bb4a03a8c..222171c52cc4 100644
 --- a/third_party/blink/renderer/core/execution_context/execution_context.h
 +++ b/third_party/blink/renderer/core/execution_context/execution_context.h
 @@ -33,7 +33,6 @@
@@ -12,7 +12,7 @@ index f1ff5a611976..d61dbd24438d 100644
  #include "third_party/blink/public/common/tokens/tokens.h"
 @@ -63,10 +62,6 @@ class SingleThreadTaskRunner;
  class UnguessableToken;
- }
+ }  // namespace base
  
 -namespace ukm {
 -class UkmRecorder;
@@ -21,9 +21,9 @@ index f1ff5a611976..d61dbd24438d 100644
  namespace blink {
  
  class Agent;
-@@ -376,9 +371,6 @@ class CORE_EXPORT ExecutionContext : public Supplementable<ExecutionContext>,
-   // Implementation of WindowOrWorkerGlobalScope.crossOriginIsolated.
-   bool IsCrossOriginIsolated() const;
+@@ -378,9 +373,6 @@ class CORE_EXPORT ExecutionContext : public Supplementable<ExecutionContext>,
+   // https://html.spec.whatwg.org/C/webappapis.html#concept-settings-object-cross-origin-isolated-capability
+   virtual bool CrossOriginIsolatedCapability() const = 0;
  
 -  virtual ukm::UkmRecorder* UkmRecorder() { return nullptr; }
 -  virtual ukm::SourceId UkmSourceID() const { return ukm::kInvalidSourceId; }

@@ -1,5 +1,5 @@
 diff --git a/cc/metrics/frame_sequence_metrics.cc b/cc/metrics/frame_sequence_metrics.cc
-index 01c2a5fb226c..b6f52914711c 100644
+index d6154c69bdf7..501c1cebff37 100644
 --- a/cc/metrics/frame_sequence_metrics.cc
 +++ b/cc/metrics/frame_sequence_metrics.cc
 @@ -15,7 +15,6 @@
@@ -22,7 +22,7 @@ index 01c2a5fb226c..b6f52914711c 100644
    ThreadType thread_type = GetEffectiveThread();
  
    // Only construct |jank_reporter_| if it has a valid tracker and thread type.
-@@ -421,8 +419,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
+@@ -438,8 +436,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
        ShouldReportForAnimation(sequence_type, thread_type);
    const bool is_interaction = ShouldReportForInteraction(metrics, thread_type);
  
@@ -31,7 +31,7 @@ index 01c2a5fb226c..b6f52914711c 100644
    if (is_animation) {
      TRACE_EVENT_INSTANT2("cc,benchmark", "PercentDroppedFrames.AllAnimations",
                           TRACE_EVENT_SCOPE_THREAD, "frames_expected",
-@@ -431,10 +427,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
+@@ -448,10 +444,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
  
      UMA_HISTOGRAM_PERCENTAGE(
          "Graphics.Smoothness.PercentDroppedFrames.AllAnimations", percent);
@@ -42,7 +42,7 @@ index 01c2a5fb226c..b6f52914711c 100644
    }
  
    if (is_interaction) {
-@@ -444,10 +436,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
+@@ -461,10 +453,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
                           data.frames_produced);
      UMA_HISTOGRAM_PERCENTAGE(
          "Graphics.Smoothness.PercentDroppedFrames.AllInteractions", percent);
@@ -53,7 +53,7 @@ index 01c2a5fb226c..b6f52914711c 100644
    }
  
    if (is_animation || is_interaction) {
-@@ -457,10 +445,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
+@@ -474,10 +462,6 @@ int FrameSequenceMetrics::ThroughputData::ReportDroppedFramePercentHistogram(
                           data.frames_produced);
      UMA_HISTOGRAM_PERCENTAGE(
          "Graphics.Smoothness.PercentDroppedFrames.AllSequences", percent);

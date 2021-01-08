@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/form_structure.h b/components/autofill/core/browser/form_structure.h
-index 788f8b7621d1..ee6e3b54061d 100644
+index a18c4d9b5811..1be900f32eb6 100644
 --- a/components/autofill/core/browser/form_structure.h
 +++ b/components/autofill/core/browser/form_structure.h
 @@ -19,7 +19,6 @@
@@ -10,24 +10,17 @@ index 788f8b7621d1..ee6e3b54061d 100644
  #include "components/autofill/core/browser/autofill_type.h"
  #include "components/autofill/core/browser/field_types.h"
  #include "components/autofill/core/browser/form_types.h"
-@@ -96,14 +95,12 @@ class FormStructure {
-   static void ParseQueryResponse(
-       std::string response,
-       const std::vector<FormStructure*>& forms,
--      const FormAndFieldSignatures& encoded_signatures,
--      AutofillMetrics::FormInteractionsUkmLogger*);
-+      const FormAndFieldSignatures& encoded_signatures);
- 
+@@ -97,8 +96,7 @@ class FormStructure {
    static void ParseApiQueryResponse(
        base::StringPiece payload,
        const std::vector<FormStructure*>& forms,
--      const FormAndFieldSignatures& encoded_signatures,
+-      const std::vector<FormSignature>& queried_form_signatures,
 -      AutofillMetrics::FormInteractionsUkmLogger*);
-+      const FormAndFieldSignatures& encoded_signatures);
++      const std::vector<FormSignature>& queried_form_signatures);
  
    // Returns predictions using the details from the given |form_structures| and
    // their fields' predicted types.
-@@ -163,31 +160,6 @@ class FormStructure {
+@@ -158,31 +156,6 @@ class FormStructure {
                           const bool should_keep_cached_value,
                           const bool only_server_and_autofill_state);
  
@@ -59,7 +52,7 @@ index 788f8b7621d1..ee6e3b54061d 100644
    // Classifies each field in |fields_| based upon its |autocomplete| attribute,
    // if the attribute is available.  The association is stored into the field's
    // |heuristic_type|.
-@@ -365,8 +337,6 @@ class FormStructure {
+@@ -360,8 +333,6 @@ class FormStructure {
    // - Name for Autofill of first field
    base::string16 GetIdentifierForRefill() const;
  
@@ -68,31 +61,31 @@ index 788f8b7621d1..ee6e3b54061d 100644
    void set_randomized_encoder(std::unique_ptr<RandomizedEncoder> encoder);
  
    void set_is_rich_query_enabled(bool v) { is_rich_query_enabled_ = v; }
-@@ -394,11 +364,8 @@ class FormStructure {
+@@ -389,11 +360,8 @@ class FormStructure {
    static void ProcessQueryResponseForTesting(
-       const AutofillQueryResponseContents& response,
+       const AutofillQueryResponse& response,
        const std::vector<FormStructure*>& forms,
--      const FormAndFieldSignatures& encoded_signatures,
+-      const std::vector<FormSignature>& queried_form_signatures,
 -      AutofillMetrics::FormInteractionsUkmLogger*
 -          form_interactions_ukm_logger) {
--    ProcessQueryResponse(response, forms, encoded_signatures,
+-    ProcessQueryResponse(response, forms, queried_form_signatures,
 -                         form_interactions_ukm_logger);
-+      const FormAndFieldSignatures& encoded_signatures) {
-+    ProcessQueryResponse(response, forms, encoded_signatures);
++      const std::vector<FormSignature>& queried_form_signatures) {
++    ProcessQueryResponse(response, forms, queried_form_signatures);
    }
  
   private:
-@@ -464,8 +431,7 @@ class FormStructure {
+@@ -459,8 +427,7 @@ class FormStructure {
    static void ProcessQueryResponse(
-       const AutofillQueryResponseContents& response,
+       const AutofillQueryResponse& response,
        const std::vector<FormStructure*>& forms,
--      const FormAndFieldSignatures& encoded_signatures,
+-      const std::vector<FormSignature>& queried_form_signatures,
 -      AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger);
-+      const FormAndFieldSignatures& encoded_signatures);
++      const std::vector<FormSignature>& queried_form_signatures);
  
    FormStructure(FormSignature form_signature,
                  const std::vector<FieldSignature>& field_signatures);
-@@ -480,8 +446,7 @@ class FormStructure {
+@@ -475,8 +442,7 @@ class FormStructure {
    // also autofilled to take care of the synthetic fields.
    void ApplyRationalizationsToHiddenSelects(
        size_t field_index,
@@ -102,7 +95,7 @@ index 788f8b7621d1..ee6e3b54061d 100644
  
    // Returns true if we can replace server predictions with the heuristics one.
    bool HeuristicsPredictionsAreApplicable(size_t upper_index,
-@@ -495,8 +460,7 @@ class FormStructure {
+@@ -490,8 +456,7 @@ class FormStructure {
        size_t upper_index,
        size_t lower_index,
        ServerFieldType upper_type,
@@ -112,7 +105,7 @@ index 788f8b7621d1..ee6e3b54061d 100644
  
    // Returns true if the fields_[index] server type should be rationalized to
    // ADDRESS_HOME_COUNTRY.
-@@ -505,23 +469,20 @@ class FormStructure {
+@@ -500,23 +465,20 @@ class FormStructure {
    // Set fields_[|field_index|] to |new_type| and log this change.
    void ApplyRationalizationsToFieldAndLog(
        size_t field_index,
@@ -140,7 +133,7 @@ index 788f8b7621d1..ee6e3b54061d 100644
  
    // Filters out fields that don't meet the relationship ruleset for their type
    // defined in |type_relationships_rules_|.
-@@ -693,11 +654,6 @@ class FormStructure {
+@@ -690,11 +652,6 @@ class FormStructure {
    // has no value, |password_length_vote_| should be ignored.
    size_t password_length_vote_;
  

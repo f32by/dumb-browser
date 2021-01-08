@@ -1,17 +1,19 @@
 diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
-index 2f35115caa53..65199314cc3c 100644
+index cca2abb108c8..880bbd54827d 100644
 --- a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
 +++ b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
-@@ -36,8 +36,6 @@
+@@ -36,10 +36,6 @@
  #include "base/metrics/histogram_functions.h"
  #include "base/rand_util.h"
  #include "third_party/blink/public/common/features.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metrics.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiable_surface.h"
  #include "third_party/blink/public/platform/platform.h"
  #include "third_party/blink/public/platform/task_type.h"
  #include "third_party/blink/renderer/bindings/modules/v8/rendering_context.h"
-@@ -136,9 +134,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(
+@@ -138,9 +134,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(
            &CanvasRenderingContext2D::TryRestoreContextEvent),
        should_prune_local_font_cache_(false),
        random_generator_((uint32_t)base::RandUint64()),
@@ -22,7 +24,7 @@ index 2f35115caa53..65199314cc3c 100644
    if (canvas->GetDocument().GetSettings() &&
        canvas->GetDocument().GetSettings()->GetAntialiasedClips2dCanvasEnabled())
      clip_antialiasing_ = kAntiAliased;
-@@ -502,8 +498,6 @@ void CanvasRenderingContext2D::setFont(const String& new_font) {
+@@ -504,8 +498,6 @@ void CanvasRenderingContext2D::setFont(const String& new_font) {
    // documents.
    if (!canvas()->GetDocument().GetFrame())
      return;
@@ -31,20 +33,21 @@ index 2f35115caa53..65199314cc3c 100644
  
    base::TimeTicks start_time = base::TimeTicks::Now();
    canvas()->GetDocument().UpdateStyleAndLayoutTreeForNode(canvas());
-@@ -680,12 +674,6 @@ ImageData* CanvasRenderingContext2D::getImageData(
+@@ -682,13 +674,6 @@ ImageData* CanvasRenderingContext2D::getImageData(
      int sw,
      int sh,
      ExceptionState& exception_state) {
--  blink::IdentifiabilityMetricBuilder(ukm_source_id_)
--      .Set(blink::IdentifiableSurface::FromTypeAndInput(
--               blink::IdentifiableSurface::Type::kCanvasReadback,
--               GetContextType()),
--           0)
--      .Record(ukm_recorder_);
+-  const IdentifiableSurface surface = IdentifiableSurface::FromTypeAndToken(
+-      IdentifiableSurface::Type::kCanvasReadback, GetContextType());
+-  if (IdentifiabilityStudySettings::Get()->ShouldSample(surface)) {
+-    blink::IdentifiabilityMetricBuilder(ukm_source_id_)
+-        .Set(surface, 0)
+-        .Record(ukm_recorder_);
+-  }
    return BaseRenderingContext2D::getImageData(sx, sy, sw, sh, exception_state);
  }
  
-@@ -865,14 +853,6 @@ void CanvasRenderingContext2D::DrawTextInternal(
+@@ -868,14 +853,6 @@ void CanvasRenderingContext2D::DrawTextInternal(
    if (max_width && (!std::isfinite(*max_width) || *max_width <= 0))
      return;
  

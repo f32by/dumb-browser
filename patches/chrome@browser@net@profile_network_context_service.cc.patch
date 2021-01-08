@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/net/profile_network_context_service.cc b/chrome/browser/net/profile_network_context_service.cc
+index 60bb552448bd..02c85219c8c3 100644
+--- a/chrome/browser/net/profile_network_context_service.cc
++++ b/chrome/browser/net/profile_network_context_service.cc
+@@ -42,7 +42,6 @@
+ #include "components/pref_registry/pref_registry_syncable.h"
+ #include "components/prefs/pref_registry_simple.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "content/public/browser/browser_context.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/network_service_instance.h"
+@@ -741,10 +740,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+ 
+   // Initialize the network context to do SCT auditing only if the current
+   // profile is opted in to Safe Browsing Extended Reporting.
+-  if (!profile_->IsOffTheRecord() &&
+-      safe_browsing::IsExtendedReportingEnabled(*profile_->GetPrefs())) {
+-    network_context_params->enable_sct_auditing = true;
+-  }
++  network_context_params->enable_sct_auditing = false;
+ 
+   network_context_params->ct_policy = GetCTPolicy();
+ 

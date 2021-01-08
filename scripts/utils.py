@@ -67,7 +67,7 @@ def check_patch_consistency(treat_as_fatal=False):
     return True
 
 
-def apply_patches():
+def apply_patches(stop_when_failed=False):
     with open(PATCH_LIST_FILE, 'r') as f:
         patch_list = f.read().split('\n')
 
@@ -83,7 +83,8 @@ def apply_patches():
 
         if not ret:
             print('Failed to patch file ', p)
-            return False
+            if stop_when_failed:
+                return False
 
     print('Patches applied.')
     return True

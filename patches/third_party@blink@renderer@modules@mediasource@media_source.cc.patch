@@ -1,28 +1,48 @@
 diff --git a/third_party/blink/renderer/modules/mediasource/media_source.cc b/third_party/blink/renderer/modules/mediasource/media_source.cc
-index ea74cdbdc556..e8a4e1a228dd 100644
+index 81a68d896a2b..383877b45659 100644
 --- a/third_party/blink/renderer/modules/mediasource/media_source.cc
 +++ b/third_party/blink/renderer/modules/mediasource/media_source.cc
-@@ -339,8 +339,6 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
+@@ -9,9 +9,6 @@
+ #include "base/memory/ptr_util.h"
+ #include "base/metrics/histogram_functions.h"
+ #include "media/base/logging_override_if_enabled.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiable_surface.h"
+ #include "third_party/blink/public/platform/web_media_source.h"
+ #include "third_party/blink/public/platform/web_source_buffer.h"
+ #include "third_party/blink/renderer/core/dom/events/event.h"
+@@ -29,7 +26,6 @@
+ #include "third_party/blink/renderer/platform/instrumentation/use_counter.h"
+ #include "third_party/blink/renderer/platform/network/mime/content_type.h"
+ #include "third_party/blink/renderer/platform/network/mime/mime_type_registry.h"
+-#include "third_party/blink/renderer/platform/privacy_budget/identifiability_digest_helpers.h"
+ #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
+ 
+ using blink::WebMediaSource;
+@@ -336,7 +332,6 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
        MIMETypeRegistry::kIsNotSupported) {
      DVLOG(1) << __func__ << "(" << type
               << ") -> false (not supported by HTMLMediaElement)";
--    if (IsUserInIdentifiabilityStudy())
--      RecordIdentifiabilityMetric(context, type, false);
+-    RecordIdentifiabilityMetric(context, type, false);
      return false;
    }
  
-@@ -363,22 +361,9 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
+@@ -359,25 +354,9 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
                  MIMETypeRegistry::SupportsMediaSourceMIMEType(
                      content_type.GetType(), codecs);
    DVLOG(2) << __func__ << "(" << type << ") -> " << (result ? "true" : "false");
--  if (IsUserInIdentifiabilityStudy())
--    RecordIdentifiabilityMetric(context, type, result);
+-  RecordIdentifiabilityMetric(context, type, result);
    return result;
  }
  
 -void MediaSource::RecordIdentifiabilityMetric(ExecutionContext* context,
 -                                              const String& type,
 -                                              bool result) {
+-  if (!IdentifiabilityStudySettings::Get()->ShouldSample(
+-          blink::IdentifiableSurface::Type::kMediaSource_IsTypeSupported)) {
+-    return;
+-  }
 -  blink::IdentifiabilityMetricBuilder(context->UkmSourceID())
 -      .Set(blink::IdentifiableSurface::FromTypeAndToken(
 -               blink::IdentifiableSurface::Type::kMediaSource_IsTypeSupported,

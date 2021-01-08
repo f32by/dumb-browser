@@ -1,8 +1,24 @@
 diff --git a/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc b/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc
-index 69ea90a3249f..c1c57fd99d2c 100644
+index 45d2516eef2c..ee3f87f137ef 100644
 --- a/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc
 +++ b/chrome/browser/prerender/isolated/isolated_prerender_tab_helper.cc
-@@ -89,17 +89,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
+@@ -21,7 +21,6 @@
+ #include "chrome/browser/prerender/isolated/isolated_prerender_features.h"
+ #include "chrome/browser/prerender/isolated/isolated_prerender_network_context_client.h"
+ #include "chrome/browser/prerender/isolated/isolated_prerender_params.h"
+-#include "chrome/browser/prerender/isolated/isolated_prerender_prefetch_metrics_collector.h"
+ #include "chrome/browser/prerender/isolated/isolated_prerender_proxy_configurator.h"
+ #include "chrome/browser/prerender/isolated/isolated_prerender_service.h"
+ #include "chrome/browser/prerender/isolated/isolated_prerender_service_factory.h"
+@@ -31,7 +30,6 @@
+ #include "components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.h"
+ #include "components/google/core/common/google_util.h"
+ #include "components/language/core/browser/pref_names.h"
+-#include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/prerender/browser/prerender_manager.h"
+ #include "components/search_engines/template_url_service.h"
+@@ -91,17 +89,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
    return end - start;
  }
  
@@ -20,10 +36,64 @@ index 69ea90a3249f..c1c57fd99d2c 100644
  void OnGotCookieList(
      const GURL& url,
      IsolatedPrerenderTabHelper::OnEligibilityResultCallback result_callback,
-@@ -988,10 +977,6 @@ void IsolatedPrerenderTabHelper::OnPredictionUpdated(
+@@ -352,11 +339,6 @@ void IsolatedPrerenderTabHelper::NotifyPrefetchProbeLatency(
+ void IsolatedPrerenderTabHelper::ReportProbeResult(
+     const GURL& url,
+     IsolatedPrerenderProbeResult result) {
+-  if (!page_->prefetch_metrics_collector_) {
+-    return;
+-  }
+-  page_->prefetch_metrics_collector_->OnMainframeNavigationProbeResult(url,
+-                                                                       result);
+ }
+ 
+ void IsolatedPrerenderTabHelper::OnPrefetchStatusUpdate(
+@@ -566,8 +548,6 @@ void IsolatedPrerenderTabHelper::DidFinishNavigation(
+       std::make_unique<CurrentPageLoad>(navigation_handle);
+ 
+   if (page_->srp_metrics_->predicted_urls_count_ > 0) {
+-    page_->prefetch_metrics_collector_->OnMainframeNavigatedTo(url);
+-
+     // If the previous page load was a Google SRP, the AfterSRPMetrics class
+     // needs to be created now from the SRP's |page_| and then set on the new
+     // one when we set it at the end of this method.
+@@ -801,16 +781,6 @@ void IsolatedPrerenderTabHelper::OnPrefetchComplete(
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+   DCHECK(PrefetchingActive());
+ 
+-  base::UmaHistogramSparse("IsolatedPrerender.Prefetch.Mainframe.NetError",
+-                           std::abs(loader->NetError()));
+-
+-  if (loader->CompletionStatus()) {
+-    page_->prefetch_metrics_collector_->OnMainframeResourcePrefetched(
+-        url, page_->original_prediction_ordering_.find(url)->second,
+-        loader->ResponseInfo() ? loader->ResponseInfo()->Clone() : nullptr,
+-        loader->CompletionStatus().value());
+-  }
+-
+   if (loader->NetError() != net::OK) {
+     OnPrefetchStatusUpdate(
+         url, IsolatedPrerenderPrefetchStatus::kPrefetchFailedNetError);
+@@ -960,8 +930,6 @@ void IsolatedPrerenderTabHelper::DoNoStatePrefetch() {
+       service->OnAboutToNoStatePrefetch(url, CopyPrefetchResponseForNSP(url));
+   DCHECK_EQ(manager, service->GetSubresourceManagerForURL(url));
+ 
+-  manager->SetPrefetchMetricsCollector(page_->prefetch_metrics_collector_);
+-
+   manager->SetCreateIsolatedLoaderFactoryCallback(base::BindRepeating(
+       &IsolatedPrerenderTabHelper::CreateNewURLLoaderFactory,
+       weak_factory_.GetWeakPtr()));
+@@ -1089,17 +1057,6 @@ void IsolatedPrerenderTabHelper::OnPredictionUpdated(
      return;
    }
  
+-  if (!page_->prefetch_metrics_collector_) {
+-    page_->prefetch_metrics_collector_ =
+-        base::MakeRefCounted<IsolatedPrerenderPrefetchMetricsCollector>(
+-            page_->navigation_start_,
+-            web_contents()->GetMainFrame()->GetPageUkmSourceId());
+-  }
+-
 -  // It's very likely we'll prefetch something at this point, so inform PLM to
 -  // start tracking metrics.
 -  InformPLMOfLikelyPrefetching(web_contents());
@@ -31,3 +101,16 @@ index 69ea90a3249f..c1c57fd99d2c 100644
    page_->srp_metrics_->predicted_urls_count_ +=
        prediction.value().sorted_predicted_urls().size();
  
+@@ -1228,12 +1185,6 @@ void IsolatedPrerenderTabHelper::OnGotEligibilityResult(
+   if (!eligible) {
+     if (status) {
+       OnPrefetchStatusUpdate(url, status.value());
+-
+-      if (page_->prefetch_metrics_collector_) {
+-        page_->prefetch_metrics_collector_->OnMainframeResourceNotEligible(
+-            url, page_->original_prediction_ordering_.find(url)->second,
+-            *status);
+-      }
+     }
+     return;
+   }

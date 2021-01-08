@@ -1,8 +1,8 @@
 diff --git a/extensions/browser/extension_navigation_throttle.cc b/extensions/browser/extension_navigation_throttle.cc
-index cd5ba5bbfd2c..c1a242dc3fdf 100644
+index cf55930d6574..9dcf1f1757eb 100644
 --- a/extensions/browser/extension_navigation_throttle.cc
 +++ b/extensions/browser/extension_navigation_throttle.cc
-@@ -24,7 +24,6 @@
+@@ -26,7 +26,6 @@
  #include "extensions/common/constants.h"
  #include "extensions/common/extension.h"
  #include "extensions/common/extension_set.h"
@@ -10,7 +10,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
  #include "extensions/common/manifest_handlers/icons_handler.h"
  #include "extensions/common/manifest_handlers/web_accessible_resources_info.h"
  #include "extensions/common/manifest_handlers/webview_info.h"
-@@ -127,13 +126,8 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -148,13 +147,8 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
      return content::NavigationThrottle::PROCEED;
    }
  
@@ -24,7 +24,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
      // TODO(nick): This yields an unsatisfying error page; use a different error
      // code once that's supported. https://crbug.com/649869
      return content::NavigationThrottle::BLOCK_REQUEST;
-@@ -147,8 +141,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -168,8 +162,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
                                   : url.path_piece().substr(1);
      if (!IconsInfo::GetIcons(target_extension)
               .ContainsPath(resource_root_relative_path)) {
@@ -33,7 +33,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
        return content::NavigationThrottle::BLOCK_REQUEST;
      }
    }
-@@ -167,8 +159,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -188,8 +180,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
          target_extension->permissions_data()->HasAPIPermission(
              APIPermission::kWebView);
      if (!has_webview_permission) {
@@ -42,7 +42,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
        return content::NavigationThrottle::CANCEL;
      }
    }
-@@ -195,8 +185,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -216,8 +206,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
            storage_partition_config.partition_name(), url.path(),
            navigation_handle()->GetPageTransition(), &allowed);
        if (!allowed) {
@@ -51,7 +51,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
          return content::NavigationThrottle::BLOCK_REQUEST;
        }
      }
-@@ -205,8 +193,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -226,8 +214,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
    if (target_extension->is_platform_app() &&
        ShouldBlockNavigationToPlatformAppResource(target_extension,
                                                   web_contents)) {
@@ -60,7 +60,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
      return content::NavigationThrottle::BLOCK_REQUEST;
    }
  
-@@ -242,8 +228,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -263,8 +249,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
  
    // Cancel cross-origin-initiator navigations to blob: or filesystem: URLs.
    if (!url_has_extension_scheme) {
@@ -69,7 +69,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
      return content::NavigationThrottle::CANCEL;
    }
  
-@@ -251,8 +235,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -272,8 +256,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
    // manifest's "web_accessible_resources" section.
    if (!WebAccessibleResourcesInfo::IsResourceWebAccessible(target_extension,
                                                             url.path())) {
@@ -78,7 +78,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
      return content::NavigationThrottle::BLOCK_REQUEST;
    }
  
-@@ -265,8 +247,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -286,8 +268,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
    // here.
    // TODO(karandeepb): Investigate if this check can be removed.
    if (target_extension->is_platform_app()) {
@@ -87,7 +87,7 @@ index cd5ba5bbfd2c..c1a242dc3fdf 100644
      return content::NavigationThrottle::CANCEL;
    }
  
-@@ -275,8 +255,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -296,8 +276,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
        registry->enabled_extensions().GetExtensionOrAppByURL(
            initiator_origin.GetURL());
    if (initiator_extension && initiator_extension->is_platform_app()) {

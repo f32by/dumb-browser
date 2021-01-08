@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/optimization_guide/optimization_guide_hints_manager.cc b/chrome/browser/optimization_guide/optimization_guide_hints_manager.cc
-index 892d0d0d2499..9bf94f805dca 100644
+index 10c01ef9d0d9..ac1ad6b98d4e 100644
 --- a/chrome/browser/optimization_guide/optimization_guide_hints_manager.cc
 +++ b/chrome/browser/optimization_guide/optimization_guide_hints_manager.cc
 @@ -51,10 +51,6 @@
@@ -13,7 +13,7 @@ index 892d0d0d2499..9bf94f805dca 100644
  #include "services/network/public/cpp/shared_url_loader_factory.h"
  
  namespace {
-@@ -188,25 +184,6 @@ bool IsOptimizationTypeAllowed(
+@@ -179,25 +175,6 @@ bool IsOptimizationTypeAllowed(
    return false;
  }
  
@@ -39,7 +39,7 @@ index 892d0d0d2499..9bf94f805dca 100644
  // Util class for recording whether a hints fetch race against the current
  // navigation was attempted. The result is recorded when it goes out of scope
  // and its destructor is called.
-@@ -1118,8 +1095,6 @@ OptimizationGuideHintsManager::CanApplyOptimization(
+@@ -1092,8 +1069,6 @@ OptimizationGuideHintsManager::CanApplyOptimization(
            url_keyed_hint->page_hints(0).whitelisted_optimizations(),
            optimization_type, optimization_metadata, &tuning_version);
        if (is_allowed || tuning_version) {
@@ -48,7 +48,7 @@ index 892d0d0d2499..9bf94f805dca 100644
          return is_allowed ? optimization_guide::OptimizationTypeDecision::
                                  kAllowedByHint
                            : optimization_guide::OptimizationTypeDecision::
-@@ -1156,8 +1131,6 @@ OptimizationGuideHintsManager::CanApplyOptimization(
+@@ -1130,8 +1105,6 @@ OptimizationGuideHintsManager::CanApplyOptimization(
        loaded_hint->whitelisted_optimizations(), optimization_type,
        optimization_metadata, &tuning_version);
    if (is_allowed || tuning_version) {
@@ -57,7 +57,7 @@ index 892d0d0d2499..9bf94f805dca 100644
      return is_allowed
                 ? optimization_guide::OptimizationTypeDecision::kAllowedByHint
                 : optimization_guide::OptimizationTypeDecision::
-@@ -1174,8 +1147,6 @@ OptimizationGuideHintsManager::CanApplyOptimization(
+@@ -1148,8 +1121,6 @@ OptimizationGuideHintsManager::CanApplyOptimization(
    is_allowed = IsOptimizationTypeAllowed(
        matched_page_hint->whitelisted_optimizations(), optimization_type,
        optimization_metadata, &tuning_version);

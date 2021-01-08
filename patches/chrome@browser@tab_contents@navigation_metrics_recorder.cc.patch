@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/tab_contents/navigation_metrics_recorder.cc b/chrome/browser/tab_contents/navigation_metrics_recorder.cc
-index dfdd6924d2bb..151c44116a9d 100644
+index 12a2eba93483..ee6c5e52c755 100644
 --- a/chrome/browser/tab_contents/navigation_metrics_recorder.cc
 +++ b/chrome/browser/tab_contents/navigation_metrics_recorder.cc
 @@ -9,7 +9,6 @@
@@ -10,13 +10,3 @@ index dfdd6924d2bb..151c44116a9d 100644
  #include "components/navigation_metrics/navigation_metrics.h"
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_thread.h"
-@@ -83,9 +82,6 @@ void NavigationMetricsRecorder::DidFinishNavigation(
- 
-   const GURL url = last_committed_entry->GetVirtualURL();
-   Profile* profile = Profile::FromBrowserContext(context);
--  navigation_metrics::RecordMainFrameNavigation(
--      url, navigation_handle->IsSameDocument(), profile->IsOffTheRecord(),
--      ProfileMetrics::GetBrowserProfileType(profile));
- 
-   if (url.SchemeIsHTTPOrHTTPS() && !navigation_handle->IsSameDocument() &&
-       !navigation_handle->IsDownload() && !profile->IsOffTheRecord()) {

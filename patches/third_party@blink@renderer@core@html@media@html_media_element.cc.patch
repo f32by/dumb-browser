@@ -1,12 +1,31 @@
 diff --git a/third_party/blink/renderer/core/html/media/html_media_element.cc b/third_party/blink/renderer/core/html/media/html_media_element.cc
-index 173b185a7c68..93b35b83e598 100644
+index f90ace79914e..cc1773963fef 100644
 --- a/third_party/blink/renderer/core/html/media/html_media_element.cc
 +++ b/third_party/blink/renderer/core/html/media/html_media_element.cc
-@@ -820,15 +820,6 @@ String HTMLMediaElement::canPlayType(ExecutionContext* context,
+@@ -37,9 +37,6 @@
+ #include "base/time/time.h"
+ #include "media/base/logging_override_if_enabled.h"
+ #include "media/base/media_switches.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiable_surface.h"
+ #include "third_party/blink/public/common/widget/screen_info.h"
+ #include "third_party/blink/public/platform/modules/mediastream/web_media_stream.h"
+ #include "third_party/blink/public/platform/modules/remoteplayback/web_remote_playback_client.h"
+@@ -115,7 +112,6 @@
+ #include "third_party/blink/renderer/platform/network/mime/mime_type_from_url.h"
+ #include "third_party/blink/renderer/platform/network/network_state_notifier.h"
+ #include "third_party/blink/renderer/platform/network/parsed_content_type.h"
+-#include "third_party/blink/renderer/platform/privacy_budget/identifiability_digest_helpers.h"
+ #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
+ #include "third_party/blink/renderer/platform/weborigin/security_origin.h"
+ #include "third_party/blink/renderer/platform/wtf/functional.h"
+@@ -820,16 +816,6 @@ String HTMLMediaElement::canPlayType(ExecutionContext* context,
    MIMETypeRegistry::SupportsType support =
        GetSupportsType(ContentType(mime_type));
  
--  if (IsUserInIdentifiabilityStudy()) {
+-  if (IdentifiabilityStudySettings::Get()->ShouldSample(
+-          blink::IdentifiableSurface::Type::kHTMLMediaElement_CanPlayType)) {
 -    blink::IdentifiabilityMetricBuilder(context->UkmSourceID())
 -        .Set(
 -            blink::IdentifiableSurface::FromTypeAndToken(

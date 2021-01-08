@@ -1,5 +1,5 @@
 diff --git a/services/network/public/cpp/url_request_mojom_traits.cc b/services/network/public/cpp/url_request_mojom_traits.cc
-index 34f6223f495b..4c5402c52dee 100644
+index d45b19b8f61c..fa22c1667328 100644
 --- a/services/network/public/cpp/url_request_mojom_traits.cc
 +++ b/services/network/public/cpp/url_request_mojom_traits.cc
 @@ -12,7 +12,6 @@
@@ -10,7 +10,7 @@ index 34f6223f495b..4c5402c52dee 100644
  #include "services/network/public/cpp/http_request_headers_mojom_traits.h"
  #include "services/network/public/cpp/isolation_info_mojom_traits.h"
  #include "services/network/public/cpp/network_ipc_param_traits.h"
-@@ -166,7 +165,6 @@ bool StructTraits<
+@@ -170,7 +169,6 @@ bool StructTraits<
      return false;
    }
    if (!data.ReadUrl(&out->url)) {
@@ -18,7 +18,7 @@ index 34f6223f495b..4c5402c52dee 100644
      return false;
    }
    if (!data.ReadSiteForCookies(&out->site_for_cookies) ||
-@@ -174,15 +172,12 @@ bool StructTraits<
+@@ -178,15 +176,12 @@ bool StructTraits<
      return false;
    }
    if (!data.ReadRequestInitiator(&out->request_initiator)) {
@@ -34,15 +34,11 @@ index 34f6223f495b..4c5402c52dee 100644
      return false;
    }
    if (!data.ReadReferrerPolicy(&out->referrer_policy) ||
-@@ -259,15 +254,12 @@ bool StructTraits<network::mojom::URLRequestBodyDataView,
+@@ -263,11 +258,9 @@ bool StructTraits<network::mojom::URLRequestBodyDataView,
  bool StructTraits<network::mojom::DataElementDataView, network::DataElement>::
      Read(network::mojom::DataElementDataView data, network::DataElement* out) {
    if (!data.ReadPath(&out->path_)) {
 -    network::debug::SetDeserializationCrashKeyString("data_element_path");
-     return false;
-   }
-   if (!data.ReadFile(&out->file_)) {
--    network::debug::SetDeserializationCrashKeyString("data_element_file");
      return false;
    }
    if (!data.ReadBlobUuid(&out->blob_uuid_)) {

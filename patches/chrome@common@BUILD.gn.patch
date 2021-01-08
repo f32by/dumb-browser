@@ -1,8 +1,8 @@
 diff --git a/chrome/common/BUILD.gn b/chrome/common/BUILD.gn
-index 16fe306a6097..c70ece70787d 100644
+index 52ae4877ab7b..9e20ff7b765c 100644
 --- a/chrome/common/BUILD.gn
 +++ b/chrome/common/BUILD.gn
-@@ -107,8 +107,6 @@ static_library("common") {
+@@ -104,8 +104,6 @@ static_library("common") {
      "common_message_generator.cc",
      "common_message_generator.h",
      "content_restriction.h",
@@ -11,7 +11,7 @@ index 16fe306a6097..c70ece70787d 100644
      "custom_handlers/protocol_handler.cc",
      "custom_handlers/protocol_handler.h",
      "google_url_loader_throttle.cc",
-@@ -165,7 +163,6 @@ static_library("common") {
+@@ -162,7 +160,6 @@ static_library("common") {
      "//chrome/app/theme:theme_resources",
      "//chrome/common:constants",
      "//chrome/common/net",
@@ -19,7 +19,7 @@ index 16fe306a6097..c70ece70787d 100644
      "//chrome/common/profiler",
      "//chrome/common/qr_code_generator",
      "//chrome/common/search:mojo_bindings",
-@@ -176,7 +173,6 @@ static_library("common") {
+@@ -173,7 +170,6 @@ static_library("common") {
      "//components/cloud_devices/common",
      "//components/component_updater",
      "//components/content_settings/core/common",
@@ -27,7 +27,7 @@ index 16fe306a6097..c70ece70787d 100644
      "//components/dom_distiller/core",
      "//components/embedder_support/origin_trials",
      "//components/error_page/common",
-@@ -194,13 +190,11 @@ static_library("common") {
+@@ -191,13 +187,11 @@ static_library("common") {
      "//components/offline_pages/buildflags",
      "//components/offline_pages/core:switches",
      "//components/omnibox/common",
@@ -38,10 +38,10 @@ index 16fe306a6097..c70ece70787d 100644
      "//components/prefs",
      "//components/safe_browsing:buildflags",
 -    "//components/safe_browsing/core/web_ui:constants",
+     "//components/services/app_service/public/cpp:app_share_target",
      "//components/services/heap_profiling/public/cpp",
      "//components/strings",
-     "//components/translate/content/common",
-@@ -240,10 +234,8 @@ static_library("common") {
+@@ -238,10 +232,8 @@ static_library("common") {
  
    deps = [
      "//build:branding_buildflags",
@@ -52,7 +52,7 @@ index 16fe306a6097..c70ece70787d 100644
      "//components/prerender/common",
      "//components/prerender/common:mojo_bindings",
    ]
-@@ -427,7 +419,6 @@ static_library("common") {
+@@ -423,7 +415,6 @@ static_library("common") {
      deps += [
        "//chrome/chrome_elf:chrome_elf_main_include",
        "//chrome/common/win:eventlog_messages",
@@ -60,7 +60,7 @@ index 16fe306a6097..c70ece70787d 100644
      ]
  
      public_deps += [
-@@ -764,10 +755,6 @@ mojom("mojo_bindings") {
+@@ -760,10 +751,6 @@ mojom("mojo_bindings") {
      public_deps += [ "//components/remote_cocoa/common:mojo" ]
    }
  

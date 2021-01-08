@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/browser_process.h b/chrome/browser/browser_process.h
-index e52ef494a8d4..fb1e5c048f8e 100644
+index a453e1acb6db..1212552edaf4 100644
 --- a/chrome/browser/browser_process.h
 +++ b/chrome/browser/browser_process.h
-@@ -46,18 +46,6 @@ class NetworkQualityTracker;
+@@ -49,19 +49,6 @@ class NetworkQualityTracker;
  class SharedURLLoaderFactory;
  }
  
@@ -16,12 +16,13 @@ index e52ef494a8d4..fb1e5c048f8e 100644
 -
 -namespace federated_learning {
 -class FlocBlocklistService;
+-class FlocSortingLshClustersService;
 -}
 -
  namespace variations {
  class VariationsService;
  }
-@@ -102,10 +90,6 @@ class PrintJobManager;
+@@ -106,10 +93,6 @@ class PrintJobManager;
  class PrintPreviewDialogController;
  }
  
@@ -32,7 +33,7 @@ index e52ef494a8d4..fb1e5c048f8e 100644
  namespace resource_coordinator {
  class ResourceCoordinatorParts;
  class TabManager;
-@@ -135,7 +119,6 @@ class BrowserProcess {
+@@ -139,7 +122,6 @@ class BrowserProcess {
  
    // Services: any of these getters may return NULL
    virtual metrics::MetricsService* metrics_service() = 0;
@@ -40,7 +41,7 @@ index e52ef494a8d4..fb1e5c048f8e 100644
    virtual ProfileManager* profile_manager() = 0;
    virtual PrefService* local_state() = 0;
    virtual scoped_refptr<network::SharedURLLoaderFactory>
-@@ -211,18 +194,6 @@ class BrowserProcess {
+@@ -217,23 +199,6 @@ class BrowserProcess {
    // on this platform (or this is a unit test).
    virtual StatusTray* status_tray() = 0;
  
@@ -56,14 +57,20 @@ index e52ef494a8d4..fb1e5c048f8e 100644
 -  virtual federated_learning::FlocBlocklistService*
 -  floc_blocklist_service() = 0;
 -
+-  // Returns the service providing versioned storage for a list of limit values
+-  // for calculating the floc based on SortingLSH.
+-  virtual federated_learning::FlocSortingLshClustersService*
+-  floc_sorting_lsh_clusters_service() = 0;
+-
    // Returns the service used to provide hints for what optimizations can be
    // performed on slow page loads.
    virtual optimization_guide::OptimizationGuideService*
-@@ -269,7 +240,6 @@ class BrowserProcess {
+@@ -280,8 +245,6 @@ class BrowserProcess {
    virtual resource_coordinator::ResourceCoordinatorParts*
    resource_coordinator_parts() = 0;
  
 -  virtual BuildState* GetBuildState() = 0;
- 
+-
   private:
    DISALLOW_COPY_AND_ASSIGN(BrowserProcess);
+ };

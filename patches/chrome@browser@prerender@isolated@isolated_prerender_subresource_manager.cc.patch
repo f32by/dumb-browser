@@ -1,0 +1,59 @@
+diff --git a/chrome/browser/prerender/isolated/isolated_prerender_subresource_manager.cc b/chrome/browser/prerender/isolated/isolated_prerender_subresource_manager.cc
+index 84e1f15d5aea..bc3138a5502e 100644
+--- a/chrome/browser/prerender/isolated/isolated_prerender_subresource_manager.cc
++++ b/chrome/browser/prerender/isolated/isolated_prerender_subresource_manager.cc
+@@ -5,7 +5,6 @@
+ #include "chrome/browser/prerender/isolated/isolated_prerender_subresource_manager.h"
+ 
+ #include "base/metrics/histogram_macros.h"
+-#include "chrome/browser/prerender/isolated/isolated_prerender_prefetch_metrics_collector.h"
+ #include "chrome/browser/prerender/isolated/prefetched_mainframe_response_container.h"
+ #include "content/public/browser/browser_context.h"
+ #include "content/public/browser/render_frame_host.h"
+@@ -169,46 +168,20 @@ void IsolatedPrerenderSubresourceManager::RemoveProxiedURLLoaderFactory(
+   proxied_loader_factories_.erase(it);
+ }
+ 
+-void IsolatedPrerenderSubresourceManager::SetPrefetchMetricsCollector(
+-    scoped_refptr<IsolatedPrerenderPrefetchMetricsCollector> collector) {
+-  metrics_collector_ = collector;
+-}
+-
+ void IsolatedPrerenderSubresourceManager::OnResourceFetchComplete(
+     const GURL& url,
+     network::mojom::URLResponseHeadPtr head,
+     const network::URLLoaderCompletionStatus& status) {
+-  if (!metrics_collector_)
+-    return;
+-
+-  metrics_collector_->OnSubresourcePrefetched(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url, std::move(head), status);
+ }
+ 
+ void IsolatedPrerenderSubresourceManager::OnResourceNotEligible(
+     const GURL& url,
+     IsolatedPrerenderPrefetchStatus status) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnSubresourceNotEligible(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url, status);
+ }
+ 
+ void IsolatedPrerenderSubresourceManager::OnResourceThrottled(const GURL& url) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnSubresourceNotEligible(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url,
+-      IsolatedPrerenderPrefetchStatus::kSubresourceThrottled);
+ }
+ 
+ void IsolatedPrerenderSubresourceManager::OnResourceUsedFromCache(
+     const GURL& url) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnCachedSubresourceUsed(/*mainframe_url=*/url_,
+-                                              /*subresource_url=*/url);
+ }

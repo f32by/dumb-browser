@@ -1,5 +1,5 @@
 diff --git a/headless/lib/headless_content_main_delegate.cc b/headless/lib/headless_content_main_delegate.cc
-index 6e6e76a9cb69..bf97b5f879c1 100644
+index edb7da92f0bb..a5ccc179ab38 100644
 --- a/headless/lib/headless_content_main_delegate.cc
 +++ b/headless/lib/headless_content_main_delegate.cc
 @@ -10,7 +10,6 @@
@@ -26,7 +26,7 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
  #include "headless/lib/headless_macros.h"
  #include "headless/lib/renderer/headless_content_renderer_client.h"
  #include "headless/lib/utility/headless_content_utility_client.h"
-@@ -48,14 +45,6 @@
+@@ -47,14 +44,6 @@
  #include "headless/embedded_resource_pak.h"
  #endif
  
@@ -41,7 +41,7 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
  #if defined(OS_POSIX)
  #include <signal.h>
  #endif
-@@ -78,13 +67,7 @@ const int kTraceEventBrowserProcessSortIndex = -6;
+@@ -77,13 +66,7 @@ const int kTraceEventBrowserProcessSortIndex = -6;
  
  HeadlessContentMainDelegate* g_current_headless_content_main_delegate = nullptr;
  
@@ -55,7 +55,7 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
  
  void InitializeResourceBundle(const base::CommandLine& command_line) {
    const std::string locale =
-@@ -172,14 +155,8 @@ HeadlessContentMainDelegate::HeadlessContentMainDelegate(
+@@ -171,14 +154,8 @@ HeadlessContentMainDelegate::HeadlessContentMainDelegate(
  }
  
  void HeadlessContentMainDelegate::Init() {
@@ -70,7 +70,7 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
  }
  
  HeadlessContentMainDelegate::~HeadlessContentMainDelegate() {
-@@ -319,44 +296,6 @@ void HeadlessContentMainDelegate::InitLogging(
+@@ -318,44 +295,6 @@ void HeadlessContentMainDelegate::InitLogging(
    DCHECK(success);
  }
  
@@ -97,7 +97,7 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
 -    DCHECK(!breakpad::IsCrashReporterEnabled());
 -    return;
 -  }
--  if (process_type != service_manager::switches::kZygoteProcess)
+-  if (process_type != switches::kZygoteProcess)
 -    breakpad::InitCrashReporter(process_type);
 -#elif defined(OS_MAC)
 -  crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
@@ -115,7 +115,7 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
  void HeadlessContentMainDelegate::PreSandboxStartup() {
    const base::CommandLine& command_line(
        *base::CommandLine::ForCurrentProcess());
-@@ -369,7 +308,6 @@ void HeadlessContentMainDelegate::PreSandboxStartup() {
+@@ -368,7 +307,6 @@ void HeadlessContentMainDelegate::PreSandboxStartup() {
      InitLogging(command_line);
  #endif  // defined(OS_WIN)
  
@@ -123,3 +123,20 @@ index 6e6e76a9cb69..bf97b5f879c1 100644
    InitializeResourceBundle(command_line);
  
    // Even though InitializeResourceBundle() has indirectly done the locale
+@@ -428,16 +366,6 @@ void HeadlessContentMainDelegate::ZygoteForked() {
+     base::debug::RestartProfilingAfterFork();
+     SetUpProfilingShutdownHandler();
+   }
+-  const base::CommandLine& command_line(
+-      *base::CommandLine::ForCurrentProcess());
+-  const std::string process_type =
+-      command_line.GetSwitchValueASCII(::switches::kProcessType);
+-  // Unconditionally try to turn on crash reporting since we do not have access
+-  // to the latest browser options at this point when testing. Breakpad will
+-  // bail out gracefully if the browser process hasn't enabled crash reporting.
+-#if defined(HEADLESS_USE_BREAKPAD)
+-  breakpad::InitCrashReporter(process_type);
+-#endif
+ }
+ #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+ 

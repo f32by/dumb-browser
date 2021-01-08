@@ -32,6 +32,7 @@ def main(args):
     apply_patches()
 
     # copy dumb-specific sources to src
+    print('Copying Dumb Browser source files to Chromium source root...')
     copy_tree(DUMB_SRC_DIR, CHROMIUM_SRC_DIR)
 
     print("Patches applied.")

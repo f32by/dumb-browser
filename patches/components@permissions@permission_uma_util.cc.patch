@@ -1,5 +1,5 @@
 diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
-index 865ae3d522f4..4c32387f2839 100644
+index 0cac71e89e4e..23a9be78f643 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
 @@ -15,11 +15,8 @@
@@ -14,7 +14,7 @@ index 865ae3d522f4..4c32387f2839 100644
  #include "third_party/blink/public/common/loader/network_utils.h"
  #include "url/gurl.h"
  
-@@ -119,43 +116,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
+@@ -119,53 +116,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
    base::UmaHistogramPercentage(name, engagement_score);
  }
  
@@ -27,6 +27,7 @@ index 865ae3d522f4..4c32387f2839 100644
 -    PermissionSourceUI source_ui,
 -    PermissionPromptDisposition ui_disposition,
 -    base::Optional<bool> has_three_consecutive_denies,
+-    base::Optional<bool> has_previously_revoked_permission,
 -    base::Optional<ukm::SourceId> source_id) {
 -  // Only record the permission change if the origin is in the history.
 -  if (!source_id.has_value())
@@ -52,13 +53,22 @@ index 865ae3d522f4..4c32387f2839 100644
 -    builder.SetSatisfiedAdaptiveTriggers(satisfied_adaptive_triggers);
 -  }
 -
+-  if (has_previously_revoked_permission.has_value()) {
+-    int64_t previously_revoked_permission = 0;
+-    if (has_previously_revoked_permission.value()) {
+-      previously_revoked_permission = static_cast<int64_t>(
+-          PermissionAutoRevocationHistory::PREVIOUSLY_AUTO_REVOKED);
+-    }
+-    builder.SetPermissionAutoRevocationHistory(previously_revoked_permission);
+-  }
+-
 -  builder.Record(ukm::UkmRecorder::Get());
 -}
 -
  std::string GetPromptDispositionString(
      PermissionPromptDisposition ui_disposition) {
    switch (ui_disposition) {
-@@ -485,23 +445,6 @@ void PermissionUmaUtil::RecordPermissionAction(
+@@ -555,25 +505,6 @@ void PermissionUmaUtil::RecordPermissionAction(
      const GURL& requesting_origin,
      const content::WebContents* web_contents,
      content::BrowserContext* browser_context) {
@@ -78,7 +88,9 @@ index 865ae3d522f4..4c32387f2839 100644
 -              ? PermissionsClient::Get()
 -                    ->HadThreeConsecutiveNotificationPermissionDenies(
 -                        browser_context)
--              : base::nullopt));
+-              : base::nullopt,
+-          PermissionsClient::Get()->HasPreviouslyAutoRevokedPermission(
+-              browser_context, requesting_origin, permission)));
  
    switch (permission) {
      case ContentSettingsType::GEOLOCATION:

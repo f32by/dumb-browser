@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/dom/document.h b/third_party/blink/renderer/core/dom/document.h
-index d36ae4c84658..7c09f042e8fd 100644
+index 37ae8c5c8d75..b251b26c756a 100644
 --- a/third_party/blink/renderer/core/dom/document.h
 +++ b/third_party/blink/renderer/core/dom/document.h
 @@ -36,7 +36,6 @@
@@ -10,7 +10,7 @@ index d36ae4c84658..7c09f042e8fd 100644
  #include "services/network/public/mojom/referrer_policy.mojom-blink-forward.h"
  #include "services/network/public/mojom/web_sandbox_flags.mojom-blink-forward.h"
  #include "third_party/blink/public/common/metrics/document_update_reason.h"
-@@ -80,10 +79,6 @@ namespace base {
+@@ -81,10 +80,6 @@ namespace base {
  class SingleThreadTaskRunner;
  }
  
@@ -21,7 +21,15 @@ index d36ae4c84658..7c09f042e8fd 100644
  namespace net {
  class SiteForCookies;
  }  // namespace net
-@@ -1465,17 +1460,8 @@ class CORE_EXPORT Document : public ContainerNode,
+@@ -143,7 +138,6 @@ template <typename EventType>
+ class EventWithHitTestResults;
+ class FloatQuad;
+ class FloatRect;
+-class FontMatchingMetrics;
+ class FormController;
+ class HTMLAllCollection;
+ class HTMLBodyElement;
+@@ -1479,17 +1473,8 @@ class CORE_EXPORT Document : public ContainerNode,
    void captureEvents() {}
    void releaseEvents() {}
  
@@ -39,7 +47,7 @@ index d36ae4c84658..7c09f042e8fd 100644
    bool CurrentFrameHadRAF() const;
    bool NextFrameHasPendingRAF() const;
  
-@@ -1669,11 +1655,6 @@ class CORE_EXPORT Document : public ContainerNode,
+@@ -1683,11 +1668,6 @@ class CORE_EXPORT Document : public ContainerNode,
    friend class NthIndexCache;
    FRIEND_TEST_ALL_PREFIXES(FrameFetchContextSubresourceFilterTest,
                             DuringOnFreeze);
@@ -51,7 +59,7 @@ index d36ae4c84658..7c09f042e8fd 100644
    class NetworkStateObserver;
  
    friend class AXContext;
-@@ -2065,12 +2046,6 @@ class CORE_EXPORT Document : public ContainerNode,
+@@ -2079,16 +2059,6 @@ class CORE_EXPORT Document : public ContainerNode,
  
    std::unique_ptr<DocumentOutliveTimeReporter> document_outlive_time_reporter_;
  
@@ -61,6 +69,10 @@ index d36ae4c84658..7c09f042e8fd 100644
 -  const int64_t ukm_source_id_;
 -  bool needs_to_record_ukm_outlive_time_;
 -
-   // Tracks and reports metrics of attempted font match attempts (both
-   // successful and not successful) by the page.
-   std::unique_ptr<FontMatchingMetrics> font_matching_metrics_;
+-  // Tracks and reports metrics of attempted font match attempts (both
+-  // successful and not successful) by the page.
+-  std::unique_ptr<FontMatchingMetrics> font_matching_metrics_;
+-
+ #if DCHECK_IS_ON()
+   unsigned slot_assignment_recalc_forbidden_recursion_depth_ = 0;
+ #endif

@@ -1,5 +1,5 @@
 diff --git a/cc/test/fake_proxy.h b/cc/test/fake_proxy.h
-index 8013828129d0..c8bb0678f76e 100644
+index 18ef28cefee1..c8bb0678f76e 100644
 --- a/cc/test/fake_proxy.h
 +++ b/cc/test/fake_proxy.h
 @@ -9,7 +9,6 @@
@@ -10,11 +10,13 @@ index 8013828129d0..c8bb0678f76e 100644
  
  namespace cc {
  class PaintWorkletLayerPainter;
-@@ -45,7 +44,7 @@ class FakeProxy : public Proxy {
+@@ -45,9 +44,7 @@ class FakeProxy : public Proxy {
                                    BrowserControlsState current,
                                    bool animate) override {}
    void RequestBeginMainFrameNotExpected(bool new_state) override {}
 -  void SetSourceURL(ukm::SourceId source_id, const GURL& url) override {}
+-  void SetUkmSmoothnessDestination(
+-      base::WritableSharedMemoryMapping ukm_smoothness_data) override {}
 +  void SetSourceURL(const GURL& url) override {}
    void ClearHistory() override {}
    void SetRenderFrameObserver(

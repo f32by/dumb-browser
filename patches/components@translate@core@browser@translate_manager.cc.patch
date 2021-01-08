@@ -1,8 +1,8 @@
 diff --git a/components/translate/core/browser/translate_manager.cc b/components/translate/core/browser/translate_manager.cc
-index cc8638b6fdaf..8fd53217d135 100644
+index 82d24b970f32..6beaf4265fda 100644
 --- a/components/translate/core/browser/translate_manager.cc
 +++ b/components/translate/core/browser/translate_manager.cc
-@@ -158,10 +158,6 @@ void TranslateManager::InitiateTranslation(const std::string& page_lang) {
+@@ -167,10 +167,6 @@ void TranslateManager::InitiateTranslation(const std::string& page_lang) {
                                        page_language_code, target_lang);
  
    NotifyTranslateInit(page_language_code, target_lang, decision, ui_shown);
@@ -13,7 +13,7 @@ index cc8638b6fdaf..8fd53217d135 100644
  }
  
  // static
-@@ -281,12 +277,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
+@@ -293,12 +289,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
    if (!TranslateDownloadManager::IsSupportedLanguage(source_lang))
      source_lang = std::string(translate::kUnknownLanguageCode);
  
@@ -26,7 +26,7 @@ index cc8638b6fdaf..8fd53217d135 100644
    if (source_lang == target_lang) {
      // If the languages are the same, try the translation using the unknown
      // language code on Desktop. Android and iOS don't support unknown source
-@@ -329,9 +319,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
+@@ -341,9 +331,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
  }
  
  void TranslateManager::RevertTranslation() {
@@ -36,7 +36,7 @@ index cc8638b6fdaf..8fd53217d135 100644
    // Revert the translation.
    translate_driver_->RevertTranslation(page_seq_no_);
    language_state_.SetCurrentLanguage(language_state_.original_language());
-@@ -419,8 +406,6 @@ void TranslateManager::PageTranslated(const std::string& source_lang,
+@@ -431,8 +418,6 @@ void TranslateManager::PageTranslated(const std::string& source_lang,
    // script initialization phase such as translation script failed because of
    // CSP issues (crbug.com/738277).
    // Note: NotifyTranslateError and ShowTranslateUI will not log the errors.
@@ -45,7 +45,7 @@ index cc8638b6fdaf..8fd53217d135 100644
    translate_client_->ShowTranslateUI(translate::TRANSLATE_STEP_AFTER_TRANSLATE,
                                       source_lang, target_lang, error_type,
                                       false);
-@@ -581,14 +566,9 @@ void TranslateManager::InitTranslateEvent(const std::string& src_lang,
+@@ -593,14 +578,9 @@ void TranslateManager::InitTranslateEvent(const std::string& src_lang,
    // TODO(rogerm): Populate the language list.
  }
  
@@ -61,7 +61,7 @@ index cc8638b6fdaf..8fd53217d135 100644
  }
  
  bool TranslateManager::ShouldSuppressBubbleUI(
-@@ -955,121 +935,6 @@ bool TranslateManager::MaterializeDecision(
+@@ -1004,146 +984,6 @@ bool TranslateManager::MaterializeDecision(
    return did_show_ui;
  }
  
@@ -84,9 +84,34 @@ index cc8638b6fdaf..8fd53217d135 100644
 -        TranslateBrowserMetrics::ReportTranslateHrefHintStatus(
 -            TranslateBrowserMetrics::HrefTranslateStatus::kAutoTranslated);
 -      }
+-    } else if (decision.can_show_href_translate_ui()) {
+-      TranslateBrowserMetrics::ReportTranslateHrefHintStatus(
+-          TranslateBrowserMetrics::HrefTranslateStatus::
+-              kUiShownNotAutoTranslated);
 -    } else {
 -      TranslateBrowserMetrics::ReportTranslateHrefHintStatus(
--          TranslateBrowserMetrics::HrefTranslateStatus::kNotAutoTranslated);
+-          TranslateBrowserMetrics::HrefTranslateStatus::
+-              kNoUiShownNotAutoTranslated);
+-    }
+-
+-    if (decision.is_in_language_blocklist()) {
+-      if (decision.is_in_site_blocklist()) {
+-        TranslateBrowserMetrics::ReportTranslateHrefHintPrefsFilterStatus(
+-            TranslateBrowserMetrics::HrefTranslatePrefsFilterStatus::
+-                kBothLanguageAndSiteInBlocklist);
+-      } else {
+-        TranslateBrowserMetrics::ReportTranslateHrefHintPrefsFilterStatus(
+-            TranslateBrowserMetrics::HrefTranslatePrefsFilterStatus::
+-                kLanguageInBlocklist);
+-      }
+-    } else if (decision.is_in_site_blocklist()) {
+-      TranslateBrowserMetrics::ReportTranslateHrefHintPrefsFilterStatus(
+-          TranslateBrowserMetrics::HrefTranslatePrefsFilterStatus::
+-              kSiteInBlocklist);
+-    } else {
+-      TranslateBrowserMetrics::ReportTranslateHrefHintPrefsFilterStatus(
+-          TranslateBrowserMetrics::HrefTranslatePrefsFilterStatus::
+-              kNotInBlocklists);
 -    }
 -  }
 -

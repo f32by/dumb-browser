@@ -1,0 +1,32 @@
+diff --git a/chrome/browser/apps/intent_helper/apps_navigation_throttle.cc b/chrome/browser/apps/intent_helper/apps_navigation_throttle.cc
+index 62e11907a546..cfb2c3311a99 100644
+--- a/chrome/browser/apps/intent_helper/apps_navigation_throttle.cc
++++ b/chrome/browser/apps/intent_helper/apps_navigation_throttle.cc
+@@ -28,7 +28,6 @@
+ #include "chrome/browser/web_applications/components/web_app_provider_base.h"
+ #include "chrome/browser/web_applications/components/web_app_tab_helper_base.h"
+ #include "chrome/common/chrome_features.h"
+-#include "components/page_load_metrics/browser/page_load_metrics_util.h"
+ #include "components/prerender/browser/prerender_contents.h"
+ #include "content/public/browser/browser_context.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -47,10 +46,6 @@ using ThrottleCheckResult = content::NavigationThrottle::ThrottleCheckResult;
+ // Returns true if |url| is a known and valid redirector that will redirect a
+ // navigation elsewhere.
+ bool IsGoogleRedirectorUrl(const GURL& url) {
+-  // This currently only check for redirectors on the "google" domain.
+-  if (!page_load_metrics::IsGoogleSearchHostname(url))
+-    return false;
+-
+   return url.path_piece() == "/url" && url.has_query();
+ }
+ 
+@@ -179,7 +174,7 @@ void AppsNavigationThrottle::OnIntentPickerClosed(
+ 
+ // static
+ bool AppsNavigationThrottle::IsGoogleRedirectorUrlForTesting(const GURL& url) {
+-  return IsGoogleRedirectorUrl(url);
++  return false;
+ }
+ 
+ // static

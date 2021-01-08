@@ -1,15 +1,12 @@
 diff --git a/content/browser/storage_partition_impl.cc b/content/browser/storage_partition_impl.cc
-index f157038575a7..46ae3a509529 100644
+index 9b5a44b6dd99..94d89434b31a 100644
 --- a/content/browser/storage_partition_impl.cc
 +++ b/content/browser/storage_partition_impl.cc
-@@ -1873,10 +1873,6 @@ void StoragePartitionImpl::OnTrustAnchorUsed() {
- }
- #endif
- 
--void StoragePartitionImpl::OnSCTReportReady(const std::string& cache_key) {
--  GetContentClient()->browser()->OnSCTReportReady(browser_context_, cache_key);
--}
--
- void StoragePartitionImpl::ClearDataImpl(
-     uint32_t remove_mask,
-     uint32_t quota_storage_remove_mask,
+@@ -97,7 +97,6 @@
+ #include "net/ssl/client_cert_store.h"
+ #include "ppapi/buildflags/buildflags.h"
+ #include "services/cert_verifier/public/mojom/cert_verifier_service_factory.mojom.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "services/network/public/cpp/cross_thread_pending_shared_url_loader_factory.h"
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/mojom/cookie_access_observer.mojom.h"

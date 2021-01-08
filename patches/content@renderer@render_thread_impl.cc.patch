@@ -1,5 +1,5 @@
 diff --git a/content/renderer/render_thread_impl.cc b/content/renderer/render_thread_impl.cc
-index 671d6851e160..bf9e74c7298f 100644
+index 6fae8670bf01..22a97fb84e82 100644
 --- a/content/renderer/render_thread_impl.cc
 +++ b/content/renderer/render_thread_impl.cc
 @@ -50,7 +50,6 @@
@@ -10,7 +10,7 @@ index 671d6851e160..bf9e74c7298f 100644
  #include "components/discardable_memory/client/client_discardable_shared_memory_manager.h"
  #include "components/metrics/public/mojom/single_sample_metrics.mojom.h"
  #include "components/metrics/single_sample_metrics.h"
-@@ -115,7 +114,6 @@
+@@ -114,7 +113,6 @@
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
  #include "net/base/url_util.h"
  #include "ppapi/buildflags/buildflags.h"
@@ -18,7 +18,7 @@ index 671d6851e160..bf9e74c7298f 100644
  #include "services/network/public/cpp/network_switches.h"
  #include "services/service_manager/public/cpp/interface_provider.h"
  #include "services/viz/public/cpp/gpu/context_provider_command_buffer.h"
-@@ -359,25 +357,6 @@ void CreateSingleSampleMetricsProvider(
+@@ -363,25 +361,6 @@ void CreateSingleSampleMetricsProvider(
    process_host->BindHostReceiver(std::move(receiver));
  }
  
@@ -44,7 +44,7 @@ index 671d6851e160..bf9e74c7298f 100644
  }  // namespace
  
  RenderThreadImpl::HistogramCustomizer::HistogramCustomizer() {
-@@ -1358,11 +1337,6 @@ bool RenderThreadImpl::IsScrollAnimatorEnabled() {
+@@ -1368,11 +1347,6 @@ bool RenderThreadImpl::IsScrollAnimatorEnabled() {
    return is_scroll_animator_enabled_;
  }
  
@@ -56,10 +56,10 @@ index 671d6851e160..bf9e74c7298f 100644
  bool RenderThreadImpl::IsMainThread() {
    return !!current();
  }
-@@ -2141,24 +2115,6 @@ bool RenderThreadImpl::RendererIsBackgrounded() const {
- void RenderThreadImpl::OnRendererBackgrounded() {
+@@ -2189,24 +2163,6 @@ void RenderThreadImpl::OnRendererBackgrounded() {
    main_thread_scheduler_->SetRendererBackgrounded(true);
    needs_to_record_first_active_paint_ = false;
+   discardable_memory_allocator_->OnBackgrounded();
 -  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
 -      FROM_HERE,
 -      base::BindOnce(&RenderThreadImpl::RecordMemoryUsageAfterBackgrounded,

@@ -1,5 +1,5 @@
 diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
-index cd9087339015..6c9da43980e8 100644
+index da3aceed75b1..d688f07abc0a 100644
 --- a/content/public/browser/content_browser_client.cc
 +++ b/content/public/browser/content_browser_client.cc
 @@ -753,7 +753,6 @@ ContentBrowserClient::CreateURLLoaderThrottles(
@@ -10,7 +10,15 @@ index cd9087339015..6c9da43980e8 100644
      NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
      NonNetworkURLLoaderFactoryMap* factories) {}
  
-@@ -1132,8 +1131,4 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+@@ -780,7 +779,6 @@ bool ContentBrowserClient::WillCreateURLLoaderFactory(
+     URLLoaderFactoryType type,
+     const url::Origin& request_initiator,
+     base::Optional<int64_t> navigation_id,
+-    base::UkmSourceId ukm_source_id,
+     mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
+     mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
+         header_client,
+@@ -1140,10 +1138,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
    return false;
  }
  
@@ -18,4 +26,6 @@ index cd9087339015..6c9da43980e8 100644
 -  return nullptr;
 -}
 -
- }  // namespace content
+ #if defined(OS_MAC)
+ bool ContentBrowserClient::SetupEmbedderSandboxParameters(
+     sandbox::policy::SandboxType sandbox_type,

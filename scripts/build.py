@@ -24,49 +24,49 @@ from constants import CHROMIUM_SRC_DIR
 from utils import run_command
 
 gn_args = OrderedDict()
-    # release build
+# release build
 gn_args['is_debug'] = 'false'
-gn_args['is_official_build'] = '!is_debug',
-    # no debug symbols
-gn_args['blink_symbol_level'] = '0',
-gn_args['symbol_level'] = '0',
-    # do not build dawn tests
-gn_args['build_dawn_tests'] = 'false',
-    # disable click to call
-gn_args['enable_click_to_call'] = 'false',
-gn_args['enable_dsyms'] = 'false',
-gn_args['enable_hangout_services_extension'] = 'false',
-gn_args['enable_iterator_debugging'] = 'false',
-    # disable mDNS discovery
-gn_args['enable_mdns'] = 'false',
-gn_args['enable_media_remoting'] = 'false',
-    # no NaCl
-gn_args['enable_nacl'] = 'false',
-gn_args['enable_nacl_nonsfi'] = 'false',
-    # no readling list
-gn_args['enable_reading_list'] = 'false',
-gn_args['enable_remoting'] = 'false',
-    # disable reporting
-gn_args['enable_reporting'] = 'false',
-    # disable service discovery
-gn_args['enable_service_discovery'] = 'false',
-    # enable Widevine DRM
-gn_args['enable_widevine'] = 'true',
-gn_args['exclude_unwind_tables'] = 'true',
-gn_args['fieldtrial_testing_like_official_build'] = 'true',
-    # use proprietary codecs
-gn_args['ffmpeg_branding'] = '"Chrome"',
-gn_args['proprietary_codecs'] = 'true',
-    # disable Safe Browsing
-gn_args['safe_browsing_mode'] = '0',
-gn_args['use_official_google_api_keys'] = 'false',
-    # use Chromium branding
-gn_args['is_chrome_branded'] = 'false',
-gn_args['use_unofficial_version_number'] = 'false',
-    # do not build WebRTC samples
-gn_args['rtc_build_examples'] = 'false',
-    # enable V8 pointer compression
-gn_args['v8_enable_pointer_compression'] = 'true',
+gn_args['is_official_build'] = '!is_debug'
+# no debug symbols
+gn_args['blink_symbol_level'] = '0'
+gn_args['symbol_level'] = '0'
+# do not build dawn tests
+gn_args['build_dawn_tests'] = 'false'
+# disable click to call
+gn_args['enable_click_to_call'] = 'false'
+gn_args['enable_dsyms'] = 'false'
+gn_args['enable_hangout_services_extension'] = 'false'
+gn_args['enable_iterator_debugging'] = 'false'
+# disable mDNS discovery
+gn_args['enable_mdns'] = 'false'
+gn_args['enable_media_remoting'] = 'false'
+# no NaCl
+gn_args['enable_nacl'] = 'false'
+gn_args['enable_nacl_nonsfi'] = 'false'
+# no readling list
+gn_args['enable_reading_list'] = 'false'
+gn_args['enable_remoting'] = 'false'
+# disable reporting
+gn_args['enable_reporting'] = 'false'
+# disable service discovery
+gn_args['enable_service_discovery'] = 'false'
+# enable Widevine DRM
+gn_args['enable_widevine'] = 'true'
+gn_args['exclude_unwind_tables'] = 'true'
+gn_args['fieldtrial_testing_like_official_build'] = 'true'
+# use proprietary codecs
+gn_args['ffmpeg_branding'] = '"Chrome"'
+gn_args['proprietary_codecs'] = 'true'
+# disable Safe Browsing
+gn_args['safe_browsing_mode'] = '0'
+gn_args['use_official_google_api_keys'] = 'false'
+# use Chromium branding
+gn_args['is_chrome_branded'] = 'false'
+gn_args['use_unofficial_version_number'] = 'false'
+# do not build WebRTC samples
+gn_args['rtc_build_examples'] = 'false'
+# enable V8 pointer compression
+gn_args['v8_enable_pointer_compression'] = 'true'
 gn_args['enable_resource_allowlist_generation'] = 'is_debug'
 
 
@@ -117,7 +117,7 @@ def main(args):
         gn_args['is_component_build'] = 'true'
 
     if args.use_ccache:
-        gn_args['cc_wrapper'] = 'ccache'
+        gn_args['cc_wrapper'] = '"ccache"'
 
     if args.print_only:
         for k, v in gn_args.items():
@@ -133,7 +133,7 @@ def main(args):
     print('Creating args.gn...')
     with open(os.path.join(out_dir, 'args.gn'), 'w') as f:
         for k, v in gn_args.items():
-            f.write('{} = {}\n'.format(k, v))
+            f.write(f'{k} = {v}\n')
 
     # run gn command
     run_command(['gn', 'gen', path_for_gn], cwd=CHROMIUM_SRC_DIR)

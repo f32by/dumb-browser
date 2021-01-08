@@ -1,5 +1,5 @@
 diff --git a/components/page_load_metrics/renderer/metrics_render_frame_observer.h b/components/page_load_metrics/renderer/metrics_render_frame_observer.h
-index 8fb5d352b839..47eb4e8ae19d 100644
+index 4901d4d6aa3d..d6f4d47a7a4f 100644
 --- a/components/page_load_metrics/renderer/metrics_render_frame_observer.h
 +++ b/components/page_load_metrics/renderer/metrics_render_frame_observer.h
 @@ -13,7 +13,6 @@
@@ -20,28 +20,7 @@ index 8fb5d352b839..47eb4e8ae19d 100644
   public:
    explicit MetricsRenderFrameObserver(content::RenderFrame* render_frame);
    ~MetricsRenderFrameObserver() override;
-@@ -85,19 +83,11 @@ class MetricsRenderFrameObserver
-   // before being destroyed.
-   void WillDetach() override;
- 
--  // Set the ad resource tracker that |this| observes.
--  void SetAdResourceTracker(
--      subresource_filter::AdResourceTracker* ad_resource_tracker);
--
--  // AdResourceTracker implementation
--  void OnAdResourceTrackerGoingAway() override;
--  void OnAdResourceObserved(int request_id) override;
- 
-   void OnMainFrameIntersectionChanged(
-       const blink::WebRect& main_frame_intersection) override;
- 
--  void OnThroughputDataAvailable(ukm::SourceId source_id,
--                                 int aggregated_percent,
-+  void OnThroughputDataAvailable(int aggregated_percent,
-                                  int impl_percent,
-                                  base::Optional<int> main_percent) override;
- 
-@@ -147,10 +137,6 @@ class MetricsRenderFrameObserver
+@@ -145,10 +143,6 @@ class MetricsRenderFrameObserver
    std::unique_ptr<PageResourceDataUse> provisional_frame_resource_data_use_;
    int provisional_frame_resource_id_ = 0;
  

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/reputation/reputation_web_contents_observer.h b/chrome/browser/reputation/reputation_web_contents_observer.h
-index a226fc78dcde..e16d3381381b 100644
+index d711850c0c59..586aba8ee634 100644
 --- a/chrome/browser/reputation/reputation_web_contents_observer.h
 +++ b/chrome/browser/reputation/reputation_web_contents_observer.h
 @@ -14,7 +14,6 @@
@@ -10,7 +10,7 @@ index a226fc78dcde..e16d3381381b 100644
  #include "ui/views/widget/widget.h"
  #include "url/gurl.h"
  #include "url/origin.h"
-@@ -60,15 +59,11 @@ class ReputationWebContentsObserver
+@@ -63,15 +62,11 @@ class ReputationWebContentsObserver
    explicit ReputationWebContentsObserver(content::WebContents* web_contents);
  
    // Possibly show a Safety Tip. Called on visibility changes and page load.
@@ -28,7 +28,7 @@ index a226fc78dcde..e16d3381381b 100644
                                     ReputationCheckResult result);
  
    // A helper method that calls and resets
-@@ -80,9 +75,7 @@ class ReputationWebContentsObserver
+@@ -83,9 +78,7 @@ class ReputationWebContentsObserver
    // records UKM data about triggered heuristics if |record_ukm| is true, and
    // calls MaybeCallReputationCheckCallback.
    void FinalizeReputationCheckWhenTipNotShown(

@@ -1,5 +1,5 @@
 diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
-index f8d655b1078b..997749fdbffa 100644
+index 01364e93b529..54dde79d9783 100644
 --- a/components/security_interstitials/content/cert_report_helper.cc
 +++ b/components/security_interstitials/content/cert_report_helper.cc
 @@ -15,7 +15,6 @@
@@ -10,7 +10,18 @@ index f8d655b1078b..997749fdbffa 100644
  #include "components/security_interstitials/content/ssl_cert_reporter.h"
  #include "components/security_interstitials/core/controller_client.h"
  #include "components/security_interstitials/core/metrics_helper.h"
-@@ -58,11 +57,7 @@ CertReportHelper::CertReportHelper(
+@@ -32,10 +31,6 @@ namespace {
+ // set by tests.
+ static bool g_is_fake_official_build_for_cert_report_testing = false;
+ 
+-PrefService* GetPrefs(content::WebContents* web_contents) {
+-  return user_prefs::UserPrefs::Get(web_contents->GetBrowserContext());
+-}
+-
+ }  // namespace
+ 
+ // Constants for the HTTPSErrorReporter Finch experiment
+@@ -58,11 +53,7 @@ CertReportHelper::CertReportHelper(
      : ssl_cert_reporter_(std::move(ssl_cert_reporter)),
        web_contents_(web_contents),
        request_url_(request_url),
@@ -23,7 +34,7 @@ index f8d655b1078b..997749fdbffa 100644
  
  CertReportHelper::~CertReportHelper() = default;
  
-@@ -83,8 +78,7 @@ void CertReportHelper::PopulateExtendedReportingOption(
+@@ -84,8 +75,7 @@ void CertReportHelper::PopulateExtendedReportingOption(
      return;
  
    load_time_data->SetBoolean(
@@ -33,7 +44,19 @@ index f8d655b1078b..997749fdbffa 100644
  
    load_time_data->SetString(
        security_interstitials::kOptInLink,
-@@ -101,14 +95,8 @@ void CertReportHelper::HandleReportingCommands(
+@@ -102,11 +92,6 @@ void CertReportHelper::PopulateEnhancedProtectionMessage(
+   if (!show)
+     return;
+ 
+-  if (metrics_helper_) {
+-    metrics_helper_->RecordUserInteraction(
+-        security_interstitials::MetricsHelper::SHOW_ENHANCED_PROTECTION);
+-  }
+-
+   load_time_data->SetString(
+       security_interstitials::kEnhancedProtectionMessage,
+       l10n_util::GetStringUTF16(IDS_SAFE_BROWSING_ENHANCED_PROTECTION_MESSAGE));
+@@ -122,14 +107,8 @@ void CertReportHelper::HandleReportingCommands(
      PrefService* pref_service) {
    switch (command) {
      case security_interstitials::CMD_DO_REPORT:
@@ -48,7 +71,7 @@ index f8d655b1078b..997749fdbffa 100644
        break;
      case security_interstitials::CMD_PROCEED:
        user_action_ = CertificateErrorReport::USER_PROCEEDED;
-@@ -122,40 +110,7 @@ void CertReportHelper::HandleReportingCommands(
+@@ -143,57 +122,10 @@ void CertReportHelper::HandleReportingCommands(
    }
  }
  
@@ -89,15 +112,49 @@ index f8d655b1078b..997749fdbffa 100644
 +void CertReportHelper::FinishCertCollection() {}
  
  bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
-   // Only show the checkbox iff the user is part of the respective Finch group
-@@ -163,9 +118,7 @@ bool CertReportHelper::ShouldShowCertificateReporterCheckbox() {
-   const bool in_incognito =
-       web_contents_->GetBrowserContext()->IsOffTheRecord();
-   const PrefService* pref_service = GetPrefs(web_contents_);
+-  // Only show the checkbox iff the user is part of the respective Finch group
+-  // and the window is not incognito and the feature is not disabled by policy
+-  // and enhanced protection is off.
+-  const bool in_incognito =
+-      web_contents_->GetBrowserContext()->IsOffTheRecord();
+-  const PrefService* pref_service = GetPrefs(web_contents_);
 -  bool can_show_checkbox =
 -      safe_browsing::IsExtendedReportingOptInAllowed(*pref_service) &&
 -      !safe_browsing::IsExtendedReportingPolicyManaged(*pref_service);
-+  bool can_show_checkbox = pref_service && false;
+-  bool is_enhanced_protection_enabled =
+-      safe_browsing::IsEnhancedProtectionEnabled(*pref_service);
+-
+-  return base::FieldTrialList::FindFullName(kFinchExperimentName) ==
+-             kFinchGroupShowPossiblySend &&
+-         !in_incognito && can_show_checkbox && !is_enhanced_protection_enabled;
++  return false;
+ }
  
-   return base::FieldTrialList::FindFullName(kFinchExperimentName) ==
-              kFinchGroupShowPossiblySend &&
+ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
+@@ -203,26 +135,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
+   // mode.
+   const bool in_incognito =
+       web_contents_->GetBrowserContext()->IsOffTheRecord();
+-  const PrefService* pref_service = GetPrefs(web_contents_);
+-  bool is_enhanced_protection_enabled =
+-      safe_browsing::IsEnhancedProtectionEnabled(*pref_service);
+-  bool is_safe_browsing_managed =
+-      safe_browsing::IsSafeBrowsingPolicyManaged(*pref_service);
+-  bool is_enhanced_protection_message_enabled =
+-      safe_browsing::IsEnhancedProtectionMessageInInterstitialsEnabled();
+ 
+   if (in_incognito) {
+     return false;
+   }
+-  if (is_enhanced_protection_enabled) {
+-    return false;
+-  }
+-  if (is_safe_browsing_managed) {
+-    return false;
+-  }
+-  if (!is_enhanced_protection_message_enabled) {
+-    return false;
+-  }
+   return true;
+ }
+ 

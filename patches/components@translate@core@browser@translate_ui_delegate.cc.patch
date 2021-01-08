@@ -1,5 +1,5 @@
 diff --git a/components/translate/core/browser/translate_ui_delegate.cc b/components/translate/core/browser/translate_ui_delegate.cc
-index ec67ee836cd5..7ee9b89cf29c 100644
+index 171e568cea37..590daa72da3b 100644
 --- a/components/translate/core/browser/translate_ui_delegate.cc
 +++ b/components/translate/core/browser/translate_ui_delegate.cc
 @@ -233,8 +233,6 @@ void TranslateUIDelegate::Translate() {
@@ -19,7 +19,7 @@ index ec67ee836cd5..7ee9b89cf29c 100644
 -        explicitly_closed ? metrics::TranslateEventProto::USER_DECLINE
 -                          : metrics::TranslateEventProto::USER_IGNORE);
      if (explicitly_closed)
-       translate_manager_->GetLanguageState().set_translation_declined(true);
+       translate_manager_->GetLanguageState()->set_translation_declined(true);
    }
 @@ -290,13 +285,6 @@ void TranslateUIDelegate::SetLanguageBlocked(bool value) {
    if (value) {

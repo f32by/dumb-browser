@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/render_frame_host_manager.cc b/content/browser/renderer_host/render_frame_host_manager.cc
-index abe9ae05e7b5..655d52f81dc5 100644
+index 0e0e806b54dc..0102dc6f3a96 100644
 --- a/content/browser/renderer_host/render_frame_host_manager.cc
 +++ b/content/browser/renderer_host/render_frame_host_manager.cc
-@@ -496,28 +496,6 @@ void RenderFrameHostManager::UnloadOldFrame(
+@@ -498,28 +498,6 @@ void RenderFrameHostManager::UnloadOldFrame(
    // RenderFrameHost should not be trying to commit a navigation.
    old_render_frame_host->ResetNavigationRequests();
  
@@ -31,7 +31,7 @@ index abe9ae05e7b5..655d52f81dc5 100644
    // BackForwardCache:
    //
    // If the old RenderFrameHost can be stored in the BackForwardCache, return
-@@ -566,9 +544,6 @@ void RenderFrameHostManager::UnloadOldFrame(
+@@ -568,9 +546,6 @@ void RenderFrameHostManager::UnloadOldFrame(
        back_forward_cache.StoreEntry(std::move(entry));
        return;
      }

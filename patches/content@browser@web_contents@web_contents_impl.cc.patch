@@ -1,5 +1,5 @@
 diff --git a/content/browser/web_contents/web_contents_impl.cc b/content/browser/web_contents/web_contents_impl.cc
-index d13b9cd849c5..491e028999c8 100644
+index 26bd3968521c..b73d5f0ee5f3 100644
 --- a/content/browser/web_contents/web_contents_impl.cc
 +++ b/content/browser/web_contents/web_contents_impl.cc
 @@ -46,8 +46,6 @@
@@ -11,7 +11,7 @@ index d13b9cd849c5..491e028999c8 100644
  #include "components/url_formatter/url_formatter.h"
  #include "content/browser/accessibility/accessibility_event_recorder.h"
  #include "content/browser/accessibility/accessibility_tree_formatter_blink.h"
-@@ -158,7 +156,6 @@
+@@ -157,7 +155,6 @@
  #include "net/http/http_util.h"
  #include "net/traffic_annotation/network_traffic_annotation.h"
  #include "ppapi/buildflags/buildflags.h"
@@ -19,7 +19,7 @@ index d13b9cd849c5..491e028999c8 100644
  #include "services/network/public/cpp/features.h"
  #include "services/network/public/cpp/web_sandbox_flags.h"
  #include "services/network/public/mojom/web_sandbox_flags.mojom.h"
-@@ -215,7 +212,6 @@ using AccessibilityEventCallback =
+@@ -214,7 +211,6 @@ using AccessibilityEventCallback =
  namespace {
  
  const int kMinimumDelayBetweenLoadingUpdatesMS = 100;
@@ -27,7 +27,7 @@ index d13b9cd849c5..491e028999c8 100644
  
  using LifecycleState = RenderFrameHostImpl::LifecycleState;
  
-@@ -325,11 +321,6 @@ bool AreValidRegisterProtocolHandlerArguments(const std::string& protocol,
+@@ -324,11 +320,6 @@ bool AreValidRegisterProtocolHandlerArguments(const std::string& protocol,
    return true;
  }
  
@@ -39,7 +39,7 @@ index d13b9cd849c5..491e028999c8 100644
  // Returns whether the condition provided applies to any inner contents.
  // This check is not recursive (however, the predicate provided may itself
  // recurse each contents' own inner contents).
-@@ -2930,12 +2921,6 @@ void WebContentsImpl::LostCapture(RenderWidgetHostImpl* render_widget_host) {
+@@ -2938,12 +2929,6 @@ void WebContentsImpl::LostCapture(RenderWidgetHostImpl* render_widget_host) {
      delegate_->LostCapture();
  }
  
@@ -52,7 +52,7 @@ index d13b9cd849c5..491e028999c8 100644
  void WebContentsImpl::SetTopControlsShownRatio(
      RenderWidgetHostImpl* render_widget_host,
      float ratio) {
-@@ -4156,29 +4141,6 @@ std::string WebContentsImpl::DumpAccessibilityTree(
+@@ -4173,28 +4158,6 @@ std::string WebContentsImpl::DumpAccessibilityTree(
        ax_mgr, internal, property_filters);
  }
  
@@ -68,8 +68,7 @@ index d13b9cd849c5..491e028999c8 100644
 -    auto* ax_mgr = GetOrCreateRootBrowserAccessibilityManager();
 -    DCHECK(ax_mgr);
 -    base::ProcessId pid = base::Process::Current().Pid();
--    event_recorder_ = content::AccessibilityEventRecorder::Create(
--        ax_mgr, pid, base::StringPiece{});
+-    event_recorder_ = content::AccessibilityEventRecorder::Create(ax_mgr, pid);
 -    event_recorder_->ListenToEvents(*callback);
 -  } else {
 -    if (event_recorder_) {
@@ -79,10 +78,10 @@ index d13b9cd849c5..491e028999c8 100644
 -  }
 -}
 -
- RenderFrameHost* WebContentsImpl::GetGuestByInstanceID(
-     RenderFrameHost* render_frame_host,
-     int browser_plugin_instance_id) {
-@@ -4443,7 +4405,6 @@ void WebContentsImpl::Undo() {
+ device::mojom::GeolocationContext* WebContentsImpl::GetGeolocationContext() {
+   OPTIONAL_TRACE_EVENT0("content", "WebContentsImpl::GetGeolocationContext");
+   if (delegate_) {
+@@ -4442,7 +4405,6 @@ void WebContentsImpl::Undo() {
      return;
  
    input_handler->Undo();
@@ -90,7 +89,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::Redo() {
-@@ -4453,7 +4414,6 @@ void WebContentsImpl::Redo() {
+@@ -4452,7 +4414,6 @@ void WebContentsImpl::Redo() {
      return;
  
    input_handler->Redo();
@@ -98,7 +97,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::Cut() {
-@@ -4463,7 +4423,6 @@ void WebContentsImpl::Cut() {
+@@ -4462,7 +4423,6 @@ void WebContentsImpl::Cut() {
      return;
  
    input_handler->Cut();
@@ -106,7 +105,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::Copy() {
-@@ -4473,7 +4432,6 @@ void WebContentsImpl::Copy() {
+@@ -4472,7 +4432,6 @@ void WebContentsImpl::Copy() {
      return;
  
    input_handler->Copy();
@@ -114,7 +113,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::CopyToFindPboard() {
-@@ -4485,7 +4443,6 @@ void WebContentsImpl::CopyToFindPboard() {
+@@ -4484,7 +4443,6 @@ void WebContentsImpl::CopyToFindPboard() {
  
    // Windows/Linux don't have the concept of a find pasteboard.
    input_handler->CopyToFindPboard();
@@ -122,7 +121,7 @@ index d13b9cd849c5..491e028999c8 100644
  #endif
  }
  
-@@ -4498,7 +4455,6 @@ void WebContentsImpl::Paste() {
+@@ -4497,7 +4455,6 @@ void WebContentsImpl::Paste() {
    input_handler->Paste();
    observers_.ForEachObserver(
        [&](WebContentsObserver* observer) { observer->OnPaste(); });
@@ -130,7 +129,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::PasteAndMatchStyle() {
-@@ -4510,7 +4466,6 @@ void WebContentsImpl::PasteAndMatchStyle() {
+@@ -4509,7 +4466,6 @@ void WebContentsImpl::PasteAndMatchStyle() {
    input_handler->PasteAndMatchStyle();
    observers_.ForEachObserver(
        [&](WebContentsObserver* observer) { observer->OnPaste(); });
@@ -138,7 +137,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::Delete() {
-@@ -4520,7 +4475,6 @@ void WebContentsImpl::Delete() {
+@@ -4519,7 +4475,6 @@ void WebContentsImpl::Delete() {
      return;
  
    input_handler->Delete();
@@ -146,7 +145,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::SelectAll() {
-@@ -4530,7 +4484,6 @@ void WebContentsImpl::SelectAll() {
+@@ -4529,7 +4484,6 @@ void WebContentsImpl::SelectAll() {
      return;
  
    input_handler->SelectAll();
@@ -154,7 +153,7 @@ index d13b9cd849c5..491e028999c8 100644
  }
  
  void WebContentsImpl::CollapseSelection() {
-@@ -4648,8 +4601,6 @@ void WebContentsImpl::OnSavePage() {
+@@ -4647,8 +4601,6 @@ void WebContentsImpl::OnSavePage() {
    OPTIONAL_TRACE_EVENT0("content", "WebContentsImpl::OnSavePage");
    // If we can not save the page, try to download it.
    if (!IsSavable()) {
@@ -163,7 +162,7 @@ index d13b9cd849c5..491e028999c8 100644
      SaveFrame(GetLastCommittedURL(), Referrer());
      return;
    }
-@@ -5343,10 +5294,6 @@ void WebContentsImpl::DidFinishNavigation(NavigationHandle* navigation_handle) {
+@@ -5342,10 +5294,6 @@ void WebContentsImpl::DidFinishNavigation(NavigationHandle* navigation_handle) {
      }
  
      if (navigation_handle->IsInMainFrame()) {
@@ -174,7 +173,7 @@ index d13b9cd849c5..491e028999c8 100644
        if (!navigation_handle->IsSameDocument()) {
          was_ever_audible_ = false;
        }
-@@ -5363,9 +5310,6 @@ void WebContentsImpl::DidFinishNavigation(NavigationHandle* navigation_handle) {
+@@ -5362,9 +5310,6 @@ void WebContentsImpl::DidFinishNavigation(NavigationHandle* navigation_handle) {
      should_focus_location_bar_by_default_ = false;
    }
  
@@ -184,7 +183,7 @@ index d13b9cd849c5..491e028999c8 100644
    // If navigation has successfully finished in the main frame, set
    // |first_navigation_completed_| to true so that we will record
    // |max_loaded_frame_count_| above when future main frame navigations finish.
-@@ -5612,10 +5556,6 @@ void WebContentsImpl::DidRunInsecureContent(const GURL& security_origin,
+@@ -5611,10 +5556,6 @@ void WebContentsImpl::DidRunInsecureContent(const GURL& security_origin,
        base::trace_event::ValueToString(target_url));
    LOG(WARNING) << security_origin << " ran insecure content from "
                 << target_url.possibly_invalid_spec();
@@ -195,7 +194,7 @@ index d13b9cd849c5..491e028999c8 100644
    controller_.ssl_manager()->DidRunMixedContent(security_origin);
  }
  
-@@ -6598,19 +6538,6 @@ void WebContentsImpl::RenderFrameDeleted(RenderFrameHost* render_frame_host) {
+@@ -6597,19 +6538,6 @@ void WebContentsImpl::RenderFrameDeleted(RenderFrameHost* render_frame_host) {
    TRACE_EVENT1("content", "WebContentsImpl::RenderFrameDeleted",
                 "render_frame_host",
                 base::trace_event::ToTracedValue(render_frame_host));
@@ -215,7 +214,7 @@ index d13b9cd849c5..491e028999c8 100644
    observers_.ForEachObserver([&](WebContentsObserver* observer) {
      observer->RenderFrameDeleted(render_frame_host);
    });
-@@ -8640,28 +8567,6 @@ void WebContentsImpl::OnFrameAudioStateChanged(RenderFrameHost* host,
+@@ -8639,28 +8567,6 @@ void WebContentsImpl::OnFrameAudioStateChanged(RenderFrameHost* host,
    });
  }
  
@@ -244,7 +243,7 @@ index d13b9cd849c5..491e028999c8 100644
  RenderFrameHostImpl* WebContentsImpl::GetMainFrameForInnerDelegate(
      FrameTreeNode* frame_tree_node) {
    if (auto* web_contents = node_.GetInnerWebContentsInFrame(frame_tree_node))
-@@ -8794,16 +8699,6 @@ void WebContentsImpl::RemoveReceiverSet(const std::string& interface_name) {
+@@ -8796,16 +8702,6 @@ void WebContentsImpl::RemoveReceiverSet(const std::string& interface_name) {
      receiver_sets_.erase(it);
  }
  
@@ -261,7 +260,7 @@ index d13b9cd849c5..491e028999c8 100644
  void WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded() {
    OPTIONAL_TRACE_EVENT0(
        "content", "WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded");
-@@ -8914,10 +8809,6 @@ WebContentsImpl::GetFocusedFrameWidgetInputHandler() {
+@@ -8917,10 +8813,6 @@ WebContentsImpl::GetFocusedFrameWidgetInputHandler() {
    return focused_render_widget_host->GetFrameWidgetInputHandler();
  }
  

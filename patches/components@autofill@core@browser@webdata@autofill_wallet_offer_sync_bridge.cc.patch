@@ -1,0 +1,20 @@
+diff --git a/components/autofill/core/browser/webdata/autofill_wallet_offer_sync_bridge.cc b/components/autofill/core/browser/webdata/autofill_wallet_offer_sync_bridge.cc
+index c95389dba6dd..411808d892f5 100644
+--- a/components/autofill/core/browser/webdata/autofill_wallet_offer_sync_bridge.cc
++++ b/components/autofill/core/browser/webdata/autofill_wallet_offer_sync_bridge.cc
+@@ -7,7 +7,6 @@
+ #include <utility>
+ 
+ #include "base/logging.h"
+-#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/data_model/autofill_offer_data.h"
+ #include "components/autofill/core/browser/webdata/autofill_sync_bridge_util.h"
+ #include "components/autofill/core/browser/webdata/autofill_table.h"
+@@ -180,7 +179,6 @@ void AutofillWalletOfferSyncBridge::MergeRemoteData(
+     if (offer_valid) {
+       offer_data.push_back(AutofillOfferDataFromOfferSpecifics(specifics));
+     }
+-    AutofillMetrics::LogSyncedOfferDataBeingValid(offer_valid);
+   }
+ 
+   AutofillTable* table = GetAutofillTable();

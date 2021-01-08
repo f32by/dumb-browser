@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/fonts/font_platform_data.cc b/third_party/blink/renderer/platform/fonts/font_platform_data.cc
-index fc5e804c590f..f1568faf6bbc 100644
+index f96cee1a9abd..05a2cb8985ae 100644
 --- a/third_party/blink/renderer/platform/fonts/font_platform_data.cc
 +++ b/third_party/blink/renderer/platform/fonts/font_platform_data.cc
 @@ -23,7 +23,6 @@
@@ -10,7 +10,7 @@ index fc5e804c590f..f1568faf6bbc 100644
  #include "third_party/blink/public/platform/linux/web_sandbox_support.h"
  #include "third_party/blink/public/platform/platform.h"
  #include "third_party/blink/renderer/platform/fonts/font_cache.h"
-@@ -296,46 +295,4 @@ void FontPlatformData::SetupSkFont(SkFont* font,
+@@ -296,48 +295,6 @@ void FontPlatformData::SetupSkFont(SkFont* font,
  }
  #endif
  
@@ -56,4 +56,6 @@ index fc5e804c590f..f1568faf6bbc 100644
 -  return builder.GetToken();  // hasher.GetHash();
 -}
 -
- }  // namespace blink
+ String FontPlatformData::GetPostScriptName() const {
+   if (!typeface_)
+     return String();

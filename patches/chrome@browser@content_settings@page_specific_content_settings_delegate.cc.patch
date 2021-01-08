@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/content_settings/page_specific_content_settings_delegate.cc b/chrome/browser/content_settings/page_specific_content_settings_delegate.cc
+index c8efb99c6d74..182b23fb65be 100644
+--- a/chrome/browser/content_settings/page_specific_content_settings_delegate.cc
++++ b/chrome/browser/content_settings/page_specific_content_settings_delegate.cc
+@@ -19,7 +19,6 @@
+ #include "chrome/common/renderer_configuration.mojom.h"
+ #include "components/content_settings/browser/page_specific_content_settings.h"
+ #include "components/permissions/permission_decision_auto_blocker.h"
+-#include "components/permissions/permission_uma_util.h"
+ #include "components/prefs/pref_service.h"
+ #include "content/public/browser/navigation_handle.h"
+ #include "content/public/browser/render_process_host.h"
+@@ -186,8 +185,6 @@ void PageSpecificContentSettingsDelegate::OnContentAllowed(
+       setting_info.primary_pattern, setting_info.secondary_pattern, type);
+   if (grant_time.is_null())
+     return;
+-  permissions::PermissionUmaUtil::RecordTimeElapsedBetweenGrantAndUse(
+-      type, base::Time::Now() - grant_time);
+ }
+ 
+ void PageSpecificContentSettingsDelegate::OnContentBlocked(

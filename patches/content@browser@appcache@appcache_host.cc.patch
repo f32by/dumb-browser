@@ -1,0 +1,12 @@
+diff --git a/content/browser/appcache/appcache_host.cc b/content/browser/appcache/appcache_host.cc
+index f5adfcabce3c..2c3ecbebf97e 100644
+--- a/content/browser/appcache/appcache_host.cc
++++ b/content/browser/appcache/appcache_host.cc
+@@ -657,7 +657,6 @@ void AppCacheHost::MaybePassSubresourceFactory() {
+         rfh->GetProcess()->GetBrowserContext(), rfh, process_id_,
+         ContentBrowserClient::URLLoaderFactoryType::kDocumentSubResource,
+         origin_for_url_loader_factory_, base::nullopt /* navigation_id */,
+-        base::UkmSourceId::FromInt64(rfh->GetPageUkmSourceId()),
+         &factory_receiver, nullptr /* header_client */,
+         nullptr /* bypass_redirect_checks */, nullptr /* disable_secure_dns */,
+         nullptr /* factory_override */);

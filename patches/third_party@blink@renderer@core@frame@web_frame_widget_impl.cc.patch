@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc b/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
-index 572dda86dfc1..d519aff63e87 100644
+index 07cb85132106..d78c33519a71 100644
 --- a/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
 +++ b/third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
 @@ -60,7 +60,6 @@
@@ -10,9 +10,9 @@ index 572dda86dfc1..d519aff63e87 100644
  #include "third_party/blink/renderer/core/frame/local_frame_view.h"
  #include "third_party/blink/renderer/core/frame/remote_frame.h"
  #include "third_party/blink/renderer/core/frame/settings.h"
-@@ -303,9 +302,6 @@ void WebFrameWidgetImpl::BeginMainFrame(base::TimeTicks last_frame_time) {
-   DocumentLifecycle::AllowThrottlingScope throttling_scope(
+@@ -311,9 +310,6 @@ void WebFrameWidgetImpl::BeginMainFrame(base::TimeTicks last_frame_time) {
        LocalRootImpl()->GetFrame()->GetDocument()->Lifecycle());
+ 
    if (WidgetBase::ShouldRecordBeginMainFrameMetrics()) {
 -    SCOPED_UMA_AND_UKM_TIMER(
 -        LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator(),
@@ -20,7 +20,7 @@ index 572dda86dfc1..d519aff63e87 100644
      PageWidgetDelegate::Animate(*GetPage(), last_frame_time);
    } else {
      PageWidgetDelegate::Animate(*GetPage(), last_frame_time);
-@@ -340,9 +336,6 @@ void WebFrameWidgetImpl::BeginUpdateLayers() {
+@@ -348,9 +344,6 @@ void WebFrameWidgetImpl::BeginUpdateLayers() {
  void WebFrameWidgetImpl::EndUpdateLayers() {
    if (LocalRootImpl()) {
      DCHECK(update_layers_start_time_);
@@ -30,7 +30,7 @@ index 572dda86dfc1..d519aff63e87 100644
      probe::LayerTreeDidChange(LocalRootImpl()->GetFrame());
    }
    update_layers_start_time_.reset();
-@@ -356,22 +349,12 @@ void WebFrameWidgetImpl::BeginCommitCompositorFrame() {
+@@ -364,22 +357,12 @@ void WebFrameWidgetImpl::BeginCommitCompositorFrame() {
  
  void WebFrameWidgetImpl::EndCommitCompositorFrame(
      base::TimeTicks commit_start_time) {
@@ -53,7 +53,7 @@ index 572dda86dfc1..d519aff63e87 100644
  }
  
  void WebFrameWidgetImpl::RecordEndOfFrameMetrics(
-@@ -379,25 +362,6 @@ void WebFrameWidgetImpl::RecordEndOfFrameMetrics(
+@@ -387,25 +370,6 @@ void WebFrameWidgetImpl::RecordEndOfFrameMetrics(
      cc::ActiveFrameSequenceTrackers trackers) {
    if (!LocalRootImpl())
      return;

@@ -1,17 +1,17 @@
 diff --git a/components/permissions/permission_request_manager.cc b/components/permissions/permission_request_manager.cc
-index 299ad4bd27d5..44328b61ace2 100644
+index fd412be2fd8c..254fb3622c5c 100644
 --- a/components/permissions/permission_request_manager.cc
 +++ b/components/permissions/permission_request_manager.cc
-@@ -488,8 +488,6 @@ void PermissionRequestManager::ShowBubble() {
+@@ -503,8 +503,6 @@ void PermissionRequestManager::ShowBubble() {
      return;
  
-   if (!current_request_view_shown_to_user_) {
+   if (!current_request_already_displayed_) {
 -    PermissionUmaUtil::PermissionPromptShown(requests_);
 -
      if (ShouldCurrentRequestUseQuietUI()) {
        switch (ReasonForUsingQuietUi()) {
          case QuietUiReason::kEnabledInPrefs:
-@@ -538,10 +536,6 @@ void PermissionRequestManager::FinalizeBubble(
+@@ -553,10 +551,6 @@ void PermissionRequestManager::FinalizeBubble(
      PermissionAction permission_action) {
    DCHECK(IsRequestInProgress());
  
@@ -22,7 +22,7 @@ index 299ad4bd27d5..44328b61ace2 100644
    content::BrowserContext* browser_context =
        web_contents()->GetBrowserContext();
    PermissionDecisionAutoBlocker* autoblocker =
-@@ -574,7 +568,6 @@ void PermissionRequestManager::FinalizeBubble(
+@@ -593,7 +587,6 @@ void PermissionRequestManager::FinalizeBubble(
          embargo_status = PermissionEmbargoStatus::REPEATED_IGNORES;
        }
      }

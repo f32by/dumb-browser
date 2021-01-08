@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/resource_coordinator/tab_helper.cc b/chrome/browser/resource_coordinator/tab_helper.cc
-index ccf38154a1b1..70257cbb6897 100644
+index 7e157ea8f732..eefdb8352991 100644
 --- a/chrome/browser/resource_coordinator/tab_helper.cc
 +++ b/chrome/browser/resource_coordinator/tab_helper.cc
-@@ -18,7 +18,6 @@
- #include "chrome/browser/resource_coordinator/tab_lifecycle_unit_external.h"
- #include "chrome/browser/resource_coordinator/tab_lifecycle_unit_source.h"
+@@ -16,7 +16,6 @@
+ #include "chrome/browser/resource_coordinator/lifecycle_unit_state.mojom-shared.h"
+ #include "chrome/browser/resource_coordinator/resource_coordinator_parts.h"
  #include "chrome/browser/resource_coordinator/tab_load_tracker.h"
 -#include "chrome/browser/resource_coordinator/tab_memory_metrics_reporter.h"
  #include "chrome/browser/resource_coordinator/utils.h"
  #include "content/public/browser/navigation_handle.h"
  #include "content/public/browser/render_frame_host.h"
-@@ -35,12 +34,6 @@ ResourceCoordinatorTabHelper::ResourceCoordinatorTabHelper(
+@@ -33,12 +32,6 @@ ResourceCoordinatorTabHelper::ResourceCoordinatorTabHelper(
      content::WebContents* web_contents)
      : content::WebContentsObserver(web_contents) {
    TabLoadTracker::Get()->StartTracking(web_contents);
@@ -23,7 +23,7 @@ index ccf38154a1b1..70257cbb6897 100644
  }
  
  ResourceCoordinatorTabHelper::~ResourceCoordinatorTabHelper() = default;
-@@ -79,11 +72,6 @@ void ResourceCoordinatorTabHelper::DidFinishNavigation(
+@@ -77,11 +70,6 @@ void ResourceCoordinatorTabHelper::DidFinishNavigation(
        navigation_handle->IsSameDocument()) {
      return;
    }

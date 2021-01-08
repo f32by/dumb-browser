@@ -1,26 +1,8 @@
 diff --git a/chrome/common/chrome_features.cc b/chrome/common/chrome_features.cc
-index b7736ace3313..a2286f8de413 100644
+index 510f8ace25a9..e946b31a33a4 100644
 --- a/chrome/common/chrome_features.cc
 +++ b/chrome/common/chrome_features.cc
-@@ -264,7 +264,7 @@ const base::Feature kDesktopPWAsWithoutExtensions{
- 
- // Enable DNS over HTTPS (DoH).
- const base::Feature kDnsOverHttps{"DnsOverHttps",
--                                  base::FEATURE_DISABLED_BY_DEFAULT};
-+                                  base::FEATURE_ENABLED_BY_DEFAULT};
- 
- // Provides a mechanism to remove providers from the dropdown list in the
- // settings UI. Separate multiple provider ids with commas. See the
-@@ -279,7 +279,7 @@ const base::FeatureParam<bool> kDnsOverHttpsFallbackParam{&kDnsOverHttps,
- 
- // Sets whether the DoH setting is displayed in the settings UI.
- const base::FeatureParam<bool> kDnsOverHttpsShowUiParam{&kDnsOverHttps,
--                                                        "ShowUi", false};
-+                                                        "ShowUi", true};
- 
- // Supply one or more space-separated DoH server URI templates to use when this
- // feature is enabled. If no templates are specified, then a hardcoded mapping
-@@ -727,7 +727,7 @@ const base::Feature kTPMFirmwareUpdate{"TPMFirmwareUpdate",
+@@ -759,7 +759,7 @@ const base::Feature kTPMFirmwareUpdate{"TPMFirmwareUpdate",
  #if !defined(OS_ANDROID)
  // Enables logging UKMs for background tab activity by TabActivityWatcher.
  const base::Feature kTabMetricsLogging{"TabMetricsLogging",

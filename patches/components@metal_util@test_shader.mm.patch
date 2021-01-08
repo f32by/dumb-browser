@@ -1,5 +1,5 @@
 diff --git a/components/metal_util/test_shader.mm b/components/metal_util/test_shader.mm
-index d92484403d47..fc12a1cfcf7f 100644
+index 996698571893..7bb50a429bd6 100644
 --- a/components/metal_util/test_shader.mm
 +++ b/components/metal_util/test_shader.mm
 @@ -18,7 +18,6 @@
@@ -10,7 +10,7 @@ index d92484403d47..fc12a1cfcf7f 100644
  #include "components/metal_util/device.h"
  #include "components/metal_util/switches.h"
  
-@@ -653,11 +652,6 @@
+@@ -659,10 +658,6 @@
  const size_t kTestLibBitcodeOffset = 0xd16;
  const size_t kTestLibBitcodeSize = 0xa50;
  
@@ -18,11 +18,10 @@ index d92484403d47..fc12a1cfcf7f 100644
 -  static crash_reporter::CrashKeyString<32> crash_key("metal-link-index");
 -  return crash_key;
 -}
--
- std::vector<uint8_t> GetAlteredLibraryData() {
-   // Make a copy of the shader's data.
-   std::vector<uint8_t> data(kTestLibData, kTestLibData + kTestLibSize);
-@@ -673,7 +667,6 @@
+ 
+ }  // namespace
+ 
+@@ -682,7 +677,6 @@
  
    // Shader link crashes have been observed on bots. Record what index caused
    // them if they appear in the wild.
@@ -30,7 +29,7 @@ index d92484403d47..fc12a1cfcf7f 100644
    return data;
  }
  
-@@ -765,11 +758,6 @@ void RunCallbackIfReady() {
+@@ -776,11 +770,6 @@ void RunCallbackIfReady() {
                                 compile_time);
      }
      if (closure) {

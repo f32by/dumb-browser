@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.h b/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.h
-index 092c6a931654..48837487b7ae 100644
+index 2894b42f5676..8b4de2c73f63 100644
 --- a/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.h
 +++ b/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.h
 @@ -58,8 +58,7 @@ class CORE_EXPORT DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
@@ -12,23 +12,19 @@ index 092c6a931654..48837487b7ae 100644
  
    // Do not call this. Use Create() instead. This is public only for
    // MakeGarbageCollected.
-@@ -68,8 +67,7 @@ class CORE_EXPORT DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
-       DedicatedWorkerThread*,
+@@ -69,7 +68,6 @@ class CORE_EXPORT DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
        base::TimeTicks time_origin,
        std::unique_ptr<Vector<String>> outside_origin_trial_tokens,
--      const BeginFrameProviderParams& begin_frame_provider_params,
--      ukm::SourceId ukm_source_id);
-+      const BeginFrameProviderParams& begin_frame_provider_params);
+       const BeginFrameProviderParams& begin_frame_provider_params,
+-      ukm::SourceId ukm_source_id,
+       bool parent_cross_origin_isolated_capability);
  
    ~DedicatedWorkerGlobalScope() override;
- 
-@@ -165,8 +163,7 @@ class CORE_EXPORT DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
-       DedicatedWorkerThread* thread,
+@@ -170,7 +168,6 @@ class CORE_EXPORT DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
        base::TimeTicks time_origin,
        std::unique_ptr<Vector<String>> outside_origin_trial_tokens,
--      const BeginFrameProviderParams& begin_frame_provider_params,
--      ukm::SourceId ukm_source_id);
-+      const BeginFrameProviderParams& begin_frame_provider_params);
+       const BeginFrameProviderParams& begin_frame_provider_params,
+-      ukm::SourceId ukm_source_id,
+       bool parent_cross_origin_isolated_capability);
  
    void DidReceiveResponseForClassicScript(
-       WorkerClassicScriptLoader* classic_script_loader);

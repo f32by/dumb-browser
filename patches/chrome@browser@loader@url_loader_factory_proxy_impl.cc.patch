@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/loader/url_loader_factory_proxy_impl.cc b/chrome/browser/loader/url_loader_factory_proxy_impl.cc
+index c79f70266708..8df90982fe21 100644
+--- a/chrome/browser/loader/url_loader_factory_proxy_impl.cc
++++ b/chrome/browser/loader/url_loader_factory_proxy_impl.cc
+@@ -43,7 +43,6 @@ void UrlLoaderFactoryProxyImpl::GetProxiedURLLoaderFactory(
+       browser_context, frame_host, process->GetID(),
+       content::ContentBrowserClient::URLLoaderFactoryType::kDocumentSubResource,
+       /*navigation_id=*/base::nullopt,
+-      base::UkmSourceId::FromInt64(frame_host->GetPageUkmSourceId()),
+       &proxied_factory,
+       /*headber_client=*/nullptr);
+ 

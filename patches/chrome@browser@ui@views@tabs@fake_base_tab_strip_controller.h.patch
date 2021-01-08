@@ -1,12 +1,12 @@
 diff --git a/chrome/browser/ui/views/tabs/fake_base_tab_strip_controller.h b/chrome/browser/ui/views/tabs/fake_base_tab_strip_controller.h
-index 67bfef74d48e..c998dfc91440 100644
+index 74bf2e5ff158..b8d4d0e253d0 100644
 --- a/chrome/browser/ui/views/tabs/fake_base_tab_strip_controller.h
 +++ b/chrome/browser/ui/views/tabs/fake_base_tab_strip_controller.h
-@@ -48,6 +48,7 @@ class FakeBaseTabStripController : public TabStripController {
+@@ -49,6 +49,7 @@ class FakeBaseTabStripController : public TabStripController {
    void AddSelectionFromAnchorTo(int index) override;
    bool BeforeCloseTab(int index, CloseTabSource source) override;
    void CloseTab(int index) override;
 +  void ToggleTabAudioMute(int index) override;
    void MoveTab(int from_index, int to_index) override;
    void MoveGroup(const tab_groups::TabGroupId&, int to_index) override;
-   bool ToggleTabGroupCollapsedState(const tab_groups::TabGroupId group,
+   bool ToggleTabGroupCollapsedState(

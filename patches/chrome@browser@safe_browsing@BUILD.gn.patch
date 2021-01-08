@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/safe_browsing/BUILD.gn b/chrome/browser/safe_browsing/BUILD.gn
-index f4491f0e7a5f..0b766132fd05 100644
+index 8d48495d450e..6b323915c8e0 100644
 --- a/chrome/browser/safe_browsing/BUILD.gn
 +++ b/chrome/browser/safe_browsing/BUILD.gn
-@@ -6,6 +6,7 @@ import("//components/safe_browsing/buildflags.gni")
- import("//extensions/buildflags/buildflags.gni")
+@@ -13,6 +13,7 @@ import("//build/config/deprecated_default_sources_assignment_filter.gni")
+ set_sources_assignment_filter(deprecated_default_sources_assignment_filter)
  
  static_library("safe_browsing") {
 +if (false) {
    sources = [
      "chrome_controller_client.cc",
      "chrome_controller_client.h",
-@@ -64,6 +65,7 @@ static_library("safe_browsing") {
+@@ -71,6 +72,7 @@ static_library("safe_browsing") {
      ]
      deps += [ "//extensions/browser" ]
    }

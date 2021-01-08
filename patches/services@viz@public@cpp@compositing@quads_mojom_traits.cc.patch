@@ -1,5 +1,5 @@
 diff --git a/services/viz/public/cpp/compositing/quads_mojom_traits.cc b/services/viz/public/cpp/compositing/quads_mojom_traits.cc
-index 308e76e04176..5e48bebac539 100644
+index 8ff5dc710dda..dafadc9e18fd 100644
 --- a/services/viz/public/cpp/compositing/quads_mojom_traits.cc
 +++ b/services/viz/public/cpp/compositing/quads_mojom_traits.cc
 @@ -5,7 +5,6 @@
@@ -18,7 +18,7 @@ index 308e76e04176..5e48bebac539 100644
      return false;
    }
    quad->force_anti_aliasing_off = data.force_anti_aliasing_off();
-@@ -220,11 +218,9 @@ bool StructTraits<viz::mojom::YUVVideoQuadStateDataView, viz::DrawQuad>::Read(
+@@ -221,11 +219,9 @@ bool StructTraits<viz::mojom::YUVVideoQuadStateDataView, viz::DrawQuad>::Read(
    quad->resource_multiplier = data.resource_multiplier();
    quad->bits_per_channel = data.bits_per_channel();
    if (quad->bits_per_channel < viz::YUVVideoDrawQuad::kMinBitsPerChannel) {
@@ -30,7 +30,7 @@ index 308e76e04176..5e48bebac539 100644
      return false;
    }
    return true;
-@@ -238,7 +234,6 @@ bool StructTraits<viz::mojom::DrawQuadDataView, viz::DrawQuad>::Read(
+@@ -239,7 +235,6 @@ bool StructTraits<viz::mojom::DrawQuadDataView, viz::DrawQuad>::Read(
      return false;
    }
    if (!out->rect.Contains(out->visible_rect)) {

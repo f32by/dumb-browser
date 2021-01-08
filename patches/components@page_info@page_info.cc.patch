@@ -1,8 +1,8 @@
 diff --git a/components/page_info/page_info.cc b/components/page_info/page_info.cc
-index d0172a94ab89..e7eefdb3a2ae 100644
+index 94c8320c48f4..3176b0954dba 100644
 --- a/components/page_info/page_info.cc
 +++ b/components/page_info/page_info.cc
-@@ -39,23 +39,17 @@
+@@ -38,23 +38,17 @@
  #include "components/permissions/permission_decision_auto_blocker.h"
  #include "components/permissions/permission_manager.h"
  #include "components/permissions/permission_result.h"
@@ -26,7 +26,7 @@ index d0172a94ab89..e7eefdb3a2ae 100644
  #include "components/url_formatter/elide_url.h"
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_thread.h"
-@@ -67,8 +61,6 @@
+@@ -65,8 +59,6 @@
  #include "net/cert/x509_certificate.h"
  #include "net/ssl/ssl_cipher_suite_names.h"
  #include "net/ssl/ssl_connection_status_flags.h"
@@ -35,7 +35,7 @@ index d0172a94ab89..e7eefdb3a2ae 100644
  #include "third_party/boringssl/src/include/openssl/ssl.h"
  #include "ui/base/l10n/l10n_util.h"
  #include "url/origin.h"
-@@ -77,8 +69,6 @@ using base::ASCIIToUTF16;
+@@ -75,8 +67,6 @@ using base::ASCIIToUTF16;
  using base::UTF16ToUTF8;
  using base::UTF8ToUTF16;
  using content::BrowserThread;
@@ -44,7 +44,7 @@ index d0172a94ab89..e7eefdb3a2ae 100644
  
  namespace {
  
-@@ -136,12 +126,7 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
+@@ -134,12 +124,7 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
    // Note |ContentSettingsType::ADS| will show up regardless of its default
    // value when it has been activated on the current origin.
    if (info.type == ContentSettingsType::ADS) {
@@ -58,7 +58,7 @@ index d0172a94ab89..e7eefdb3a2ae 100644
    }
  
    if (info.type == ContentSettingsType::SOUND) {
-@@ -462,13 +447,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
+@@ -452,13 +437,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
  
    UMA_HISTOGRAM_ENUMERATION("WebsiteSettings.Action", action, PAGE_INFO_COUNT);
  
@@ -72,7 +72,7 @@ index d0172a94ab89..e7eefdb3a2ae 100644
    base::UmaHistogramEnumeration(
        security_state::GetSafetyTipHistogramName(
            "Security.SafetyTips.PageInfo.Action", safety_tip_info_.status),
-@@ -554,11 +532,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
+@@ -549,11 +527,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
      }
    }
  

@@ -1,8 +1,8 @@
 diff --git a/content/shell/browser/shell_content_browser_client.cc b/content/shell/browser/shell_content_browser_client.cc
-index 7ebc20d5c2bb..2a649bd7db2e 100644
+index f7ba3a73481a..9fc6607a81ff 100644
 --- a/content/shell/browser/shell_content_browser_client.cc
 +++ b/content/shell/browser/shell_content_browser_client.cc
-@@ -63,13 +63,7 @@
+@@ -64,13 +64,7 @@
  #include "content/public/browser/context_factory.h"
  #endif
  
@@ -16,7 +16,7 @@ index 7ebc20d5c2bb..2a649bd7db2e 100644
  #include "content/public/common/content_descriptors.h"
  #endif
  
-@@ -83,18 +77,6 @@ namespace {
+@@ -84,18 +78,6 @@ namespace {
  
  ShellContentBrowserClient* g_browser_client;
  
@@ -35,7 +35,7 @@ index 7ebc20d5c2bb..2a649bd7db2e 100644
  class ShellControllerImpl : public mojom::ShellController {
   public:
    ShellControllerImpl() = default;
-@@ -223,19 +205,6 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
+@@ -224,19 +206,6 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
    command_line->CopySwitchesFrom(*base::CommandLine::ForCurrentProcess(),
                                   kForwardSwitches,
                                   base::size(kForwardSwitches));
@@ -55,13 +55,13 @@ index 7ebc20d5c2bb..2a649bd7db2e 100644
  }
  
  std::string ShellContentBrowserClient::GetAcceptLangs(BrowserContext* context) {
-@@ -417,10 +386,6 @@ void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
+@@ -416,10 +385,6 @@ void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
        base::GlobalDescriptors::GetInstance()->Get(kShellPakDescriptor),
        base::GlobalDescriptors::GetInstance()->GetRegion(kShellPakDescriptor));
  #endif
 -  int crash_signal_fd = GetCrashSignalFD(command_line);
 -  if (crash_signal_fd >= 0) {
--    mappings->Share(service_manager::kCrashDumpSignal, crash_signal_fd);
+-    mappings->Share(kCrashDumpSignal, crash_signal_fd);
 -  }
  }
  #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ANDROID)

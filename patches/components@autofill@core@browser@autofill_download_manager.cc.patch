@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/autofill_download_manager.cc b/components/autofill/core/browser/autofill_download_manager.cc
-index d50a48532875..d41b5cbe1b99 100644
+index e356433a2f89..55d7923cacc8 100644
 --- a/components/autofill/core/browser/autofill_download_manager.cc
 +++ b/components/autofill/core/browser/autofill_download_manager.cc
 @@ -26,7 +26,6 @@
@@ -9,8 +9,8 @@ index d50a48532875..d41b5cbe1b99 100644
 -#include "components/autofill/core/browser/autofill_metrics.h"
  #include "components/autofill/core/browser/logging/log_manager.h"
  #include "components/autofill/core/browser/logging/log_protobufs.h"
- #include "components/autofill/core/browser/proto/legacy_proto_bridge.h"
-@@ -47,6 +46,7 @@
+ #include "components/autofill/core/browser/proto/api_v1.pb.h"
+@@ -46,6 +45,7 @@
  #include "components/prefs/scoped_user_pref_update.h"
  #include "components/variations/net/variations_http_headers.h"
  #include "net/base/load_flags.h"
@@ -18,15 +18,15 @@ index d50a48532875..d41b5cbe1b99 100644
  #include "net/http/http_request_headers.h"
  #include "net/http/http_response_headers.h"
  #include "net/http/http_status_code.h"
-@@ -667,7 +667,6 @@ bool AutofillDownloadManager::StartQueryRequest(
-   request_data.signatures = std::move(signatures);
+@@ -654,7 +654,6 @@ bool AutofillDownloadManager::StartQueryRequest(
+   request_data.form_signatures = std::move(queried_form_signatures);
    request_data.request_type = AutofillDownloadManager::REQUEST_QUERY;
    request_data.payload = std::move(payload);
 -  AutofillMetrics::LogServerQueryMetric(AutofillMetrics::QUERY_SENT);
  
    std::string query_data;
-   if (CheckCacheForQueryRequest(request_data.signatures, &query_data)) {
-@@ -709,7 +708,6 @@ bool AutofillDownloadManager::StartUploadRequest(
+   if (CheckCacheForQueryRequest(request_data.form_signatures, &query_data)) {
+@@ -694,7 +693,6 @@ bool AutofillDownloadManager::StartUploadRequest(
    bool is_small_form = form.active_field_count() < 3;
    bool allow_upload =
        !(can_throttle_upload && (throttling_is_enabled || is_small_form));

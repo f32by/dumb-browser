@@ -1,5 +1,5 @@
 diff --git a/content/public/browser/content_browser_client.h b/content/public/browser/content_browser_client.h
-index c2642a399f14..b777cad70d33 100644
+index 811bc7be6b17..a3d06665b0f1 100644
 --- a/content/public/browser/content_browser_client.h
 +++ b/content/public/browser/content_browser_client.h
 @@ -19,7 +19,6 @@
@@ -10,7 +10,7 @@ index c2642a399f14..b777cad70d33 100644
  #include "base/optional.h"
  #include "base/strings/string_piece.h"
  #include "base/time/time.h"
-@@ -167,10 +166,6 @@ class SelectFilePolicy;
+@@ -168,10 +167,6 @@ class SelectFilePolicy;
  class ClipboardFormatType;
  }  // namespace ui
  
@@ -21,19 +21,7 @@ index c2642a399f14..b777cad70d33 100644
  namespace url {
  class Origin;
  }  // namespace url
-@@ -746,11 +741,6 @@ class CONTENT_EXPORT ContentBrowserClient {
-   virtual void OnTrustAnchorUsed(BrowserContext* browser_context) {}
- #endif
- 
--  // Notification that a signed certificate timestamp (SCT) report was enqueued.
--  // Allows an embedder to implement their own behavior for auditing SCTs.
--  virtual void OnSCTReportReady(BrowserContext* browser_context,
--                                const std::string& cache_key) {}
--
-   // Allows the embedder to override the LocationProvider implementation.
-   // Return nullptr to indicate the default one for the platform should be
-   // created. This is used by Qt, see
-@@ -1261,7 +1251,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -1265,7 +1260,6 @@ class CONTENT_EXPORT ContentBrowserClient {
                 mojo::PendingRemote<network::mojom::URLLoaderFactory>>;
    virtual void RegisterNonNetworkNavigationURLLoaderFactories(
        int frame_tree_node_id,
@@ -41,13 +29,21 @@ index c2642a399f14..b777cad70d33 100644
        NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
        NonNetworkURLLoaderFactoryMap* factories);
  
-@@ -1915,9 +1904,6 @@ class CONTENT_EXPORT ContentBrowserClient {
-   virtual bool ShouldAllowInsecurePrivateNetworkRequests(
+@@ -1417,7 +1411,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+       URLLoaderFactoryType type,
+       const url::Origin& request_initiator,
+       base::Optional<int64_t> navigation_id,
+-      base::UkmSourceId ukm_source_id,
+       mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
+       mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
+           header_client,
+@@ -1923,9 +1916,6 @@ class CONTENT_EXPORT ContentBrowserClient {
        BrowserContext* browser_context,
        const GURL& url);
--
+ 
 -  // Returns the URL-Keyed Metrics service for chrome:ukm.
 -  virtual ukm::UkmService* GetUkmService();
- };
- 
- }  // namespace content
+-
+ #if defined(OS_MAC)
+   // Sets up the embedder sandbox parameters for the given sandbox type. Returns
+   // true if parameters were successfully set up or false if no additional

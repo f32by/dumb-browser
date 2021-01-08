@@ -1,5 +1,5 @@
 diff --git a/components/paint_preview/browser/paint_preview_client.cc b/components/paint_preview/browser/paint_preview_client.cc
-index 68db488b0da1..138ff0c9ce4f 100644
+index e80c63009854..a9c644d80d58 100644
 --- a/components/paint_preview/browser/paint_preview_client.cc
 +++ b/components/paint_preview/browser/paint_preview_client.cc
 @@ -19,15 +19,12 @@
@@ -38,7 +38,7 @@ index 68db488b0da1..138ff0c9ce4f 100644
  base::flat_set<base::UnguessableToken> CreateAcceptedTokenList(
      content::RenderFrameHost* render_frame_host) {
    auto rfhs = render_frame_host->GetFramesInSubtree();
-@@ -300,8 +284,6 @@ void PaintPreviewClient::CapturePaintPreview(
+@@ -301,8 +285,6 @@ void PaintPreviewClient::CapturePaintPreview(
    metadata->set_url(url.spec());
    metadata->set_version(kPaintPreviewVersion);
    document_data.callback = std::move(callback);
@@ -47,7 +47,7 @@ index 68db488b0da1..138ff0c9ce4f 100644
    document_data.accepted_tokens = CreateAcceptedTokenList(render_frame_host);
    document_data.capture_links = params.inner.capture_links;
    document_data.max_per_capture_size = params.inner.max_capture_size;
-@@ -537,9 +519,6 @@ void PaintPreviewClient::OnFinished(
+@@ -541,9 +523,6 @@ void PaintPreviewClient::OnFinished(
          "Browser.PaintPreview.Capture.NumberOfFramesCaptured",
          document_data->finished_subframes.size());
  

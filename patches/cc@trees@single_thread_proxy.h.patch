@@ -1,8 +1,8 @@
 diff --git a/cc/trees/single_thread_proxy.h b/cc/trees/single_thread_proxy.h
-index 2be75a960001..c141b57ab20c 100644
+index b65b1069041d..4de6536133dd 100644
 --- a/cc/trees/single_thread_proxy.h
 +++ b/cc/trees/single_thread_proxy.h
-@@ -62,7 +62,7 @@ class CC_EXPORT SingleThreadProxy : public Proxy,
+@@ -62,13 +62,11 @@ class CC_EXPORT SingleThreadProxy : public Proxy,
        std::unique_ptr<PaintWorkletLayerPainter> painter) override;
    bool SupportsImplScrolling() const override;
    bool MainFrameWillHappenForTesting() override;
@@ -11,13 +11,9 @@ index 2be75a960001..c141b57ab20c 100644
      // Single-threaded mode is only for browser compositing and for renderers in
      // layout tests. This will still get called in the latter case, but we don't
      // need to record UKM in that case.
-@@ -136,8 +136,7 @@ class CC_EXPORT SingleThreadProxy : public Proxy,
-   void NotifyPaintWorkletStateChange(
-       Scheduler::PaintWorkletState state) override;
-   void NotifyThroughputTrackerResults(CustomTrackerResults results) override;
--  void SubmitThroughputData(ukm::SourceId source_id,
--                            int aggregated_percent,
-+  void SubmitThroughputData(int aggregated_percent,
-                             int impl_percent,
-                             base::Optional<int> main_percent) override {}
- 
+   }
+-  void SetUkmSmoothnessDestination(
+-      base::WritableSharedMemoryMapping ukm_smoothness_data) override {}
+   void ClearHistory() override;
+   void SetRenderFrameObserver(
+       std::unique_ptr<RenderFrameMetadataObserver> observer) override;

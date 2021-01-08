@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/navigator.h b/content/browser/renderer_host/navigator.h
-index a433de0a98f2..afbdf5c3614c 100644
+index 4db476c8078f..c9d6a4696c05 100644
 --- a/content/browser/renderer_host/navigator.h
 +++ b/content/browser/renderer_host/navigator.h
-@@ -186,32 +186,11 @@ class CONTENT_EXPORT Navigator {
+@@ -187,32 +187,11 @@ class CONTENT_EXPORT Navigator {
    // Cancel a NavigationRequest for |frame_tree_node|.
    void CancelNavigation(FrameTreeNode* frame_tree_node);
  
@@ -35,7 +35,7 @@ index a433de0a98f2..afbdf5c3614c 100644
    // Called when a renderer initiated navigation has started. Returns the
    // pending NavigationEntry to be used. Either null or a new one owned
    // NavigationController.
-@@ -219,14 +198,6 @@ class CONTENT_EXPORT Navigator {
+@@ -220,14 +199,6 @@ class CONTENT_EXPORT Navigator {
        const mojom::CommonNavigationParams& common_params,
        FrameTreeNode* frame_tree_node);
  
@@ -50,7 +50,7 @@ index a433de0a98f2..afbdf5c3614c 100644
    // The NavigationController that will keep track of session history for all
    // RenderFrameHost objects using this Navigator.
    // TODO(nasko): Move ownership of the NavigationController from
-@@ -237,8 +208,6 @@ class CONTENT_EXPORT Navigator {
+@@ -238,8 +209,6 @@ class CONTENT_EXPORT Navigator {
    // events. Can be nullptr in tests.
    NavigatorDelegate* delegate_;
  

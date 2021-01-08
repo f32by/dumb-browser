@@ -1,14 +1,14 @@
 diff --git a/extensions/browser/api/crash_report_private/crash_report_private_api.cc b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
-index 362c825a0717..9f29d7021402 100644
+index 49c2c3001112..e11e191da7ac 100644
 --- a/extensions/browser/api/crash_report_private/crash_report_private_api.cc
 +++ b/extensions/browser/api/crash_report_private/crash_report_private_api.cc
-@@ -27,47 +27,7 @@ CrashReportPrivateReportErrorFunction::
+@@ -30,47 +30,7 @@ CrashReportPrivateReportErrorFunction::
      ~CrashReportPrivateReportErrorFunction() = default;
  
  ExtensionFunction::ResponseAction CrashReportPrivateReportErrorFunction::Run() {
 -  // Ensure we don't send too many crash reports. Limit to one report per hour.
 -  if (!g_last_called_time.is_null() &&
--      g_clock->Now() - g_last_called_time < base::TimeDelta::FromHours(1)) {
+-      GetClock()->Now() - g_last_called_time < base::TimeDelta::FromHours(1)) {
 -    return RespondNow(Error("Too many calls to this API"));
 -  }
 -  g_last_called_time = base::Time::Now();
@@ -47,7 +47,7 @@ index 362c825a0717..9f29d7021402 100644
 -      browser_context());
 -
 -  return RespondLater();
-+  return RespondNow(NoArguments());
++  return Respond(NoArguments());
  }
  
  void CrashReportPrivateReportErrorFunction::OnReportComplete() {

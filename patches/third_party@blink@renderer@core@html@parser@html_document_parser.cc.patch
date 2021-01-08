@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/html/parser/html_document_parser.cc b/third_party/blink/renderer/core/html/parser/html_document_parser.cc
-index 4c1969e47f5e..eb9cb1a8239d 100644
+index c1212564bd68..53b631cc24f0 100644
 --- a/third_party/blink/renderer/core/html/parser/html_document_parser.cc
 +++ b/third_party/blink/renderer/core/html/parser/html_document_parser.cc
-@@ -309,16 +309,6 @@ HTMLDocumentParser::HTMLDocumentParser(Document& document,
+@@ -318,16 +318,6 @@ HTMLDocumentParser::HTMLDocumentParser(Document& document,
    DCHECK(!RuntimeEnabledFeatures::ForceSynchronousHTMLParsingEnabled() ||
           !CanParseAsynchronously());
  
@@ -16,19 +16,19 @@ index 4c1969e47f5e..eb9cb1a8239d 100644
 -        document.UkmSourceID(), document.UkmRecorder());
 -  }
 -
-   max_tokenization_budget_ = base::GetFieldTrialParamByFeatureAsInt(
-       features::kForceSynchronousHTMLParsing, "MaxTokenizationBudget",
-       kDefaultMaxTokenizationBudget);
-@@ -510,8 +500,6 @@ void HTMLDocumentParser::ResumeParsingAfterYield() {
+   max_tokenization_budget_ = GetMaxTokenizationBudget();
+ 
+   // Don't create preloader for parsing clipboard content.
+@@ -517,8 +507,6 @@ void HTMLDocumentParser::ResumeParsingAfterYield() {
    DCHECK(have_background_parser_);
    DCHECK(!RuntimeEnabledFeatures::ForceSynchronousHTMLParsingEnabled());
  
--  ScopedYieldTimer(&yield_timer_, metrics_reporter_.get());
+-  ScopedYieldTimer timer(&yield_timer_, metrics_reporter_.get());
 -
    CheckIfBlockingStylesheetAdded();
    if (IsStopped() || IsPaused())
      return;
-@@ -847,13 +835,6 @@ void HTMLDocumentParser::PumpPendingSpeculations() {
+@@ -854,13 +842,6 @@ void HTMLDocumentParser::PumpPendingSpeculations() {
              session, speculations_.front()->starting_script))
        break;
    }

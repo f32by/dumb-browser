@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
-index bd425f6f9b7d..22e95ceea126 100644
+index d5a1df2fc923..96b98f0337c7 100644
 --- a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
 +++ b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
-@@ -196,8 +196,7 @@ ServiceWorkerGlobalScope* ServiceWorkerGlobalScope::Create(
+@@ -197,8 +197,7 @@ ServiceWorkerGlobalScope* ServiceWorkerGlobalScope::Create(
          installed_scripts_manager,
      mojo::PendingRemote<mojom::blink::CacheStorage> cache_storage_remote,
      base::TimeTicks time_origin,
@@ -12,7 +12,7 @@ index bd425f6f9b7d..22e95ceea126 100644
  #if DCHECK_IS_ON()
    // If the script is being loaded via script streaming, the script is not yet
    // loaded.
-@@ -214,8 +213,7 @@ ServiceWorkerGlobalScope* ServiceWorkerGlobalScope::Create(
+@@ -215,8 +214,7 @@ ServiceWorkerGlobalScope* ServiceWorkerGlobalScope::Create(
  
    return MakeGarbageCollected<ServiceWorkerGlobalScope>(
        std::move(creation_params), thread, std::move(installed_scripts_manager),
@@ -22,7 +22,7 @@ index bd425f6f9b7d..22e95ceea126 100644
  }
  
  ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(
-@@ -225,12 +223,10 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(
+@@ -226,12 +224,10 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(
          installed_scripts_manager,
      mojo::PendingRemote<mojom::blink::CacheStorage> cache_storage_remote,
      base::TimeTicks time_origin,

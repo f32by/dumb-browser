@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
-index 1a7e0c10e887..e953a75fbf97 100644
+index e2230f7605e9..e953a75fbf97 100644
 --- a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
 +++ b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
 @@ -30,7 +30,6 @@
@@ -155,8 +155,8 @@ index 1a7e0c10e887..e953a75fbf97 100644
 -        metric = AutofillMetrics::SAVE_CARD_PROMPT_LOST_FOCUS;
 -        break;
 -      case PaymentsBubbleClosedReason::kUnknown:
--        NOTREACHED();
--        return;
+-        metric = AutofillMetrics::SAVE_CARD_PROMPT_RESULT_UNKNOWN;
+-        break;
 -    }
 -    AutofillMetrics::LogSaveCardPromptResultMetric(
 -        metric, is_upload_save_, is_reshow_, options_,

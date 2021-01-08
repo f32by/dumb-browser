@@ -1,16 +1,16 @@
 diff --git a/third_party/blink/renderer/platform/wtf/allocator/partitions.cc b/third_party/blink/renderer/platform/wtf/allocator/partitions.cc
-index 8904a440fbe3..dc2e916597bf 100644
+index ca2b0371c825..591c060c0fb2 100644
 --- a/third_party/blink/renderer/platform/wtf/allocator/partitions.cc
 +++ b/third_party/blink/renderer/platform/wtf/allocator/partitions.cc
-@@ -35,7 +35,6 @@
- #include "base/allocator/partition_allocator/page_allocator.h"
+@@ -36,7 +36,6 @@
  #include "base/debug/alias.h"
  #include "base/strings/safe_sprintf.h"
+ #include "base/thread_annotations.h"
 -#include "components/crash/core/common/crash_key.h"
  #include "third_party/blink/renderer/platform/wtf/allocator/partition_allocator.h"
  #include "third_party/blink/renderer/platform/wtf/wtf.h"
  
-@@ -268,9 +267,6 @@ void Partitions::HandleOutOfMemory(size_t size) {
+@@ -274,9 +273,6 @@ void Partitions::HandleOutOfMemory(size_t size) {
    // %d works for 64 bit types as well with SafeSPrintf(), see its unit tests
    // for an example.
    base::strings::SafeSPrintf(value, "%d", base::GetTotalMappedSize());

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-index 38f0f0d1a304..ee8e281c05c6 100644
+index f10172af2b81..03e8013020a4 100644
 --- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 +++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-@@ -32,7 +32,6 @@
+@@ -33,7 +33,6 @@
  #include "chrome/browser/favicon/favicon_service_factory.h"
  #include "chrome/browser/favicon/history_ui_favicon_request_handler_factory.h"
  #include "chrome/browser/feature_engagement/tracker_factory.h"
@@ -10,15 +10,15 @@ index 38f0f0d1a304..ee8e281c05c6 100644
  #include "chrome/browser/history/domain_diversity_reporter_factory.h"
  #include "chrome/browser/history/history_service_factory.h"
  #include "chrome/browser/history/top_sites_factory.h"
-@@ -46,7 +45,6 @@
+@@ -47,7 +46,6 @@
+ #include "chrome/browser/media/webrtc/webrtc_event_log_manager_keyed_service_factory.h"
  #include "chrome/browser/media_galleries/media_galleries_preferences_factory.h"
  #include "chrome/browser/notifications/notifier_state_tracker_factory.h"
- #include "chrome/browser/ntp_snippets/content_suggestions_service_factory.h"
 -#include "chrome/browser/page_load_metrics/observers/https_engagement_metrics/https_engagement_service_factory.h"
  #include "chrome/browser/password_manager/password_store_factory.h"
  #include "chrome/browser/permissions/adaptive_quiet_notification_permission_ui_enabler.h"
  #include "chrome/browser/plugins/plugin_prefs_factory.h"
-@@ -59,7 +57,6 @@
+@@ -60,7 +58,6 @@
  #include "chrome/browser/prerender/prerender_manager_factory.h"
  #include "chrome/browser/profiles/gaia_info_update_service_factory.h"
  #include "chrome/browser/profiles/renderer_updater_factory.h"
@@ -26,7 +26,7 @@ index 38f0f0d1a304..ee8e281c05c6 100644
  #include "chrome/browser/search/suggestions/suggestions_service_factory.h"
  #include "chrome/browser/search_engines/template_url_fetcher_factory.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
-@@ -144,7 +141,6 @@
+@@ -145,7 +142,6 @@
  #include "chrome/browser/apps/platform_apps/api/browser_context_keyed_service_factories.h"
  #include "chrome/browser/apps/platform_apps/browser_context_keyed_service_factories.h"
  #include "chrome/browser/extensions/browser_context_keyed_service_factories.h"
@@ -34,7 +34,7 @@ index 38f0f0d1a304..ee8e281c05c6 100644
  #include "chrome/browser/web_applications/web_app_provider_factory.h"
  #include "extensions/browser/browser_context_keyed_service_factories.h"
  #endif
-@@ -242,7 +238,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -244,7 +240,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
    CaptivePortalServiceFactory::GetInstance();
  #endif
@@ -42,7 +42,7 @@ index 38f0f0d1a304..ee8e281c05c6 100644
    ChromeBrowsingDataRemoverDelegateFactory::GetInstance();
    ChromeSigninClientFactory::GetInstance();
    ClientHintsFactory::GetInstance();
-@@ -272,11 +267,9 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -273,11 +268,9 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if !defined(OS_ANDROID)
    GlobalErrorServiceFactory::GetInstance();
  #endif
@@ -54,7 +54,7 @@ index 38f0f0d1a304..ee8e281c05c6 100644
    IdentityManagerFactory::EnsureFactoryAndDependeeFactoriesBuilt();
    InMemoryURLIndexFactory::GetInstance();
  #if !defined(OS_ANDROID)
-@@ -347,7 +340,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -349,7 +342,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(FULL_SAFE_BROWSING)
    safe_browsing::AdvancedProtectionStatusManagerFactory::GetInstance();
  #endif
@@ -62,7 +62,7 @@ index 38f0f0d1a304..ee8e281c05c6 100644
  #if defined(OS_ANDROID)
    SearchPermissionsService::Factory::GetInstance();
  #endif
-@@ -397,7 +389,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -399,7 +391,6 @@ void ChromeBrowserMainExtraPartsProfiles::
    UsbChooserContextFactory::GetInstance();
  #endif
  #if BUILDFLAG(ENABLE_EXTENSIONS)

@@ -1,5 +1,5 @@
 diff --git a/components/payments/content/payment_request_state.h b/components/payments/content/payment_request_state.h
-index 762b8646cbbc..8e9b445269b8 100644
+index d277d415b20a..2eb646c41544 100644
 --- a/components/payments/content/payment_request_state.h
 +++ b/components/payments/content/payment_request_state.h
 @@ -19,7 +19,6 @@
@@ -8,9 +8,9 @@ index 762b8646cbbc..8e9b445269b8 100644
  #include "components/payments/content/service_worker_payment_app_factory.h"
 -#include "components/payments/core/journey_logger.h"
  #include "components/payments/core/payments_profile_comparator.h"
+ #include "content/public/browser/global_routing_id.h"
  #include "content/public/browser/payment_app_provider.h"
- #include "content/public/browser/web_contents.h"
-@@ -123,8 +122,7 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
+@@ -106,8 +105,7 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
                        base::WeakPtr<Delegate> delegate,
                        const std::string& app_locale,
                        autofill::PersonalDataManager* personal_data_manager,
@@ -20,19 +20,9 @@ index 762b8646cbbc..8e9b445269b8 100644
    ~PaymentRequestState() override;
  
    // PaymentAppFactory::Delegate
-@@ -345,9 +343,6 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
-   void OnAddressNormalized(bool success,
-                            const autofill::AutofillProfile& normalized_profile);
+@@ -372,7 +370,6 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
  
--  void IncrementSelectionStatus(JourneyLogger::Section section,
--                                SectionSelectionStatus selection_status);
--
-   // Returns whether the browser is currently in a TWA.
-   bool IsInTwa() const;
- 
-@@ -394,7 +389,6 @@ class PaymentRequestState : public PaymentAppFactory::Delegate,
-   PaymentRequestSpec* spec_;
-   base::WeakPtr<Delegate> delegate_;
+   // Not owned. Never null. Will outlive this object.
    autofill::PersonalDataManager* personal_data_manager_;
 -  JourneyLogger* journey_logger_;
  

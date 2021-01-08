@@ -1,0 +1,93 @@
+diff --git a/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc b/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc
+index a20936c830c5..9c724960c91c 100644
+--- a/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc
++++ b/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc
+@@ -8,15 +8,12 @@
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+ #include "chrome/browser/permissions/abusive_origin_notifications_permission_revocation_config.h"
+-#include "chrome/browser/permissions/crowd_deny_preload_data.h"
+ #include "chrome/browser/permissions/permission_manager_factory.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_service.h"
++#include "chrome/browser/profiles/profile.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+ #include "components/permissions/permission_manager.h"
+ #include "components/permissions/permission_result.h"
+-#include "components/permissions/permission_uma_util.h"
+ #include "components/permissions/permissions_client.h"
+-#include "components/safe_browsing/core/db/database_manager.h"
+ 
+ namespace {
+ constexpr char kExcludedKey[] = "exempted";
+@@ -76,21 +73,6 @@ void SetOriginStatus(Profile* profile,
+           std::string(), base::WrapUnique(dict.DeepCopy()));
+ }
+ 
+-void RevokePermission(const GURL& origin, Profile* profile) {
+-  permissions::PermissionsClient::Get()
+-      ->GetSettingsMap(profile)
+-      ->SetContentSettingDefaultScope(
+-          origin, GURL(), ContentSettingsType::NOTIFICATIONS, std::string(),
+-          ContentSetting::CONTENT_SETTING_DEFAULT);
+-
+-  OriginStatus status = GetOriginStatus(profile, origin);
+-  status.has_been_previously_revoked = true;
+-  SetOriginStatus(profile, origin, status);
+-
+-  permissions::PermissionUmaUtil::PermissionRevoked(
+-      ContentSettingsType::NOTIFICATIONS,
+-      permissions::PermissionSourceUI::AUTO_REVOCATION, origin, profile);
+-}
+ }  // namespace
+ 
+ AbusiveOriginPermissionRevocationRequest::
+@@ -122,49 +104,9 @@ void AbusiveOriginPermissionRevocationRequest::CheckAndRevokeIfAbusive() {
+     return;
+   }
+ 
+-  CrowdDenyPreloadData* crowd_deny = CrowdDenyPreloadData::GetInstance();
+-  permissions::PermissionUmaUtil::RecordCrowdDenyIsLoadedAtAbuseCheckTime(
+-      crowd_deny->is_loaded_from_disk());
+-  permissions::PermissionUmaUtil::RecordCrowdDenyVersionAtAbuseCheckTime(
+-      crowd_deny->version_on_disk());
+-
+-  const CrowdDenyPreloadData::SiteReputation* site_reputation =
+-      crowd_deny->GetReputationDataForSite(url::Origin::Create(origin_));
+-  if (site_reputation &&
+-      (site_reputation->notification_ux_quality() ==
+-           CrowdDenyPreloadData::SiteReputation::ABUSIVE_PROMPTS ||
+-       site_reputation->notification_ux_quality() ==
+-           CrowdDenyPreloadData::SiteReputation::ABUSIVE_CONTENT)) {
+-    DCHECK(g_browser_process->safe_browsing_service());
+-
+-    if (g_browser_process->safe_browsing_service()) {
+-      safe_browsing_request_.emplace(
+-          g_browser_process->safe_browsing_service()->database_manager(),
+-          base::DefaultClock::GetInstance(), url::Origin::Create(origin_),
+-          base::BindOnce(&AbusiveOriginPermissionRevocationRequest::
+-                             OnSafeBrowsingVerdictReceived,
+-                         weak_factory_.GetWeakPtr()));
+-      return;
+-    }
+-  }
+-
+   std::move(callback_).Run(Outcome::PERMISSION_NOT_REVOKED);
+ }
+ 
+-void AbusiveOriginPermissionRevocationRequest::OnSafeBrowsingVerdictReceived(
+-    CrowdDenySafeBrowsingRequest::Verdict verdict) {
+-  DCHECK(safe_browsing_request_);
+-  DCHECK(profile_);
+-  DCHECK(callback_);
+-
+-  if (verdict == CrowdDenySafeBrowsingRequest::Verdict::kUnacceptable) {
+-    RevokePermission(origin_, profile_);
+-    std::move(callback_).Run(Outcome::PERMISSION_REVOKED_DUE_TO_ABUSE);
+-  } else {
+-    std::move(callback_).Run(Outcome::PERMISSION_NOT_REVOKED);
+-  }
+-}
+-
+ // static
+ bool AbusiveOriginPermissionRevocationRequest::
+     IsOriginExemptedFromFutureRevocations(Profile* profile,

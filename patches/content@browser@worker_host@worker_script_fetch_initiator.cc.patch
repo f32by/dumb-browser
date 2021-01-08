@@ -1,0 +1,14 @@
+diff --git a/content/browser/worker_host/worker_script_fetch_initiator.cc b/content/browser/worker_host/worker_script_fetch_initiator.cc
+index 79ca56521401..219c88a1f5d1 100644
+--- a/content/browser/worker_host/worker_script_fetch_initiator.cc
++++ b/content/browser/worker_host/worker_script_fetch_initiator.cc
+@@ -359,8 +359,7 @@ void WorkerScriptFetchInitiator::CreateScriptLoader(
+         ContentBrowserClient::URLLoaderFactoryType::kWorkerMainResource,
+         request_initiator,
+         /*navigation_id=*/base::nullopt,
+-        /* TODO(https://crbug.com/1103288): The UKM ID could be computed */
+-        base::kInvalidUkmSourceId, &default_factory_receiver,
++        &default_factory_receiver,
+         &factory_params->header_client, &bypass_redirect_checks,
+         nullptr /* disable_secure_dns */, &factory_params->factory_override);
+     factory_bundle_for_browser_info->set_bypass_redirect_checks(

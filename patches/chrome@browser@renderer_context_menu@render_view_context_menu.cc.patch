@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.cc b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-index 132619a0f0af..e832e1b97a3a 100644
+index ae82444496c1..f8ebbc1d86f1 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 @@ -40,7 +40,6 @@
@@ -8,9 +8,9 @@ index 132619a0f0af..e832e1b97a3a 100644
  #include "chrome/browser/devtools/devtools_window.h"
 -#include "chrome/browser/download/download_stats.h"
  #include "chrome/browser/language/language_model_manager_factory.h"
- #include "chrome/browser/media/router/media_router_dialog_controller.h"
  #include "chrome/browser/media/router/media_router_feature.h"
-@@ -246,227 +245,6 @@ base::OnceCallback<void(RenderViewContextMenu*)>* GetMenuShownCallback() {
+ #include "chrome/browser/password_manager/chrome_password_manager_client.h"
+@@ -250,230 +249,6 @@ base::OnceCallback<void(RenderViewContextMenu*)>* GetMenuShownCallback() {
    return callback.get();
  }
  
@@ -25,7 +25,7 @@ index 132619a0f0af..e832e1b97a3a 100644
 -
 -  // These UMA values are for the the RenderViewContextMenuItem enum, used for
 -  // the RenderViewContextMenu.Shown and RenderViewContextMenu.Used histograms.
--  static base::NoDestructor<std::map<int, int>> general_map(
+-  static const base::NoDestructor<std::map<int, int>> kGeneralMap(
 -      {// NB: UMA values for 0 and 1 are detected using
 -       // RenderViewContextMenu::IsContentCustomCommandId() and
 -       // ContextMenuMatcher::IsExtensionsCustomCommandId()
@@ -133,17 +133,19 @@ index 132619a0f0af..e832e1b97a3a 100644
 -       {IDC_CONTENT_CONTEXT_SHARING_SHARED_CLIPBOARD_SINGLE_DEVICE, 108},
 -       {IDC_CONTENT_CONTEXT_SHARING_SHARED_CLIPBOARD_MULTIPLE_DEVICES, 109},
 -       {IDC_CONTENT_CONTEXT_GENERATE_QR_CODE, 110},
+-       {IDC_CONTENT_CLIPBOARD_HISTORY_MENU, 111},
+-       {IDC_CONTENT_CONTEXT_COPYLINKTOTEXT, 112},
 -       // To add new items:
 -       //   - Add one more line above this comment block, using the UMA value
 -       //     from the line below this comment block.
 -       //   - Increment the UMA value in that latter line.
 -       //   - Add the new item to the RenderViewContextMenuItem enum in
 -       //     tools/metrics/histograms/enums.xml.
--       {0, 111}});
+-       {0, 113}});
 -
 -  // These UMA values are for the the ContextMenuOptionDesktop enum, used for
 -  // the ContextMenu.SelectedOptionDesktop histograms.
--  static base::NoDestructor<std::map<int, int>> specific_map(
+-  static const base::NoDestructor<std::map<int, int>> kSpecificMap(
 -      {{IDC_CONTENT_CONTEXT_OPENLINKNEWTAB, 0},
 -       {IDC_CONTENT_CONTEXT_OPENLINKOFFTHERECORD, 1},
 -       {IDC_CONTENT_CONTEXT_COPYLINKLOCATION, 2},
@@ -164,16 +166,17 @@ index 132619a0f0af..e832e1b97a3a 100644
 -       {IDC_CONTENT_CONTEXT_CUT, 17},
 -       {IDC_CONTENT_CONTEXT_PASTE, 18},
 -       {IDC_CONTENT_CONTEXT_GOTOURL, 19},
+-       {IDC_CONTENT_CONTEXT_COPYLINKTOTEXT, 20},
 -       // To add new items:
 -       //   - Add one more line above this comment block, using the UMA value
 -       //     from the line below this comment block.
 -       //   - Increment the UMA value in that latter line.
 -       //   - Add the new item to the ContextMenuOptionDesktop enum in
 -       //     tools/metrics/histograms/enums.xml.
--       {0, 20}});
+-       {0, 21}});
 -
--  return *(type == UmaEnumIdLookupType::GeneralEnumId ? general_map
--                                                      : specific_map);
+-  return *(type == UmaEnumIdLookupType::GeneralEnumId ? kGeneralMap
+-                                                      : kSpecificMap);
 -}
 -
 -int GetUmaValueMax(UmaEnumIdLookupType type) {
@@ -238,7 +241,7 @@ index 132619a0f0af..e832e1b97a3a 100644
  // Returns the preference of the profile represented by the |context|.
  PrefService* GetPrefs(content::BrowserContext* context) {
    return user_prefs::UserPrefs::Get(context);
-@@ -946,108 +724,6 @@ Profile* RenderViewContextMenu::GetProfile() const {
+@@ -952,108 +727,6 @@ Profile* RenderViewContextMenu::GetProfile() const {
    return Profile::FromBrowserContext(browser_context_);
  }
  
@@ -347,7 +350,7 @@ index 132619a0f0af..e832e1b97a3a 100644
  bool RenderViewContextMenu::IsHTML5Fullscreen() const {
    Browser* browser = chrome::FindBrowserWithWebContents(source_web_contents_);
    if (!browser)
-@@ -1269,7 +945,9 @@ void RenderViewContextMenu::AppendLinkItems() {
+@@ -1275,7 +948,9 @@ void RenderViewContextMenu::AppendLinkItems() {
        }
      }
  
@@ -357,7 +360,7 @@ index 132619a0f0af..e832e1b97a3a 100644
  
      menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
      menu_model_.AddItemWithStringId(IDC_CONTENT_CONTEXT_SAVELINKAS,
-@@ -1807,7 +1485,9 @@ void RenderViewContextMenu::AppendSharingItems() {
+@@ -1833,7 +1508,9 @@ void RenderViewContextMenu::AppendSharingItems() {
    int items_before_sharing = menu_model_.GetItemCount();
    bool starting_separator_added = items_before_sharing > items_initial;
  
@@ -367,7 +370,7 @@ index 132619a0f0af..e832e1b97a3a 100644
    AppendSharedClipboardItem();
  
    // Add an ending separator if there are sharing items, otherwise remove the
-@@ -1819,6 +1499,7 @@ void RenderViewContextMenu::AppendSharingItems() {
+@@ -1845,6 +1522,7 @@ void RenderViewContextMenu::AppendSharingItems() {
      menu_model_.RemoveItemAt(items_initial);
  }
  
@@ -375,7 +378,7 @@ index 132619a0f0af..e832e1b97a3a 100644
  void RenderViewContextMenu::AppendClickToCallItem() {
    SharingClickToCallEntryPoint entry_point;
    base::Optional<std::string> phone_number;
-@@ -1845,6 +1526,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
+@@ -1871,6 +1549,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
    click_to_call_context_menu_observer_->BuildMenu(*phone_number, selection_text,
                                                    entry_point);
  }
@@ -383,7 +386,7 @@ index 132619a0f0af..e832e1b97a3a 100644
  
  void RenderViewContextMenu::AppendSharedClipboardItem() {
    if (!ShouldOfferSharedClipboard(browser_context_, params_.selection_text))
-@@ -2264,16 +1946,12 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
+@@ -2299,16 +1978,12 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
      case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
        send_tab_to_self::ShareToSingleTarget(
            GetBrowser()->tab_strip_model()->GetActiveWebContents());
@@ -400,7 +403,7 @@ index 132619a0f0af..e832e1b97a3a 100644
        break;
  
      case IDC_CONTENT_CONTEXT_GENERATE_QR_CODE: {
-@@ -2801,8 +2479,6 @@ void RenderViewContextMenu::ExecSaveLinkAs() {
+@@ -2861,8 +2536,6 @@ void RenderViewContextMenu::ExecSaveLinkAs() {
    if (!render_frame_host)
      return;
  
@@ -409,7 +412,7 @@ index 132619a0f0af..e832e1b97a3a 100644
    const GURL& url = params_.link_url;
  
    net::NetworkTrafficAnnotationTag traffic_annotation =
-@@ -2852,7 +2528,6 @@ void RenderViewContextMenu::ExecSaveAs() {
+@@ -2912,7 +2585,6 @@ void RenderViewContextMenu::ExecSaveAs() {
      if (frame_host)
        frame_host->SaveImageAt(params_.x, params_.y);
    } else {
@@ -417,7 +420,7 @@ index 132619a0f0af..e832e1b97a3a 100644
      const GURL& url = params_.src_url;
      content::Referrer referrer = CreateReferrer(url, params_);
      std::string headers;
-@@ -3007,8 +2682,6 @@ void RenderViewContextMenu::ExecRouteMedia() {
+@@ -3067,8 +2739,6 @@ void RenderViewContextMenu::ExecRouteMedia() {
  
    dialog_controller->ShowMediaRouterDialog(
        media_router::MediaRouterDialogOpenOrigin::CONTEXTUAL_MENU);

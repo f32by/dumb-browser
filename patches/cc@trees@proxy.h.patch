@@ -1,5 +1,5 @@
 diff --git a/cc/trees/proxy.h b/cc/trees/proxy.h
-index cf96398f0f47..749a91e7f1e3 100644
+index 5c886bb152f6..749a91e7f1e3 100644
 --- a/cc/trees/proxy.h
 +++ b/cc/trees/proxy.h
 @@ -17,7 +17,6 @@
@@ -10,11 +10,14 @@ index cf96398f0f47..749a91e7f1e3 100644
  #include "url/gurl.h"
  
  namespace gfx {
-@@ -90,7 +89,7 @@ class CC_EXPORT Proxy {
+@@ -90,10 +89,7 @@ class CC_EXPORT Proxy {
    // Testing hooks
    virtual bool MainFrameWillHappenForTesting() = 0;
  
 -  virtual void SetSourceURL(ukm::SourceId source_id, const GURL& url) = 0;
+-
+-  virtual void SetUkmSmoothnessDestination(
+-      base::WritableSharedMemoryMapping ukm_smoothness_data) = 0;
 +  virtual void SetSourceURL(const GURL& url) = 0;
  
    virtual void ClearHistory() = 0;

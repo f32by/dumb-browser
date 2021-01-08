@@ -1,8 +1,8 @@
 diff --git a/extensions/browser/extension_protocols.cc b/extensions/browser/extension_protocols.cc
-index b7e6e3a906d4..c08a6c843a62 100644
+index e4e1bf4054ad..53af39858172 100644
 --- a/extensions/browser/extension_protocols.cc
 +++ b/extensions/browser/extension_protocols.cc
-@@ -64,7 +64,6 @@
+@@ -71,7 +71,6 @@
  #include "extensions/common/extension.h"
  #include "extensions/common/extension_resource.h"
  #include "extensions/common/file_util.h"
@@ -10,7 +10,7 @@ index b7e6e3a906d4..c08a6c843a62 100644
  #include "extensions/common/manifest_handlers/background_info.h"
  #include "extensions/common/manifest_handlers/csp_info.h"
  #include "extensions/common/manifest_handlers/icons_handler.h"
-@@ -100,85 +99,6 @@ namespace {
+@@ -107,85 +106,6 @@ namespace {
  
  ExtensionProtocolTestHandler* g_test_handler = nullptr;
  
@@ -96,41 +96,41 @@ index b7e6e3a906d4..c08a6c843a62 100644
  void GenerateBackgroundPageContents(const Extension* extension,
                                      std::string* mime_type,
                                      std::string* charset,
-@@ -452,29 +372,21 @@ class FileLoaderObserver : public content::FileURLLoaderObserver {
- class ExtensionURLLoaderFactory : public network::mojom::URLLoaderFactory {
+@@ -461,7 +381,6 @@ class ExtensionURLLoaderFactory
   public:
-   ExtensionURLLoaderFactory(int render_process_id, int render_frame_id)
--      : render_process_id_(render_process_id),
--        render_frame_id_(render_frame_id) {
-+      : render_process_id_(render_process_id) {
-     content::RenderProcessHost* process_host =
-         content::RenderProcessHost::FromID(render_process_id);
-     browser_context_ = process_host->GetBrowserContext();
-     is_web_view_request_ = WebViewGuest::FromFrameID(
-                                render_process_id_, render_frame_id) != nullptr;
--    content::RenderFrameHost* rfh =
--        content::RenderFrameHost::FromID(render_process_id_, render_frame_id_);
--    if (rfh)
--      ukm_source_id_ = base::UkmSourceId::FromInt64(rfh->GetPageUkmSourceId());
+   static mojo::PendingRemote<network::mojom::URLLoaderFactory> Create(
+       content::BrowserContext* browser_context,
+-      base::UkmSourceId ukm_source_id,
+       bool is_web_view_request,
+       int render_process_id) {
+     DCHECK(browser_context);
+@@ -475,7 +394,7 @@ class ExtensionURLLoaderFactory
  
-     Init();
-   }
+     // Manages its own lifetime.
+     new ExtensionURLLoaderFactory(
+-        browser_context, ukm_source_id, is_web_view_request, render_process_id,
++        browser_context, is_web_view_request, render_process_id,
+         pending_remote.InitWithNewPipeAndPassReceiver());
  
-   ExtensionURLLoaderFactory(content::BrowserContext* browser_context,
--                            base::UkmSourceId ukm_source_id,
-                             bool is_web_view_request)
-       : browser_context_(browser_context),
+     return pending_remote;
+@@ -494,14 +413,12 @@ class ExtensionURLLoaderFactory
+   // the NonNetworkURLLoaderFactoryBase::OnDisconnect method.
+   ExtensionURLLoaderFactory(
+       content::BrowserContext* browser_context,
+-      base::UkmSourceId ukm_source_id,
+       bool is_web_view_request,
+       int render_process_id,
+       mojo::PendingReceiver<network::mojom::URLLoaderFactory> factory_receiver)
+       : content::NonNetworkURLLoaderFactoryBase(std::move(factory_receiver)),
+         browser_context_(browser_context),
          is_web_view_request_(is_web_view_request),
 -        ukm_source_id_(ukm_source_id),
--        render_process_id_(-1),
--        render_frame_id_(-1) {
-+        render_process_id_(-1) {
-     Init();
-   }
- 
-@@ -498,9 +410,6 @@ class ExtensionURLLoaderFactory : public network::mojom::URLLoaderFactory {
-       override {
+         render_process_id_(render_process_id) {
      DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+     extension_info_map_ =
+@@ -538,9 +455,6 @@ class ExtensionURLLoaderFactory
+       return;
+     }
  
 -    client =
 -        WrapWithMetricsIfNeeded(request.url, ukm_source_id_, std::move(client));
@@ -138,7 +138,7 @@ index b7e6e3a906d4..c08a6c843a62 100644
      const std::string extension_id = request.url.host();
      ExtensionRegistry* registry = ExtensionRegistry::Get(browser_context_);
      scoped_refptr<const Extension> extension =
-@@ -558,20 +467,6 @@ class ExtensionURLLoaderFactory : public network::mojom::URLLoaderFactory {
+@@ -592,20 +506,6 @@ class ExtensionURLLoaderFactory
                                &send_cors_header, &follow_symlinks_anywhere);
      }
  
@@ -159,7 +159,7 @@ index b7e6e3a906d4..c08a6c843a62 100644
      if (IsBackgroundPageURL(request.url)) {
        // Handle background page requests immediately with a simple generated
        // chunk of HTML.
-@@ -723,13 +618,11 @@ class ExtensionURLLoaderFactory : public network::mojom::URLLoaderFactory {
+@@ -789,7 +689,6 @@ class ExtensionURLLoaderFactory
  
    content::BrowserContext* browser_context_;
    bool is_web_view_request_;
@@ -167,38 +167,49 @@ index b7e6e3a906d4..c08a6c843a62 100644
  
    // We store the ID and get RenderProcessHost each time it's needed. This is to
    // avoid holding on to stale pointers if we get requests past the lifetime of
-   // the objects.
-   const int render_process_id_;
--  const int render_frame_id_;
-   scoped_refptr<extensions::InfoMap> extension_info_map_;
-   mojo::ReceiverSet<network::mojom::URLLoaderFactory> receivers_;
- 
-@@ -785,17 +678,16 @@ void SetExtensionProtocolTestHandler(ExtensionProtocolTestHandler* handler) {
- std::unique_ptr<network::mojom::URLLoaderFactory>
+@@ -852,10 +751,9 @@ void SetExtensionProtocolTestHandler(ExtensionProtocolTestHandler* handler) {
+ mojo::PendingRemote<network::mojom::URLLoaderFactory>
  CreateExtensionNavigationURLLoaderFactory(
      content::BrowserContext* browser_context,
 -    base::UkmSourceId ukm_source_id,
      bool is_web_view_request) {
-   return std::make_unique<ExtensionURLLoaderFactory>(
--      browser_context, ukm_source_id, is_web_view_request);
-+      browser_context, is_web_view_request);
+   return ExtensionURLLoaderFactory::Create(
+-      browser_context, ukm_source_id, is_web_view_request,
++      browser_context, is_web_view_request,
+       content::ChildProcessHost::kInvalidUniqueID);
  }
  
- std::unique_ptr<network::mojom::URLLoaderFactory>
+@@ -863,7 +761,7 @@ mojo::PendingRemote<network::mojom::URLLoaderFactory>
  CreateExtensionWorkerMainResourceURLLoaderFactory(
      content::BrowserContext* browser_context) {
-   return std::make_unique<ExtensionURLLoaderFactory>(
+   return ExtensionURLLoaderFactory::Create(
 -      browser_context, base::kInvalidUkmSourceId,
 +      browser_context,
-       /*is_web_view_request=*/false);
+       /*is_web_view_request=*/false,
+       content::ChildProcessHost::kInvalidUniqueID);
  }
- 
-@@ -803,7 +695,7 @@ std::unique_ptr<network::mojom::URLLoaderFactory>
+@@ -872,7 +770,7 @@ mojo::PendingRemote<network::mojom::URLLoaderFactory>
  CreateExtensionServiceWorkerScriptURLLoaderFactory(
      content::BrowserContext* browser_context) {
-   return std::make_unique<ExtensionURLLoaderFactory>(
+   return ExtensionURLLoaderFactory::Create(
 -      browser_context, base::kInvalidUkmSourceId,
 +      browser_context,
-       /*is_web_view_request=*/false);
+       /*is_web_view_request=*/false,
+       content::ChildProcessHost::kInvalidUniqueID);
+ }
+@@ -885,14 +783,8 @@ CreateExtensionURLLoaderFactory(int render_process_id, int render_frame_id) {
+   bool is_web_view_request =
+       WebViewGuest::FromFrameID(render_process_id, render_frame_id) != nullptr;
+ 
+-  content::RenderFrameHost* rfh =
+-      content::RenderFrameHost::FromID(render_process_id, render_frame_id);
+-  base::UkmSourceId ukm_source_id = base::kInvalidUkmSourceId;
+-  if (rfh)
+-    ukm_source_id = base::UkmSourceId::FromInt64(rfh->GetPageUkmSourceId());
+-
+   return ExtensionURLLoaderFactory::Create(
+-      browser_context, ukm_source_id, is_web_view_request, render_process_id);
++      browser_context, is_web_view_request, render_process_id);
  }
  
+ void EnsureExtensionURLLoaderFactoryShutdownNotifierFactoryBuilt() {

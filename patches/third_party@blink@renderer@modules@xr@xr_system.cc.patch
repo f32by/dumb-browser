@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/xr/xr_system.cc b/third_party/blink/renderer/modules/xr/xr_system.cc
-index 7956f218cfe0..e73d8951cf70 100644
+index 7914f42774b8..dbabb49b8769 100644
 --- a/third_party/blink/renderer/modules/xr/xr_system.cc
 +++ b/third_party/blink/renderer/modules/xr/xr_system.cc
 @@ -6,7 +6,6 @@
@@ -10,7 +10,7 @@ index 7956f218cfe0..e73d8951cf70 100644
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/feature_policy/feature_policy.mojom-blink.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
-@@ -370,7 +369,6 @@ XRSystem::PendingSupportsSessionQuery::mode() const {
+@@ -382,7 +381,6 @@ XRSystem::PendingSupportsSessionQuery::mode() const {
  }
  
  XRSystem::PendingRequestSessionQuery::PendingRequestSessionQuery(
@@ -18,7 +18,7 @@ index 7956f218cfe0..e73d8951cf70 100644
      ScriptPromiseResolver* resolver,
      device::mojom::blink::XRSessionMode session_mode,
      RequestedXRSessionFeatureSet required_features,
-@@ -378,8 +376,7 @@ XRSystem::PendingRequestSessionQuery::PendingRequestSessionQuery(
+@@ -390,8 +388,7 @@ XRSystem::PendingRequestSessionQuery::PendingRequestSessionQuery(
      : resolver_(resolver),
        mode_(session_mode),
        required_features_(std::move(required_features)),
@@ -28,7 +28,7 @@ index 7956f218cfe0..e73d8951cf70 100644
    ParseSensorRequirement();
  }
  
-@@ -472,30 +469,9 @@ void XRSystem::PendingRequestSessionQuery::ReportRequestSessionResult(
+@@ -484,32 +481,11 @@ void XRSystem::PendingRequestSessionQuery::ReportRequestSessionResult(
    if (!doc)
      return;
  
@@ -44,6 +44,8 @@ index 7956f218cfe0..e73d8951cf70 100644
 -      GetFeatureRequestStatus(XRSessionFeature::REF_SPACE_UNBOUNDED, session);
    auto feature_request_dom_overlay =
        GetFeatureRequestStatus(XRSessionFeature::DOM_OVERLAY, session);
+   auto feature_request_depth_sensing =
+       GetFeatureRequestStatus(XRSessionFeature::DEPTH, session);
  
 -  ukm::builders::XR_WebXR_SessionRequest(ukm_source_id_)
 -      .SetMode(static_cast<int64_t>(mode_))
@@ -59,7 +61,7 @@ index 7956f218cfe0..e73d8951cf70 100644
    // If the session was successfully created and DOM overlay was requested,
    // count this as a use of the DOM overlay feature.
    if (session && status == SessionRequestStatus::kSuccess &&
-@@ -737,10 +713,9 @@ device::mojom::blink::XRSessionOptionsPtr XRSystem::XRSessionOptionsFromQuery(
+@@ -761,10 +737,9 @@ device::mojom::blink::XRSessionOptionsPtr XRSystem::XRSessionOptionsFromQuery(
    return session_options;
  }
  
@@ -71,7 +73,7 @@ index 7956f218cfe0..e73d8951cf70 100644
        service_(frame.DomWindow()),
        environment_provider_(frame.DomWindow()),
        receiver_(this, frame.DomWindow()),
-@@ -947,9 +922,6 @@ void XRSystem::RequestImmersiveSession(LocalFrame* frame,
+@@ -971,9 +946,6 @@ void XRSystem::RequestImmersiveSession(LocalFrame* frame,
    DVLOG(2) << __func__;
    // Log an immersive session request if we haven't already
    if (!did_log_request_immersive_session_) {
@@ -81,7 +83,7 @@ index 7956f218cfe0..e73d8951cf70 100644
      did_log_request_immersive_session_ = true;
    }
  
-@@ -1179,13 +1151,6 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
+@@ -1203,13 +1175,6 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
      exception_state.ThrowTypeError(
          String::Format(kImmersiveArModeNotValid, "requestSession"));
  
@@ -95,7 +97,7 @@ index 7956f218cfe0..e73d8951cf70 100644
      return ScriptPromise();
    }
  
-@@ -1236,7 +1201,7 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
+@@ -1260,7 +1225,7 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
  
    PendingRequestSessionQuery* query =
        MakeGarbageCollected<PendingRequestSessionQuery>(
@@ -104,7 +106,7 @@ index 7956f218cfe0..e73d8951cf70 100644
            std::move(optional_features));
  
    if (query->HasFeature(device::mojom::XRSessionFeature::DOM_OVERLAY)) {
-@@ -1464,13 +1429,6 @@ void XRSystem::OnRequestSessionReturned(
+@@ -1488,13 +1453,6 @@ void XRSystem::OnRequestSessionReturned(
  }
  
  void XRSystem::ReportImmersiveSupported(bool supported) {

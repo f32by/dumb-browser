@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/form_structure.cc b/components/autofill/core/browser/form_structure.cc
-index b108c471c2a7..c82fc07ab0dc 100644
+index ff7993d82e26..5a8cb000d0d4 100644
 --- a/components/autofill/core/browser/form_structure.cc
 +++ b/components/autofill/core/browser/form_structure.cc
 @@ -31,7 +31,6 @@
@@ -10,7 +10,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
  #include "components/autofill/core/browser/autofill_type.h"
  #include "components/autofill/core/browser/field_types.h"
  #include "components/autofill/core/browser/form_parsing/field_candidates.h"
-@@ -618,7 +617,6 @@ FormStructure::FormStructure(const FormData& form)
+@@ -608,7 +607,6 @@ FormStructure::FormStructure(const FormData& form)
        form_parsed_timestamp_(AutofillTickClock::NowTicks()),
        passwords_were_revealed_(false),
        password_symbol_vote_(0),
@@ -18,7 +18,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
        unique_renderer_id_(form.unique_renderer_id) {
    // Copy the form fields.
    std::map<base::string16, size_t> unique_names;
-@@ -656,9 +654,6 @@ FormStructure::FormStructure(
+@@ -646,9 +644,6 @@ FormStructure::FormStructure(
  FormStructure::~FormStructure() = default;
  
  void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
@@ -28,7 +28,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
    // First, try to detect field types based on each field's |autocomplete|
    // attribute value.
    if (!was_parsed_for_autocomplete_attributes_)
-@@ -681,27 +676,7 @@ void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
+@@ -671,27 +666,7 @@ void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
    UpdateAutofillCount();
    IdentifySections(has_author_specified_sections_);
  
@@ -56,61 +56,39 @@ index b108c471c2a7..c82fc07ab0dc 100644
  }
  
  bool FormStructure::EncodeUploadRequest(
-@@ -801,11 +776,7 @@ bool FormStructure::EncodeQueryRequest(
- void FormStructure::ParseQueryResponse(
-     std::string payload,
-     const std::vector<FormStructure*>& forms,
--    const FormAndFieldSignatures& encoded_signatures,
--    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
--  AutofillMetrics::LogServerQueryMetric(
--      AutofillMetrics::QUERY_RESPONSE_RECEIVED);
--
-+    const FormAndFieldSignatures& encoded_signatures) {
-   // Parse the response.
-   AutofillQueryResponseContents response;
-   if (!response.ParseFromString(payload))
-@@ -813,18 +784,13 @@ void FormStructure::ParseQueryResponse(
- 
-   VLOG(1) << "Autofill query response was successfully parsed:\n" << response;
- 
--  ProcessQueryResponse(response, forms, encoded_signatures,
--                       form_interactions_ukm_logger);
-+  ProcessQueryResponse(response, forms, encoded_signatures);
- }
- 
+@@ -791,10 +766,7 @@ bool FormStructure::EncodeQueryRequest(
  void FormStructure::ParseApiQueryResponse(
      base::StringPiece payload,
      const std::vector<FormStructure*>& forms,
--    const FormAndFieldSignatures& encoded_signatures,
+-    const std::vector<FormSignature>& queried_form_signatures,
 -    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
 -  AutofillMetrics::LogServerQueryMetric(
 -      AutofillMetrics::QUERY_RESPONSE_RECEIVED);
--
-+    const FormAndFieldSignatures& encoded_signatures) {
++    const std::vector<FormSignature>& queried_form_signatures) {
+ 
    std::string decoded_payload;
    if (!base::Base64Decode(payload, &decoded_payload)) {
-     VLOG(1) << "Could not decode payload from base64 to bytes";
-@@ -840,17 +806,14 @@ void FormStructure::ParseApiQueryResponse(
+@@ -810,17 +782,14 @@ void FormStructure::ParseApiQueryResponse(
+   VLOG(1) << "Autofill query response from API was successfully parsed: "
            << response;
  
-   ProcessQueryResponse(CreateLegacyResponseFromApiResponse(response), forms,
--                       encoded_signatures, form_interactions_ukm_logger);
-+                       encoded_signatures);
+-  ProcessQueryResponse(response, forms, queried_form_signatures,
+-                       form_interactions_ukm_logger);
++  ProcessQueryResponse(response, forms, queried_form_signatures);
  }
  
  // static
  void FormStructure::ProcessQueryResponse(
-     const AutofillQueryResponseContents& response,
+     const AutofillQueryResponse& response,
      const std::vector<FormStructure*>& forms,
--    const FormAndFieldSignatures& encoded_signatures,
+-    const std::vector<FormSignature>& queried_form_signatures,
 -    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
 -  AutofillMetrics::LogServerQueryMetric(AutofillMetrics::QUERY_RESPONSE_PARSED);
--
-+    const FormAndFieldSignatures& encoded_signatures) {
++    const std::vector<FormSignature>& queried_form_signatures) {
+ 
    bool heuristics_detected_fillable_field = false;
    bool query_response_overrode_heuristics = false;
- 
-@@ -912,27 +875,12 @@ void FormStructure::ProcessQueryResponse(
+@@ -883,27 +852,12 @@ void FormStructure::ProcessQueryResponse(
          field->SetPasswordRequirements(current_field.password_requirements());
      }
  
@@ -139,7 +117,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
  }
  
  // static
-@@ -1194,148 +1142,6 @@ void FormStructure::RetrieveFromCache(
+@@ -1165,148 +1119,6 @@ void FormStructure::RetrieveFromCache(
    form_signature_ = cached_form.form_signature_;
  }
  
@@ -288,7 +266,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
  void FormStructure::ParseFieldTypesFromAutocompleteAttributes() {
    has_author_specified_types_ = false;
    has_author_specified_sections_ = false;
-@@ -1678,21 +1484,14 @@ void FormStructure::RationalizePhoneNumbersInSection(std::string section) {
+@@ -1649,21 +1461,14 @@ void FormStructure::RationalizePhoneNumbersInSection(std::string section) {
  
  void FormStructure::ApplyRationalizationsToFieldAndLog(
      size_t field_index,
@@ -312,7 +290,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
    // The rationalization happens within sections.
    for (sections_of_address_indexes->Reset();
         !sections_of_address_indexes->IsFinished();
-@@ -1709,16 +1508,13 @@ void FormStructure::RationalizeAddressLineFields(
+@@ -1680,16 +1485,13 @@ void FormStructure::RationalizeAddressLineFields(
      for (auto field_index : current_section) {
        switch (nb_address_rationalized) {
          case 0:
@@ -332,7 +310,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
            break;
          default:
            NOTREACHED();
-@@ -1731,8 +1527,7 @@ void FormStructure::RationalizeAddressLineFields(
+@@ -1702,8 +1504,7 @@ void FormStructure::RationalizeAddressLineFields(
  
  void FormStructure::ApplyRationalizationsToHiddenSelects(
      size_t field_index,
@@ -342,7 +320,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
    ServerFieldType old_type = fields_[field_index]->Type().GetStorableType();
  
    // Walk on the hidden select fields right after the field_index which share
-@@ -1744,8 +1539,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
+@@ -1715,8 +1516,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
          fields_[current_index]->form_control_type != "select-one" ||
          fields_[current_index]->Type().GetStorableType() != old_type)
        break;
@@ -352,7 +330,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
    }
  
    // Same for the fields coming right before the field_index. (No need to check
-@@ -1757,8 +1551,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
+@@ -1728,8 +1528,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
          fields_[current_index]->form_control_type != "select-one" ||
          fields_[current_index]->Type().GetStorableType() != old_type)
        break;
@@ -362,7 +340,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
      if (current_index == 0)
        break;
    }
-@@ -1786,22 +1579,17 @@ void FormStructure::ApplyRationalizationsToFields(
+@@ -1757,22 +1556,17 @@ void FormStructure::ApplyRationalizationsToFields(
      size_t upper_index,
      size_t lower_index,
      ServerFieldType upper_type,
@@ -390,7 +368,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
  }
  
  bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
-@@ -1821,8 +1609,7 @@ bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
+@@ -1792,8 +1586,7 @@ bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
  
  void FormStructure::RationalizeAddressStateCountry(
      SectionedFieldsIndexes* sections_of_state_indexes,
@@ -400,7 +378,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
    // Walk on the sections of state and country indexes simultaneously. If they
    // both point to the same section, it means that that section includes both
    // the country and the state type. This means that no that rationalization is
-@@ -1884,18 +1671,16 @@ void FormStructure::RationalizeAddressStateCountry(
+@@ -1855,18 +1648,16 @@ void FormStructure::RationalizeAddressStateCountry(
                                             ADDRESS_HOME_COUNTRY)) {
        ApplyRationalizationsToFields(
            upper_index, lower_index, fields_[upper_index]->heuristic_type(),
@@ -422,7 +400,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
      }
    }
  }
-@@ -1919,8 +1704,7 @@ void FormStructure::OverrideServerPredictionsWithHeuristics() {
+@@ -1892,8 +1683,7 @@ void FormStructure::OverrideServerPredictionsWithHeuristics() {
    }
  }
  
@@ -432,7 +410,7 @@ index b108c471c2a7..c82fc07ab0dc 100644
    // The type of every field whose index is in
    // sectioned_field_indexes_by_type[|type|] is predicted by server as |type|.
    // Example: sectioned_field_indexes_by_type[FULL_NAME] is a sectioned fields
-@@ -1949,14 +1733,12 @@ void FormStructure::RationalizeRepeatedFields(
+@@ -1922,14 +1712,12 @@ void FormStructure::RationalizeRepeatedFields(
    }
  
    RationalizeAddressLineFields(

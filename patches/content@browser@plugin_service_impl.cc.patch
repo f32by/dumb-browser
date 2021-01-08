@@ -1,8 +1,16 @@
 diff --git a/content/browser/plugin_service_impl.cc b/content/browser/plugin_service_impl.cc
-index e9cb48e03f17..78b6ed96bb50 100644
+index e9cb48e03f17..d98bbd1840b8 100644
 --- a/content/browser/plugin_service_impl.cc
 +++ b/content/browser/plugin_service_impl.cc
-@@ -69,18 +69,6 @@ void WillLoadPluginsCallback(base::SequenceChecker* sequence_checker) {
+@@ -46,7 +46,6 @@
+ #include "content/public/common/process_type.h"
+ #include "content/public/common/webplugininfo.h"
+ #include "ppapi/shared_impl/ppapi_permissions.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ 
+ namespace content {
+ namespace {
+@@ -69,18 +68,6 @@ void WillLoadPluginsCallback(base::SequenceChecker* sequence_checker) {
  
  }  // namespace
  
@@ -21,7 +29,7 @@ index e9cb48e03f17..78b6ed96bb50 100644
  // static
  PluginService* PluginService::GetInstance() {
    return PluginServiceImpl::GetInstance();
-@@ -314,10 +302,6 @@ void PluginServiceImpl::OpenChannelToPpapiBroker(
+@@ -314,10 +301,6 @@ void PluginServiceImpl::OpenChannelToPpapiBroker(
      int render_frame_id,
      const base::FilePath& path,
      PpapiPluginProcessHost::BrokerClient* client) {

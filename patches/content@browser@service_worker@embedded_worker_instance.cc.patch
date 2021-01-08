@@ -1,0 +1,13 @@
+diff --git a/content/browser/service_worker/embedded_worker_instance.cc b/content/browser/service_worker/embedded_worker_instance.cc
+index 1247e5434f21..82f0c668dc61 100644
+--- a/content/browser/service_worker/embedded_worker_instance.cc
++++ b/content/browser/service_worker/embedded_worker_instance.cc
+@@ -1235,7 +1235,7 @@ EmbeddedWorkerInstance::CreateFactoryBundleOnUI(
+   GetContentClient()->browser()->WillCreateURLLoaderFactory(
+       rph->GetBrowserContext(), nullptr /* frame_host */, rph->GetID(),
+       factory_type, origin, base::nullopt /* navigation_id */,
+-      base::kInvalidUkmSourceId, &default_factory_receiver,
++      &default_factory_receiver,
+       &factory_params->header_client, &bypass_redirect_checks,
+       nullptr /* disable_secure_dns */, &factory_params->factory_override);
+   devtools_instrumentation::WillCreateURLLoaderFactoryForServiceWorker(

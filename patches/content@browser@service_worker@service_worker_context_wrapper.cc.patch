@@ -1,0 +1,13 @@
+diff --git a/content/browser/service_worker/service_worker_context_wrapper.cc b/content/browser/service_worker/service_worker_context_wrapper.cc
+index 24242fd6d2aa..e679916d2d3c 100644
+--- a/content/browser/service_worker/service_worker_context_wrapper.cc
++++ b/content/browser/service_worker/service_worker_context_wrapper.cc
+@@ -1948,7 +1948,7 @@ void ServiceWorkerContextWrapper::SetUpLoaderFactoryForUpdateCheckOnUI(
+       ChildProcessHost::kInvalidUniqueID,
+       ContentBrowserClient::URLLoaderFactoryType::kServiceWorkerScript,
+       url::Origin::Create(scope), /*navigation_id=*/base::nullopt,
+-      base::kInvalidUkmSourceId, &pending_receiver, &header_client,
++      &pending_receiver, &header_client,
+       &bypass_redirect_checks,
+       /*disable_secure_dns=*/nullptr,
+       /*factory_override=*/nullptr);

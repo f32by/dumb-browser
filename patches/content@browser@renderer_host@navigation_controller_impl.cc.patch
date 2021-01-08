@@ -1,17 +1,18 @@
 diff --git a/content/browser/renderer_host/navigation_controller_impl.cc b/content/browser/renderer_host/navigation_controller_impl.cc
-index d50253cb9c4d..0871047a7eb1 100644
+index 29fed88f36ec..50e66ee86cc1 100644
 --- a/content/browser/renderer_host/navigation_controller_impl.cc
 +++ b/content/browser/renderer_host/navigation_controller_impl.cc
-@@ -84,8 +84,6 @@
+@@ -84,9 +84,6 @@
  #include "media/base/mime_util.h"
  #include "net/base/escape.h"
  #include "net/http/http_status_code.h"
 -#include "services/metrics/public/cpp/ukm_builders.h"
 -#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
  #include "skia/ext/platform_canvas.h"
  #include "third_party/blink/public/common/blob/blob_utils.h"
  #include "third_party/blink/public/common/mime_util/mime_util.h"
-@@ -1041,25 +1039,6 @@ bool NavigationControllerImpl::RendererDidNavigate(
+@@ -1043,25 +1040,6 @@ bool NavigationControllerImpl::RendererDidNavigate(
      details->previous_entry_index = -1;
    }
  
@@ -37,7 +38,7 @@ index d50253cb9c4d..0871047a7eb1 100644
    // If there is a pending entry at this point, it should have a SiteInstance,
    // except for restored entries.
    bool was_restored = false;
-@@ -1171,15 +1150,6 @@ bool NavigationControllerImpl::RendererDidNavigate(
+@@ -1173,15 +1151,6 @@ bool NavigationControllerImpl::RendererDidNavigate(
    NavigationEntryImpl* active_entry = GetLastCommittedEntry();
    active_entry->SetTimestamp(timestamp);
    active_entry->SetHttpStatusCode(params.http_status_code);
@@ -53,7 +54,7 @@ index d50253cb9c4d..0871047a7eb1 100644
  
    // Grab the corresponding FrameNavigationEntry for a few updates, but only if
    // the SiteInstance matches (to avoid updating the wrong entry by mistake).
-@@ -1571,7 +1541,7 @@ void NavigationControllerImpl::RendererDidNavigateToNewPage(
+@@ -1573,7 +1542,7 @@ void NavigationControllerImpl::RendererDidNavigateToNewPage(
  
    SetShouldSkipOnBackForwardUIIfNeeded(
        replace_entry, previous_document_was_activated,
@@ -62,7 +63,7 @@ index d50253cb9c4d..0871047a7eb1 100644
  
    InsertOrReplaceEntry(std::move(new_entry), replace_entry,
                         !request->post_commit_error_page_html().empty());
-@@ -1861,7 +1831,7 @@ void NavigationControllerImpl::RendererDidNavigateNewSubframe(
+@@ -1863,7 +1832,7 @@ void NavigationControllerImpl::RendererDidNavigateNewSubframe(
  
    SetShouldSkipOnBackForwardUIIfNeeded(
        replace_entry, previous_document_was_activated,
@@ -71,7 +72,15 @@ index d50253cb9c4d..0871047a7eb1 100644
  
    // TODO(creis): Update this to add the frame_entry if we can't find the one
    // to replace, which can happen due to a unique name change. See
-@@ -3660,8 +3630,7 @@ void NavigationControllerImpl::SetGetTimestampCallbackForTest(
+@@ -3365,7 +3334,6 @@ NavigationControllerImpl::CreateNavigationRequestFromLoadParams(
+           network::mojom::IPAddressSpace::kUnknown,
+           GURL() /* web_bundle_physical_url */,
+           GURL() /* base_url_override_for_web_bundle */,
+-          ukm::kInvalidSourceId /* document_ukm_source_id */,
+           node->pending_frame_policy(),
+           std::vector<std::string>() /* force_enabled_origin_trials */,
+           false /* origin_isolated */,
+@@ -3677,8 +3645,7 @@ void NavigationControllerImpl::SetGetTimestampCallbackForTest(
  void NavigationControllerImpl::SetShouldSkipOnBackForwardUIIfNeeded(
      bool replace_entry,
      bool previous_document_was_activated,
@@ -81,7 +90,7 @@ index d50253cb9c4d..0871047a7eb1 100644
    // Note that for a subframe, previous_document_was_activated is true if the
    // gesture happened in any subframe (propagated to main frame) or in the main
    // frame itself.
-@@ -3684,11 +3653,6 @@ void NavigationControllerImpl::SetShouldSkipOnBackForwardUIIfNeeded(
+@@ -3701,11 +3668,6 @@ void NavigationControllerImpl::SetShouldSkipOnBackForwardUIIfNeeded(
    SetSkippableForSameDocumentEntries(last_committed_entry_index_, true);
    UMA_HISTOGRAM_BOOLEAN("Navigation.BackForward.SetShouldSkipOnBackForwardUI",
                          true);

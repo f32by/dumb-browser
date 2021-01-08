@@ -1,8 +1,8 @@
 diff --git a/components/viz/service/BUILD.gn b/components/viz/service/BUILD.gn
-index c93313243875..567e590c842e 100644
+index 3d3fc4f52270..777a69dcec05 100644
 --- a/components/viz/service/BUILD.gn
 +++ b/components/viz/service/BUILD.gn
-@@ -186,7 +186,6 @@ viz_component("service") {
+@@ -193,7 +193,6 @@ viz_component("service") {
      "//build:chromecast_buildflags",
      "//cc/base",
      "//cc/paint",
@@ -10,3 +10,12 @@ index c93313243875..567e590c842e 100644
      "//gpu/command_buffer/client:gles2_cmd_helper",
      "//gpu/command_buffer/client:gles2_implementation",
      "//gpu/command_buffer/client:raster",
+@@ -257,7 +256,7 @@ viz_component("service") {
+     ]
+ 
+     deps += [ "//ui/accelerated_widget_mac" ]
+-    frameworks = [ "IOSurface.framework" ]
++    frameworks = [ "CoreFoundation.framework", "IOSurface.framework" ]
+   }
+ 
+   if (is_android || use_ozone) {

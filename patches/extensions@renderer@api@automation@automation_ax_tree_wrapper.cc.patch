@@ -1,5 +1,5 @@
 diff --git a/extensions/renderer/api/automation/automation_ax_tree_wrapper.cc b/extensions/renderer/api/automation/automation_ax_tree_wrapper.cc
-index 6caa93d8508f..88a0f485e3a7 100644
+index 39cc85ac6565..043edb876feb 100644
 --- a/extensions/renderer/api/automation/automation_ax_tree_wrapper.cc
 +++ b/extensions/renderer/api/automation/automation_ax_tree_wrapper.cc
 @@ -3,7 +3,6 @@
@@ -8,9 +8,9 @@ index 6caa93d8508f..88a0f485e3a7 100644
  #include "base/no_destructor.h"
 -#include "components/crash/core/common/crash_key.h"
  #include "extensions/common/extension_messages.h"
+ #include "extensions/renderer/api/automation/automation_api_util.h"
  #include "extensions/renderer/api/automation/automation_internal_custom_bindings.h"
- #include "ui/accessibility/ax_language_detection.h"
-@@ -437,9 +436,6 @@ bool AutomationAXTreeWrapper::OnAccessibilityEvents(
+@@ -68,9 +67,6 @@ bool AutomationAXTreeWrapper::OnAccessibilityEvents(
      did_send_tree_change_during_unserialization_ = false;
  
      if (!tree_.Unserialize(update)) {

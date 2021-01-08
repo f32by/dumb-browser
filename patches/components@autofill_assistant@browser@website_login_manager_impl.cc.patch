@@ -1,16 +1,16 @@
 diff --git a/components/autofill_assistant/browser/website_login_manager_impl.cc b/components/autofill_assistant/browser/website_login_manager_impl.cc
-index 6e21c380c48f..64afa7690bc7 100644
+index d3d1ff871eb4..3bf87c8c1311 100644
 --- a/components/autofill_assistant/browser/website_login_manager_impl.cc
 +++ b/components/autofill_assistant/browser/website_login_manager_impl.cc
-@@ -8,7 +8,6 @@
- #include "base/strings/utf_string_conversions.h"
+@@ -10,7 +10,6 @@
+ #include "components/password_manager/content/browser/content_password_manager_driver_factory.h"
  #include "components/password_manager/core/browser/form_fetcher_impl.h"
  #include "components/password_manager/core/browser/form_parsing/form_parser.h"
 -#include "components/password_manager/core/browser/password_form_metrics_recorder.h"
  #include "components/password_manager/core/browser/password_generation_frame_helper.h"
  #include "components/password_manager/core/browser/password_manager_client.h"
- #include "components/password_manager/core/browser/password_manager_driver.h"
-@@ -174,11 +173,6 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
+ #include "components/password_manager/core/browser/password_save_manager_impl.h"
+@@ -175,11 +174,6 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
          presaving_completed_callback_(std::move(presaving_completed_callback)),
          password_save_manager_(password_manager::PasswordSaveManagerImpl::
                                     CreatePasswordSaveManagerImpl(client)),
@@ -22,7 +22,7 @@ index 6e21c380c48f..64afa7690bc7 100644
          votes_uploader_(client, true /* is_possible_change_password_form */) {
      DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
  
-@@ -203,7 +197,7 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
+@@ -204,7 +198,7 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
    // password_manager::FormFetcher::Consumer
    void OnFetchCompleted() override {
      password_save_manager_->Init(client_, form_fetcher_.get(),
@@ -31,7 +31,7 @@ index 6e21c380c48f..64afa7690bc7 100644
      password_save_manager_->PresaveGeneratedPassword(password_form_);
      password_save_manager_->CreatePendingCredentials(
          password_form_, &form_data_ /* observed_form */,
-@@ -223,8 +217,6 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
+@@ -224,8 +218,6 @@ class WebsiteLoginManagerImpl::UpdatePasswordRequest
    base::OnceCallback<void()> presaving_completed_callback_;
    const std::unique_ptr<password_manager::PasswordSaveManager>
        password_save_manager_;

@@ -1,0 +1,16 @@
+diff --git a/cc/metrics/dropped_frame_counter.cc b/cc/metrics/dropped_frame_counter.cc
+index 79f68b73e82e..8d82c062a8c7 100644
+--- a/cc/metrics/dropped_frame_counter.cc
++++ b/cc/metrics/dropped_frame_counter.cc
+@@ -69,11 +69,6 @@ void DroppedFrameCounter::ReportFrames() {
+   }
+ }
+ 
+-void DroppedFrameCounter::SetUkmSmoothnessDestination(
+-    UkmSmoothnessDataShared* smoothness_data) {
+-  ukm_smoothness_data_ = smoothness_data;
+-}
+-
+ void DroppedFrameCounter::Reset() {
+   total_frames_ = 0;
+   total_partial_ = 0;

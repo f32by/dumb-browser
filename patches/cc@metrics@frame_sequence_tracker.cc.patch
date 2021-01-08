@@ -1,8 +1,8 @@
 diff --git a/cc/metrics/frame_sequence_tracker.cc b/cc/metrics/frame_sequence_tracker.cc
-index 9e851e3d87d7..0d9472d005c6 100644
+index 03b59ce58ede..b5649ffe3f54 100644
 --- a/cc/metrics/frame_sequence_tracker.cc
 +++ b/cc/metrics/frame_sequence_tracker.cc
-@@ -66,12 +66,10 @@ const char* FrameSequenceTracker::GetFrameSequenceTrackerTypeName(
+@@ -70,12 +70,10 @@ const char* FrameSequenceTracker::GetFrameSequenceTrackerTypeName(
  }
  
  FrameSequenceTracker::FrameSequenceTracker(
@@ -17,7 +17,7 @@ index 9e851e3d87d7..0d9472d005c6 100644
    DCHECK_LT(type, FrameSequenceTrackerType::kMaxType);
    DCHECK(type != FrameSequenceTrackerType::kCustom);
  }
-@@ -81,8 +79,7 @@ FrameSequenceTracker::FrameSequenceTracker(
+@@ -85,8 +83,7 @@ FrameSequenceTracker::FrameSequenceTracker(
      FrameSequenceMetrics::CustomReporter custom_reporter)
      : custom_sequence_id_(custom_sequence_id),
        metrics_(std::make_unique<FrameSequenceMetrics>(

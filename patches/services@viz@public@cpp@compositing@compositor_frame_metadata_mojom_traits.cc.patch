@@ -1,5 +1,5 @@
 diff --git a/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc b/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc
-index cb57ef4394f2..271e007830a6 100644
+index fd72c7fde26e..7a7b57228281 100644
 --- a/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc
 +++ b/services/viz/public/cpp/compositing/compositor_frame_metadata_mojom_traits.cc
 @@ -8,7 +8,6 @@
@@ -18,12 +18,3 @@ index cb57ef4394f2..271e007830a6 100644
      return false;
    }
    out->device_scale_factor = data.device_scale_factor();
-@@ -60,8 +58,6 @@ bool StructTraits<viz::mojom::CompositorFrameMetadataDataView,
-     return false;
-   }
-   if (out->local_surface_id_allocation_time.is_null()) {
--    viz::SetDeserializationCrashKeyString(
--        "Null local surface ID allocation time");
-     return false;
-   }
-   return data.ReadPreferredFrameInterval(&out->preferred_frame_interval) &&

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/api/preference/preference_api.cc b/chrome/browser/extensions/api/preference/preference_api.cc
-index 6f6096606b65..b0375310984c 100644
+index 6f608df99958..f8b1885ba329 100644
 --- a/chrome/browser/extensions/api/preference/preference_api.cc
 +++ b/chrome/browser/extensions/api/preference/preference_api.cc
 @@ -33,7 +33,6 @@
@@ -22,7 +22,7 @@ index 6f6096606b65..b0375310984c 100644
      {"searchSuggestEnabled", prefs::kSearchSuggestEnabled,
       APIPermission::kPrivacy, APIPermission::kPrivacy},
      {"spellingServiceEnabled", spellcheck::prefs::kSpellCheckUseSpellingService,
-@@ -817,18 +811,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
+@@ -820,18 +814,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
          base::Value(browser_pref_value->GetBool()));
    }
  
@@ -41,7 +41,7 @@ index 6f6096606b65..b0375310984c 100644
    preference_api->SetExtensionControlledPref(
        extension_id(), browser_pref, scope,
        base::Value::FromUniquePtrValue(std::move(browser_pref_value)));
-@@ -882,18 +864,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
+@@ -885,18 +867,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
    PreferenceAPI::Get(browser_context())
        ->RemoveExtensionControlledPref(extension_id(), browser_pref, scope);
  
