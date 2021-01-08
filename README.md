@@ -46,8 +46,8 @@ It's impossible to build Dumb Browser via GitHub Actions due to GitHub free acco
 Please build on your own or wait for official binaries.
 
 Tested on following OS:
-1. macOS 10.15.7
-2. macOS 11.0 Beta 9
+1. macOS 11.1
+2. macOS 10.15.7
 3. Windows 10 1909 18363.1082
 
 ### Prerequisites
