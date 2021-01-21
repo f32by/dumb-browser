@@ -1,0 +1,73 @@
+diff --git a/components/viz/service/display_embedder/skia_output_device.cc b/components/viz/service/display_embedder/skia_output_device.cc
+index 3ed0b7c5efa1..0a169061d8f2 100644
+--- a/components/viz/service/display_embedder/skia_output_device.cc
++++ b/components/viz/service/display_embedder/skia_output_device.cc
+@@ -20,32 +20,8 @@
+ #include "third_party/skia/include/gpu/GrDirectContext.h"
+ #include "ui/gfx/gpu_fence.h"
+ #include "ui/gfx/presentation_feedback.h"
+-#include "ui/latency/latency_tracker.h"
+ 
+ namespace viz {
+-namespace {
+-
+-scoped_refptr<base::SequencedTaskRunner> CreateLatencyTracerRunner() {
+-  if (!base::ThreadPoolInstance::Get())
+-    return nullptr;
+-  return base::ThreadPool::CreateSequencedTaskRunner(
+-      {base::TaskPriority::BEST_EFFORT,
+-       base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN});
+-}
+-
+-void ReportLatency(const gfx::SwapTimings& timings,
+-                   ui::LatencyTracker* tracker,
+-                   std::vector<ui::LatencyInfo> latency_info) {
+-  for (auto& latency : latency_info) {
+-    latency.AddLatencyNumberWithTimestamp(
+-        ui::INPUT_EVENT_GPU_SWAP_BUFFER_COMPONENT, timings.swap_start);
+-    latency.AddLatencyNumberWithTimestamp(
+-        ui::INPUT_EVENT_LATENCY_FRAME_SWAP_COMPONENT, timings.swap_end);
+-  }
+-  tracker->OnGpuSwapBuffersCompleted(std::move(latency_info));
+-}
+-
+-}  // namespace
+ 
+ SkiaOutputDevice::ScopedPaint::ScopedPaint(SkiaOutputDevice* device)
+     : device_(device), sk_surface_(device->BeginPaint(&end_semaphores_)) {}
+@@ -87,16 +63,12 @@ SkiaOutputDevice::SkiaOutputDevice(
+       did_swap_buffer_complete_callback_(
+           std::move(did_swap_buffer_complete_callback)),
+       memory_type_tracker_(
+-          std::make_unique<gpu::MemoryTypeTracker>(memory_tracker)),
+-      latency_tracker_(std::make_unique<ui::LatencyTracker>()),
+-      latency_tracker_runner_(CreateLatencyTracerRunner()) {
++          std::make_unique<gpu::MemoryTypeTracker>(memory_tracker)) {
+   DCHECK(gr_context);
+   capabilities_.max_render_target_size = gr_context->maxRenderTargetSize();
+ }
+ 
+ SkiaOutputDevice::~SkiaOutputDevice() {
+-  if (latency_tracker_runner_)
+-    latency_tracker_runner_->DeleteSoon(FROM_HERE, std::move(latency_tracker_));
+ }
+ 
+ void SkiaOutputDevice::Submit(bool sync_cpu, base::OnceClosure callback) {
+@@ -181,17 +153,6 @@ void SkiaOutputDevice::FinishSwapBuffers(
+ 
+   pending_swaps_.front().CallFeedback();
+ 
+-  if (latency_tracker_runner_) {
+-    // Report latency off GPU main thread.
+-    latency_tracker_runner_->PostTask(
+-        FROM_HERE,
+-        base::BindOnce(&ReportLatency, params.swap_response.timings,
+-                       latency_tracker_.get(), std::move(latency_info)));
+-  } else {
+-    ReportLatency(params.swap_response.timings, latency_tracker_.get(),
+-                  std::move(latency_info));
+-  }
+-
+   pending_swaps_.pop();
+ }
+ 

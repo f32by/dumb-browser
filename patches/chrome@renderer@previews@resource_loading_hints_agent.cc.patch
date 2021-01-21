@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/previews/resource_loading_hints_agent.cc b/chrome/renderer/previews/resource_loading_hints_agent.cc
-index 2a814ecb666a..ed1afa6eb1cd 100644
+index 2dd38106f0ca..aba2277ab8d7 100644
 --- a/chrome/renderer/previews/resource_loading_hints_agent.cc
 +++ b/chrome/renderer/previews/resource_loading_hints_agent.cc
-@@ -76,7 +76,6 @@ void ResourceLoadingHintsAgent::DidCreateNewDocument() {
+@@ -58,7 +58,6 @@ void ResourceLoadingHintsAgent::DidCreateNewDocument() {
    if (!subresource_patterns_to_block_.empty()) {
      std::unique_ptr<blink::WebLoadingHintsProvider> loading_hints =
          std::make_unique<blink::WebLoadingHintsProvider>(
@@ -10,7 +10,7 @@ index 2a814ecb666a..ed1afa6eb1cd 100644
              convert_to_web_vector(subresource_patterns_to_block_));
  
      web_frame->GetDocumentLoader()->SetLoadingHintsProvider(
-@@ -134,8 +133,6 @@ void ResourceLoadingHintsAgent::SetResourceLoadingHints(
+@@ -116,8 +115,6 @@ void ResourceLoadingHintsAgent::SetResourceLoadingHints(
    if (!IsMainFrame())
      return;
  
@@ -19,8 +19,8 @@ index 2a814ecb666a..ed1afa6eb1cd 100644
    for (const auto& subresource :
         resource_loading_hints->subresources_to_block) {
      subresource_patterns_to_block_.push_back(subresource);
-@@ -160,14 +157,6 @@ void ResourceLoadingHintsAgent::NotifyHttpsImageCompressionFetchFailed(
-       retry_after);
+@@ -134,14 +131,6 @@ void ResourceLoadingHintsAgent::SetCompressPublicImagesHints(
+   }
  }
  
 -void ResourceLoadingHintsAgent::SetLiteVideoHint(
@@ -34,7 +34,7 @@ index 2a814ecb666a..ed1afa6eb1cd 100644
  void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
      blink::mojom::BlinkOptimizationGuideHintsPtr hints) {
    if (!IsMainFrame())
-@@ -176,12 +165,6 @@ void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
+@@ -150,12 +139,6 @@ void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
  }
  
  void ResourceLoadingHintsAgent::StopThrottlingMediaRequests() {

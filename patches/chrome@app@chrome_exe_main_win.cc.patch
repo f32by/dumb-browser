@@ -1,8 +1,8 @@
 diff --git a/chrome/app/chrome_exe_main_win.cc b/chrome/app/chrome_exe_main_win.cc
-index 2fcdad988a60..92bdcbb1a170 100644
+index 784c60609a2f..c4ec66867ebc 100644
 --- a/chrome/app/chrome_exe_main_win.cc
 +++ b/chrome/app/chrome_exe_main_win.cc
-@@ -37,13 +37,8 @@
+@@ -39,13 +39,8 @@
  #include "chrome/install_static/install_util.h"
  #include "chrome/install_static/user_data_dir.h"
  #include "components/browser_watcher/exit_code_watcher_win.h"
@@ -14,9 +14,9 @@ index 2fcdad988a60..92bdcbb1a170 100644
  #include "content/public/common/result_codes.h"
 -#include "third_party/crashpad/crashpad/util/win/initial_client_data.h"
  
- namespace {
- 
-@@ -138,24 +133,6 @@ bool RemoveAppCompatFlagsEntry() {
+ #if defined(WIN_CONSOLE_APP)
+ // Forward declaration of main.
+@@ -145,24 +140,6 @@ bool RemoveAppCompatFlagsEntry() {
    return false;
  }
  
@@ -40,16 +40,16 @@ index 2fcdad988a60..92bdcbb1a170 100644
 -
  }  // namespace
  
- #if !defined(WIN_CONSOLE_APP)
-@@ -165,7 +142,6 @@ int main() {
-   HINSTANCE instance = GetModuleHandle(nullptr);
- #endif
+ namespace {
+@@ -249,7 +226,6 @@ int main() {
+ #endif  // defined(ARCH_CPU_32_BITS)
+ 
    install_static::InitializeFromPrimaryModule();
 -  SignalInitializeCrashReporting();
- 
-   // Done here to ensure that OOMs that happen early in process initialization
-   // are correctly signaled to the OS.
-@@ -186,54 +162,6 @@ int main() {
+ #if defined(ARCH_CPU_32_BITS)
+   // Intentionally crash if converting to a fiber failed.
+   CHECK_EQ(fiber_status, FiberStatus::kSuccess);
+@@ -274,54 +250,6 @@ int main() {
    DCHECK(process_type.empty() ||
           HasValidWindowsPrefetchArgument(*command_line));
  

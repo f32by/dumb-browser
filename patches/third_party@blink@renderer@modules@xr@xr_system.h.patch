@@ -1,26 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/xr/xr_system.h b/third_party/blink/renderer/modules/xr/xr_system.h
-index ed199681cba1..d3330b4af992 100644
+index 289801f61202..2b6cfe417e76 100644
 --- a/third_party/blink/renderer/modules/xr/xr_system.h
 +++ b/third_party/blink/renderer/modules/xr/xr_system.h
-@@ -68,7 +68,7 @@ class XRSystem final : public EventTargetWithInlineData,
- 
-  public:
-   // TODO(crbug.com/976796): Fix lint errors.
--  XRSystem(LocalFrame& frame, int64_t ukm_source_id);
-+  XRSystem(LocalFrame& frame);
- 
-   DEFINE_ATTRIBUTE_EVENT_LISTENER(devicechange, kDevicechange)
- 
-@@ -103,8 +103,6 @@ class XRSystem final : public EventTargetWithInlineData,
-   void FocusedFrameChanged() override;
-   bool IsFrameFocused();
- 
--  int64_t GetSourceId() const { return ukm_source_id_; }
--
-   using EnvironmentProviderErrorCallback = base::OnceCallback<void()>;
-   // Registers a callback that'll be invoked when mojo invokes a disconnect
-   // handler on the underlying XREnvironmentIntegrationProvider remote.
-@@ -156,8 +154,7 @@ class XRSystem final : public EventTargetWithInlineData,
+@@ -165,8 +165,7 @@ class XRSystem final : public EventTargetWithInlineData,
    class PendingRequestSessionQuery final
        : public GarbageCollected<PendingRequestSessionQuery> {
     public:
@@ -30,21 +12,12 @@ index ed199681cba1..d3330b4af992 100644
                                 device::mojom::blink::XRSessionMode mode,
                                 RequestedXRSessionFeatureSet required_features,
                                 RequestedXRSessionFeatureSet optional_features);
-@@ -230,8 +227,6 @@ class XRSystem final : public EventTargetWithInlineData,
+@@ -247,8 +246,6 @@ class XRSystem final : public EventTargetWithInlineData,
      RequestedXRSessionFeatureSet optional_features_;
      SensorRequirement sensor_requirement_ = SensorRequirement::kNone;
  
 -    const int64_t ukm_source_id_;
 -
      Member<Element> dom_overlay_element_;
-     DISALLOW_COPY_AND_ASSIGN(PendingRequestSessionQuery);
-   };
-@@ -418,8 +413,6 @@ class XRSystem final : public EventTargetWithInlineData,
-   // Indicates whether we've already logged a request for an immersive session.
-   bool did_log_request_immersive_session_ = false;
  
--  const int64_t ukm_source_id_;
--
-   // The XR object owns outstanding pending session queries, these live until
-   // the underlying promise is either resolved or rejected.
-   HeapHashSet<Member<PendingSupportsSessionQuery>> outstanding_support_queries_;
+     Vector<device::mojom::blink::XRTrackedImage> tracked_images_;

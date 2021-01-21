@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc b/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
-index 8b1845860be8..b20fd24e7447 100644
+index 984f2281a2bd..2eba8d351ff1 100644
 --- a/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
 +++ b/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
 @@ -38,8 +38,6 @@
@@ -11,8 +11,8 @@ index 8b1845860be8..b20fd24e7447 100644
  #include "services/network/public/cpp/features.h"
  #include "services/network/public/mojom/blocked_by_response_reason.mojom-shared.h"
  #include "services/network/public/mojom/fetch_api.mojom-blink.h"
-@@ -119,39 +117,6 @@ bool IsThrottlableRequestContext(mojom::RequestContextType context) {
-          context != mojom::RequestContextType::AUDIO;
+@@ -119,39 +117,6 @@ bool IsThrottlableRequestContext(mojom::blink::RequestContextType context) {
+          context != mojom::blink::RequestContextType::AUDIO;
  }
  
 -void LogMixedAutoupgradeMetrics(blink::MixedContentAutoupgradeStatus status,
@@ -51,7 +51,7 @@ index 8b1845860be8..b20fd24e7447 100644
  bool CanHandleDataURLRequestLocally(const ResourceRequestHead& request) {
    if (!request.Url().ProtocolIsData())
      return false;
-@@ -491,16 +456,6 @@ void ResourceLoader::Start() {
+@@ -499,16 +464,6 @@ void ResourceLoader::Start() {
      throttle_option = ResourceLoadScheduler::ThrottleOption::kStoppable;
    }
  
@@ -68,7 +68,7 @@ index 8b1845860be8..b20fd24e7447 100644
    if (resource_->GetResourceRequest().IsDownloadToNetworkCacheOnly()) {
      // The download-to-cache requests are throttled in net/, they are fire-and
      // forget, and cannot unregister properly from the scheduler once they are
-@@ -873,18 +828,6 @@ void ResourceLoader::DidReceiveResponseInternal(
+@@ -888,18 +843,6 @@ void ResourceLoader::DidReceiveResponseInternal(
      const ResourceResponse& response) {
    const ResourceRequestHead& request = resource_->GetResourceRequest();
  
@@ -87,12 +87,13 @@ index 8b1845860be8..b20fd24e7447 100644
    if (fetcher_->GetProperties().IsDetached()) {
      // If the fetch context is already detached, we don't need further signals,
      // so let's cancel the request.
-@@ -1136,18 +1079,6 @@ void ResourceLoader::DidFail(const WebURLError& error,
+@@ -1154,19 +1097,8 @@ void ResourceLoader::DidFail(const WebURLError& error,
                               int64_t encoded_data_length,
                               int64_t encoded_body_length,
                               int64_t decoded_body_length) {
 -  const ResourceRequestHead& request = resource_->GetResourceRequest();
--
+   response_end_time_for_error_cases_ = response_end_time;
+ 
 -  if (request.IsAutomaticUpgrade()) {
 -    mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> pending_recorder;
 -    Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(

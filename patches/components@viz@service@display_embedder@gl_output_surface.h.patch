@@ -1,0 +1,28 @@
+diff --git a/components/viz/service/display_embedder/gl_output_surface.h b/components/viz/service/display_embedder/gl_output_surface.h
+index 25394e2b353d..05e0aae0cc7e 100644
+--- a/components/viz/service/display_embedder/gl_output_surface.h
++++ b/components/viz/service/display_embedder/gl_output_surface.h
+@@ -12,7 +12,6 @@
+ #include "components/viz/service/display/output_surface.h"
+ #include "components/viz/service/display_embedder/viz_process_context_provider.h"
+ #include "gpu/command_buffer/client/context_support.h"
+-#include "ui/latency/latency_tracker.h"
+ 
+ namespace viz {
+ 
+@@ -59,7 +58,6 @@ class GLOutputSurface : public OutputSurface {
+ 
+  protected:
+   OutputSurfaceClient* client() const { return client_; }
+-  ui::LatencyTracker* latency_tracker() { return &latency_tracker_; }
+   bool needs_swap_size_notifications() {
+     return needs_swap_size_notifications_;
+   }
+@@ -89,7 +87,6 @@ class GLOutputSurface : public OutputSurface {
+   scoped_refptr<VizProcessContextProvider> viz_context_provider_;
+   OutputSurfaceClient* client_ = nullptr;
+   bool wants_vsync_parameter_updates_ = false;
+-  ui::LatencyTracker latency_tracker_;
+ 
+   const gpu::SurfaceHandle surface_handle_;
+ 

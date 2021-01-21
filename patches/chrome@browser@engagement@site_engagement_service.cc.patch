@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/engagement/site_engagement_service.cc b/chrome/browser/engagement/site_engagement_service.cc
-index 7fef0417cad2..03a0b0d12dc8 100644
+index 5489da5806a2..f1ae38e00c74 100644
 --- a/chrome/browser/engagement/site_engagement_service.cc
 +++ b/chrome/browser/engagement/site_engagement_service.cc
 @@ -21,7 +21,6 @@
@@ -20,7 +20,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
  // A clock that keeps showing the time it was constructed with.
  class StoppedClock : public base::Clock {
   public:
-@@ -260,7 +256,6 @@ void SiteEngagementService::HandleNotificationInteraction(const GURL& url) {
+@@ -259,7 +255,6 @@ void SiteEngagementService::HandleNotificationInteraction(const GURL& url) {
  
    AddPoints(url, SiteEngagementScore::GetNotificationInteractionPoints());
  
@@ -28,7 +28,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
    OnEngagementEvent(nullptr /* web_contents */, url,
                      ENGAGEMENT_NOTIFICATION_INTERACTION);
  }
-@@ -319,8 +314,6 @@ void SiteEngagementService::SetLastShortcutLaunchTime(
+@@ -318,8 +313,6 @@ void SiteEngagementService::SetLastShortcutLaunchTime(
    base::Time now = clock_->Now();
    base::Time last_launch = score.last_shortcut_launch_time();
    if (!last_launch.is_null()) {
@@ -37,7 +37,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
    }
  
    score.set_last_shortcut_launch_time(now);
-@@ -481,75 +474,6 @@ void SiteEngagementService::CleanupEngagementScores(
+@@ -479,75 +472,6 @@ void SiteEngagementService::CleanupEngagementScores(
      SetLastEngagementTime(new_last_engagement_time);
  }
  
@@ -113,7 +113,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
  bool SiteEngagementService::ShouldRecordEngagement(const GURL& url) const {
    return url.SchemeIsHTTPOrHTTPS();
  }
-@@ -607,7 +531,6 @@ void SiteEngagementService::HandleMediaPlaying(
+@@ -605,7 +529,6 @@ void SiteEngagementService::HandleMediaPlaying(
    AddPoints(url, is_hidden ? SiteEngagementScore::GetHiddenMediaPoints()
                             : SiteEngagementScore::GetVisibleMediaPoints());
  
@@ -121,7 +121,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
    OnEngagementEvent(
        web_contents, url,
        is_hidden ? ENGAGEMENT_MEDIA_HIDDEN : ENGAGEMENT_MEDIA_VISIBLE);
-@@ -621,7 +544,6 @@ void SiteEngagementService::HandleNavigation(content::WebContents* web_contents,
+@@ -619,7 +542,6 @@ void SiteEngagementService::HandleNavigation(content::WebContents* web_contents,
  
    AddPoints(url, SiteEngagementScore::GetNavigationPoints());
  
@@ -129,7 +129,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
    OnEngagementEvent(web_contents, url, ENGAGEMENT_NAVIGATION);
  }
  
-@@ -633,7 +555,6 @@ void SiteEngagementService::HandleUserInput(content::WebContents* web_contents,
+@@ -631,7 +553,6 @@ void SiteEngagementService::HandleUserInput(content::WebContents* web_contents,
  
    AddPoints(url, SiteEngagementScore::GetUserInputPoints());
  
@@ -137,7 +137,7 @@ index 7fef0417cad2..03a0b0d12dc8 100644
    OnEngagementEvent(web_contents, url, type);
  }
  
-@@ -641,8 +562,6 @@ void SiteEngagementService::OnEngagementEvent(
+@@ -639,8 +560,6 @@ void SiteEngagementService::OnEngagementEvent(
      content::WebContents* web_contents,
      const GURL& url,
      EngagementType type) {

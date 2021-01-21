@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
-index e9b31cd44a1c..91a46bd8eb6c 100644
+index 58036e2038cc..0761d3dc044c 100644
 --- a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
 +++ b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
-@@ -65,7 +65,6 @@
+@@ -68,7 +68,6 @@
  #include "chrome/browser/ui/browser.h"
  #include "chrome/browser/ui/browser_list.h"
  #include "chrome/browser/ui/tabs/tab_strip_model.h"
@@ -10,12 +10,3 @@ index e9b31cd44a1c..91a46bd8eb6c 100644
  #endif
  
  namespace {
-@@ -445,7 +444,7 @@ bool ChromeAutocompleteProviderClient::IsBrowserUpdateAvailable() const {
- #if defined(OS_ANDROID)
-   return false;
- #else
--  return UpgradeDetector::GetInstance()->is_upgrade_available();
-+  return false;
- #endif
- }
- 

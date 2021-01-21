@@ -1,13 +1,9 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `87.0.4280.141`.
+Current version: `88.0.4324.96`.
 
 **Some patches are experimental and build may fail.**
-
-# Warning
-
-This branch (dev) is for reference use only. Patches may update frequently and some features may not work.
 
 # Features
 

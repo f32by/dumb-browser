@@ -1,10 +1,10 @@
 diff --git a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
-index 67dad494a17f..7175f04337a4 100644
+index 2f43ded6cea6..76ace9ac7620 100644
 --- a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
 +++ b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
 @@ -30,7 +30,6 @@
- #include "components/lookalikes/core/lookalike_url_util.h"
- #include "components/prerender/browser/prerender_contents.h"
+ #include "components/no_state_prefetch/browser/prerender_contents.h"
+ #include "components/reputation/core/safety_tips_config.h"
  #include "components/security_interstitials/content/security_interstitial_tab_helper.h"
 -#include "components/ukm/content/source_url_recorder.h"
  #include "components/url_formatter/spoof_checks/top_domains/top500_domains.h"
@@ -18,18 +18,18 @@ index 67dad494a17f..7175f04337a4 100644
      LookalikeUrlMatchType match_type) {
    content::NavigationHandle* handle = navigation_handle();
    content::WebContents* web_contents = handle->GetWebContents();
-@@ -143,7 +141,7 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::ShowInterstitial(
-       web_contents, url, safe_url);
+@@ -144,7 +142,7 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::ShowInterstitial(
  
    std::unique_ptr<LookalikeUrlBlockingPage> blocking_page(
--      new LookalikeUrlBlockingPage(web_contents, safe_url, url, source_id,
-+      new LookalikeUrlBlockingPage(web_contents, safe_url, url,
-                                    match_type, std::move(controller)));
+       new LookalikeUrlBlockingPage(
+-          web_contents, safe_url, url, source_id, match_type,
++          web_contents, safe_url, url, match_type,
+           handle->IsSignedExchangeInnerResponse(), std::move(controller)));
  
    base::Optional<std::string> error_page_contents =
-@@ -228,26 +226,17 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::PerformChecks(
-     first_is_lookalike = false;
-   }
+@@ -253,30 +251,17 @@ ThrottleCheckResult LookalikeUrlNavigationThrottle::PerformChecks(
+   // IMPORTANT: Do not modify first_is_lookalike or last_is_lookalike beyond
+   // this line. See crbug.com/1138138 for an example bug.
  
 -  // source_id corresponds to last_url, even when first_url is what triggered.
 -  // TODO(crbug.com/1133598): disambiguate first_- vs. last_urls.
@@ -38,17 +38,21 @@ index 67dad494a17f..7175f04337a4 100644
 -
    if (first_is_lookalike &&
        ShouldBlockLookalikeUrlNavigation(first_match_type)) {
+     RecordUMAFromMatchType(first_match_type);
 -    return ShowInterstitial(first_suggested_url, first_url, source_id,
 +    return ShowInterstitial(first_suggested_url, first_url,
                              first_match_type);
    }
  
    if (last_is_lookalike && ShouldBlockLookalikeUrlNavigation(last_match_type)) {
+-    RecordUMAFromMatchType(last_match_type);
 -    return ShowInterstitial(last_suggested_url, last_url, source_id,
 +    return ShowInterstitial(last_suggested_url, last_url,
                              last_match_type);
    }
- 
+-
+-  RecordUMAFromMatchType(first_is_lookalike ? first_match_type
+-                                            : last_match_type);
 -  // Interstitial normally records UKM, but still record when it's not shown.
 -  RecordUkmForLookalikeUrlBlockingPage(
 -      source_id, first_is_lookalike ? first_match_type : last_match_type,

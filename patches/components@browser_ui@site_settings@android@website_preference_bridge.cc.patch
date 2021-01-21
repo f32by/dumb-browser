@@ -1,5 +1,5 @@
 diff --git a/components/browser_ui/site_settings/android/website_preference_bridge.cc b/components/browser_ui/site_settings/android/website_preference_bridge.cc
-index a933d1159f34..2eceb753e6c4 100644
+index aea039ec6739..fb0b8e3d4b59 100644
 --- a/components/browser_ui/site_settings/android/website_preference_bridge.cc
 +++ b/components/browser_ui/site_settings/android/website_preference_bridge.cc
 @@ -34,7 +34,6 @@
@@ -10,7 +10,7 @@ index a933d1159f34..2eceb753e6c4 100644
  #include "components/permissions/permission_util.h"
  #include "components/permissions/permissions_client.h"
  #include "components/user_prefs/user_prefs.h"
-@@ -244,10 +243,6 @@ void SetSettingForOrigin(JNIEnv* env,
+@@ -245,10 +244,6 @@ void SetSettingForOrigin(JNIEnv* env,
      return;
    }
  
@@ -20,8 +20,8 @@ index a933d1159f34..2eceb753e6c4 100644
 -          permissions::PermissionSourceUI::SITE_SETTINGS);
    GetHostContentSettingsMap(browser_context)
        ->SetContentSettingDefaultScope(origin_url, embedder_url, content_type,
-                                       std::string(), setting);
-@@ -534,11 +529,6 @@ static void JNI_WebsitePreferenceBridge_SetNotificationSettingForOrigin(
+                                       setting);
+@@ -366,11 +361,6 @@ static void SetNotificationSettingForOrigin(
      return;
    }
  
@@ -32,4 +32,4 @@ index a933d1159f34..2eceb753e6c4 100644
 -
    GetHostContentSettingsMap(browser_context)
        ->SetContentSettingDefaultScope(
-           url, GURL(), ContentSettingsType::NOTIFICATIONS,
+           url, GURL(), ContentSettingsType::NOTIFICATIONS, setting);

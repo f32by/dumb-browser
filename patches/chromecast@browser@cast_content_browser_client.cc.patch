@@ -1,16 +1,8 @@
 diff --git a/chromecast/browser/cast_content_browser_client.cc b/chromecast/browser/cast_content_browser_client.cc
-index 6763a870727d..3d0096c9fc34 100644
+index 66f46bec061e..f4a74c232087 100644
 --- a/chromecast/browser/cast_content_browser_client.cc
 +++ b/chromecast/browser/cast_content_browser_client.cc
-@@ -866,7 +866,6 @@ CastContentBrowserClient::CreateThrottlesForNavigation(
- 
- void CastContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
-     int frame_tree_node_id,
--    base::UkmSourceId ukm_source_id,
-     NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
-     NonNetworkURLLoaderFactoryMap* factories) {
- #if BUILDFLAG(ENABLE_CHROMECAST_EXTENSIONS)
-@@ -875,7 +874,7 @@ void CastContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
+@@ -874,7 +874,7 @@ void CastContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
    auto* browser_context = web_contents->GetBrowserContext();
    auto extension_factory =
        extensions::CreateExtensionNavigationURLLoaderFactory(

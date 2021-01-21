@@ -1,16 +1,16 @@
 diff --git a/extensions/browser/BUILD.gn b/extensions/browser/BUILD.gn
-index edfacf36d2fc..030e30c1b3ae 100644
+index 488170149c68..5707221cc727 100644
 --- a/extensions/browser/BUILD.gn
 +++ b/extensions/browser/BUILD.gn
-@@ -524,7 +524,6 @@ source_set("browser_tests") {
-     sources += [
-       "api/audio/audio_apitest_chromeos.cc",
-       "api/cec_private/cec_private_apitest.cc",
--      "api/crash_report_private/crash_report_private_apitest.cc",
-       "api/media_perception_private/media_perception_private_apitest.cc",
-       "api/system_power_source/system_power_source_apitest.cc",
-       "api/virtual_keyboard/virtual_keyboard_apitest.cc",
-@@ -542,7 +541,6 @@ source_set("browser_tests") {
+@@ -412,7 +412,6 @@ source_set("browser_sources") {
+     "//google_apis",
+     "//ppapi/buildflags",
+     "//services/device/public/mojom",
+-    "//services/metrics/public/cpp:metrics_cpp",
+     "//services/preferences/public/cpp",
+     "//services/service_manager/public/cpp",
+     "//skia",
+@@ -543,7 +542,6 @@ source_set("browser_tests") {
        "//chromeos/dbus/upstart",
        "//chromeos/login/login_state",
        "//chromeos/network",
@@ -18,7 +18,7 @@ index edfacf36d2fc..030e30c1b3ae 100644
      ]
    }
  }
-@@ -592,7 +590,6 @@ source_set("test_support") {
+@@ -595,7 +593,6 @@ source_set("test_support") {
        "api/feedback_private/mock_feedback_service.h",
      ]
      deps += [

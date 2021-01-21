@@ -1,12 +1,12 @@
 diff --git a/content/browser/renderer_host/render_widget_host_view_aura.h b/content/browser/renderer_host/render_widget_host_view_aura.h
-index 6b4f412a5fd7..8338d088eb0e 100644
+index 7ccb0e84f69f..fb350a919592 100644
 --- a/content/browser/renderer_host/render_widget_host_view_aura.h
 +++ b/content/browser/renderer_host/render_widget_host_view_aura.h
-@@ -221,7 +221,6 @@ class CONTENT_EXPORT RenderWidgetHostViewAura
+@@ -222,7 +222,6 @@ class CONTENT_EXPORT RenderWidgetHostViewAura
    void EnsureCaretNotInRect(const gfx::Rect& rect) override;
    bool IsTextEditCommandEnabled(ui::TextEditCommand command) const override;
    void SetTextEditCommandForNextKeyEvent(ui::TextEditCommand command) override;
 -  ukm::SourceId GetClientSourceForMetrics() const override;
    bool ShouldDoLearning() override;
  
- #if defined(OS_WIN) || defined(OS_CHROMEOS)
+ #if defined(OS_WIN) || BUILDFLAG(IS_CHROMEOS_ASH)

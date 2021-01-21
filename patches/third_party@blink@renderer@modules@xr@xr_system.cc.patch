@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/xr/xr_system.cc b/third_party/blink/renderer/modules/xr/xr_system.cc
-index 7914f42774b8..dbabb49b8769 100644
+index a657120bde31..20dbcf3502e4 100644
 --- a/third_party/blink/renderer/modules/xr/xr_system.cc
 +++ b/third_party/blink/renderer/modules/xr/xr_system.cc
 @@ -6,7 +6,6 @@
@@ -10,7 +10,7 @@ index 7914f42774b8..dbabb49b8769 100644
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/feature_policy/feature_policy.mojom-blink.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
-@@ -382,7 +381,6 @@ XRSystem::PendingSupportsSessionQuery::mode() const {
+@@ -403,7 +402,6 @@ XRSystem::PendingSupportsSessionQuery::mode() const {
  }
  
  XRSystem::PendingRequestSessionQuery::PendingRequestSessionQuery(
@@ -18,7 +18,7 @@ index 7914f42774b8..dbabb49b8769 100644
      ScriptPromiseResolver* resolver,
      device::mojom::blink::XRSessionMode session_mode,
      RequestedXRSessionFeatureSet required_features,
-@@ -390,8 +388,7 @@ XRSystem::PendingRequestSessionQuery::PendingRequestSessionQuery(
+@@ -411,8 +409,7 @@ XRSystem::PendingRequestSessionQuery::PendingRequestSessionQuery(
      : resolver_(resolver),
        mode_(session_mode),
        required_features_(std::move(required_features)),
@@ -28,8 +28,8 @@ index 7914f42774b8..dbabb49b8769 100644
    ParseSensorRequirement();
  }
  
-@@ -484,32 +481,11 @@ void XRSystem::PendingRequestSessionQuery::ReportRequestSessionResult(
-   if (!doc)
+@@ -503,32 +500,11 @@ void XRSystem::PendingRequestSessionQuery::ReportRequestSessionResult(
+   if (!resolver_->DomWindow())
      return;
  
 -  auto feature_request_viewer =
@@ -56,67 +56,63 @@ index 7914f42774b8..dbabb49b8769 100644
 -      .SetFeature_BoundedFloor(
 -          static_cast<int64_t>(feature_request_bounded_floor))
 -      .SetFeature_Unbounded(static_cast<int64_t>(feature_request_unbounded))
--      .Record(doc->UkmRecorder());
+-      .Record(resolver_->DomWindow()->UkmRecorder());
 -
    // If the session was successfully created and DOM overlay was requested,
    // count this as a use of the DOM overlay feature.
    if (session && status == SessionRequestStatus::kSuccess &&
-@@ -761,10 +737,9 @@ device::mojom::blink::XRSessionOptionsPtr XRSystem::XRSessionOptionsFromQuery(
-   return session_options;
- }
- 
--XRSystem::XRSystem(LocalFrame& frame, int64_t ukm_source_id)
-+XRSystem::XRSystem(LocalFrame& frame)
-     : ExecutionContextLifecycleObserver(frame.DomWindow()),
-       FocusChangedObserver(frame.GetPage()),
--      ukm_source_id_(ukm_source_id),
-       service_(frame.DomWindow()),
-       environment_provider_(frame.DomWindow()),
-       receiver_(this, frame.DomWindow()),
-@@ -971,9 +946,6 @@ void XRSystem::RequestImmersiveSession(LocalFrame* frame,
-   DVLOG(2) << __func__;
-   // Log an immersive session request if we haven't already
-   if (!did_log_request_immersive_session_) {
--    ukm::builders::XR_WebXR(GetSourceId())
--        .SetDidRequestPresentation(1)
--        .Record(doc->UkmRecorder());
-     did_log_request_immersive_session_ = true;
+@@ -547,13 +523,6 @@ void XRSystem::PendingRequestSessionQuery::ReportRequestSessionResult(
+     UseCounter::Count(session->GetExecutionContext(),
+                       WebFeature::kXRDepthSensing);
    }
- 
-@@ -1203,13 +1175,6 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
-     exception_state.ThrowTypeError(
-         String::Format(kImmersiveArModeNotValid, "requestSession"));
- 
--    // We haven't created the query yet, so we can't use it to implicitly log
--    // our metrics for us, so explicitly log it here, as the query requires the
--    // features to be parsed before it can be built.
--    ukm::builders::XR_WebXR_SessionRequest(GetSourceId())
--        .SetMode(static_cast<int64_t>(session_mode))
--        .SetStatus(static_cast<int64_t>(SessionRequestStatus::kOtherError))
--        .Record(doc->UkmRecorder());
-     return ScriptPromise();
-   }
- 
-@@ -1260,7 +1225,7 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
- 
-   PendingRequestSessionQuery* query =
-       MakeGarbageCollected<PendingRequestSessionQuery>(
--          GetSourceId(), resolver, session_mode, std::move(required_features),
-+          resolver, session_mode, std::move(required_features),
-           std::move(optional_features));
- 
-   if (query->HasFeature(device::mojom::XRSessionFeature::DOM_OVERLAY)) {
-@@ -1488,13 +1453,6 @@ void XRSystem::OnRequestSessionReturned(
- }
- 
- void XRSystem::ReportImmersiveSupported(bool supported) {
--  Document* doc = GetFrame() ? GetFrame()->GetDocument() : nullptr;
--  if (doc && !did_log_supports_immersive_ && supported) {
--    ukm::builders::XR_WebXR ukm_builder(ukm_source_id_);
--    ukm_builder.SetReturnedPresentationCapableDevice(1);
--    ukm_builder.Record(doc->UkmRecorder());
--    did_log_supports_immersive_ = true;
+-
+-  if (session && metrics_recorder) {
+-    mojo::Remote<device::mojom::blink::XRSessionMetricsRecorder> recorder(
+-        std::move(metrics_recorder));
+-    session->SetMetricsReporter(
+-        std::make_unique<XRSession::MetricsReporter>(std::move(recorder)));
 -  }
  }
  
- void XRSystem::AddedEventListener(
+ device::mojom::blink::XRSessionMode XRSystem::PendingRequestSessionQuery::mode()
+@@ -809,10 +778,6 @@ XRSystem* XRSystem::xr(Navigator& navigator) {
+   if (!xr) {
+     xr = MakeGarbageCollected<XRSystem>(navigator);
+     ProvideTo(navigator, xr);
+-
+-    ukm::builders::XR_WebXR(window->UkmSourceID())
+-        .SetDidUseNavigatorXR(1)
+-        .Record(window->UkmRecorder());
+   }
+   return xr;
+ }
+@@ -1021,9 +986,6 @@ void XRSystem::RequestImmersiveSession(PendingRequestSessionQuery* query,
+   DVLOG(2) << __func__;
+   // Log an immersive session request if we haven't already
+   if (!did_log_request_immersive_session_) {
+-    ukm::builders::XR_WebXR(DomWindow()->UkmSourceID())
+-        .SetDidRequestPresentation(1)
+-        .Record(DomWindow()->UkmRecorder());
+     did_log_request_immersive_session_ = true;
+   }
+ 
+@@ -1254,10 +1216,6 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
+     // We haven't created the query yet, so we can't use it to implicitly log
+     // our metrics for us, so explicitly log it here, as the query requires the
+     // features to be parsed before it can be built.
+-    ukm::builders::XR_WebXR_SessionRequest(DomWindow()->UkmSourceID())
+-        .SetMode(static_cast<int64_t>(session_mode))
+-        .SetStatus(static_cast<int64_t>(SessionRequestStatus::kOtherError))
+-        .Record(DomWindow()->UkmRecorder());
+     return ScriptPromise();
+   }
+ 
+@@ -1308,7 +1266,7 @@ ScriptPromise XRSystem::requestSession(ScriptState* script_state,
+ 
+   PendingRequestSessionQuery* query =
+       MakeGarbageCollected<PendingRequestSessionQuery>(
+-          DomWindow()->UkmSourceID(), resolver, session_mode,
++          resolver, session_mode,
+           std::move(required_features), std::move(optional_features));
+ 
+   if (query->HasFeature(device::mojom::XRSessionFeature::DOM_OVERLAY)) {

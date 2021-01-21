@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-index 5bc58e3dd54d..db68f6b0a326 100644
+index 9f8870262c83..8451c69c7f33 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 @@ -27,7 +27,6 @@
@@ -27,7 +27,7 @@ index 5bc58e3dd54d..db68f6b0a326 100644
 -ChromeMetricsServicesManagerClient::CreateRapporServiceImpl() {
 -  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 -  return std::make_unique<rappor::RapporServiceImpl>(
--      local_state_, base::Bind(&chrome::IsOffTheRecordSessionActive));
+-      local_state_, base::BindRepeating(&chrome::IsOffTheRecordSessionActive));
 -}
 -
  std::unique_ptr<variations::VariationsService>

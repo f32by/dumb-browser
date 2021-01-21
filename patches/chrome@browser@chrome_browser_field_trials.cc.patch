@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_field_trials.cc b/chrome/browser/chrome_browser_field_trials.cc
-index 63a2aeadf005..4c51b45c3108 100644
+index 2d6772e01b42..5a1b4980154e 100644
 --- a/chrome/browser/chrome_browser_field_trials.cc
 +++ b/chrome/browser/chrome_browser_field_trials.cc
 @@ -21,8 +21,6 @@
@@ -11,7 +11,7 @@ index 63a2aeadf005..4c51b45c3108 100644
  #include "components/version_info/version_info.h"
  
  #if defined(OS_ANDROID)
-@@ -49,13 +47,6 @@ void CreateFallbackSamplingTrialIfNeeded(base::FeatureList* feature_list) {
+@@ -52,13 +50,6 @@ void CreateFallbackSamplingTrialIfNeeded(base::FeatureList* feature_list) {
  #endif  // defined(OS_WIN) || defined(OS_ANDROID)
  }
  
@@ -25,7 +25,7 @@ index 63a2aeadf005..4c51b45c3108 100644
  }  // namespace
  
  ChromeBrowserFieldTrials::ChromeBrowserFieldTrials(PrefService* local_state)
-@@ -87,7 +78,6 @@ void ChromeBrowserFieldTrials::SetupFeatureControllingFieldTrials(
+@@ -91,7 +82,6 @@ void ChromeBrowserFieldTrials::SetupFeatureControllingFieldTrials(
    // is needed.
    if (!has_seed) {
      CreateFallbackSamplingTrialIfNeeded(feature_list);
@@ -33,7 +33,7 @@ index 63a2aeadf005..4c51b45c3108 100644
  #if defined(OS_CHROMEOS)
      chromeos::multidevice_setup::CreateFirstRunFieldTrial(feature_list);
  #endif
-@@ -114,9 +104,4 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
+@@ -151,9 +141,4 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
  }
  
  void ChromeBrowserFieldTrials::InstantiateDynamicTrials() {

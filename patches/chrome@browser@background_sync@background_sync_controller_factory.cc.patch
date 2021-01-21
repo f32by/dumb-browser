@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/background_sync/background_sync_controller_factory.cc b/chrome/browser/background_sync/background_sync_controller_factory.cc
-index d03ed9e64f4f..a85447d112ca 100644
+index 8217f93bad95..c92d685d46ea 100644
 --- a/chrome/browser/background_sync/background_sync_controller_factory.cc
 +++ b/chrome/browser/background_sync/background_sync_controller_factory.cc
 @@ -6,7 +6,6 @@
  
- #include "chrome/browser/background_sync/background_sync_controller_impl.h"
+ #include "chrome/browser/background_sync/background_sync_delegate_impl.h"
  #include "chrome/browser/engagement/site_engagement_service_factory.h"
 -#include "chrome/browser/metrics/ukm_background_recorder_service.h"
  #include "chrome/browser/profiles/incognito_helpers.h"
  #include "chrome/browser/profiles/profile.h"
- #include "components/keyed_service/content/browser_context_dependency_manager.h"
-@@ -28,7 +27,6 @@ BackgroundSyncControllerFactory::BackgroundSyncControllerFactory()
+ #include "components/background_sync/background_sync_controller_impl.h"
+@@ -29,7 +28,6 @@ BackgroundSyncControllerFactory::BackgroundSyncControllerFactory()
      : BrowserContextKeyedServiceFactory(
            "BackgroundSyncService",
            BrowserContextDependencyManager::GetInstance()) {

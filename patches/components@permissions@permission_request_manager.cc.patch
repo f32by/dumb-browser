@@ -1,8 +1,8 @@
 diff --git a/components/permissions/permission_request_manager.cc b/components/permissions/permission_request_manager.cc
-index fd412be2fd8c..254fb3622c5c 100644
+index c930f2f499c9..c4f1ee96666c 100644
 --- a/components/permissions/permission_request_manager.cc
 +++ b/components/permissions/permission_request_manager.cc
-@@ -503,8 +503,6 @@ void PermissionRequestManager::ShowBubble() {
+@@ -556,8 +556,6 @@ void PermissionRequestManager::ShowBubble() {
      return;
  
    if (!current_request_already_displayed_) {
@@ -11,22 +11,23 @@ index fd412be2fd8c..254fb3622c5c 100644
      if (ShouldCurrentRequestUseQuietUI()) {
        switch (ReasonForUsingQuietUi()) {
          case QuietUiReason::kEnabledInPrefs:
-@@ -553,10 +551,6 @@ void PermissionRequestManager::FinalizeBubble(
+@@ -608,11 +606,6 @@ void PermissionRequestManager::ResetViewStateForCurrentRequest() {
+ void PermissionRequestManager::FinalizeCurrentRequests(
      PermissionAction permission_action) {
    DCHECK(IsRequestInProgress());
- 
 -  PermissionUmaUtil::PermissionPromptResolved(
 -      requests_, web_contents(), permission_action,
--      DetermineCurrentRequestUIDispositionForUMA());
--
+-      DetermineCurrentRequestUIDispositionForUMA(),
+-      DetermineCurrentRequestUIDispositionReasonForUMA(),
+-      prediction_grant_likelihood_);
+ 
    content::BrowserContext* browser_context =
        web_contents()->GetBrowserContext();
-   PermissionDecisionAutoBlocker* autoblocker =
-@@ -593,7 +587,6 @@ void PermissionRequestManager::FinalizeBubble(
+@@ -650,7 +643,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
          embargo_status = PermissionEmbargoStatus::REPEATED_IGNORES;
        }
      }
 -    PermissionUmaUtil::RecordEmbargoStatus(embargo_status);
    }
+   ResetViewStateForCurrentRequest();
    std::vector<PermissionRequest*>::iterator requests_iter;
-   for (requests_iter = requests_.begin(); requests_iter != requests_.end();

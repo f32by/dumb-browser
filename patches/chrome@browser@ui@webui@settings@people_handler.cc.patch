@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/people_handler.cc b/chrome/browser/ui/webui/settings/people_handler.cc
-index 702dce697775..dd40aa85cbda 100644
+index e326ae815ea7..54dbba59c73b 100644
 --- a/chrome/browser/ui/webui/settings/people_handler.cc
 +++ b/chrome/browser/ui/webui/settings/people_handler.cc
 @@ -19,7 +19,6 @@
@@ -10,7 +10,7 @@ index 702dce697775..dd40aa85cbda 100644
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_error_controller_factory.h"
  #include "chrome/browser/signin/signin_promo.h"
-@@ -458,10 +457,6 @@ void PeopleHandler::HandleSetDatatypes(const base::ListValue* args) {
+@@ -449,10 +448,6 @@ void PeopleHandler::HandleSetDatatypes(const base::ListValue* args) {
  
    // Choosing data types to sync never fails.
    ResolveJavascriptCallback(*callback_id, base::Value(kConfigurePageStatus));
@@ -21,19 +21,25 @@ index 702dce697775..dd40aa85cbda 100644
  }
  
  void PeopleHandler::HandleGetStoredAccounts(const base::ListValue* args) {
-@@ -611,11 +606,6 @@ void PeopleHandler::HandleSetEncryption(const base::ListValue* args) {
+@@ -544,7 +539,6 @@ void PeopleHandler::HandleSetEncryption(const base::ListValue* args) {
+   }
+ 
+   if (service->GetUserSettings()->IsEncryptEverythingAllowed()) {
+-    ProfileMetrics::LogProfileSyncInfo(ProfileMetrics::SYNC_ENCRYPT);
+   } else {
+     // Don't allow "encrypt all" if the SyncService doesn't allow it.
+     // The UI is hidden, but the user may have enabled it e.g. by fiddling with
+@@ -596,9 +590,6 @@ void PeopleHandler::HandleSetEncryption(const base::ListValue* args) {
    } else {
      ResolveJavascriptCallback(*callback_id, base::Value(kConfigurePageStatus));
    }
 -
--  if (configuration.encrypt_all)
--    ProfileMetrics::LogProfileSyncInfo(ProfileMetrics::SYNC_ENCRYPT);
 -  if (!configuration.set_new_passphrase && !configuration.passphrase.empty())
 -    ProfileMetrics::LogProfileSyncInfo(ProfileMetrics::SYNC_PASSPHRASE);
  }
  
  void PeopleHandler::HandleShowSyncSetupUI(const base::ListValue* args) {
-@@ -725,8 +715,7 @@ void PeopleHandler::HandleSignout(const base::ListValue* args) {
+@@ -703,8 +694,7 @@ void PeopleHandler::HandleSignout(const base::ListValue* args) {
    }
  
    if (delete_profile) {

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-index c84f395a5543..2e0f55df9f09 100644
+index 31978bf56193..20c90f78269b 100644
 --- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 +++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-@@ -32,7 +32,6 @@
+@@ -31,7 +31,6 @@
  #include "chrome/browser/browsing_data/navigation_entry_remover.h"
  #include "chrome/browser/chrome_notification_types.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -10,24 +10,24 @@ index c84f395a5543..2e0f55df9f09 100644
  #include "chrome/browser/custom_handlers/protocol_handler_registry.h"
  #include "chrome/browser/custom_handlers/protocol_handler_registry_factory.h"
  #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
-@@ -47,8 +46,6 @@
+@@ -46,8 +45,6 @@
  #include "chrome/browser/history/history_service_factory.h"
  #include "chrome/browser/history/web_history_service_factory.h"
  #include "chrome/browser/language/url_language_histogram_factory.h"
 -#include "chrome/browser/lite_video/lite_video_keyed_service.h"
 -#include "chrome/browser/lite_video/lite_video_keyed_service_factory.h"
+ #include "chrome/browser/login_detection/login_detection_prefs.h"
  #include "chrome/browser/media/history/media_history_keyed_service.h"
  #include "chrome/browser/media/history/media_history_keyed_service_factory.h"
- #include "chrome/browser/media/media_device_id_salt.h"
-@@ -64,7 +61,6 @@
+@@ -66,7 +63,6 @@
  #include "chrome/browser/previews/previews_service.h"
  #include "chrome/browser/previews/previews_service_factory.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
- #include "chrome/browser/translate/chrome_translate_client.h"
- #include "chrome/browser/ui/find_bar/find_bar_state.h"
- #include "chrome/browser/ui/find_bar/find_bar_state_factory.h"
-@@ -579,11 +575,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+ #include "chrome/browser/search_engines/template_url_service_factory.h"
+ #include "chrome/browser/spellchecker/spellcheck_factory.h"
+ #include "chrome/browser/spellchecker/spellcheck_service.h"
+@@ -578,11 +574,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
  
      AvailabilityProber::ClearData(prefs);
  
@@ -39,7 +39,7 @@ index c84f395a5543..2e0f55df9f09 100644
  #if defined(OS_ANDROID)
      OomInterventionDecider* oom_intervention_decider =
          OomInterventionDecider::GetForBrowserContext(profile_);
-@@ -630,7 +621,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -629,7 +620,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      }
  #endif
  
@@ -47,7 +47,7 @@ index c84f395a5543..2e0f55df9f09 100644
  
      FindBarStateFactory::GetForBrowserContext(profile_)->SetLastSearchText(
          base::string16());
-@@ -657,19 +647,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -656,19 +646,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
         content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB)) {
      base::RecordAction(UserMetricsAction("ClearBrowsingData_Cookies"));
  

@@ -1,19 +1,19 @@
 diff --git a/components/translate/core/browser/translate_manager.cc b/components/translate/core/browser/translate_manager.cc
-index 82d24b970f32..6beaf4265fda 100644
+index 7fb66fc81db9..0204f5b791b5 100644
 --- a/components/translate/core/browser/translate_manager.cc
 +++ b/components/translate/core/browser/translate_manager.cc
-@@ -167,10 +167,6 @@ void TranslateManager::InitiateTranslation(const std::string& page_lang) {
-                                       page_language_code, target_lang);
+@@ -173,10 +173,6 @@ void TranslateManager::InitiateTranslation(const std::string& page_lang) {
  
    NotifyTranslateInit(page_language_code, target_lang, decision, ui_shown);
--
+ 
 -  RecordDecisionMetrics(decision, page_language_code, ui_shown);
 -  RecordDecisionRankerEvent(decision, translate_prefs.get(), page_language_code,
 -                            target_lang);
- }
- 
- // static
-@@ -293,12 +289,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
+-
+   // Mark the current state as the initial state now that we are done
+   // initializing Translate.
+   GetActiveTranslateMetricsLogger()->LogInitialState();
+@@ -375,12 +371,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
    if (!TranslateDownloadManager::IsSupportedLanguage(source_lang))
      source_lang = std::string(translate::kUnknownLanguageCode);
  
@@ -26,7 +26,7 @@ index 82d24b970f32..6beaf4265fda 100644
    if (source_lang == target_lang) {
      // If the languages are the same, try the translation using the unknown
      // language code on Desktop. Android and iOS don't support unknown source
-@@ -341,9 +331,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
+@@ -425,9 +415,6 @@ void TranslateManager::TranslatePage(const std::string& original_source_lang,
  }
  
  void TranslateManager::RevertTranslation() {
@@ -36,7 +36,7 @@ index 82d24b970f32..6beaf4265fda 100644
    // Revert the translation.
    translate_driver_->RevertTranslation(page_seq_no_);
    language_state_.SetCurrentLanguage(language_state_.original_language());
-@@ -431,8 +418,6 @@ void TranslateManager::PageTranslated(const std::string& source_lang,
+@@ -517,8 +504,6 @@ void TranslateManager::PageTranslated(const std::string& source_lang,
    // script initialization phase such as translation script failed because of
    // CSP issues (crbug.com/738277).
    // Note: NotifyTranslateError and ShowTranslateUI will not log the errors.
@@ -45,7 +45,7 @@ index 82d24b970f32..6beaf4265fda 100644
    translate_client_->ShowTranslateUI(translate::TRANSLATE_STEP_AFTER_TRANSLATE,
                                       source_lang, target_lang, error_type,
                                       false);
-@@ -593,14 +578,9 @@ void TranslateManager::InitTranslateEvent(const std::string& src_lang,
+@@ -683,14 +668,9 @@ void TranslateManager::InitTranslateEvent(const std::string& src_lang,
    // TODO(rogerm): Populate the language list.
  }
  
@@ -61,7 +61,7 @@ index 82d24b970f32..6beaf4265fda 100644
  }
  
  bool TranslateManager::ShouldSuppressBubbleUI(
-@@ -1004,146 +984,6 @@ bool TranslateManager::MaterializeDecision(
+@@ -1148,146 +1128,6 @@ bool TranslateManager::MaterializeDecision(
    return did_show_ui;
  }
  

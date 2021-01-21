@@ -1,16 +1,16 @@
 diff --git a/services/network/network_service.cc b/services/network/network_service.cc
-index da36edb0a529..23f8f0b6c590 100644
+index 4901703b899b..4c5ce3b0d32d 100644
 --- a/services/network/network_service.cc
 +++ b/services/network/network_service.cc
-@@ -26,7 +26,6 @@
- #include "build/chromecast_buildflags.h"
+@@ -27,7 +27,6 @@
+ #include "build/chromeos_buildflags.h"
  #include "components/network_session_configurator/common/network_features.h"
  #include "components/os_crypt/os_crypt.h"
 -#include "mojo/public/cpp/bindings/scoped_message_error_crash_key.h"
  #include "mojo/public/cpp/system/functions.h"
+ #include "net/base/features.h"
  #include "net/base/logging_network_change_observer.h"
- #include "net/base/network_change_notifier.h"
-@@ -57,7 +56,6 @@
+@@ -60,7 +59,6 @@
  #include "services/network/net_log_proxy_sink.h"
  #include "services/network/network_context.h"
  #include "services/network/network_usage_accumulator.h"
@@ -18,7 +18,7 @@ index da36edb0a529..23f8f0b6c590 100644
  #include "services/network/public/cpp/cross_origin_read_blocking.h"
  #include "services/network/public/cpp/features.h"
  #include "services/network/public/cpp/initiator_lock_compatibility.h"
-@@ -189,9 +187,6 @@ std::unique_ptr<net::HttpAuthMechanism> CreateAuthSystem(
+@@ -192,9 +190,6 @@ std::unique_ptr<net::HttpAuthMechanism> CreateAuthSystem(
  // message handling inside the Browser process is sufficient).
  void HandleBadMessage(const std::string& error) {
    LOG(WARNING) << "Mojo error in NetworkService:" << error;

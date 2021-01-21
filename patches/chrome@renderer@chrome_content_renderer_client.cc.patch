@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index ce09634902a5..8f3af3fb7f0c 100644
+index 7dbbe8742ca4..ef4acdb43ae5 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
 @@ -11,7 +11,6 @@
@@ -18,7 +18,7 @@ index ce09634902a5..8f3af3fb7f0c 100644
  #include "chrome/common/pdf_util.h"
  #include "chrome/common/pepper_permission_util.h"
  #include "chrome/common/privacy_budget/privacy_budget_settings_provider.h"
-@@ -48,8 +46,6 @@
+@@ -47,8 +45,6 @@
  #include "chrome/renderer/chrome_content_settings_agent_delegate.h"
  #include "chrome/renderer/chrome_render_frame_observer.h"
  #include "chrome/renderer/chrome_render_thread_observer.h"
@@ -27,17 +27,9 @@ index ce09634902a5..8f3af3fb7f0c 100644
  #include "chrome/renderer/loadtimes_extension_bindings.h"
  #include "chrome/renderer/media/flash_embed_rewrite.h"
  #include "chrome/renderer/media/webrtc_logging_agent_impl.h"
-@@ -85,7 +81,6 @@
- #include "components/error_page/common/localized_error.h"
- #include "components/grit/components_scaled_resources.h"
- #include "components/network_hints/renderer/web_prescient_networking_impl.h"
--#include "components/page_load_metrics/renderer/metrics_render_frame_observer.h"
+@@ -95,11 +91,7 @@
  #include "components/paint_preview/buildflags/buildflags.h"
  #include "components/pdf/renderer/pepper_pdf_host.h"
- #include "components/prerender/common/prerender_types.mojom.h"
-@@ -95,11 +90,7 @@
- #include "components/prerender/renderer/prerender_utils.h"
- #include "components/prerender/renderer/prerenderer_client.h"
  #include "components/safe_browsing/buildflags.h"
 -#include "components/safe_browsing/content/renderer/threat_dom_details.h"
  #include "components/spellcheck/spellcheck_buildflags.h"
@@ -47,7 +39,7 @@ index ce09634902a5..8f3af3fb7f0c 100644
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/translate/content/renderer/per_frame_translate_agent.h"
  #include "components/translate/core/common/translate_util.h"
-@@ -134,7 +125,6 @@
+@@ -134,7 +126,6 @@
  #include "services/tracing/public/cpp/stack_sampling/tracing_sampler_profiler.h"
  #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
  #include "third_party/blink/public/common/features.h"
@@ -55,7 +47,7 @@ index ce09634902a5..8f3af3fb7f0c 100644
  #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
  #include "third_party/blink/public/mojom/page/page_visibility_state.mojom.h"
  #include "third_party/blink/public/platform/platform.h"
-@@ -366,11 +356,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -363,11 +354,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
@@ -65,9 +57,9 @@ index ce09634902a5..8f3af3fb7f0c 100644
    thread->AddObserver(chrome_observer_.get());
 -  thread->AddObserver(subresource_filter_ruleset_dealer_.get());
  
- #if !defined(OS_ANDROID)
-   thread->AddObserver(SearchBouncer::GetInstance());
-@@ -456,9 +442,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+   thread->RegisterExtension(extensions_v8::LoadTimesExtension::Get());
+ 
+@@ -449,9 +436,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      thread->BindHostReceiver(collector.InitWithNewPipeAndPassReceiver());
      ThreadProfiler::SetCollectorForChildProcess(std::move(collector));
    }
@@ -77,7 +69,7 @@ index ce09634902a5..8f3af3fb7f0c 100644
  }
  
  void ChromeContentRendererClient::ExposeInterfacesToBrowser(
-@@ -589,25 +572,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -582,25 +566,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
        render_frame->GetRoutingID()));
  #endif
  
@@ -101,9 +93,9 @@ index ce09634902a5..8f3af3fb7f0c 100644
 -  if (lite_video::IsLiteVideoEnabled())
 -    new lite_video::LiteVideoHintAgent(render_frame);
  
-   new previews::ResourceLoadingHintsAgent(
-       render_frame_observer->associated_interfaces(), render_frame);
-@@ -1488,9 +1452,6 @@ void ChromeContentRendererClient::
+   new previews::ResourceLoadingHintsAgent(associated_interfaces, render_frame);
+ 
+@@ -1471,9 +1436,6 @@ void ChromeContentRendererClient::
  #if defined(OS_CHROMEOS) || defined(OS_WIN) || defined(OS_ANDROID)
      blink::WebRuntimeFeatures::EnableWebShare(true);
  #endif

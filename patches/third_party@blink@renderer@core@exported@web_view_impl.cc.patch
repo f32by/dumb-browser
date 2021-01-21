@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/exported/web_view_impl.cc b/third_party/blink/renderer/core/exported/web_view_impl.cc
-index 9c1a8efc3516..1a0f25f11ae2 100644
+index 4b7d0d5811ba..dc24353770ac 100644
 --- a/third_party/blink/renderer/core/exported/web_view_impl.cc
 +++ b/third_party/blink/renderer/core/exported/web_view_impl.cc
-@@ -105,7 +105,6 @@
+@@ -106,7 +106,6 @@
  #include "third_party/blink/renderer/core/frame/local_dom_window.h"
  #include "third_party/blink/renderer/core/frame/local_frame.h"
  #include "third_party/blink/renderer/core/frame/local_frame_client.h"
@@ -10,63 +10,3 @@ index 9c1a8efc3516..1a0f25f11ae2 100644
  #include "third_party/blink/renderer/core/frame/local_frame_view.h"
  #include "third_party/blink/renderer/core/frame/page_scale_constraints_set.h"
  #include "third_party/blink/renderer/core/frame/remote_frame.h"
-@@ -1727,14 +1726,6 @@ void WebViewImpl::BeginFrame(base::TimeTicks last_frame_time) {
-   DocumentLifecycle::AllowThrottlingScope throttling_scope(
-       MainFrameImpl()->GetFrame()->GetDocument()->Lifecycle());
- 
--  base::Optional<LocalFrameUkmAggregator::ScopedUkmHierarchicalTimer> ukm_timer;
--  if (WidgetBase::ShouldRecordBeginMainFrameMetrics()) {
--    ukm_timer.emplace(MainFrameImpl()
--                          ->GetFrame()
--                          ->View()
--                          ->EnsureUkmAggregator()
--                          .GetScopedTimer(LocalFrameUkmAggregator::kAnimate));
--  }
-   PageWidgetDelegate::Animate(*page_, last_frame_time);
- }
- 
-@@ -1746,9 +1737,6 @@ void WebViewImpl::BeginUpdateLayers() {
- void WebViewImpl::EndUpdateLayers() {
-   if (MainFrameImpl()) {
-     DCHECK(update_layers_start_time_);
--    MainFrameImpl()->GetFrame()->View()->EnsureUkmAggregator().RecordSample(
--        LocalFrameUkmAggregator::kUpdateLayers,
--        update_layers_start_time_.value(), base::TimeTicks::Now());
-     probe::LayerTreeDidChange(MainFrameImpl()->GetFrame());
-   }
-   update_layers_start_time_.reset();
-@@ -1757,8 +1745,6 @@ void WebViewImpl::EndUpdateLayers() {
- void WebViewImpl::RecordStartOfFrameMetrics() {
-   if (!MainFrameImpl())
-     return;
--
--  MainFrameImpl()->GetFrame()->View()->EnsureUkmAggregator().BeginMainFrame();
- }
- 
- void WebViewImpl::RecordEndOfFrameMetrics(
-@@ -1766,25 +1752,6 @@ void WebViewImpl::RecordEndOfFrameMetrics(
-     cc::ActiveFrameSequenceTrackers trackers) {
-   if (!MainFrameImpl())
-     return;
--
--  MainFrameImpl()
--      ->GetFrame()
--      ->View()
--      ->EnsureUkmAggregator()
--      .RecordEndOfFrameMetrics(frame_begin_time, base::TimeTicks::Now(),
--                               trackers);
--}
--
--std::unique_ptr<cc::BeginMainFrameMetrics>
--WebViewImpl::GetBeginMainFrameMetrics() {
--  if (!MainFrameImpl())
--    return nullptr;
--
--  return MainFrameImpl()
--      ->GetFrame()
--      ->View()
--      ->EnsureUkmAggregator()
--      .GetBeginMainFrameMetrics();
- }
- 
- void WebViewImpl::UpdateLifecycle(WebLifecycleUpdate requested_update,

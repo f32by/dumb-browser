@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.h b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.h
+index d1541999bbdd..8dec3b127fa5 100644
+--- a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.h
++++ b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.h
+@@ -26,7 +26,6 @@ namespace performance_manager {
+ class BrowserChildProcessWatcher;
+ class Graph;
+ class PageLiveStateDecoratorHelper;
+-class PageLoadMetricsObserver;
+ class PageLoadTrackerDecoratorHelper;
+ class PerformanceManager;
+ class PerformanceManagerFeatureObserverClient;
+@@ -79,10 +78,6 @@ class ChromeBrowserMainExtraPartsPerformanceManager
+   base::ScopedMultiSourceObservation<Profile, ProfileObserver>
+       profile_observations_{this};
+ 
+-  // Needed to record "Pageloads" metrics.
+-  std::unique_ptr<performance_manager::PageLoadMetricsObserver>
+-      page_load_metrics_observer_;
+-
+   // Needed to maintain some of the PageLiveStateDecorator' properties.
+   std::unique_ptr<performance_manager::PageLiveStateDecoratorHelper>
+       page_live_state_data_helper_;

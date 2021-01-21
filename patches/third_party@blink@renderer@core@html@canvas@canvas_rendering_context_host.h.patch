@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/html/canvas/canvas_rendering_context_host.h b/third_party/blink/renderer/core/html/canvas/canvas_rendering_context_host.h
-index 04b766a42183..4985166acde6 100644
+index 5a4c9de1d282..b3478be446cb 100644
 --- a/third_party/blink/renderer/core/html/canvas/canvas_rendering_context_host.h
 +++ b/third_party/blink/renderer/core/html/canvas/canvas_rendering_context_host.h
 @@ -5,14 +5,11 @@
@@ -17,25 +17,16 @@ index 04b766a42183..4985166acde6 100644
  #include "third_party/blink/renderer/platform/bindings/exception_state.h"
  #include "third_party/blink/renderer/platform/bindings/script_state.h"
  #include "third_party/blink/renderer/platform/geometry/float_rect.h"
-@@ -40,7 +37,7 @@ class CORE_EXPORT CanvasRenderingContextHost : public CanvasResourceHost,
-     kCanvasHost,
-     kOffscreenCanvasHost,
-   };
--  CanvasRenderingContextHost(HostType host_type, UkmParameters ukm_params);
-+  CanvasRenderingContextHost(HostType host_type);
+@@ -81,8 +78,6 @@ class CORE_EXPORT CanvasRenderingContextHost : public CanvasResourceHost,
+   virtual void Commit(scoped_refptr<CanvasResource> canvas_resource,
+                       const SkIRect& damage_rect);
  
-   void RecordCanvasSizeToUMA(const IntSize&);
- 
-@@ -108,8 +105,6 @@ class CORE_EXPORT CanvasRenderingContextHost : public CanvasResourceHost,
-   // blink::CanvasImageSource
-   bool IsOffscreenCanvas() const override;
- 
--  const UkmParameters GetUkmParameters() { return ukm_params_; }
+-  virtual UkmParameters GetUkmParameters() = 0;
 -
-  protected:
-   ~CanvasRenderingContextHost() override {}
- 
-@@ -118,16 +113,9 @@ class CORE_EXPORT CanvasRenderingContextHost : public CanvasResourceHost,
+   // For deferred canvases this will have the side effect of drawing recorded
+   // commands in order to finalize the frame.
+   ScriptPromise convertToBlob(ScriptState*,
+@@ -118,12 +113,6 @@ class CORE_EXPORT CanvasRenderingContextHost : public CanvasResourceHost,
    void CreateCanvasResourceProvider2D(RasterModeHint hint);
    void CreateCanvasResourceProvider3D();
  
@@ -48,7 +39,3 @@ index 04b766a42183..4985166acde6 100644
    bool did_fail_to_create_resource_provider_ = false;
    bool did_record_canvas_size_to_uma_ = false;
    HostType host_type_ = kNone;
--  UkmParameters ukm_params_;
- };
- 
- }  // namespace blink

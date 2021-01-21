@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/lookalikes/lookalike_url_blocking_page.h b/chrome/browser/lookalikes/lookalike_url_blocking_page.h
-index f82f2920e823..a0ca2ae80f0c 100644
+index d7281e955b24..6d205a6c6589 100644
 --- a/chrome/browser/lookalikes/lookalike_url_blocking_page.h
 +++ b/chrome/browser/lookalikes/lookalike_url_blocking_page.h
 @@ -12,7 +12,6 @@
@@ -16,13 +16,13 @@ index f82f2920e823..a0ca2ae80f0c 100644
        const GURL& request_url,
 -      ukm::SourceId source_id,
        LookalikeUrlMatchType match_type,
+       bool is_signed_exchange,
        std::unique_ptr<
-           security_interstitials::SecurityInterstitialControllerClient>
-@@ -57,7 +55,6 @@ class LookalikeUrlBlockingPage
+@@ -60,7 +58,6 @@ class LookalikeUrlBlockingPage
    // The URL suggested to the user as the safe URL. Can be empty, in which case
    // the default action on the interstitial takes the user to the new tab page.
    const GURL safe_url_;
 -  ukm::SourceId source_id_;
    LookalikeUrlMatchType match_type_;
- 
-   DISALLOW_COPY_AND_ASSIGN(LookalikeUrlBlockingPage);
+   // True if the throttle encountered a response with
+   // is_signed_exchange_inner_response flag. Only checked in tests.

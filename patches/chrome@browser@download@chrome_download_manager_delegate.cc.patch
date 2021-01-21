@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/chrome_download_manager_delegate.cc b/chrome/browser/download/chrome_download_manager_delegate.cc
-index 7d1310b5d8e0..666f38db3367 100644
+index da96652fdc95..4c96ca2e0194 100644
 --- a/chrome/browser/download/chrome_download_manager_delegate.cc
 +++ b/chrome/browser/download/chrome_download_manager_delegate.cc
 @@ -38,18 +38,12 @@
@@ -29,7 +29,7 @@ index 7d1310b5d8e0..666f38db3367 100644
  #include "components/services/quarantine/public/mojom/quarantine.mojom.h"
  #include "components/services/quarantine/quarantine_impl.h"
  #include "content/public/browser/browser_task_traits.h"
-@@ -128,8 +121,6 @@ using content::DownloadManager;
+@@ -129,8 +122,6 @@ using content::DownloadManager;
  using download::DownloadItem;
  using download::DownloadPathReservationTracker;
  using download::PathValidationResult;
@@ -38,7 +38,7 @@ index 7d1310b5d8e0..666f38db3367 100644
  
  namespace {
  
-@@ -285,7 +276,6 @@ void OnCheckExistingDownloadPathDone(
+@@ -286,7 +277,6 @@ void OnCheckExistingDownloadPathDone(
      content::DownloadTargetCallback callback,
      bool file_exists) {
    if (file_exists) {
@@ -46,7 +46,7 @@ index 7d1310b5d8e0..666f38db3367 100644
      target_info->result = download::DOWNLOAD_INTERRUPT_REASON_USER_CANCELED;
    }
  
-@@ -385,13 +375,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
+@@ -386,13 +376,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
  
  void ChromeDownloadManagerDelegate::SetDownloadManager(DownloadManager* dm) {
    download_manager_ = dm;
@@ -60,7 +60,7 @@ index 7d1310b5d8e0..666f38db3367 100644
  }
  
  #if defined(OS_ANDROID)
-@@ -433,7 +416,6 @@ void ChromeDownloadManagerDelegate::SetNextId(uint32_t next_id) {
+@@ -434,7 +417,6 @@ void ChromeDownloadManagerDelegate::SetNextId(uint32_t next_id) {
    // |download::DownloadItem::kInvalidId| will be returned only when history
    // database failed to initialize.
    bool history_db_available = (next_id != download::DownloadItem::kInvalidId);
@@ -68,7 +68,7 @@ index 7d1310b5d8e0..666f38db3367 100644
    if (history_db_available)
      next_download_id_ = next_id;
    next_id_retrieved_ = true;
-@@ -728,16 +710,6 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
+@@ -733,16 +715,6 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
  
  void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
      base::FilePath* filename) {
@@ -85,7 +85,7 @@ index 7d1310b5d8e0..666f38db3367 100644
  }
  
  void ChromeDownloadManagerDelegate::SanitizeDownloadParameters(
-@@ -774,7 +746,6 @@ void ChromeDownloadManagerDelegate::OpenDownload(DownloadItem* download) {
+@@ -779,7 +751,6 @@ void ChromeDownloadManagerDelegate::OpenDownload(DownloadItem* download) {
    DownloadUtils::OpenDownload(download, DownloadOpenSource::kUnknown);
  #else
    if (!DownloadItemModel(download).ShouldPreferOpeningInBrowser()) {
@@ -93,7 +93,7 @@ index 7d1310b5d8e0..666f38db3367 100644
      OpenDownloadUsingPlatformHandler(download);
      return;
    }
-@@ -798,8 +769,6 @@ void ChromeDownloadManagerDelegate::OpenDownload(DownloadItem* download) {
+@@ -803,8 +774,6 @@ void ChromeDownloadManagerDelegate::OpenDownload(DownloadItem* download) {
      chrome::ShowSettingsSubPage(browser, "certificates");
    else
      browser->OpenURL(params);
@@ -102,7 +102,7 @@ index 7d1310b5d8e0..666f38db3367 100644
  #endif  // OS_ANDROID
  }
  
-@@ -850,19 +819,6 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
+@@ -855,19 +824,6 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
    return std::string(chrome::kApplicationClientIDStringForAVScanning);
  }
  
@@ -122,7 +122,7 @@ index 7d1310b5d8e0..666f38db3367 100644
  void ChromeDownloadManagerDelegate::GetMixedContentStatus(
      download::DownloadItem* download,
      const base::FilePath& virtual_path,
-@@ -1397,8 +1353,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
+@@ -1404,8 +1360,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
      if (item->GetOriginalMimeType() == "application/x-x509-user-cert")
        DownloadItemModel(item).SetShouldPreferOpeningInBrowser(true);
  #endif
@@ -131,7 +131,7 @@ index 7d1310b5d8e0..666f38db3367 100644
    }
    if (ShouldBlockFile(target_info->danger_type, item)) {
      MaybeReportDangerousDownloadBlocked(
-@@ -1567,15 +1521,6 @@ void ChromeDownloadManagerDelegate::OnCheckDownloadAllowedComplete(
+@@ -1592,15 +1546,6 @@ void ChromeDownloadManagerDelegate::OnCheckDownloadAllowedComplete(
      content::CheckDownloadAllowedCallback check_download_allowed_cb,
      bool storage_permission_granted,
      bool allow) {

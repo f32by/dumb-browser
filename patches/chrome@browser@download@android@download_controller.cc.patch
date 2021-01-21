@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/android/download_controller.cc b/chrome/browser/download/android/download_controller.cc
-index 4ac6b5f00624..fdeda20be35f 100644
+index 624b89b30e6c..d9e55a53cead 100644
 --- a/chrome/browser/download/android/download_controller.cc
 +++ b/chrome/browser/download/android/download_controller.cc
 @@ -27,7 +27,6 @@
@@ -10,7 +10,7 @@ index 4ac6b5f00624..fdeda20be35f 100644
  #include "chrome/browser/flags/android/chrome_feature_list.h"
  #include "chrome/browser/infobars/infobar_service.h"
  #include "chrome/browser/offline_pages/android/offline_page_bridge.h"
-@@ -76,9 +75,6 @@ void CreateContextMenuDownload(const content::WebContents::Getter& wc_getter,
+@@ -73,13 +72,9 @@ void CreateContextMenuDownloadInternal(
      return;
  
    if (!web_contents) {
@@ -20,15 +20,11 @@ index 4ac6b5f00624..fdeda20be35f 100644
      return;
    }
  
-@@ -111,7 +107,6 @@ void CreateContextMenuDownload(const content::WebContents::Getter& wc_getter,
-       offline_pages::android::OfflinePageBridge::GetEncodedOriginApp(
-           web_contents));
-   dl_params->set_suggested_name(params.suggested_filename);
 -  RecordDownloadSource(DOWNLOAD_INITIATED_BY_CONTEXT_MENU);
-   dl_params->set_download_source(download::DownloadSource::CONTEXT_MENU);
-   dlm->DownloadUrl(std::move(dl_params));
- }
-@@ -174,14 +169,6 @@ void OnStoragePermissionDecided(
+   auto origin = offline_pages::android::OfflinePageBridge::GetEncodedOriginApp(
+       web_contents);
+   download::CreateContextMenuDownload(web_contents, params, origin, is_link);
+@@ -143,14 +138,6 @@ void OnStoragePermissionDecided(
      bool granted) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
@@ -43,7 +39,7 @@ index 4ac6b5f00624..fdeda20be35f 100644
    std::move(cb).Run(granted);
  }
  
-@@ -222,12 +209,6 @@ void DownloadControllerBase::SetDownloadControllerBase(
+@@ -191,12 +178,6 @@ void DownloadControllerBase::SetDownloadControllerBase(
    DownloadControllerBase::download_controller_ = download_controller;
  }
  
@@ -56,7 +52,7 @@ index 4ac6b5f00624..fdeda20be35f 100644
  // static
  void DownloadController::CloseTabIfEmpty(content::WebContents* web_contents) {
    if (!web_contents)
-@@ -257,10 +238,6 @@ void DownloadController::AcquireFileAccessPermission(
+@@ -226,10 +207,6 @@ void DownloadController::AcquireFileAccessPermission(
    WebContents* web_contents = web_contents_getter.Run();
  
    if (HasFileAccessPermission()) {
@@ -67,7 +63,7 @@ index 4ac6b5f00624..fdeda20be35f 100644
      content::GetUIThreadTaskRunner({})->PostTask(
          FROM_HERE, base::BindOnce(std::move(cb), true));
      return;
-@@ -272,7 +249,6 @@ void DownloadController::AcquireFileAccessPermission(
+@@ -241,7 +218,6 @@ void DownloadController::AcquireFileAccessPermission(
      return;
    }
  

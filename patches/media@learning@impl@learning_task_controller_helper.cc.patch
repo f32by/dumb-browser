@@ -1,5 +1,5 @@
 diff --git a/media/learning/impl/learning_task_controller_helper.cc b/media/learning/impl/learning_task_controller_helper.cc
-index 753dfb0940ee..a562cfa7a6df 100644
+index 59dee3cbbe50..315dc3a23ab3 100644
 --- a/media/learning/impl/learning_task_controller_helper.cc
 +++ b/media/learning/impl/learning_task_controller_helper.cc
 @@ -26,13 +26,9 @@ LearningTaskControllerHelper::~LearningTaskControllerHelper() = default;
@@ -16,8 +16,8 @@ index 753dfb0940ee..a562cfa7a6df 100644
 -
    // Start feature prediction, so that we capture the current values.
    if (!feature_provider_.is_null()) {
-     feature_provider_.Post(
-@@ -103,7 +99,7 @@ void LearningTaskControllerHelper::ProcessExampleIfFinished(
+     // TODO(dcheng): Convert this to use Then() helper.
+@@ -105,7 +101,7 @@ void LearningTaskControllerHelper::ProcessExampleIfFinished(
    if (!iter->second.features_done || !iter->second.target_done)
      return;
  

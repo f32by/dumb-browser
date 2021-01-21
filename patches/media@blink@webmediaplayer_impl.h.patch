@@ -1,5 +1,5 @@
 diff --git a/media/blink/webmediaplayer_impl.h b/media/blink/webmediaplayer_impl.h
-index 0c1918a588ff..fd3ab4cc0e07 100644
+index 995d07a7ea2c..b48c6bdab824 100644
 --- a/media/blink/webmediaplayer_impl.h
 +++ b/media/blink/webmediaplayer_impl.h
 @@ -45,7 +45,6 @@
@@ -10,15 +10,15 @@ index 0c1918a588ff..fd3ab4cc0e07 100644
  #include "media/renderers/paint_canvas_video_renderer.h"
  #include "mojo/public/cpp/bindings/remote.h"
  #include "services/media_session/public/cpp/media_position.h"
-@@ -87,7 +86,6 @@ class MediaLog;
- class MemoryDumpProviderProxy;
- class UrlIndex;
- class VideoFrameCompositor;
+@@ -63,7 +62,6 @@ class WebAudioSourceProviderImpl;
+ class WebLocalFrame;
+ class WebMediaPlayerClient;
+ class WebMediaPlayerEncryptedMediaClient;
 -class WatchTimeReporter;
+ }  // namespace blink
  
- // The canonical implementation of blink::WebMediaPlayer that's backed by
- // Pipeline. Handles normal resource loading, Media Source, and
-@@ -498,11 +496,8 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+ namespace base {
+@@ -500,11 +498,8 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
    // thus we think we are idle forever).
    bool IsPrerollAttemptNeeded();
  
@@ -30,15 +30,15 @@ index 0c1918a588ff..fd3ab4cc0e07 100644
    // Returns true if the player is hidden.
    bool IsHidden() const;
  
-@@ -895,7 +890,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -897,7 +892,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
    base::OneShotTimer background_pause_timer_;
  
    // Monitors the watch time of the played content.
--  std::unique_ptr<WatchTimeReporter> watch_time_reporter_;
+-  std::unique_ptr<blink::WatchTimeReporter> watch_time_reporter_;
    std::string audio_decoder_name_;
    std::string video_decoder_name_;
  
-@@ -909,9 +903,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -911,9 +905,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
  
    bool have_reported_time_to_play_ready_ = false;
  
@@ -48,7 +48,7 @@ index 0c1918a588ff..fd3ab4cc0e07 100644
    // Elapsed time since we've last reached BUFFERING_HAVE_NOTHING.
    std::unique_ptr<base::ElapsedTimer> underflow_timer_;
  
-@@ -1001,9 +992,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -1002,9 +993,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
  
    base::CancelableClosure update_background_status_cb_;
  

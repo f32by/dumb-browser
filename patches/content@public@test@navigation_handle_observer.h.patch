@@ -1,16 +1,16 @@
 diff --git a/content/public/test/navigation_handle_observer.h b/content/public/test/navigation_handle_observer.h
-index 7fd971f96130..8c99192b0d2b 100644
+index b5f6fa2de0e2..49819fde6712 100644
 --- a/content/public/test/navigation_handle_observer.h
 +++ b/content/public/test/navigation_handle_observer.h
-@@ -9,7 +9,6 @@
- #include "content/public/browser/navigation_handle_timing.h"
+@@ -10,7 +10,6 @@
  #include "content/public/browser/reload_type.h"
+ #include "content/public/browser/render_frame_host.h"
  #include "content/public/browser/web_contents_observer.h"
 -#include "services/metrics/public/cpp/ukm_source_id.h"
  
  namespace content {
  
-@@ -37,7 +36,6 @@ class NavigationHandleObserver : public WebContentsObserver {
+@@ -38,7 +37,6 @@ class NavigationHandleObserver : public WebContentsObserver {
    net::Error net_error_code() { return net_error_code_; }
    int64_t navigation_id() { return navigation_id_; }
    bool is_download() { return is_download_; }
@@ -18,7 +18,7 @@ index 7fd971f96130..8c99192b0d2b 100644
    base::Optional<net::AuthChallengeInfo> auth_challenge_info() {
      return auth_challenge_info_;
    }
-@@ -69,7 +67,6 @@ class NavigationHandleObserver : public WebContentsObserver {
+@@ -70,7 +68,6 @@ class NavigationHandleObserver : public WebContentsObserver {
    net::Error net_error_code_ = net::OK;
    int64_t navigation_id_ = -1;
    bool is_download_ = false;

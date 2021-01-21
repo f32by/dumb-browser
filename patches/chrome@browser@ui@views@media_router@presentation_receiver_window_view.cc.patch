@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/media_router/presentation_receiver_window_view.cc b/chrome/browser/ui/views/media_router/presentation_receiver_window_view.cc
-index 870b8bd0af54..1566eb0188ff 100644
+index 734e3714e4ac..1566eb0188ff 100644
 --- a/chrome/browser/ui/views/media_router/presentation_receiver_window_view.cc
 +++ b/chrome/browser/ui/views/media_router/presentation_receiver_window_view.cc
 @@ -16,7 +16,6 @@
@@ -10,11 +10,12 @@ index 870b8bd0af54..1566eb0188ff 100644
  #include "chrome/browser/translate/chrome_translate_client.h"
  #include "chrome/browser/ui/autofill/chrome_autofill_client.h"
  #include "chrome/browser/ui/blocked_content/framebust_block_tab_helper.h"
-@@ -160,7 +159,6 @@ void PresentationReceiverWindowView::Init() {
+@@ -160,8 +159,6 @@ void PresentationReceiverWindowView::Init() {
    SearchTabHelper::CreateForWebContents(web_contents);
    TabDialogs::CreateForWebContents(web_contents);
    FramebustBlockTabHelper::CreateForWebContents(web_contents);
--  ChromeSubresourceFilterClient::CreateForWebContents(web_contents);
+-  ChromeSubresourceFilterClient::CreateThrottleManagerWithClientForWebContents(
+-      web_contents);
    InfoBarService::CreateForWebContents(web_contents);
    MixedContentSettingsTabHelper::CreateForWebContents(web_contents);
    blocked_content::PopupBlockerTabHelper::CreateForWebContents(web_contents);

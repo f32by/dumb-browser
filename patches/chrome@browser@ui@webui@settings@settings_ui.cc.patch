@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/settings/settings_ui.cc b/chrome/browser/ui/webui/settings/settings_ui.cc
-index e87212b52e91..adedfa94c9ba 100644
+index 9c535e816ff8..e0327ec38aa7 100644
 --- a/chrome/browser/ui/webui/settings/settings_ui.cc
 +++ b/chrome/browser/ui/webui/settings/settings_ui.cc
-@@ -69,7 +69,6 @@
+@@ -68,7 +68,6 @@
  #include "components/password_manager/core/common/password_manager_features.h"
  #include "components/pref_registry/pref_registry_syncable.h"
  #include "components/prefs/pref_service.h"
@@ -10,7 +10,7 @@ index e87212b52e91..adedfa94c9ba 100644
  #include "components/signin/public/base/signin_pref_names.h"
  #include "content/public/browser/url_data_source.h"
  #include "content/public/browser/web_contents.h"
-@@ -79,9 +78,6 @@
+@@ -78,9 +77,6 @@
  #include "ui/resources/grit/webui_resources.h"
  
  #if defined(OS_WIN)
@@ -20,7 +20,7 @@ index e87212b52e91..adedfa94c9ba 100644
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
  #include "chrome/browser/ui/webui/settings/incompatible_applications_handler_win.h"
  #include "chrome/browser/win/conflicts/incompatible_applications_updater.h"
-@@ -195,7 +191,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -181,7 +177,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
    AddSettingsPageUIHandler(std::make_unique<BrowserLifetimeHandler>());
    AddSettingsPageUIHandler(
        std::make_unique<ClearBrowsingDataHandler>(web_ui, profile));
@@ -28,8 +28,8 @@ index e87212b52e91..adedfa94c9ba 100644
    AddSettingsPageUIHandler(std::make_unique<CookiesViewHandler>());
    AddSettingsPageUIHandler(std::make_unique<DownloadsHandler>(profile));
    AddSettingsPageUIHandler(std::make_unique<ExtensionControlHandler>());
-@@ -246,10 +241,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
-   AddSettingsPageUIHandler(std::make_unique<PrintingHandler>());
+@@ -226,10 +221,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   AddSettingsPageUIHandler(std::make_unique<SystemHandler>());
  #endif
  
 -#if defined(OS_WIN)
@@ -39,7 +39,7 @@ index e87212b52e91..adedfa94c9ba 100644
  #if defined(OS_WIN) && BUILDFLAG(GOOGLE_CHROME_BRANDING)
    bool has_incompatible_applications =
        IncompatibleApplicationsUpdater::HasCachedApplications();
-@@ -266,10 +257,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -246,10 +237,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
                                                 profile->GetPrefs()->GetBoolean(
                                                     prefs::kSigninAllowed));
  
@@ -50,14 +50,19 @@ index e87212b52e91..adedfa94c9ba 100644
    html_source->AddBoolean(
        "passwordsWeaknessCheck",
        base::FeatureList::IsEnabled(
-@@ -293,12 +280,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
-       "enableContentSettingsRedesign",
-       base::FeatureList::IsEnabled(features::kContentSettingsRedesign));
+@@ -276,17 +263,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   html_source->AddBoolean("isEphemeralGuestProfile",
+                           profile->IsEphemeralGuestProfile());
  
 -#if defined(OS_WIN)
 -  html_source->AddBoolean(
 -      "safetyCheckChromeCleanerChildEnabled",
 -      base::FeatureList::IsEnabled(features::kSafetyCheckChromeCleanerChild));
+-
+-  html_source->AddBoolean(
+-      "chromeCleanupScanCompletedNotificationEnabled",
+-      base::FeatureList::IsEnabled(
+-          features::kChromeCleanupScanCompletedNotification));
 -#endif
 -
  #if defined(OS_CHROMEOS)

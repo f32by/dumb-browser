@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process_impl.h b/chrome/browser/browser_process_impl.h
-index 7cc470fe599d..1ebe5183e194 100644
+index e63afefc769d..1ebe5183e194 100644
 --- a/chrome/browser/browser_process_impl.h
 +++ b/chrome/browser/browser_process_impl.h
 @@ -34,11 +34,7 @@
@@ -22,20 +22,19 @@ index 7cc470fe599d..1ebe5183e194 100644
    // TODO(qinmin): Remove this method as callers can retrieve the global
    // instance from SystemNetworkContextManager directly.
    SystemNetworkContextManager* system_network_context_manager() override;
-@@ -169,12 +164,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -169,11 +164,6 @@ class BrowserProcessImpl : public BrowserProcess,
    void set_background_mode_manager_for_test(
        std::unique_ptr<BackgroundModeManager> manager) override;
    StatusTray* status_tray() override;
 -  safe_browsing::SafeBrowsingService* safe_browsing_service() override;
 -  subresource_filter::RulesetService* subresource_filter_ruleset_service()
 -      override;
--  federated_learning::FlocBlocklistService* floc_blocklist_service() override;
 -  federated_learning::FlocSortingLshClustersService*
 -  floc_sorting_lsh_clusters_service() override;
    optimization_guide::OptimizationGuideService* optimization_guide_service()
        override;
  
-@@ -199,7 +188,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -198,7 +188,6 @@ class BrowserProcessImpl : public BrowserProcess,
    resource_coordinator::ResourceCoordinatorParts* resource_coordinator_parts()
        override;
  
@@ -43,7 +42,7 @@ index 7cc470fe599d..1ebe5183e194 100644
  
    static void RegisterPrefs(PrefRegistrySimple* registry);
  
-@@ -221,10 +209,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -220,10 +209,6 @@ class BrowserProcessImpl : public BrowserProcess,
    void CreateNotificationUIManager();
    void CreatePrintPreviewDialogController();
    void CreateBackgroundPrintingManager();
@@ -54,7 +53,7 @@ index 7cc470fe599d..1ebe5183e194 100644
    void CreateOptimizationGuideService();
    void CreateStatusTray();
    void CreateBackgroundModeManager();
-@@ -320,19 +304,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -319,16 +304,6 @@ class BrowserProcessImpl : public BrowserProcess,
    std::unique_ptr<BackgroundModeManager> background_mode_manager_;
  #endif
  
@@ -65,16 +64,13 @@ index 7cc470fe599d..1ebe5183e194 100644
 -  std::unique_ptr<subresource_filter::RulesetService>
 -      subresource_filter_ruleset_service_;
 -
--  std::unique_ptr<federated_learning::FlocBlocklistService>
--      floc_blocklist_service_;
--
 -  std::unique_ptr<federated_learning::FlocSortingLshClustersService>
 -      floc_sorting_lsh_clusters_service_;
 -
    bool created_optimization_guide_service_ = false;
    std::unique_ptr<optimization_guide::OptimizationGuideService>
        optimization_guide_service_;
-@@ -357,8 +328,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -353,8 +328,6 @@ class BrowserProcessImpl : public BrowserProcess,
    // notifications are properly added and removed.
    PrefChangeRegistrar pref_change_registrar_;
  
@@ -83,7 +79,7 @@ index 7cc470fe599d..1ebe5183e194 100644
  #if defined(OS_WIN) || (defined(OS_LINUX) && !defined(OS_CHROMEOS))
    base::RepeatingTimer autoupdate_timer_;
  
-@@ -409,7 +378,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -405,7 +378,6 @@ class BrowserProcessImpl : public BrowserProcess,
    // Called to signal the process' main message loop to exit.
    base::OnceClosure quit_closure_;
  

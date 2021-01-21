@@ -1,5 +1,5 @@
 diff --git a/content/browser/service_worker/service_worker_version.cc b/content/browser/service_worker/service_worker_version.cc
-index d360afea47c4..e7c955313493 100644
+index aff9ead11ca5..e20315dbc837 100644
 --- a/content/browser/service_worker/service_worker_version.cc
 +++ b/content/browser/service_worker/service_worker_version.cc
 @@ -265,9 +265,7 @@ ServiceWorkerVersion::ServiceWorkerVersion(
@@ -13,7 +13,16 @@ index d360afea47c4..e7c955313493 100644
    DCHECK_NE(blink::mojom::kInvalidServiceWorkerVersionId, version_id);
    DCHECK(context_);
    DCHECK(registration);
-@@ -1891,8 +1889,6 @@ void ServiceWorkerVersion::StartWorkerInternal() {
+@@ -394,7 +392,7 @@ ServiceWorkerVersionInfo ServiceWorkerVersion::GetInfo() {
+       running_status(), status(), fetch_handler_existence(), script_url(),
+       origin(), registration_id(), version_id(),
+       embedded_worker()->process_id(), embedded_worker()->thread_id(),
+-      embedded_worker()->worker_devtools_agent_route_id(), ukm_source_id());
++      embedded_worker()->worker_devtools_agent_route_id());
+   for (const auto& controllee : controllee_map_) {
+     ServiceWorkerContainerHost* container_host = controllee.second;
+     info.clients.emplace(container_host->client_uuid(),
+@@ -1900,8 +1898,6 @@ void ServiceWorkerVersion::StartWorkerInternal() {
  
    params->provider_info = std::move(provider_info);
  

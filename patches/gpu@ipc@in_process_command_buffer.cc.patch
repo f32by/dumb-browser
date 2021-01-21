@@ -1,8 +1,8 @@
 diff --git a/gpu/ipc/in_process_command_buffer.cc b/gpu/ipc/in_process_command_buffer.cc
-index 43659617af44..27c8bcf2aa76 100644
+index de5c85df5b1f..9e8bba082908 100644
 --- a/gpu/ipc/in_process_command_buffer.cc
 +++ b/gpu/ipc/in_process_command_buffer.cc
-@@ -56,7 +56,6 @@
+@@ -55,7 +55,6 @@
  #include "gpu/command_buffer/service/shared_context_state.h"
  #include "gpu/command_buffer/service/sync_point_manager.h"
  #include "gpu/command_buffer/service/webgpu_decoder.h"
@@ -10,7 +10,7 @@ index 43659617af44..27c8bcf2aa76 100644
  #include "gpu/config/gpu_feature_info.h"
  #include "gpu/config/gpu_preferences.h"
  #include "gpu/config/gpu_switches.h"
-@@ -393,9 +392,6 @@ gpu::ContextResult InProcessCommandBuffer::InitializeOnGpuThread(
+@@ -396,9 +395,6 @@ gpu::ContextResult InProcessCommandBuffer::InitializeOnGpuThread(
      // See https://crbug.com/914976
      use_virtualized_gl_context_ = false;
    }
@@ -19,8 +19,8 @@ index 43659617af44..27c8bcf2aa76 100644
 -                                                                        : "0");
  
    command_buffer_ = std::make_unique<CommandBufferService>(
-       this, context_group_->memory_tracker());
-@@ -681,9 +677,6 @@ bool InProcessCommandBuffer::DestroyOnGpuThread() {
+       this, gpu_dependency_->memory_tracker());
+@@ -684,9 +680,6 @@ bool InProcessCommandBuffer::DestroyOnGpuThread() {
    if (gpu_channel_manager_delegate_)
      gpu_channel_manager_delegate_->UnregisterDisplayContext(this);
  
@@ -30,7 +30,7 @@ index 43659617af44..27c8bcf2aa76 100644
    gpu_thread_weak_ptr_factory_.InvalidateWeakPtrs();
    // Clean up GL resources if possible.
    bool have_context = context_.get() && context_->MakeCurrent(surface_.get());
-@@ -801,8 +794,7 @@ void InProcessCommandBuffer::OnContextLost() {
+@@ -807,8 +800,7 @@ void InProcessCommandBuffer::OnContextLost() {
  void InProcessCommandBuffer::RunTaskOnGpuThread(base::OnceClosure task) {
    DCHECK_CALLED_ON_VALID_SEQUENCE(gpu_sequence_checker_);
    UpdateActiveUrl();
@@ -40,7 +40,7 @@ index 43659617af44..27c8bcf2aa76 100644
    std::move(task).Run();
  }
  
-@@ -907,9 +899,7 @@ void InProcessCommandBuffer::FlushOnGpuThread(
+@@ -913,9 +905,7 @@ void InProcessCommandBuffer::FlushOnGpuThread(
  void InProcessCommandBuffer::PerformDelayedWorkOnGpuThread() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(gpu_sequence_checker_);
    delayed_work_pending_ = false;

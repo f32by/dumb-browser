@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/core/intersection_observer/intersection_observer_controller.h b/third_party/blink/renderer/core/intersection_observer/intersection_observer_controller.h
+index 1283d139b34c..fb472a7e72df 100644
+--- a/third_party/blink/renderer/core/intersection_observer/intersection_observer_controller.h
++++ b/third_party/blink/renderer/core/intersection_observer/intersection_observer_controller.h
+@@ -37,8 +37,7 @@ class IntersectionObserverController
+   // whether an IntersectionObserver needs to do any work. The return value
+   // communicates whether observer->trackVisibility() is true for any tracked
+   // observer.
+-  bool ComputeIntersections(unsigned flags,
+-                            LocalFrameUkmAggregator& ukm_aggregator);
++  bool ComputeIntersections(unsigned flags);
+ 
+   // The second argument indicates whether the Element is a target of any
+   // observers for which observer->trackVisibility() is true.

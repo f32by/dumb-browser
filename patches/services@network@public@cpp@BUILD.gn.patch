@@ -1,8 +1,8 @@
 diff --git a/services/network/public/cpp/BUILD.gn b/services/network/public/cpp/BUILD.gn
-index 3e240ba3c7a5..e0f4bc6462fa 100644
+index 1ba78613e28e..4e9c472fcb4a 100644
 --- a/services/network/public/cpp/BUILD.gn
 +++ b/services/network/public/cpp/BUILD.gn
-@@ -173,7 +173,6 @@ component("cookies_mojom_support") {
+@@ -178,7 +178,6 @@ component("cookies_mojom_support") {
      "site_for_cookies_mojom_traits.h",
    ]
    deps = [
@@ -10,11 +10,11 @@ index 3e240ba3c7a5..e0f4bc6462fa 100644
      "//net",
      "//services/network/public/mojom:cookies_mojom_shared",
    ]
-@@ -257,7 +256,6 @@ component("cpp_base") {
+@@ -277,7 +276,6 @@ component("cpp_base") {
  
    public_deps = [
      ":cookies_mojom_support",
 -    ":crash_keys",
      ":cross_origin_embedder_policy",
      ":ip_address_mojom_support",
-     "//services/network/public/mojom:url_loader_base",
+     ":schemeful_site_mojom_support",

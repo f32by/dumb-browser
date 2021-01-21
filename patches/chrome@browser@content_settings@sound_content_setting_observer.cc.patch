@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/content_settings/sound_content_setting_observer.cc b/chrome/browser/content_settings/sound_content_setting_observer.cc
-index 13ad04ccfb6e..1d72c217e178 100644
+index fe784bb734e6..d9af4d951480 100644
 --- a/chrome/browser/content_settings/sound_content_setting_observer.cc
 +++ b/chrome/browser/content_settings/sound_content_setting_observer.cc
 @@ -13,12 +13,10 @@
@@ -32,7 +32,7 @@ index 13ad04ccfb6e..1d72c217e178 100644
    }
  }
  
-@@ -132,6 +129,10 @@ void SoundContentSettingObserver::MuteOrUnmuteIfNecessary() {
+@@ -130,6 +127,10 @@ void SoundContentSettingObserver::MuteOrUnmuteIfNecessary() {
  
    TabMutedReason reason = chrome::GetTabAudioMutedReason(web_contents());
  
@@ -43,7 +43,7 @@ index 13ad04ccfb6e..1d72c217e178 100644
    // Do not override the decisions of an extension.
    if (reason == TabMutedReason::EXTENSION)
      return;
-@@ -166,23 +167,9 @@ void SoundContentSettingObserver::CheckSoundBlocked(bool is_audible) {
+@@ -164,23 +165,9 @@ void SoundContentSettingObserver::CheckSoundBlocked(bool is_audible) {
              web_contents()->GetMainFrame());
      if (settings)
        settings->OnAudioBlocked();

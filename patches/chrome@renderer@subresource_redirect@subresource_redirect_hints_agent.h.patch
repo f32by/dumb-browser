@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/subresource_redirect/subresource_redirect_hints_agent.h b/chrome/renderer/subresource_redirect/subresource_redirect_hints_agent.h
-index 76448440f3a1..9aa18c615c89 100644
+index 9e5974dd1c07..f16037c1aec5 100644
 --- a/chrome/renderer/subresource_redirect/subresource_redirect_hints_agent.h
 +++ b/chrome/renderer/subresource_redirect/subresource_redirect_hints_agent.h
-@@ -64,23 +64,11 @@ class SubresourceRedirectHintsAgent {
+@@ -64,11 +64,6 @@ class SubresourceRedirectHintsAgent
  
    RedirectResult ShouldRedirectImage(const GURL& url) const;
  
@@ -11,11 +11,13 @@ index 76448440f3a1..9aa18c615c89 100644
 -                                   int64_t content_length,
 -                                   RedirectResult redirect_result);
 -
-   // Clears the image hint urls.
-   void ClearImageHints();
+   void SetCompressPublicImagesHints(
+       blink::mojom::CompressPublicImagesHintsPtr images_hints);
  
-  private:
+@@ -91,14 +86,6 @@ class SubresourceRedirectHintsAgent
+ 
    void OnHintsReceiveTimeout();
+ 
 -  void RecordMetrics(int64_t content_length,
 -                     RedirectResult redirect_result) const;
 -
@@ -23,6 +25,7 @@ index 76448440f3a1..9aa18c615c89 100644
 -  // hints fetch timed out, or the image was not in the delayed hints, or the
 -  // image was in the delayed hints.
 -  void RecordImageHintsUnavailableMetrics();
- 
+-
    bool public_image_urls_received_ = false;
    base::flat_set<std::string> public_image_urls_;
+ 

@@ -1,8 +1,8 @@
 diff --git a/media/learning/impl/learning_session_impl.cc b/media/learning/impl/learning_session_impl.cc
-index 2680a881dd4b..c7b160533206 100644
+index cfe5ababfe72..770c69fa8055 100644
 --- a/media/learning/impl/learning_session_impl.cc
 +++ b/media/learning/impl/learning_session_impl.cc
-@@ -50,8 +50,7 @@ class WeakLearningTaskController : public LearningTaskController {
+@@ -49,8 +49,7 @@ class WeakLearningTaskController : public LearningTaskController {
    void BeginObservation(
        base::UnguessableToken id,
        const FeatureVector& features,
@@ -12,12 +12,12 @@ index 2680a881dd4b..c7b160533206 100644
      if (!weak_session_)
        return;
  
-@@ -60,7 +59,7 @@ class WeakLearningTaskController : public LearningTaskController {
+@@ -59,7 +58,7 @@ class WeakLearningTaskController : public LearningTaskController {
      // doesn't support it.  Since all client calls eventually come through us
      // anyway, it seems okay to handle it here.
-     controller_->Post(FROM_HERE, &LearningTaskController::BeginObservation, id,
--                      features, base::nullopt, source_id);
-+                      features, base::nullopt);
+     controller_->AsyncCall(&LearningTaskController::BeginObservation)
+-        .WithArgs(id, features, base::nullopt, source_id);
++        .WithArgs(id, features, base::nullopt);
    }
  
    void CompleteObservation(base::UnguessableToken id,

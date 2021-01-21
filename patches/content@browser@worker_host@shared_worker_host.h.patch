@@ -1,5 +1,5 @@
 diff --git a/content/browser/worker_host/shared_worker_host.h b/content/browser/worker_host/shared_worker_host.h
-index 66928a68f7a9..9d80a0aa8c0d 100644
+index 74ec23894f5c..0f9dedc4d6cb 100644
 --- a/content/browser/worker_host/shared_worker_host.h
 +++ b/content/browser/worker_host/shared_worker_host.h
 @@ -27,7 +27,6 @@
@@ -10,7 +10,7 @@ index 66928a68f7a9..9d80a0aa8c0d 100644
  #include "services/network/public/mojom/url_loader_factory.mojom-forward.h"
  #include "third_party/blink/public/common/tokens/tokens.h"
  #include "third_party/blink/public/mojom/appcache/appcache.mojom.h"
-@@ -118,8 +117,7 @@ class CONTENT_EXPORT SharedWorkerHost : public blink::mojom::SharedWorkerHost,
+@@ -120,8 +119,7 @@ class CONTENT_EXPORT SharedWorkerHost : public blink::mojom::SharedWorkerHost,
  
    void AddClient(mojo::PendingRemote<blink::mojom::SharedWorkerClient> client,
                   GlobalFrameRoutingId client_render_frame_host_id,
@@ -20,7 +20,16 @@ index 66928a68f7a9..9d80a0aa8c0d 100644
  
    void SetAppCacheHandle(
        std::unique_ptr<AppCacheNavigationHandle> appcache_handle);
-@@ -259,8 +257,6 @@ class CONTENT_EXPORT SharedWorkerHost : public blink::mojom::SharedWorkerHost,
+@@ -145,8 +143,6 @@ class CONTENT_EXPORT SharedWorkerHost : public blink::mojom::SharedWorkerHost,
+ 
+   const SharedWorkerInstance& instance() const { return instance_; }
+ 
+-  ukm::SourceId ukm_source_id() const { return ukm_source_id_; }
+-
+   const base::UnguessableToken& GetDevToolsToken() const;
+ 
+   // Signals the remote worker to terminate and returns the mojo::Remote
+@@ -260,8 +256,6 @@ class CONTENT_EXPORT SharedWorkerHost : public blink::mojom::SharedWorkerHost,
  
    GURL final_response_url_;
  

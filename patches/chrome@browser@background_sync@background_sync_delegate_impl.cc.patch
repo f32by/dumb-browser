@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/background_sync/background_sync_delegate_impl.cc b/chrome/browser/background_sync/background_sync_delegate_impl.cc
+index 403214f521e2..0d8eae5a8752 100644
+--- a/chrome/browser/background_sync/background_sync_delegate_impl.cc
++++ b/chrome/browser/background_sync/background_sync_delegate_impl.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+ #include "chrome/browser/engagement/site_engagement_service.h"
+-#include "chrome/browser/metrics/ukm_background_recorder_service.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+ #include "content/public/browser/background_sync_context.h"
+@@ -21,25 +20,15 @@
+ BackgroundSyncDelegateImpl::BackgroundSyncDelegateImpl(Profile* profile)
+     : SiteEngagementObserver(SiteEngagementService::Get(profile)),
+       profile_(profile),
+-      ukm_background_service_(
+-          ukm::UkmBackgroundRecorderFactory::GetForProfile(profile)),
+ 
+       site_engagement_service_(SiteEngagementService::Get(profile)) {
+   DCHECK(profile_);
+-  DCHECK(ukm_background_service_);
+   DCHECK(site_engagement_service_);
+   off_the_record_ = profile_->IsOffTheRecord();
+ }
+ 
+ BackgroundSyncDelegateImpl::~BackgroundSyncDelegateImpl() = default;
+ 
+-void BackgroundSyncDelegateImpl::GetUkmSourceId(
+-    const url::Origin& origin,
+-    base::OnceCallback<void(base::Optional<ukm::SourceId>)> callback) {
+-  ukm_background_service_->GetBackgroundSourceIdIfAllowed(origin,
+-                                                          std::move(callback));
+-}
+-
+ void BackgroundSyncDelegateImpl::Shutdown() {
+   // Clear the profile as we're not supposed to use it anymore.
+   profile_ = nullptr;

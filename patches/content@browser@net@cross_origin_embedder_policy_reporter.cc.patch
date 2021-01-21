@@ -1,15 +1,11 @@
 diff --git a/content/browser/net/cross_origin_embedder_policy_reporter.cc b/content/browser/net/cross_origin_embedder_policy_reporter.cc
-index 8109a98c697e..bbf7758646ab 100644
+index 03616fbcc27f..1b095b86492f 100644
 --- a/content/browser/net/cross_origin_embedder_policy_reporter.cc
 +++ b/content/browser/net/cross_origin_embedder_policy_reporter.cc
-@@ -11,19 +11,6 @@
+@@ -15,13 +15,6 @@ namespace {
  
- namespace content {
+ constexpr char kType[] = "coep";
  
--namespace {
--
--constexpr char kType[] = "coep";
--
 -GURL StripUsernameAndPassword(const GURL& url) {
 -  url::Replacements<char> replacements;
 -  replacements.ClearUsername();
@@ -17,12 +13,10 @@ index 8109a98c697e..bbf7758646ab 100644
 -  return url.ReplaceComponents(replacements);
 -}
 -
--}  // namespace
--
+ }  // namespace
+ 
  CrossOriginEmbedderPolicyReporter::CrossOriginEmbedderPolicyReporter(
-     StoragePartition* storage_partition,
-     const GURL& context_url,
-@@ -42,18 +29,7 @@ CrossOriginEmbedderPolicyReporter::~CrossOriginEmbedderPolicyReporter() =
+@@ -42,18 +35,7 @@ CrossOriginEmbedderPolicyReporter::~CrossOriginEmbedderPolicyReporter() =
  void CrossOriginEmbedderPolicyReporter::QueueCorpViolationReport(
      const GURL& blocked_url,
      network::mojom::RequestDestination destination,
@@ -42,7 +36,7 @@ index 8109a98c697e..bbf7758646ab 100644
  
  void CrossOriginEmbedderPolicyReporter::BindObserver(
      mojo::PendingRemote<blink::mojom::ReportingObserver> observer) {
-@@ -62,15 +38,7 @@ void CrossOriginEmbedderPolicyReporter::BindObserver(
+@@ -62,15 +44,7 @@ void CrossOriginEmbedderPolicyReporter::BindObserver(
  
  void CrossOriginEmbedderPolicyReporter::QueueNavigationReport(
      const GURL& blocked_url,
@@ -59,38 +53,3 @@ index 8109a98c697e..bbf7758646ab 100644
  
  void CrossOriginEmbedderPolicyReporter::Clone(
      mojo::PendingReceiver<network::mojom::CrossOriginEmbedderPolicyReporter>
-@@ -80,33 +48,6 @@ void CrossOriginEmbedderPolicyReporter::Clone(
- 
- void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
-     std::initializer_list<std::pair<base::StringPiece, base::StringPiece>> body,
--    bool report_only) {
--  const base::Optional<std::string>& endpoint =
--      report_only ? report_only_endpoint_ : endpoint_;
--  const char* const disposition = report_only ? "reporting" : "enforce";
--  if (observer_) {
--    std::vector<blink::mojom::ReportBodyElementPtr> list;
--
--    for (const auto& pair : body) {
--      list.push_back(blink::mojom::ReportBodyElement::New(
--          pair.first.as_string(), pair.second.as_string()));
--    }
--    list.push_back(
--        blink::mojom::ReportBodyElement::New("disposition", disposition));
--
--    observer_->Notify(blink::mojom::Report::New(
--        kType, context_url_, blink::mojom::ReportBody::New(std::move(list))));
--  }
--  if (endpoint) {
--    base::DictionaryValue body_to_pass;
--    for (const auto& pair : body) {
--      body_to_pass.SetString(pair.first, pair.second);
--    }
--    body_to_pass.SetString("disposition", disposition);
--    storage_partition_->GetNetworkContext()->QueueReport(
--        kType, *endpoint, context_url_, /*user_agent=*/base::nullopt,
--        std::move(body_to_pass));
--  }
--}
-+    bool report_only) {}
- 
- }  // namespace content

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/frame/web_frame_widget_base.cc b/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
-index 7ca299353f3b..6dbce42dc8da 100644
+index 1aab30ab14d0..72aba684f562 100644
 --- a/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
 +++ b/third_party/blink/renderer/core/frame/web_frame_widget_base.cc
 @@ -13,7 +13,6 @@
@@ -10,15 +10,15 @@ index 7ca299353f3b..6dbce42dc8da 100644
  #include "third_party/blink/public/mojom/input/input_handler.mojom-blink.h"
  #include "third_party/blink/public/mojom/input/touch_event.mojom-blink.h"
  #include "third_party/blink/public/platform/platform.h"
-@@ -29,7 +28,6 @@
- #include "third_party/blink/renderer/core/events/web_input_event_conversion.h"
- #include "third_party/blink/renderer/core/events/wheel_event.h"
+@@ -35,7 +34,6 @@
+ #include "third_party/blink/renderer/core/exported/web_dev_tools_agent_impl.h"
+ #include "third_party/blink/renderer/core/exported/web_plugin_container_impl.h"
  #include "third_party/blink/renderer/core/exported/web_view_impl.h"
 -#include "third_party/blink/renderer/core/frame/local_frame_ukm_aggregator.h"
  #include "third_party/blink/renderer/core/frame/local_frame_view.h"
  #include "third_party/blink/renderer/core/frame/remote_frame_client.h"
  #include "third_party/blink/renderer/core/frame/screen_metrics_emulator.h"
-@@ -1048,11 +1046,10 @@ cc::LayerTreeHost* WebFrameWidgetBase::InitializeCompositing(
+@@ -1231,11 +1229,10 @@ cc::LayerTreeHost* WebFrameWidgetBase::InitializeCompositing(
      cc::TaskGraphRunner* task_graph_runner,
      bool for_child_local_root_frame,
      const ScreenInfo& screen_info,
@@ -31,7 +31,34 @@ index 7ca299353f3b..6dbce42dc8da 100644
    GetPage()->AnimationHostInitialized(*AnimationHost(),
                                        GetLocalFrameViewForAnimationScrolling());
    return widget_base_->LayerTreeHost();
-@@ -1069,11 +1066,6 @@ void WebFrameWidgetBase::RecordTimeToFirstActivePaint(
+@@ -1266,15 +1263,6 @@ void WebFrameWidgetBase::BeginMainFrame(base::TimeTicks last_frame_time) {
+     }
+   }
+ 
+-  base::Optional<LocalFrameUkmAggregator::ScopedUkmHierarchicalTimer> ukm_timer;
+-  if (WidgetBase::ShouldRecordBeginMainFrameMetrics()) {
+-    ukm_timer.emplace(LocalRootImpl()
+-                          ->GetFrame()
+-                          ->View()
+-                          ->EnsureUkmAggregator()
+-                          .GetScopedTimer(LocalFrameUkmAggregator::kAnimate));
+-  }
+-
+   PageWidgetDelegate::Animate(*GetPage(), last_frame_time);
+   // Animate can cause the local frame to detach.
+   if (!LocalRootImpl())
+@@ -1300,22 +1288,11 @@ void WebFrameWidgetBase::EndCommitCompositorFrame(
+     View()->UpdatePreferredSize();
+   }
+ 
+-  LocalRootImpl()
+-      ->GetFrame()
+-      ->View()
+-      ->EnsureUkmAggregator()
+-      .RecordImplCompositorSample(commit_compositor_frame_start_time_.value(),
+-                                  commit_start_time, base::TimeTicks::Now());
+   commit_compositor_frame_start_time_.reset();
+ }
  
  void WebFrameWidgetBase::RecordDispatchRafAlignedInputTime(
      base::TimeTicks raf_aligned_input_start_time) {
@@ -40,6 +67,55 @@ index 7ca299353f3b..6dbce42dc8da 100644
 -        LocalFrameUkmAggregator::kHandleInputEvents,
 -        raf_aligned_input_start_time, base::TimeTicks::Now());
 -  }
+ }
+ 
+ void WebFrameWidgetBase::SetSuppressFrameRequestsWorkaroundFor704763Only(
+@@ -1326,14 +1303,7 @@ void WebFrameWidgetBase::SetSuppressFrameRequestsWorkaroundFor704763Only(
+ 
+ std::unique_ptr<cc::BeginMainFrameMetrics>
+ WebFrameWidgetBase::GetBeginMainFrameMetrics() {
+-  if (!LocalRootImpl())
+-    return nullptr;
+-
+-  return LocalRootImpl()
+-      ->GetFrame()
+-      ->View()
+-      ->EnsureUkmAggregator()
+-      .GetBeginMainFrameMetrics();
++  return nullptr;
+ }
+ 
+ void WebFrameWidgetBase::BeginUpdateLayers() {
+@@ -1344,9 +1314,6 @@ void WebFrameWidgetBase::BeginUpdateLayers() {
+ void WebFrameWidgetBase::EndUpdateLayers() {
+   if (LocalRootImpl()) {
+     DCHECK(update_layers_start_time_);
+-    LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator().RecordSample(
+-        LocalFrameUkmAggregator::kUpdateLayers,
+-        update_layers_start_time_.value(), base::TimeTicks::Now());
+     probe::LayerTreeDidChange(LocalRootImpl()->GetFrame());
+   }
+   update_layers_start_time_.reset();
+@@ -1355,8 +1322,6 @@ void WebFrameWidgetBase::EndUpdateLayers() {
+ void WebFrameWidgetBase::RecordStartOfFrameMetrics() {
+   if (!LocalRootImpl())
+     return;
+-
+-  LocalRootImpl()->GetFrame()->View()->EnsureUkmAggregator().BeginMainFrame();
+ }
+ 
+ void WebFrameWidgetBase::RecordEndOfFrameMetrics(
+@@ -1364,13 +1329,6 @@ void WebFrameWidgetBase::RecordEndOfFrameMetrics(
+     cc::ActiveFrameSequenceTrackers trackers) {
+   if (!LocalRootImpl())
+     return;
+-
+-  LocalRootImpl()
+-      ->GetFrame()
+-      ->View()
+-      ->EnsureUkmAggregator()
+-      .RecordEndOfFrameMetrics(frame_begin_time, base::TimeTicks::Now(),
+-                               trackers);
  }
  
  bool WebFrameWidgetBase::WillHandleGestureEvent(const WebGestureEvent& event) {

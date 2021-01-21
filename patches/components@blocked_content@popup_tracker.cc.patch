@@ -1,58 +1,39 @@
 diff --git a/components/blocked_content/popup_tracker.cc b/components/blocked_content/popup_tracker.cc
-index 22cf6b9cb445..1da3a978b908 100644
+index f949085b5244..4ad77dbd46ca 100644
 --- a/components/blocked_content/popup_tracker.cc
 +++ b/components/blocked_content/popup_tracker.cc
-@@ -47,7 +47,6 @@ PopupTracker::PopupTracker(content::WebContents* contents,
-                            content::WebContents* opener,
-                            WindowOpenDisposition disposition)
-     : content::WebContentsObserver(contents),
--      scoped_observer_(this),
-       visibility_tracker_(
-           base::DefaultTickClock::GetInstance(),
-           contents->GetVisibility() != content::Visibility::HIDDEN),
-@@ -55,13 +54,6 @@ PopupTracker::PopupTracker(content::WebContents* contents,
+@@ -11,12 +11,8 @@
+ #include "base/metrics/histogram_macros.h"
+ #include "base/time/default_tick_clock.h"
+ #include "components/blocked_content/popup_opener_tab_helper.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "content/public/browser/navigation_handle.h"
+ #include "content/public/browser/web_contents.h"
+-#include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace blocked_content {
+ namespace {
+@@ -54,13 +50,6 @@ PopupTracker::PopupTracker(content::WebContents* contents,
        window_open_disposition_(disposition) {
    if (auto* popup_opener = PopupOpenerTabHelper::FromWebContents(opener))
      popup_opener->OnOpenedPopup(this);
 -
--  auto* observer_manager =
+-  auto* observation_manager =
 -      subresource_filter::SubresourceFilterObserverManager::FromWebContents(
 -          contents);
--  if (observer_manager) {
--    scoped_observer_.Add(observer_manager);
+-  if (observation_manager) {
+-    scoped_observation_.Observe(observation_manager);
 -  }
  }
  
  void PopupTracker::WebContentsDestroyed() {
-@@ -143,31 +135,6 @@ void PopupTracker::DidGetUserInteraction(const blink::WebInputEvent& event) {
-   }
+@@ -172,7 +161,6 @@ void PopupTracker::OnSafeBrowsingChecksComplete(
  }
  
--// This method will always be called before the DidFinishNavigation associated
--// with this handle.
--// The exception is a navigation restoring a page from back-forward cache --
--// in that case don't issue any requests, therefore we don't get any
--// safe browsing callbacks. See the comment above for the mitigation.
--void PopupTracker::OnSafeBrowsingChecksComplete(
--    content::NavigationHandle* navigation_handle,
--    const subresource_filter::SubresourceFilterSafeBrowsingClient::CheckResult&
--        result) {
--  DCHECK(navigation_handle->IsInMainFrame());
--  safe_browsing_status_ = PopupSafeBrowsingStatus::kSafe;
--  if (result.threat_type ==
--          safe_browsing::SBThreatType::SB_THREAT_TYPE_URL_PHISHING ||
--      result.threat_type == safe_browsing::SBThreatType::
--                                SB_THREAT_TYPE_URL_CLIENT_SIDE_PHISHING ||
--      result.threat_type ==
--          safe_browsing::SBThreatType::SB_THREAT_TYPE_SUBRESOURCE_FILTER) {
--    safe_browsing_status_ = PopupSafeBrowsingStatus::kUnsafe;
--  }
--}
--
--void PopupTracker::OnSubresourceFilterGoingAway() {
--  scoped_observer_.RemoveAll();
--}
--
- WEB_CONTENTS_USER_DATA_KEY_IMPL(PopupTracker)
+ void PopupTracker::OnSubresourceFilterGoingAway() {
+-  scoped_observation_.RemoveObservation();
+ }
  
- }  // namespace blocked_content
+ WEB_CONTENTS_USER_DATA_KEY_IMPL(PopupTracker)

@@ -1,5 +1,5 @@
 diff --git a/base/metrics/histogram_functions.cc b/base/metrics/histogram_functions.cc
-index 3aa89e39fc6a..e40bb971ec10 100644
+index 99789a7e00ac..7543618e97f2 100644
 --- a/base/metrics/histogram_functions.cc
 +++ b/base/metrics/histogram_functions.cc
 @@ -12,31 +12,17 @@
@@ -34,7 +34,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramPercentage(const std::string& name, int percent) {
-@@ -52,9 +38,6 @@ void UmaHistogramCustomCounts(const std::string& name,
+@@ -61,9 +47,6 @@ void UmaHistogramCustomCounts(const std::string& name,
                                int min,
                                int max,
                                int buckets) {
@@ -44,7 +44,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramCustomCounts(const char* name,
-@@ -62,9 +45,6 @@ void UmaHistogramCustomCounts(const char* name,
+@@ -71,9 +54,6 @@ void UmaHistogramCustomCounts(const char* name,
                                int min,
                                int max,
                                int buckets) {
@@ -54,7 +54,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramCounts100(const std::string& name, int sample) {
-@@ -120,9 +100,6 @@ void UmaHistogramCustomTimes(const std::string& name,
+@@ -129,9 +109,6 @@ void UmaHistogramCustomTimes(const std::string& name,
                               TimeDelta min,
                               TimeDelta max,
                               int buckets) {
@@ -64,7 +64,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramCustomTimes(const char* name,
-@@ -130,9 +107,6 @@ void UmaHistogramCustomTimes(const char* name,
+@@ -139,9 +116,6 @@ void UmaHistogramCustomTimes(const char* name,
                               TimeDelta min,
                               TimeDelta max,
                               int buckets) {
@@ -74,7 +74,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramTimes(const std::string& name, TimeDelta sample) {
-@@ -180,9 +154,6 @@ void UmaHistogramCustomMicrosecondsTimes(const std::string& name,
+@@ -189,9 +163,6 @@ void UmaHistogramCustomMicrosecondsTimes(const std::string& name,
                                           TimeDelta min,
                                           TimeDelta max,
                                           int buckets) {
@@ -84,7 +84,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramCustomMicrosecondsTimes(const char* name,
-@@ -190,9 +161,6 @@ void UmaHistogramCustomMicrosecondsTimes(const char* name,
+@@ -199,9 +170,6 @@ void UmaHistogramCustomMicrosecondsTimes(const char* name,
                                           TimeDelta min,
                                           TimeDelta max,
                                           int buckets) {
@@ -94,7 +94,7 @@ index 3aa89e39fc6a..e40bb971ec10 100644
  }
  
  void UmaHistogramMicrosecondsTimes(const std::string& name, TimeDelta sample) {
-@@ -250,15 +218,9 @@ void UmaHistogramMemoryLargeMB(const char* name, int sample) {
+@@ -259,15 +227,9 @@ void UmaHistogramMemoryLargeMB(const char* name, int sample) {
  }
  
  void UmaHistogramSparse(const std::string& name, int sample) {

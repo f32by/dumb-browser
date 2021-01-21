@@ -1,16 +1,16 @@
 diff --git a/components/translate/content/browser/content_translate_driver.cc b/components/translate/content/browser/content_translate_driver.cc
-index 999cf363d49f..3563e13e8920 100644
+index 7b95620633c6..3262a67ac77e 100644
 --- a/components/translate/content/browser/content_translate_driver.cc
 +++ b/components/translate/content/browser/content_translate_driver.cc
-@@ -23,7 +23,6 @@
- #include "components/translate/core/browser/translate_download_manager.h"
+@@ -24,7 +24,6 @@
  #include "components/translate/core/browser/translate_manager.h"
+ #include "components/translate/core/browser/translate_metrics_logger.h"
  #include "components/translate/core/common/translate_metrics.h"
 -#include "components/ukm/content/source_url_recorder.h"
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/navigation_controller.h"
  #include "content/public/browser/navigation_details.h"
-@@ -35,7 +34,6 @@
+@@ -36,7 +35,6 @@
  #include "content/public/browser/web_contents.h"
  #include "content/public/common/referrer.h"
  #include "net/http/http_status_code.h"
@@ -18,7 +18,7 @@ index 999cf363d49f..3563e13e8920 100644
  #include "url/gurl.h"
  
  namespace translate {
-@@ -161,11 +159,6 @@ const GURL& ContentTranslateDriver::GetVisibleURL() {
+@@ -162,11 +160,6 @@ const GURL& ContentTranslateDriver::GetVisibleURL() {
    return navigation_controller_->GetWebContents()->GetVisibleURL();
  }
  

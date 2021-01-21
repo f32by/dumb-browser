@@ -1,12 +1,12 @@
 diff --git a/content/test/fake_compositor_dependencies.h b/content/test/fake_compositor_dependencies.h
-index 01dc4086fb5d..8dd5a741792e 100644
+index b10b450155eb..c2c1c2f95610 100644
 --- a/content/test/fake_compositor_dependencies.h
 +++ b/content/test/fake_compositor_dependencies.h
-@@ -33,7 +33,6 @@ class FakeCompositorDependencies : public CompositorDependencies {
+@@ -29,7 +29,6 @@ class FakeCompositorDependencies : public CompositorDependencies {
    blink::scheduler::WebThreadScheduler* GetWebMainThreadScheduler() override;
    cc::TaskGraphRunner* GetTaskGraphRunner() override;
    bool IsScrollAnimatorEnabled() override;
 -  std::unique_ptr<cc::UkmRecorderFactory> CreateUkmRecorderFactory() override;
-   void RequestNewLayerTreeFrameSink(
-       RenderWidget* render_widget,
-       const GURL& url,
+ 
+   void set_use_zoom_for_dsf_enabled(bool enabled) {
+     use_zoom_for_dsf_ = enabled;

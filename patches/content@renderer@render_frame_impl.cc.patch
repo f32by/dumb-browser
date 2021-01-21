@@ -1,8 +1,16 @@
 diff --git a/content/renderer/render_frame_impl.cc b/content/renderer/render_frame_impl.cc
-index 72a3bd4837f3..0ae07e3771be 100644
+index c836b113e985..61d529bcb25b 100644
 --- a/content/renderer/render_frame_impl.cc
 +++ b/content/renderer/render_frame_impl.cc
-@@ -477,8 +477,6 @@ void FillNavigationParamsRequest(
+@@ -132,7 +132,6 @@
+ #include "net/http/http_request_headers.h"
+ #include "net/http/http_util.h"
+ #include "ppapi/buildflags/buildflags.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/cpp/not_implemented_url_loader_factory.h"
+ #include "services/network/public/cpp/weak_wrapper_shared_url_loader_factory.h"
+@@ -476,8 +475,6 @@ void FillNavigationParamsRequest(
        common_params.initiator_origin_trial_features.end()};
  
    navigation_params->was_discarded = commit_params.was_discarded;
@@ -11,13 +19,3 @@ index 72a3bd4837f3..0ae07e3771be 100644
  
    if (!commit_params.prefetched_signed_exchanges.empty()) {
      navigation_params->prefetched_signed_exchanges = WebVector<std::unique_ptr<
-@@ -4415,8 +4413,7 @@ void RenderFrameImpl::DidCommitNavigation(
-   // track of that on the widget to help the browser process detect when stale
-   // compositor frames are being shown after a commit.
-   if (is_main_frame_) {
--    GetLocalRootRenderWidget()->DidNavigate(
--        frame_->GetDocument().GetUkmSourceId(), GetLoadingUrl());
-+    GetLocalRootRenderWidget()->DidNavigate(GetLoadingUrl());
-   }
- 
-   mojo::PendingReceiver<service_manager::mojom::InterfaceProvider>

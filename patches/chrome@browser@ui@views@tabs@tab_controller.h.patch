@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/tabs/tab_controller.h b/chrome/browser/ui/views/tabs/tab_controller.h
-index 1f10049c1d7c..7de9c6b1dffc 100644
+index 5ebf65dc4dae..189b46e36f53 100644
 --- a/chrome/browser/ui/views/tabs/tab_controller.h
 +++ b/chrome/browser/ui/views/tabs/tab_controller.h
 @@ -58,6 +58,9 @@ class TabController {
@@ -9,6 +9,6 @@ index 1f10049c1d7c..7de9c6b1dffc 100644
 +  // Toggles whether tab-wide audio muting is active.
 +  virtual void ToggleTabAudioMute(Tab* tab) = 0;
 +
-   // Attempts to shift the specified tab to the right by one index.
-   virtual void ShiftTabRight(Tab* tab) = 0;
- 
+   // Attempts to shift the specified tab towards the end of the tabstrip by one
+   // index.
+   virtual void ShiftTabNext(Tab* tab) = 0;

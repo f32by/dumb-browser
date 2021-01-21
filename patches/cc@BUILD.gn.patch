@@ -1,9 +1,9 @@
 diff --git a/cc/BUILD.gn b/cc/BUILD.gn
-index acc0b7db8728..91de148e37d0 100644
+index 3bb5e5583023..d2faa7e9f7f2 100644
 --- a/cc/BUILD.gn
 +++ b/cc/BUILD.gn
-@@ -178,15 +178,10 @@ cc_component("cc") {
-     "metrics/frame_sequence_tracker_collection.h",
+@@ -181,15 +181,10 @@ cc_component("cc") {
+     "metrics/frame_sorter.h",
      "metrics/jank_metrics.cc",
      "metrics/jank_metrics.h",
 -    "metrics/latency_ukm_reporter.cc",
@@ -18,7 +18,7 @@ index acc0b7db8728..91de148e37d0 100644
      "metrics/video_playback_roughness_reporter.cc",
      "metrics/video_playback_roughness_reporter.h",
      "raster/bitmap_raster_buffer_provider.cc",
-@@ -398,8 +393,6 @@ cc_component("cc") {
+@@ -402,8 +397,6 @@ cc_component("cc") {
      "trees/transform_node.h",
      "trees/tree_synchronizer.cc",
      "trees/tree_synchronizer.h",
@@ -27,7 +27,7 @@ index acc0b7db8728..91de148e37d0 100644
      "trees/viewport_layers.cc",
      "trees/viewport_layers.h",
    ]
-@@ -422,8 +415,6 @@ cc_component("cc") {
+@@ -427,8 +420,6 @@ cc_component("cc") {
      "//gpu/vulkan:buildflags",
      "//media",  # For VideoLayerImpl.
      "//mojo/public/cpp/bindings:struct_traits",
@@ -36,7 +36,7 @@ index acc0b7db8728..91de148e37d0 100644
      "//services/tracing/public/cpp:cpp",
      "//ui/events:events_base",
      "//ui/gfx",
-@@ -571,8 +562,6 @@ cc_test_static_library("test_support") {
+@@ -576,8 +567,6 @@ cc_test_static_library("test_support") {
      "test/test_tile_task_runner.h",
      "test/test_types.cc",
      "test/test_types.h",
@@ -45,7 +45,7 @@ index acc0b7db8728..91de148e37d0 100644
      "test/transfer_cache_test_helper.cc",
      "test/transfer_cache_test_helper.h",
    ]
-@@ -588,8 +577,6 @@ cc_test_static_library("test_support") {
+@@ -593,8 +582,6 @@ cc_test_static_library("test_support") {
      "//base/test:test_support",
      "//base/third_party/dynamic_annotations",
      "//cc/paint",
@@ -54,7 +54,7 @@ index acc0b7db8728..91de148e37d0 100644
      "//components/viz/client",
      "//components/viz/common",
      "//components/viz/service",
-@@ -678,18 +665,6 @@ cc_test("cc_unittests") {
+@@ -683,19 +670,6 @@ cc_test("cc_unittests") {
      "layers/video_frame_provider_client_impl_unittest.cc",
      "layers/video_layer_impl_unittest.cc",
      "layers/viewport_unittest.cc",
@@ -67,13 +67,14 @@ index acc0b7db8728..91de148e37d0 100644
 -    "metrics/events_metrics_manager_unittest.cc",
 -    "metrics/frame_sequence_metrics_unittest.cc",
 -    "metrics/frame_sequence_tracker_unittest.cc",
+-    "metrics/frame_sorter_unittest.cc",
 -    "metrics/jank_metrics_unittest.cc",
 -    "metrics/total_frame_counter_unittest.cc",
 -    "metrics/video_playback_roughness_reporter_unittest.cc",
      "mojo_embedder/async_layer_tree_frame_sink_unittest.cc",
      "paint/clear_for_opaque_raster_unittest.cc",
      "paint/discardable_image_map_unittest.cc",
-@@ -766,7 +741,6 @@ cc_test("cc_unittests") {
+@@ -772,7 +746,6 @@ cc_test("cc_unittests") {
      "trees/property_tree_unittest.cc",
      "trees/swap_promise_manager_unittest.cc",
      "trees/tree_synchronizer_unittest.cc",
@@ -81,8 +82,8 @@ index acc0b7db8728..91de148e37d0 100644
  
      # Animation test files.
      "animation/animation_host_unittest.cc",
-@@ -797,7 +771,6 @@ cc_test("cc_unittests") {
-     "//base/test:test_support",
+@@ -804,7 +777,6 @@ cc_test("cc_unittests") {
+     "//build:chromeos_buildflags",
      "//cc/mojo_embedder",
      "//cc/paint",
 -    "//components/ukm:test_support",

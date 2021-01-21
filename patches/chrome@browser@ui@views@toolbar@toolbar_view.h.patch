@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.h b/chrome/browser/ui/views/toolbar/toolbar_view.h
-index 21510da06867..831f4f0a9b00 100644
+index 1fd8c2ceb743..ec6957e6e9bd 100644
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.h
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.h
 @@ -23,7 +23,6 @@
@@ -10,17 +10,17 @@ index 21510da06867..831f4f0a9b00 100644
  #include "components/prefs/pref_member.h"
  #include "ui/base/accelerators/accelerator.h"
  #include "ui/base/pointer/touch_ui_controller.h"
-@@ -73,7 +72,6 @@ class ToolbarView : public views::AccessiblePaneView,
+@@ -71,7 +70,6 @@ class ToolbarView : public views::AccessiblePaneView,
+                     public BrowserActionsContainer::Delegate,
                      public CommandObserver,
-                     public views::ButtonListener,
                      public AppMenuIconController::Delegate,
 -                    public UpgradeObserver,
                      public ToolbarButtonProvider,
                      public BrowserRootView::DropTarget {
   public:
-@@ -176,10 +174,6 @@ class ToolbarView : public views::AccessiblePaneView,
-   // views::ButtonListener:
-   void ButtonPressed(views::Button* sender, const ui::Event& event) override;
+@@ -171,10 +169,6 @@ class ToolbarView : public views::AccessiblePaneView,
+   // CommandObserver:
+   void EnabledStateChangedForCommand(int id, bool enabled) override;
  
 -  // UpgradeObserver toolbar_button_view_provider.
 -  void OnOutdatedInstall() override;

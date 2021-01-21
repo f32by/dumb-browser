@@ -1,17 +1,17 @@
 diff --git a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
-index 2a33b3f4e9a4..f3e2a7ec3b53 100644
+index fa2de73d0439..25a3a185c749 100644
 --- a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
 +++ b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
-@@ -17,8 +17,6 @@
- #include "build/build_config.h"
+@@ -19,8 +19,6 @@
  #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
  #include "components/enterprise/browser/controller/chrome_browser_cloud_management_helper.h"
+ #include "components/enterprise/browser/enterprise_switches.h"
 -#include "components/enterprise/browser/reporting/report_generator.h"
 -#include "components/enterprise/browser/reporting/report_scheduler.h"
  #include "components/policy/core/browser/browser_policy_connector.h"
  #include "components/policy/core/common/cloud/chrome_browser_cloud_management_metrics.h"
  #include "components/policy/core/common/cloud/cloud_external_data_manager.h"
-@@ -156,14 +154,6 @@ void ChromeBrowserCloudManagementController::Init(
+@@ -163,14 +161,6 @@ void ChromeBrowserCloudManagementController::Init(
      delegate_->InitializeOAuthTokenFactory(url_loader_factory, local_state);
    }
  
@@ -26,7 +26,7 @@ index 2a33b3f4e9a4..f3e2a7ec3b53 100644
    MachineLevelUserCloudPolicyManager* policy_manager =
        delegate_->GetMachineLevelUserCloudPolicyManager();
    DeviceManagementService* device_management_service =
-@@ -263,11 +253,6 @@ void ChromeBrowserCloudManagementController::InvalidatePolicies() {
+@@ -270,11 +260,6 @@ void ChromeBrowserCloudManagementController::InvalidatePolicies() {
      policy_fetcher_->RemoveClientObserver(this);
      policy_fetcher_->Disconnect();
    }
@@ -38,7 +38,7 @@ index 2a33b3f4e9a4..f3e2a7ec3b53 100644
  }
  
  void ChromeBrowserCloudManagementController::InvalidateDMTokenCallback(
-@@ -310,8 +295,6 @@ void ChromeBrowserCloudManagementController::OnServiceAccountSet(
+@@ -317,8 +302,6 @@ void ChromeBrowserCloudManagementController::OnServiceAccountSet(
  
  void ChromeBrowserCloudManagementController::ShutDown() {
    delegate_->ShutDown();
@@ -47,7 +47,7 @@ index 2a33b3f4e9a4..f3e2a7ec3b53 100644
  }
  
  void ChromeBrowserCloudManagementController::NotifyPolicyRegisterFinished(
-@@ -390,9 +373,6 @@ void ChromeBrowserCloudManagementController::
+@@ -397,9 +380,6 @@ void ChromeBrowserCloudManagementController::
    VLOG(1) << "Fetch policy after enrollment.";
    policy_fetcher_->SetupRegistrationAndFetchPolicy(
        BrowserDMTokenStorage::Get()->RetrieveDMToken(), client_id);
@@ -57,7 +57,7 @@ index 2a33b3f4e9a4..f3e2a7ec3b53 100644
  
    NotifyPolicyRegisterFinished(true);
  }
-@@ -412,8 +392,6 @@ void ChromeBrowserCloudManagementController::CreateReportScheduler() {
+@@ -419,8 +399,6 @@ void ChromeBrowserCloudManagementController::CreateReportScheduler() {
        delegate_->GetSharedURLLoaderFactory(),
        CloudPolicyClient::DeviceDMTokenCallback());
    cloud_policy_client_->AddObserver(this);

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resource_coordinator/tab_activity_watcher.cc b/chrome/browser/resource_coordinator/tab_activity_watcher.cc
-index cb42c263b7b9..211c2e1949c8 100644
+index 019c4d41615e..eeec8038c78d 100644
 --- a/chrome/browser/resource_coordinator/tab_activity_watcher.cc
 +++ b/chrome/browser/resource_coordinator/tab_activity_watcher.cc
 @@ -22,7 +22,6 @@
@@ -17,8 +17,8 @@ index cb42c263b7b9..211c2e1949c8 100644
 -#include "services/metrics/public/cpp/ukm_source_id.h"
  #include "third_party/blink/public/common/input/web_input_event.h"
  
- // Use a 1-day max for tab visibility histograms since it's not uncommon to keep
-@@ -51,18 +49,6 @@ constexpr float kFrecencyScoreDecay = 0.8f;
+ namespace resource_coordinator {
+@@ -43,18 +41,6 @@ constexpr float kFrecencyScoreDecay = 0.8f;
  static int32_t reactivation_index = 0;
  // Used for generating label_ids and query_ids.
  int64_t internal_id_for_logging = 0;
@@ -37,17 +37,20 @@ index cb42c263b7b9..211c2e1949c8 100644
  
  }  // namespace
  
-@@ -115,9 +101,6 @@ class TabActivityWatcher::WebContentsData
-     // Copy the replaced tab's stats.
-     page_metrics_ = replaced_tab.page_metrics_;
+@@ -104,12 +90,6 @@ class TabActivityWatcher::WebContentsData
+     // Copy background status so ForegroundOrClosed can potentially be logged.
+     backgrounded_time_ = replaced_tab.backgrounded_time_;
  
+-    // Copy the replaced tab's stats.
+-    page_metrics_ = replaced_tab.page_metrics_;
+-
 -    // Recover the ukm_source_id from the |replaced_tab|.
 -    ukm_source_id_ = replaced_tab.ukm_source_id_;
 -
      // Copy the replaced label_id_.
      label_id_ = replaced_tab.label_id_;
  
-@@ -154,35 +137,6 @@ class TabActivityWatcher::WebContentsData
+@@ -146,35 +126,6 @@ class TabActivityWatcher::WebContentsData
      }
    }
  
@@ -83,7 +86,7 @@ index cb42c263b7b9..211c2e1949c8 100644
    // Sets foregrounded_time_ to NowTicks() so this becomes the
    // most-recently-used tab.
    void TabWindowActivated() { foregrounded_time_ = NowTicks(); }
-@@ -208,9 +162,6 @@ class TabActivityWatcher::WebContentsData
+@@ -203,9 +154,6 @@ class TabActivityWatcher::WebContentsData
  
      creation_time_ = NowTicks();
  
@@ -93,7 +96,7 @@ index cb42c263b7b9..211c2e1949c8 100644
      // When a tab is discarded, a new null_web_contents will be created (with
      // WasDiscarded set as true) applied as a replacement of the discarded tab.
      // We want to record this discarded state for later logging.
-@@ -238,7 +189,6 @@ class TabActivityWatcher::WebContentsData
+@@ -233,7 +181,6 @@ class TabActivityWatcher::WebContentsData
  
      backgrounded_time_ = NowTicks();
      discarded_since_backgrounded_ = false;
@@ -101,7 +104,7 @@ index cb42c263b7b9..211c2e1949c8 100644
    }
  
    void WasShown() {
-@@ -251,9 +201,6 @@ class TabActivityWatcher::WebContentsData
+@@ -246,13 +193,8 @@ class TabActivityWatcher::WebContentsData
      if (browser && browser->tab_strip_model()->closing_all())
        return;
  
@@ -110,11 +113,16 @@ index cb42c263b7b9..211c2e1949c8 100644
 -
      backgrounded_time_ = base::TimeTicks();
      foregrounded_time_ = NowTicks();
+-
+-    page_metrics_.num_reactivations++;
+   }
  
-@@ -276,14 +223,6 @@ class TabActivityWatcher::WebContentsData
+   // content::WebContentsObserver:
+@@ -270,29 +212,12 @@ class TabActivityWatcher::WebContentsData
+         navigation_handle->IsSameDocument()) {
        return;
      }
- 
+-
 -    // Use the same SourceId that SourceUrlRecorderWebContentsObserver populates
 -    // and updates.
 -    ukm::SourceId new_source_id = ukm::ConvertToSourceId(
@@ -123,10 +131,14 @@ index cb42c263b7b9..211c2e1949c8 100644
 -        << "Expected a unique Source ID for the navigation";
 -    ukm_source_id_ = new_source_id;
 -
-     // Update navigation time for UKM reporting.
-     navigation_time_ = navigation_handle->NavigationStart();
+-    // Reset the per-page data.
+-    page_metrics_ = {};
+-
+-    // Update navigation info.
+-    page_metrics_.page_transition = navigation_handle->GetPageTransition();
+   }
  
-@@ -298,9 +237,6 @@ class TabActivityWatcher::WebContentsData
+   // Logs metrics for the tab when it stops loading instead of immediately
    // after a navigation commits, so we can have some idea of its status and
    // contents.
    void DidStopLoading() override {
@@ -136,7 +148,20 @@ index cb42c263b7b9..211c2e1949c8 100644
    }
  
    void OnVisibilityChanged(content::Visibility visibility) override {
-@@ -412,55 +348,7 @@ class TabActivityWatcher::WebContentsData
+@@ -317,12 +242,6 @@ class TabActivityWatcher::WebContentsData
+ 
+   // content::RenderWidgetHost::InputEventObserver:
+   void OnInputEvent(const blink::WebInputEvent& event) override {
+-    if (blink::WebInputEvent::IsMouseEventType(event.GetType()))
+-      page_metrics_.mouse_event_count++;
+-    else if (blink::WebInputEvent::IsKeyboardEventType(event.GetType()))
+-      page_metrics_.key_event_count++;
+-    else if (blink::WebInputEvent::IsTouchEventType(event.GetType()))
+-      page_metrics_.touch_event_count++;
+   }
+ 
+   // Iterates through tabstrips to determine the index of |contents| in
+@@ -373,55 +292,7 @@ class TabActivityWatcher::WebContentsData
    // TODO(charleszhao): refactor TabMetricsLogger::GetTabFeatures to return a
    // full TabFeatures instead of a partial TabFeatures.
    base::Optional<TabFeatures> GetTabFeatures() {
@@ -193,7 +218,7 @@ index cb42c263b7b9..211c2e1949c8 100644
    }
  
    // Returns frecency score of this tab.
-@@ -485,9 +373,6 @@ class TabActivityWatcher::WebContentsData
+@@ -446,9 +317,6 @@ class TabActivityWatcher::WebContentsData
      frecency_score_.score = GetFrecencyScore() + 1.0f - kFrecencyScoreDecay;
    }
  
@@ -203,7 +228,17 @@ index cb42c263b7b9..211c2e1949c8 100644
    // When the tab was created.
    base::TimeTicks creation_time_;
  
-@@ -539,8 +424,7 @@ class TabActivityWatcher::WebContentsData
+@@ -461,9 +329,6 @@ class TabActivityWatcher::WebContentsData
+   // is activated.
+   base::TimeTicks foregrounded_time_;
+ 
+-  // Stores current page stats for the tab.
+-  TabMetricsLogger::PageMetrics page_metrics_;
+-
+   // Set to true when the WebContents has been detached from its tab.
+   bool is_detached_ = false;
+ 
+@@ -491,8 +356,7 @@ class TabActivityWatcher::WebContentsData
  WEB_CONTENTS_USER_DATA_KEY_IMPL(TabActivityWatcher::WebContentsData)
  
  TabActivityWatcher::TabActivityWatcher()
@@ -213,7 +248,7 @@ index cb42c263b7b9..211c2e1949c8 100644
        predictor_(std::make_unique<tab_ranker::TabScorePredictor>()) {
    BrowserList::AddObserver(this);
    browser_tab_strip_tracker_.Init();
-@@ -561,9 +445,6 @@ base::Optional<float> TabActivityWatcher::CalculateReactivationScore(
+@@ -513,9 +377,6 @@ base::Optional<float> TabActivityWatcher::CalculateReactivationScore(
  
  void TabActivityWatcher::LogAndMaybeSortLifecycleUnitWithTabRanker(
      std::vector<LifecycleUnit*>* tabs) {
@@ -223,7 +258,7 @@ index cb42c263b7b9..211c2e1949c8 100644
    const bool should_sort_tabs =
        base::FeatureList::IsEnabled(features::kTabRanker);
  
-@@ -589,7 +470,6 @@ void TabActivityWatcher::LogAndMaybeSortLifecycleUnitWithTabRanker(
+@@ -541,7 +402,6 @@ void TabActivityWatcher::LogAndMaybeSortLifecycleUnitWithTabRanker(
      }
  
      const base::Optional<TabFeatures> tab = web_contents_data->GetTabFeatures();
@@ -231,7 +266,7 @@ index cb42c263b7b9..211c2e1949c8 100644
  
      // No reason to store TabFeatures if TabRanker is disabled.
      if (should_sort_tabs) {
-@@ -672,7 +552,6 @@ void TabActivityWatcher::OnTabStripModelChanged(
+@@ -624,7 +484,6 @@ void TabActivityWatcher::OnTabStripModelChanged(
  void TabActivityWatcher::TabPinnedStateChanged(TabStripModel* tab_strip_model,
                                                 content::WebContents* contents,
                                                 int index) {
@@ -239,7 +274,7 @@ index cb42c263b7b9..211c2e1949c8 100644
  }
  
  bool TabActivityWatcher::ShouldTrackBrowser(Browser* browser) {
-@@ -684,7 +563,6 @@ bool TabActivityWatcher::ShouldTrackBrowser(Browser* browser) {
+@@ -636,7 +495,6 @@ bool TabActivityWatcher::ShouldTrackBrowser(Browser* browser) {
  }
  
  void TabActivityWatcher::ResetForTesting() {
@@ -247,15 +282,10 @@ index cb42c263b7b9..211c2e1949c8 100644
    predictor_ = std::make_unique<tab_ranker::TabScorePredictor>();
    internal_id_for_logging = 0;
  }
-@@ -696,16 +574,6 @@ TabActivityWatcher* TabActivityWatcher::GetInstance() {
+@@ -648,11 +506,6 @@ TabActivityWatcher* TabActivityWatcher::GetInstance() {
  }
  
  void TabActivityWatcher::OnTabClosed(WebContentsData* web_contents_data) {
--  // Log TabLifetime event.
--  tab_metrics_logger_->LogTabLifetime(
--      web_contents_data->ukm_source_id_,
--      NowTicks() - web_contents_data->navigation_time_);
--
 -  // Log ForegroundedOrClosed event.
 -  if (!web_contents_data->backgrounded_time_.is_null()) {
 -    web_contents_data->LogForegroundedOrClosedMetrics(

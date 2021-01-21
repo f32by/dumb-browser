@@ -1,24 +1,16 @@
 diff --git a/chrome/browser/ui/browser.cc b/chrome/browser/ui/browser.cc
-index 24954ee7e0e8..919de080f17a 100644
+index 2c9d816e1aff..18226804b4af 100644
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
-@@ -73,7 +73,6 @@
- #include "chrome/browser/printing/background_printing_manager.h"
+@@ -74,7 +74,6 @@
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_destroyer.h"
+ #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
  #include "chrome/browser/profiles/profiles_state.h"
  #include "chrome/browser/repost_form_warning_controller.h"
  #include "chrome/browser/resource_coordinator/tab_load_tracker.h"
-@@ -84,7 +83,6 @@
- #include "chrome/browser/sessions/session_service_factory.h"
- #include "chrome/browser/sessions/tab_restore_service_factory.h"
- #include "chrome/browser/ssl/security_state_tab_helper.h"
--#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
- #include "chrome/browser/tab_contents/tab_util.h"
- #include "chrome/browser/task_manager/web_contents_tags.h"
- #include "chrome/browser/themes/theme_service.h"
-@@ -158,7 +156,6 @@
+@@ -154,7 +153,6 @@
  #include "components/blocked_content/list_item_position.h"
  #include "components/blocked_content/popup_blocker.h"
  #include "components/blocked_content/popup_blocker_tab_helper.h"
@@ -26,7 +18,7 @@ index 24954ee7e0e8..919de080f17a 100644
  #include "components/bookmarks/browser/bookmark_model.h"
  #include "components/bookmarks/browser/bookmark_utils.h"
  #include "components/bookmarks/common/bookmark_pref_names.h"
-@@ -172,20 +169,15 @@
+@@ -168,20 +166,15 @@
  #include "components/keep_alive_registry/keep_alive_types.h"
  #include "components/keep_alive_registry/scoped_keep_alive.h"
  #include "components/omnibox/browser/location_bar_model_impl.h"
@@ -47,7 +39,7 @@ index 24954ee7e0e8..919de080f17a 100644
  #include "components/translate/core/browser/language_state.h"
  #include "components/user_manager/user_manager.h"
  #include "components/viz/common/surfaces/surface_id.h"
-@@ -499,8 +491,6 @@ Browser::Browser(const CreateParams& params)
+@@ -500,8 +493,6 @@ Browser::Browser(const CreateParams& params)
  
    UpdateBookmarkBarState(BOOKMARK_BAR_STATE_CHANGE_INIT);
  
@@ -56,7 +48,7 @@ index 24954ee7e0e8..919de080f17a 100644
    if (params.skip_window_init_for_testing)
      return;
  
-@@ -1475,10 +1465,6 @@ void Browser::OnDidBlockNavigation(
+@@ -1438,10 +1429,6 @@ void Browser::OnDidBlockNavigation(
        framebust_helper->AddBlockedUrl(blocked_url, base::BindOnce(on_click));
      }
    }
@@ -67,19 +59,19 @@ index 24954ee7e0e8..919de080f17a 100644
  }
  
  content::PictureInPictureResult Browser::EnterPictureInPicture(
-@@ -1553,10 +1539,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
+@@ -1516,10 +1503,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
  bool Browser::IsFrameLowPriority(
      const content::WebContents* web_contents,
      const content::RenderFrameHost* render_frame_host) {
--  const auto* client =
--      ChromeSubresourceFilterClient::FromWebContents(web_contents);
--  return client &&
--         client->GetThrottleManager()->IsFrameTaggedAsAd(render_frame_host);
+-  const auto* throttle_manager = subresource_filter::
+-      ContentSubresourceFilterThrottleManager::FromWebContents(web_contents);
+-  return throttle_manager &&
+-         throttle_manager->IsFrameTaggedAsAd(render_frame_host);
 +  return false;
  }
  
  void Browser::MediaWatchTimeChanged(
-@@ -1580,7 +1563,6 @@ void Browser::OnWindowDidShow() {
+@@ -1543,7 +1527,6 @@ void Browser::OnWindowDidShow() {
      return;
    window_has_shown_ = true;
  
@@ -87,7 +79,7 @@ index 24954ee7e0e8..919de080f17a 100644
  
    // Nothing to do for non-tabbed windows.
    if (!is_type_normal())
-@@ -1637,12 +1619,6 @@ WebContents* Browser::OpenURLFromTab(WebContents* source,
+@@ -1600,12 +1583,6 @@ WebContents* Browser::OpenURLFromTab(WebContents* source,
  
    content::WebContents* navigated_or_inserted_contents =
        popup_delegate->nav_params()->navigated_or_inserted_contents;
@@ -100,7 +92,7 @@ index 24954ee7e0e8..919de080f17a 100644
  
    return navigated_or_inserted_contents;
  }
-@@ -1696,13 +1672,6 @@ void Browser::AddNewContents(WebContents* source,
+@@ -1659,13 +1636,6 @@ void Browser::AddNewContents(WebContents* source,
    }
  #endif
  
@@ -114,7 +106,7 @@ index 24954ee7e0e8..919de080f17a 100644
    chrome::AddWebContents(this, source, std::move(new_contents), target_url,
                           disposition, initial_rect);
  }
-@@ -1732,18 +1701,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
+@@ -1695,18 +1665,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
    if (is_type_normal())
      return;
  
@@ -133,7 +125,7 @@ index 24954ee7e0e8..919de080f17a 100644
    window_->SetBounds(bounds);
  }
  
-@@ -2383,12 +2340,6 @@ void Browser::OnTabClosing(WebContents* contents) {
+@@ -2375,12 +2333,6 @@ void Browser::OnTabClosing(WebContents* contents) {
    // associated with their tab is still valid.
    WebContentsModalDialogManager::FromWebContents(contents)->CloseAllDialogs();
  

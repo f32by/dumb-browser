@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/site_settings_handler.cc b/chrome/browser/ui/webui/settings/site_settings_handler.cc
-index 7a66411fe4fc..0ad71500f409 100644
+index 9a28e12cad0c..1460826ce1c0 100644
 --- a/chrome/browser/ui/webui/settings/site_settings_handler.cc
 +++ b/chrome/browser/ui/webui/settings/site_settings_handler.cc
 @@ -52,7 +52,6 @@
@@ -10,7 +10,7 @@ index 7a66411fe4fc..0ad71500f409 100644
  #include "components/permissions/permission_util.h"
  #include "components/prefs/pref_change_registrar.h"
  #include "components/prefs/pref_service.h"
-@@ -1051,11 +1050,6 @@ void SiteSettingsHandler::HandleSetOriginPermissions(
+@@ -1045,11 +1044,6 @@ void SiteSettingsHandler::HandleSetOriginPermissions(
      HostContentSettingsMap* map =
          HostContentSettingsMapFactory::GetForProfile(profile_);
  
@@ -22,7 +22,7 @@ index 7a66411fe4fc..0ad71500f409 100644
      // Clear any existing embargo status if the new setting isn't block.
      if (setting != CONTENT_SETTING_BLOCK) {
        PermissionDecisionAutoBlockerFactory::GetForProfile(profile_)
-@@ -1142,10 +1136,6 @@ void SiteSettingsHandler::HandleResetCategoryPermissionForPattern(
+@@ -1122,10 +1116,6 @@ void SiteSettingsHandler::HandleResetCategoryPermissionForPattern(
        secondary_pattern_string.empty()
            ? ContentSettingsPattern::Wildcard()
            : ContentSettingsPattern::FromString(secondary_pattern_string);
@@ -32,8 +32,8 @@ index 7a66411fe4fc..0ad71500f409 100644
 -          permissions::PermissionSourceUI::SITE_SETTINGS);
  
    map->SetContentSettingCustomScope(primary_pattern, secondary_pattern,
-                                     content_type, "", CONTENT_SETTING_DEFAULT);
-@@ -1208,11 +1198,6 @@ void SiteSettingsHandler::HandleSetCategoryPermissionForPattern(
+                                     content_type, CONTENT_SETTING_DEFAULT);
+@@ -1188,11 +1178,6 @@ void SiteSettingsHandler::HandleSetCategoryPermissionForPattern(
            ? ContentSettingsPattern::Wildcard()
            : ContentSettingsPattern::FromString(secondary_pattern_string);
  
@@ -43,5 +43,5 @@ index 7a66411fe4fc..0ad71500f409 100644
 -          permissions::PermissionSourceUI::SITE_SETTINGS);
 -
    map->SetContentSettingCustomScope(primary_pattern, secondary_pattern,
-                                     content_type, "", setting);
+                                     content_type, setting);
  

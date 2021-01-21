@@ -1,0 +1,83 @@
+diff --git a/content/browser/sms/webotp_service.cc b/content/browser/sms/webotp_service.cc
+index b8fb113f017b..ee2d60923773 100644
+--- a/content/browser/sms/webotp_service.cc
++++ b/content/browser/sms/webotp_service.cc
+@@ -17,7 +17,6 @@
+ #include "base/metrics/histogram_functions.h"
+ #include "base/optional.h"
+ #include "content/browser/renderer_host/render_frame_host_impl.h"
+-#include "content/browser/sms/sms_metrics.h"
+ #include "content/browser/sms/user_consent_handler.h"
+ #include "content/public/browser/navigation_details.h"
+ #include "content/public/browser/navigation_type.h"
+@@ -26,10 +25,8 @@
+ #include "content/public/browser/web_contents_delegate.h"
+ #include "content/public/common/content_features.h"
+ #include "content/public/common/content_switches.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/mojom/sms/webotp_service.mojom-shared.h"
+ 
+-using blink::WebOTPServiceDestroyedReason;
+ using blink::mojom::SmsStatus;
+ 
+ namespace content {
+@@ -149,10 +146,6 @@ void WebOTPService::OnReceive(const std::string& one_time_code) {
+   DCHECK(!start_time_.is_null());
+ 
+   receive_time_ = base::TimeTicks::Now();
+-  RecordSmsReceiveTime(receive_time_ - start_time_,
+-                       render_frame_host()->GetPageUkmSourceId());
+-  RecordSmsParsingStatus(SmsParsingStatus::kParsed,
+-                         render_frame_host()->GetPageUkmSourceId());
+ 
+   one_time_code_ = one_time_code;
+ 
+@@ -191,7 +184,6 @@ void WebOTPService::OnFailure(FailureType failure_type) {
+       break;
+   }
+   DCHECK(status != SmsParsingStatus::kParsed);
+-  RecordSmsParsingStatus(status, render_frame_host()->GetPageUkmSourceId());
+ }
+ 
+ void WebOTPService::Abort() {
+@@ -201,21 +193,6 @@ void WebOTPService::Abort() {
+ 
+ void WebOTPService::NavigationEntryCommitted(
+     const content::LoadCommittedDetails& load_details) {
+-  switch (load_details.type) {
+-    case NavigationType::NAVIGATION_TYPE_NEW_PAGE:
+-      RecordDestroyedReason(WebOTPServiceDestroyedReason::kNavigateNewPage);
+-      break;
+-    case NavigationType::NAVIGATION_TYPE_EXISTING_PAGE:
+-      RecordDestroyedReason(
+-          WebOTPServiceDestroyedReason::kNavigateExistingPage);
+-      break;
+-    case NavigationType::NAVIGATION_TYPE_SAME_PAGE:
+-      RecordDestroyedReason(WebOTPServiceDestroyedReason::kNavigateSamePage);
+-      break;
+-    default:
+-      // Ignore cases we don't care about.
+-      break;
+-  }
+ }
+ 
+ void WebOTPService::CompleteRequest(blink::mojom::SmsStatus status) {
+@@ -227,18 +204,6 @@ void WebOTPService::CompleteRequest(blink::mojom::SmsStatus status) {
+     code = one_time_code_;
+   }
+ 
+-  // Record ContinueOn timing values only if we are using an asynchronous
+-  // consent handler (i.e. showing user prompts).
+-  if (consent_handler_->is_async()) {
+-    if (status == SmsStatus::kSuccess) {
+-      DCHECK(!receive_time_.is_null());
+-      RecordContinueOnSuccessTime(base::TimeTicks::Now() - receive_time_);
+-    } else if (status == SmsStatus::kCancelled) {
+-      DCHECK(!receive_time_.is_null());
+-      RecordCancelOnSuccessTime(base::TimeTicks::Now() - receive_time_);
+-    }
+-  }
+-
+   if (callback_) {
+     std::move(callback_).Run(status, code);
+   }

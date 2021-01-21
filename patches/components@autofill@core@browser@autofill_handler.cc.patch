@@ -1,8 +1,8 @@
 diff --git a/components/autofill/core/browser/autofill_handler.cc b/components/autofill/core/browser/autofill_handler.cc
-index c7474a25dfa8..cfe0d75429f2 100644
+index b8f647955aed..8e8d8bb10eef 100644
 --- a/components/autofill/core/browser/autofill_handler.cc
 +++ b/components/autofill/core/browser/autofill_handler.cc
-@@ -84,7 +84,6 @@ void AutofillHandler::OnFormsSeen(const std::vector<FormData>& forms,
+@@ -88,7 +88,6 @@ void AutofillHandler::OnFormsSeen(const std::vector<FormData>& forms,
  
    std::vector<const FormData*> new_forms;
    for (const FormData& form : forms) {
@@ -10,7 +10,7 @@ index c7474a25dfa8..cfe0d75429f2 100644
      FormStructure* cached_form_structure =
          FindCachedFormByRendererId(form.unique_renderer_id);
      // Autofill used to ignore cache hits for non-credit-card forms. The
-@@ -124,8 +123,6 @@ void AutofillHandler::OnFormsSeen(const std::vector<FormData>& forms,
+@@ -122,8 +121,6 @@ void AutofillHandler::OnFormsSeen(const std::vector<FormData>& forms,
        form_structure->set_form_signature(CalculateFormSignature(form));
  
      new_forms.push_back(&form);

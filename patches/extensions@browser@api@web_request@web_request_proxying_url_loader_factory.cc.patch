@@ -1,5 +1,5 @@
 diff --git a/extensions/browser/api/web_request/web_request_proxying_url_loader_factory.cc b/extensions/browser/api/web_request/web_request_proxying_url_loader_factory.cc
-index 342dc5541473..3009d1f310a8 100644
+index c4e3a7249fc6..9e535bdfecc0 100644
 --- a/extensions/browser/api/web_request/web_request_proxying_url_loader_factory.cc
 +++ b/extensions/browser/api/web_request/web_request_proxying_url_loader_factory.cc
 @@ -14,7 +14,6 @@
@@ -24,7 +24,7 @@ index 342dc5541473..3009d1f310a8 100644
      int32_t network_service_request_id,
      int32_t routing_id,
      uint32_t options,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      const network::ResourceRequest& request,
      const net::MutableNetworkTrafficAnnotationTag& traffic_annotation,
      mojo::PendingReceiver<network::mojom::URLLoader> loader_receiver,
@@ -40,11 +40,11 @@ index 342dc5541473..3009d1f310a8 100644
        request_(request),
        original_initiator_(request.request_initiator),
        request_id_(request_id),
--      ukm_source_id_(base::kInvalidUkmSourceId),
+-      ukm_source_id_(ukm::kInvalidSourceIdObj),
        proxied_loader_receiver_(this),
        for_cors_preflight_(true),
        has_any_extra_headers_listeners_(
-@@ -151,13 +144,6 @@ WebRequestProxyingURLLoaderFactory::InProgressRequest::~InProgressRequest() {
+@@ -151,14 +144,6 @@ WebRequestProxyingURLLoaderFactory::InProgressRequest::~InProgressRequest() {
    if (request_.keepalive && !for_cors_preflight_) {
      UMA_HISTOGRAM_ENUMERATION("Extensions.WebRequest.KeepaliveRequestState",
                                state_);
@@ -53,12 +53,13 @@ index 342dc5541473..3009d1f310a8 100644
 -      ukm::builders::Extensions_WebRequest_KeepaliveRequestFinished(
 -          ukm_source_id_)
 -          .SetState(state_)
+-          .SetNumRedirects(num_redirects_)
 -          .Record(ukm::UkmRecorder::Get());
 -    }
    }
    // This is important to ensure that no outstanding blocking requests continue
    // to reference state owned by this object.
-@@ -195,8 +181,7 @@ void WebRequestProxyingURLLoaderFactory::InProgressRequest::
+@@ -196,8 +181,7 @@ void WebRequestProxyingURLLoaderFactory::InProgressRequest::
                                      : nullptr,
        routing_id_, request_for_info, factory_->IsForDownload(),
        !(options_ & network::mojom::kURLLoadOptionSynchronous),
@@ -68,15 +69,15 @@ index 342dc5541473..3009d1f310a8 100644
  
    current_request_uses_header_client_ =
        factory_->url_loader_header_client_receiver_.is_bound() &&
-@@ -1083,7 +1068,6 @@ WebRequestProxyingURLLoaderFactory::WebRequestProxyingURLLoaderFactory(
+@@ -1096,7 +1080,6 @@ WebRequestProxyingURLLoaderFactory::WebRequestProxyingURLLoaderFactory(
      WebRequestAPI::RequestIDGenerator* request_id_generator,
      std::unique_ptr<ExtensionNavigationUIData> navigation_ui_data,
      base::Optional<int64_t> navigation_id,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory> loader_receiver,
      mojo::PendingRemote<network::mojom::URLLoaderFactory> target_factory_remote,
      mojo::PendingReceiver<network::mojom::TrustedURLLoaderHeaderClient>
-@@ -1096,8 +1080,7 @@ WebRequestProxyingURLLoaderFactory::WebRequestProxyingURLLoaderFactory(
+@@ -1109,8 +1092,7 @@ WebRequestProxyingURLLoaderFactory::WebRequestProxyingURLLoaderFactory(
        navigation_ui_data_(std::move(navigation_ui_data)),
        navigation_id_(std::move(navigation_id)),
        proxies_(proxies),
@@ -86,15 +87,15 @@ index 342dc5541473..3009d1f310a8 100644
    DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
    // base::Unretained is safe here because the callback will be
    // canceled when |shutdown_notifier_| is destroyed, and |proxies_|
-@@ -1127,7 +1110,6 @@ void WebRequestProxyingURLLoaderFactory::StartProxying(
+@@ -1140,7 +1122,6 @@ void WebRequestProxyingURLLoaderFactory::StartProxying(
      WebRequestAPI::RequestIDGenerator* request_id_generator,
      std::unique_ptr<ExtensionNavigationUIData> navigation_ui_data,
      base::Optional<int64_t> navigation_id,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory> loader_receiver,
      mojo::PendingRemote<network::mojom::URLLoaderFactory> target_factory_remote,
      mojo::PendingReceiver<network::mojom::TrustedURLLoaderHeaderClient>
-@@ -1138,7 +1120,7 @@ void WebRequestProxyingURLLoaderFactory::StartProxying(
+@@ -1151,7 +1132,7 @@ void WebRequestProxyingURLLoaderFactory::StartProxying(
  
    auto proxy = std::make_unique<WebRequestProxyingURLLoaderFactory>(
        browser_context, render_process_id, request_id_generator,
@@ -103,7 +104,7 @@ index 342dc5541473..3009d1f310a8 100644
        std::move(loader_receiver), std::move(target_factory_remote),
        std::move(header_client_receiver), proxies, loader_factory_type);
  
-@@ -1183,7 +1165,7 @@ void WebRequestProxyingURLLoaderFactory::CreateLoaderAndStart(
+@@ -1196,7 +1177,7 @@ void WebRequestProxyingURLLoaderFactory::CreateLoaderAndStart(
    auto result = requests_.emplace(
        web_request_id, std::make_unique<InProgressRequest>(
                            this, web_request_id, request_id, routing_id, options,

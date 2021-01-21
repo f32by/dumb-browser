@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/worklet_global_scope.cc b/third_party/blink/renderer/core/workers/worklet_global_scope.cc
-index e9734bdcb928..f84997933d82 100644
+index 818ab0d61a36..56f033b82a3f 100644
 --- a/third_party/blink/renderer/core/workers/worklet_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/worklet_global_scope.cc
 @@ -5,7 +5,6 @@
@@ -9,8 +9,8 @@ index e9734bdcb928..f84997933d82 100644
 -#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
- #include "third_party/blink/public/platform/task_type.h"
-@@ -287,18 +286,6 @@ void WorkletGlobalScope::BindContentSecurityPolicyToExecutionContext() {
+ #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
+@@ -288,18 +287,6 @@ void WorkletGlobalScope::BindContentSecurityPolicyToExecutionContext() {
    GetContentSecurityPolicy()->SetupSelf(*document_security_origin_);
  }
  

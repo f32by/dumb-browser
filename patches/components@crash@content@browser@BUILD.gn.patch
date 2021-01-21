@@ -1,8 +1,8 @@
 diff --git a/components/crash/content/browser/BUILD.gn b/components/crash/content/browser/BUILD.gn
-index efc8041b4133..821597a0bddd 100644
+index 7649900ccecb..61882eeb7764 100644
 --- a/components/crash/content/browser/BUILD.gn
 +++ b/components/crash/content/browser/BUILD.gn
-@@ -45,10 +45,6 @@ source_set("browser") {
+@@ -27,10 +27,6 @@ source_set("browser") {
      ]
    }
  
@@ -10,6 +10,6 @@ index efc8041b4133..821597a0bddd 100644
 -    deps += [ "//third_party/crashpad/crashpad/client" ]
 -  }
 -
-   if (!is_android) {
-     deps += [ "//third_party/breakpad:client" ]
-   }
+   # This is not in the GYP build but this target includes breakpad client
+   # headers, so add the dependency here.
+   if ((is_posix && !is_ios) || is_fuchsia) {

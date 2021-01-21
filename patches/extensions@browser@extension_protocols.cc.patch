@@ -1,5 +1,5 @@
 diff --git a/extensions/browser/extension_protocols.cc b/extensions/browser/extension_protocols.cc
-index e4e1bf4054ad..53af39858172 100644
+index 1841283a1f84..53af39858172 100644
 --- a/extensions/browser/extension_protocols.cc
 +++ b/extensions/browser/extension_protocols.cc
 @@ -71,7 +71,6 @@
@@ -10,7 +10,15 @@ index e4e1bf4054ad..53af39858172 100644
  #include "extensions/common/manifest_handlers/background_info.h"
  #include "extensions/common/manifest_handlers/csp_info.h"
  #include "extensions/common/manifest_handlers/icons_handler.h"
-@@ -107,85 +106,6 @@ namespace {
+@@ -90,7 +89,6 @@
+ #include "net/http/http_request_headers.h"
+ #include "net/http/http_response_headers.h"
+ #include "net/http/http_response_info.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/url_loader_completion_status.h"
+ #include "services/network/public/mojom/url_response_head.mojom.h"
+ #include "third_party/blink/public/common/features.h"
+@@ -108,85 +106,6 @@ namespace {
  
  ExtensionProtocolTestHandler* g_test_handler = nullptr;
  
@@ -25,7 +33,7 @@ index e4e1bf4054ad..53af39858172 100644
 - public:
 -  ResultRecordingClient(
 -      const GURL& url,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
 -      mojo::PendingRemote<network::mojom::URLLoaderClient> real_client)
 -      : url_(url),
 -        ukm_source_id_(ukm_source_id),
@@ -72,15 +80,15 @@ index e4e1bf4054ad..53af39858172 100644
 -
 - private:
 -  GURL url_;
--  base::UkmSourceId ukm_source_id_;
+-  ukm::SourceIdObj ukm_source_id_;
 -  mojo::Remote<network::mojom::URLLoaderClient> real_client_;
 -};
 -
 -mojo::PendingRemote<network::mojom::URLLoaderClient> WrapWithMetricsIfNeeded(
 -    const GURL& url,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
 -    mojo::PendingRemote<network::mojom::URLLoaderClient> in_client) {
--  if (ukm_source_id == base::kInvalidUkmSourceId)
+-  if (ukm_source_id == ukm::kInvalidSourceIdObj)
 -    return in_client;
 -
 -  mojo::PendingRemote<network::mojom::URLLoaderClient> proxy_client_remote;
@@ -96,15 +104,15 @@ index e4e1bf4054ad..53af39858172 100644
  void GenerateBackgroundPageContents(const Extension* extension,
                                      std::string* mime_type,
                                      std::string* charset,
-@@ -461,7 +381,6 @@ class ExtensionURLLoaderFactory
+@@ -462,7 +381,6 @@ class ExtensionURLLoaderFactory
   public:
    static mojo::PendingRemote<network::mojom::URLLoaderFactory> Create(
        content::BrowserContext* browser_context,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
        bool is_web_view_request,
        int render_process_id) {
      DCHECK(browser_context);
-@@ -475,7 +394,7 @@ class ExtensionURLLoaderFactory
+@@ -476,7 +394,7 @@ class ExtensionURLLoaderFactory
  
      // Manages its own lifetime.
      new ExtensionURLLoaderFactory(
@@ -113,11 +121,11 @@ index e4e1bf4054ad..53af39858172 100644
          pending_remote.InitWithNewPipeAndPassReceiver());
  
      return pending_remote;
-@@ -494,14 +413,12 @@ class ExtensionURLLoaderFactory
+@@ -495,14 +413,12 @@ class ExtensionURLLoaderFactory
    // the NonNetworkURLLoaderFactoryBase::OnDisconnect method.
    ExtensionURLLoaderFactory(
        content::BrowserContext* browser_context,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
        bool is_web_view_request,
        int render_process_id,
        mojo::PendingReceiver<network::mojom::URLLoaderFactory> factory_receiver)
@@ -128,7 +136,7 @@ index e4e1bf4054ad..53af39858172 100644
          render_process_id_(render_process_id) {
      DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
      extension_info_map_ =
-@@ -538,9 +455,6 @@ class ExtensionURLLoaderFactory
+@@ -539,9 +455,6 @@ class ExtensionURLLoaderFactory
        return;
      }
  
@@ -138,7 +146,7 @@ index e4e1bf4054ad..53af39858172 100644
      const std::string extension_id = request.url.host();
      ExtensionRegistry* registry = ExtensionRegistry::Get(browser_context_);
      scoped_refptr<const Extension> extension =
-@@ -592,20 +506,6 @@ class ExtensionURLLoaderFactory
+@@ -593,20 +506,6 @@ class ExtensionURLLoaderFactory
                                &send_cors_header, &follow_symlinks_anywhere);
      }
  
@@ -159,19 +167,19 @@ index e4e1bf4054ad..53af39858172 100644
      if (IsBackgroundPageURL(request.url)) {
        // Handle background page requests immediately with a simple generated
        // chunk of HTML.
-@@ -789,7 +689,6 @@ class ExtensionURLLoaderFactory
+@@ -790,7 +689,6 @@ class ExtensionURLLoaderFactory
  
    content::BrowserContext* browser_context_;
    bool is_web_view_request_;
--  base::UkmSourceId ukm_source_id_;
+-  ukm::SourceIdObj ukm_source_id_;
  
    // We store the ID and get RenderProcessHost each time it's needed. This is to
    // avoid holding on to stale pointers if we get requests past the lifetime of
-@@ -852,10 +751,9 @@ void SetExtensionProtocolTestHandler(ExtensionProtocolTestHandler* handler) {
+@@ -853,10 +751,9 @@ void SetExtensionProtocolTestHandler(ExtensionProtocolTestHandler* handler) {
  mojo::PendingRemote<network::mojom::URLLoaderFactory>
  CreateExtensionNavigationURLLoaderFactory(
      content::BrowserContext* browser_context,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      bool is_web_view_request) {
    return ExtensionURLLoaderFactory::Create(
 -      browser_context, ukm_source_id, is_web_view_request,
@@ -179,33 +187,33 @@ index e4e1bf4054ad..53af39858172 100644
        content::ChildProcessHost::kInvalidUniqueID);
  }
  
-@@ -863,7 +761,7 @@ mojo::PendingRemote<network::mojom::URLLoaderFactory>
+@@ -864,7 +761,7 @@ mojo::PendingRemote<network::mojom::URLLoaderFactory>
  CreateExtensionWorkerMainResourceURLLoaderFactory(
      content::BrowserContext* browser_context) {
    return ExtensionURLLoaderFactory::Create(
--      browser_context, base::kInvalidUkmSourceId,
+-      browser_context, ukm::kInvalidSourceIdObj,
 +      browser_context,
        /*is_web_view_request=*/false,
        content::ChildProcessHost::kInvalidUniqueID);
  }
-@@ -872,7 +770,7 @@ mojo::PendingRemote<network::mojom::URLLoaderFactory>
+@@ -873,7 +770,7 @@ mojo::PendingRemote<network::mojom::URLLoaderFactory>
  CreateExtensionServiceWorkerScriptURLLoaderFactory(
      content::BrowserContext* browser_context) {
    return ExtensionURLLoaderFactory::Create(
--      browser_context, base::kInvalidUkmSourceId,
+-      browser_context, ukm::kInvalidSourceIdObj,
 +      browser_context,
        /*is_web_view_request=*/false,
        content::ChildProcessHost::kInvalidUniqueID);
  }
-@@ -885,14 +783,8 @@ CreateExtensionURLLoaderFactory(int render_process_id, int render_frame_id) {
+@@ -886,14 +783,8 @@ CreateExtensionURLLoaderFactory(int render_process_id, int render_frame_id) {
    bool is_web_view_request =
        WebViewGuest::FromFrameID(render_process_id, render_frame_id) != nullptr;
  
 -  content::RenderFrameHost* rfh =
 -      content::RenderFrameHost::FromID(render_process_id, render_frame_id);
--  base::UkmSourceId ukm_source_id = base::kInvalidUkmSourceId;
+-  ukm::SourceIdObj ukm_source_id = ukm::kInvalidSourceIdObj;
 -  if (rfh)
--    ukm_source_id = base::UkmSourceId::FromInt64(rfh->GetPageUkmSourceId());
+-    ukm_source_id = ukm::SourceIdObj::FromInt64(rfh->GetPageUkmSourceId());
 -
    return ExtensionURLLoaderFactory::Create(
 -      browser_context, ukm_source_id, is_web_view_request, render_process_id);

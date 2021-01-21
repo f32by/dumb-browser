@@ -1,8 +1,8 @@
 diff --git a/components/translate/core/browser/translate_ui_delegate.cc b/components/translate/core/browser/translate_ui_delegate.cc
-index 171e568cea37..590daa72da3b 100644
+index 2c51171e6a17..891132f15c78 100644
 --- a/components/translate/core/browser/translate_ui_delegate.cc
 +++ b/components/translate/core/browser/translate_ui_delegate.cc
-@@ -233,8 +233,6 @@ void TranslateUIDelegate::Translate() {
+@@ -234,8 +234,6 @@ void TranslateUIDelegate::Translate() {
    }
  
    if (translate_manager_) {
@@ -11,7 +11,7 @@ index 171e568cea37..590daa72da3b 100644
      translate_manager_->TranslatePage(GetOriginalLanguageCode(),
                                        GetTargetLanguageCode(), false);
      UMA_HISTOGRAM_BOOLEAN(kPerformTranslate, true);
-@@ -268,9 +266,6 @@ void TranslateUIDelegate::TranslationDeclined(bool explicitly_closed) {
+@@ -269,9 +267,6 @@ void TranslateUIDelegate::TranslationDeclined(bool explicitly_closed) {
    // stops. That could happen multiple times, including after the user already
    // declined the translation.)
    if (translate_manager_) {
@@ -21,7 +21,7 @@ index 171e568cea37..590daa72da3b 100644
      if (explicitly_closed)
        translate_manager_->GetLanguageState()->set_translation_declined(true);
    }
-@@ -290,13 +285,6 @@ void TranslateUIDelegate::SetLanguageBlocked(bool value) {
+@@ -291,13 +286,6 @@ void TranslateUIDelegate::SetLanguageBlocked(bool value) {
    if (value) {
      prefs_->AddToLanguageList(GetOriginalLanguageCode(),
                                /*force_blocked=*/true);
@@ -35,7 +35,7 @@ index 171e568cea37..590daa72da3b 100644
    } else {
      prefs_->UnblockLanguage(GetOriginalLanguageCode());
    }
-@@ -320,13 +308,6 @@ void TranslateUIDelegate::SetSiteBlacklist(bool value) {
+@@ -321,13 +309,6 @@ void TranslateUIDelegate::SetSiteBlacklist(bool value) {
  
    if (value) {
      prefs_->BlacklistSite(host);
@@ -49,7 +49,7 @@ index 171e568cea37..590daa72da3b 100644
    } else {
      prefs_->RemoveSiteFromBlacklist(host);
    }
-@@ -360,14 +341,6 @@ void TranslateUIDelegate::SetAlwaysTranslate(bool value) {
+@@ -361,14 +342,6 @@ void TranslateUIDelegate::SetAlwaysTranslate(bool value) {
    const std::string& target_lang = GetTargetLanguageCode();
    if (value) {
      prefs_->WhitelistLanguagePair(original_lang, target_lang);

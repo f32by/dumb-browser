@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/mediasource/media_source.cc b/third_party/blink/renderer/modules/mediasource/media_source.cc
-index 81a68d896a2b..383877b45659 100644
+index 3d0d59bcbc3f..e577abf06948 100644
 --- a/third_party/blink/renderer/modules/mediasource/media_source.cc
 +++ b/third_party/blink/renderer/modules/mediasource/media_source.cc
 @@ -9,9 +9,6 @@
@@ -12,15 +12,15 @@ index 81a68d896a2b..383877b45659 100644
  #include "third_party/blink/public/platform/web_media_source.h"
  #include "third_party/blink/public/platform/web_source_buffer.h"
  #include "third_party/blink/renderer/core/dom/events/event.h"
-@@ -29,7 +26,6 @@
+@@ -32,7 +29,6 @@
  #include "third_party/blink/renderer/platform/instrumentation/use_counter.h"
  #include "third_party/blink/renderer/platform/network/mime/content_type.h"
  #include "third_party/blink/renderer/platform/network/mime/mime_type_registry.h"
 -#include "third_party/blink/renderer/platform/privacy_budget/identifiability_digest_helpers.h"
  #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
+ #include "third_party/blink/renderer/platform/wtf/functional.h"
  
- using blink::WebMediaSource;
-@@ -336,7 +332,6 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
+@@ -395,7 +391,6 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
        MIMETypeRegistry::kIsNotSupported) {
      DVLOG(1) << __func__ << "(" << type
               << ") -> false (not supported by HTMLMediaElement)";
@@ -28,12 +28,16 @@ index 81a68d896a2b..383877b45659 100644
      return false;
    }
  
-@@ -359,25 +354,9 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
+@@ -418,7 +413,6 @@ bool MediaSource::isTypeSupported(ExecutionContext* context,
                  MIMETypeRegistry::SupportsMediaSourceMIMEType(
                      content_type.GetType(), codecs);
    DVLOG(2) << __func__ << "(" << type << ") -> " << (result ? "true" : "false");
 -  RecordIdentifiabilityMetric(context, type, result);
    return result;
+ }
+ 
+@@ -430,21 +424,6 @@ bool MediaSource::canConstructInDedicatedWorker() {
+   return true;
  }
  
 -void MediaSource::RecordIdentifiabilityMetric(ExecutionContext* context,

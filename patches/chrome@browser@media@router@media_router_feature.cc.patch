@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/media/router/media_router_feature.cc b/chrome/browser/media/router/media_router_feature.cc
-index 843b8d4ef78e..fca339ca1654 100644
+index 52716b28a9b6..f09be4cd8bdf 100644
 --- a/chrome/browser/media/router/media_router_feature.cc
 +++ b/chrome/browser/media/router/media_router_feature.cc
-@@ -31,11 +31,13 @@ namespace media_router {
+@@ -30,11 +30,13 @@ namespace media_router {
  
  #if !defined(OS_ANDROID)
  #if !defined(OFFICIAL_BUILD)
@@ -16,7 +16,7 @@ index 843b8d4ef78e..fca339ca1654 100644
  #endif  // !defined(OFFICIAL_BUILD)
  // Controls if browser side DialMediaRouteProvider is enabled.
  const base::Feature kDialMediaRouteProvider{"DialMediaRouteProvider",
-@@ -52,15 +54,18 @@ const base::Feature kAllowAllSitesToInitiateMirroring{
+@@ -51,15 +53,18 @@ const base::Feature kAllowAllSitesToInitiateMirroring{
  
  #if defined(OS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)
  namespace {
@@ -35,7 +35,7 @@ index 843b8d4ef78e..fca339ca1654 100644
  #if !defined(OFFICIAL_BUILD) && !defined(OS_ANDROID)
    if (!base::FeatureList::IsEnabled(kMediaRouter))
      return false;
-@@ -81,6 +86,9 @@ bool MediaRouterEnabled(content::BrowserContext* context) {
+@@ -80,6 +85,9 @@ bool MediaRouterEnabled(content::BrowserContext* context) {
  #else   // !(defined(OS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS))
    return false;
  #endif  // defined(OS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)

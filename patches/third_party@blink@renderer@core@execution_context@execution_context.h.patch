@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/execution_context/execution_context.h b/third_party/blink/renderer/core/execution_context/execution_context.h
-index da9bb4a03a8c..222171c52cc4 100644
+index 050e047a1636..1b8212a3c000 100644
 --- a/third_party/blink/renderer/core/execution_context/execution_context.h
 +++ b/third_party/blink/renderer/core/execution_context/execution_context.h
 @@ -33,7 +33,6 @@
@@ -10,7 +10,7 @@ index da9bb4a03a8c..222171c52cc4 100644
  #include "services/network/public/mojom/ip_address_space.mojom-blink-forward.h"
  #include "services/network/public/mojom/referrer_policy.mojom-blink-forward.h"
  #include "third_party/blink/public/common/tokens/tokens.h"
-@@ -63,10 +62,6 @@ class SingleThreadTaskRunner;
+@@ -64,10 +63,6 @@ class SingleThreadTaskRunner;
  class UnguessableToken;
  }  // namespace base
  
@@ -21,9 +21,9 @@ index da9bb4a03a8c..222171c52cc4 100644
  namespace blink {
  
  class Agent;
-@@ -378,9 +373,6 @@ class CORE_EXPORT ExecutionContext : public Supplementable<ExecutionContext>,
-   // https://html.spec.whatwg.org/C/webappapis.html#concept-settings-object-cross-origin-isolated-capability
-   virtual bool CrossOriginIsolatedCapability() const = 0;
+@@ -383,9 +378,6 @@ class CORE_EXPORT ExecutionContext : public Supplementable<ExecutionContext>,
+   // to cross-origin isolated contexts.
+   bool SharedArrayBufferTransferAllowed() const;
  
 -  virtual ukm::UkmRecorder* UkmRecorder() { return nullptr; }
 -  virtual ukm::SourceId UkmSourceID() const { return ukm::kInvalidSourceId; }

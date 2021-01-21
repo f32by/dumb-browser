@@ -1,27 +1,35 @@
 diff --git a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
-index 8bb32c255f27..398c82831fce 100644
+index e8df99f59499..927e436fa238 100644
 --- a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
 +++ b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
-@@ -13,12 +13,8 @@
+@@ -13,10 +13,8 @@
  #include "chrome/browser/permissions/permission_decision_auto_blocker_factory.h"
  #include "chrome/browser/permissions/permission_manager_factory.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/safe_browsing/chrome_password_protection_service.h"
  #include "chrome/browser/ssl/security_state_tab_helper.h"
  #include "chrome/browser/ssl/stateful_ssl_host_state_delegate_factory.h"
--#include "chrome/browser/subresource_filter/subresource_filter_content_settings_manager.h"
--#include "chrome/browser/subresource_filter/subresource_filter_profile_context.h"
 -#include "chrome/browser/subresource_filter/subresource_filter_profile_context_factory.h"
  #include "chrome/browser/usb/usb_chooser_context.h"
  #include "chrome/browser/usb/usb_chooser_context_factory.h"
  #include "chrome/browser/vr/vr_tab_helper.h"
-@@ -172,11 +168,7 @@ HostContentSettingsMap* ChromePageInfoDelegate::GetContentSettings() {
+@@ -26,8 +24,6 @@
+ #include "components/permissions/permission_manager.h"
+ #include "components/permissions/permission_result.h"
+ #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
+-#include "components/subresource_filter/content/browser/subresource_filter_content_settings_manager.h"
+-#include "components/subresource_filter/content/browser/subresource_filter_profile_context.h"
+ #include "content/public/browser/web_contents.h"
+ #include "content/public/common/content_features.h"
+ 
+@@ -172,12 +168,7 @@ HostContentSettingsMap* ChromePageInfoDelegate::GetContentSettings() {
  
  bool ChromePageInfoDelegate::IsSubresourceFilterActivated(
      const GURL& site_url) {
--  SubresourceFilterContentSettingsManager* settings_manager =
--      SubresourceFilterProfileContextFactory::GetForProfile(GetProfile())
--          ->settings_manager();
+-  subresource_filter::SubresourceFilterContentSettingsManager*
+-      settings_manager =
+-          SubresourceFilterProfileContextFactory::GetForProfile(GetProfile())
+-              ->settings_manager();
 -
 -  return settings_manager->GetSiteActivationFromMetadata(site_url);
 +  return false;

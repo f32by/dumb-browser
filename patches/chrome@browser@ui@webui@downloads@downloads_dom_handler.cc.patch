@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc b/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
-index 2d0a890d18bc..28276e1b86b5 100644
+index 16f77f8e99ae..25cf5b59bb01 100644
 --- a/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
 +++ b/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
 @@ -23,7 +23,6 @@
@@ -28,7 +28,7 @@ index 2d0a890d18bc..28276e1b86b5 100644
  }
  
  void DownloadsDOMHandler::DiscardDangerous(const std::string& id) {
-@@ -317,12 +312,6 @@ void DownloadsDOMHandler::RemoveDownloads(const DownloadVector& to_remove) {
+@@ -316,12 +311,6 @@ void DownloadsDOMHandler::RemoveDownloads(const DownloadVector& to_remove) {
    IdSet ids;
  
    for (auto* download : to_remove) {
@@ -41,7 +41,7 @@ index 2d0a890d18bc..28276e1b86b5 100644
      DownloadItemModel item_model(download);
      if (!item_model.ShouldShowInShelf() ||
          download->GetState() == download::DownloadItem::IN_PROGRESS) {
-@@ -368,7 +357,6 @@ void DownloadsDOMHandler::OpenDuringScanningRequiringGesture(
+@@ -367,7 +356,6 @@ void DownloadsDOMHandler::OpenDuringScanningRequiringGesture(
    if (download) {
      DownloadItemModel model(download);
      model.SetOpenWhenComplete(true);
@@ -49,7 +49,7 @@ index 2d0a890d18bc..28276e1b86b5 100644
    }
  }
  
-@@ -396,44 +384,6 @@ void DownloadsDOMHandler::FinalizeRemovals() {
+@@ -395,44 +383,6 @@ void DownloadsDOMHandler::FinalizeRemovals() {
    }
  }
  

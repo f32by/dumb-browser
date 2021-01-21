@@ -239,6 +239,11 @@ void DumbProxyingWebSocket::OnHeadersReceived(
   ContinueToHeadersReceived();
 }
 
+void DumbProxyingWebSocket::OnFailure(const std::string& message,
+    int32_t net_error,
+    int32_t response_code) {
+}
+
 void DumbProxyingWebSocket::OnBeforeRequestComplete(int error_code) {
   DCHECK(proxy_has_extra_headers() ||
          !receiver_as_handshake_client_.is_bound());

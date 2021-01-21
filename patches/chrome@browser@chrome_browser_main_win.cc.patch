@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_main_win.cc b/chrome/browser/chrome_browser_main_win.cc
-index c5bd51f35bbf..0961e7a98e38 100644
+index 4dd3612876e6..22cd92332345 100644
 --- a/chrome/browser/chrome_browser_main_win.cc
 +++ b/chrome/browser/chrome_browser_main_win.cc
 @@ -49,9 +49,6 @@
@@ -9,18 +9,18 @@ index c5bd51f35bbf..0961e7a98e38 100644
 -#include "chrome/browser/safe_browsing/chrome_cleaner/settings_resetter_win.h"
 -#include "chrome/browser/safe_browsing/settings_reset_prompt/settings_reset_prompt_config.h"
 -#include "chrome/browser/safe_browsing/settings_reset_prompt/settings_reset_prompt_util_win.h"
+ #include "chrome/browser/shell_integration_win.h"
  #include "chrome/browser/ui/simple_message_box.h"
  #include "chrome/browser/ui/uninstall_browser_prompt.h"
- #include "chrome/browser/web_applications/chrome_pwa_launcher/last_browser_file_util.h"
 @@ -73,7 +70,6 @@
  #include "chrome/common/chrome_result_codes.h"
  #include "chrome/common/chrome_switches.h"
  #include "chrome/common/conflicts/module_watcher_win.h"
 -#include "chrome/common/crash_keys.h"
  #include "chrome/common/env_vars.h"
+ #include "chrome/common/pref_names.h"
  #include "chrome/grit/chromium_strings.h"
- #include "chrome/grit/generated_resources.h"
-@@ -83,9 +79,6 @@
+@@ -84,9 +80,6 @@
  #include "chrome/installer/util/installer_util_strings.h"
  #include "chrome/installer/util/l10n_string_util.h"
  #include "chrome/installer/util/shell_util.h"
@@ -28,9 +28,9 @@ index c5bd51f35bbf..0961e7a98e38 100644
 -#include "components/crash/core/app/dump_hung_process_with_ptype.h"
 -#include "components/crash/core/common/crash_key.h"
  #include "components/os_crypt/os_crypt.h"
+ #include "components/prefs/pref_service.h"
  #include "components/version_info/channel.h"
- #include "content/public/browser/browser_task_traits.h"
-@@ -103,7 +96,6 @@
+@@ -106,7 +99,6 @@
  #include "ui/display/win/dpi.h"
  #include "ui/gfx/switches.h"
  #include "ui/gfx/system_fonts_win.h"
@@ -38,7 +38,7 @@ index c5bd51f35bbf..0961e7a98e38 100644
  #include "ui/strings/grit/app_locale_settings.h"
  
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -117,15 +109,10 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
+@@ -120,15 +112,10 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
      DWORD flags);
  
  void InitializeWindowProcExceptions() {
@@ -54,7 +54,7 @@ index c5bd51f35bbf..0961e7a98e38 100644
  }
  
  // gfx::Font callbacks
-@@ -445,15 +432,6 @@ void ShowCloseBrowserFirstMessageBox() {
+@@ -448,15 +435,6 @@ void ShowCloseBrowserFirstMessageBox() {
        l10n_util::GetStringUTF16(IDS_UNINSTALL_CLOSE_APP));
  }
  
@@ -70,7 +70,7 @@ index c5bd51f35bbf..0961e7a98e38 100644
  // Updates all Progressive Web App launchers in |profile_dir| to the latest
  // version.
  void UpdatePwaLaunchersForProfile(const base::FilePath& profile_dir) {
-@@ -552,7 +530,6 @@ ChromeBrowserMainPartsWin::~ChromeBrowserMainPartsWin() = default;
+@@ -577,7 +555,6 @@ ChromeBrowserMainPartsWin::~ChromeBrowserMainPartsWin() = default;
  
  void ChromeBrowserMainPartsWin::ToolkitInitialized() {
    DCHECK_NE(base::PlatformThread::CurrentId(), base::kInvalidThreadId);
@@ -78,7 +78,7 @@ index c5bd51f35bbf..0961e7a98e38 100644
    ChromeBrowserMainParts::ToolkitInitialized();
    gfx::win::SetAdjustFontCallback(&AdjustUIFont);
    gfx::win::SetGetMinimumFontSizeCallback(&GetMinimumFontSize);
-@@ -579,22 +556,6 @@ void ChromeBrowserMainPartsWin::PreMainMessageLoopStart() {
+@@ -604,22 +581,6 @@ void ChromeBrowserMainPartsWin::PreMainMessageLoopStart() {
  }
  
  int ChromeBrowserMainPartsWin::PreCreateThreads() {
@@ -101,7 +101,7 @@ index c5bd51f35bbf..0961e7a98e38 100644
    if (chrome::GetChannel() == version_info::Channel::CANARY) {
      content::RenderProcessHost::SetHungRendererAnalysisFunction(
          &DumpHungRendererProcessImpl);
-@@ -652,22 +613,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -677,22 +638,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
  
    InitializeChromeElf();
  
@@ -124,7 +124,7 @@ index c5bd51f35bbf..0961e7a98e38 100644
    // Record UMA data about whether the fault-tolerant heap is enabled.
    // Use a delayed task to minimize the impact on startup time.
    content::GetUIThreadTaskRunner({})->PostDelayedTask(
-@@ -702,11 +647,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -727,11 +672,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
          base::BindOnce(&UpdatePwaLaunchersForProfile, profile()->GetPath()));
    }
  
@@ -133,6 +133,6 @@ index c5bd51f35bbf..0961e7a98e38 100644
 -      FROM_HERE, {base::TaskPriority::BEST_EFFORT, base::MayBlock()},
 -      base::BindOnce(&web_app::RecordPwaLauncherResult));
 -
-   base::ImportantFileWriterCleaner::GetInstance().Start();
- }
- 
+   // Possibly migrate pinned taskbar shortcuts.
+   content::GetUIThreadTaskRunner({base::TaskPriority::BEST_EFFORT,
+                                   base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN})

@@ -1,5 +1,5 @@
 diff --git a/content/browser/download/download_manager_impl.cc b/content/browser/download/download_manager_impl.cc
-index b2fa2a289b4d..2f392430bf2d 100644
+index ff135b7f253c..eaf05495da02 100644
 --- a/content/browser/download/download_manager_impl.cc
 +++ b/content/browser/download/download_manager_impl.cc
 @@ -33,7 +33,6 @@
@@ -18,17 +18,17 @@ index b2fa2a289b4d..2f392430bf2d 100644
  #include "services/network/public/cpp/features.h"
  #include "services/network/public/cpp/shared_url_loader_factory.h"
  #include "services/network/public/cpp/wrapper_shared_url_loader_factory.h"
-@@ -254,7 +252,7 @@ CreatePendingSharedURLLoaderFactory(StoragePartitionImpl* storage_partition,
+@@ -253,7 +251,7 @@ CreatePendingSharedURLLoaderFactory(StoragePartitionImpl* storage_partition,
          rfh->GetSiteInstance()->GetBrowserContext(), rfh,
          rfh->GetProcess()->GetID(),
          ContentBrowserClient::URLLoaderFactoryType::kDownload, url::Origin(),
--        base::nullopt /* navigation_id */, base::kInvalidUkmSourceId,
+-        base::nullopt /* navigation_id */, ukm::kInvalidSourceIdObj,
 +        base::nullopt /* navigation_id */,
          &maybe_proxy_factory_receiver, nullptr /* header_client */,
          nullptr /* bypass_redirect_checks */, nullptr /* disable_secure_dns */,
          nullptr /* factory_override */);
-@@ -283,32 +281,6 @@ CreatePendingSharedURLLoaderFactoryFromURLLoaderFactory(
-       std::move(factory_remote));
+@@ -271,32 +269,6 @@ CreatePendingSharedURLLoaderFactory(StoragePartitionImpl* storage_partition,
+       std::move(proxy_factory_remote), std::move(proxy_factory_receiver));
  }
  
 -void RecordDownloadOpenerType(RenderFrameHost* current,
@@ -60,7 +60,7 @@ index b2fa2a289b4d..2f392430bf2d 100644
  }  // namespace
  
  DownloadManagerImpl::DownloadManagerImpl(BrowserContext* browser_context)
-@@ -832,12 +804,6 @@ void DownloadManagerImpl::DownloadRemoved(
+@@ -819,12 +791,6 @@ void DownloadManagerImpl::DownloadRemoved(
  
  void DownloadManagerImpl::DownloadInterrupted(
      download::DownloadItemImpl* download) {
@@ -73,7 +73,7 @@ index b2fa2a289b4d..2f392430bf2d 100644
  }
  
  bool DownloadManagerImpl::IsOffTheRecord() const {
-@@ -931,9 +897,6 @@ void DownloadManagerImpl::DownloadUrl(
+@@ -918,9 +884,6 @@ void DownloadManagerImpl::DownloadUrl(
    if (delegate_)
      delegate_->SanitizeDownloadParameters(params.get());
  
@@ -82,8 +82,8 @@ index b2fa2a289b4d..2f392430bf2d 100644
 -      params->download_source());
    auto* rfh = RenderFrameHost::FromID(params->render_process_host_id(),
                                        params->render_frame_host_routing_id());
-   if (rfh)
-@@ -1118,11 +1081,6 @@ void DownloadManagerImpl::OnDownloadManagerInitialized() {
+   BeginDownloadInternal(std::move(params), std::move(blob_url_loader_factory),
+@@ -1103,11 +1066,6 @@ void DownloadManagerImpl::OnDownloadManagerInitialized() {
    in_progress_manager_->OnAllInprogressDownloadsLoaded();
    for (auto& observer : observers_)
      observer.OnManagerInitialized();
@@ -95,7 +95,7 @@ index b2fa2a289b4d..2f392430bf2d 100644
  }
  
  bool DownloadManagerImpl::IsManagerInitialized() {
-@@ -1195,7 +1153,6 @@ void DownloadManagerImpl::OpenDownload(download::DownloadItemImpl* download) {
+@@ -1180,7 +1138,6 @@ void DownloadManagerImpl::OpenDownload(download::DownloadItemImpl* download) {
          !item->GetOpened())
        ++num_unopened;
    }
@@ -103,7 +103,7 @@ index b2fa2a289b4d..2f392430bf2d 100644
  
    if (delegate_)
      delegate_->OpenDownload(download);
-@@ -1208,7 +1165,6 @@ void DownloadManagerImpl::ShowDownloadInShell(
+@@ -1193,7 +1150,6 @@ void DownloadManagerImpl::ShowDownloadInShell(
  }
  
  void DownloadManagerImpl::DropDownload() {
@@ -111,7 +111,7 @@ index b2fa2a289b4d..2f392430bf2d 100644
    for (auto& observer : observers_)
      observer.OnDownloadDropped(this);
  }
-@@ -1245,10 +1201,6 @@ void DownloadManagerImpl::InterceptNavigationOnChecksComplete(
+@@ -1230,10 +1186,6 @@ void DownloadManagerImpl::InterceptNavigationOnChecksComplete(
        tab_url = entry->GetURL();
        tab_referrer_url = entry->GetReferrer().url;
      }

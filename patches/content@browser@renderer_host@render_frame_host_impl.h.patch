@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/render_frame_host_impl.h b/content/browser/renderer_host/render_frame_host_impl.h
-index dc1015e539e7..966dd7bafdde 100644
+index 942463d375cd..f6d8b76627bd 100644
 --- a/content/browser/renderer_host/render_frame_host_impl.h
 +++ b/content/browser/renderer_host/render_frame_host_impl.h
-@@ -64,8 +64,6 @@
+@@ -67,8 +67,6 @@
  #include "content/public/browser/render_process_host_observer.h"
  #include "content/public/common/javascript_dialog_type.h"
  #include "media/mojo/mojom/interface_factory.mojom-forward.h"
@@ -11,7 +11,7 @@ index dc1015e539e7..966dd7bafdde 100644
  #include "mojo/public/cpp/bindings/associated_receiver.h"
  #include "mojo/public/cpp/bindings/associated_remote.h"
  #include "mojo/public/cpp/bindings/message.h"
-@@ -82,8 +80,6 @@
+@@ -85,8 +83,6 @@
  #include "net/http/http_response_headers.h"
  #include "services/device/public/mojom/sensor_provider.mojom.h"
  #include "services/device/public/mojom/wake_lock_context.mojom.h"
@@ -20,7 +20,7 @@ index dc1015e539e7..966dd7bafdde 100644
  #include "services/network/public/cpp/content_security_policy/csp_context.h"
  #include "services/network/public/cpp/cross_origin_embedder_policy.h"
  #include "services/network/public/cpp/cross_origin_opener_policy.h"
-@@ -391,7 +387,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -390,7 +386,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
        const url::Origin& effective_origin) override;
    void SetIsXrOverlaySetup() override;
    bool IsInBackForwardCache() override;
@@ -28,9 +28,9 @@ index dc1015e539e7..966dd7bafdde 100644
    StoragePartition* GetStoragePartition() override;
    BrowserContext* GetBrowserContext() override;
    void ReportHeavyAdIssue(blink::mojom::HeavyAdResolutionStatus resolution,
-@@ -677,9 +672,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
- 
-   GlobalFrameRoutingId GetGlobalFrameRoutingId();
+@@ -671,9 +666,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+   // typically mean that the frame has been detached from the frame tree.
+   virtual RenderWidgetHostImpl* GetRenderWidgetHost();
  
 -  media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
 -  GetRecordAggregateWatchTimeCallback();
@@ -38,7 +38,7 @@ index dc1015e539e7..966dd7bafdde 100644
    // The unique ID of the latest NavigationEntry that this RenderFrameHost is
    // showing. This may change even when this frame hasn't committed a page,
    // such as for a new subframe navigation in a different frame.
-@@ -1440,9 +1432,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -1433,9 +1425,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    void BindMediaInterfaceFactoryReceiver(
        mojo::PendingReceiver<media::mojom::InterfaceFactory> receiver);
  
@@ -48,7 +48,7 @@ index dc1015e539e7..966dd7bafdde 100644
  #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
    void BindMediaRemoterFactoryReceiver(
        mojo::PendingReceiver<media::mojom::RemoterFactory> receiver);
-@@ -1538,10 +1527,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -1539,10 +1528,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
      return appcache_handle_.get();
    }
  
@@ -59,7 +59,7 @@ index dc1015e539e7..966dd7bafdde 100644
    const std::string& GetEncoding() const { return canonical_encoding_; }
  
    // Returns a base salt used to generate frame-specific IDs for media-device
-@@ -1909,7 +1894,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -1926,7 +1911,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
                             CheckIsCurrentBeforeAndAfterUnload);
    FRIEND_TEST_ALL_PREFIXES(RenderFrameHostImplBrowserTest,
                             HasCommittedAnyNavigation);
@@ -67,28 +67,28 @@ index dc1015e539e7..966dd7bafdde 100644
    FRIEND_TEST_ALL_PREFIXES(RenderFrameHostManagerTest,
                             CreateRenderViewAfterProcessKillAndClosedProxy);
    FRIEND_TEST_ALL_PREFIXES(RenderFrameHostManagerTest, DontSelectInvalidFiles);
-@@ -2173,12 +2157,10 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -2195,12 +2179,10 @@ class CONTENT_EXPORT RenderFrameHostImpl
    // downstream loaders.
    bool CreateNetworkServiceDefaultFactoryAndObserve(
        network::mojom::URLLoaderFactoryParamsPtr params,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
        mojo::PendingReceiver<network::mojom::URLLoaderFactory>
            default_factory_receiver);
    bool CreateNetworkServiceDefaultFactoryInternal(
        network::mojom::URLLoaderFactoryParamsPtr params,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
        mojo::PendingReceiver<network::mojom::URLLoaderFactory>
            default_factory_receiver);
  
-@@ -2187,7 +2169,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -2209,7 +2191,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    void WillCreateURLLoaderFactory(
        const url::Origin& request_initiator,
        mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
        mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
            header_client = nullptr,
        bool* bypass_redirect_checks = nullptr,
-@@ -2551,12 +2532,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -2561,12 +2542,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    // RenderFrameHost.
    void SetEmbeddingToken(const base::UnguessableToken& embedding_token);
  

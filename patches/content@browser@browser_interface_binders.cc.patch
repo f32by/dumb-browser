@@ -1,5 +1,5 @@
 diff --git a/content/browser/browser_interface_binders.cc b/content/browser/browser_interface_binders.cc
-index 0ddf9a962108..62069f082df6 100644
+index 1b8ba0d052d3..899b44cf9a84 100644
 --- a/content/browser/browser_interface_binders.cc
 +++ b/content/browser/browser_interface_binders.cc
 @@ -60,14 +60,11 @@
@@ -17,7 +17,7 @@ index 0ddf9a962108..62069f082df6 100644
  #include "services/network/public/cpp/cross_origin_embedder_policy.h"
  #include "services/network/public/mojom/restricted_cookie_manager.mojom.h"
  #include "services/shape_detection/public/mojom/barcodedetection_provider.mojom.h"
-@@ -210,12 +207,6 @@ void BindTextInputHost(
+@@ -211,12 +208,6 @@ void BindTextInputHost(
  }
  #endif
  
@@ -30,7 +30,7 @@ index 0ddf9a962108..62069f082df6 100644
  void BindBadgeServiceForServiceWorkerOnUI(
      int service_worker_process_id,
      const GURL& service_worker_scope,
-@@ -679,10 +670,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+@@ -687,10 +678,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
        &RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver,
        base::Unretained(host)));
  
@@ -41,7 +41,7 @@ index 0ddf9a962108..62069f082df6 100644
  #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
    map->Add<media::mojom::RemoterFactory>(
        base::BindRepeating(&RenderFrameHostImpl::BindMediaRemoterFactoryReceiver,
-@@ -862,8 +849,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
+@@ -879,8 +866,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
        base::BindRepeating(&BindFaceDetectionProvider));
    map->Add<shape_detection::mojom::TextDetection>(
        base::BindRepeating(&BindTextDetection));
@@ -50,7 +50,7 @@ index 0ddf9a962108..62069f082df6 100644
  
    // worker host binders
    // base::Unretained(host) is safe because the map is owned by
-@@ -955,8 +940,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
+@@ -973,8 +958,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
        base::BindRepeating(&BindFaceDetectionProvider));
    map->Add<shape_detection::mojom::TextDetection>(
        base::BindRepeating(&BindTextDetection));
@@ -59,7 +59,7 @@ index 0ddf9a962108..62069f082df6 100644
  
    // worker host binders
    // base::Unretained(host) is safe because the map is owned by
-@@ -1035,8 +1018,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
+@@ -1053,8 +1036,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
        base::BindRepeating(&BindFaceDetectionProvider));
    map->Add<shape_detection::mojom::TextDetection>(
        base::BindRepeating(&BindTextDetection));

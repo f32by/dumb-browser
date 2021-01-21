@@ -1,24 +1,32 @@
 diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
-index da3aceed75b1..d688f07abc0a 100644
+index 3a2957836151..8ddc23512e2c 100644
 --- a/content/public/browser/content_browser_client.cc
 +++ b/content/public/browser/content_browser_client.cc
-@@ -753,7 +753,6 @@ ContentBrowserClient::CreateURLLoaderThrottles(
+@@ -43,7 +43,6 @@
+ #include "net/ssl/client_cert_store.h"
+ #include "sandbox/policy/sandbox_type.h"
+ #include "services/device/public/cpp/geolocation/location_provider.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/resource_request.h"
+ #include "services/network/public/mojom/network_context.mojom.h"
+ #include "services/network/public/mojom/network_service.mojom.h"
+@@ -752,7 +751,6 @@ ContentBrowserClient::CreateURLLoaderThrottles(
  
  void ContentBrowserClient::RegisterNonNetworkNavigationURLLoaderFactories(
      int frame_tree_node_id,
--    base::UkmSourceId ukm_source_id,
-     NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
+-    ukm::SourceIdObj ukm_source_id,
      NonNetworkURLLoaderFactoryMap* factories) {}
  
-@@ -780,7 +779,6 @@ bool ContentBrowserClient::WillCreateURLLoaderFactory(
+ void ContentBrowserClient::
+@@ -777,7 +775,6 @@ bool ContentBrowserClient::WillCreateURLLoaderFactory(
      URLLoaderFactoryType type,
      const url::Origin& request_initiator,
      base::Optional<int64_t> navigation_id,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
      mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
          header_client,
-@@ -1140,10 +1138,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+@@ -1137,10 +1134,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
    return false;
  }
  
@@ -26,6 +34,6 @@ index da3aceed75b1..d688f07abc0a 100644
 -  return nullptr;
 -}
 -
- #if defined(OS_MAC)
- bool ContentBrowserClient::SetupEmbedderSandboxParameters(
-     sandbox::policy::SandboxType sandbox_type,
+ void ContentBrowserClient::OnKeepaliveRequestStarted() {}
+ 
+ void ContentBrowserClient::OnKeepaliveRequestFinished() {}

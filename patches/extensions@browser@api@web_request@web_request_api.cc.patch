@@ -1,16 +1,16 @@
 diff --git a/extensions/browser/api/web_request/web_request_api.cc b/extensions/browser/api/web_request/web_request_api.cc
-index 86dbbf736eaf..6daadac0aea5 100644
+index 360441ec9fa6..ff1ea26366d8 100644
 --- a/extensions/browser/api/web_request/web_request_api.cc
 +++ b/extensions/browser/api/web_request/web_request_api.cc
-@@ -26,7 +26,6 @@
- #include "base/task/post_task.h"
+@@ -27,7 +27,6 @@
  #include "base/time/time.h"
  #include "base/values.h"
+ #include "build/chromeos_buildflags.h"
 -#include "components/ukm/content/source_url_recorder.h"
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -76,7 +75,6 @@
+@@ -77,7 +76,6 @@
  #include "extensions/common/extension_features.h"
  #include "extensions/common/features/feature.h"
  #include "extensions/common/features/feature_provider.h"
@@ -18,15 +18,23 @@ index 86dbbf736eaf..6daadac0aea5 100644
  #include "extensions/common/permissions/permissions_data.h"
  #include "extensions/common/url_pattern.h"
  #include "extensions/strings/grit/extensions_strings.h"
-@@ -688,7 +686,6 @@ bool WebRequestAPI::MaybeProxyURLLoaderFactory(
+@@ -85,7 +83,6 @@
+ #include "net/base/auth.h"
+ #include "net/base/net_errors.h"
+ #include "net/http/http_util.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/fetch_api.mojom-shared.h"
+ #include "ui/base/l10n/l10n_util.h"
+ #include "url/gurl.h"
+@@ -691,7 +688,6 @@ bool WebRequestAPI::MaybeProxyURLLoaderFactory(
      int render_process_id,
      URLLoaderFactoryType type,
      base::Optional<int64_t> navigation_id,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
      mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
          header_client) {
-@@ -749,7 +746,7 @@ bool WebRequestAPI::MaybeProxyURLLoaderFactory(
+@@ -752,7 +748,7 @@ bool WebRequestAPI::MaybeProxyURLLoaderFactory(
    WebRequestProxyingURLLoaderFactory::StartProxying(
        browser_context, is_navigation ? -1 : render_process_id,
        &request_id_generator_, std::move(navigation_ui_data),
@@ -35,15 +43,15 @@ index 86dbbf736eaf..6daadac0aea5 100644
        std::move(target_factory_remote), std::move(header_client_receiver),
        proxies_.get(), type);
    return true;
-@@ -796,15 +793,10 @@ void WebRequestAPI::ProxyWebSocket(
+@@ -799,15 +795,10 @@ void WebRequestAPI::ProxyWebSocket(
        ExtensionWebRequestEventRouter::GetInstance()->HasAnyExtraHeadersListener(
            frame->GetProcess()->GetBrowserContext());
  
 -  auto* web_contents = content::WebContents::FromRenderFrameHost(frame);
--  const base::UkmSourceId ukm_source_id =
--      web_contents ? base::UkmSourceId::FromInt64(
+-  const ukm::SourceIdObj ukm_source_id =
+-      web_contents ? ukm::SourceIdObj::FromInt64(
 -                         ukm::GetSourceIdForWebContentsDocument(web_contents))
--                   : base::kInvalidUkmSourceId;
+-                   : ukm::kInvalidSourceIdObj;
    WebRequestProxyingWebSocket::StartProxying(
        std::move(factory), url, site_for_cookies, user_agent,
        std::move(handshake_client), has_extra_headers,
@@ -52,7 +60,7 @@ index 86dbbf736eaf..6daadac0aea5 100644
        &request_id_generator_, frame->GetLastCommittedOrigin(),
        frame->GetProcess()->GetBrowserContext(), proxies_.get());
  }
-@@ -1091,16 +1083,12 @@ int ExtensionWebRequestEventRouter::OnBeforeRequest(
+@@ -1094,16 +1085,12 @@ int ExtensionWebRequestEventRouter::OnBeforeRequest(
          ClearPendingCallbacks(*request);
          DCHECK_EQ(1u, actions.size());
          OnDNRActionMatched(browser_context, *request, action);
@@ -69,7 +77,7 @@ index 86dbbf736eaf..6daadac0aea5 100644
          return net::ERR_BLOCKED_BY_CLIENT;
        case DNRRequestAction::Type::ALLOW:
        case DNRRequestAction::Type::ALLOW_ALL_REQUESTS:
-@@ -2322,8 +2310,6 @@ int ExtensionWebRequestEventRouter::ExecuteDeltas(
+@@ -2325,8 +2312,6 @@ int ExtensionWebRequestEventRouter::ExecuteDeltas(
    int rv = net::OK;
    if (canceled_by_extension) {
      rv = net::ERR_BLOCKED_BY_CLIENT;

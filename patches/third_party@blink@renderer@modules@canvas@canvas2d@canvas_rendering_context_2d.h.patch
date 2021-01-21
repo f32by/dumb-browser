@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.h b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.h
-index ac10ae4389a8..a6d708d8b328 100644
+index 4e6faada14cb..6625f9bdd6bd 100644
 --- a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.h
 +++ b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.h
 @@ -30,7 +30,6 @@
@@ -24,7 +24,7 @@ index ac10ae4389a8..a6d708d8b328 100644
  #include "third_party/blink/renderer/platform/scheduler/public/thread.h"
  #include "third_party/blink/renderer/platform/wtf/linked_hash_set.h"
  #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
-@@ -214,18 +211,6 @@ class MODULES_EXPORT CanvasRenderingContext2D final
+@@ -218,18 +215,6 @@ class MODULES_EXPORT CanvasRenderingContext2D final
  
    CanvasColorParams ColorParamsForTest() const { return ColorParams(); }
  
@@ -43,7 +43,7 @@ index ac10ae4389a8..a6d708d8b328 100644
   protected:
    CanvasColorParams ColorParams() const override;
    bool WritePixels(const SkImageInfo& orig_info,
-@@ -298,9 +283,6 @@ class MODULES_EXPORT CanvasRenderingContext2D final
+@@ -302,9 +287,6 @@ class MODULES_EXPORT CanvasRenderingContext2D final
    static constexpr float kRasterMetricProbability = 0.01;
    std::mt19937 random_generator_;
    std::bernoulli_distribution bernoulli_distribution_;

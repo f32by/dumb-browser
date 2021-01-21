@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
-index 96c4c1161cd7..272bc928305e 100644
+index 02136f9294c0..903232989033 100644
 --- a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
 +++ b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
 @@ -32,7 +32,6 @@
@@ -10,20 +10,20 @@ index 96c4c1161cd7..272bc928305e 100644
  #include "components/viz/common/frame_sinks/begin_frame_args.h"
  #include "components/viz/common/frame_sinks/begin_frame_source.h"
  #include "components/viz/common/quads/compositor_frame_metadata.h"
-@@ -66,8 +65,7 @@ LayerTreeView::LayerTreeView(
- LayerTreeView::~LayerTreeView() = default;
- 
- void LayerTreeView::Initialize(
--    const cc::LayerTreeSettings& settings,
+@@ -63,8 +62,7 @@ void LayerTreeView::Initialize(
+     const cc::LayerTreeSettings& settings,
+     scoped_refptr<base::SingleThreadTaskRunner> main_thread,
+     scoped_refptr<base::SingleThreadTaskRunner> compositor_thread,
+-    cc::TaskGraphRunner* task_graph_runner,
 -    std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory) {
-+    const cc::LayerTreeSettings& settings) {
++    cc::TaskGraphRunner* task_graph_runner) {
    DCHECK(delegate_);
-   const bool is_threaded = !!compositor_thread_;
+   const bool is_threaded = !!compositor_thread;
  
-@@ -78,7 +76,6 @@ void LayerTreeView::Initialize(
-   params.task_graph_runner = task_graph_runner_;
-   params.main_task_runner = main_thread_;
+@@ -76,7 +74,6 @@ void LayerTreeView::Initialize(
+   params.main_task_runner = std::move(main_thread);
    params.mutator_host = animation_host_.get();
+   params.dark_mode_filter = dark_mode_filter_.get();
 -  params.ukm_recorder_factory = std::move(ukm_recorder_factory);
    if (base::ThreadPoolInstance::Get()) {
      // The image worker thread needs to allow waiting since it makes discardable

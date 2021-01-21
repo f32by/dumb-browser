@@ -1,12 +1,20 @@
 diff --git a/chrome/browser/loader/url_loader_factory_proxy_impl.cc b/chrome/browser/loader/url_loader_factory_proxy_impl.cc
-index c79f70266708..8df90982fe21 100644
+index f2d8412505f5..2c77d3ec43d0 100644
 --- a/chrome/browser/loader/url_loader_factory_proxy_impl.cc
 +++ b/chrome/browser/loader/url_loader_factory_proxy_impl.cc
-@@ -43,7 +43,6 @@ void UrlLoaderFactoryProxyImpl::GetProxiedURLLoaderFactory(
+@@ -9,7 +9,6 @@
+ #include "extensions/browser/api/web_request/web_request_api.h"
+ #include "extensions/browser/browser_context_keyed_api_factory.h"
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ 
+ // static
+ void UrlLoaderFactoryProxyImpl::Create(
+@@ -44,7 +43,6 @@ void UrlLoaderFactoryProxyImpl::GetProxiedURLLoaderFactory(
        browser_context, frame_host, process->GetID(),
        content::ContentBrowserClient::URLLoaderFactoryType::kDocumentSubResource,
        /*navigation_id=*/base::nullopt,
--      base::UkmSourceId::FromInt64(frame_host->GetPageUkmSourceId()),
+-      ukm::SourceIdObj::FromInt64(frame_host->GetPageUkmSourceId()),
        &proxied_factory,
-       /*headber_client=*/nullptr);
+       /*header_client=*/nullptr);
  

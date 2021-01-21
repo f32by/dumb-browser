@@ -1,5 +1,5 @@
 diff --git a/content/renderer/render_thread_impl.cc b/content/renderer/render_thread_impl.cc
-index 6fae8670bf01..22a97fb84e82 100644
+index a4240c7c75a3..cf9354c16671 100644
 --- a/content/renderer/render_thread_impl.cc
 +++ b/content/renderer/render_thread_impl.cc
 @@ -50,7 +50,6 @@
@@ -10,7 +10,7 @@ index 6fae8670bf01..22a97fb84e82 100644
  #include "components/discardable_memory/client/client_discardable_shared_memory_manager.h"
  #include "components/metrics/public/mojom/single_sample_metrics.mojom.h"
  #include "components/metrics/single_sample_metrics.h"
-@@ -114,7 +113,6 @@
+@@ -112,7 +111,6 @@
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
  #include "net/base/url_util.h"
  #include "ppapi/buildflags/buildflags.h"
@@ -18,7 +18,7 @@ index 6fae8670bf01..22a97fb84e82 100644
  #include "services/network/public/cpp/network_switches.h"
  #include "services/service_manager/public/cpp/interface_provider.h"
  #include "services/viz/public/cpp/gpu/context_provider_command_buffer.h"
-@@ -363,25 +361,6 @@ void CreateSingleSampleMetricsProvider(
+@@ -355,25 +353,6 @@ void CreateSingleSampleMetricsProvider(
    process_host->BindHostReceiver(std::move(receiver));
  }
  
@@ -44,8 +44,8 @@ index 6fae8670bf01..22a97fb84e82 100644
  }  // namespace
  
  RenderThreadImpl::HistogramCustomizer::HistogramCustomizer() {
-@@ -1368,11 +1347,6 @@ bool RenderThreadImpl::IsScrollAnimatorEnabled() {
-   return is_scroll_animator_enabled_;
+@@ -1353,11 +1332,6 @@ void RenderThreadImpl::SetScrollAnimatorEnabled(
+   is_scroll_animator_enabled_ = enable_scroll_animator;
  }
  
 -std::unique_ptr<cc::UkmRecorderFactory>
@@ -56,9 +56,55 @@ index 6fae8670bf01..22a97fb84e82 100644
  bool RenderThreadImpl::IsMainThread() {
    return !!current();
  }
-@@ -2189,24 +2163,6 @@ void RenderThreadImpl::OnRendererBackgrounded() {
+@@ -1487,45 +1461,9 @@ bool RenderThreadImpl::GetRendererMemoryMetrics(
+   return true;
+ }
+ 
+-static void RecordMemoryUsageAfterBackgroundedMB(const char* basename,
+-                                                 const char* suffix,
+-                                                 int memory_usage) {
+-  std::string histogram_name = base::StringPrintf("%s.%s", basename, suffix);
+-  base::UmaHistogramMemoryLargeMB(histogram_name, memory_usage);
+-}
+-
+ void RenderThreadImpl::RecordMemoryUsageAfterBackgrounded(
+     const char* suffix,
+     int foregrounded_count) {
+-  // If this renderer is resumed, we should not update UMA.
+-  if (!RendererIsHidden())
+-    return;
+-  // If this renderer was not kept backgrounded for 5/10/15 minutes,
+-  // we should not record current memory usage.
+-  if (foregrounded_count != process_foregrounded_count_)
+-    return;
+-
+-  RendererMemoryMetrics memory_metrics;
+-  if (!GetRendererMemoryMetrics(&memory_metrics))
+-    return;
+-  RecordMemoryUsageAfterBackgroundedMB(
+-      "Memory.Experimental.Renderer.PartitionAlloc.AfterBackgrounded", suffix,
+-      memory_metrics.partition_alloc_kb / 1024);
+-  RecordMemoryUsageAfterBackgroundedMB(
+-      "Memory.Experimental.Renderer.BlinkGC.AfterBackgrounded", suffix,
+-      memory_metrics.blink_gc_kb / 1024);
+-  RecordMemoryUsageAfterBackgroundedMB(
+-      "Memory.Experimental.Renderer.Malloc.AfterBackgrounded", suffix,
+-      memory_metrics.malloc_mb);
+-  RecordMemoryUsageAfterBackgroundedMB(
+-      "Memory.Experimental.Renderer.Discardable.AfterBackgrounded", suffix,
+-      memory_metrics.discardable_kb / 1024);
+-  RecordMemoryUsageAfterBackgroundedMB(
+-      "Memory.Experimental.Renderer.V8MainThreaIsolate.AfterBackgrounded",
+-      suffix, memory_metrics.v8_main_thread_isolate_mb);
+-  RecordMemoryUsageAfterBackgroundedMB(
+-      "Memory.Experimental.Renderer.TotalAllocated.AfterBackgrounded", suffix,
+-      memory_metrics.total_allocated_mb);
+ }
+ 
+ #define GET_MEMORY_GROWTH(current, previous, allocator) \
+@@ -1905,24 +1843,6 @@ bool RenderThreadImpl::RendererIsBackgrounded() const {
+ void RenderThreadImpl::OnRendererBackgrounded() {
    main_thread_scheduler_->SetRendererBackgrounded(true);
-   needs_to_record_first_active_paint_ = false;
    discardable_memory_allocator_->OnBackgrounded();
 -  GetWebMainThreadScheduler()->DefaultTaskRunner()->PostDelayedTask(
 -      FROM_HERE,
@@ -78,6 +124,6 @@ index 6fae8670bf01..22a97fb84e82 100644
 -                     base::Unretained(this), "15min",
 -                     process_foregrounded_count_),
 -      base::TimeDelta::FromMinutes(15));
-   was_backgrounded_time_ = base::TimeTicks::Now();
  }
  
+ void RenderThreadImpl::OnRendererForegrounded() {

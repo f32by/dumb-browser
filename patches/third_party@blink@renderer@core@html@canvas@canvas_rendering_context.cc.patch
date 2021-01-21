@@ -1,0 +1,31 @@
+diff --git a/third_party/blink/renderer/core/html/canvas/canvas_rendering_context.cc b/third_party/blink/renderer/core/html/canvas/canvas_rendering_context.cc
+index e165fcf0f54f..3a605cae9b3f 100644
+--- a/third_party/blink/renderer/core/html/canvas/canvas_rendering_context.cc
++++ b/third_party/blink/renderer/core/html/canvas/canvas_rendering_context.cc
+@@ -25,7 +25,6 @@
+ 
+ #include "third_party/blink/renderer/core/html/canvas/canvas_rendering_context.h"
+ 
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/renderer/core/animation_frame/worker_animation_frame_provider.h"
+ #include "third_party/blink/renderer/core/html/canvas/canvas_context_creation_attributes_core.h"
+@@ -127,18 +126,6 @@ void CanvasRenderingContext::DidProcessTask(
+ 
+ void CanvasRenderingContext::RecordUKMCanvasRenderingAPI(
+     CanvasRenderingAPI canvasRenderingAPI) {
+-  DCHECK(Host());
+-  const auto& ukm_params = Host()->GetUkmParameters();
+-  if (Host()->IsOffscreenCanvas()) {
+-    ukm::builders::ClientRenderingAPI(ukm_params.source_id)
+-        .SetOffscreenCanvas_RenderingContext(
+-            static_cast<int>(canvasRenderingAPI))
+-        .Record(ukm_params.ukm_recorder);
+-  } else {
+-    ukm::builders::ClientRenderingAPI(ukm_params.source_id)
+-        .SetCanvas_RenderingContext(static_cast<int>(canvasRenderingAPI))
+-        .Record(ukm_params.ukm_recorder);
+-  }
+ }
+ 
+ CanvasRenderingContext::ContextType CanvasRenderingContext::ContextTypeFromId(

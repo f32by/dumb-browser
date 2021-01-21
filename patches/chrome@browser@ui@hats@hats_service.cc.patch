@@ -1,13 +1,16 @@
 diff --git a/chrome/browser/ui/hats/hats_service.cc b/chrome/browser/ui/hats/hats_service.cc
-index bc024ac55a6b..5308ea76fd87 100644
+index 98bef780f199..29b231738745 100644
 --- a/chrome/browser/ui/hats/hats_service.cc
 +++ b/chrome/browser/ui/hats/hats_service.cc
-@@ -56,14 +56,9 @@ constexpr double kHatsSurveyProbabilityDefault = 0;
+@@ -62,17 +62,9 @@ constexpr double kHatsSurveyProbabilityDefault = 0;
  
  constexpr char kHatsSurveyEnSiteIDDefault[] = "bhej2dndhpc33okm6xexsbyv4y";
  
 -constexpr base::TimeDelta kMinimumTimeBetweenSurveyStarts =
 -    base::TimeDelta::FromDays(60);
+-
+-constexpr base::TimeDelta kMinimumTimeBetweenAnySurveyStarts =
+-    base::TimeDelta::FromDays(7);
 -
  constexpr base::TimeDelta kMinimumTimeBetweenSurveyChecks =
      base::TimeDelta::FromDays(1);
@@ -17,10 +20,10 @@ index bc024ac55a6b..5308ea76fd87 100644
  // Preferences Data Model
  // The kHatsSurveyMetadata pref points to a dictionary.
  // The valid keys and value types for this dictionary are as follows:
-@@ -354,91 +349,7 @@ void HatsService::LaunchSurveyForBrowser(const std::string& trigger,
+@@ -377,116 +369,11 @@ void HatsService::LaunchSurveyForBrowser(Browser* browser,
  }
  
- bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
+ bool HatsService::CanShowSurvey(const std::string& trigger) const {
 -  // Do not show if a survey dialog already exists.
 -  if (hats_next_dialog_exists_) {
 -    UMA_HISTOGRAM_ENUMERATION(
@@ -31,13 +34,14 @@ index bc024ac55a6b..5308ea76fd87 100644
 -
 -  // Survey should not be loaded if the corresponding survey config is
 -  // unavailable.
--  if (survey_configs_by_triggers_.find(trigger) ==
--      survey_configs_by_triggers_.end()) {
+-  const auto config_iterator = survey_configs_by_triggers_.find(trigger);
+-  if (config_iterator == survey_configs_by_triggers_.end()) {
 -    UMA_HISTOGRAM_ENUMERATION(
 -        kHatsShouldShowSurveyReasonHistogram,
 -        ShouldShowSurveyReasons::kNoTriggerStringMismatch);
 -    return false;
 -  }
+-  const SurveyConfig config = config_iterator->second;
 -
 -  if (base::FeatureList::IsEnabled(
 -          features::kHappinessTrackingSurveysForDesktopDemo)) {
@@ -78,24 +82,49 @@ index bc024ac55a6b..5308ea76fd87 100644
 -
 -  base::Time now = base::Time::Now();
 -
--  if ((now - profile_->GetCreationTime()) < kMinimumProfileAge) {
--    UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
--                              ShouldShowSurveyReasons::kNoProfileTooNew);
--    return false;
--  }
--
--  base::Optional<base::Time> last_survey_started_time =
--      util::ValueToTime(pref_data->FindPath(GetLastSurveyStartedTime(trigger)));
--  if (last_survey_started_time.has_value()) {
--    base::TimeDelta elapsed_time_since_last_start =
--        now - *last_survey_started_time;
--    if (elapsed_time_since_last_start < kMinimumTimeBetweenSurveyStarts) {
--      UMA_HISTOGRAM_ENUMERATION(
--          kHatsShouldShowSurveyReasonHistogram,
--          ShouldShowSurveyReasons::kNoLastSurveyTooRecent);
+-  if (!config.user_prompted_) {
+-    if ((now - profile_->GetCreationTime()) < kMinimumProfileAge) {
+-      UMA_HISTOGRAM_ENUMERATION(kHatsShouldShowSurveyReasonHistogram,
+-                                ShouldShowSurveyReasons::kNoProfileTooNew);
 -      return false;
 -    }
+-
+-    base::Optional<base::Time> last_survey_started_time = util::ValueToTime(
+-        pref_data->FindPath(GetLastSurveyStartedTime(trigger)));
+-    if (last_survey_started_time.has_value()) {
+-      base::TimeDelta elapsed_time_since_last_start =
+-          now - *last_survey_started_time;
+-      if (elapsed_time_since_last_start < kMinimumTimeBetweenSurveyStarts) {
+-        UMA_HISTOGRAM_ENUMERATION(
+-            kHatsShouldShowSurveyReasonHistogram,
+-            ShouldShowSurveyReasons::kNoLastSurveyTooRecent);
+-        return false;
+-      }
+-    }
+-
+-    // The time any survey was started will always be equal or more recent than
+-    // the time a particular survey was started, so it is checked afterwards to
+-    // improve UMA logging.
+-    base::Optional<base::Time> last_any_started_time =
+-        util::ValueToTime(pref_data->FindPath(kAnyLastSurveyStartedTimePath));
+-    if (last_any_started_time.has_value()) {
+-      base::TimeDelta elapsed_time_any_started = now - *last_any_started_time;
+-      if (elapsed_time_any_started < kMinimumTimeBetweenAnySurveyStarts) {
+-        UMA_HISTOGRAM_ENUMERATION(
+-            kHatsShouldShowSurveyReasonHistogram,
+-            ShouldShowSurveyReasons::kNoAnyLastSurveyTooRecent);
+-        return false;
+-      }
+-    }
 -  }
+-
+-  return true;
++  return false;
+ }
+ 
+ bool HatsService::ShouldShowSurvey(const std::string& trigger) const {
+-  if (!CanShowSurvey(trigger))
+-    return false;
 -
 -  auto probability_ = survey_configs_by_triggers_.at(trigger).probability_;
 -  bool should_show_survey = base::RandDouble() < probability_;
@@ -109,4 +138,4 @@ index bc024ac55a6b..5308ea76fd87 100644
 +  return false;
  }
  
- void HatsService::CheckSurveyStatusAndMaybeShow(Browser* browser,
+ void HatsService::CheckSurveyStatusAndMaybeShow(

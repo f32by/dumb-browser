@@ -1,30 +1,18 @@
 diff --git a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
-index 5a4ef1ededae..709975996ef3 100644
+index 310d625729de..7950370db433 100644
 --- a/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
 +++ b/chrome/browser/ui/content_settings/content_setting_bubble_model.cc
-@@ -34,7 +34,6 @@
- #include "chrome/browser/plugins/chrome_plugin_service_filter.h"
- #include "chrome/browser/plugins/plugin_utils.h"
- #include "chrome/browser/profiles/profile.h"
--#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
- #include "chrome/browser/ui/collected_cookies_infobar_delegate.h"
- #include "chrome/browser/ui/content_settings/content_setting_bubble_model_delegate.h"
- #include "chrome/common/chrome_features.h"
-@@ -54,13 +53,10 @@
- #include "components/permissions/permission_manager.h"
- #include "components/permissions/permission_request_manager.h"
- #include "components/permissions/permission_result.h"
--#include "components/permissions/permission_uma_util.h"
- #include "components/permissions/permission_util.h"
+@@ -57,9 +57,6 @@
  #include "components/permissions/permissions_client.h"
  #include "components/prefs/pref_service.h"
  #include "components/strings/grit/components_strings.h"
+-#include "components/subresource_filter/content/browser/content_subresource_filter_throttle_manager.h"
 -#include "components/subresource_filter/core/browser/subresource_filter_constants.h"
 -#include "components/subresource_filter/core/browser/subresource_filter_features.h"
  #include "components/url_formatter/elide_url.h"
  #include "components/vector_icons/vector_icons.h"
  #include "content/public/browser/notification_service.h"
-@@ -375,7 +371,6 @@ void ContentSettingMixedScriptBubbleModel::OnLearnMoreClicked() {
+@@ -375,7 +372,6 @@ void ContentSettingMixedScriptBubbleModel::OnLearnMoreClicked() {
  }
  
  void ContentSettingMixedScriptBubbleModel::OnCustomLinkClicked() {
@@ -32,7 +20,7 @@ index 5a4ef1ededae..709975996ef3 100644
    MixedContentSettingsTabHelper* mixed_content_settings =
        MixedContentSettingsTabHelper::FromWebContents(web_contents());
    if (mixed_content_settings) {
-@@ -1116,21 +1111,11 @@ void ContentSettingMediaStreamBubbleModel::UpdateSettings(
+@@ -1116,21 +1112,11 @@ void ContentSettingMediaStreamBubbleModel::UpdateSettings(
    HostContentSettingsMap* map =
        HostContentSettingsMapFactory::GetForProfile(GetProfile());
    if (MicrophoneAccessed()) {
@@ -43,7 +31,7 @@ index 5a4ef1ededae..709975996ef3 100644
 -            permissions::PermissionSourceUI::PAGE_ACTION);
      map->SetContentSettingDefaultScope(
          page_content_settings->media_stream_access_origin(), GURL(),
-         ContentSettingsType::MEDIASTREAM_MIC, std::string(), setting);
+         ContentSettingsType::MEDIASTREAM_MIC, setting);
    }
    if (CameraAccessed()) {
 -    permissions::PermissionUmaUtil::ScopedRevocationReporter
@@ -53,34 +41,35 @@ index 5a4ef1ededae..709975996ef3 100644
 -            permissions::PermissionSourceUI::PAGE_ACTION);
      map->SetContentSettingDefaultScope(
          page_content_settings->media_stream_access_origin(), GURL(),
-         ContentSettingsType::MEDIASTREAM_CAMERA, std::string(), setting);
-@@ -1386,8 +1371,6 @@ ContentSettingSubresourceFilterBubbleModel::
+         ContentSettingsType::MEDIASTREAM_CAMERA, setting);
+@@ -1397,8 +1383,6 @@ ContentSettingSubresourceFilterBubbleModel::
    SetManageText();
    set_done_button_text(l10n_util::GetStringUTF16(IDS_OK));
    set_show_learn_more(true);
--  ChromeSubresourceFilterClient::LogAction(
--      SubresourceFilterAction::kDetailsShown);
+-  subresource_filter::ContentSubresourceFilterThrottleManager::LogAction(
+-      subresource_filter::SubresourceFilterAction::kDetailsShown);
  }
  
  ContentSettingSubresourceFilterBubbleModel::
-@@ -1415,16 +1398,10 @@ void ContentSettingSubresourceFilterBubbleModel::OnManageCheckboxChecked(
+@@ -1426,17 +1410,10 @@ void ContentSettingSubresourceFilterBubbleModel::OnManageCheckboxChecked(
  
  void ContentSettingSubresourceFilterBubbleModel::OnLearnMoreClicked() {
    DCHECK(delegate());
--  ChromeSubresourceFilterClient::LogAction(
--      SubresourceFilterAction::kClickedLearnMore);
+-  subresource_filter::ContentSubresourceFilterThrottleManager::LogAction(
+-      subresource_filter::SubresourceFilterAction::kClickedLearnMore);
    delegate()->ShowLearnMorePage(ContentSettingsType::ADS);
  }
  
  void ContentSettingSubresourceFilterBubbleModel::CommitChanges() {
 -  if (is_checked_) {
--    ChromeSubresourceFilterClient::FromWebContents(web_contents())
--        ->OnReloadRequested();
+-    subresource_filter::ContentSubresourceFilterThrottleManager::
+-        FromWebContents(web_contents())
+-            ->OnReloadRequested();
 -  }
  }
  
  ContentSettingSubresourceFilterBubbleModel*
-@@ -1743,8 +1720,7 @@ ContentSettingBubbleModel::ContentSettingBubbleModel(Delegate* delegate,
+@@ -1758,8 +1735,7 @@ ContentSettingBubbleModel::ContentSettingBubbleModel(Delegate* delegate,
                                                       WebContents* web_contents)
      : web_contents_(web_contents),
        owner_(nullptr),

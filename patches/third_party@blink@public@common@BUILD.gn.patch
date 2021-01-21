@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/public/common/BUILD.gn b/third_party/blink/public/common/BUILD.gn
-index 6e7ef7b5d294..8ee1ecb0a819 100644
+index ccb2c396ec8d..2d063a70efa9 100644
 --- a/third_party/blink/public/common/BUILD.gn
 +++ b/third_party/blink/public/common/BUILD.gn
-@@ -15,7 +15,6 @@ component("common") {
+@@ -19,7 +19,6 @@ component("common") {
    output_name = "blink_common"
  
    public_deps = [
@@ -10,7 +10,15 @@ index 6e7ef7b5d294..8ee1ecb0a819 100644
      "//third_party/blink/public/common:headers",
      "//third_party/blink/public/mojom:mojom_modules",
      "//third_party/blink/public/mojom:web_bluetooth_mojo_bindings",
-@@ -199,11 +198,9 @@ source_set("headers") {
+@@ -165,7 +164,6 @@ source_set("headers") {
+     "origin_trials/origin_trial_policy.h",
+     "origin_trials/trial_token.h",
+     "origin_trials/trial_token_validator.h",
+-    "page/content_to_visible_time_reporter.h",
+     "page/drag_mojom_traits.h",
+     "page/drag_operation.h",
+     "page/launching_process_state.h",
+@@ -201,11 +199,9 @@ source_set("headers") {
  
    public_deps = [
      "//mojo/public/cpp/bindings",
@@ -19,6 +27,6 @@ index 6e7ef7b5d294..8ee1ecb0a819 100644
      "//skia",
      "//skia/public/mojom:shared_typemap_traits",
 -    "//third_party/blink/public/common/privacy_budget",
+     "//third_party/blink/public/common/tokens:tokens_headers",
      "//third_party/blink/public/mojom:mojom_modules_headers",
      "//third_party/blink/public/mojom:mojom_platform_shared",
-     "//third_party/blink/public/mojom:web_bluetooth_mojo_bindings_headers",

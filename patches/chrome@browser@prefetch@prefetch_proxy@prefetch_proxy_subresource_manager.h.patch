@@ -1,0 +1,34 @@
+diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
+index 998ece0845f8..c266c60e39a2 100644
+--- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
++++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
+@@ -33,7 +33,6 @@ class PrerenderHandle;
+ }
+ 
+ class PrefetchedMainframeResponseContainer;
+-class PrefetchProxyPrefetchMetricsCollector;
+ class PrefetchProxyProxyingURLLoaderFactory;
+ 
+ // This class manages the prefetch proxy of a page and its subresources.
+@@ -64,10 +63,6 @@ class PrefetchProxySubresourceManager
+     return successfully_loaded_subresources_;
+   }
+ 
+-  // Sets the prefetch metrics collector to report subresource fetches to.
+-  void SetPrefetchMetricsCollector(
+-      scoped_refptr<PrefetchProxyPrefetchMetricsCollector> collector);
+-
+   // Takes ownership of |mainframe_response_|.
+   std::unique_ptr<PrefetchedMainframeResponseContainer> TakeMainframeResponse();
+ 
+@@ -156,10 +151,6 @@ class PrefetchProxySubresourceManager
+   // The mainframe response headers and body.
+   std::unique_ptr<PrefetchedMainframeResponseContainer> mainframe_response_;
+ 
+-  // Collects metrics from the implementation of
+-  // |PrefetchProxyProxyingURLLoaderFactory::ResourceMetricsObserver|.
+-  scoped_refptr<PrefetchProxyPrefetchMetricsCollector> metrics_collector_;
+-
+   // State for managing the NoStatePrerender when it is running. If
+   // |nsp_handle_| is set, then |on_nsp_done_callback_| is also set and vise
+   // versa.

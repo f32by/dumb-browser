@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/web_applications/web_app_provider_factory.cc b/chrome/browser/web_applications/web_app_provider_factory.cc
-index 6da1a5a02e16..daf6535f5598 100644
+index 1237beafed1a..d5b0a5f84553 100644
 --- a/chrome/browser/web_applications/web_app_provider_factory.cc
 +++ b/chrome/browser/web_applications/web_app_provider_factory.cc
 @@ -4,7 +4,6 @@
@@ -10,9 +10,9 @@ index 6da1a5a02e16..daf6535f5598 100644
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/sync/model_type_store_service_factory.h"
  #include "chrome/browser/web_applications/components/web_app_utils.h"
-@@ -35,7 +34,6 @@ WebAppProviderFactory::WebAppProviderFactory()
-   DependsOn(
-       extensions::ExtensionsBrowserClient::Get()->GetExtensionSystemFactory());
+@@ -32,7 +31,6 @@ WebAppProviderFactory::WebAppProviderFactory()
+   WebAppProviderBaseFactory::SetInstance(this);
+   DependsOnExtensionsSystem();
    DependsOn(ModelTypeStoreServiceFactory::GetInstance());
 -  DependsOn(ukm::UkmBackgroundRecorderFactory::GetInstance());
  }

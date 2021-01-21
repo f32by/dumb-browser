@@ -1,8 +1,8 @@
 diff --git a/weblayer/browser/browser_main_parts_impl.cc b/weblayer/browser/browser_main_parts_impl.cc
-index 769fd7957f96..6e99697c7b53 100644
+index 30ad30176b74..b84f2869e2db 100644
 --- a/weblayer/browser/browser_main_parts_impl.cc
 +++ b/weblayer/browser/browser_main_parts_impl.cc
-@@ -39,9 +39,6 @@
+@@ -44,9 +44,6 @@
  
  #if defined(OS_ANDROID)
  #include "base/command_line.h"
@@ -11,8 +11,8 @@ index 769fd7957f96..6e99697c7b53 100644
 -#include "components/crash/core/common/crash_key.h"
  #include "components/javascript_dialogs/android/app_modal_dialog_view_android.h"  // nogncheck
  #include "components/javascript_dialogs/app_modal_dialog_manager.h"  // nogncheck
- #include "content/public/browser/web_contents.h"
-@@ -122,14 +119,6 @@ int BrowserMainPartsImpl::PreCreateThreads() {
+ #include "components/metrics/metrics_service.h"
+@@ -148,14 +145,6 @@ int BrowserMainPartsImpl::PreCreateThreads() {
    // Make sure permissions client has been set.
    WebLayerPermissionsClient::GetInstance();
  #if defined(OS_ANDROID)

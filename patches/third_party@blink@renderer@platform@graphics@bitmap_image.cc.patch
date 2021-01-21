@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/graphics/bitmap_image.cc b/third_party/blink/renderer/platform/graphics/bitmap_image.cc
-index 6e9b2c17d020..9afbba39acdd 100644
+index fafc5eb7c00f..28518d252a36 100644
 --- a/third_party/blink/renderer/platform/graphics/bitmap_image.cc
 +++ b/third_party/blink/renderer/platform/graphics/bitmap_image.cc
 @@ -33,7 +33,6 @@
@@ -10,7 +10,7 @@ index 6e9b2c17d020..9afbba39acdd 100644
  #include "third_party/blink/renderer/platform/graphics/deferred_image_decoder.h"
  #include "third_party/blink/renderer/platform/graphics/image_observer.h"
  #include "third_party/blink/renderer/platform/graphics/paint/paint_canvas.h"
-@@ -197,15 +196,6 @@ Image::SizeAvailability BitmapImage::SetData(scoped_refptr<SharedBuffer> data,
+@@ -211,15 +210,6 @@ Image::SizeAvailability BitmapImage::SetData(scoped_refptr<SharedBuffer> data,
    return DataChanged(all_data_received);
  }
  
@@ -26,7 +26,7 @@ index 6e9b2c17d020..9afbba39acdd 100644
  Image::SizeAvailability BitmapImage::DataChanged(bool all_data_received) {
    TRACE_EVENT0("blink", "BitmapImage::dataChanged");
  
-@@ -214,17 +204,6 @@ Image::SizeAvailability BitmapImage::DataChanged(bool all_data_received) {
+@@ -228,17 +218,6 @@ Image::SizeAvailability BitmapImage::DataChanged(bool all_data_received) {
    // requires a new PaintImageGenerator instance.
    cached_frame_ = PaintImage();
  
@@ -44,7 +44,7 @@ index 6e9b2c17d020..9afbba39acdd 100644
    // Feed all the data we've seen so far to the image decoder.
    all_data_received_ = all_data_received;
    have_frame_count_ = false;
-@@ -316,26 +295,11 @@ size_t BitmapImage::FrameCount() {
+@@ -337,23 +316,11 @@ size_t BitmapImage::FrameCount() {
    return frame_count_;
  }
  
@@ -60,9 +60,6 @@ index 6e9b2c17d020..9afbba39acdd 100644
 -  if (size_available_ && HasVisibleImageSize(Size())) {
 -    BitmapImageMetrics::CountDecodedImageType(decoder_->FilenameExtension());
 -    if (decoder_->FilenameExtension() == "jpg") {
--      BitmapImageMetrics::CountImageOrientation(
--          decoder_->OrientationAtIndex(0).Orientation());
--
 -      IntSize correctedSize = decoder_->DensityCorrectedSizeAtIndex(0);
 -      BitmapImageMetrics::CountImageDensityCorrection(
 -        !correctedSize.IsEmpty() && correctedSize != decoder_->Size());

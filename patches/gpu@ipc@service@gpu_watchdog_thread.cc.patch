@@ -1,30 +1,27 @@
 diff --git a/gpu/ipc/service/gpu_watchdog_thread.cc b/gpu/ipc/service/gpu_watchdog_thread.cc
-index a96193fa95e6..74602995a41b 100644
+index fac06bb181cf..4cc6e897b09b 100644
 --- a/gpu/ipc/service/gpu_watchdog_thread.cc
 +++ b/gpu/ipc/service/gpu_watchdog_thread.cc
-@@ -22,7 +22,6 @@
- #include "base/task/current_thread.h"
+@@ -26,7 +26,6 @@
  #include "base/threading/thread_task_runner_handle.h"
+ #include "base/time/time.h"
  #include "build/build_config.h"
 -#include "gpu/config/gpu_crash_keys.h"
  #include "gpu/config/gpu_finch_features.h"
  #include "gpu/ipc/common/result_codes.h"
- #include "ui/gl/shader_tracking.h"
-@@ -437,17 +436,10 @@ void GpuWatchdogThreadImplV1::DeliberatelyTerminateToRecoverFromHang() {
-   base::debug::Alias(&current_time);
-   base::debug::Alias(&current_timeticks);
  
--  int64_t available_physical_memory =
--      base::SysInfo::AmountOfAvailablePhysicalMemory() >> 20;
--  crash_keys::available_physical_memory_in_mb.Set(
--      base::NumberToString(available_physical_memory));
+@@ -680,14 +679,6 @@ void GpuWatchdogThread::DeliberatelyTerminateToRecoverFromHang() {
+ 
+   GpuWatchdogHistogram(GpuWatchdogThreadEvent::kGpuWatchdogKill);
+ 
+-  crash_keys::gpu_watchdog_crashed_in_gpu_init.Set(
+-      in_gpu_initialization_ ? "1" : "0");
 -
-   gl::ShaderTracking* shader_tracking = gl::ShaderTracking::GetInstance();
-   if (shader_tracking) {
-     std::string shaders[2];
-     shader_tracking->GetShaders(shaders, shaders + 1);
--    crash_keys::current_shader_0.Set(shaders[0]);
--    crash_keys::current_shader_1.Set(shaders[1]);
-   }
- 
-   // Check it one last time before crashing.
+-  crash_keys::gpu_watchdog_kill_after_power_resume.Set(
+-      WithinOneMinFromPowerResumed() ? "1" : "0");
+-
+-  crash_keys::num_of_processors.Set(base::NumberToString(num_of_processors_));
+-
+   // Check the arm_disarm_counter value one more time.
+   auto last_arm_disarm_counter = ReadArmDisarmCounter();
+   base::debug::Alias(&last_arm_disarm_counter);

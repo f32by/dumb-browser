@@ -1,12 +1,13 @@
 diff --git a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
-index 54501100353c..a552c156e50a 100644
+index 4489838b4ed6..79307067d236 100644
 --- a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 +++ b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
-@@ -38,12 +38,7 @@
+@@ -38,13 +38,7 @@
  #include "base/metrics/histogram_macros.h"
  #include "base/numerics/checked_math.h"
  #include "build/build_config.h"
 -#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
  #include "third_party/blink/public/common/features.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metrics.h"
@@ -15,7 +16,7 @@ index 54501100353c..a552c156e50a 100644
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/gpu/gpu.mojom-blink.h"
  #include "third_party/blink/public/platform/platform.h"
-@@ -93,7 +88,6 @@
+@@ -95,7 +89,6 @@
  #include "third_party/blink/renderer/platform/graphics/paint/paint_canvas.h"
  #include "third_party/blink/renderer/platform/image-encoders/image_encoder_utils.h"
  #include "third_party/blink/renderer/platform/instrumentation/use_counter.h"
@@ -23,17 +24,7 @@ index 54501100353c..a552c156e50a 100644
  #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
  #include "ui/base/resource/scale_factor.h"
  #include "v8/include/v8.h"
-@@ -119,8 +113,7 @@ HTMLCanvasElement::HTMLCanvasElement(Document& document)
-       ExecutionContextLifecycleObserver(GetExecutionContext()),
-       PageVisibilityObserver(document.GetPage()),
-       CanvasRenderingContextHost(
--          CanvasRenderingContextHost::HostType::kCanvasHost,
--          {document.UkmRecorder(), document.UkmSourceID()}),
-+          CanvasRenderingContextHost::HostType::kCanvasHost),
-       size_(kDefaultCanvasWidth, kDefaultCanvasHeight),
-       context_creation_was_blocked_(false),
-       ignore_reset_(false),
-@@ -258,26 +251,6 @@ void HTMLCanvasElement::RegisterRenderingContextFactory(
+@@ -260,43 +253,12 @@ void HTMLCanvasElement::RegisterRenderingContextFactory(
    RenderingContextFactories()[type] = std::move(rendering_context_factory);
  }
  
@@ -60,27 +51,35 @@ index 54501100353c..a552c156e50a 100644
  CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
      const String& type,
      const CanvasContextCreationAttributesCore& attributes) {
-@@ -300,19 +273,6 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContextInternal(
-     return nullptr;
-   }
+   auto* old_contents_cc_layer = ContentsCcLayer();
+   auto* result = GetCanvasRenderingContextInternal(type, attributes);
  
--  // Log the aliased context type used.
--  if (!context_) {
--    if (IdentifiabilityStudySettings::Get()->IsWebFeatureAllowed(
--          blink::WebFeature::kCanvasRenderingContext)) {
--      RecordIdentifiabilityMetric(
--          IdentifiableSurface::FromTypeAndToken(
--              blink::IdentifiableSurface::Type::kWebFeature,
--              blink::WebFeature::kCanvasRenderingContext),
--          context_type);
--    }
--    UMA_HISTOGRAM_ENUMERATION("Blink.Canvas.ContextType", context_type);
+-  if (IdentifiabilityStudySettings::Get()->ShouldSample(
+-          IdentifiableSurface::Type::kCanvasRenderingContext)) {
+-    Document& doc = GetDocument();
+-    IdentifiabilityMetricBuilder(doc.UkmSourceID())
+-        .Set(IdentifiableSurface::FromTypeAndToken(
+-                 IdentifiableSurface::Type::kCanvasRenderingContext,
+-                 CanvasRenderingContext::ContextTypeFromId(type)),
+-             !!result)
+-        .Record(doc.UkmRecorder());
 -  }
 -
-   context_type =
-       CanvasRenderingContext::ResolveContextTypeAliases(context_type);
+   if (ContentsCcLayer() != old_contents_cc_layer)
+     OnContentsCcLayerChanged();
+   return result;
+@@ -869,10 +831,6 @@ bool HTMLCanvasElement::IsPrinting() const {
+   return GetDocument().BeforePrintingOrPrinting();
+ }
  
-@@ -976,7 +936,6 @@ String HTMLCanvasElement::ToDataURLInternal(
+-UkmParameters HTMLCanvasElement::GetUkmParameters() {
+-  return {GetDocument().UkmRecorder(), GetDocument().UkmSourceID()};
+-}
+-
+ void HTMLCanvasElement::SetSurfaceSize(const IntSize& size) {
+   size_ = size;
+   did_fail_to_create_resource_provider_ = false;
+@@ -976,7 +934,6 @@ String HTMLCanvasElement::ToDataURLInternal(
        // Currently we only support three encoding types.
        NOTREACHED();
      }
@@ -88,12 +87,11 @@ index 54501100353c..a552c156e50a 100644
      return data_url;
    }
  
-@@ -1042,12 +1001,7 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
+@@ -1042,11 +999,7 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
      async_creator = MakeGarbageCollected<CanvasAsyncBlobCreator>(
          image_bitmap, options,
          CanvasAsyncBlobCreator::kHTMLCanvasToBlobCallback, callback, start_time,
 -        GetExecutionContext(),
--        UkmParameters{GetDocument().UkmRecorder(), GetDocument().UkmSourceID()},
 -        IdentifiabilityStudySettings::Get()->IsTypeAllowed(
 -            IdentifiableSurface::Type::kCanvasReadback)
 -            ? IdentifiabilityInputDigest(context_)

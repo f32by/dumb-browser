@@ -1,17 +1,15 @@
 diff --git a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
-index 3df0614a53d6..a8607a773ded 100644
+index 2a9282d47f69..5437c452161d 100644
 --- a/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
 +++ b/chrome/browser/ui/cocoa/notifications/alert_notification_service.mm
-@@ -12,26 +12,9 @@
- #import "chrome/browser/ui/cocoa/notifications/notification_builder_mac.h"
- #include "chrome/browser/ui/cocoa/notifications/notification_constants_mac.h"
+@@ -9,35 +9,11 @@
+ #include "base/strings/string_number_conversions.h"
+ #import "chrome/browser/ui/cocoa/notifications/alert_nsnotification_service.h"
  #import "chrome/browser/ui/cocoa/notifications/xpc_transaction_handler.h"
 -#include "third_party/crashpad/crashpad/client/crashpad_client.h"
 -#include "third_party/crashpad/crashpad/client/crashpad_info.h"
 -#include "third_party/crashpad/crashpad/client/simple_string_dictionary.h"
- 
- @class NSUserNotificationCenter;
- 
+-
 -namespace {
 -
 -crashpad::SimpleStringDictionary* GetCrashpadAnnotations() {
@@ -25,24 +23,33 @@ index 3df0614a53d6..a8607a773ded 100644
 -}
 -
 -}  // namespace
--
- @implementation AlertNotificationService {
-   XPCTransactionHandler* _transactionHandler;
  
-@@ -51,29 +34,9 @@ - (instancetype)initWithTransactionHandler:(XPCTransactionHandler*)handler {
+ @implementation AlertNotificationService {
+   base::scoped_nsobject<XPCTransactionHandler> _transactionHandler;
+   base::scoped_nsobject<NSXPCConnection> _connection;
+   base::scoped_nsobject<NSObject<NotificationDelivery>> _notificationDelivery;
+-
+-  // Ensures that the XPC service has been configured for crash reporting.
+-  // Other messages should not be sent to a new instance of the service
+-  // before -setMachExceptionPort: is called.
+-  // Because XPC callouts occur on a concurrent dispatch queue, this must be
+-  // accessed in a @synchronized(self) block.
+-  BOOL _didSetExceptionPort;
  }
  
- - (void)setMachExceptionPort:(CrXPCMachPort*)port {
--  base::mac::ScopedMachSendRight sendRight([port takeRight]);
--  if (!sendRight.is_valid()) {
--    NOTREACHED();
--    return;
--  }
--
--  @synchronized(self) {
+ - (instancetype)initWithTransactionHandler:(XPCTransactionHandler*)handler
+@@ -58,26 +34,14 @@ - (void)setUseUNNotification:(BOOL)useUNNotification
+   }
+ 
+   @synchronized(self) {
 -    if (_didSetExceptionPort) {
 -      return;
 -    }
+-
+     [_transactionHandler setUseUNNotification:useUNNotification];
+     _notificationDelivery.reset([[AlertNSNotificationService alloc]
+         initWithTransactionHandler:_transactionHandler
+                      xpcConnection:_connection]);
 -
 -    crashpad::CrashpadClient client;
 -    _didSetExceptionPort = client.SetHandlerMachPort(std::move(sendRight));
@@ -50,30 +57,27 @@ index 3df0614a53d6..a8607a773ded 100644
 -
 -    crashpad::CrashpadInfo::GetCrashpadInfo()->set_simple_annotations(
 -        GetCrashpadAnnotations());
--  }
+   }
  }
  
  - (void)deliverNotification:(NSDictionary*)notificationData {
 -  DCHECK(_didSetExceptionPort);
--
-   base::scoped_nsobject<NotificationBuilder> builder(
-       [[NotificationBuilder alloc] initWithDictionary:notificationData]);
+   DCHECK(_notificationDelivery);
  
-@@ -85,8 +48,6 @@ - (void)deliverNotification:(NSDictionary*)notificationData {
+   [_notificationDelivery deliverNotification:notificationData];
+@@ -85,7 +49,6 @@ - (void)deliverNotification:(NSDictionary*)notificationData {
  
  - (void)closeNotificationWithId:(NSString*)notificationId
                    withProfileId:(NSString*)profileId {
 -  DCHECK(_didSetExceptionPort);
--
-   NSUserNotificationCenter* notificationCenter =
-       [NSUserNotificationCenter defaultUserNotificationCenter];
-   for (NSUserNotification* candidate in
-@@ -107,8 +68,6 @@ - (void)closeNotificationWithId:(NSString*)notificationId
+   DCHECK(_notificationDelivery);
+ 
+   [_notificationDelivery closeNotificationWithId:notificationId
+@@ -93,7 +56,6 @@ - (void)closeNotificationWithId:(NSString*)notificationId
  }
  
  - (void)closeAllNotifications {
 -  DCHECK(_didSetExceptionPort);
--
-   [[NSUserNotificationCenter defaultUserNotificationCenter]
-       removeAllDeliveredNotifications];
-   [_transactionHandler closeTransactionIfNeeded];
+   DCHECK(_notificationDelivery);
+ 
+   [_notificationDelivery closeAllNotifications];

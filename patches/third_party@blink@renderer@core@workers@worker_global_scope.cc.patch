@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.cc b/third_party/blink/renderer/core/workers/worker_global_scope.cc
-index d73564839b61..3e326e834e9f 100644
+index 2a34728a31dc..a5261fd1809f 100644
 --- a/third_party/blink/renderer/core/workers/worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/worker_global_scope.cc
 @@ -29,7 +29,6 @@
@@ -8,9 +8,9 @@ index d73564839b61..3e326e834e9f 100644
  #include "mojo/public/cpp/bindings/pending_remote.h"
 -#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
  #include "third_party/blink/public/platform/platform.h"
- #include "third_party/blink/public/platform/web_url_request.h"
-@@ -67,7 +66,6 @@
+@@ -68,7 +67,6 @@
  #include "third_party/blink/renderer/core/workers/worker_thread.h"
  #include "third_party/blink/renderer/platform/bindings/exception_state.h"
  #include "third_party/blink/renderer/platform/bindings/microtask.h"
@@ -18,7 +18,7 @@ index d73564839b61..3e326e834e9f 100644
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/instance_counters.h"
  #include "third_party/blink/renderer/platform/loader/fetch/fetch_client_settings_object_snapshot.h"
-@@ -148,8 +146,6 @@ FontFaceSet* WorkerGlobalScope::fonts() {
+@@ -149,8 +147,6 @@ FontFaceSet* WorkerGlobalScope::fonts() {
  }
  
  WorkerGlobalScope::~WorkerGlobalScope() {
@@ -27,7 +27,7 @@ index d73564839b61..3e326e834e9f 100644
    DCHECK(!ScriptController());
    InstanceCounters::DecrementCounter(
        InstanceCounters::kWorkerGlobalScopeCounter);
-@@ -522,8 +518,7 @@ void WorkerGlobalScope::ReceiveMessage(BlinkTransferableMessage message) {
+@@ -523,8 +519,7 @@ void WorkerGlobalScope::ReceiveMessage(BlinkTransferableMessage message) {
  WorkerGlobalScope::WorkerGlobalScope(
      std::unique_ptr<GlobalScopeCreationParams> creation_params,
      WorkerThread* thread,
@@ -37,7 +37,7 @@ index d73564839b61..3e326e834e9f 100644
      : WorkerOrWorkletGlobalScope(
            thread->GetIsolate(),
            CreateSecurityOrigin(creation_params.get(), GetExecutionContext()),
-@@ -545,8 +540,7 @@ WorkerGlobalScope::WorkerGlobalScope(
+@@ -546,8 +541,7 @@ WorkerGlobalScope::WorkerGlobalScope(
        thread_(thread),
        time_origin_(time_origin),
        font_selector_(MakeGarbageCollected<OffscreenFontSelector>(this)),
@@ -47,7 +47,7 @@ index d73564839b61..3e326e834e9f 100644
    InstanceCounters::IncrementCounter(
        InstanceCounters::kWorkerGlobalScopeCounter);
  
-@@ -639,18 +633,6 @@ TrustedTypePolicyFactory* WorkerGlobalScope::GetTrustedTypes() const {
+@@ -641,18 +635,6 @@ TrustedTypePolicyFactory* WorkerGlobalScope::GetTrustedTypes() const {
    return trusted_types_.Get();
  }
  
@@ -66,7 +66,7 @@ index d73564839b61..3e326e834e9f 100644
  std::unique_ptr<WorkerMainScriptLoadParameters>
  WorkerGlobalScope::TakeWorkerMainScriptLoadingParametersForModules() {
    return std::move(worker_main_script_load_params_for_modules_);
-@@ -667,13 +649,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
+@@ -669,13 +651,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
    Supplementable<WorkerGlobalScope>::Trace(visitor);
  }
  

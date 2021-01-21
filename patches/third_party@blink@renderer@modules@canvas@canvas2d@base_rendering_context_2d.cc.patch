@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-index 4c512aea8daf..f8acbf8dc35c 100644
+index efc376143b4a..65d8144f45cd 100644
 --- a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
 +++ b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-@@ -175,20 +175,6 @@ static inline void ConvertCanvasStyleToUnionType(
+@@ -194,20 +194,6 @@ static inline void ConvertCanvasStyleToUnionType(
    return_value.SetString(style->GetColor());
  }
  
@@ -23,7 +23,7 @@ index 4c512aea8daf..f8acbf8dc35c 100644
  void BaseRenderingContext2D::strokeStyle(
      StringOrCanvasGradientOrCanvasPattern& return_value) const {
    ConvertCanvasStyleToUnionType(GetState().StrokeStyle(), return_value);
-@@ -197,8 +183,6 @@ void BaseRenderingContext2D::strokeStyle(
+@@ -216,8 +202,6 @@ void BaseRenderingContext2D::strokeStyle(
  void BaseRenderingContext2D::setStrokeStyle(
      const StringOrCanvasGradientOrCanvasPattern& style) {
    DCHECK(!style.IsNull());
@@ -32,7 +32,7 @@ index 4c512aea8daf..f8acbf8dc35c 100644
  
    String color_string;
    CanvasStyle* canvas_style = nullptr;
-@@ -242,8 +226,6 @@ void BaseRenderingContext2D::setFillStyle(
+@@ -261,8 +245,6 @@ void BaseRenderingContext2D::setFillStyle(
      const StringOrCanvasGradientOrCanvasPattern& style) {
    DCHECK(!style.IsNull());
    ValidateStateStack();
@@ -41,7 +41,7 @@ index 4c512aea8daf..f8acbf8dc35c 100644
  
    String color_string;
    CanvasStyle* canvas_style = nullptr;
-@@ -2022,8 +2004,6 @@ String BaseRenderingContext2D::textAlign() const {
+@@ -2048,8 +2030,6 @@ String BaseRenderingContext2D::textAlign() const {
  }
  
  void BaseRenderingContext2D::setTextAlign(const String& s) {
@@ -50,7 +50,7 @@ index 4c512aea8daf..f8acbf8dc35c 100644
    TextAlign align;
    if (!ParseTextAlign(s, align))
      return;
-@@ -2037,8 +2017,6 @@ String BaseRenderingContext2D::textBaseline() const {
+@@ -2063,8 +2043,6 @@ String BaseRenderingContext2D::textBaseline() const {
  }
  
  void BaseRenderingContext2D::setTextBaseline(const String& s) {

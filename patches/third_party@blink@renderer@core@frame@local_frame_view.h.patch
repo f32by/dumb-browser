@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/frame/local_frame_view.h b/third_party/blink/renderer/core/frame/local_frame_view.h
-index 73d9e41d8e9a..2ce9de438f4b 100644
+index f88522138a12..762c0a10cb31 100644
 --- a/third_party/blink/renderer/core/frame/local_frame_view.h
 +++ b/third_party/blink/renderer/core/frame/local_frame_view.h
-@@ -100,7 +100,6 @@ class ScrollingCoordinator;
+@@ -103,7 +103,6 @@ class ScrollingCoordinator;
  class ScrollingCoordinatorContext;
  class TracedValue;
  class TransformState;
@@ -10,9 +10,9 @@ index 73d9e41d8e9a..2ce9de438f4b 100644
  class WebPluginContainerImpl;
  struct AnnotatedRegionValue;
  struct IntrinsicSizingInfo;
-@@ -689,9 +688,6 @@ class CORE_EXPORT LocalFrameView final
-     return *paint_timing_detector_;
+@@ -715,9 +714,6 @@ class CORE_EXPORT LocalFrameView final
    }
+   void DidChangeMobileFriendliness(const MobileFriendliness& mf);
  
 -  // Return the UKM aggregator for this frame, creating it if necessary.
 -  LocalFrameUkmAggregator& EnsureUkmAggregator();
@@ -20,7 +20,7 @@ index 73d9e41d8e9a..2ce9de438f4b 100644
    // Report the First Contentful Paint signal to the LocalFrameView.
    // This causes Deferred Commits to be restarted and tells the UKM
    // aggregator that FCP has been reached.
-@@ -1050,7 +1046,6 @@ class CORE_EXPORT LocalFrameView final
+@@ -1124,7 +1120,6 @@ class CORE_EXPORT LocalFrameView final
  
    MainThreadScrollingReasons main_thread_scrolling_reasons_;
  

@@ -1,0 +1,22 @@
+diff --git a/content/browser/service_worker/service_worker_context_core.cc b/content/browser/service_worker/service_worker_context_core.cc
+index b958e55f706f..f9b6418ffc42 100644
+--- a/content/browser/service_worker/service_worker_context_core.cc
++++ b/content/browser/service_worker/service_worker_context_core.cc
+@@ -491,7 +491,7 @@ void ServiceWorkerContextCore::OnContainerHostReceiverDisconnected() {
+ 
+   observer_list_->Notify(FROM_HERE,
+                          &ServiceWorkerContextCoreObserver::OnClientDestroyed,
+-                         container_host->ukm_source_id(), container_host->url(),
++                         container_host->url(),
+                          container_host->GetClientType());
+ 
+   size_t removed = container_host_by_uuid_.erase(container_host->client_uuid());
+@@ -631,7 +631,7 @@ void ServiceWorkerContextCore::NotifyClientIsExecutionReady(
+   DCHECK(container_host.is_execution_ready());
+   observer_list_->Notify(
+       FROM_HERE, &ServiceWorkerContextCoreObserver::OnClientIsExecutionReady,
+-      container_host.ukm_source_id(), container_host.url(),
++      container_host.url(),
+       container_host.GetClientType());
+ }
+ 

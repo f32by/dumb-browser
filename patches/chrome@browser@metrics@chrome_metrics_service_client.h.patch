@@ -1,10 +1,12 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.h b/chrome/browser/metrics/chrome_metrics_service_client.h
-index 116765ed1155..e6a4c72b8a21 100644
+index 116765ed1155..71ccf8aa4aab 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.h
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.h
-@@ -19,13 +19,10 @@
+@@ -17,21 +17,16 @@
+ #include "base/memory/weak_ptr.h"
+ #include "base/sequence_checker.h"
  #include "build/build_config.h"
- #include "chrome/browser/metrics/incognito_observer.h"
+-#include "chrome/browser/metrics/incognito_observer.h"
  #include "chrome/browser/metrics/metrics_memory_details.h"
 -#include "chrome/browser/privacy_budget/identifiability_study_state.h"
  #include "components/metrics/file_metrics_provider.h"
@@ -16,7 +18,13 @@ index 116765ed1155..e6a4c72b8a21 100644
  #include "content/public/browser/notification_observer.h"
  #include "content/public/browser/notification_registrar.h"
  #include "ppapi/buildflags/buildflags.h"
-@@ -44,9 +41,7 @@ class MetricsStateManager;
+ #include "third_party/metrics_proto/system_profile.pb.h"
+ 
+-class BrowserActivityWatcher;
+ class PluginMetricsProvider;
+ class Profile;
+ class PrefRegistrySimple;
+@@ -44,9 +39,7 @@ class MetricsStateManager;
  // ChromeMetricsServiceClient provides an implementation of MetricsServiceClient
  // that depends on chrome/.
  class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
@@ -27,7 +35,7 @@ index 116765ed1155..e6a4c72b8a21 100644
   public:
    ~ChromeMetricsServiceClient() override;
  
-@@ -59,7 +54,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -59,7 +52,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
  
    // metrics::MetricsServiceClient:
    metrics::MetricsService* GetMetricsService() override;
@@ -35,7 +43,7 @@ index 116765ed1155..e6a4c72b8a21 100644
    void SetMetricsClientId(const std::string& client_id) override;
    int32_t GetProduct() override;
    std::string GetApplicationLocale() override;
-@@ -80,8 +74,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -80,8 +72,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    bool IsReportingPolicyManaged() override;
    metrics::EnableMetricsDefault GetMetricsReportingDefaultState() override;
    bool IsUMACellularUploadLogicEnabled() override;
@@ -44,7 +52,7 @@ index 116765ed1155..e6a4c72b8a21 100644
    bool AreNotificationListenersEnabledOnAllProfiles() override;
    std::string GetAppPackageName() override;
    std::string GetUploadSigningKey() override;
-@@ -89,12 +81,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -89,12 +79,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
        bool simulate_failure);
    bool ShouldResetClientIdsOnClonedInstall() override;
  
@@ -57,7 +65,7 @@ index 116765ed1155..e6a4c72b8a21 100644
    // Determine what to do with a file based on filename. Visible for testing.
    using IsProcessRunningFunction = bool (*)(base::ProcessId);
    static metrics::FileMetricsProvider::FilterAction FilterBrowserMetricsFiles(
-@@ -110,14 +96,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -110,14 +94,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    // Completes the two-phase initialization of ChromeMetricsServiceClient.
    void Initialize();
  
@@ -72,7 +80,7 @@ index 116765ed1155..e6a4c72b8a21 100644
    // Returns true iff profiler data should be included in the next metrics log.
    // NOTE: This method is probabilistic and also updates internal state as a
    // side-effect when called, so it should only be called once per log.
-@@ -162,18 +140,12 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -162,23 +138,14 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
  
    SEQUENCE_CHECKER(sequence_checker_);
  
@@ -90,4 +98,20 @@ index 116765ed1155..e6a4c72b8a21 100644
 -
    content::NotificationRegistrar registrar_;
  
-   // Listener for changes in incognito activity.
+-  // Listener for changes in incognito activity.
+-  std::unique_ptr<IncognitoObserver> incognito_observer_;
+-
+   // Whether we registered all notification listeners successfully.
+   bool notification_listeners_active_ = false;
+ 
+@@ -202,10 +169,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+   std::unique_ptr<base::CallbackList<void(OmniboxLog*)>::Subscription>
+       omnibox_url_opened_subscription_;
+ 
+-#if !defined(OS_ANDROID)
+-  std::unique_ptr<BrowserActivityWatcher> browser_activity_watcher_;
+-#endif
+-
+   base::WeakPtrFactory<ChromeMetricsServiceClient> weak_ptr_factory_{this};
+ 
+   DISALLOW_COPY_AND_ASSIGN(ChromeMetricsServiceClient);

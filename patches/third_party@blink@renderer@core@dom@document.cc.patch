@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
-index 20688b7ab11e..106c4a8ec6ec 100644
+index dc456c70a933..6d98a9bd40eb 100644
 --- a/third_party/blink/renderer/core/dom/document.cc
 +++ b/third_party/blink/renderer/core/dom/document.cc
-@@ -48,10 +48,6 @@
+@@ -48,18 +48,12 @@
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "mojo/public/cpp/bindings/remote.h"
  #include "mojo/public/mojom/base/text_direction.mojom-blink.h"
@@ -13,16 +13,15 @@ index 20688b7ab11e..106c4a8ec6ec 100644
  #include "services/network/public/mojom/ip_address_space.mojom-blink.h"
  #include "services/network/public/mojom/trust_tokens.mojom-blink.h"
  #include "services/network/public/mojom/web_sandbox_flags.mojom-blink.h"
-@@ -59,8 +55,6 @@
- #include "third_party/blink/public/common/css/preferred_color_scheme.h"
+ #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/common/feature_policy/document_policy_features.h"
  #include "third_party/blink/public/common/features.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_sample_collector.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
- #include "third_party/blink/public/mojom/insecure_input/insecure_input_service.mojom-blink.h"
-@@ -306,7 +300,6 @@
+@@ -307,7 +301,6 @@
  #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
  #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
  #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
@@ -30,7 +29,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
  #include "third_party/blink/renderer/platform/geometry/length_functions.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
-@@ -438,11 +431,6 @@ class DocumentOutliveTimeReporter : public BlinkGCObserver {
+@@ -459,11 +452,6 @@ class DocumentOutliveTimeReporter : public BlinkGCObserver {
        else
          NOTREACHED();
      }
@@ -42,7 +41,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    }
  
   private:
-@@ -783,16 +771,6 @@ Document::Document(const DocumentInit& initializer,
+@@ -804,16 +792,6 @@ Document::Document(const DocumentInit& initializer,
                : kAllowAsynchronousParsing),
        node_count_(0),
        logged_field_edit_(false),
@@ -59,7 +58,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
        viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
        is_for_external_handler_(initializer.IsForExternalHandler()),
        fragment_directive_(MakeGarbageCollected<FragmentDirective>()),
-@@ -2726,12 +2704,6 @@ void Document::MarkHasFindInPageRequest() {
+@@ -2750,12 +2728,6 @@ void Document::MarkHasFindInPageRequest() {
    if (had_find_in_page_request_ || !IsInMainFrame())
      return;
  
@@ -72,7 +71,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    had_find_in_page_request_ = true;
  }
  
-@@ -2742,13 +2714,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
+@@ -2766,13 +2738,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
    if (had_find_in_page_render_subtree_active_match_ || !IsInMainFrame())
      return;
  
@@ -86,7 +85,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    had_find_in_page_render_subtree_active_match_ = true;
  }
  
-@@ -2760,12 +2725,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
+@@ -2784,12 +2749,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
        !IsInMainFrame())
      return;
  
@@ -99,7 +98,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    had_find_in_page_beforematch_expanded_hidden_matchable_ = true;
  }
  
-@@ -3103,8 +3062,6 @@ void Document::Shutdown() {
+@@ -3127,8 +3086,6 @@ void Document::Shutdown() {
    if (num_canvases_ > 0)
      UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
  
@@ -108,7 +107,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    GetViewportData().Shutdown();
  
    View()->Dispose();
-@@ -3215,18 +3172,6 @@ void Document::Shutdown() {
+@@ -3239,18 +3196,6 @@ void Document::Shutdown() {
    lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
    DCHECK(!View()->IsAttached());
  
@@ -127,7 +126,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    mime_handler_view_before_unload_event_listener_ = nullptr;
  
    resource_coordinator_.reset();
-@@ -3951,15 +3896,6 @@ bool Document::CheckCompletedInternal() {
+@@ -3975,15 +3920,6 @@ bool Document::CheckCompletedInternal() {
  
      AnchorElementMetrics::NotifyOnLoad(*this);
      DetectJavascriptFrameworksOnLoad(*this);
@@ -143,7 +142,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
    }
  
    if (auto* view = View()) {
-@@ -6853,14 +6789,6 @@ void Document::RecordAsyncScriptCount() {
+@@ -6883,14 +6819,6 @@ void Document::RecordAsyncScriptCount() {
    // Only record async script count for mainframe documents, as per UKM policy.
    if (!IsInMainFrame())
      return;
@@ -158,7 +157,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
  }
  
  void Document::MaybeExecuteDelayedAsyncScripts() {
-@@ -7211,31 +7139,6 @@ bool Document::AllowedToUseDynamicMarkUpInsertion(
+@@ -7250,31 +7178,6 @@ bool Document::AllowedToUseDynamicMarkUpInsertion(
    return false;
  }
  
@@ -190,7 +189,7 @@ index 20688b7ab11e..106c4a8ec6ec 100644
  bool Document::AllowInlineEventHandler(Node* node,
                                         EventListener* listener,
                                         const String& context_url,
-@@ -8273,18 +8176,6 @@ void Document::Trace(Visitor* visitor) const {
+@@ -8310,18 +8213,6 @@ void Document::Trace(Visitor* visitor) const {
    ContainerNode::Trace(visitor);
  }
  

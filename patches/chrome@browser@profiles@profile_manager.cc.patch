@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_manager.cc b/chrome/browser/profiles/profile_manager.cc
-index 99b167f0aba8..56bafee08180 100644
+index 8af99f57cd5e..98ecc68ed140 100644
 --- a/chrome/browser/profiles/profile_manager.cc
 +++ b/chrome/browser/profiles/profile_manager.cc
-@@ -42,8 +42,6 @@
+@@ -43,8 +43,6 @@
  #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
  #include "chrome/browser/download/download_core_service.h"
  #include "chrome/browser/download/download_core_service_factory.h"
@@ -11,7 +11,7 @@ index 99b167f0aba8..56bafee08180 100644
  #include "chrome/browser/navigation_predictor/navigation_predictor_keyed_service_factory.h"
  #include "chrome/browser/optimization_guide/optimization_guide_keyed_service.h"
  #include "chrome/browser/optimization_guide/optimization_guide_keyed_service_factory.h"
-@@ -60,7 +58,6 @@
+@@ -61,7 +59,6 @@
  #include "chrome/browser/profiles/profile_info_cache.h"
  #include "chrome/browser/profiles/profile_key.h"
  #include "chrome/browser/profiles/profile_manager_observer.h"
@@ -19,7 +19,7 @@ index 99b167f0aba8..56bafee08180 100644
  #include "chrome/browser/profiles/profiles_state.h"
  #include "chrome/browser/signin/account_reconcilor_factory.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
-@@ -264,7 +261,6 @@ void CancelProfileDeletion(const base::FilePath& path) {
+@@ -265,7 +262,6 @@ void CancelProfileDeletion(const base::FilePath& path) {
    DCHECK(!base::Contains(ProfilesToDelete(), path) ||
           ProfilesToDelete()[path] == ProfileDeletionStage::SCHEDULING);
    ProfilesToDelete().erase(path);
@@ -27,7 +27,7 @@ index 99b167f0aba8..56bafee08180 100644
  }
  #endif
  
-@@ -847,8 +843,7 @@ ProfileShortcutManager* ProfileManager::profile_shortcut_manager() {
+@@ -878,8 +874,7 @@ ProfileShortcutManager* ProfileManager::profile_shortcut_manager() {
  #if !defined(OS_ANDROID)
  void ProfileManager::MaybeScheduleProfileForDeletion(
      const base::FilePath& profile_dir,
@@ -37,7 +37,7 @@ index 99b167f0aba8..56bafee08180 100644
    if (!ScheduleProfileDirectoryForDeletion(profile_dir))
      return;
  
-@@ -857,7 +852,6 @@ void ProfileManager::MaybeScheduleProfileForDeletion(
+@@ -888,7 +883,6 @@ void ProfileManager::MaybeScheduleProfileForDeletion(
    if (storage.GetProfileAttributesWithPath(profile_dir, &entry)) {
      storage.RecordDeletedProfileState(entry);
    }
@@ -45,7 +45,7 @@ index 99b167f0aba8..56bafee08180 100644
  
    ScheduleProfileForDeletion(profile_dir, std::move(callback));
  }
-@@ -1352,12 +1346,14 @@ void ProfileManager::DoFinalInitForServices(Profile* profile,
+@@ -1385,12 +1379,14 @@ void ProfileManager::DoFinalInitForServices(Profile* profile,
        profile);
  #endif
  
@@ -60,7 +60,7 @@ index 99b167f0aba8..56bafee08180 100644
  
    // TODO(crbug.com/1031477): Remove once getting this created with the browser
    // context does not change dependency initialization order to cause crashes.
-@@ -1535,9 +1531,6 @@ void ProfileManager::EnsureActiveProfileExistsBeforeDeletion(
+@@ -1614,9 +1610,6 @@ void ProfileManager::EnsureActiveProfileExistsBeforeDeletion(
      new_avatar_url = profiles::GetDefaultAvatarIconUrl(avatar_index);
      new_profile_name = storage.ChooseNameForNewProfile(avatar_index);
  #endif
@@ -70,7 +70,7 @@ index 99b167f0aba8..56bafee08180 100644
    }
  
    // Create and/or load fallback profile.
-@@ -1575,7 +1568,6 @@ void ProfileManager::OnLoadProfileForProfileDeletion(
+@@ -1654,7 +1647,6 @@ void ProfileManager::OnLoadProfileForProfileDeletion(
      ProfileAttributesEntry* entry;
      bool has_entry = storage.GetProfileAttributesWithPath(profile_dir, &entry);
      DCHECK(has_entry);

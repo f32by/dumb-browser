@@ -1,28 +1,30 @@
 diff --git a/chrome/browser/extensions/api/autofill_private/autofill_private_api.h b/chrome/browser/extensions/api/autofill_private/autofill_private_api.h
-index 64e55183c8ae..fb753b555c0d 100644
+index 138c0c3dda05..f8e02874ecd6 100644
 --- a/chrome/browser/extensions/api/autofill_private/autofill_private_api.h
 +++ b/chrome/browser/extensions/api/autofill_private/autofill_private_api.h
-@@ -189,25 +189,6 @@ class AutofillPrivateMigrateCreditCardsFunction : public ExtensionFunction {
-   DISALLOW_COPY_AND_ASSIGN(AutofillPrivateMigrateCreditCardsFunction);
+@@ -206,27 +206,6 @@ class AutofillPrivateMigrateCreditCardsFunction : public ExtensionFunction {
+   ChromeExtensionFunctionDetails chrome_details_{this};
  };
  
 -class AutofillPrivateLogServerCardLinkClickedFunction
 -    : public ExtensionFunction {
 - public:
--  AutofillPrivateLogServerCardLinkClickedFunction();
+-  AutofillPrivateLogServerCardLinkClickedFunction() = default;
+-  AutofillPrivateLogServerCardLinkClickedFunction(
+-      const AutofillPrivateLogServerCardLinkClickedFunction&) = delete;
+-  AutofillPrivateLogServerCardLinkClickedFunction& operator=(
+-      const AutofillPrivateLogServerCardLinkClickedFunction&) = delete;
 -  DECLARE_EXTENSION_FUNCTION("autofillPrivate.logServerCardLinkClicked",
 -                             AUTOFILLPRIVATE_SERVERCARDLINKCLICKED)
 -
 - protected:
--  ~AutofillPrivateLogServerCardLinkClickedFunction() override;
+-  ~AutofillPrivateLogServerCardLinkClickedFunction() override = default;
 -
 -  // ExtensionFunction overrides.
 -  ResponseAction Run() override;
 -
 - private:
--  ChromeExtensionFunctionDetails chrome_details_;
--
--  DISALLOW_COPY_AND_ASSIGN(AutofillPrivateLogServerCardLinkClickedFunction);
+-  ChromeExtensionFunctionDetails chrome_details_{this};
 -};
 -
  class AutofillPrivateSetCreditCardFIDOAuthEnabledStateFunction

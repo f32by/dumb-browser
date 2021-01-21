@@ -1,0 +1,36 @@
+diff --git a/third_party/blink/common/media/watch_time_component.cc b/third_party/blink/common/media/watch_time_component.cc
+index 2091652d7151..cb81f98d88f9 100644
+--- a/third_party/blink/common/media/watch_time_component.cc
++++ b/third_party/blink/common/media/watch_time_component.cc
+@@ -14,12 +14,10 @@ WatchTimeComponent<T>::WatchTimeComponent(
+     T initial_value,
+     std::vector<media::WatchTimeKey> keys_to_finalize,
+     ValueToKeyCB value_to_key_cb,
+-    GetMediaTimeCB get_media_time_cb,
+-    media::mojom::WatchTimeRecorder* recorder)
++    GetMediaTimeCB get_media_time_cb)
+     : keys_to_finalize_(std::move(keys_to_finalize)),
+       value_to_key_cb_(std::move(value_to_key_cb)),
+       get_media_time_cb_(std::move(get_media_time_cb)),
+-      recorder_(recorder),
+       current_value_(initial_value),
+       pending_value_(initial_value) {}
+ 
+@@ -86,17 +84,8 @@ void WatchTimeComponent<T>::RecordWatchTime(base::TimeDelta current_timestamp) {
+   // If no value to key callback has been provided, record |elapsed| to every
+   // key in the |keys_to_finalize_| list.
+   if (!value_to_key_cb_) {
+-    for (auto k : keys_to_finalize_)
+-      recorder_->RecordWatchTime(k, elapsed);
+     return;
+   }
+-
+-  // A conversion callback has been specified, so only report elapsed to the
+-  // key provided by the callback.
+-  //
+-  // Record watch time using |current_value_| and not |pending_value_| since
+-  // that transition should not happen until Finalize().
+-  recorder_->RecordWatchTime(value_to_key_cb_.Run(current_value_), elapsed);
+ }
+ 
+ template <typename T>

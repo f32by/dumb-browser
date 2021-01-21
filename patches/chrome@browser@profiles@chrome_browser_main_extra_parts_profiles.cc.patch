@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-index f10172af2b81..03e8013020a4 100644
+index b3a1a925ef46..f65ee0a68511 100644
 --- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 +++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 @@ -33,7 +33,6 @@
@@ -17,16 +17,32 @@ index f10172af2b81..03e8013020a4 100644
 -#include "chrome/browser/page_load_metrics/observers/https_engagement_metrics/https_engagement_service_factory.h"
  #include "chrome/browser/password_manager/password_store_factory.h"
  #include "chrome/browser/permissions/adaptive_quiet_notification_permission_ui_enabler.h"
- #include "chrome/browser/plugins/plugin_prefs_factory.h"
-@@ -60,7 +58,6 @@
- #include "chrome/browser/prerender/prerender_manager_factory.h"
+ #include "chrome/browser/permissions/last_tab_standing_tracker_factory.h"
+@@ -63,7 +61,6 @@
+ #include "chrome/browser/prefs/pref_metrics_service.h"
  #include "chrome/browser/profiles/gaia_info_update_service_factory.h"
  #include "chrome/browser/profiles/renderer_updater_factory.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_service_factory.h"
  #include "chrome/browser/search/suggestions/suggestions_service_factory.h"
  #include "chrome/browser/search_engines/template_url_fetcher_factory.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
-@@ -145,7 +142,6 @@
+@@ -77,7 +74,6 @@
+ #include "chrome/browser/signin/chrome_signin_client_factory.h"
+ #include "chrome/browser/signin/identity_manager_factory.h"
+ #include "chrome/browser/signin/signin_profile_attributes_updater_factory.h"
+-#include "chrome/browser/ssl/sct_reporting_service_factory.h"
+ #include "chrome/browser/sync/model_type_store_service_factory.h"
+ #include "chrome/browser/sync/profile_sync_service_factory.h"
+ #include "chrome/browser/sync/user_event_service_factory.h"
+@@ -117,7 +113,6 @@
+ #include "chrome/browser/browsing_data/chrome_browsing_data_lifetime_manager_factory.h"
+ #include "chrome/browser/feedback/feedback_uploader_factory_chrome.h"
+ #include "chrome/browser/media/feeds/media_feeds_service_factory.h"
+-#include "chrome/browser/metrics/desktop_session_duration/desktop_profile_session_durations_service_factory.h"
+ #include "chrome/browser/performance_manager/persistence/site_data/site_data_cache_facade_factory.h"
+ #include "chrome/browser/profiles/profile_theme_update_service_factory.h"
+ #include "chrome/browser/search/instant_service_factory.h"
+@@ -151,7 +146,6 @@
  #include "chrome/browser/apps/platform_apps/api/browser_context_keyed_service_factories.h"
  #include "chrome/browser/apps/platform_apps/browser_context_keyed_service_factories.h"
  #include "chrome/browser/extensions/browser_context_keyed_service_factories.h"
@@ -34,15 +50,15 @@ index f10172af2b81..03e8013020a4 100644
  #include "chrome/browser/web_applications/web_app_provider_factory.h"
  #include "extensions/browser/browser_context_keyed_service_factories.h"
  #endif
-@@ -244,7 +240,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -249,7 +243,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
    CaptivePortalServiceFactory::GetInstance();
  #endif
 -  CertificateReportingServiceFactory::GetInstance();
-   ChromeBrowsingDataRemoverDelegateFactory::GetInstance();
-   ChromeSigninClientFactory::GetInstance();
-   ClientHintsFactory::GetInstance();
-@@ -273,11 +268,9 @@ void ChromeBrowserMainExtraPartsProfiles::
+ #if !defined(OS_ANDROID)
+   ChromeBrowsingDataLifetimeManagerFactory::GetInstance();
+ #endif
+@@ -284,11 +277,9 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if !defined(OS_ANDROID)
    GlobalErrorServiceFactory::GetInstance();
  #endif
@@ -54,7 +70,18 @@ index f10172af2b81..03e8013020a4 100644
    IdentityManagerFactory::EnsureFactoryAndDependeeFactoriesBuilt();
    InMemoryURLIndexFactory::GetInstance();
  #if !defined(OS_ANDROID)
-@@ -349,7 +342,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -317,10 +308,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+   media_router::ChromeMediaRouterFactory::GetInstance();
+ #if !defined(OS_ANDROID)
+   media_router::MediaRouterUIServiceFactory::GetInstance();
+-#endif
+-#if defined(OS_WIN) || defined(OS_MAC) || \
+-    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-  metrics::DesktopProfileSessionDurationsServiceFactory::GetInstance();
+ #endif
+   ModelTypeStoreServiceFactory::GetInstance();
+ #if defined(OS_CHROMEOS)
+@@ -370,7 +357,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(FULL_SAFE_BROWSING)
    safe_browsing::AdvancedProtectionStatusManagerFactory::GetInstance();
  #endif
@@ -62,7 +89,7 @@ index f10172af2b81..03e8013020a4 100644
  #if defined(OS_ANDROID)
    SearchPermissionsService::Factory::GetInstance();
  #endif
-@@ -399,7 +391,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -419,7 +405,6 @@ void ChromeBrowserMainExtraPartsProfiles::
    UsbChooserContextFactory::GetInstance();
  #endif
  #if BUILDFLAG(ENABLE_EXTENSIONS)

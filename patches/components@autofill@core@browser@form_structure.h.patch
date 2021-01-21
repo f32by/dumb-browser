@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/form_structure.h b/components/autofill/core/browser/form_structure.h
-index a18c4d9b5811..1be900f32eb6 100644
+index 58a8a8d48dc4..d8a3f8e5fcd6 100644
 --- a/components/autofill/core/browser/form_structure.h
 +++ b/components/autofill/core/browser/form_structure.h
 @@ -19,7 +19,6 @@
@@ -10,7 +10,7 @@ index a18c4d9b5811..1be900f32eb6 100644
  #include "components/autofill/core/browser/autofill_type.h"
  #include "components/autofill/core/browser/field_types.h"
  #include "components/autofill/core/browser/form_types.h"
-@@ -97,8 +96,7 @@ class FormStructure {
+@@ -96,8 +95,7 @@ class FormStructure {
    static void ParseApiQueryResponse(
        base::StringPiece payload,
        const std::vector<FormStructure*>& forms,
@@ -20,7 +20,7 @@ index a18c4d9b5811..1be900f32eb6 100644
  
    // Returns predictions using the details from the given |form_structures| and
    // their fields' predicted types.
-@@ -158,31 +156,6 @@ class FormStructure {
+@@ -157,31 +155,6 @@ class FormStructure {
                           const bool should_keep_cached_value,
                           const bool only_server_and_autofill_state);
  
@@ -52,7 +52,7 @@ index a18c4d9b5811..1be900f32eb6 100644
    // Classifies each field in |fields_| based upon its |autocomplete| attribute,
    // if the attribute is available.  The association is stored into the field's
    // |heuristic_type|.
-@@ -360,8 +333,6 @@ class FormStructure {
+@@ -359,8 +332,6 @@ class FormStructure {
    // - Name for Autofill of first field
    base::string16 GetIdentifierForRefill() const;
  
@@ -61,7 +61,7 @@ index a18c4d9b5811..1be900f32eb6 100644
    void set_randomized_encoder(std::unique_ptr<RandomizedEncoder> encoder);
  
    void set_is_rich_query_enabled(bool v) { is_rich_query_enabled_ = v; }
-@@ -389,11 +360,8 @@ class FormStructure {
+@@ -388,11 +359,8 @@ class FormStructure {
    static void ProcessQueryResponseForTesting(
        const AutofillQueryResponse& response,
        const std::vector<FormStructure*>& forms,

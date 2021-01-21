@@ -30,10 +30,10 @@ GIT_DIFF_PATTERN = 'diff --git '
 
 EXCLUSION_FILES = [
     # locale resources
-    'chrome/app/chromium_strings.grd',
-    'chrome/app/settings_chromium_strings.grdp',
-    'chrome/app/settings_strings.grdp',
-    'components/components_chromium_strings.grd',
+    # 'chrome/app/chromium_strings.grd',
+    # 'chrome/app/settings_chromium_strings.grdp',
+    # 'chrome/app/settings_strings.grdp',
+    # 'components/components_chromium_strings.grd',
     # branding resources
     'chrome/app/theme/chromium/BRANDING',
 ]

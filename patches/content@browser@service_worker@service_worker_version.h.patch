@@ -1,8 +1,8 @@
 diff --git a/content/browser/service_worker/service_worker_version.h b/content/browser/service_worker/service_worker_version.h
-index b7c3b5cc809c..6ee1560e978f 100644
+index 46aea41d2af0..04cf76da2b3f 100644
 --- a/content/browser/service_worker/service_worker_version.h
 +++ b/content/browser/service_worker/service_worker_version.h
-@@ -47,7 +47,6 @@
+@@ -48,7 +48,6 @@
  #include "mojo/public/cpp/bindings/pending_associated_remote.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "mojo/public/cpp/bindings/remote.h"
@@ -10,7 +10,7 @@ index b7c3b5cc809c..6ee1560e978f 100644
  #include "services/network/public/cpp/cross_origin_embedder_policy.h"
  #include "third_party/blink/public/common/origin_trials/trial_token_validator.h"
  #include "third_party/blink/public/common/service_worker/service_worker_status_code.h"
-@@ -213,7 +212,6 @@ class CONTENT_EXPORT ServiceWorkerVersion
+@@ -211,7 +210,6 @@ class CONTENT_EXPORT ServiceWorkerVersion
    }
    ServiceWorkerVersionInfo GetInfo();
    Status status() const { return status_; }
@@ -18,7 +18,7 @@ index b7c3b5cc809c..6ee1560e978f 100644
  
    // This status is set to EXISTS or DOES_NOT_EXIST when the install event has
    // been executed in a new version or when an installed version is loaded from
-@@ -1102,10 +1100,6 @@ class CONTENT_EXPORT ServiceWorkerVersion
+@@ -1113,10 +1111,6 @@ class CONTENT_EXPORT ServiceWorkerVersion
    // for more details.
    mojo::Remote<storage::mojom::ServiceWorkerLiveVersionRef> remote_reference_;
  

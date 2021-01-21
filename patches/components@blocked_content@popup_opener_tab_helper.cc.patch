@@ -1,5 +1,5 @@
 diff --git a/components/blocked_content/popup_opener_tab_helper.cc b/components/blocked_content/popup_opener_tab_helper.cc
-index 77a7d075087f..e2422e07d52a 100644
+index 69e264d9fb0b..e2422e07d52a 100644
 --- a/components/blocked_content/popup_opener_tab_helper.cc
 +++ b/components/blocked_content/popup_opener_tab_helper.cc
 @@ -10,15 +10,11 @@
@@ -38,9 +38,9 @@ index 77a7d075087f..e2422e07d52a 100644
 -  // Do not record duplicate Popup.Page events for popups opened in succession
 -  // from the same opener.
 -  if (source_id != last_opener_source_id_) {
--    bool user_allows_popups = settings_map_->GetContentSetting(
--                                  url, url, ContentSettingsType::POPUPS,
--                                  std::string()) == CONTENT_SETTING_ALLOW;
+-    bool user_allows_popups =
+-        settings_map_->GetContentSetting(
+-            url, url, ContentSettingsType::POPUPS) == CONTENT_SETTING_ALLOW;
 -    ukm::builders::Popup_Page(source_id)
 -        .SetAllowed(user_allows_popups)
 -        .Record(ukm::UkmRecorder::Get());

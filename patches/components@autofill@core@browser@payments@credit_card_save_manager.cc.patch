@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/payments/credit_card_save_manager.cc b/components/autofill/core/browser/payments/credit_card_save_manager.cc
-index e9e8c203a209..d6e77bf2b25a 100644
+index 2addf2ad08fd..8b70c69f9d03 100644
 --- a/components/autofill/core/browser/payments/credit_card_save_manager.cc
 +++ b/components/autofill/core/browser/payments/credit_card_save_manager.cc
 @@ -27,7 +27,6 @@
@@ -131,7 +131,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    }
  }
  
-@@ -500,27 +441,6 @@ void CreditCardSaveManager::OfferCardUploadSave() {
+@@ -502,27 +443,6 @@ void CreditCardSaveManager::OfferCardUploadSave() {
      client_->LoadRiskData(
          base::BindOnce(&CreditCardSaveManager::OnDidGetUploadRiskData,
                         weak_ptr_factory_.GetWeakPtr()));
@@ -159,7 +159,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    }
  }
  
-@@ -528,14 +448,6 @@ void CreditCardSaveManager::OnUserDidDecideOnLocalSave(
+@@ -530,14 +450,6 @@ void CreditCardSaveManager::OnUserDidDecideOnLocalSave(
      AutofillClient::SaveCardOfferUserDecision user_decision) {
    switch (user_decision) {
      case AutofillClient::ACCEPTED:
@@ -174,7 +174,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
        // Clear all CreditCardSave strikes for this card, in case it is later
        // removed.
        GetCreditCardSaveStrikeDatabase()->ClearStrikes(
-@@ -574,8 +486,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+@@ -576,8 +488,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
    std::vector<AutofillProfile> candidate_profiles;
    const base::Time now = AutofillClock::Now();
    const base::TimeDelta fifteen_minutes = base::TimeDelta::FromMinutes(15);
@@ -183,7 +183,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    bool has_profile = false;
  
    // First, collect all of the addresses used or modified recently.
-@@ -587,13 +497,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+@@ -589,13 +499,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
      }
    }
  
@@ -197,7 +197,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    // If any of the names on the card or the addresses don't match the
    // candidate set is invalid. This matches the rules for name matching applied
    // server-side by Google Payments and ensures that we don't send upload
-@@ -619,16 +522,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+@@ -621,16 +524,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
          break;
        }
      }
@@ -214,7 +214,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    }
  
    // If any of the candidate addresses have a non-empty zip that doesn't match
-@@ -652,8 +545,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+@@ -654,8 +547,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
          // likely to fail.
          if (!(StartsWith(verified_zip, zip, base::CompareCase::SENSITIVE) ||
                StartsWith(zip, verified_zip, base::CompareCase::SENSITIVE))) {
@@ -223,7 +223,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
            break;
          }
        }
-@@ -663,8 +554,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
+@@ -665,8 +556,6 @@ void CreditCardSaveManager::SetProfilesForCreditCardUpload(
    // If none of the candidate addresses have a zip, the candidate set is
    // invalid.
    if (verified_zip.empty() && !candidate_profiles.empty())
@@ -232,7 +232,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    // Set up |upload_request->profiles|.
    upload_request->profiles.assign(candidate_profiles.begin(),
                                    candidate_profiles.end());
-@@ -682,9 +571,7 @@ int CreditCardSaveManager::GetDetectedValues() const {
+@@ -684,9 +573,7 @@ int CreditCardSaveManager::GetDetectedValues() const {
    // UPLOAD_NOT_OFFERED_CONFLICTING_NAMES was not set.
    if (!upload_request_.card
             .GetInfo(AutofillType(CREDIT_CARD_NAME_FULL), app_locale_)
@@ -243,7 +243,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
      detected_values |= DetectedValue::CARDHOLDER_NAME;
    }
  
-@@ -694,14 +581,10 @@ int CreditCardSaveManager::GetDetectedValues() const {
+@@ -696,14 +583,10 @@ int CreditCardSaveManager::GetDetectedValues() const {
    //  - POSTAL_CODE, as long as UPLOAD_NOT_OFFERED_CONFLICTING_ZIPS was not set
    //  - Any other address fields found on any addresses, regardless of conflicts
    for (const AutofillProfile& profile : upload_request_.profiles) {
@@ -260,7 +260,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
        detected_values |= DetectedValue::POSTAL_CODE;
      }
      if (!profile.GetInfo(ADDRESS_HOME_LINE1, app_locale_).empty()) {
-@@ -908,10 +791,6 @@ void CreditCardSaveManager::SendUploadCardRequest() {
+@@ -910,10 +793,6 @@ void CreditCardSaveManager::SendUploadCardRequest() {
    upload_request_.billing_customer_number =
        payments::GetBillingCustomerId(personal_data_manager_);
  
@@ -271,7 +271,7 @@ index e9e8c203a209..d6e77bf2b25a 100644
    payments_client_->UploadCard(
        upload_request_, base::BindOnce(&CreditCardSaveManager::OnDidUploadCard,
                                        weak_ptr_factory_.GetWeakPtr()));
-@@ -934,66 +813,4 @@ void CreditCardSaveManager::OnStrikeChangeComplete(const int num_strikes) {
+@@ -936,66 +815,4 @@ void CreditCardSaveManager::OnStrikeChangeComplete(const int num_strikes) {
      observer_for_testing_->OnStrikeChangeComplete();
  }
  

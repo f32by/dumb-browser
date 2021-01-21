@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/notifications/notification_platform_bridge_mac.mm b/chrome/browser/notifications/notification_platform_bridge_mac.mm
-index c2905bfd0df7..aae09d5a8113 100644
+index 9e8fcb9f9f91..1e34d7f9841d 100644
 --- a/chrome/browser/notifications/notification_platform_bridge_mac.mm
 +++ b/chrome/browser/notifications/notification_platform_bridge_mac.mm
-@@ -40,7 +40,6 @@
+@@ -39,7 +39,6 @@
  #include "components/crash/core/app/crashpad.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "third_party/blink/public/common/notifications/notification_constants.h"
@@ -10,17 +10,16 @@ index c2905bfd0df7..aae09d5a8113 100644
  #include "ui/base/l10n/l10n_util_mac.h"
  #include "ui/message_center/public/cpp/notification.h"
  #include "ui/message_center/public/cpp/notification_types.h"
-@@ -448,16 +447,6 @@ - (void)notificationClick:(NSDictionary*)notificationResponseData {
- // service has its exception port configured for crash reporting.
+@@ -451,15 +450,6 @@ - (void)notificationClick:(NSDictionary*)notificationResponseData {
  - (id<NotificationDelivery>)serviceProxy {
    id<NotificationDelivery> proxy = [_xpcConnection remoteObjectProxy];
--
+ 
 -  if (!_setExceptionPort) {
 -    base::mac::ScopedMachSendRight exceptionPort(
 -        crash_reporter::GetCrashpadClient().GetHandlerMachPort());
 -    base::scoped_nsobject<CrXPCMachPort> xpcPort(
 -        [[CrXPCMachPort alloc] initWithMachSendRight:std::move(exceptionPort)]);
--    [proxy setMachExceptionPort:xpcPort];
+-    [proxy setUseUNNotification:NO machExceptionPort:xpcPort];
 -    _setExceptionPort = YES;
 -  }
 -

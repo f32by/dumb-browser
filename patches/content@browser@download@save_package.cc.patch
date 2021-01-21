@@ -1,5 +1,5 @@
 diff --git a/content/browser/download/save_package.cc b/content/browser/download/save_package.cc
-index 832f69deb266..54a8d2408d8b 100644
+index 6028a18435cc..cdbefeb9ddf6 100644
 --- a/content/browser/download/save_package.cc
 +++ b/content/browser/download/save_package.cc
 @@ -27,9 +27,7 @@
@@ -12,7 +12,7 @@ index 832f69deb266..54a8d2408d8b 100644
  #include "components/download/public/common/download_utils.h"
  #include "components/filename_generation/filename_generation.h"
  #include "components/url_formatter/url_formatter.h"
-@@ -64,7 +62,6 @@
+@@ -63,7 +61,6 @@
  #include "mojo/public/cpp/bindings/self_owned_receiver.h"
  #include "net/base/filename_util.h"
  #include "net/base/mime_util.h"
@@ -20,7 +20,7 @@ index 832f69deb266..54a8d2408d8b 100644
  #include "url/url_constants.h"
  
  namespace content {
-@@ -246,7 +243,6 @@ void SavePackage::Cancel(bool user_action, bool cancel_download_item) {
+@@ -245,7 +242,6 @@ void SavePackage::Cancel(bool user_action, bool cancel_download_item) {
        disk_error_occurred_ = true;
      Stop(cancel_download_item);
    }
@@ -28,7 +28,7 @@ index 832f69deb266..54a8d2408d8b 100644
  }
  
  // Init() can be called directly, or indirectly via GetSaveInfo(). In both
-@@ -261,22 +257,6 @@ void SavePackage::InternalInit() {
+@@ -260,22 +256,6 @@ void SavePackage::InternalInit() {
        BrowserContext::GetDownloadManager(
            web_contents()->GetBrowserContext()));
    DCHECK(download_manager_);
@@ -51,7 +51,7 @@ index 832f69deb266..54a8d2408d8b 100644
  }
  
  bool SavePackage::Init(
-@@ -715,20 +695,6 @@ void SavePackage::Finish() {
+@@ -714,20 +694,6 @@ void SavePackage::Finish() {
    wait_state_ = SUCCESSFUL;
    finished_ = true;
  

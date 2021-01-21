@@ -1,10 +1,13 @@
 diff --git a/chrome/browser/ui/webui/interstitials/interstitial_ui.cc b/chrome/browser/ui/webui/interstitials/interstitial_ui.cc
-index f0f6eca30f7d..82d5bd4e633d 100644
+index 5d2531179768..56274daaf67d 100644
 --- a/chrome/browser/ui/webui/interstitials/interstitial_ui.cc
 +++ b/chrome/browser/ui/webui/interstitials/interstitial_ui.cc
-@@ -16,10 +16,6 @@
- #include "chrome/browser/lookalikes/lookalike_url_blocking_page.h"
- #include "chrome/browser/lookalikes/lookalike_url_controller_client.h"
+@@ -13,21 +13,13 @@
+ #include "base/strings/string_util.h"
+ #include "base/time/time.h"
+ #include "chrome/browser/browser_process.h"
+-#include "chrome/browser/lookalikes/lookalike_url_blocking_page.h"
+-#include "chrome/browser/lookalikes/lookalike_url_controller_client.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_blocking_page.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
@@ -13,15 +16,15 @@ index f0f6eca30f7d..82d5bd4e633d 100644
  #include "chrome/browser/ssl/chrome_security_blocking_page_factory.h"
  #include "chrome/browser/ssl/insecure_form/insecure_form_controller_client.h"
  #include "chrome/common/buildflags.h"
-@@ -27,7 +23,6 @@
+ #include "chrome/common/url_constants.h"
  #include "components/captive_portal/core/buildflags.h"
  #include "components/grit/dev_ui_components_resources.h"
- #include "components/lookalikes/core/lookalike_url_util.h"
+-#include "components/lookalikes/core/lookalike_url_util.h"
 -#include "components/safe_browsing/core/db/database_manager.h"
  #include "components/security_interstitials/content/bad_clock_blocking_page.h"
  #include "components/security_interstitials/content/blocked_interception_blocking_page.h"
  #include "components/security_interstitials/content/insecure_form_blocking_page.h"
-@@ -51,7 +46,6 @@
+@@ -51,7 +43,6 @@
  #include "net/cert/x509_certificate.h"
  #include "net/cert/x509_util.h"
  #include "net/ssl/ssl_info.h"
@@ -29,7 +32,7 @@ index f0f6eca30f7d..82d5bd4e633d 100644
  #include "services/network/public/cpp/origin_policy.h"
  #include "services/network/public/mojom/content_security_policy.mojom.h"
  #include "ui/base/resource/resource_bundle.h"
-@@ -66,8 +60,6 @@
+@@ -66,8 +57,6 @@
  #include "chrome/browser/supervised_user/supervised_user_interstitial.h"
  #endif
  
@@ -38,16 +41,30 @@ index f0f6eca30f7d..82d5bd4e633d 100644
  namespace {
  
  // NSS requires that serial numbers be unique even for the same issuer;
-@@ -272,7 +264,7 @@ std::unique_ptr<LookalikeUrlBlockingPage> CreateLookalikeInterstitialPage(
-     safe_url = GURL();
-   }
-   return std::make_unique<LookalikeUrlBlockingPage>(
+@@ -262,22 +251,6 @@ std::unique_ptr<BadClockBlockingPage> CreateBadClockBlockingPage(
+       clock_state, nullptr);
+ }
+ 
+-std::unique_ptr<LookalikeUrlBlockingPage> CreateLookalikeInterstitialPage(
+-    content::WebContents* web_contents) {
+-  GURL request_url("https://example.net");
+-  GURL safe_url("https://example.com");
+-  std::string url_param;
+-  if (net::GetValueForKeyInQuery(web_contents->GetURL(), "no-safe-url",
+-                                 &url_param)) {
+-    safe_url = GURL();
+-  }
+-  return std::make_unique<LookalikeUrlBlockingPage>(
 -      web_contents, safe_url, request_url, ukm::kInvalidSourceId,
-+      web_contents, safe_url, request_url,
-       LookalikeUrlMatchType::kNone,
-       std::make_unique<LookalikeUrlControllerClient>(web_contents, request_url,
-                                                      safe_url));
-@@ -287,113 +279,6 @@ CreateInsecureFormPage(content::WebContents* web_contents) {
+-      LookalikeUrlMatchType::kNone, false,
+-      std::make_unique<LookalikeUrlControllerClient>(web_contents, request_url,
+-                                                     safe_url));
+-}
+-
+ std::unique_ptr<security_interstitials::InsecureFormBlockingPage>
+ CreateInsecureFormPage(content::WebContents* web_contents) {
+   GURL request_url("http://example.com");
+@@ -287,113 +260,6 @@ CreateInsecureFormPage(content::WebContents* web_contents) {
                                                       request_url));
  }
  
@@ -161,7 +178,7 @@ index f0f6eca30f7d..82d5bd4e633d 100644
  #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
  std::unique_ptr<CaptivePortalBlockingPage> CreateCaptivePortalBlockingPage(
      content::WebContents* web_contents) {
-@@ -510,8 +395,6 @@ void InterstitialHTMLSource::StartDataRequest(
+@@ -510,12 +376,8 @@ void InterstitialHTMLSource::StartDataRequest(
      interstitial_delegate = CreateBlockedInterceptionBlockingPage(web_contents);
    } else if (path_without_query == "/legacy-tls") {
      interstitial_delegate = CreateLegacyTLSBlockingPage(web_contents);
@@ -169,8 +186,12 @@ index f0f6eca30f7d..82d5bd4e633d 100644
 -    interstitial_delegate = CreateSafeBrowsingBlockingPage(web_contents);
    } else if (path_without_query == "/clock") {
      interstitial_delegate = CreateBadClockBlockingPage(web_contents);
-   } else if (path_without_query == "/lookalike") {
-@@ -526,16 +409,12 @@ void InterstitialHTMLSource::StartDataRequest(
+-  } else if (path_without_query == "/lookalike") {
+-    interstitial_delegate = CreateLookalikeInterstitialPage(web_contents);
+ #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
+   } else if (path_without_query == "/captiveportal") {
+     interstitial_delegate = CreateCaptivePortalBlockingPage(web_contents);
+@@ -526,16 +388,12 @@ void InterstitialHTMLSource::StartDataRequest(
      interstitial_delegate = CreateInsecureFormPage(web_contents);
    }
  

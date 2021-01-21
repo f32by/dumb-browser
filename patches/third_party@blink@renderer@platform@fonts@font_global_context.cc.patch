@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/fonts/font_global_context.cc b/third_party/blink/renderer/platform/fonts/font_global_context.cc
-index 05d13203f29c..ee1cb3b220c5 100644
+index bd422ac3c84d..2b9efbba1f0f 100644
 --- a/third_party/blink/renderer/platform/fonts/font_global_context.cc
 +++ b/third_party/blink/renderer/platform/fonts/font_global_context.cc
 @@ -7,14 +7,8 @@
@@ -28,7 +28,7 @@ index 05d13203f29c..ee1cb3b220c5 100644
  
  FontGlobalContext::~FontGlobalContext() = default;
  
-@@ -51,51 +43,11 @@ HarfBuzzFontCache* FontGlobalContext::GetHarfBuzzFontCache() {
+@@ -51,52 +43,12 @@ HarfBuzzFontCache* FontGlobalContext::GetHarfBuzzFontCache() {
    return global_context_harfbuzz_font_cache.get();
  }
  
@@ -71,12 +71,13 @@ index 05d13203f29c..ee1cb3b220c5 100644
 -}
 -
  void FontGlobalContext::ClearMemory() {
-   if (!Get(kDoNotCreate))
+   FontGlobalContext* context = Get(kDoNotCreate);
+   if (!context)
      return;
  
-   GetFontCache().Invalidate();
--  Get()->typeface_digest_cache_.Clear();
--  Get()->postscript_name_digest_cache_.Clear();
+   context->font_cache_.Invalidate();
+-  context->typeface_digest_cache_.Clear();
+-  context->postscript_name_digest_cache_.Clear();
  }
  
  }  // namespace blink

@@ -1,8 +1,8 @@
 diff --git a/cc/trees/layer_tree_host_impl.h b/cc/trees/layer_tree_host_impl.h
-index c0c6166c5f61..cbc84389e3a8 100644
+index eee1d46bc159..99b3acc06bcc 100644
 --- a/cc/trees/layer_tree_host_impl.h
 +++ b/cc/trees/layer_tree_host_impl.h
-@@ -60,7 +60,6 @@
+@@ -62,7 +62,6 @@
  #include "cc/trees/presentation_time_callback_buffer.h"
  #include "cc/trees/render_frame_metadata.h"
  #include "cc/trees/task_runner_provider.h"
@@ -10,7 +10,7 @@ index c0c6166c5f61..cbc84389e3a8 100644
  #include "components/viz/client/client_resource_provider.h"
  #include "components/viz/common/frame_sinks/begin_frame_args.h"
  #include "components/viz/common/gpu/context_cache_controller.h"
-@@ -760,9 +759,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -773,9 +772,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
        base::flat_map<PaintImage::Id, PaintImage::DecodingMode>
            decoding_mode_map);
  
@@ -20,7 +20,7 @@ index c0c6166c5f61..cbc84389e3a8 100644
    ActiveFrameSequenceTrackers FrameSequenceTrackerActiveTypes() {
      return frame_trackers_.FrameSequenceTrackerActiveTypes();
    }
-@@ -772,10 +768,7 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -785,10 +781,7 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
    void SetRenderFrameObserver(
        std::unique_ptr<RenderFrameMetadataObserver> observer);
  
@@ -32,7 +32,7 @@ index c0c6166c5f61..cbc84389e3a8 100644
  
    CompositorFrameReportingController* compositor_frame_reporting_controller()
        const {
-@@ -1104,8 +1097,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -1127,8 +1120,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
  
    ImageAnimationController image_animation_controller_;
  
@@ -41,12 +41,12 @@ index c0c6166c5f61..cbc84389e3a8 100644
    // Provides RenderFrameMetadata to the Browser process upon the submission of
    // each CompositorFrame.
    std::unique_ptr<RenderFrameMetadataObserver> render_frame_metadata_observer_;
-@@ -1176,8 +1167,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+@@ -1199,8 +1190,6 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
    // DroppedFrameCounter. Currently true when first contentful paint is done.
    bool is_measuring_smoothness_ = false;
  
 -  base::WritableSharedMemoryMapping ukm_smoothness_mapping_;
 -
-   // Must be the last member to ensure this is destroyed first in the
-   // destruction order and invalidates all weak pointers.
-   base::WeakPtrFactory<LayerTreeHostImpl> weak_factory_{this};
+   // Cache for the results of calls to gfx::ColorSpace::Contains() on sRGB. This
+   // computation is deterministic for a given color space, can be called
+   // multiple times per frame, and incurs a non-trivial cost.

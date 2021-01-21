@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/autofill_manager.h b/components/autofill/core/browser/autofill_manager.h
-index fc6e8bc4714b..c07e0c6274d2 100644
+index d2cecaf5e007..32ffbf3f817e 100644
 --- a/components/autofill/core/browser/autofill_manager.h
 +++ b/components/autofill/core/browser/autofill_manager.h
 @@ -27,11 +27,8 @@
@@ -39,7 +39,7 @@ index fc6e8bc4714b..c07e0c6274d2 100644
    // Exposed for testing.
    void set_download_manager(AutofillDownloadManager* manager) {
      download_manager_.reset(manager);
-@@ -611,11 +597,6 @@ class AutofillManager : public AutofillHandler,
+@@ -625,11 +611,6 @@ class AutofillManager : public AutofillHandler,
    bool ShouldShowVirtualCardOption(FormStructure* form_structure);
  #endif
  
@@ -50,8 +50,8 @@ index fc6e8bc4714b..c07e0c6274d2 100644
 -
    void SetDataList(const std::vector<base::string16>& values,
                     const std::vector<base::string16>& labels);
-   AutofillClient* const client_;
-@@ -643,14 +624,6 @@ class AutofillManager : public AutofillHandler,
+ 
+@@ -658,14 +639,6 @@ class AutofillManager : public AutofillHandler,
    // May be NULL.  NULL indicates OTR.
    base::WeakPtr<AutocompleteHistoryManager> autocomplete_history_manager_;
  

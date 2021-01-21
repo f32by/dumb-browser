@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/form_structure.cc b/components/autofill/core/browser/form_structure.cc
-index ff7993d82e26..5a8cb000d0d4 100644
+index 9bd72190efaa..d9246533d883 100644
 --- a/components/autofill/core/browser/form_structure.cc
 +++ b/components/autofill/core/browser/form_structure.cc
 @@ -31,7 +31,6 @@
@@ -7,10 +7,10 @@ index ff7993d82e26..5a8cb000d0d4 100644
  #include "base/time/time.h"
  #include "components/autofill/core/browser/autofill_data_util.h"
 -#include "components/autofill/core/browser/autofill_metrics.h"
+ #include "components/autofill/core/browser/autofill_regex_constants.h"
+ #include "components/autofill/core/browser/autofill_regexes.h"
  #include "components/autofill/core/browser/autofill_type.h"
- #include "components/autofill/core/browser/field_types.h"
- #include "components/autofill/core/browser/form_parsing/field_candidates.h"
-@@ -608,7 +607,6 @@ FormStructure::FormStructure(const FormData& form)
+@@ -607,7 +606,6 @@ FormStructure::FormStructure(const FormData& form)
        form_parsed_timestamp_(AutofillTickClock::NowTicks()),
        passwords_were_revealed_(false),
        password_symbol_vote_(0),
@@ -18,7 +18,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
        unique_renderer_id_(form.unique_renderer_id) {
    // Copy the form fields.
    std::map<base::string16, size_t> unique_names;
-@@ -646,9 +644,6 @@ FormStructure::FormStructure(
+@@ -645,9 +643,6 @@ FormStructure::FormStructure(
  FormStructure::~FormStructure() = default;
  
  void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
@@ -28,7 +28,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
    // First, try to detect field types based on each field's |autocomplete|
    // attribute value.
    if (!was_parsed_for_autocomplete_attributes_)
-@@ -671,27 +666,7 @@ void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
+@@ -670,27 +665,7 @@ void FormStructure::DetermineHeuristicTypes(LogManager* log_manager) {
    UpdateAutofillCount();
    IdentifySections(has_author_specified_sections_);
  
@@ -56,7 +56,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
  }
  
  bool FormStructure::EncodeUploadRequest(
-@@ -791,10 +766,7 @@ bool FormStructure::EncodeQueryRequest(
+@@ -792,10 +767,7 @@ bool FormStructure::EncodeQueryRequest(
  void FormStructure::ParseApiQueryResponse(
      base::StringPiece payload,
      const std::vector<FormStructure*>& forms,
@@ -68,7 +68,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
  
    std::string decoded_payload;
    if (!base::Base64Decode(payload, &decoded_payload)) {
-@@ -810,17 +782,14 @@ void FormStructure::ParseApiQueryResponse(
+@@ -811,17 +783,14 @@ void FormStructure::ParseApiQueryResponse(
    VLOG(1) << "Autofill query response from API was successfully parsed: "
            << response;
  
@@ -88,7 +88,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
  
    bool heuristics_detected_fillable_field = false;
    bool query_response_overrode_heuristics = false;
-@@ -883,27 +852,12 @@ void FormStructure::ProcessQueryResponse(
+@@ -884,26 +853,11 @@ void FormStructure::ProcessQueryResponse(
          field->SetPasswordRequirements(current_field.password_requirements());
      }
  
@@ -99,7 +99,6 @@ index ff7993d82e26..5a8cb000d0d4 100644
 -    form->RationalizeRepeatedFields(form_interactions_ukm_logger);
 +    form->RationalizeRepeatedFields();
      form->RationalizeFieldTypePredictions();
-     form->OverrideServerPredictionsWithHeuristics();
      form->IdentifySections(false);
    }
 -
@@ -117,7 +116,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
  }
  
  // static
-@@ -1165,148 +1119,6 @@ void FormStructure::RetrieveFromCache(
+@@ -1141,148 +1095,6 @@ void FormStructure::RetrieveFromCache(
    form_signature_ = cached_form.form_signature_;
  }
  
@@ -198,8 +197,8 @@ index ff7993d82e26..5a8cb000d0d4 100644
 -  // submission event.
 -  if (observed_submission) {
 -    AutofillMetrics::AutofillFormSubmittedState state;
--    if (num_detected_field_types < MinRequiredFieldsForHeuristics() &&
--        num_detected_field_types < MinRequiredFieldsForQuery()) {
+-    if (num_detected_field_types < kMinRequiredFieldsForHeuristics &&
+-        num_detected_field_types < kMinRequiredFieldsForQuery) {
 -      state = AutofillMetrics::NON_FILLABLE_FORM_OR_NEW_DATA;
 -    } else {
 -      if (did_autofill_all_possible_fields) {
@@ -266,7 +265,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
  void FormStructure::ParseFieldTypesFromAutocompleteAttributes() {
    has_author_specified_types_ = false;
    has_author_specified_sections_ = false;
-@@ -1649,21 +1461,14 @@ void FormStructure::RationalizePhoneNumbersInSection(std::string section) {
+@@ -1625,21 +1437,14 @@ void FormStructure::RationalizePhoneNumbersInSection(std::string section) {
  
  void FormStructure::ApplyRationalizationsToFieldAndLog(
      size_t field_index,
@@ -290,7 +289,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
    // The rationalization happens within sections.
    for (sections_of_address_indexes->Reset();
         !sections_of_address_indexes->IsFinished();
-@@ -1680,16 +1485,13 @@ void FormStructure::RationalizeAddressLineFields(
+@@ -1656,16 +1461,13 @@ void FormStructure::RationalizeAddressLineFields(
      for (auto field_index : current_section) {
        switch (nb_address_rationalized) {
          case 0:
@@ -310,7 +309,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
            break;
          default:
            NOTREACHED();
-@@ -1702,8 +1504,7 @@ void FormStructure::RationalizeAddressLineFields(
+@@ -1678,8 +1480,7 @@ void FormStructure::RationalizeAddressLineFields(
  
  void FormStructure::ApplyRationalizationsToHiddenSelects(
      size_t field_index,
@@ -320,7 +319,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
    ServerFieldType old_type = fields_[field_index]->Type().GetStorableType();
  
    // Walk on the hidden select fields right after the field_index which share
-@@ -1715,8 +1516,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
+@@ -1691,8 +1492,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
          fields_[current_index]->form_control_type != "select-one" ||
          fields_[current_index]->Type().GetStorableType() != old_type)
        break;
@@ -330,7 +329,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
    }
  
    // Same for the fields coming right before the field_index. (No need to check
-@@ -1728,8 +1528,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
+@@ -1704,8 +1504,7 @@ void FormStructure::ApplyRationalizationsToHiddenSelects(
          fields_[current_index]->form_control_type != "select-one" ||
          fields_[current_index]->Type().GetStorableType() != old_type)
        break;
@@ -340,7 +339,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
      if (current_index == 0)
        break;
    }
-@@ -1757,22 +1556,17 @@ void FormStructure::ApplyRationalizationsToFields(
+@@ -1733,22 +1532,17 @@ void FormStructure::ApplyRationalizationsToFields(
      size_t upper_index,
      size_t lower_index,
      ServerFieldType upper_type,
@@ -368,7 +367,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
  }
  
  bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
-@@ -1792,8 +1586,7 @@ bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
+@@ -1768,8 +1562,7 @@ bool FormStructure::FieldShouldBeRationalizedToCountry(size_t upper_index) {
  
  void FormStructure::RationalizeAddressStateCountry(
      SectionedFieldsIndexes* sections_of_state_indexes,
@@ -378,7 +377,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
    // Walk on the sections of state and country indexes simultaneously. If they
    // both point to the same section, it means that that section includes both
    // the country and the state type. This means that no that rationalization is
-@@ -1855,18 +1648,16 @@ void FormStructure::RationalizeAddressStateCountry(
+@@ -1831,24 +1624,21 @@ void FormStructure::RationalizeAddressStateCountry(
                                             ADDRESS_HOME_COUNTRY)) {
        ApplyRationalizationsToFields(
            upper_index, lower_index, fields_[upper_index]->heuristic_type(),
@@ -400,9 +399,6 @@ index ff7993d82e26..5a8cb000d0d4 100644
      }
    }
  }
-@@ -1892,8 +1683,7 @@ void FormStructure::OverrideServerPredictionsWithHeuristics() {
-   }
- }
  
 -void FormStructure::RationalizeRepeatedFields(
 -    AutofillMetrics::FormInteractionsUkmLogger* form_interactions_ukm_logger) {
@@ -410,7 +406,7 @@ index ff7993d82e26..5a8cb000d0d4 100644
    // The type of every field whose index is in
    // sectioned_field_indexes_by_type[|type|] is predicted by server as |type|.
    // Example: sectioned_field_indexes_by_type[FULL_NAME] is a sectioned fields
-@@ -1922,14 +1712,12 @@ void FormStructure::RationalizeRepeatedFields(
+@@ -1877,14 +1667,12 @@ void FormStructure::RationalizeRepeatedFields(
    }
  
    RationalizeAddressLineFields(

@@ -1,15 +1,15 @@
 diff --git a/content/public/browser/content_browser_client.h b/content/public/browser/content_browser_client.h
-index 811bc7be6b17..a3d06665b0f1 100644
+index ce69e43769b2..9984a998e863 100644
 --- a/content/public/browser/content_browser_client.h
 +++ b/content/public/browser/content_browser_client.h
-@@ -19,7 +19,6 @@
- #include "base/containers/flat_set.h"
- #include "base/files/file_path.h"
- #include "base/memory/scoped_refptr.h"
--#include "base/metrics/ukm_source_id.h"
- #include "base/optional.h"
- #include "base/strings/string_piece.h"
- #include "base/time/time.h"
+@@ -42,7 +42,6 @@
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "mojo/public/cpp/system/message_pipe.h"
+ #include "ppapi/buildflags/buildflags.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/network_context.mojom-forward.h"
+ #include "services/network/public/mojom/restricted_cookie_manager.mojom-forward.h"
+ #include "services/network/public/mojom/url_loader_factory.mojom-forward.h"
 @@ -168,10 +167,6 @@ class SelectFilePolicy;
  class ClipboardFormatType;
  }  // namespace ui
@@ -21,29 +21,29 @@ index 811bc7be6b17..a3d06665b0f1 100644
  namespace url {
  class Origin;
  }  // namespace url
-@@ -1265,7 +1260,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -1256,7 +1251,6 @@ class CONTENT_EXPORT ContentBrowserClient {
                 mojo::PendingRemote<network::mojom::URLLoaderFactory>>;
    virtual void RegisterNonNetworkNavigationURLLoaderFactories(
        int frame_tree_node_id,
--      base::UkmSourceId ukm_source_id,
-       NonNetworkURLLoaderFactoryDeprecatedMap* uniquely_owned_factories,
+-      ukm::SourceIdObj ukm_source_id,
        NonNetworkURLLoaderFactoryMap* factories);
  
-@@ -1417,7 +1411,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+   // Allows the embedder to register per-scheme URLLoaderFactory
+@@ -1402,7 +1396,6 @@ class CONTENT_EXPORT ContentBrowserClient {
        URLLoaderFactoryType type,
        const url::Origin& request_initiator,
        base::Optional<int64_t> navigation_id,
--      base::UkmSourceId ukm_source_id,
+-      ukm::SourceIdObj ukm_source_id,
        mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
        mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
            header_client,
-@@ -1923,9 +1916,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -1909,9 +1902,6 @@ class CONTENT_EXPORT ContentBrowserClient {
        BrowserContext* browser_context,
        const GURL& url);
  
 -  // Returns the URL-Keyed Metrics service for chrome:ukm.
 -  virtual ukm::UkmService* GetUkmService();
 -
- #if defined(OS_MAC)
-   // Sets up the embedder sandbox parameters for the given sandbox type. Returns
-   // true if parameters were successfully set up or false if no additional
+   // Called when a keepalive request
+   // (https://fetch.spec.whatwg.org/#request-keepalive-flag) is requested.
+   virtual void OnKeepaliveRequestStarted();

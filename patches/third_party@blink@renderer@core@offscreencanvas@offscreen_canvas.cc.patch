@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc b/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
-index 6ca96f58319e..4fa8130a5473 100644
+index a98d3ace6662..4fa8130a5473 100644
 --- a/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
 +++ b/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
 @@ -8,9 +8,6 @@
@@ -20,17 +20,7 @@ index 6ca96f58319e..4fa8130a5473 100644
  #include "third_party/blink/renderer/core/imagebitmap/image_bitmap.h"
  #include "third_party/blink/renderer/core/workers/dedicated_worker_global_scope.h"
  #include "third_party/blink/renderer/platform/bindings/microtask.h"
-@@ -47,8 +43,7 @@ namespace blink {
- 
- OffscreenCanvas::OffscreenCanvas(ExecutionContext* context, const IntSize& size)
-     : CanvasRenderingContextHost(
--          CanvasRenderingContextHost::HostType::kOffscreenCanvasHost,
--          {context->UkmRecorder(), context->UkmSourceID()}),
-+          CanvasRenderingContextHost::HostType::kOffscreenCanvasHost),
-       execution_context_(context),
-       size_(size) {
-   // Other code in Blink watches for destruction of the context; be
-@@ -222,26 +217,9 @@ ImageBitmap* OffscreenCanvas::transferToImageBitmap(
+@@ -221,26 +217,9 @@ ImageBitmap* OffscreenCanvas::transferToImageBitmap(
                                        "ImageBitmap construction failed");
    }
  
@@ -57,3 +47,15 @@ index 6ca96f58319e..4fa8130a5473 100644
  scoped_refptr<Image> OffscreenCanvas::GetSourceImageForCanvas(
      SourceImageStatus* status,
      const FloatSize& size) {
+@@ -522,11 +501,6 @@ bool OffscreenCanvas::ShouldAccelerate2dContext() const {
+          context_provider_wrapper->Utils()->Accelerated2DCanvasFeatureEnabled();
+ }
+ 
+-UkmParameters OffscreenCanvas::GetUkmParameters() {
+-  auto* context = GetExecutionContext();
+-  return {context->UkmRecorder(), context->UkmSourceID()};
+-}
+-
+ FontSelector* OffscreenCanvas::GetFontSelector() {
+   if (auto* window = DynamicTo<LocalDOMWindow>(GetExecutionContext())) {
+     return window->document()->GetStyleEngine().GetFontSelector();

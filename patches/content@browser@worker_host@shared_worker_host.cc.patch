@@ -1,28 +1,29 @@
 diff --git a/content/browser/worker_host/shared_worker_host.cc b/content/browser/worker_host/shared_worker_host.cc
-index b3cae30e8413..2ab175b728c7 100644
+index be8d622fe81c..32f0b2a14216 100644
 --- a/content/browser/worker_host/shared_worker_host.cc
 +++ b/content/browser/worker_host/shared_worker_host.cc
-@@ -32,8 +32,6 @@
+@@ -33,9 +33,6 @@
  #include "mojo/public/cpp/bindings/pending_associated_remote.h"
  #include "net/base/isolation_info.h"
  #include "net/cookies/site_for_cookies.h"
 -#include "services/metrics/public/cpp/delegating_ukm_recorder.h"
 -#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
  #include "third_party/blink/public/common/loader/url_loader_factory_bundle.h"
  #include "third_party/blink/public/common/messaging/message_port_channel.h"
- #include "third_party/blink/public/mojom/appcache/appcache.mojom.h"
-@@ -112,9 +110,7 @@ SharedWorkerHost::SharedWorkerHost(SharedWorkerServiceImpl* service,
-           std::make_unique<ScopedProcessHostRef>(worker_process_host)),
-       scoped_process_host_observer_(this),
+ #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
+@@ -115,9 +112,7 @@ SharedWorkerHost::SharedWorkerHost(
+       scoped_process_host_ref_(
+           std::make_unique<ScopedProcessHostRef>(site_instance_->GetProcess())),
        next_connection_request_id_(1),
 -      devtools_handle_(std::make_unique<ScopedDevToolsHandle>(this)),
 -      ukm_source_id_(ukm::ConvertToSourceId(ukm::AssignNewSourceId(),
 -                                            ukm::SourceIdType::WORKER_ID)) {
 +      devtools_handle_(std::make_unique<ScopedDevToolsHandle>(this)) {
-   DCHECK(worker_process_host_);
-   DCHECK(worker_process_host_->IsInitializedAndNotDead());
+   DCHECK(GetProcessHost());
+   DCHECK(GetProcessHost()->IsInitializedAndNotDead());
  
-@@ -234,7 +230,7 @@ void SharedWorkerHost::Start(
+@@ -246,7 +241,7 @@ void SharedWorkerHost::Start(
        std::move(main_script_load_params),
        std::move(subresource_loader_factories), std::move(controller),
        receiver_.BindNewPipeAndPassRemote(), std::move(worker_receiver_),
@@ -31,16 +32,16 @@ index b3cae30e8413..2ab175b728c7 100644
  
    // |service_worker_remote_object| is an associated interface ptr, so calls
    // can't be made on it until its request endpoint is sent. Now that the
-@@ -280,7 +276,7 @@ SharedWorkerHost::CreateNetworkFactoryForSubresources(
-       /*frame=*/nullptr, worker_process_host_->GetID(),
+@@ -292,7 +287,7 @@ SharedWorkerHost::CreateNetworkFactoryForSubresources(
+       /*frame=*/nullptr, GetProcessHost()->GetID(),
        ContentBrowserClient::URLLoaderFactoryType::kWorkerSubResource, origin,
        /*navigation_id=*/base::nullopt,
--      base::UkmSourceId::FromInt64(ukm_source_id_), &default_factory_receiver,
+-      ukm::SourceIdObj::FromInt64(ukm_source_id_), &default_factory_receiver,
 +      &default_factory_receiver,
        &factory_params->header_client, bypass_redirect_checks,
        /*disable_secure_dns=*/nullptr, &factory_params->factory_override);
  
-@@ -467,8 +463,7 @@ void SharedWorkerHost::ReportNoBinderForInterface(const std::string& error) {
+@@ -475,8 +470,7 @@ void SharedWorkerHost::ReportNoBinderForInterface(const std::string& error) {
  void SharedWorkerHost::AddClient(
      mojo::PendingRemote<blink::mojom::SharedWorkerClient> client,
      GlobalFrameRoutingId client_render_frame_host_id,
@@ -50,7 +51,7 @@ index b3cae30e8413..2ab175b728c7 100644
    mojo::Remote<blink::mojom::SharedWorkerClient> remote_client(
        std::move(client));
  
-@@ -484,14 +479,6 @@ void SharedWorkerHost::AddClient(
+@@ -492,14 +486,6 @@ void SharedWorkerHost::AddClient(
    info.client.set_disconnect_handler(base::BindOnce(
        &SharedWorkerHost::OnClientConnectionLost, weak_factory_.GetWeakPtr()));
  

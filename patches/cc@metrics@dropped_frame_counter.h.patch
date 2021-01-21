@@ -1,13 +1,12 @@
 diff --git a/cc/metrics/dropped_frame_counter.h b/cc/metrics/dropped_frame_counter.h
-index f1c3f5e97a40..c3fa91f40355 100644
+index 17e9386a5082..2508d3859184 100644
 --- a/cc/metrics/dropped_frame_counter.h
 +++ b/cc/metrics/dropped_frame_counter.h
-@@ -51,8 +51,6 @@ class CC_EXPORT DroppedFrameCounter {
-   void AddDroppedFrameAffectingSmoothness();
-   void ReportFrames();
+@@ -50,7 +50,6 @@ class CC_EXPORT DroppedFrameCounter {
  
+   void OnBeginFrame(const viz::BeginFrameArgs& args);
+   void OnEndFrame(const viz::BeginFrameArgs& args, bool is_dropped);
 -  void SetUkmSmoothnessDestination(UkmSmoothnessDataShared* smoothness_data);
--
-   void Reset();
    void OnFcpReceived();
  
+   // Reset is used on navigation, which resets frame statistics as well as

@@ -1,5 +1,5 @@
 diff --git a/cc/trees/layer_tree_host_impl.cc b/cc/trees/layer_tree_host_impl.cc
-index bb7ff971823d..13cdeaee72f0 100644
+index 9efdf67d48cb..db353201785c 100644
 --- a/cc/trees/layer_tree_host_impl.cc
 +++ b/cc/trees/layer_tree_host_impl.cc
 @@ -60,7 +60,6 @@
@@ -18,7 +18,7 @@ index bb7ff971823d..13cdeaee72f0 100644
  #include "third_party/perfetto/protos/perfetto/trace/track_event/chrome_latency_info.pbzero.h"
  #include "third_party/skia/include/gpu/GrDirectContext.h"
  #include "ui/events/types/scroll_input_type.h"
-@@ -248,30 +246,6 @@ void ApplyFirstScrollTracking(const ui::LatencyInfo* latency,
+@@ -255,30 +253,6 @@ void ApplyFirstScrollTracking(const ui::LatencyInfo* latency,
        frame_token, std::move(presentation_callback));
  }
  
@@ -49,7 +49,7 @@ index bb7ff971823d..13cdeaee72f0 100644
  }  // namespace
  
  DEFINE_SCOPED_UMA_HISTOGRAM_TIMER(PendingTreeRasterDurationHistogramTimer,
-@@ -419,8 +393,7 @@ LayerTreeHostImpl::LayerTreeHostImpl(
+@@ -429,8 +403,7 @@ LayerTreeHostImpl::LayerTreeHostImpl(
                                    this,
                                    settings_.enable_image_animation_resync),
        paint_image_generator_client_id_(PaintImage::GetNextGeneratorClientId()),
@@ -57,9 +57,9 @@ index bb7ff971823d..13cdeaee72f0 100644
 -                      compositor_frame_reporting_controller_.get()),
 +      frame_trackers_(settings.single_thread_proxy_scheduler),
        lcd_text_metrics_reporter_(LCDTextMetricsReporter::CreateIfNeeded(this)),
-       frame_rate_estimator_(GetTaskRunner()) {
-   DCHECK(mutator_host_);
-@@ -496,9 +469,6 @@ LayerTreeHostImpl::~LayerTreeHostImpl() {
+       frame_rate_estimator_(GetTaskRunner()),
+       contains_srgb_cache_(kContainsSrgbCacheSize) {
+@@ -507,9 +480,6 @@ LayerTreeHostImpl::~LayerTreeHostImpl() {
    mutator_host_->ClearMutators();
    mutator_host_->SetMutatorHostClient(nullptr);
  
@@ -69,7 +69,7 @@ index bb7ff971823d..13cdeaee72f0 100644
    compositor_frame_reporting_controller_ = nullptr;
  }
  
-@@ -648,8 +618,6 @@ void LayerTreeHostImpl::UpdateSyncTreeAfterCommitOrImplSideInvalidation() {
+@@ -659,8 +629,6 @@ void LayerTreeHostImpl::UpdateSyncTreeAfterCommitOrImplSideInvalidation() {
    // and the updated data for the image from the main frame.
    PaintImageIdFlatSet images_to_invalidate =
        tile_manager_.TakeImagesToInvalidateOnSyncTree();
@@ -78,7 +78,7 @@ index bb7ff971823d..13cdeaee72f0 100644
  
    const auto& animated_images =
        image_animation_controller_.AnimateForSyncTree(CurrentBeginFrameArgs());
-@@ -1373,13 +1341,6 @@ DrawResult LayerTreeHostImpl::CalculateRenderPasses(FrameData* frame) {
+@@ -1384,13 +1352,6 @@ DrawResult LayerTreeHostImpl::CalculateRenderPasses(FrameData* frame) {
    frame->has_missing_content =
        num_missing_tiles > 0 || num_incomplete_tiles > 0;
  
@@ -92,7 +92,7 @@ index bb7ff971823d..13cdeaee72f0 100644
    if (active_tree_->has_ever_been_drawn()) {
      UMA_HISTOGRAM_COUNTS_100(
          "Compositing.RenderPass.AppendQuadData.NumMissingTiles",
-@@ -2478,19 +2439,12 @@ viz::CompositorFrame LayerTreeHostImpl::GenerateCompositorFrame(
+@@ -2520,19 +2481,12 @@ viz::CompositorFrame LayerTreeHostImpl::GenerateCompositorFrame(
    if (!CommitToActiveTree() && !metadata.latency_info.empty()) {
      base::TimeTicks draw_time = base::TimeTicks::Now();
  
@@ -112,7 +112,7 @@ index bb7ff971823d..13cdeaee72f0 100644
    }
    ui::LatencyInfo::TraceIntermediateFlowEvents(
        metadata.latency_info,
-@@ -4769,39 +4723,14 @@ void LayerTreeHostImpl::ShowScrollbarsForImplScroll(ElementId element_id) {
+@@ -4813,39 +4767,14 @@ void LayerTreeHostImpl::ShowScrollbarsForImplScroll(ElementId element_id) {
      animation_controller->DidScrollUpdate();
  }
  

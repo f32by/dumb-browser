@@ -1,5 +1,5 @@
 diff --git a/services/network/cors/cors_url_loader_factory.cc b/services/network/cors/cors_url_loader_factory.cc
-index 93328dbcc3f2..3bcf61eacde7 100644
+index 25386af0f335..f8ede8e99628 100644
 --- a/services/network/cors/cors_url_loader_factory.cc
 +++ b/services/network/cors/cors_url_loader_factory.cc
 @@ -19,7 +19,6 @@
@@ -10,7 +10,15 @@ index 93328dbcc3f2..3bcf61eacde7 100644
  #include "services/network/cross_origin_read_blocking_exception_for_plugin.h"
  #include "services/network/network_context.h"
  #include "services/network/network_service.h"
-@@ -256,7 +255,6 @@ void CorsURLLoaderFactory::CreateLoaderAndStart(
+@@ -94,7 +93,6 @@ bool VerifyTrustTokenParamsIntegrityIfPresent(
+     //
+     // TODO(crbug.com/1118183): Re-add a ReportBadMessage (and false return)
+     // once the false positives in crbug.com/1117458 have been resolved.
+-    base::debug::DumpWithoutCrashing();
+     HistogramWhetherTrustTokenFeaturePolicyConsistentWithBrowserOpinion(
+         IsConsistent(false));
+   } else if (DoesTrustTokenOperationRequireFeaturePolicy(
+@@ -255,7 +253,6 @@ void CorsURLLoaderFactory::CreateLoaderAndStart(
      const ResourceRequest& resource_request,
      mojo::PendingRemote<mojom::URLLoaderClient> client,
      const net::MutableNetworkTrafficAnnotationTag& traffic_annotation) {
@@ -18,15 +26,15 @@ index 93328dbcc3f2..3bcf61eacde7 100644
  
    if (!IsValidRequest(resource_request, options)) {
      mojo::Remote<mojom::URLLoaderClient>(std::move(client))
-@@ -430,11 +428,6 @@ bool CorsURLLoaderFactory::IsValidRequest(const ResourceRequest& request,
+@@ -429,11 +426,6 @@ bool CorsURLLoaderFactory::IsValidRequest(const ResourceRequest& request,
        NOTREACHED();
        if (base::FeatureList::IsEnabled(
                features::kRequestInitiatorSiteLockEnfocement)) {
 -        url::debug::ScopedOriginCrashKey initiator_lock_crash_key(
 -            debug::GetRequestInitiatorOriginLockCrashKey(),
 -            base::OptionalOrNullptr(request_initiator_origin_lock_));
--        base::debug::ScopedCrashKeyString debug_tag_crash_key(
--            debug::GetFactoryDebugTagCrashKey(), debug_tag_);
-         mojo::ReportBadMessage(
-             "CorsURLLoaderFactory: lock VS initiator mismatch");
+-        mojo::ReportBadMessage(
+-            "CorsURLLoaderFactory: lock VS initiator mismatch");
          return false;
+       }
+       break;

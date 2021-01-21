@@ -1,8 +1,8 @@
 diff --git a/extensions/renderer/script_injection.cc b/extensions/renderer/script_injection.cc
-index b13a81b715b2..c883bd941a03 100644
+index f9c3f9d4501c..c883bd941a03 100644
 --- a/extensions/renderer/script_injection.cc
 +++ b/extensions/renderer/script_injection.cc
-@@ -19,7 +19,6 @@
+@@ -19,13 +19,11 @@
  #include "extensions/common/extension_features.h"
  #include "extensions/common/extension_messages.h"
  #include "extensions/common/host_id.h"
@@ -10,16 +10,22 @@ index b13a81b715b2..c883bd941a03 100644
  #include "extensions/renderer/dom_activity_logger.h"
  #include "extensions/renderer/extension_frame_helper.h"
  #include "extensions/renderer/extensions_renderer_client.h"
-@@ -165,8 +164,6 @@ ScriptInjection::ScriptInjection(
+ #include "extensions/renderer/script_injection_callback.h"
+ #include "extensions/renderer/scripts_run_info.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/platform/web_isolated_world_info.h"
+ #include "third_party/blink/public/platform/web_security_origin.h"
+ #include "third_party/blink/public/platform/web_string.h"
+@@ -166,8 +164,6 @@ ScriptInjection::ScriptInjection(
        injection_host_(std::move(injection_host)),
        run_location_(run_location),
        request_id_(kInvalidRequestId),
--      ukm_source_id_(base::UkmSourceId::FromInt64(
+-      ukm_source_id_(ukm::SourceIdObj::FromInt64(
 -          render_frame_->GetWebFrame()->GetDocument().GetUkmSourceId())),
        complete_(false),
        did_inject_js_(false),
        log_activity_(log_activity),
-@@ -275,8 +272,6 @@ ScriptInjection::InjectionResult ScriptInjection::Inject(
+@@ -276,8 +272,6 @@ ScriptInjection::InjectionResult ScriptInjection::Inject(
    complete_ = did_inject_js_ || !should_inject_js;
  
    if (complete_) {
@@ -28,7 +34,7 @@ index b13a81b715b2..c883bd941a03 100644
      injector_->OnInjectionComplete(std::move(execution_result_), run_location_,
                                     render_frame_);
    } else {
-@@ -365,8 +360,6 @@ void ScriptInjection::OnJsInjectionCompleted(
+@@ -366,8 +360,6 @@ void ScriptInjection::OnJsInjectionCompleted(
        execution_result_ = std::make_unique<base::Value>();
    }
    did_inject_js_ = true;

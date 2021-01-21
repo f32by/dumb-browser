@@ -1,0 +1,27 @@
+diff --git a/third_party/blink/renderer/core/paint/image_paint_timing_detector.cc b/third_party/blink/renderer/core/paint/image_paint_timing_detector.cc
+index e1ec4037aefb..6150b548062d 100644
+--- a/third_party/blink/renderer/core/paint/image_paint_timing_detector.cc
++++ b/third_party/blink/renderer/core/paint/image_paint_timing_detector.cc
+@@ -3,8 +3,6 @@
+ // found in the LICENSE file.
+ #include "third_party/blink/renderer/core/paint/image_paint_timing_detector.h"
+ 
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "third_party/blink/renderer/core/frame/local_frame.h"
+ #include "third_party/blink/renderer/core/frame/local_frame_view.h"
+ #include "third_party/blink/renderer/core/layout/layout_image_resource.h"
+@@ -170,13 +168,6 @@ void ImagePaintTimingDetector::NotifyImageRemoved(
+ 
+ void ImagePaintTimingDetector::StopRecordEntries() {
+   is_recording_ = false;
+-  if (frame_view_->GetFrame().IsMainFrame()) {
+-    DCHECK(frame_view_->GetFrame().GetDocument());
+-    ukm::builders::Blink_PaintTiming(
+-        frame_view_->GetFrame().GetDocument()->UkmSourceID())
+-        .SetLCPDebugging_HasViewportImage(contains_full_viewport_image_)
+-        .Record(ukm::UkmRecorder::Get());
+-  }
+ }
+ 
+ void ImagePaintTimingDetector::RegisterNotifySwapTime() {

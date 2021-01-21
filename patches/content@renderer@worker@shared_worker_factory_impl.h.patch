@@ -1,5 +1,5 @@
 diff --git a/content/renderer/worker/shared_worker_factory_impl.h b/content/renderer/worker/shared_worker_factory_impl.h
-index bf085b0c918a..75b0065472c2 100644
+index 720676645d9e..f7f976aae5ce 100644
 --- a/content/renderer/worker/shared_worker_factory_impl.h
 +++ b/content/renderer/worker/shared_worker_factory_impl.h
 @@ -8,7 +8,6 @@
@@ -7,10 +7,10 @@ index bf085b0c918a..75b0065472c2 100644
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "mojo/public/cpp/bindings/pending_remote.h"
 -#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
  #include "third_party/blink/public/mojom/service_worker/service_worker_provider.mojom-forward.h"
  #include "third_party/blink/public/mojom/worker/shared_worker_factory.mojom.h"
- 
-@@ -50,8 +49,7 @@ class SharedWorkerFactoryImpl : public blink::mojom::SharedWorkerFactory {
+@@ -51,8 +50,7 @@ class SharedWorkerFactoryImpl : public blink::mojom::SharedWorkerFactory {
        mojo::PendingRemote<blink::mojom::SharedWorkerHost> host,
        mojo::PendingReceiver<blink::mojom::SharedWorker> receiver,
        mojo::PendingRemote<blink::mojom::BrowserInterfaceBroker>

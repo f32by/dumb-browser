@@ -1,17 +1,28 @@
 diff --git a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
-index 5f62eed60089..58dbfb791ce3 100644
+index 3df9ad07ab2d..2ffc5319b3f0 100644
 --- a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
 +++ b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
-@@ -236,12 +236,6 @@ void SubresourceRedirectURLLoaderThrottle::WillProcessResponse(
-   if (content_length < 0)
-     return;
+@@ -153,11 +153,6 @@ void SubresourceRedirectURLLoaderThrottle::BeforeWillProcessResponse(
+       net::HttpUtil::ParseRetryAfterHeader(retry_after_string,
+                                            base::Time::Now(), &retry_after);
+     }
+-    if (auto* subresource_redirect_hints_agent =
+-            SubresourceRedirectHintsAgent::Get(GetRenderFrame())) {
+-      subresource_redirect_hints_agent->NotifyHttpsImageCompressionFetchFailed(
+-          retry_after);
+-    }
+   }
  
--  auto* subresource_redirect_hints_agent = GetSubresourceRedirectHintsAgent();
--  if (subresource_redirect_hints_agent) {
--    subresource_redirect_hints_agent->RecordMetricsOnLoadFinished(
--        response_url, content_length, redirect_result_);
+   // Non 2XX responses from the compression server need to have unaltered
+@@ -230,11 +225,6 @@ void SubresourceRedirectURLLoaderThrottle::OnRedirectTimeout() {
+   DCHECK(did_redirect_compressed_origin_);
+   did_redirect_compressed_origin_ = false;
+   delegate_->RestartWithURLResetAndFlagsNow(net::LOAD_NORMAL);
+-  if (auto* subresource_redirect_hints_agent =
+-          SubresourceRedirectHintsAgent::Get(GetRenderFrame())) {
+-    subresource_redirect_hints_agent->NotifyHttpsImageCompressionFetchFailed(
+-        base::TimeDelta());
 -  }
--
-   if (!did_redirect_compressed_origin_)
-     return;
-   DCHECK(ShouldCompressionServerRedirectSubresource());
+   UMA_HISTOGRAM_BOOLEAN("SubresourceRedirect.CompressionFetchTimeout", true);
+ }
+ 

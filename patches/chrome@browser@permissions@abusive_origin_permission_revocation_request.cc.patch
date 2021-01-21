@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc b/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc
-index a20936c830c5..9c724960c91c 100644
+index a229fa2e1771..21b0f93653e3 100644
 --- a/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc
 +++ b/chrome/browser/permissions/abusive_origin_permission_revocation_request.cc
-@@ -8,15 +8,12 @@
+@@ -8,17 +8,13 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
  #include "chrome/browser/permissions/abusive_origin_notifications_permission_revocation_config.h"
@@ -15,20 +15,22 @@ index a20936c830c5..9c724960c91c 100644
  #include "components/permissions/permission_result.h"
 -#include "components/permissions/permission_uma_util.h"
  #include "components/permissions/permissions_client.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
 -#include "components/safe_browsing/core/db/database_manager.h"
  
  namespace {
  constexpr char kExcludedKey[] = "exempted";
-@@ -76,21 +73,6 @@ void SetOriginStatus(Profile* profile,
-           std::string(), base::WrapUnique(dict.DeepCopy()));
+@@ -77,28 +73,13 @@ void SetOriginStatus(Profile* profile,
+           base::WrapUnique(dict.DeepCopy()));
  }
  
 -void RevokePermission(const GURL& origin, Profile* profile) {
 -  permissions::PermissionsClient::Get()
 -      ->GetSettingsMap(profile)
--      ->SetContentSettingDefaultScope(
--          origin, GURL(), ContentSettingsType::NOTIFICATIONS, std::string(),
--          ContentSetting::CONTENT_SETTING_DEFAULT);
+-      ->SetContentSettingDefaultScope(origin, GURL(),
+-                                      ContentSettingsType::NOTIFICATIONS,
+-                                      ContentSetting::CONTENT_SETTING_DEFAULT);
 -
 -  OriginStatus status = GetOriginStatus(profile, origin);
 -  status.has_been_previously_revoked = true;
@@ -41,10 +43,28 @@ index a20936c830c5..9c724960c91c 100644
  }  // namespace
  
  AbusiveOriginPermissionRevocationRequest::
-@@ -122,49 +104,9 @@ void AbusiveOriginPermissionRevocationRequest::CheckAndRevokeIfAbusive() {
-     return;
-   }
+     AbusiveOriginPermissionRevocationRequest(Profile* profile,
+                                              const GURL& origin,
+                                              OutcomeCallback callback)
+-    : profile_(profile), origin_(origin), callback_(std::move(callback)) {
++    : origin_(origin), callback_(std::move(callback)) {
+   base::SequencedTaskRunnerHandle::Get()->PostTask(
+       FROM_HERE,
+       base::BindOnce(
+@@ -110,57 +91,6 @@ AbusiveOriginPermissionRevocationRequest::
+     ~AbusiveOriginPermissionRevocationRequest() = default;
  
+ void AbusiveOriginPermissionRevocationRequest::CheckAndRevokeIfAbusive() {
+-  DCHECK(profile_);
+-  DCHECK(callback_);
+-
+-  if (!AbusiveOriginNotificationsPermissionRevocationConfig::IsEnabled() ||
+-      !safe_browsing::IsSafeBrowsingEnabled(*profile_->GetPrefs()) ||
+-      IsOriginExemptedFromFutureRevocations(profile_, origin_)) {
+-    std::move(callback_).Run(Outcome::PERMISSION_NOT_REVOKED);
+-    return;
+-  }
+-
 -  CrowdDenyPreloadData* crowd_deny = CrowdDenyPreloadData::GetInstance();
 -  permissions::PermissionUmaUtil::RecordCrowdDenyIsLoadedAtAbuseCheckTime(
 -      crowd_deny->is_loaded_from_disk());
@@ -53,7 +73,7 @@ index a20936c830c5..9c724960c91c 100644
 -
 -  const CrowdDenyPreloadData::SiteReputation* site_reputation =
 -      crowd_deny->GetReputationDataForSite(url::Origin::Create(origin_));
--  if (site_reputation &&
+-  if (site_reputation && !site_reputation->warning_only() &&
 -      (site_reputation->notification_ux_quality() ==
 -           CrowdDenyPreloadData::SiteReputation::ABUSIVE_PROMPTS ||
 -       site_reputation->notification_ux_quality() ==
@@ -71,9 +91,9 @@ index a20936c830c5..9c724960c91c 100644
 -    }
 -  }
 -
-   std::move(callback_).Run(Outcome::PERMISSION_NOT_REVOKED);
- }
- 
+-  std::move(callback_).Run(Outcome::PERMISSION_NOT_REVOKED);
+-}
+-
 -void AbusiveOriginPermissionRevocationRequest::OnSafeBrowsingVerdictReceived(
 -    CrowdDenySafeBrowsingRequest::Verdict verdict) {
 -  DCHECK(safe_browsing_request_);
@@ -86,8 +106,6 @@ index a20936c830c5..9c724960c91c 100644
 -  } else {
 -    std::move(callback_).Run(Outcome::PERMISSION_NOT_REVOKED);
 -  }
--}
--
+ }
+ 
  // static
- bool AbusiveOriginPermissionRevocationRequest::
-     IsOriginExemptedFromFutureRevocations(Profile* profile,

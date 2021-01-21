@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/BUILD.gn b/chrome/renderer/BUILD.gn
-index ce49b5924986..622142ac5961 100644
+index fb7fa9ff4ed2..df47bfa57f8f 100644
 --- a/chrome/renderer/BUILD.gn
 +++ b/chrome/renderer/BUILD.gn
-@@ -68,12 +68,6 @@ static_library("renderer") {
+@@ -61,12 +61,6 @@ static_library("renderer") {
      "chrome_render_thread_observer.h",
      "custom_menu_commands.h",
      "instant_restricted_id_cache.h",
@@ -15,36 +15,41 @@ index ce49b5924986..622142ac5961 100644
      "loadtimes_extension_bindings.cc",
      "loadtimes_extension_bindings.h",
      "media/chrome_key_systems.cc",
-@@ -157,19 +151,15 @@ static_library("renderer") {
-     "//components/network_hints/renderer",
+@@ -160,23 +154,15 @@ static_library("renderer") {
+     "//components/no_state_prefetch/renderer",
      "//components/omnibox/common",
      "//components/page_image_annotation/content/renderer",
 -    "//components/page_load_metrics/renderer",
      "//components/paint_preview/buildflags",
      "//components/plugins/renderer",
-     "//components/prerender/renderer",
      "//components/resources:components_resources",
+     "//components/resources:components_scaled_resources",
      "//components/safe_browsing:buildflags",
+-    "//components/safe_browsing/content/common:interfaces",
+-    "//components/safe_browsing/content/renderer",
 -    "//components/safe_browsing/content/renderer:throttles",
+-    "//components/safe_browsing/core:features",
 -    "//components/safe_browsing/core/common:interfaces",
      "//components/security_interstitials/content/renderer:security_interstitial_page_controller",
      "//components/security_interstitials/core:",
      "//components/security_interstitials/core/common/mojom:",
      "//components/spellcheck:buildflags",
 -    "//components/subresource_filter/content/renderer",
+-    "//components/subresource_filter/core/common",
+     "//components/sync/driver",
      "//components/translate/content/renderer",
      "//components/translate/core/common",
-     "//components/translate/core/language_detection",
-@@ -186,8 +176,6 @@ static_library("renderer") {
-     "//net",
+@@ -197,9 +183,6 @@ static_library("renderer") {
      "//ppapi/buildflags",
+     "//ppapi/shared_impl",
      "//printing/buildflags",
 -    "//services/metrics/public/cpp:metrics_cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
 -    "//services/metrics/public/mojom",
      "//services/service_manager/public/cpp",
      "//skia",
      "//storage/common",
-@@ -435,7 +423,6 @@ static_library("test_support") {
+@@ -418,7 +401,6 @@ static_library("test_support") {
    deps = [
      ":renderer",
      "//chrome/common/search:mojo_bindings",

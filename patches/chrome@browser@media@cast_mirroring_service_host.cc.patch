@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/media/cast_mirroring_service_host.cc b/chrome/browser/media/cast_mirroring_service_host.cc
-index 16357c19e37b..dd0a2fbfd295 100644
+index b32f95ae3d92..ca449518b926 100644
 --- a/chrome/browser/media/cast_mirroring_service_host.cc
 +++ b/chrome/browser/media/cast_mirroring_service_host.cc
-@@ -16,7 +16,9 @@
+@@ -17,7 +17,9 @@
  #include "base/task/thread_pool.h"
  #include "base/threading/thread_task_runner_handle.h"
  #include "chrome/browser/browser_process.h"
@@ -12,7 +12,7 @@ index 16357c19e37b..dd0a2fbfd295 100644
  #include "chrome/browser/media/webrtc/media_capture_devices_dispatcher.h"
  #include "chrome/browser/media/webrtc/media_stream_capture_indicator.h"
  #include "chrome/browser/net/system_network_context_manager.h"
-@@ -321,6 +323,7 @@ void CastMirroringServiceHost::CreateAudioStream(
+@@ -428,6 +430,7 @@ void CastMirroringServiceHost::CreateAudioStreamForDesktop(
  void CastMirroringServiceHost::ConnectToRemotingSource(
      mojo::PendingRemote<media::mojom::Remoter> remoter,
      mojo::PendingReceiver<media::mojom::RemotingSource> receiver) {
@@ -20,7 +20,7 @@ index 16357c19e37b..dd0a2fbfd295 100644
    if (source_media_id_.type == content::DesktopMediaID::TYPE_WEB_CONTENTS) {
      content::WebContents* source_contents = web_contents();
      if (source_contents) {
-@@ -328,6 +331,7 @@ void CastMirroringServiceHost::ConnectToRemotingSource(
+@@ -435,6 +438,7 @@ void CastMirroringServiceHost::ConnectToRemotingSource(
            ->ConnectWithMediaRemoter(std::move(remoter), std::move(receiver));
      }
    }

@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/background_sync/background_sync_delegate_impl.h b/chrome/browser/background_sync/background_sync_delegate_impl.h
+index aa3eda9164c6..44802eff3ab9 100644
+--- a/chrome/browser/background_sync/background_sync_delegate_impl.h
++++ b/chrome/browser/background_sync/background_sync_delegate_impl.h
+@@ -15,10 +15,6 @@
+ class Profile;
+ class HostContentSettingsMap;
+ 
+-namespace ukm {
+-class UkmBackgroundRecorderService;
+-}  // namespace ukm
+-
+ // Chrome's customization of the logic in components/background_sync
+ class BackgroundSyncDelegateImpl
+     : public background_sync::BackgroundSyncDelegate,
+@@ -32,9 +28,6 @@ class BackgroundSyncDelegateImpl
+   explicit BackgroundSyncDelegateImpl(Profile* profile);
+   ~BackgroundSyncDelegateImpl() override;
+ 
+-  void GetUkmSourceId(const url::Origin& origin,
+-                      base::OnceCallback<void(base::Optional<ukm::SourceId>)>
+-                          callback) override;
+   void Shutdown() override;
+   HostContentSettingsMap* GetHostContentSettingsMap() override;
+   bool IsProfileOffTheRecord() override;
+@@ -60,7 +53,6 @@ class BackgroundSyncDelegateImpl
+  private:
+   Profile* profile_;
+   bool off_the_record_;
+-  ukm::UkmBackgroundRecorderService* ukm_background_service_;
+   // Same lifetime as |profile_|.
+   SiteEngagementService* site_engagement_service_;
+   std::set<url::Origin> suspended_periodic_sync_origins_;

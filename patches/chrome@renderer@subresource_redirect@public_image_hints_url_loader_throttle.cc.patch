@@ -1,0 +1,16 @@
+diff --git a/chrome/renderer/subresource_redirect/public_image_hints_url_loader_throttle.cc b/chrome/renderer/subresource_redirect/public_image_hints_url_loader_throttle.cc
+index 1b2b8ff6c83e..9a338d93e6db 100644
+--- a/chrome/renderer/subresource_redirect/public_image_hints_url_loader_throttle.cc
++++ b/chrome/renderer/subresource_redirect/public_image_hints_url_loader_throttle.cc
+@@ -73,11 +73,6 @@ void PublicImageHintsURLLoaderThrottle::OnRedirectedLoadCompleteWithError() {
+ void PublicImageHintsURLLoaderThrottle::RecordMetricsOnLoadFinished(
+     const GURL& url,
+     int64_t content_length) {
+-  auto* subresource_redirect_hints_agent = GetSubresourceRedirectHintsAgent();
+-  if (subresource_redirect_hints_agent) {
+-    subresource_redirect_hints_agent->RecordMetricsOnLoadFinished(
+-        url, content_length, redirect_result_);
+-  }
+ }
+ 
+ }  // namespace subresource_redirect

@@ -1,16 +1,16 @@
 diff --git a/content/renderer/render_widget.cc b/content/renderer/render_widget.cc
-index c10e26f983c9..e71161547bc3 100644
+index 6055365c20f3..2ca14ae39014 100644
 --- a/content/renderer/render_widget.cc
 +++ b/content/renderer/render_widget.cc
-@@ -31,7 +31,6 @@
- #include "cc/base/switches.h"
- #include "cc/trees/layer_tree_frame_sink.h"
+@@ -14,7 +14,6 @@
+ #include "base/logging.h"
+ #include "base/macros.h"
  #include "cc/trees/layer_tree_host.h"
 -#include "cc/trees/ukm_manager.h"
- #include "components/viz/common/features.h"
- #include "components/viz/common/frame_sinks/begin_frame_source.h"
- #include "components/viz/common/frame_sinks/copy_output_request.h"
-@@ -528,7 +527,7 @@ void RenderWidget::InitCompositing(const blink::ScreenInfo& screen_info) {
+ #include "content/renderer/render_thread_impl.h"
+ #include "ppapi/buildflags/buildflags.h"
+ #include "third_party/blink/public/platform/web_rect.h"
+@@ -147,7 +146,7 @@ void RenderWidget::InitCompositing(const blink::ScreenInfo& screen_info) {
    layer_tree_host_ = webwidget_->InitializeCompositing(
        compositor_deps_->GetWebMainThreadScheduler(),
        compositor_deps_->GetTaskGraphRunner(), for_child_local_root_frame_,
@@ -19,25 +19,3 @@ index c10e26f983c9..e71161547bc3 100644
        /*settings=*/nullptr);
    DCHECK(layer_tree_host_);
  }
-@@ -730,19 +729,10 @@ bool RenderWidget::IsPointerLocked() {
-       webwidget_mouse_lock_target_.get());
- }
- 
--void RenderWidget::DidNavigate(ukm::SourceId source_id, const GURL& url) {
--  // Update the URL and the document source id used to key UKM metrics in the
--  // compositor. Note that the metrics for all frames are keyed to the main
--  // frame's URL.
--  layer_tree_host_->SetSourceURL(source_id, url);
-+void RenderWidget::DidNavigate(const GURL& url) {
-+  layer_tree_host_->SetSourceURL(url);
- 
-   DCHECK(for_frame());
--  RenderFrameImpl* render_frame =
--      RenderFrameImpl::FromWebFrame(GetFrameWidget()->LocalRoot());
--  auto shmem = layer_tree_host_->CreateSharedMemoryForSmoothnessUkm();
--  if (shmem.IsValid()) {
--    render_frame->SetUpSharedMemoryForSmoothness(std::move(shmem));
--  }
- }
- 
- blink::WebInputMethodController* RenderWidget::GetInputMethodController()

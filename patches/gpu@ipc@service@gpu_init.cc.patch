@@ -1,8 +1,8 @@
 diff --git a/gpu/ipc/service/gpu_init.cc b/gpu/ipc/service/gpu_init.cc
-index 4d3aa8eb3c37..32029391d1fe 100644
+index 1471ceae556a..664d49a0df26 100644
 --- a/gpu/ipc/service/gpu_init.cc
 +++ b/gpu/ipc/service/gpu_init.cc
-@@ -187,9 +187,6 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
+@@ -189,9 +189,6 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
    UMA_HISTOGRAM_ENUMERATION("GPU.IntelGpuSeriesType", intel_gpu_series_type);
  #endif  // OS_WIN
  
@@ -12,7 +12,7 @@ index 4d3aa8eb3c37..32029391d1fe 100644
  #if defined(SUBPIXEL_FONT_RENDERING_DISABLED)
    gpu_info_.subpixel_font_rendering = false;
  #else
-@@ -417,7 +414,6 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
+@@ -414,7 +411,6 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
        if (!CollectGraphicsInfo(&gpu_info_))
          return false;
  

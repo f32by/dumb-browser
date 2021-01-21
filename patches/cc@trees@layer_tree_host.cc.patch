@@ -1,8 +1,8 @@
 diff --git a/cc/trees/layer_tree_host.cc b/cc/trees/layer_tree_host.cc
-index 8e390b365f4f..3ce066896d98 100644
+index 03e3c41c5e5c..a5ea60aeabeb 100644
 --- a/cc/trees/layer_tree_host.cc
 +++ b/cc/trees/layer_tree_host.cc
-@@ -62,8 +62,6 @@
+@@ -64,8 +64,6 @@
  #include "cc/trees/swap_promise_manager.h"
  #include "cc/trees/transform_node.h"
  #include "cc/trees/tree_synchronizer.h"
@@ -11,7 +11,7 @@ index 8e390b365f4f..3ce066896d98 100644
  #include "services/tracing/public/cpp/perfetto/flow_event_utils.h"
  #include "services/tracing/public/cpp/perfetto/macros.h"
  #include "ui/gfx/geometry/size_conversions.h"
-@@ -130,7 +128,6 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::CreateSingleThreaded(
+@@ -132,7 +130,6 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::CreateSingleThreaded(
  LayerTreeHost::LayerTreeHost(InitParams params, CompositorMode mode)
      : micro_benchmark_controller_(this),
        image_worker_task_runner_(std::move(params.image_worker_task_runner)),
@@ -19,18 +19,18 @@ index 8e390b365f4f..3ce066896d98 100644
        compositor_mode_(mode),
        ui_resource_manager_(std::make_unique<UIResourceManager>()),
        client_(params.client),
-@@ -546,10 +543,6 @@ std::unique_ptr<LayerTreeHostImpl> LayerTreeHost::CreateLayerTreeHostImpl(
+@@ -549,10 +546,6 @@ std::unique_ptr<LayerTreeHostImpl> LayerTreeHost::CreateLayerTreeHostImpl(
        rendering_stats_instrumentation_.get(), task_graph_runner_,
-       std::move(mutator_host_impl), id_, std::move(image_worker_task_runner_),
-       scheduling_client_);
+       std::move(mutator_host_impl), dark_mode_filter_, id_,
+       std::move(image_worker_task_runner_), scheduling_client_);
 -  if (ukm_recorder_factory_) {
 -    host_impl->InitializeUkm(ukm_recorder_factory_->CreateRecorder());
 -    ukm_recorder_factory_.reset();
 -  }
  
    task_graph_runner_ = nullptr;
-   compositor_delegate_weak_ptr_ = host_impl->AsWeakPtr();
-@@ -1854,22 +1847,11 @@ void LayerTreeHost::RequestBeginMainFrameNotExpected(bool new_state) {
+   dark_mode_filter_ = nullptr;
+@@ -1849,22 +1842,11 @@ void LayerTreeHost::RequestBeginMainFrameNotExpected(bool new_state) {
    proxy_->RequestBeginMainFrameNotExpected(new_state);
  }
  

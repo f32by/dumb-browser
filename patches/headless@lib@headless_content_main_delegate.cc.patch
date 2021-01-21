@@ -1,5 +1,5 @@
 diff --git a/headless/lib/headless_content_main_delegate.cc b/headless/lib/headless_content_main_delegate.cc
-index edb7da92f0bb..a5ccc179ab38 100644
+index 7bac74b7a58e..e30d23b20778 100644
 --- a/headless/lib/headless_content_main_delegate.cc
 +++ b/headless/lib/headless_content_main_delegate.cc
 @@ -10,7 +10,6 @@
@@ -70,11 +70,10 @@ index edb7da92f0bb..a5ccc179ab38 100644
  }
  
  HeadlessContentMainDelegate::~HeadlessContentMainDelegate() {
-@@ -318,44 +295,6 @@ void HeadlessContentMainDelegate::InitLogging(
+@@ -322,43 +299,6 @@ void HeadlessContentMainDelegate::InitLogging(
    DCHECK(success);
  }
  
--
 -void HeadlessContentMainDelegate::InitCrashReporter(
 -    const base::CommandLine& command_line) {
 -  if (command_line.HasSwitch(::switches::kDisableBreakpad))
@@ -115,7 +114,7 @@ index edb7da92f0bb..a5ccc179ab38 100644
  void HeadlessContentMainDelegate::PreSandboxStartup() {
    const base::CommandLine& command_line(
        *base::CommandLine::ForCurrentProcess());
-@@ -368,7 +307,6 @@ void HeadlessContentMainDelegate::PreSandboxStartup() {
+@@ -371,7 +311,6 @@ void HeadlessContentMainDelegate::PreSandboxStartup() {
      InitLogging(command_line);
  #endif  // defined(OS_WIN)
  
@@ -123,7 +122,7 @@ index edb7da92f0bb..a5ccc179ab38 100644
    InitializeResourceBundle(command_line);
  
    // Even though InitializeResourceBundle() has indirectly done the locale
-@@ -428,16 +366,6 @@ void HeadlessContentMainDelegate::ZygoteForked() {
+@@ -431,16 +370,6 @@ void HeadlessContentMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

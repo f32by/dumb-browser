@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/navigation_request.h b/content/browser/renderer_host/navigation_request.h
-index c985c048fed8..7f1fa76d3210 100644
+index 0e01b71e3572..044a61090738 100644
 --- a/content/browser/renderer_host/navigation_request.h
 +++ b/content/browser/renderer_host/navigation_request.h
-@@ -43,7 +43,6 @@
+@@ -45,7 +45,6 @@
  #include "mojo/public/cpp/system/data_pipe.h"
  #include "net/base/proxy_server.h"
  #include "net/dns/public/resolve_error_info.h"
@@ -10,7 +10,7 @@ index c985c048fed8..7f1fa76d3210 100644
  #include "services/network/public/cpp/origin_policy.h"
  #include "services/network/public/mojom/blocked_by_response_reason.mojom-shared.h"
  #include "services/network/public/mojom/content_security_policy.mojom.h"
-@@ -248,7 +247,6 @@ class CONTENT_EXPORT NavigationRequest
+@@ -250,7 +249,6 @@ class CONTENT_EXPORT NavigationRequest
  
    // NavigationHandle implementation:
    int64_t GetNavigationId() override;
@@ -18,7 +18,7 @@ index c985c048fed8..7f1fa76d3210 100644
    const GURL& GetURL() override;
    SiteInstanceImpl* GetStartingSiteInstance() override;
    SiteInstanceImpl* GetSourceSiteInstance() override;
-@@ -641,13 +639,6 @@ class CONTENT_EXPORT NavigationRequest
+@@ -665,13 +663,6 @@ class CONTENT_EXPORT NavigationRequest
  
    std::unique_ptr<CrossOriginEmbedderPolicyReporter> TakeCoepReporter();
  
@@ -32,7 +32,7 @@ index c985c048fed8..7f1fa76d3210 100644
    void OnServiceWorkerAccessed(const GURL& scope,
                                 AllowServiceWorkerResult allowed);
  
-@@ -1445,9 +1436,6 @@ class CONTENT_EXPORT NavigationRequest
+@@ -1465,9 +1456,6 @@ class CONTENT_EXPORT NavigationRequest
    bool is_safe_to_delete_ = true;
  #endif
  

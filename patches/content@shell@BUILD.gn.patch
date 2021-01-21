@@ -1,8 +1,8 @@
 diff --git a/content/shell/BUILD.gn b/content/shell/BUILD.gn
-index 74c1e0f29db0..b81654fdaf0e 100644
+index 09637c7a1cea..74ed97274137 100644
 --- a/content/shell/BUILD.gn
 +++ b/content/shell/BUILD.gn
-@@ -83,7 +83,6 @@ static_library("content_shell_app") {
+@@ -75,7 +75,6 @@ static_library("content_shell_app") {
    ]
    deps = [
      ":content_shell_lib",
@@ -10,7 +10,7 @@ index 74c1e0f29db0..b81654fdaf0e 100644
      "//content/public/app",
      "//v8",
    ]
-@@ -94,12 +93,6 @@ static_library("content_shell_app") {
+@@ -86,12 +85,6 @@ static_library("content_shell_app") {
        "//content/web_test:web_test_renderer",
      ]
    }
@@ -20,10 +20,10 @@ index 74c1e0f29db0..b81654fdaf0e 100644
 -      "//components/crash/core/app:test_support",
 -    ]
 -  }
-   defines = [
-     "CONTENT_SHELL_VERSION=\"$content_shell_version\"",
-     "CONTENT_SHELL_MAJOR_VERSION=\"$content_shell_major_version\"",
-@@ -254,10 +247,6 @@ static_library("content_shell_lib") {
+   if (is_mac) {
+     sources += [
+       "app/paths_mac.h",
+@@ -267,10 +260,6 @@ static_library("content_shell_lib") {
    if (is_fuchsia) {
      deps += [ "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.policy" ]
    } else {
@@ -34,7 +34,7 @@ index 74c1e0f29db0..b81654fdaf0e 100644
    }
  
    if (enable_plugins) {
-@@ -578,9 +567,9 @@ if (is_mac) {
+@@ -590,9 +579,9 @@ if (is_mac) {
  
    bundle_data("content_shell_framework_helpers") {
      testonly = true
@@ -46,7 +46,7 @@ index 74c1e0f29db0..b81654fdaf0e 100644
      foreach(helper_params, content_mac_helpers) {
        sources += [
          "$root_out_dir/${content_shell_helper_name}${helper_params[2]}.app",
-@@ -789,12 +778,6 @@ group("content_shell_crash_test") {
+@@ -801,12 +790,6 @@ group("content_shell_crash_test") {
        mac_bin_path + "otool",
      ]
    }

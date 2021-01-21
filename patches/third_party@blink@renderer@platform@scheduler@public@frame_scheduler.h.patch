@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h b/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h
-index f458a4aee04c..32e04ba7c248 100644
+index 068ed556e92b..d48d4089c5ac 100644
 --- a/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h
 +++ b/third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h
 @@ -10,7 +10,6 @@
@@ -20,8 +20,8 @@ index f458a4aee04c..32e04ba7c248 100644
 -
  namespace blink {
  
- class PageScheduler;
-@@ -36,9 +31,6 @@ class FrameScheduler : public FrameOrWorkerScheduler {
+ namespace scheduler {
+@@ -40,9 +35,6 @@ class FrameScheduler : public FrameOrWorkerScheduler {
     public:
      virtual ~Delegate() = default;
  
@@ -31,7 +31,7 @@ index f458a4aee04c..32e04ba7c248 100644
      // Called when a frame has exceeded a total task time threshold (100ms).
      virtual void UpdateTaskTime(base::TimeDelta time) = 0;
  
-@@ -164,9 +156,6 @@ class FrameScheduler : public FrameOrWorkerScheduler {
+@@ -178,9 +170,6 @@ class FrameScheduler : public FrameOrWorkerScheduler {
    // of the page.
    virtual bool IsExemptFromBudgetBasedThrottling() const = 0;
  

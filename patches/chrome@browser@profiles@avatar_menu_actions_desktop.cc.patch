@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/avatar_menu_actions_desktop.cc b/chrome/browser/profiles/avatar_menu_actions_desktop.cc
-index 6db41b61c0aa..750698c017c4 100644
+index 93ab73145b70..827af5144bcd 100644
 --- a/chrome/browser/profiles/avatar_menu_actions_desktop.cc
 +++ b/chrome/browser/profiles/avatar_menu_actions_desktop.cc
 @@ -21,7 +21,7 @@ AvatarMenuActions* AvatarMenuActions::Create() {
@@ -12,7 +12,7 @@ index 6db41b61c0aa..750698c017c4 100644
    // and EditProfile actions.
  
 @@ -32,7 +32,6 @@ void AvatarMenuActionsDesktop::AddNewProfile(ProfileMetrics::ProfileAdd type) {
-     settings_browser = new Browser(params);
+     settings_browser = Browser::Create(params);
    }
    chrome::ShowSettingsSubPage(settings_browser, chrome::kCreateProfileSubPage);
 -  ProfileMetrics::LogProfileAddNewUser(type);

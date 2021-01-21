@@ -1,8 +1,8 @@
 diff --git a/extensions/browser/extension_navigation_throttle.cc b/extensions/browser/extension_navigation_throttle.cc
-index cf55930d6574..9dcf1f1757eb 100644
+index c9cc4359f3ea..2e8ca41670ba 100644
 --- a/extensions/browser/extension_navigation_throttle.cc
 +++ b/extensions/browser/extension_navigation_throttle.cc
-@@ -26,7 +26,6 @@
+@@ -27,13 +27,11 @@
  #include "extensions/common/constants.h"
  #include "extensions/common/extension.h"
  #include "extensions/common/extension_set.h"
@@ -10,11 +10,17 @@ index cf55930d6574..9dcf1f1757eb 100644
  #include "extensions/common/manifest_handlers/icons_handler.h"
  #include "extensions/common/manifest_handlers/web_accessible_resources_info.h"
  #include "extensions/common/manifest_handlers/webview_info.h"
-@@ -148,13 +147,8 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+ #include "extensions/common/permissions/api_permission.h"
+ #include "extensions/common/permissions/permissions_data.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/web_sandbox_flags.h"
+ #include "ui/base/page_transition_types.h"
+ 
+@@ -151,13 +149,8 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
      return content::NavigationThrottle::PROCEED;
    }
  
--  base::UkmSourceId source_id = base::UkmSourceId::FromInt64(
+-  ukm::SourceIdObj source_id = ukm::SourceIdObj::FromInt64(
 -      navigation_handle()->GetNextPageUkmSourceId());
 -
    // If the navigation is to an unknown or disabled extension, block it.
@@ -24,7 +30,7 @@ index cf55930d6574..9dcf1f1757eb 100644
      // TODO(nick): This yields an unsatisfying error page; use a different error
      // code once that's supported. https://crbug.com/649869
      return content::NavigationThrottle::BLOCK_REQUEST;
-@@ -168,8 +162,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -171,8 +164,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
                                   : url.path_piece().substr(1);
      if (!IconsInfo::GetIcons(target_extension)
               .ContainsPath(resource_root_relative_path)) {
@@ -33,7 +39,7 @@ index cf55930d6574..9dcf1f1757eb 100644
        return content::NavigationThrottle::BLOCK_REQUEST;
      }
    }
-@@ -188,8 +180,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -191,8 +182,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
          target_extension->permissions_data()->HasAPIPermission(
              APIPermission::kWebView);
      if (!has_webview_permission) {
@@ -42,7 +48,7 @@ index cf55930d6574..9dcf1f1757eb 100644
        return content::NavigationThrottle::CANCEL;
      }
    }
-@@ -216,8 +206,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -219,8 +208,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
            storage_partition_config.partition_name(), url.path(),
            navigation_handle()->GetPageTransition(), &allowed);
        if (!allowed) {
@@ -51,7 +57,7 @@ index cf55930d6574..9dcf1f1757eb 100644
          return content::NavigationThrottle::BLOCK_REQUEST;
        }
      }
-@@ -226,8 +214,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -229,8 +216,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
    if (target_extension->is_platform_app() &&
        ShouldBlockNavigationToPlatformAppResource(target_extension,
                                                   web_contents)) {
@@ -60,7 +66,7 @@ index cf55930d6574..9dcf1f1757eb 100644
      return content::NavigationThrottle::BLOCK_REQUEST;
    }
  
-@@ -263,8 +249,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -266,8 +251,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
  
    // Cancel cross-origin-initiator navigations to blob: or filesystem: URLs.
    if (!url_has_extension_scheme) {
@@ -69,7 +75,7 @@ index cf55930d6574..9dcf1f1757eb 100644
      return content::NavigationThrottle::CANCEL;
    }
  
-@@ -272,8 +256,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -275,8 +258,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
    // manifest's "web_accessible_resources" section.
    if (!WebAccessibleResourcesInfo::IsResourceWebAccessible(target_extension,
                                                             url.path())) {
@@ -78,7 +84,7 @@ index cf55930d6574..9dcf1f1757eb 100644
      return content::NavigationThrottle::BLOCK_REQUEST;
    }
  
-@@ -286,8 +268,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -289,8 +270,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
    // here.
    // TODO(karandeepb): Investigate if this check can be removed.
    if (target_extension->is_platform_app()) {
@@ -87,7 +93,7 @@ index cf55930d6574..9dcf1f1757eb 100644
      return content::NavigationThrottle::CANCEL;
    }
  
-@@ -296,8 +276,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
+@@ -299,8 +278,6 @@ ExtensionNavigationThrottle::WillStartOrRedirectRequest() {
        registry->enabled_extensions().GetExtensionOrAppByURL(
            initiator_origin.GetURL());
    if (initiator_extension && initiator_extension->is_platform_app()) {

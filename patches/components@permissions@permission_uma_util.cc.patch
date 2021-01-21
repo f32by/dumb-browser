@@ -1,5 +1,5 @@
 diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
-index 0cac71e89e4e..23a9be78f643 100644
+index 600f79366502..4f3dcaa96d26 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
 @@ -15,11 +15,8 @@
@@ -14,8 +14,8 @@ index 0cac71e89e4e..23a9be78f643 100644
  #include "third_party/blink/public/common/loader/network_utils.h"
  #include "url/gurl.h"
  
-@@ -119,53 +116,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
-   base::UmaHistogramPercentage(name, engagement_score);
+@@ -119,64 +116,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
+   base::UmaHistogramPercentageObsoleteDoNotUse(name, engagement_score);
  }
  
 -void RecordPermissionActionUkm(
@@ -26,8 +26,11 @@ index 0cac71e89e4e..23a9be78f643 100644
 -    int ignore_count,
 -    PermissionSourceUI source_ui,
 -    PermissionPromptDisposition ui_disposition,
+-    base::Optional<PermissionPromptDispositionReason> ui_reason,
 -    base::Optional<bool> has_three_consecutive_denies,
 -    base::Optional<bool> has_previously_revoked_permission,
+-    base::Optional<PermissionUmaUtil::PredictionGrantLikelihood>
+-        predicted_grant_likelihood,
 -    base::Optional<ukm::SourceId> source_id) {
 -  // Only record the permission change if the origin is in the history.
 -  if (!source_id.has_value())
@@ -44,6 +47,14 @@ index 0cac71e89e4e..23a9be78f643 100644
 -      .SetPriorIgnores(std::min(kPriorCountCap, ignore_count))
 -      .SetSource(static_cast<int64_t>(source_ui))
 -      .SetPromptDisposition(static_cast<int64_t>(ui_disposition));
+-
+-  if (ui_reason.has_value())
+-    builder.SetPromptDispositionReason(static_cast<int64_t>(ui_reason.value()));
+-
+-  if (predicted_grant_likelihood.has_value()) {
+-    builder.SetPredictionsApiResponse_GrantLikelihood(
+-        static_cast<int64_t>(predicted_grant_likelihood.value()));
+-  }
 -
 -  if (has_three_consecutive_denies.has_value()) {
 -    int64_t satisfied_adaptive_triggers = 0;
@@ -68,10 +79,10 @@ index 0cac71e89e4e..23a9be78f643 100644
  std::string GetPromptDispositionString(
      PermissionPromptDisposition ui_disposition) {
    switch (ui_disposition) {
-@@ -555,25 +505,6 @@ void PermissionUmaUtil::RecordPermissionAction(
-     const GURL& requesting_origin,
+@@ -584,26 +523,6 @@ void PermissionUmaUtil::RecordPermissionAction(
      const content::WebContents* web_contents,
-     content::BrowserContext* browser_context) {
+     content::BrowserContext* browser_context,
+     base::Optional<PredictionGrantLikelihood> predicted_grant_likelihood) {
 -  PermissionDecisionAutoBlocker* autoblocker =
 -      PermissionsClient::Get()->GetPermissionDecisionAutoBlocker(
 -          browser_context);
@@ -83,14 +94,15 @@ index 0cac71e89e4e..23a9be78f643 100644
 -      browser_context, web_contents, requesting_origin,
 -      base::BindOnce(
 -          &RecordPermissionActionUkm, action, gesture_type, permission,
--          dismiss_count, ignore_count, source_ui, ui_disposition,
+-          dismiss_count, ignore_count, source_ui, ui_disposition, ui_reason,
 -          permission == ContentSettingsType::NOTIFICATIONS
 -              ? PermissionsClient::Get()
 -                    ->HadThreeConsecutiveNotificationPermissionDenies(
 -                        browser_context)
 -              : base::nullopt,
 -          PermissionsClient::Get()->HasPreviouslyAutoRevokedPermission(
--              browser_context, requesting_origin, permission)));
+-              browser_context, requesting_origin, permission),
+-          predicted_grant_likelihood));
  
    switch (permission) {
      case ContentSettingsType::GEOLOCATION:

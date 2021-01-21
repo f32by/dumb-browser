@@ -1,0 +1,23 @@
+diff --git a/third_party/blink/renderer/modules/screen_orientation/screen_orientation_controller.cc b/third_party/blink/renderer/modules/screen_orientation/screen_orientation_controller.cc
+index 1d51152f7756..8b3a30ee0dc8 100644
+--- a/third_party/blink/renderer/modules/screen_orientation/screen_orientation_controller.cc
++++ b/third_party/blink/renderer/modules/screen_orientation/screen_orientation_controller.cc
+@@ -245,18 +245,6 @@ void ScreenOrientationController::OnLockOrientationResult(
+   if (!pending_callback_ || request_id != request_id_)
+     return;
+ 
+-  if (IdentifiabilityStudySettings::Get()->ShouldSample(
+-          IdentifiableSurface::FromTypeAndToken(
+-              IdentifiableSurface::Type::kWebFeature,
+-              WebFeature::kScreenOrientationLock))) {
+-    auto* context = GetExecutionContext();
+-    IdentifiabilityMetricBuilder(context->UkmSourceID())
+-        .SetWebfeature(WebFeature::kScreenOrientationLock,
+-                       result == ScreenOrientationLockResult::
+-                                     SCREEN_ORIENTATION_LOCK_RESULT_SUCCESS)
+-        .Record(context->UkmRecorder());
+-  }
+-
+   switch (result) {
+     case ScreenOrientationLockResult::SCREEN_ORIENTATION_LOCK_RESULT_SUCCESS:
+       pending_callback_->OnSuccess();

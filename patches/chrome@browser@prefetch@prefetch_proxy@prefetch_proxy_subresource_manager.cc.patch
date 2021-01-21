@@ -1,0 +1,58 @@
+diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
+index 01caf12b6e89..9c22ada73fb6 100644
+--- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
++++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
+@@ -5,7 +5,6 @@
+ #include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h"
+ 
+ #include "base/metrics/histogram_macros.h"
+-#include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_prefetch_metrics_collector.h"
+ #include "chrome/browser/prefetch/prefetch_proxy/prefetched_mainframe_response_container.h"
+ #include "content/public/browser/browser_context.h"
+ #include "content/public/browser/render_frame_host.h"
+@@ -167,45 +166,19 @@ void PrefetchProxySubresourceManager::RemoveProxiedURLLoaderFactory(
+   proxied_loader_factories_.erase(it);
+ }
+ 
+-void PrefetchProxySubresourceManager::SetPrefetchMetricsCollector(
+-    scoped_refptr<PrefetchProxyPrefetchMetricsCollector> collector) {
+-  metrics_collector_ = collector;
+-}
+-
+ void PrefetchProxySubresourceManager::OnResourceFetchComplete(
+     const GURL& url,
+     network::mojom::URLResponseHeadPtr head,
+     const network::URLLoaderCompletionStatus& status) {
+-  if (!metrics_collector_)
+-    return;
+-
+-  metrics_collector_->OnSubresourcePrefetched(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url, std::move(head), status);
+ }
+ 
+ void PrefetchProxySubresourceManager::OnResourceNotEligible(
+     const GURL& url,
+     PrefetchProxyPrefetchStatus status) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnSubresourceNotEligible(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url, status);
+ }
+ 
+ void PrefetchProxySubresourceManager::OnResourceThrottled(const GURL& url) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnSubresourceNotEligible(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url,
+-      PrefetchProxyPrefetchStatus::kSubresourceThrottled);
+ }
+ 
+ void PrefetchProxySubresourceManager::OnResourceUsedFromCache(const GURL& url) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnCachedSubresourceUsed(/*mainframe_url=*/url_,
+-                                              /*subresource_url=*/url);
+ }

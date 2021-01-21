@@ -1,10 +1,10 @@
 diff --git a/components/blocked_content/popup_tracker.h b/components/blocked_content/popup_tracker.h
-index 29483926eb67..9e35434c4e7e 100644
+index 2321b3baa9f2..144a0ee65f38 100644
 --- a/components/blocked_content/popup_tracker.h
 +++ b/components/blocked_content/popup_tracker.h
 @@ -9,8 +9,6 @@
  #include "base/optional.h"
- #include "base/scoped_observer.h"
+ #include "base/scoped_observation.h"
  #include "base/time/time.h"
 -#include "components/subresource_filter/content/browser/subresource_filter_observer.h"
 -#include "components/subresource_filter/content/browser/subresource_filter_observer_manager.h"
@@ -32,9 +32,9 @@ index 29483926eb67..9e35434c4e7e 100644
 -          CheckResult& result) override;
 -  void OnSubresourceFilterGoingAway() override;
 -
--  ScopedObserver<subresource_filter::SubresourceFilterObserverManager,
--                 subresource_filter::SubresourceFilterObserver>
--      scoped_observer_;
+-  base::ScopedObservation<subresource_filter::SubresourceFilterObserverManager,
+-                          subresource_filter::SubresourceFilterObserver>
+-      scoped_observation_{this};
 -
    // Will be unset until the first navigation commits. Will be set to the total
    // time the contents was visible at commit time.

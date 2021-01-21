@@ -1,29 +1,57 @@
 diff --git a/third_party/blink/renderer/platform/widget/widget_base.cc b/third_party/blink/renderer/platform/widget/widget_base.cc
-index 59a70580ded0..feeab1a7cff4 100644
+index 9cd69720a13a..cda9c393cf55 100644
 --- a/third_party/blink/renderer/platform/widget/widget_base.cc
 +++ b/third_party/blink/renderer/platform/widget/widget_base.cc
-@@ -9,7 +9,6 @@
- #include "build/build_config.h"
+@@ -11,7 +11,6 @@
+ #include "cc/mojo_embedder/async_layer_tree_frame_sink.h"
  #include "cc/trees/layer_tree_host.h"
  #include "cc/trees/layer_tree_settings.h"
 -#include "cc/trees/ukm_manager.h"
- #include "mojo/public/cpp/bindings/pending_associated_receiver.h"
- #include "mojo/public/cpp/bindings/pending_associated_remote.h"
- #include "third_party/blink/public/common/features.h"
-@@ -125,7 +124,6 @@ void WidgetBase::InitializeCompositing(
+ #include "components/viz/common/features.h"
+ #include "components/viz/common/switches.h"
+ #include "gpu/command_buffer/client/shared_memory_limits.h"
+@@ -170,7 +169,6 @@ void WidgetBase::InitializeCompositing(
      cc::TaskGraphRunner* task_graph_runner,
      bool for_child_local_root_frame,
      const ScreenInfo& screen_info,
 -    std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory,
      const cc::LayerTreeSettings* settings) {
-   scoped_refptr<base::SingleThreadTaskRunner> main_thread_task_runner =
+   main_thread_compositor_task_runner_ =
        main_thread_scheduler->CompositorTaskRunner();
-@@ -149,7 +147,7 @@ void WidgetBase::InitializeCompositing(
-     settings = &default_settings.value();
-   }
-   screen_info_ = screen_info;
--  layer_tree_view_->Initialize(*settings, std::move(ukm_recorder_factory));
-+  layer_tree_view_->Initialize(*settings);
+@@ -193,7 +191,7 @@ void WidgetBase::InitializeCompositing(
+       compositing_thread_scheduler
+           ? compositing_thread_scheduler->DefaultTaskRunner()
+           : nullptr,
+-      task_graph_runner, std::move(ukm_recorder_factory));
++      task_graph_runner);
  
    FrameWidget* frame_widget = client_->FrameWidget();
+ 
+@@ -404,8 +402,6 @@ void WidgetBase::WasHidden() {
+ 
+   SetHidden(true);
+ 
+-  tab_switch_time_recorder_.TabWasHidden();
+-
+   client_->WasHidden();
+ }
+ 
+@@ -422,18 +418,6 @@ void WidgetBase::WasShown(base::TimeTicks show_request_timestamp,
+ 
+   SetHidden(false);
+ 
+-  if (record_tab_switch_time_request) {
+-    LayerTreeHost()->RequestPresentationTimeForNextFrame(
+-        tab_switch_time_recorder_.TabWasShown(
+-            false /* has_saved_frames */,
+-            record_tab_switch_time_request->event_start_time,
+-            record_tab_switch_time_request->destination_is_loaded,
+-            record_tab_switch_time_request->show_reason_tab_switching,
+-            record_tab_switch_time_request->show_reason_unoccluded,
+-            record_tab_switch_time_request->show_reason_bfcache_restore,
+-            show_request_timestamp));
+-  }
+-
+   client_->WasShown(was_evicted);
+ }
  

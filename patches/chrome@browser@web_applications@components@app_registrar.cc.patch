@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/web_applications/components/app_registrar.cc b/chrome/browser/web_applications/components/app_registrar.cc
-index 103e40caccde..dfa8ee79c1c1 100644
+index bf11042247ae..bccfd2e492ed 100644
 --- a/chrome/browser/web_applications/components/app_registrar.cc
 +++ b/chrome/browser/web_applications/components/app_registrar.cc
 @@ -9,7 +9,6 @@
@@ -10,7 +10,7 @@ index 103e40caccde..dfa8ee79c1c1 100644
  #include "chrome/browser/web_applications/components/web_app_helpers.h"
  #include "chrome/browser/web_applications/components/web_app_prefs_utils.h"
  #include "chrome/common/chrome_features.h"
-@@ -63,7 +62,6 @@ void AppRegistrar::NotifyWebAppsWillBeUpdatedFromSync(
+@@ -67,7 +66,6 @@ void AppRegistrar::NotifyWebAppsWillBeUpdatedFromSync(
  void AppRegistrar::NotifyWebAppUninstalled(const AppId& app_id) {
    for (AppRegistrarObserver& observer : observers_)
      observer.OnWebAppUninstalled(app_id);

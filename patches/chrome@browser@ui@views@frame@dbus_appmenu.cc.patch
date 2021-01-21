@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/frame/dbus_appmenu.cc b/chrome/browser/ui/views/frame/dbus_appmenu.cc
-index 513a2845b388..8dbed384e9e4 100644
+index 6f082929cedd..f3ac6964e9f4 100644
 --- a/chrome/browser/ui/views/frame/dbus_appmenu.cc
 +++ b/chrome/browser/ui/views/frame/dbus_appmenu.cc
-@@ -25,7 +25,6 @@
+@@ -26,7 +26,6 @@
  #include "chrome/browser/history/top_sites_factory.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -10,13 +10,3 @@ index 513a2845b388..8dbed384e9e4 100644
  #include "chrome/browser/profiles/profile_window.h"
  #include "chrome/browser/sessions/tab_restore_service_factory.h"
  #include "chrome/browser/ui/browser.h"
-@@ -549,8 +548,7 @@ void DbusAppmenu::ExecuteCommand(int command_id, int event_flags) {
-   } else if (command_id == kTagProfileEdit) {
-     avatar_menu_->EditProfile(active_profile_index_);
-   } else if (command_id == kTagProfileCreate) {
--    profiles::CreateAndSwitchToNewProfile(ProfileManager::CreateCallback(),
--                                          ProfileMetrics::ADD_NEW_USER_MENU);
-+    profiles::CreateAndSwitchToNewProfile(ProfileManager::CreateCallback());
-   } else if (base::Contains(history_items_, command_id)) {
-     HistoryItem* item = history_items_[command_id].get();
-     // If this item can be restored using TabRestoreService, do so.

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.h b/chrome/browser/renderer_context_menu/render_view_context_menu.h
-index cd477e3ba1b4..5d82f5dd04c8 100644
+index ebe6e6b01df0..2ffffd5d2dff 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.h
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.h
-@@ -111,7 +111,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -107,7 +107,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
  #if BUILDFLAG(ENABLE_EXTENSIONS)
    extensions::ContextMenuMatcher extension_items_;
  #endif
@@ -10,7 +10,7 @@ index cd477e3ba1b4..5d82f5dd04c8 100644
  
    // Returns true if the browser is in HTML fullscreen mode, initiated by the
    // page (as opposed to the user). Used to determine which shortcut to display.
-@@ -147,7 +146,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -143,7 +142,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
  
    // RenderViewContextMenuBase:
    void InitMenu() override;
@@ -18,7 +18,7 @@ index cd477e3ba1b4..5d82f5dd04c8 100644
  #if BUILDFLAG(ENABLE_PLUGINS)
    void HandleAuthorizeAllPlugins() override;
  #endif
-@@ -197,7 +195,9 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -193,7 +191,9 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
    void AppendPasswordItems();
    void AppendPictureInPictureItem();
    void AppendSharingItems();
@@ -28,7 +28,7 @@ index cd477e3ba1b4..5d82f5dd04c8 100644
    void AppendSharedClipboardItem();
    void AppendQRCodeGeneratorItem(bool for_image, bool draw_icon);
  
-@@ -307,9 +307,11 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -304,9 +304,11 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
    std::unique_ptr<send_tab_to_self::SendTabToSelfSubMenuModel>
        send_tab_to_self_sub_menu_model_;
  

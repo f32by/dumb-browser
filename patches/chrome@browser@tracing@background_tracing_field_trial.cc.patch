@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/tracing/background_tracing_field_trial.cc b/chrome/browser/tracing/background_tracing_field_trial.cc
-index 5293258f99c5..2c20b8b264d1 100644
+index 31a72d5d4647..599be5547105 100644
 --- a/chrome/browser/tracing/background_tracing_field_trial.cc
 +++ b/chrome/browser/tracing/background_tracing_field_trial.cc
 @@ -16,7 +16,6 @@
@@ -9,10 +9,10 @@ index 5293258f99c5..2c20b8b264d1 100644
 -#include "chrome/browser/tracing/crash_service_uploader.h"
  #include "chrome/common/chrome_switches.h"
  #include "components/tracing/common/tracing_switches.h"
- #include "components/variations/variations_associated_data.h"
-@@ -38,42 +37,10 @@ const char kBackgroundTracingUploadUrl[] = "upload_url";
+ #include "content/public/browser/background_tracing_config.h"
+@@ -33,42 +32,10 @@ namespace {
  
- ConfigTextFilterForTesting g_config_text_filter_for_testing = nullptr;
+ const char kBackgroundTracingFieldTrial[] = "BackgroundTracing";
  
 -void OnBackgroundTracingUploadComplete(
 -    TraceCrashServiceUploader* uploader,
@@ -52,4 +52,4 @@ index 5293258f99c5..2c20b8b264d1 100644
 -                     std::move(callback)));
  }
  
- std::unique_ptr<content::BackgroundTracingConfig> GetBackgroundTracingConfig() {
+ void SetupBackgroundTracingFromConfigFile(const base::FilePath& config_file,

@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/render_frame_host_impl.cc b/content/browser/renderer_host/render_frame_host_impl.cc
-index 8aa3723aa317..06e73ebf6089 100644
+index 04ccff2b3586..7518002afd53 100644
 --- a/content/browser/renderer_host/render_frame_host_impl.cc
 +++ b/content/browser/renderer_host/render_frame_host_impl.cc
-@@ -196,8 +196,6 @@
+@@ -199,8 +199,6 @@
  #include "services/device/public/mojom/sensor_provider.mojom.h"
  #include "services/device/public/mojom/wake_lock.mojom.h"
  #include "services/device/public/mojom/wake_lock_context.mojom.h"
@@ -11,23 +11,23 @@ index 8aa3723aa317..06e73ebf6089 100644
  #include "services/network/public/cpp/features.h"
  #include "services/network/public/cpp/is_potentially_trustworthy.h"
  #include "services/network/public/cpp/trust_token_operation_authorization.h"
-@@ -1526,7 +1524,6 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactory(
+@@ -1593,7 +1591,6 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactory(
+ 
    return CreateNetworkServiceDefaultFactoryAndObserve(
-       CreateURLLoaderFactoryParamsForMainWorld(
-           navigation_request, "RFHI::CreateNetworkServiceDefaultFactory"),
--      base::UkmSourceId::FromInt64(GetPageUkmSourceId()),
+       CreateURLLoaderFactoryParamsForMainWorld(navigation_request),
+-      ukm::SourceIdObj::FromInt64(GetPageUkmSourceId()),
        std::move(default_factory_receiver));
  }
  
-@@ -1601,7 +1598,6 @@ RenderFrameHostImpl::CreateURLLoaderFactoriesForIsolatedWorlds(
+@@ -1668,7 +1665,6 @@ RenderFrameHostImpl::CreateURLLoaderFactoriesForIsolatedWorlds(
      mojo::PendingRemote<network::mojom::URLLoaderFactory> factory_remote;
      CreateNetworkServiceDefaultFactoryAndObserve(
          std::move(factory_params),
--        base::kInvalidUkmSourceId, /* isolated from page */
+-        ukm::kInvalidSourceIdObj, /* isolated from page */
          factory_remote.InitWithNewPipeAndPassReceiver());
      result[isolated_world_origin] = std::move(factory_remote);
    }
-@@ -3145,10 +3141,6 @@ void RenderFrameHostImpl::ProcessBeforeUnloadCompletedFromFrame(
+@@ -3299,10 +3295,6 @@ void RenderFrameHostImpl::ProcessBeforeUnloadCompletedFromFrame(
          (renderer_before_unload_end_time - renderer_before_unload_start_time);
      UMA_HISTOGRAM_TIMES("Navigation.OnBeforeUnloadOverheadTime",
                          on_before_unload_overhead_time);
@@ -38,7 +38,7 @@ index 8aa3723aa317..06e73ebf6089 100644
    }
  
    // Resets beforeunload waiting state.
-@@ -3541,15 +3533,6 @@ void RenderFrameHostImpl::ReportNoBinderForInterface(const std::string& error) {
+@@ -3730,15 +3722,6 @@ void RenderFrameHostImpl::ReportNoBinderForInterface(const std::string& error) {
    broker_receiver_.ReportBadMessage(error + " for the frame/document scope");
  }
  
@@ -54,18 +54,18 @@ index 8aa3723aa317..06e73ebf6089 100644
  BrowserContext* RenderFrameHostImpl::GetBrowserContext() {
    return GetProcess()->GetBrowserContext();
  }
-@@ -3778,10 +3761,6 @@ void RenderFrameHostImpl::UpdateSubresourceLoaderFactories() {
+@@ -3951,10 +3934,6 @@ void RenderFrameHostImpl::UpdateSubresourceLoaderFactories() {
+     bypass_redirect_checks = CreateNetworkServiceDefaultFactoryAndObserve(
          CreateURLLoaderFactoryParamsForMainWorld(
-             latest_nav_request_still_committing,
-             "RFHI::UpdateSubresourceLoaderFactories"),
--        base::UkmSourceId::FromInt64(
+             latest_nav_request_still_committing),
+-        ukm::SourceIdObj::FromInt64(
 -            latest_nav_request_still_committing
 -                ? latest_nav_request_still_committing->GetNextPageUkmSourceId()
 -                : GetPageUkmSourceId()),
          default_factory_remote.InitWithNewPipeAndPassReceiver());
    }
  
-@@ -4332,19 +4311,9 @@ void RenderFrameHostImpl::EvictFromBackForwardCacheWithReasons(
+@@ -4511,19 +4490,9 @@ void RenderFrameHostImpl::EvictFromBackForwardCacheWithReasons(
      DCHECK_EQ(top_document->IsInBackForwardCache(), in_back_forward_cache);
    }
  
@@ -85,17 +85,17 @@ index 8aa3723aa317..06e73ebf6089 100644
      // A document is evicted from the BackForwardCache, but it has already been
      // restored. The current document should be reloaded, because it is not
      // salvageable.
-@@ -4912,9 +4881,6 @@ RenderFrameHostImpl::CreateCrossOriginPrefetchLoaderFactoryBundle() {
+@@ -5083,9 +5052,6 @@ RenderFrameHostImpl::CreateCrossOriginPrefetchLoaderFactoryBundle() {
    // it.
    bypass_redirect_checks = CreateNetworkServiceDefaultFactoryAndObserve(
        std::move(factory_params),
 -      // This is for renderer prefetches, so it's associated with this page, not
 -      // pending navigation.
--      base::UkmSourceId::FromInt64(GetPageUkmSourceId()),
+-      ukm::SourceIdObj::FromInt64(GetPageUkmSourceId()),
        pending_default_factory.InitWithNewPipeAndPassReceiver());
  
    return std::make_unique<blink::PendingURLLoaderFactoryBundle>(
-@@ -5500,11 +5466,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
+@@ -5664,11 +5630,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
    }
  }
  
@@ -107,18 +107,16 @@ index 8aa3723aa317..06e73ebf6089 100644
  void RenderFrameHostImpl::ResetWaitingState() {
    // We don't allow resetting waiting state when the RenderFrameHost is either
    // in BackForwardCache or in pending deletion state, as we don't allow
-@@ -6119,10 +6080,6 @@ void RenderFrameHostImpl::CommitNavigation(
-         ->set_origin_for_url_loader_factory(
-             main_world_origin_for_url_loader_factory);
+@@ -6287,8 +6248,6 @@ void RenderFrameHostImpl::CommitNavigation(
    }
--  // This needs to ask |navigation_request| for the UKM ID since the commit is
--  // in progress but not yet done.
--  base::UkmSourceId next_page_ukm_source_id = base::UkmSourceId::FromInt64(
--      navigation_request->GetNextPageUkmSourceId());
+   // This needs to ask |navigation_request| for the UKM ID since the commit is
+   // in progress but not yet done.
+-  ukm::SourceIdObj next_page_ukm_source_id =
+-      ukm::SourceIdObj::FromInt64(navigation_request->GetNextPageUkmSourceId());
    std::unique_ptr<blink::PendingURLLoaderFactoryBundle>
        subresource_loader_factories;
    if ((!is_same_document || is_first_navigation) && !is_srcdoc) {
-@@ -6150,7 +6107,7 @@ void RenderFrameHostImpl::CommitNavigation(
+@@ -6316,7 +6275,7 @@ void RenderFrameHostImpl::CommitNavigation(
                browser_context, this, GetProcess()->GetID(),
                ContentBrowserClient::URLLoaderFactoryType::kDocumentSubResource,
                main_world_origin_for_url_loader_factory,
@@ -127,7 +125,7 @@ index 8aa3723aa317..06e73ebf6089 100644
                &appcache_proxied_receiver, nullptr /* header_client */,
                nullptr /* bypass_redirect_checks */,
                nullptr /* disable_secure_dns */, nullptr /* factory_override */);
-@@ -6182,7 +6139,7 @@ void RenderFrameHostImpl::CommitNavigation(
+@@ -6347,7 +6306,7 @@ void RenderFrameHostImpl::CommitNavigation(
            browser_context, this, GetProcess()->GetID(),
            ContentBrowserClient::URLLoaderFactoryType::kDocumentSubResource,
            main_world_origin_for_url_loader_factory,
@@ -136,24 +134,15 @@ index 8aa3723aa317..06e73ebf6089 100644
            &factory_receiver, nullptr /* header_client */,
            nullptr /* bypass_redirect_checks */,
            nullptr /* disable_secure_dns */, nullptr /* factory_override */);
-@@ -6222,7 +6179,6 @@ void RenderFrameHostImpl::CommitNavigation(
+@@ -6386,7 +6345,6 @@ void RenderFrameHostImpl::CommitNavigation(
+       bool bypass_redirect_checks =
            CreateNetworkServiceDefaultFactoryAndObserve(
-               CreateURLLoaderFactoryParamsForMainWorld(
-                   navigation_request, "RFHI::CommitNavigation"),
+               CreateURLLoaderFactoryParamsForMainWorld(navigation_request),
 -              next_page_ukm_source_id,
                pending_default_factory.InitWithNewPipeAndPassReceiver());
        subresource_loader_factories->set_bypass_redirect_checks(
            bypass_redirect_checks);
-@@ -6314,7 +6270,7 @@ void RenderFrameHostImpl::CommitNavigation(
-       mojo::PendingReceiver<network::mojom::URLLoaderFactory> factory_receiver =
-           pending_factory_proxy.InitWithNewPipeAndPassReceiver();
-       WillCreateURLLoaderFactory(main_world_origin_for_url_loader_factory,
--                                 &factory_receiver, next_page_ukm_source_id);
-+                                 &factory_receiver);
-       factory.second->Clone(std::move(factory_receiver));
-       subresource_loader_factories->pending_scheme_specific_factories().emplace(
-           factory.first, std::move(pending_factory_proxy));
-@@ -6326,7 +6282,7 @@ void RenderFrameHostImpl::CommitNavigation(
+@@ -6477,7 +6435,7 @@ void RenderFrameHostImpl::CommitNavigation(
        mojo::PendingReceiver<network::mojom::URLLoaderFactory> factory_receiver =
            pending_factory_proxy.InitWithNewPipeAndPassReceiver();
        WillCreateURLLoaderFactory(main_world_origin_for_url_loader_factory,
@@ -162,7 +151,7 @@ index 8aa3723aa317..06e73ebf6089 100644
        mojo::Remote<network::mojom::URLLoaderFactory> remote(
            std::move(factory.second));
        remote->Clone(std::move(factory_receiver));
-@@ -6411,32 +6367,6 @@ void RenderFrameHostImpl::CommitNavigation(
+@@ -6562,32 +6520,6 @@ void RenderFrameHostImpl::CommitNavigation(
      mojom::NavigationClient* navigation_client =
          navigation_request->GetCommitNavigationClient();
  
@@ -195,15 +184,15 @@ index 8aa3723aa317..06e73ebf6089 100644
      // about:srcdoc "inherits" loaders from its parent in the renderer process,
      // There are no need to provide new ones here.
      // TODO(arthursonzogni): What about about:blank URLs?
-@@ -6514,7 +6444,6 @@ void RenderFrameHostImpl::FailedNavigation(
+@@ -6668,7 +6600,6 @@ void RenderFrameHostImpl::FailedNavigation(
+   mojo::PendingRemote<network::mojom::URLLoaderFactory> default_factory_remote;
    bool bypass_redirect_checks = CreateNetworkServiceDefaultFactoryAndObserve(
-       CreateURLLoaderFactoryParamsForMainWorld(navigation_request,
-                                                "RFHI::FailedNavigation"),
--      base::kInvalidUkmSourceId,
+       CreateURLLoaderFactoryParamsForMainWorld(navigation_request),
+-      ukm::kInvalidSourceIdObj,
        default_factory_remote.InitWithNewPipeAndPassReceiver());
    subresource_loader_factories =
        std::make_unique<blink::PendingURLLoaderFactoryBundle>(
-@@ -6531,9 +6460,6 @@ void RenderFrameHostImpl::FailedNavigation(
+@@ -6685,9 +6616,6 @@ void RenderFrameHostImpl::FailedNavigation(
        commit_params.Clone(), has_stale_copy_in_cache, error_code,
        error_page_content, std::move(subresource_loader_factories));
  
@@ -213,11 +202,11 @@ index 8aa3723aa317..06e73ebf6089 100644
    // An error page is expected to commit, hence why is_loading_ is set to true.
    is_loading_ = true;
    dom_content_loaded_ = false;
-@@ -7204,11 +7130,10 @@ RenderFrameHostImpl::CreateURLLoaderFactoryParamsForMainWorld(
+@@ -7341,11 +7269,10 @@ RenderFrameHostImpl::CreateURLLoaderFactoryParamsForMainWorld(
  
  bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryAndObserve(
      network::mojom::URLLoaderFactoryParamsPtr params,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory>
          default_factory_receiver) {
    bool bypass_redirect_checks = CreateNetworkServiceDefaultFactoryInternal(
@@ -226,15 +215,15 @@ index 8aa3723aa317..06e73ebf6089 100644
  
    // Add a disconnect handler when Network Service is running
    // out-of-process.
-@@ -7242,7 +7167,6 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryAndObserve(
+@@ -7378,7 +7305,6 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryAndObserve(
  
  bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryInternal(
      network::mojom::URLLoaderFactoryParamsPtr params,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory>
          default_factory_receiver) {
    DCHECK(params->request_initiator_origin_lock.has_value());
-@@ -7251,7 +7175,7 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryInternal(
+@@ -7387,7 +7313,7 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryInternal(
  
    bool bypass_redirect_checks = false;
    WillCreateURLLoaderFactory(
@@ -243,15 +232,15 @@ index 8aa3723aa317..06e73ebf6089 100644
        &params->header_client, &bypass_redirect_checks,
        &params->disable_secure_dns, &params->factory_override);
  
-@@ -7264,7 +7188,6 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryInternal(
+@@ -7400,7 +7326,6 @@ bool RenderFrameHostImpl::CreateNetworkServiceDefaultFactoryInternal(
  void RenderFrameHostImpl::WillCreateURLLoaderFactory(
      const url::Origin& request_initiator,
      mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
--    base::UkmSourceId ukm_source_id,
+-    ukm::SourceIdObj ukm_source_id,
      mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
          header_client,
      bool* bypass_redirect_checks,
-@@ -7273,7 +7196,7 @@ void RenderFrameHostImpl::WillCreateURLLoaderFactory(
+@@ -7409,7 +7334,7 @@ void RenderFrameHostImpl::WillCreateURLLoaderFactory(
    GetContentClient()->browser()->WillCreateURLLoaderFactory(
        GetBrowserContext(), this, GetProcess()->GetID(),
        ContentBrowserClient::URLLoaderFactoryType::kDocumentSubResource,
@@ -260,7 +249,7 @@ index 8aa3723aa317..06e73ebf6089 100644
        factory_receiver, header_client, bypass_redirect_checks,
        disable_secure_dns, factory_override);
  
-@@ -7530,58 +7453,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
+@@ -7675,58 +7600,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
    media_interface_proxy_->Bind(std::move(receiver));
  }
  
@@ -319,7 +308,7 @@ index 8aa3723aa317..06e73ebf6089 100644
  #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
  void RenderFrameHostImpl::BindMediaRemoterFactoryReceiver(
      mojo::PendingReceiver<media::mojom::RemoterFactory> receiver) {
-@@ -8500,20 +8371,6 @@ bool RenderFrameHostImpl::DidCommitNavigationInternal(
+@@ -8628,20 +8501,6 @@ bool RenderFrameHostImpl::DidCommitNavigationInternal(
      // Resets when navigating to a new document. This is needed because
      // RenderFrameHost might be reused for a new document
      document_used_web_otp_ = false;
@@ -340,7 +329,7 @@ index 8aa3723aa317..06e73ebf6089 100644
    }
  
    // If we still have a PeakGpuMemoryTracker, then the loading it was observing
-@@ -9341,14 +9198,6 @@ void RenderFrameHostImpl::EnableMojoJsBindings() {
+@@ -9487,14 +9346,6 @@ void RenderFrameHostImpl::EnableMojoJsBindings() {
    GetFrameBindingsControl()->EnableMojoJsBindings();
  }
  
@@ -355,7 +344,7 @@ index 8aa3723aa317..06e73ebf6089 100644
  bool RenderFrameHostImpl::IsBackForwardCacheDisabled() const {
    return back_forward_cache_disabled_reasons_.size();
  }
-@@ -9504,29 +9353,6 @@ void RenderFrameHostImpl::SetLifecycleState(LifecycleState state) {
+@@ -9660,29 +9511,6 @@ void RenderFrameHostImpl::SetLifecycleState(LifecycleState state) {
    delegate_->RenderFrameHostStateChanged(this, old_state, lifecycle_state_);
  }
  

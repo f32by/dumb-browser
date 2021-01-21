@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.h b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.h
+index bcc8cc0f66c1..68de84e43c56 100644
+--- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.h
++++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.h
+@@ -34,7 +34,6 @@
+ #include "url/gurl.h"
+ 
+ class PrefetchProxyPageLoadMetricsObserver;
+-class PrefetchProxyPrefetchMetricsCollector;
+ class PrefetchProxySubresourceManager;
+ class Profile;
+ 
+@@ -260,12 +259,6 @@ class PrefetchProxyTabHelper
+     // Only set for pages after a Google SRP.
+     std::unique_ptr<AfterSRPMetrics> after_srp_metrics_;
+ 
+-    // Collects metrics on all prefetching. This is a scoped refptr so that it
+-    // can also be shared with subresource managers until all pointers to it are
+-    // destroyed, at which time it logs UKM.
+-    scoped_refptr<PrefetchProxyPrefetchMetricsCollector>
+-        prefetch_metrics_collector_;
+-
+     // The status of each prefetch.
+     std::map<GURL, PrefetchProxyPrefetchStatus> prefetch_status_by_url_;
+ 

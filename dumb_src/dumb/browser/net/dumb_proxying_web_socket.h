@@ -106,6 +106,9 @@ class DumbProxyingWebSocket : public network::mojom::WebSocketHandshakeClient,
                          const ::net::IPEndPoint& remote_endpoint,
                          OnHeadersReceivedCallback callback) override;
 
+  void OnFailure(const std::string& message, int32_t net_error,
+                 int32_t response_code) override;
+
  private:
   void WebSocketFactoryRun(
       const GURL& url,

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/lookalikes/lookalike_url_blocking_page.cc b/chrome/browser/lookalikes/lookalike_url_blocking_page.cc
-index 6d7c101d8b9f..8a34b272f513 100644
+index aa0af3df4163..ebb5d2bcd6d4 100644
 --- a/chrome/browser/lookalikes/lookalike_url_blocking_page.cc
 +++ b/chrome/browser/lookalikes/lookalike_url_blocking_page.cc
 @@ -28,7 +28,6 @@ LookalikeUrlBlockingPage::LookalikeUrlBlockingPage(
@@ -8,17 +8,17 @@ index 6d7c101d8b9f..8a34b272f513 100644
      const GURL& request_url,
 -    ukm::SourceId source_id,
      LookalikeUrlMatchType match_type,
+     bool is_signed_exchange,
      std::unique_ptr<
-         security_interstitials::SecurityInterstitialControllerClient>
-@@ -38,7 +37,6 @@ LookalikeUrlBlockingPage::LookalikeUrlBlockingPage(
+@@ -39,7 +38,6 @@ LookalikeUrlBlockingPage::LookalikeUrlBlockingPage(
            request_url,
            std::move(controller_client)),
        safe_url_(safe_url),
 -      source_id_(source_id),
-       match_type_(match_type) {
+       match_type_(match_type),
+       is_signed_exchange_(is_signed_exchange) {
    controller()->metrics_helper()->RecordUserDecision(MetricsHelper::SHOW);
-   controller()->metrics_helper()->RecordUserInteraction(
-@@ -61,9 +59,6 @@ void LookalikeUrlBlockingPage::PopulateInterstitialStrings(
+@@ -63,9 +61,6 @@ void LookalikeUrlBlockingPage::PopulateInterstitialStrings(
  }
  
  void LookalikeUrlBlockingPage::OnInterstitialClosing() {
@@ -28,7 +28,7 @@ index 6d7c101d8b9f..8a34b272f513 100644
  }
  
  bool LookalikeUrlBlockingPage::ShouldDisplayURL() const {
-@@ -86,9 +81,6 @@ void LookalikeUrlBlockingPage::CommandReceived(const std::string& command) {
+@@ -88,9 +83,6 @@ void LookalikeUrlBlockingPage::CommandReceived(const std::string& command) {
      case security_interstitials::CMD_DONT_PROCEED:
        controller()->metrics_helper()->RecordUserDecision(
            MetricsHelper::DONT_PROCEED);
@@ -38,7 +38,7 @@ index 6d7c101d8b9f..8a34b272f513 100644
        // If the interstitial doesn't have a suggested URL (e.g. punycode
        // interstitial), simply open the new tab page.
        if (!safe_url_.is_valid()) {
-@@ -100,9 +92,6 @@ void LookalikeUrlBlockingPage::CommandReceived(const std::string& command) {
+@@ -102,9 +94,6 @@ void LookalikeUrlBlockingPage::CommandReceived(const std::string& command) {
      case security_interstitials::CMD_PROCEED:
        controller()->metrics_helper()->RecordUserDecision(
            MetricsHelper::PROCEED);

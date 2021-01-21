@@ -1,16 +1,17 @@
 diff --git a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
-index 7f550df8e692..5237e8efdaab 100644
+index 42d71231d6e7..9cffe52a1a33 100644
 --- a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
 +++ b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
-@@ -17,7 +17,6 @@
+@@ -18,8 +18,6 @@
  #include "chrome/browser/performance_manager/decorators/process_metrics_decorator.h"
  #include "chrome/browser/performance_manager/metrics/memory_pressure_metrics.h"
  #include "chrome/browser/performance_manager/observers/isolation_context_metrics.h"
 -#include "chrome/browser/performance_manager/observers/metrics_collector.h"
+-#include "chrome/browser/performance_manager/observers/page_load_metrics_observer.h"
  #include "chrome/browser/performance_manager/policies/background_tab_loading_policy.h"
  #include "chrome/browser/performance_manager/policies/high_pmf_discard_policy.h"
  #include "chrome/browser/performance_manager/policies/policy_features.h"
-@@ -83,7 +82,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::CreatePoliciesAndDecorators(
+@@ -85,7 +83,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::CreatePoliciesAndDecorators(
        std::make_unique<performance_manager::FrozenFrameAggregator>());
    graph->PassToGraph(
        std::make_unique<performance_manager::IsolationContextMetrics>());
@@ -18,3 +19,20 @@ index 7f550df8e692..5237e8efdaab 100644
    graph->PassToGraph(
        std::make_unique<performance_manager::ProcessMetricsDecorator>());
  
+@@ -180,8 +177,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::PostCreateThreads() {
+ 
+   g_browser_process->profile_manager()->AddObserver(this);
+ 
+-  page_load_metrics_observer_ =
+-      std::make_unique<performance_manager::PageLoadMetricsObserver>();
+   page_live_state_data_helper_ =
+       std::make_unique<performance_manager::PageLiveStateDecoratorHelper>();
+   page_load_tracker_decorator_helper_ =
+@@ -199,7 +194,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::PostMainMessageLoopRun() {
+ 
+   page_load_tracker_decorator_helper_.reset();
+   page_live_state_data_helper_.reset();
+-  page_load_metrics_observer_.reset();
+ 
+   // There may still be worker hosts, WebContents and RenderProcessHosts with
+   // attached user data, retaining WorkerNodes, PageNodes, FrameNodes and

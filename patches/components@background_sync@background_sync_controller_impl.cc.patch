@@ -1,0 +1,56 @@
+diff --git a/components/background_sync/background_sync_controller_impl.cc b/components/background_sync/background_sync_controller_impl.cc
+index 040a8b6db3d3..d7a382f48d01 100644
+--- a/components/background_sync/background_sync_controller_impl.cc
++++ b/components/background_sync/background_sync_controller_impl.cc
+@@ -55,8 +55,6 @@ BackgroundSyncControllerImpl::BackgroundSyncControllerImpl(
+   DCHECK(browser_context_);
+   DCHECK(delegate_);
+ 
+-  background_sync_metrics_ =
+-      std::make_unique<BackgroundSyncMetrics>(delegate_.get());
+   delegate_->GetHostContentSettingsMap()->AddObserver(this);
+ }
+ 
+@@ -208,20 +206,12 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncRegistered(
+     const url::Origin& origin,
+     bool can_fire,
+     bool is_reregistered) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_->MaybeRecordOneShotSyncRegistrationEvent(
+-      origin, can_fire, is_reregistered);
+ }
+ 
+ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncRegistered(
+     const url::Origin& origin,
+     int min_interval,
+     bool is_reregistered) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_->MaybeRecordPeriodicSyncRegistrationEvent(
+-      origin, min_interval, is_reregistered);
+ }
+ 
+ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
+@@ -229,10 +219,6 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
+     blink::ServiceWorkerStatusCode status_code,
+     int num_attempts,
+     int max_attempts) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_->MaybeRecordOneShotSyncCompletionEvent(
+-      origin, status_code, num_attempts, max_attempts);
+ }
+ 
+ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
+@@ -240,10 +226,6 @@ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
+     blink::ServiceWorkerStatusCode status_code,
+     int num_attempts,
+     int max_attempts) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-
+-  background_sync_metrics_->MaybeRecordPeriodicSyncEventCompletion(
+-      origin, status_code, num_attempts, max_attempts);
+ }
+ 
+ void BackgroundSyncControllerImpl::ScheduleBrowserWakeUpWithDelay(

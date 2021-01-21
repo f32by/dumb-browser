@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/permissions/contextual_notification_permission_ui_selector.h b/chrome/browser/permissions/contextual_notification_permission_ui_selector.h
-index 77c295a1a10e..cbbc755c533b 100644
+index abbf37f6383a..b286527ee444 100644
 --- a/chrome/browser/permissions/contextual_notification_permission_ui_selector.h
 +++ b/chrome/browser/permissions/contextual_notification_permission_ui_selector.h
 @@ -7,7 +7,6 @@
@@ -9,18 +9,15 @@ index 77c295a1a10e..cbbc755c533b 100644
 -#include "chrome/browser/permissions/crowd_deny_safe_browsing_request.h"
  #include "components/permissions/notification_permission_ui_selector.h"
  
- class Profile;
-@@ -51,15 +50,11 @@ class ContextualNotificationPermissionUiSelector
+ namespace permissions {
+@@ -46,12 +45,8 @@ class ContextualNotificationPermissionUiSelector
        const ContextualNotificationPermissionUiSelector&) = delete;
  
    void EvaluatePerSiteTriggers(const url::Origin& origin);
 -  void OnSafeBrowsingVerdictReceived(
 -      Decision candidate_decision,
 -      CrowdDenySafeBrowsingRequest::Verdict verdict);
-   void OnPerSiteTriggersEvaluated(Decision decision);
    void Notify(const Decision& decision);
- 
-   Profile* profile_;
  
 -  base::Optional<CrowdDenySafeBrowsingRequest> safe_browsing_request_;
    DecisionMadeCallback callback_;

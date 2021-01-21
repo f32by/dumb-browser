@@ -1,8 +1,8 @@
 diff --git a/cc/trees/layer_tree_host.h b/cc/trees/layer_tree_host.h
-index c528a84e40b3..d06d6159507d 100644
+index e5e66fa7cc68..be792a76d5d6 100644
 --- a/cc/trees/layer_tree_host.h
 +++ b/cc/trees/layer_tree_host.h
-@@ -55,7 +55,6 @@
+@@ -54,7 +54,6 @@
  #include "components/viz/common/delegated_ink_metadata.h"
  #include "components/viz/common/resources/resource_format.h"
  #include "components/viz/common/surfaces/local_surface_id.h"
@@ -18,7 +18,7 @@ index c528a84e40b3..d06d6159507d 100644
  struct RenderingStats;
  struct CompositorCommitData;
  
-@@ -115,8 +113,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
+@@ -116,8 +114,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
      // compositor thread may make sync calls to this thread, analogous to the
      // raster worker threads.
      scoped_refptr<base::SequencedTaskRunner> image_worker_task_runner;
@@ -27,7 +27,7 @@ index c528a84e40b3..d06d6159507d 100644
    };
  
    // Constructs a LayerTreeHost with a compositor thread where scrolling and
-@@ -693,8 +689,7 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
+@@ -687,8 +683,7 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
  
    float recording_scale_factor() const { return recording_scale_factor_; }
  
@@ -37,7 +37,7 @@ index c528a84e40b3..d06d6159507d 100644
  
    void SetRenderFrameObserver(
        std::unique_ptr<RenderFrameMetadataObserver> observer);
-@@ -759,7 +754,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
+@@ -753,7 +748,6 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
    base::WeakPtr<CompositorDelegateForInput> compositor_delegate_weak_ptr_;
  
    scoped_refptr<base::SequencedTaskRunner> image_worker_task_runner_;

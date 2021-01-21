@@ -1,0 +1,20 @@
+diff --git a/components/background_sync/background_sync_controller_impl.h b/components/background_sync/background_sync_controller_impl.h
+index d06e0459be65..fd546b20f4ba 100644
+--- a/components/background_sync/background_sync_controller_impl.h
++++ b/components/background_sync/background_sync_controller_impl.h
+@@ -15,7 +15,6 @@
+ #include "base/time/time.h"
+ #include "build/build_config.h"
+ #include "components/background_sync/background_sync_delegate.h"
+-#include "components/background_sync/background_sync_metrics.h"
+ #include "components/content_settings/core/browser/content_settings_observer.h"
+ #include "components/keep_alive_registry/keep_alive_types.h"
+ #include "components/keep_alive_registry/scoped_keep_alive.h"
+@@ -136,7 +135,6 @@ class BackgroundSyncControllerImpl : public content::BackgroundSyncController,
+   content::BrowserContext* browser_context_;
+ 
+   std::unique_ptr<background_sync::BackgroundSyncDelegate> delegate_;
+-  std::unique_ptr<BackgroundSyncMetrics> background_sync_metrics_;
+ 
+   std::set<url::Origin> periodic_sync_origins_;
+ 

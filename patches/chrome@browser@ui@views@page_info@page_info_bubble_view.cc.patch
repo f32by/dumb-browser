@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/views/page_info/page_info_bubble_view.cc b/chrome/browser/ui/views/page_info/page_info_bubble_view.cc
+index d17168bcde55..b1adbf897b97 100644
+--- a/chrome/browser/ui/views/page_info/page_info_bubble_view.cc
++++ b/chrome/browser/ui/views/page_info/page_info_bubble_view.cc
+@@ -449,7 +449,6 @@ views::BubbleDialogDelegateView* PageInfoBubbleView::CreatePageInfoBubble(
+ 
+ void PageInfoBubbleView::SecurityDetailsClicked(const ui::Event& event) {
+   if (GetSecurityDescriptionType() == SecurityDescriptionType::SAFETY_TIP) {
+-    OpenHelpCenterFromSafetyTip(web_contents());
+   } else {
+     web_contents()->OpenURL(content::OpenURLParams(
+         GURL(chrome::kPageInfoHelpCenterURL), content::Referrer(),

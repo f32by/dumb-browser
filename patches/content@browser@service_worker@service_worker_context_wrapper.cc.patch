@@ -1,12 +1,42 @@
 diff --git a/content/browser/service_worker/service_worker_context_wrapper.cc b/content/browser/service_worker/service_worker_context_wrapper.cc
-index 24242fd6d2aa..e679916d2d3c 100644
+index f26042ce82a5..5f116e3ca195 100644
 --- a/content/browser/service_worker/service_worker_context_wrapper.cc
 +++ b/content/browser/service_worker/service_worker_context_wrapper.cc
-@@ -1948,7 +1948,7 @@ void ServiceWorkerContextWrapper::SetUpLoaderFactoryForUpdateCheckOnUI(
+@@ -45,7 +45,6 @@
+ #include "content/public/common/content_features.h"
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+ #include "net/base/url_util.h"
+-#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "storage/browser/quota/quota_client_type.h"
+ #include "storage/browser/quota/quota_manager_proxy.h"
+ #include "storage/browser/quota/special_storage_policy.h"
+@@ -227,12 +226,6 @@ ServiceWorkerContextWrapper::ServiceWorkerContextWrapper(
+   // Add this object as an observer of the wrapped |context_core_|. This lets us
+   // forward observer methods to observers outside of content.
+   core_observer_list_->AddObserver(this);
+-
+-  if (blink::IdentifiabilityStudySettings::Get()->IsActive()) {
+-    identifiability_metrics_ =
+-        std::make_unique<ServiceWorkerIdentifiabilityMetrics>();
+-    core_observer_list_->AddObserver(identifiability_metrics_.get());
+-  }
+ }
+ 
+ void ServiceWorkerContextWrapper::Init(
+@@ -1537,8 +1530,6 @@ ServiceWorkerContextWrapper::~ServiceWorkerContextWrapper() {
+   // tests where this object is not guaranteed to outlive the
+   // ServiceWorkerContextCore it wraps.
+   core_observer_list_->RemoveObserver(this);
+-  if (identifiability_metrics_)
+-    core_observer_list_->RemoveObserver(identifiability_metrics_.get());
+ }
+ 
+ void ServiceWorkerContextWrapper::InitOnCoreThread(
+@@ -1932,7 +1923,7 @@ void ServiceWorkerContextWrapper::SetUpLoaderFactoryForUpdateCheckOnUI(
        ChildProcessHost::kInvalidUniqueID,
        ContentBrowserClient::URLLoaderFactoryType::kServiceWorkerScript,
        url::Origin::Create(scope), /*navigation_id=*/base::nullopt,
--      base::kInvalidUkmSourceId, &pending_receiver, &header_client,
+-      ukm::kInvalidSourceIdObj, &pending_receiver, &header_client,
 +      &pending_receiver, &header_client,
        &bypass_redirect_checks,
        /*disable_secure_dns=*/nullptr,

@@ -1,8 +1,8 @@
 diff --git a/components/autofill/core/browser/BUILD.gn b/components/autofill/core/browser/BUILD.gn
-index 3447ad7a3033..3e2467ebf5ea 100644
+index b0dcbce1521a..44c96a7df0cb 100644
 --- a/components/autofill/core/browser/BUILD.gn
 +++ b/components/autofill/core/browser/BUILD.gn
-@@ -59,8 +59,6 @@ static_library("browser") {
+@@ -61,8 +61,6 @@ static_library("browser") {
      "autofill_manager.cc",
      "autofill_manager.h",
      "autofill_manager_test_delegate.h",
@@ -11,7 +11,7 @@ index 3447ad7a3033..3e2467ebf5ea 100644
      "autofill_observer.cc",
      "autofill_observer.h",
      "autofill_profile_sync_util.cc",
-@@ -176,13 +174,6 @@ static_library("browser") {
+@@ -186,13 +184,6 @@ static_library("browser") {
      "logging/log_receiver.h",
      "logging/log_router.cc",
      "logging/log_router.h",
@@ -22,10 +22,10 @@ index 3447ad7a3033..3e2467ebf5ea 100644
 -    "metrics/form_event_logger_base.cc",
 -    "metrics/form_event_logger_base.h",
 -    "metrics/form_events.h",
+     "pattern_provider/pattern_configuration_parser.cc",
+     "pattern_provider/pattern_configuration_parser.h",
      "pattern_provider/pattern_provider.cc",
-     "pattern_provider/pattern_provider.h",
-     "payments/account_info_getter.h",
-@@ -309,13 +300,6 @@ static_library("browser") {
+@@ -321,13 +312,6 @@ static_library("browser") {
      ]
    }
  
@@ -39,7 +39,7 @@ index 3447ad7a3033..3e2467ebf5ea 100644
    if (is_ios || is_android) {
      sources += [
        "payments/autofill_credit_card_filling_infobar_delegate_mobile.cc",
-@@ -371,7 +355,6 @@ static_library("browser") {
+@@ -383,7 +367,6 @@ static_library("browser") {
      "//components/history/core/browser",
      "//components/infobars/core",
      "//components/keyed_service/core",
@@ -47,16 +47,16 @@ index 3447ad7a3033..3e2467ebf5ea 100644
      "//components/leveldb_proto",
      "//components/os_crypt",
      "//components/policy/core/browser",
-@@ -390,8 +373,6 @@ static_library("browser") {
-     "//crypto",
+@@ -403,8 +386,6 @@ static_library("browser") {
      "//google_apis",
      "//net",
+     "//services/data_decoder/public/cpp:cpp",
 -    "//services/metrics/public/cpp:metrics_cpp",
 -    "//services/metrics/public/cpp:ukm_builders",
      "//services/network/public/cpp",
      "//services/network/public/mojom",
      "//sql",
-@@ -514,8 +495,6 @@ static_library("test_support") {
+@@ -531,8 +512,6 @@ static_library("test_support") {
      "//components/sync:test_support",
      "//components/translate/core/browser",
      "//components/translate/core/browser:test_support",
@@ -65,7 +65,7 @@ index 3447ad7a3033..3e2467ebf5ea 100644
      "//google_apis:test_support",
      "//services/network:test_support",
      "//services/network/public/cpp",
-@@ -587,7 +566,6 @@ source_set("unit_tests") {
+@@ -605,7 +584,6 @@ source_set("unit_tests") {
      "autofill_external_delegate_unittest.cc",
      "autofill_manager_unittest.cc",
      "autofill_merge_unittest.cc",
@@ -73,7 +73,7 @@ index 3447ad7a3033..3e2467ebf5ea 100644
      "autofill_profile_sync_util_unittest.cc",
      "autofill_profile_validation_util_unittest.cc",
      "autofill_profile_validator_unittest.cc",
-@@ -716,8 +694,6 @@ source_set("unit_tests") {
+@@ -738,8 +716,6 @@ source_set("unit_tests") {
      "//components/sync:test_support_model",
      "//components/sync/driver:test_support",
      "//components/translate/core/browser",
@@ -82,10 +82,10 @@ index 3447ad7a3033..3e2467ebf5ea 100644
      "//components/unified_consent",
      "//components/variations",
      "//components/variations:test_support",
-@@ -727,7 +703,6 @@ source_set("unit_tests") {
-     "//google_apis",
+@@ -750,7 +726,6 @@ source_set("unit_tests") {
      "//google_apis:test_support",
      "//net:test_support",
+     "//services/data_decoder/public/cpp:test_support",
 -    "//services/metrics/public/cpp:ukm_builders",
      "//services/network:test_support",
      "//services/network/public/cpp",

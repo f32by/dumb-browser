@@ -1,5 +1,5 @@
 diff --git a/content/renderer/accessibility/render_accessibility_impl.h b/content/renderer/accessibility/render_accessibility_impl.h
-index 0df6d32a8b65..42d97c200770 100644
+index 44e8ea758ec4..9d6cc10f890b 100644
 --- a/content/renderer/accessibility/render_accessibility_impl.h
 +++ b/content/renderer/accessibility/render_accessibility_impl.h
 @@ -43,10 +43,6 @@ class AXActionTarget;
@@ -23,7 +23,7 @@ index 0df6d32a8b65..42d97c200770 100644
   protected:
    // Send queued events from the renderer to the browser.
    void SendPendingAccessibilityEvents();
-@@ -237,16 +230,6 @@ class CONTENT_EXPORT RenderAccessibilityImpl : public RenderAccessibility,
+@@ -246,16 +239,6 @@ class CONTENT_EXPORT RenderAccessibilityImpl : public RenderAccessibility,
    // Cancels scheduled events that are not yet in flight
    void CancelScheduledEvents();
  
@@ -40,7 +40,7 @@ index 0df6d32a8b65..42d97c200770 100644
    // The initial accessibility tree root still needs to be created. Like other
    // accessible objects, it must be created when layout is clean.
    bool needs_initial_ax_tree_root_ = true;
-@@ -311,23 +294,11 @@ class CONTENT_EXPORT RenderAccessibilityImpl : public RenderAccessibility,
+@@ -320,23 +303,11 @@ class CONTENT_EXPORT RenderAccessibilityImpl : public RenderAccessibility,
    // The specified page language, or empty if unknown.
    std::string page_language_;
  
@@ -64,7 +64,7 @@ index 0df6d32a8b65..42d97c200770 100644
    // So we can queue up tasks to be executed later.
    base::WeakPtrFactory<RenderAccessibilityImpl>
        weak_factory_for_pending_events_{this};
-@@ -335,7 +306,6 @@ class CONTENT_EXPORT RenderAccessibilityImpl : public RenderAccessibility,
+@@ -344,7 +315,6 @@ class CONTENT_EXPORT RenderAccessibilityImpl : public RenderAccessibility,
    friend class AXImageAnnotatorTest;
    friend class PluginActionHandlingTest;
    friend class RenderAccessibilityImplTest;

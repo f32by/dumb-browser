@@ -1,0 +1,100 @@
+diff --git a/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc b/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
+index 84ab267a56a0..e42a3cdc1cd7 100644
+--- a/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
++++ b/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
+@@ -6,8 +6,6 @@
+ 
+ #include "base/bind.h"
+ #include "chrome/browser/platform_util.h"
+-#include "chrome/browser/reputation/reputation_service.h"
+-#include "chrome/browser/reputation/safety_tip_ui_helper.h"
+ #include "chrome/browser/ui/browser.h"
+ #include "chrome/browser/ui/browser_finder.h"
+ #include "chrome/browser/ui/browser_window.h"
+@@ -36,19 +34,7 @@ namespace {
+ 
+ int GetSafetyTipBannerId(security_state::SafetyTipStatus safety_tip_status,
+                          bool is_dark) {
+-  switch (safety_tip_status) {
+-    case security_state::SafetyTipStatus::kBadReputation:
+-    case security_state::SafetyTipStatus::kLookalike:
+-      return is_dark ? IDR_SAFETY_TIP_ILLUSTRATION_DARK
+-                     : IDR_SAFETY_TIP_ILLUSTRATION_LIGHT;
+-    case security_state::SafetyTipStatus::kBadReputationIgnored:
+-    case security_state::SafetyTipStatus::kLookalikeIgnored:
+-    case security_state::SafetyTipStatus::kBadKeyword:
+-    case security_state::SafetyTipStatus::kUnknown:
+-    case security_state::SafetyTipStatus::kNone:
+-      NOTREACHED();
+-      return 0;
+-  }
++  return 0;
+ }
+ 
+ }  // namespace
+@@ -73,10 +59,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
+   // created over it, etc).
+   set_close_on_deactivate(false);
+ 
+-  const base::string16 title_text =
+-      GetSafetyTipTitle(safety_tip_status, suggested_url);
+-  SetTitle(title_text);
+-
+   views::BubbleDialogDelegateView::CreateBubble(this);
+ 
+   // Replace the original title view with our formatted title.
+@@ -92,11 +74,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
+       kSizeDeltaInPixels, gfx::Font::FontStyle::NORMAL,
+       gfx::Font::Weight::NORMAL);
+ 
+-  auto new_title = std::make_unique<views::StyledLabel>();
+-  new_title->SetText(title_text);
+-  new_title->AddStyleRange(gfx::Range(0, title_text.length()), name_style);
+-  GetBubbleFrameView()->SetTitleView(std::move(new_title));
+-
+   ChromeLayoutProvider* layout_provider = ChromeLayoutProvider::Get();
+ 
+   gfx::Insets insets =
+@@ -141,15 +118,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
+       layout_provider->GetDistanceMetric(DISTANCE_CONTROL_LIST_VERTICAL);
+   bottom_layout->StartRowWithPadding(views::GridLayout::kFixedSize, kColumnId,
+                                      views::GridLayout::kFixedSize, spacing);
+-  auto text_label = std::make_unique<views::Label>(
+-      GetSafetyTipDescription(safety_tip_status, suggested_url_));
+-  text_label->SetMultiLine(true);
+-  text_label->SetLineHeight(20);
+-  text_label->SetHorizontalAlignment(gfx::ALIGN_LEFT);
+-  text_label->SizeToFit(layout_provider->GetDistanceMetric(
+-                            views::DISTANCE_BUBBLE_PREFERRED_WIDTH) -
+-                        insets.left() - insets.right());
+-  bottom_layout->AddView(std::move(text_label));
+ 
+   MaybeAddButtons(safety_tip_status, bottom_layout, spacing, kColumnId, insets);
+ 
+@@ -194,16 +162,10 @@ void SafetyTipPageInfoBubbleView::OnWidgetDestroying(views::Widget* widget) {
+ 
+ void SafetyTipPageInfoBubbleView::ExecuteLeaveCommand() {
+   action_taken_ = SafetyTipInteraction::kLeaveSite;
+-  LeaveSiteFromSafetyTip(
+-      web_contents(),
+-      safety_tip_status_ == security_state::SafetyTipStatus::kLookalike
+-          ? suggested_url_
+-          : GURL());
+ }
+ 
+ void SafetyTipPageInfoBubbleView::OpenHelpCenter() {
+   action_taken_ = SafetyTipInteraction::kLearnMore;
+-  OpenHelpCenterFromSafetyTip(web_contents());
+ }
+ 
+ void SafetyTipPageInfoBubbleView::RenderFrameDeleted(
+@@ -302,8 +264,7 @@ void SafetyTipPageInfoBubbleView::MaybeAddButtons(
+           [](SafetyTipPageInfoBubbleView* view) {
+             view->ExecuteLeaveCommand();
+           },
+-          this),
+-      l10n_util::GetStringUTF16(GetSafetyTipLeaveButtonId(safety_tip_status)));
++          this));
+   leave_button->SetProminent(true);
+   leave_button->SetID(PageInfoBubbleView::VIEW_ID_PAGE_INFO_BUTTON_LEAVE_SITE);
+   leave_button_ = button_layout->AddView(std::move(leave_button));

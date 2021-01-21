@@ -1,9 +1,9 @@
 diff --git a/components/translate/core/browser/translate_ranker_impl.cc b/components/translate/core/browser/translate_ranker_impl.cc
-index 8ff64686ceb3..bcd34144ccdc 100644
+index 90a61e4f2463..f9b2e3fe42fc 100644
 --- a/components/translate/core/browser/translate_ranker_impl.cc
 +++ b/components/translate/core/browser/translate_ranker_impl.cc
-@@ -27,9 +27,6 @@
- #include "components/translate/core/browser/translate_download_manager.h"
+@@ -28,9 +28,6 @@
+ #include "components/translate/core/browser/translate_metrics_logger.h"
  #include "components/translate/core/common/translate_switches.h"
  #include "components/variations/variations_associated_data.h"
 -#include "services/metrics/public/cpp/ukm_builders.h"
@@ -12,7 +12,7 @@ index 8ff64686ceb3..bcd34144ccdc 100644
  #include "third_party/metrics_proto/translate_event.pb.h"
  #include "url/gurl.h"
  
-@@ -150,10 +147,8 @@ void TranslateRankerFeatures::WriteTo(std::ostream& stream) const {
+@@ -151,10 +148,8 @@ void TranslateRankerFeatures::WriteTo(std::ostream& stream) const {
  }
  
  TranslateRankerImpl::TranslateRankerImpl(const base::FilePath& model_path,
@@ -25,7 +25,7 @@ index 8ff64686ceb3..bcd34144ccdc 100644
        is_query_enabled_(base::FeatureList::IsEnabled(kTranslateRankerQuery)),
        is_enforcement_enabled_(
            base::FeatureList::IsEnabled(kTranslateRankerEnforcement)),
-@@ -314,40 +309,6 @@ void TranslateRankerImpl::FlushTranslateEvents(
+@@ -324,40 +319,6 @@ void TranslateRankerImpl::FlushTranslateEvents(
    event_cache_.clear();
  }
  
@@ -66,7 +66,7 @@ index 8ff64686ceb3..bcd34144ccdc 100644
  void TranslateRankerImpl::OnModelAvailable(std::unique_ptr<RankerModel> model) {
    DCHECK(sequence_checker_.CalledOnValidSequence());
    model_ = std::move(model);
-@@ -357,33 +318,16 @@ bool TranslateRankerImpl::CheckModelLoaderForTesting() {
+@@ -367,33 +328,16 @@ bool TranslateRankerImpl::CheckModelLoaderForTesting() {
    return model_loader_ != nullptr;
  }
  

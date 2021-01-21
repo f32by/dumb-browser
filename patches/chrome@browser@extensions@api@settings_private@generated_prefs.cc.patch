@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/settings_private/generated_prefs.cc b/chrome/browser/extensions/api/settings_private/generated_prefs.cc
-index 564163014923..c774d794bf6e 100644
+index 4ff9d4cc8de5..02d0a4d2a4bb 100644
 --- a/chrome/browser/extensions/api/settings_private/generated_prefs.cc
 +++ b/chrome/browser/extensions/api/settings_private/generated_prefs.cc
-@@ -10,7 +10,6 @@
+@@ -11,7 +11,6 @@
  #include "chrome/browser/extensions/api/settings_private/generated_pref.h"
  #include "chrome/browser/extensions/api/settings_private/prefs_util_enums.h"
  #include "chrome/browser/password_manager/generated_password_leak_detection_pref.h"
@@ -10,12 +10,12 @@ index 564163014923..c774d794bf6e 100644
  #include "chrome/common/extensions/api/settings_private.h"
  #include "components/content_settings/core/common/pref_names.h"
  
-@@ -97,8 +96,6 @@ void GeneratedPrefs::CreatePrefs() {
+@@ -98,8 +97,6 @@ void GeneratedPrefs::CreatePrefs() {
            profile_);
    prefs_[kGeneratedPasswordLeakDetectionPref] =
        std::make_unique<GeneratedPasswordLeakDetectionPref>(profile_);
 -  prefs_[safe_browsing::kGeneratedSafeBrowsingPref] =
 -      std::make_unique<safe_browsing::GeneratedSafeBrowsingPref>(profile_);
+   prefs_[content_settings::kGeneratedNotificationPref] =
+       std::make_unique<content_settings::GeneratedNotificationPref>(profile_);
  }
- 
- }  // namespace settings_private

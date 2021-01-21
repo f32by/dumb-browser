@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/cocoa/profiles/profile_menu_controller.mm b/chrome/browser/ui/cocoa/profiles/profile_menu_controller.mm
-index 6790741b242e..5d31e19f288f 100644
+index abdaf085527c..9c2b5ef2d9ea 100644
 --- a/chrome/browser/ui/cocoa/profiles/profile_menu_controller.mm
 +++ b/chrome/browser/ui/cocoa/profiles/profile_menu_controller.mm
-@@ -15,7 +15,6 @@
+@@ -16,7 +16,6 @@
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_avatar_icon_util.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -10,13 +10,3 @@ index 6790741b242e..5d31e19f288f 100644
  #include "chrome/browser/profiles/profile_window.h"
  #include "chrome/browser/ui/browser.h"
  #include "chrome/browser/ui/browser_list.h"
-@@ -119,8 +118,7 @@ - (IBAction)editProfile:(id)sender {
- }
- 
- - (IBAction)newProfile:(id)sender {
--  profiles::CreateAndSwitchToNewProfile(ProfileManager::CreateCallback(),
--                                        ProfileMetrics::ADD_NEW_USER_MENU);
-+  profiles::CreateAndSwitchToNewProfile(ProfileManager::CreateCallback());
- }
- 
- - (BOOL)insertItemsIntoMenu:(NSMenu*)menu

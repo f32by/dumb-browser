@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/web_applications/web_app_install_task.cc b/chrome/browser/web_applications/web_app_install_task.cc
-index 2527101db970..3f7c5bdf71fd 100644
+index c1a3d631ce64..137a65c8b06f 100644
 --- a/chrome/browser/web_applications/web_app_install_task.cc
 +++ b/chrome/browser/web_applications/web_app_install_task.cc
-@@ -202,8 +202,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
+@@ -205,8 +205,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
    install_source_ = install_source;
    background_installation_ = true;
  
@@ -11,7 +11,7 @@ index 2527101db970..3f7c5bdf71fd 100644
    InstallFinalizer::FinalizeOptions options;
    options.install_source = install_source;
    options.locally_installed = true;
-@@ -314,14 +312,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
+@@ -321,14 +319,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
    initiated_ = true;
  }
  
@@ -26,7 +26,7 @@ index 2527101db970..3f7c5bdf71fd 100644
  void WebAppInstallTask::CallInstallCallback(const AppId& app_id,
                                              InstallResultCode code) {
    Observe(nullptr);
-@@ -714,9 +704,6 @@ void WebAppInstallTask::OnDialogCompleted(
+@@ -719,9 +709,6 @@ void WebAppInstallTask::OnDialogCompleted(
  
    WebApplicationInfo web_app_info_copy = *web_app_info;
  
@@ -36,13 +36,22 @@ index 2527101db970..3f7c5bdf71fd 100644
    InstallFinalizer::FinalizeOptions finalize_options;
    finalize_options.install_source = install_source_;
    finalize_options.locally_installed = true;
-@@ -771,10 +758,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+@@ -776,9 +763,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
      return;
    }
  
--  RecordAppBanner(web_contents(), web_app_info->start_url);
 -  RecordWebAppInstallationTimestamp(profile_->GetPrefs(), app_id,
 -                                    install_source_);
+-
+   if (install_params_ && !install_params_->locally_installed) {
+     DCHECK(background_installation_);
+     DCHECK(!(install_params_->add_to_applications_menu ||
+@@ -790,9 +774,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+     return;
+   }
+ 
+-  // Only record the AppBanner stats for locally installed apps.
+-  RecordAppBanner(web_contents(), web_app_info->start_url);
 -
    InstallOsHooksOptions options;
  

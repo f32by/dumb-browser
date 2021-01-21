@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/policy/configuration_policy_handler_list_factory.cc b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
-index f4b05aaf7469..e873fa7638b9 100644
+index b832898d2997..ebfc4f5331f9 100644
 --- a/chrome/browser/policy/configuration_policy_handler_list_factory.cc
 +++ b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
-@@ -58,7 +58,6 @@
+@@ -59,7 +59,6 @@
  #include "components/content_settings/core/common/pref_names.h"
  #include "components/data_reduction_proxy/core/common/data_reduction_proxy_pref_names.h"
  #include "components/embedder_support/pref_names.h"
@@ -10,7 +10,7 @@ index f4b05aaf7469..e873fa7638b9 100644
  #include "components/feed/core/shared_prefs/pref_names.h"
  #include "components/history/core/common/pref_names.h"
  #include "components/language/core/browser/pref_names.h"
-@@ -77,8 +76,6 @@
+@@ -78,8 +77,6 @@
  #include "components/policy/core/common/policy_pref_names.h"
  #include "components/policy/core/common/schema.h"
  #include "components/policy/policy_constants.h"
@@ -19,15 +19,15 @@ index f4b05aaf7469..e873fa7638b9 100644
  #include "components/search_engines/default_search_policy_handler.h"
  #include "components/search_engines/search_engines_pref_names.h"
  #include "components/security_interstitials/core/pref_names.h"
-@@ -105,7 +102,6 @@
+@@ -106,7 +103,6 @@
  #include "chrome/browser/download/download_dir_policy_handler.h"
  #include "chrome/browser/enterprise/connectors/connectors_prefs.h"
  #include "chrome/browser/enterprise/connectors/enterprise_connectors_policy_handler.h"
--#include "chrome/browser/enterprise/reporting/extension_request_policy_handler.h"
+-#include "chrome/browser/enterprise/reporting/extension_request/extension_request_policy_handler.h"
  #include "chrome/browser/media/kaleidoscope/kaleidoscope_prefs.h"
  #include "chrome/browser/media/router/media_router_feature.h"
  #include "chrome/browser/policy/local_sync_policy_handler.h"
-@@ -162,6 +158,7 @@ namespace {
+@@ -158,6 +154,7 @@ namespace {
  // List of policy types to preference names. This is used for simple policies
  // that directly map to a single preference.
  // clang-format off
@@ -35,7 +35,7 @@ index f4b05aaf7469..e873fa7638b9 100644
  const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kHomepageIsNewTabPage,
      prefs::kHomePageIsNewTabPage,
-@@ -187,12 +184,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -183,12 +180,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kQuicAllowed,
      prefs::kQuicAllowed,
      base::Value::Type::BOOLEAN },
@@ -48,7 +48,7 @@ index f4b05aaf7469..e873fa7638b9 100644
    { key::kUrlKeyedAnonymizedDataCollectionEnabled,
      unified_consent::prefs::kUrlKeyedAnonymizedDataCollectionEnabled,
      base::Value::Type::BOOLEAN },
-@@ -331,21 +322,9 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -318,15 +309,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kGloballyScopeHTTPAuthCacheEnabled,
      prefs::kGloballyScopeHTTPAuthCacheEnabled,
      base::Value::Type::BOOLEAN },
@@ -64,13 +64,7 @@ index f4b05aaf7469..e873fa7638b9 100644
    { key::kSafeSitesFilterBehavior,
      policy_prefs::kSafeSitesFilterBehavior,
      base::Value::Type::INTEGER },
--  { key::kSendFilesForMalwareCheck,
--    prefs::kSafeBrowsingSendFilesForMalwareCheck,
--    base::Value::Type::INTEGER },
-   { key::kAmbientAuthenticationInPrivateModesEnabled,
-     prefs::kAmbientAuthenticationInPrivateModesEnabled,
-     base::Value::Type::INTEGER },
-@@ -450,7 +429,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -434,7 +416,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kImportAutofillFormData,
      prefs::kImportDialogAutofillFormData,
      base::Value::Type::BOOLEAN },
@@ -78,7 +72,7 @@ index f4b05aaf7469..e873fa7638b9 100644
    { key::kMaxConnectionsPerProxy,
      prefs::kMaxConnectionsPerProxy,
      base::Value::Type::INTEGER },
-@@ -463,9 +441,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -447,9 +428,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kDefaultMediaStreamSetting,
      prefs::kManagedDefaultMediaStreamSetting,
      base::Value::Type::INTEGER },
@@ -88,17 +82,17 @@ index f4b05aaf7469..e873fa7638b9 100644
    { key::kSSLErrorOverrideAllowed,
      prefs::kSSLErrorOverrideAllowed,
      base::Value::Type::BOOLEAN },
-@@ -619,9 +594,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
-   { key::kDNSInterceptionChecksEnabled,
-     prefs::kDNSInterceptionChecksEnabled,
-     base::Value::Type::BOOLEAN },
+@@ -603,9 +581,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+   { key::kIntranetRedirectBehavior,
+     omnibox::kIntranetRedirectBehavior,
+     base::Value::Type::INTEGER },
 -  { key::kAdvancedProtectionAllowed,
 -    prefs::kAdvancedProtectionAllowed,
 -    base::Value::Type::BOOLEAN },
    { key::kAccessibilityImageLabelsEnabled,
      prefs::kAccessibilityImageLabelsEnabled,
      base::Value::Type::BOOLEAN },
-@@ -661,9 +633,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -645,9 +620,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kWebRtcEventLogCollectionAllowed,
      prefs::kWebRtcEventLogCollectionAllowed,
      base::Value::Type::BOOLEAN },
@@ -108,44 +102,7 @@ index f4b05aaf7469..e873fa7638b9 100644
    { key::kSuppressUnsupportedOSWarning,
      prefs::kSuppressUnsupportedOSWarning,
      base::Value::Type::BOOLEAN },
-@@ -679,36 +648,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
-   { key::kBrowserGuestModeEnforced,
-     prefs::kBrowserGuestModeEnforced,
-     base::Value::Type::BOOLEAN },
--  { key::kUnsafeEventsReportingEnabled,
--    prefs::kUnsafeEventsReportingEnabled,
--    base::Value::Type::BOOLEAN },
--  { key::kDelayDeliveryUntilVerdict,
--    prefs::kDelayDeliveryUntilVerdict,
--    base::Value::Type::INTEGER },
--  { key::kBlockLargeFileTransfer,
--    prefs::kBlockLargeFileTransfer,
--    base::Value::Type::INTEGER },
--  { key::kAllowPasswordProtectedFiles,
--    prefs::kAllowPasswordProtectedFiles,
--    base::Value::Type::INTEGER },
--  { key::kCheckContentCompliance,
--    prefs::kCheckContentCompliance,
--    base::Value::Type::INTEGER },
--  { key::kBlockUnsupportedFiletypes,
--    prefs::kBlockUnsupportedFiletypes,
--    base::Value::Type::INTEGER },
--  { key::kURLsToCheckComplianceOfDownloadedContent,
--    prefs::kURLsToCheckComplianceOfDownloadedContent,
--    base::Value::Type::LIST },
--  { key::kURLsToCheckForMalwareOfUploadedContent,
--    prefs::kURLsToCheckForMalwareOfUploadedContent,
--    base::Value::Type::LIST },
--  { key::kURLsToNotCheckForMalwareOfDownloadedContent,
--    prefs::kURLsToNotCheckForMalwareOfDownloadedContent,
--    base::Value::Type::LIST },
--  { key::kURLsToNotCheckComplianceOfUploadedContent,
--    prefs::kURLsToNotCheckComplianceOfUploadedContent,
--    base::Value::Type::LIST },
-   { key::kWebRtcAllowLegacyTLSProtocols,
-     prefs::kWebRTCAllowLegacyTLSProtocols,
-     base::Value::Type::BOOLEAN },
-@@ -1449,8 +1388,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1436,8 +1408,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
    handlers->AddHandler(std::make_unique<JavascriptPolicyHandler>());
    handlers->AddHandler(std::make_unique<NetworkPredictionPolicyHandler>());
    handlers->AddHandler(std::make_unique<RestoreOnStartupPolicyHandler>());
@@ -154,24 +111,20 @@ index f4b05aaf7469..e873fa7638b9 100644
    handlers->AddHandler(std::make_unique<SimpleDeprecatingPolicyHandler>(
        std::make_unique<SimplePolicyHandler>(key::kAuthServerWhitelist,
                                              prefs::kAuthServerAllowlist,
-@@ -1466,13 +1403,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1453,9 +1423,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            key::kAuthNegotiateDelegateAllowlist,
            prefs::kAuthNegotiateDelegateAllowlist, base::Value::Type::STRING)));
  
--  handlers->AddHandler(std::make_unique<SimpleDeprecatingPolicyHandler>(
--      std::make_unique<SimplePolicyHandler>(
--          key::kSafeBrowsingWhitelistDomains,
--          prefs::kSafeBrowsingWhitelistDomains, base::Value::Type::LIST),
--      std::make_unique<SimplePolicyHandler>(
--          key::kSafeBrowsingAllowlistDomains,
--          prefs::kSafeBrowsingWhitelistDomains, base::Value::Type::LIST)));
+-  handlers->AddHandler(std::make_unique<SimplePolicyHandler>(
+-      key::kSafeBrowsingAllowlistDomains, prefs::kSafeBrowsingWhitelistDomains,
+-      base::Value::Type::LIST));
    handlers->AddHandler(std::make_unique<syncer::SyncPolicyHandler>());
    handlers->AddHandler(std::make_unique<BrowsingHistoryPolicyHandler>());
  
-@@ -1486,12 +1416,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
-       std::make_unique<SimplePolicyHandler>(key::kURLAllowlist,
-                                             policy_prefs::kUrlWhitelist,
-                                             base::Value::Type::LIST)));
+@@ -1464,12 +1431,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+   handlers->AddHandler(std::make_unique<SimplePolicyHandler>(
+       key::kURLAllowlist, policy_prefs::kUrlWhitelist,
+       base::Value::Type::LIST));
 -  handlers->AddHandler(std::make_unique<SimpleSchemaValidatingPolicyHandler>(
 -      key::kSafeBrowsingExtendedReportingEnabled,
 -      prefs::kSafeBrowsingScoutReportingEnabled, chrome_schema,
@@ -181,7 +134,7 @@ index f4b05aaf7469..e873fa7638b9 100644
  
  #if defined(OS_ANDROID)
    handlers->AddHandler(
-@@ -1537,8 +1461,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1511,8 +1472,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            chrome_schema.GetValidationSchema(),
            SimpleSchemaValidatingPolicyHandler::RECOMMENDED_ALLOWED,
            SimpleSchemaValidatingPolicyHandler::MANDATORY_ALLOWED));
@@ -190,7 +143,7 @@ index f4b05aaf7469..e873fa7638b9 100644
  
    // Handlers for Chrome Enterprise Connectors policies.
    handlers->AddHandler(
-@@ -1561,11 +1483,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1535,11 +1494,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            enterprise_connectors::EnterpriseConnectorsPolicyHandler>(
            key::kOnSecurityEventEnterpriseConnector,
            enterprise_connectors::kOnSecurityEventPref, chrome_schema));
@@ -199,6 +152,6 @@ index f4b05aaf7469..e873fa7638b9 100644
 -          enterprise_connectors::EnterpriseConnectorsPolicyHandler>(
 -          key::kEnterpriseRealTimeUrlCheckMode,
 -          prefs::kSafeBrowsingEnterpriseRealTimeUrlCheckMode, chrome_schema));
- #endif  // defined(OS_ANDROID)
  
- #if defined(OS_CHROMEOS)
+   handlers->AddHandler(std::make_unique<SimpleSchemaValidatingPolicyHandler>(
+       key::kBrowsingDataLifetime, browsing_data::prefs::kBrowsingDataLifetime,

@@ -1,5 +1,5 @@
 diff --git a/components/download/internal/common/parallel_download_job.cc b/components/download/internal/common/parallel_download_job.cc
-index c8355e740ee4..25d1535f8a45 100644
+index c4c88473b287..45265127d9da 100644
 --- a/components/download/internal/common/parallel_download_job.cc
 +++ b/components/download/internal/common/parallel_download_job.cc
 @@ -11,7 +11,6 @@
@@ -10,27 +10,7 @@ index c8355e740ee4..25d1535f8a45 100644
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "net/traffic_annotation/network_traffic_annotation.h"
  #include "net/url_request/referrer_policy.h"
-@@ -130,9 +129,6 @@ void ParallelDownloadJob::OnInputStreamReady(
-   bool success =
-       DownloadJob::AddInputStream(std::move(input_stream), worker->offset());
- 
--  RecordParallelDownloadAddStreamSuccess(
--      success, range_support_ == RangeRequestSupportType::kSupport);
--
-   // Destroy the request if the sink is gone.
-   if (!success) {
-     VLOG(kDownloadJobVerboseLevel)
-@@ -189,9 +185,6 @@ void ParallelDownloadJob::BuildParallelRequests() {
-           first_slice_offset,
-           content_length_ - first_slice_offset + initial_request_offset_,
-           GetParallelRequestCount(), GetMinSliceSize());
--    } else {
--      RecordParallelDownloadCreationEvent(
--          ParallelDownloadCreationEvent::FALLBACK_REASON_REMAINING_TIME);
-     }
-   }
- 
-@@ -204,8 +197,6 @@ void ParallelDownloadJob::BuildParallelRequests() {
+@@ -197,8 +196,6 @@ void ParallelDownloadJob::BuildParallelRequests() {
      slices_to_download.pop_back();
  
    ForkSubRequests(slices_to_download);

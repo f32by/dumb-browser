@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc b/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
-index cb0d83f58f46..2672297b6a60 100644
+index 74e260587e44..c9bf0eeb05e6 100644
 --- a/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
 @@ -32,7 +32,6 @@
@@ -8,9 +8,9 @@ index cb0d83f58f46..2672297b6a60 100644
  #include "base/feature_list.h"
 -#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
  #include "third_party/blink/public/common/features.h"
+ #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
  #include "third_party/blink/renderer/bindings/core/v8/source_location.h"
- #include "third_party/blink/renderer/bindings/core/v8/worker_or_worklet_script_controller.h"
-@@ -58,12 +57,10 @@ SharedWorkerGlobalScope::SharedWorkerGlobalScope(
+@@ -59,12 +58,10 @@ SharedWorkerGlobalScope::SharedWorkerGlobalScope(
      SharedWorkerThread* thread,
      base::TimeTicks time_origin,
      const SharedWorkerToken& token,

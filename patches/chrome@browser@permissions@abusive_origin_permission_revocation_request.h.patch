@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/permissions/abusive_origin_permission_revocation_request.h b/chrome/browser/permissions/abusive_origin_permission_revocation_request.h
-index 18aeb4ba43aa..b0548b4d89d8 100644
+index 18aeb4ba43aa..94ca9765c9f7 100644
 --- a/chrome/browser/permissions/abusive_origin_permission_revocation_request.h
 +++ b/chrome/browser/permissions/abusive_origin_permission_revocation_request.h
 @@ -8,7 +8,6 @@
@@ -10,7 +10,7 @@ index 18aeb4ba43aa..b0548b4d89d8 100644
  #include "url/gurl.h"
  
  class Profile;
-@@ -57,10 +56,8 @@ class AbusiveOriginPermissionRevocationRequest {
+@@ -57,11 +56,7 @@ class AbusiveOriginPermissionRevocationRequest {
    // yes, the notifications permission will be revoked. |callback_| will be
    // synchronously called with the result.
    void CheckAndRevokeIfAbusive();
@@ -18,7 +18,7 @@ index 18aeb4ba43aa..b0548b4d89d8 100644
 -      CrowdDenySafeBrowsingRequest::Verdict verdict);
  
 -  base::Optional<CrowdDenySafeBrowsingRequest> safe_browsing_request_;
-+
-   Profile* profile_;
+-  Profile* profile_;
    const GURL origin_;
    OutcomeCallback callback_;
+   base::WeakPtrFactory<AbusiveOriginPermissionRevocationRequest> weak_factory_{

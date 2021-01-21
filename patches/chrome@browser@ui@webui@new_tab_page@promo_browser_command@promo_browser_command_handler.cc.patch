@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/new_tab_page/promo_browser_command/promo_browser_command_handler.cc b/chrome/browser/ui/webui/new_tab_page/promo_browser_command/promo_browser_command_handler.cc
-index 7e16e7d6631c..08c43f7dc127 100644
+index 8b632fdaa583..2f59764a37ff 100644
 --- a/chrome/browser/ui/webui/new_tab_page/promo_browser_command/promo_browser_command_handler.cc
 +++ b/chrome/browser/ui/webui/new_tab_page/promo_browser_command/promo_browser_command_handler.cc
-@@ -15,9 +15,6 @@
+@@ -16,9 +16,6 @@
  #include "chrome/browser/ui/browser_navigator.h"
  #include "chrome/browser/ui/chrome_pages.h"
  #include "chrome/common/webui_url_constants.h"
@@ -12,7 +12,7 @@ index 7e16e7d6631c..08c43f7dc127 100644
  #include "ui/base/page_transition_types.h"
  #include "ui/base/window_open_disposition.h"
  
-@@ -46,24 +43,6 @@ void PromoBrowserCommandHandler::CanShowPromoWithCommand(
+@@ -47,24 +44,6 @@ void PromoBrowserCommandHandler::CanShowPromoWithCommand(
      promo_browser_command::mojom::Command command_id,
      CanShowPromoWithCommandCallback callback) {
    bool can_show = false;
@@ -21,7 +21,7 @@ index 7e16e7d6631c..08c43f7dc127 100644
 -      // Nothing to do.
 -      break;
 -    case Command::kOpenSafetyCheck:
--      can_show = true;
+-      can_show = chrome::enterprise_util::HasBrowserPoliciesApplied(profile_);
 -      break;
 -    case Command::kOpenSafeBrowsingEnhancedProtectionSettings: {
 -      bool managed = safe_browsing::SafeBrowsingPolicyHandler::

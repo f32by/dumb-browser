@@ -1,8 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 39b9075b1267..085c4a88bf23 100644
+index adf4629ced45..c1c1d055618c 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -113,7 +113,6 @@ group("gn_all") {
+@@ -116,7 +116,6 @@ group("gn_all") {
        "//chrome/test:interactive_ui_tests",
        "//chrome/test:sync_integration_tests",
        "//chrome/test/chromedriver:chromedriver_unittests",
@@ -10,7 +10,15 @@ index 39b9075b1267..085c4a88bf23 100644
        "//components/zucchini:zucchini",
        "//components/zucchini:zucchini_unittests",
        "//gpu/gles2_conform_support:gles2_conform_test",
-@@ -243,7 +242,6 @@ group("gn_all") {
+@@ -154,7 +153,6 @@ group("gn_all") {
+       "//third_party/pdfium/samples:pdfium_test",
+       "//tools/perf/clear_system_cache",
+       "//tools/polymer:polymer_tools_python_unittests",
+-      "//tools/privacy_budget:privacy_budget_tools",
+       "//ui/accessibility:accessibility_perftests",
+       "//ui/accessibility:accessibility_unittests",
+       "//ui/accessibility/extensions:extension_tests",
+@@ -245,7 +243,6 @@ group("gn_all") {
    } else if (is_ios) {
      deps += [
        "//ios:all",
@@ -18,7 +26,7 @@ index 39b9075b1267..085c4a88bf23 100644
      ]
    } else if (is_fuchsia) {
      deps += [
-@@ -448,14 +446,6 @@ group("gn_all") {
+@@ -452,14 +449,6 @@ group("gn_all") {
      ]
    }
  
@@ -33,7 +41,7 @@ index 39b9075b1267..085c4a88bf23 100644
    if (is_linux || is_chromeos) {
      # The following are definitely linux-only.
      deps += [
-@@ -630,7 +620,6 @@ group("gn_all") {
+@@ -634,7 +623,6 @@ group("gn_all") {
    if (is_win) {
      deps += [
        "//base:pe_image_test",
@@ -41,11 +49,11 @@ index 39b9075b1267..085c4a88bf23 100644
        "//chrome/chrome_elf:chrome_elf_unittests",
        "//chrome/chrome_elf:dll_hash_main",
        "//chrome/elevation_service:elevation_service_unittests",
-@@ -678,14 +667,6 @@ group("gn_all") {
+@@ -682,14 +670,6 @@ group("gn_all") {
      }
    }
  
--  if (is_mac || is_win || is_android || (is_linux && !is_chromeos)) {
+-  if (is_mac || is_win || is_android || is_linux || is_chromeos) {
 -    deps += [
 -      "//third_party/crashpad/crashpad:crashpad_tests",
 -      "//third_party/crashpad/crashpad/handler:crashpad_handler",
@@ -56,7 +64,7 @@ index 39b9075b1267..085c4a88bf23 100644
    if (use_openh264) {
      deps += [
        "//third_party/openh264:common",
-@@ -722,7 +703,6 @@ group("gn_all") {
+@@ -726,7 +706,6 @@ group("gn_all") {
        "//chrome/tools/convert_dict",
        "//components/constrained_window:unit_tests",
        "//components/metrics:serialization",
@@ -64,7 +72,7 @@ index 39b9075b1267..085c4a88bf23 100644
        "//components/services/filesystem:filesystem_service_unittests",
        "//components/sessions:unit_tests",
        "//media/blink:media_blink_unittests",
-@@ -848,10 +828,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
+@@ -853,10 +832,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
        "//remoting/host:host",
        "//tools/traffic_annotation/summary:annotations_xml",
      ]
@@ -75,15 +83,15 @@ index 39b9075b1267..085c4a88bf23 100644
    }
  }
  
-@@ -1230,7 +1206,6 @@ if (!is_ios) {
-   group("blink_python_tests") {
+@@ -1258,7 +1233,6 @@ if (!is_ios) {
+ 
      data = [
        "//build/android/",
 -      "//components/crash/content/tools/generate_breakpad_symbols.py",
-       "//testing/scripts/common.py",
-       "//testing/scripts/run_isolated_script_test.py",
-       "//testing/test_env.py",
-@@ -1372,7 +1347,6 @@ if (enable_js_type_check) {
+       "//third_party/blink/renderer/bindings/scripts/",
+       "//third_party/blink/renderer/build/scripts/",
+       "//third_party/blink/tools/",
+@@ -1396,7 +1370,6 @@ if (enable_js_type_check) {
        "components/neterror/resources:closure_compile",
        "components/security_interstitials/core/common/resources:closure_compile",
        "components/sync/driver/resources:closure_compile",

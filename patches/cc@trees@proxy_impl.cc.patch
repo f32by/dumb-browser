@@ -1,8 +1,8 @@
 diff --git a/cc/trees/proxy_impl.cc b/cc/trees/proxy_impl.cc
-index eefabd96dfb6..d9e9f393f2c5 100644
+index 13cccd11026d..f06f4267e482 100644
 --- a/cc/trees/proxy_impl.cc
 +++ b/cc/trees/proxy_impl.cc
-@@ -32,7 +32,6 @@
+@@ -33,7 +33,6 @@
  #include "components/viz/common/frame_timing_details.h"
  #include "components/viz/common/gpu/context_provider.h"
  #include "gpu/command_buffer/client/gles2_interface.h"
@@ -10,7 +10,7 @@ index eefabd96dfb6..d9e9f393f2c5 100644
  
  namespace cc {
  
-@@ -84,9 +83,7 @@ ProxyImpl::ProxyImpl(base::WeakPtr<ProxyMain> proxy_main_weak_ptr,
+@@ -86,9 +85,7 @@ ProxyImpl::ProxyImpl(base::WeakPtr<ProxyMain> proxy_main_weak_ptr,
    std::unique_ptr<CompositorTimingHistory> compositor_timing_history(
        new CompositorTimingHistory(
            scheduler_settings.using_synchronous_renderer_compositor,
@@ -21,9 +21,9 @@ index eefabd96dfb6..d9e9f393f2c5 100644
    scheduler_.reset(new Scheduler(this, scheduler_settings, layer_tree_host_id_,
                                   task_runner_provider_->ImplThreadTaskRunner(),
                                   std::move(compositor_timing_history)));
-@@ -390,11 +387,6 @@ void ProxyImpl::RenewTreePriority() {
-       host_impl_->page_scale_animation_active() ||
-       host_impl_->IsActivelyPrecisionScrolling();
+@@ -414,11 +411,6 @@ void ProxyImpl::RenewTreePriority() {
+   bool user_interaction_in_progress =
+       non_scroll_interaction_in_progress || scroll_type_considered_interaction;
  
 -  if (host_impl_->ukm_manager()) {
 -    host_impl_->ukm_manager()->SetUserInteractionInProgress(
@@ -33,7 +33,7 @@ index eefabd96dfb6..d9e9f393f2c5 100644
    // Schedule expiration if smoothness currently takes priority.
    if (user_interaction_in_progress)
      smoothness_priority_expiration_notifier_.Schedule();
-@@ -771,15 +763,9 @@ base::SingleThreadTaskRunner* ProxyImpl::MainThreadTaskRunner() {
+@@ -803,15 +795,9 @@ base::SingleThreadTaskRunner* ProxyImpl::MainThreadTaskRunner() {
    return task_runner_provider_->MainThreadTaskRunner();
  }
  

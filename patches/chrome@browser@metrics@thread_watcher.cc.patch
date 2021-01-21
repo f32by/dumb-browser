@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/thread_watcher.cc b/chrome/browser/metrics/thread_watcher.cc
-index 7d7ff858739a..b7aefaa09217 100644
+index 1ea199cde52e..eae87c433b0f 100644
 --- a/chrome/browser/metrics/thread_watcher.cc
 +++ b/chrome/browser/metrics/thread_watcher.cc
 @@ -27,7 +27,6 @@
@@ -10,7 +10,42 @@ index 7d7ff858739a..b7aefaa09217 100644
  #include "components/metrics/call_stack_profile_metrics_provider.h"
  #include "components/omnibox/browser/omnibox_event_global_tracker.h"
  #include "components/version_info/version_info.h"
-@@ -432,11 +431,6 @@ void ThreadWatcher::GotNoResponse() {
+@@ -36,10 +35,6 @@
+ #include "content/public/browser/notification_registrar.h"
+ #include "content/public/browser/notification_service.h"
+ 
+-#if !defined(OS_ANDROID)
+-#include "chrome/browser/metrics/browser_activity_watcher.h"
+-#endif
+-
+ using content::BrowserThread;
+ 
+ namespace {
+@@ -68,10 +63,6 @@ class ThreadWatcherObserver : public content::NotificationObserver {
+   // Called when user activity is detected.
+   void OnUserActivityDetected();
+ 
+-#if !defined(OS_ANDROID)
+-  std::unique_ptr<BrowserActivityWatcher> browser_activity_watcher_;
+-#endif
+-
+   content::NotificationRegistrar registrar_;
+ 
+   // This is the last time when woke all thread watchers up.
+@@ -97,12 +88,6 @@ ThreadWatcherObserver::ThreadWatcherObserver(
+   DCHECK(!g_thread_watcher_observer_);
+   g_thread_watcher_observer_ = this;
+ 
+-#if !defined(OS_ANDROID)
+-  browser_activity_watcher_ = std::make_unique<BrowserActivityWatcher>(
+-      base::BindRepeating(&ThreadWatcherObserver::OnUserActivityDetected,
+-                          base::Unretained(this)));
+-#endif
+-
+   registrar_.Add(this, content::NOTIFICATION_LOAD_START,
+                  content::NotificationService::AllSources());
+   registrar_.Add(this, content::NOTIFICATION_LOAD_STOP,
+@@ -431,11 +416,6 @@ void ThreadWatcher::GotNoResponse() {
      if (!crashed_once) {
        crashed_once = true;
  
@@ -22,7 +57,7 @@ index 7d7ff858739a..b7aefaa09217 100644
        // Simulate a crash.ou
        metrics::CrashBecauseThreadWasUnresponsive(thread_id_);
      }
-@@ -445,29 +439,6 @@ void ThreadWatcher::GotNoResponse() {
+@@ -444,29 +424,6 @@ void ThreadWatcher::GotNoResponse() {
    hung_processing_complete_ = true;
  }
  

@@ -1,0 +1,16 @@
+diff --git a/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc b/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
+index c969660cef0b..cb1a3a6e1646 100644
+--- a/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
++++ b/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
+@@ -94,11 +94,6 @@ void TextFragmentAnchorMetrics::ReportMetrics() {
+     UseCounter::Count(document_, WebFeature::kTextFragmentAnchorMatchFound);
+   }
+ 
+-  shared_highlighting::LogLinkOpenedUkmEvent(
+-      document_->UkmRecorder(), document_->UkmSourceID(),
+-      KURL(document_->referrer()),
+-      /*success=*/matches_.size() == selector_count_);
+-
+   std::string uma_prefix = GetPrefixForHistograms();
+ 
+   base::UmaHistogramCounts100(base::StrCat({uma_prefix, "SelectorCount"}),

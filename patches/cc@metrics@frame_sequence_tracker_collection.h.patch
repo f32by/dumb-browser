@@ -1,5 +1,5 @@
 diff --git a/cc/metrics/frame_sequence_tracker_collection.h b/cc/metrics/frame_sequence_tracker_collection.h
-index e54f39f1098d..b8bf8b309118 100644
+index d1b5fa53dd29..3e0a78468fd0 100644
 --- a/cc/metrics/frame_sequence_tracker_collection.h
 +++ b/cc/metrics/frame_sequence_tracker_collection.h
 @@ -26,9 +26,6 @@ struct BeginFrameArgs;
@@ -29,10 +29,10 @@ index e54f39f1098d..b8bf8b309118 100644
 -  void SetUkmManager(UkmManager* manager);
 -
    using NotifyCustomerTrackerResutlsCallback =
-       base::RepeatingCallback<void(CustomTrackerResults)>;
+       base::RepeatingCallback<void(const CustomTrackerResults&)>;
    void set_custom_tracker_results_added_callback(
 @@ -141,14 +135,6 @@ class CC_EXPORT FrameSequenceTrackerCollection {
-       FrameSequenceMetrics::ThroughputData throughput_data);
+       const FrameSequenceMetrics::CustomReportData& data);
  
    const bool is_single_threaded_;
 -  // The reporter takes throughput data and connect to UkmManager to report it.

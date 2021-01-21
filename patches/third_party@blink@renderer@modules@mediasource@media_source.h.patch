@@ -1,10 +1,10 @@
 diff --git a/third_party/blink/renderer/modules/mediasource/media_source.h b/third_party/blink/renderer/modules/mediasource/media_source.h
-index f39e0a3370ef..5ef1e2d7f620 100644
+index ccaff0d97fc9..20a2e2be16d8 100644
 --- a/third_party/blink/renderer/modules/mediasource/media_source.h
 +++ b/third_party/blink/renderer/modules/mediasource/media_source.h
-@@ -125,9 +125,6 @@ class MediaSource final : public EventTargetWithInlineData,
-                                                          const String& codecs,
-                                                          ExceptionState&);
+@@ -195,9 +195,6 @@ class MediaSource final : public EventTargetWithInlineData,
+                                                          ExceptionState&)
+       LOCKS_EXCLUDED(attachment_link_lock_);
    void ScheduleEvent(const AtomicString& event_name);
 -  static void RecordIdentifiabilityMetric(ExecutionContext* context,
 -                                          const String& type,

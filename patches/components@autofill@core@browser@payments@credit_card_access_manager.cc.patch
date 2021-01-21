@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/payments/credit_card_access_manager.cc b/components/autofill/core/browser/payments/credit_card_access_manager.cc
-index cbd1018b3dd6..87c23336d9da 100644
+index 9b38d40a5946..87c23336d9da 100644
 --- a/components/autofill/core/browser/payments/credit_card_access_manager.cc
 +++ b/components/autofill/core/browser/payments/credit_card_access_manager.cc
 @@ -25,7 +25,6 @@
@@ -25,7 +25,7 @@ index cbd1018b3dd6..87c23336d9da 100644
        ready_to_start_authentication_(
            base::WaitableEvent::ResetPolicy::AUTOMATIC,
            base::WaitableEvent::InitialState::NOT_SIGNALED),
-@@ -74,31 +71,6 @@ CreditCardAccessManager::CreditCardAccessManager(
+@@ -74,22 +71,6 @@ CreditCardAccessManager::CreditCardAccessManager(
  
  CreditCardAccessManager::~CreditCardAccessManager() {}
  
@@ -34,21 +34,12 @@ index cbd1018b3dd6..87c23336d9da 100644
 -
 -  size_t server_record_type_count = 0;
 -  size_t local_record_type_count = 0;
--  bool has_server_nickname = false;
 -  for (CreditCard* credit_card : credit_cards) {
--    // If any masked server card has valid nickname, we will set to true no
--    // matter the flag is enabled or not.
--    if (credit_card->record_type() == CreditCard::MASKED_SERVER_CARD &&
--        credit_card->HasNonEmptyValidNickname()) {
--      has_server_nickname = true;
--    }
--
 -    if (credit_card->record_type() == CreditCard::LOCAL_CARD)
 -      local_record_type_count++;
 -    else
 -      server_record_type_count++;
 -  }
--  form_event_logger_->set_has_server_nickname(has_server_nickname);
 -  form_event_logger_->set_server_record_type_count(server_record_type_count);
 -  form_event_logger_->set_local_record_type_count(local_record_type_count);
 -  form_event_logger_->set_is_context_secure(client_->IsContextSecure());
@@ -57,7 +48,7 @@ index cbd1018b3dd6..87c23336d9da 100644
  std::vector<CreditCard*> CreditCardAccessManager::GetCreditCards() {
    return personal_data_manager_->GetCreditCards();
  }
-@@ -201,12 +173,6 @@ void CreditCardAccessManager::GetUnmaskDetailsIfUserIsVerifiable(
+@@ -192,12 +173,6 @@ void CreditCardAccessManager::GetUnmaskDetailsIfUserIsVerifiable(
      bool is_user_verifiable) {
    is_user_verifiable_ = is_user_verifiable;
  
@@ -70,7 +61,7 @@ index cbd1018b3dd6..87c23336d9da 100644
    // If user is verifiable, then make preflight call to payments to fetch unmask
    // details, otherwise the only option is to perform CVC Auth, which does not
    // require any. Do nothing if request is already in progress.
-@@ -218,17 +184,12 @@ void CreditCardAccessManager::GetUnmaskDetailsIfUserIsVerifiable(
+@@ -209,17 +184,12 @@ void CreditCardAccessManager::GetUnmaskDetailsIfUserIsVerifiable(
                         weak_ptr_factory_.GetWeakPtr()),
          personal_data_manager_->app_locale());
      preflight_call_timestamp_ = AutofillTickClock::NowTicks();
@@ -88,7 +79,7 @@ index cbd1018b3dd6..87c23336d9da 100644
    unmask_details_request_in_progress_ = false;
    unmask_details_ = unmask_details;
    unmask_details_.offer_fido_opt_in = unmask_details_.offer_fido_opt_in &&
-@@ -283,22 +244,9 @@ void CreditCardAccessManager::FetchCreditCard(
+@@ -274,22 +244,9 @@ void CreditCardAccessManager::FetchCreditCard(
      }
    }
  
@@ -111,7 +102,7 @@ index cbd1018b3dd6..87c23336d9da 100644
      return;
    }
  
-@@ -313,19 +261,6 @@ void CreditCardAccessManager::FetchCreditCard(
+@@ -304,19 +261,6 @@ void CreditCardAccessManager::FetchCreditCard(
    bool should_wait_to_authenticate =
        user_is_opted_in && !get_unmask_details_returned;
  
@@ -131,7 +122,7 @@ index cbd1018b3dd6..87c23336d9da 100644
  #if !defined(OS_ANDROID) && !defined(OS_IOS)
    // On desktop, show the verify pending dialog for opted-in user, unless it is
    // already known that selected card requires CVC.
-@@ -426,28 +361,10 @@ void CreditCardAccessManager::Authenticate(bool get_unmask_details_returned) {
+@@ -417,28 +361,10 @@ void CreditCardAccessManager::Authenticate(bool get_unmask_details_returned) {
  
    // If the user had to wait for Unmask Details, log the latency.
    if (card_selected_without_unmask_details_timestamp_.has_value()) {
@@ -160,7 +151,7 @@ index cbd1018b3dd6..87c23336d9da 100644
  
    if (unmask_auth_flow_type_ == UnmaskAuthFlowType::kFido) {
  #if defined(OS_IOS)
-@@ -503,8 +420,6 @@ void CreditCardAccessManager::OnCVCAuthenticationComplete(
+@@ -494,8 +420,6 @@ void CreditCardAccessManager::OnCVCAuthenticationComplete(
    // kCvcThenFido flow since that is yet to be completed.
    if (response.did_succeed &&
        unmask_auth_flow_type_ != UnmaskAuthFlowType::kCvcThenFido) {
@@ -169,7 +160,7 @@ index cbd1018b3dd6..87c23336d9da 100644
    }
  
    // Store request options temporarily if given. They will be used for
-@@ -634,13 +549,9 @@ void CreditCardAccessManager::OnFIDOAuthenticationComplete(
+@@ -625,13 +549,9 @@ void CreditCardAccessManager::OnFIDOAuthenticationComplete(
      accessor_->OnCreditCardFetched(did_succeed, card, cvc);
      can_fetch_unmask_details_.Signal();
  
@@ -183,7 +174,7 @@ index cbd1018b3dd6..87c23336d9da 100644
      GetOrCreateCVCAuthenticator()->Authenticate(
          card_.get(), weak_ptr_factory_.GetWeakPtr(), personal_data_manager_,
          form_parsed_timestamp_);
-@@ -650,8 +561,6 @@ void CreditCardAccessManager::OnFIDOAuthenticationComplete(
+@@ -641,8 +561,6 @@ void CreditCardAccessManager::OnFIDOAuthenticationComplete(
  void CreditCardAccessManager::OnFidoAuthorizationComplete(bool did_succeed) {
    if (did_succeed) {
      accessor_->OnCreditCardFetched(/*did_succeed=*/true, card_.get(), cvc_);

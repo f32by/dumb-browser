@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h
-index 85c75104bff5..78cddde84ba0 100644
+index d8c20a962eba..bfdb311633e3 100644
 --- a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h
 +++ b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.h
 @@ -29,7 +29,6 @@ class LayerTreeHost;
@@ -10,15 +10,13 @@ index 85c75104bff5..78cddde84ba0 100644
  }  // namespace cc
  
  namespace blink {
-@@ -54,10 +53,7 @@ class PLATFORM_EXPORT LayerTreeView
-                 scheduler::WebThreadScheduler* scheduler);
-   ~LayerTreeView() override;
- 
--  // The |ukm_recorder_factory| may be null to disable recording (in tests
--  // only).
--  void Initialize(const cc::LayerTreeSettings& settings,
+@@ -56,8 +55,7 @@ class PLATFORM_EXPORT LayerTreeView
+   void Initialize(const cc::LayerTreeSettings& settings,
+                   scoped_refptr<base::SingleThreadTaskRunner> main_thread,
+                   scoped_refptr<base::SingleThreadTaskRunner> compositor_thread,
+-                  cc::TaskGraphRunner* task_graph_runner,
 -                  std::unique_ptr<cc::UkmRecorderFactory> ukm_recorder_factory);
-+  void Initialize(const cc::LayerTreeSettings& settings);
++                  cc::TaskGraphRunner* task_graph_runner);
  
    // Drops any references back to the delegate in preparation for being
    // destroyed.

@@ -1,8 +1,16 @@
 diff --git a/content/browser/renderer_host/compositor_impl_android.cc b/content/browser/renderer_host/compositor_impl_android.cc
-index ec498d601a7b..0b57107fd835 100644
+index 44d35de2b2db..81f8383bdd44 100644
 --- a/content/browser/renderer_host/compositor_impl_android.cc
 +++ b/content/browser/renderer_host/compositor_impl_android.cc
-@@ -704,11 +704,6 @@ void CompositorImpl::DidCommit(base::TimeTicks) {
+@@ -75,7 +75,6 @@
+ #include "ui/display/screen.h"
+ #include "ui/gfx/ca_layer_params.h"
+ #include "ui/gfx/swap_result.h"
+-#include "ui/latency/latency_tracker.h"
+ 
+ namespace content {
+ 
+@@ -704,11 +703,6 @@ void CompositorImpl::DidCommit(base::TimeTicks) {
    root_window_->OnCompositingDidCommit();
  }
  

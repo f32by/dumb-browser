@@ -1,5 +1,5 @@
 diff --git a/services/network/public/cpp/url_request_mojom_traits.cc b/services/network/public/cpp/url_request_mojom_traits.cc
-index d45b19b8f61c..fa22c1667328 100644
+index 8626ff6086fe..c0cb1fccfb2e 100644
 --- a/services/network/public/cpp/url_request_mojom_traits.cc
 +++ b/services/network/public/cpp/url_request_mojom_traits.cc
 @@ -12,7 +12,6 @@
@@ -34,15 +34,19 @@ index d45b19b8f61c..fa22c1667328 100644
      return false;
    }
    if (!data.ReadReferrerPolicy(&out->referrer_policy) ||
-@@ -263,11 +258,9 @@ bool StructTraits<network::mojom::URLRequestBodyDataView,
+@@ -213,7 +208,6 @@ bool StructTraits<
+   if (!data.ReadTrustTokenParams(&out->trust_token_params.as_ptr())) {
+     // We don't return false here to avoid duplicate reports.
+     out->trust_token_params = base::nullopt;
+-    base::debug::DumpWithoutCrashing();
+   }
+ 
+   out->force_ignore_site_for_cookies = data.force_ignore_site_for_cookies();
+@@ -265,7 +259,6 @@ bool StructTraits<network::mojom::URLRequestBodyDataView,
  bool StructTraits<network::mojom::DataElementDataView, network::DataElement>::
      Read(network::mojom::DataElementDataView data, network::DataElement* out) {
    if (!data.ReadPath(&out->path_)) {
 -    network::debug::SetDeserializationCrashKeyString("data_element_path");
-     return false;
-   }
-   if (!data.ReadBlobUuid(&out->blob_uuid_)) {
--    network::debug::SetDeserializationCrashKeyString("data_element_blob_uuid");
      return false;
    }
    if (!data.ReadExpectedModificationTime(&out->expected_modification_time_)) {

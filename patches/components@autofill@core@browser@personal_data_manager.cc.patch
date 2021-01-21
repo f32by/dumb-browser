@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/browser/personal_data_manager.cc b/components/autofill/core/browser/personal_data_manager.cc
-index 0a6960bbd434..e78975ad4ea0 100644
+index 11d891b12822..0d6debf687d3 100644
 --- a/components/autofill/core/browser/personal_data_manager.cc
 +++ b/components/autofill/core/browser/personal_data_manager.cc
 @@ -30,7 +30,6 @@
@@ -55,7 +55,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
  }
  
  std::vector<Suggestion> PersonalDataManager::GetCreditCardSuggestions(
-@@ -1831,9 +1813,6 @@ std::string PersonalDataManager::SaveImportedCreditCard(
+@@ -1828,9 +1810,6 @@ std::string PersonalDataManager::SaveImportedCreditCard(
  
  void PersonalDataManager::LogStoredProfileMetrics() const {
    if (!has_logged_stored_profile_metrics_) {
@@ -65,7 +65,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
      // If the user has stored addresses, log the distribution of days since
      // their last use and how many would be considered disused.
      if (!web_profiles_.empty()) {
-@@ -1841,12 +1820,9 @@ void PersonalDataManager::LogStoredProfileMetrics() const {
+@@ -1838,12 +1817,9 @@ void PersonalDataManager::LogStoredProfileMetrics() const {
        const base::Time now = AutofillClock::Now();
        for (const std::unique_ptr<AutofillProfile>& profile : web_profiles_) {
          const base::TimeDelta time_since_last_use = now - profile->use_date();
@@ -78,7 +78,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
      }
  
      // Only log this info once per chrome user profile load.
-@@ -1856,9 +1832,6 @@ void PersonalDataManager::LogStoredProfileMetrics() const {
+@@ -1853,9 +1829,6 @@ void PersonalDataManager::LogStoredProfileMetrics() const {
  
  void PersonalDataManager::LogStoredCreditCardMetrics() const {
    if (!has_logged_stored_credit_card_metrics_) {
@@ -88,7 +88,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
      // Only log this info once per chrome user profile load.
      has_logged_stored_credit_card_metrics_ = true;
    }
-@@ -1866,7 +1839,6 @@ void PersonalDataManager::LogStoredCreditCardMetrics() const {
+@@ -1863,7 +1836,6 @@ void PersonalDataManager::LogStoredCreditCardMetrics() const {
  
  void PersonalDataManager::LogStoredOfferMetrics() const {
    if (!has_logged_stored_offer_metrics_) {
@@ -96,7 +96,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
      // Only log this info once per chrome user profile load.
      has_logged_stored_offer_metrics_ = true;
    }
-@@ -1978,8 +1950,6 @@ bool PersonalDataManager::ShouldShowCardsFromAccountOption() const {
+@@ -1975,8 +1947,6 @@ bool PersonalDataManager::ShouldShowCardsFromAccountOption() const {
    bool is_opted_in = prefs::IsUserOptedInWalletSyncTransport(
        pref_service_, sync_service_->GetAuthenticatedAccountInfo().account_id);
  
@@ -105,7 +105,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
    // The option should only be shown if the user has not already opted-in.
    return !is_opted_in;
  #else
-@@ -2038,10 +2008,6 @@ void PersonalDataManager::OnAutofillProfileChanged(
+@@ -2035,10 +2005,6 @@ void PersonalDataManager::OnAutofillProfileChanged(
    OnProfileChangeDone(guid);
  }
  
@@ -116,7 +116,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
  void PersonalDataManager::OnUserAcceptedUpstreamOffer() {
    // If the user is in sync transport mode for Wallet, record an opt-in.
    if (GetSyncSigninState() ==
-@@ -2242,8 +2208,6 @@ void PersonalDataManager::DedupeProfiles(
+@@ -2239,8 +2205,6 @@ void PersonalDataManager::DedupeProfiles(
      std::vector<std::unique_ptr<AutofillProfile>>* existing_profiles,
      std::unordered_set<std::string>* profiles_to_delete,
      std::unordered_map<std::string, std::string>* guids_merge_map) const {
@@ -125,7 +125,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
  
    // Sort the profiles by frecency with all the verified profiles at the end.
    // That way the most relevant profiles will get merged into the less relevant
-@@ -2315,8 +2279,6 @@ void PersonalDataManager::DedupeProfiles(
+@@ -2312,8 +2276,6 @@ void PersonalDataManager::DedupeProfiles(
        }
      }
    }
@@ -134,7 +134,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
  }
  
  void PersonalDataManager::UpdateCardsBillingAddressReference(
-@@ -2410,8 +2372,6 @@ bool PersonalDataManager::DeleteDisusedCreditCards() {
+@@ -2407,8 +2369,6 @@ bool PersonalDataManager::DeleteDisusedCreditCards() {
      Refresh();
    }
  
@@ -143,7 +143,7 @@ index 0a6960bbd434..e78975ad4ea0 100644
    return true;
  }
  
-@@ -2449,8 +2409,6 @@ bool PersonalDataManager::DeleteDisusedAddresses() {
+@@ -2446,8 +2406,6 @@ bool PersonalDataManager::DeleteDisusedAddresses() {
      Refresh();
    }
  

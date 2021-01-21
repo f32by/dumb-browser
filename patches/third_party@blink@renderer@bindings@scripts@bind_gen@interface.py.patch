@@ -1,8 +1,18 @@
 diff --git a/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py b/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
-index ac574cbc9bbb..8100f83d98b9 100644
+index 5a6c82c1b8f5..45518efb3bde 100644
 --- a/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
 +++ b/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
-@@ -1723,7 +1723,6 @@ def make_attribute_get_callback_def(cg_context, function_name):
+@@ -1319,9 +1319,6 @@ def make_report_high_entropy(cg_context):
+             "${current_execution_context}, {measure_constant});",
+             measure_constant=_make_measure_web_feature_constant(cg_context))
+     node = TextNode(text)
+-    node.accumulate(
+-        CodeGenAccumulator.require_include_headers(
+-            ["third_party/blink/renderer/core/frame/dactyloscoper.h"]))
+     return node
+ 
+ 
+@@ -1723,7 +1720,6 @@ def make_attribute_get_callback_def(cg_context, function_name):
          EmptyNode(),
          make_check_security_of_return_value(cg_context),
          make_v8_set_return_value(cg_context),
@@ -10,7 +20,7 @@ index ac574cbc9bbb..8100f83d98b9 100644
          make_return_value_cache_update_value(cg_context),
      ])
  
-@@ -1898,7 +1897,6 @@ def make_constant_callback_def(cg_context, function_name):
+@@ -1898,7 +1894,6 @@ def make_constant_callback_def(cg_context, function_name):
          logging_nodes,
          EmptyNode(),
          TextNode(v8_set_return_value),
@@ -18,7 +28,7 @@ index ac574cbc9bbb..8100f83d98b9 100644
      ])
  
      return func_def
-@@ -2209,7 +2207,6 @@ def make_operation_function_def(cg_context, function_name):
+@@ -2217,7 +2212,6 @@ def make_operation_function_def(cg_context, function_name):
          EmptyNode(),
          make_check_security_of_return_value(cg_context),
          make_v8_set_return_value(cg_context),
