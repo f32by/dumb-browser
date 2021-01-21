@@ -33,6 +33,7 @@ Other changes / optimizations:
 3. [UI] Disable Chromium's missing key warning
 4. [UI] Restore mute button on tab
 5. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
+6. [History] Remove the 90-day history limitation
 
 # Installation
 
