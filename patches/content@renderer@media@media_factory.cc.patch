@@ -1,5 +1,5 @@
 diff --git a/content/renderer/media/media_factory.cc b/content/renderer/media/media_factory.cc
-index 819de0e9015b..ad6be8cd4e7d 100644
+index 77b1ba949e94..fdf020e7aed5 100644
 --- a/content/renderer/media/media_factory.cc
 +++ b/content/renderer/media/media_factory.cc
 @@ -45,6 +45,8 @@
@@ -11,7 +11,7 @@ index 819de0e9015b..ad6be8cd4e7d 100644
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "services/device/public/mojom/battery_monitor.mojom.h"
  #include "services/service_manager/public/cpp/connect.h"
-@@ -427,10 +429,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
+@@ -431,10 +433,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
    DCHECK_EQ(static_cast<FrameFetchContext*>(fetch_context_.get())->frame(),
              web_frame);
  
@@ -22,7 +22,7 @@ index 819de0e9015b..ad6be8cd4e7d 100644
    std::unique_ptr<media::PowerStatusHelper> power_status_helper;
    if (base::FeatureList::IsEnabled(media::kMediaPowerExperiment)) {
      // The battery monitor is only available through the blink provider.
-@@ -482,7 +480,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
+@@ -486,7 +484,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
                base::Unretained(blink::MainThreadIsolate())),
            initial_cdm, request_routing_token_cb_, media_observer,
            enable_instant_source_buffer_gc, embedded_media_experience_enabled,

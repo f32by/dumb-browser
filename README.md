@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `88.0.4324.96`.
+Current version: `88.0.4324.182`.
 
 **Some patches are experimental and build may fail.**
 
@@ -19,21 +19,17 @@ Following components are removed/disabled:
 7. [Rappor](https://github.com/google/rappor)
 8. (macOS only) Download Quarantine
 10. (Windows only) Chrome Cleaner
-11. WebGL renderer info
-12. Field trails fetching
-13. Promotions in New Tab Page
-14. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
-16. Updater
-17. Subresource filter (which is used by Chrome's integrated AdBlocking feature.)
-18. [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
+11. Field trails fetching
+12. Promotions in New Tab Page
+13. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
+14. Chromium Updater
+15. Subresource filter (which is used by Chrome's integrated AdBlocking feature.)
+16. [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
 
-Other changes / optimizations:
-1. [UI] Change web controls' color to gray (Microsoft Edge style)
-2. [UI] Reduce location bar corner radius
-3. [UI] Disable Chromium's missing key warning
-4. [UI] Restore mute button on tab
-5. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
-6. [History] Remove the 90-day history limitation
+Other changes:
+1. [UI] Restore mute button on tab
+2. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
+3. [History] Unlimited browsing history.
 
 # Installation
 
@@ -43,9 +39,8 @@ It's impossible to build Dumb Browser via GitHub Actions due to GitHub free acco
 Please build on your own or wait for official binaries.
 
 Tested on following OS:
-1. macOS 11.1
-2. macOS 10.15.7
-3. Windows 10 1909 18363.1082
+1. macOS 11.2.1
+2. Windows 10 1909 18363.1082
 
 ### Prerequisites
 
@@ -83,9 +78,7 @@ Binaries will be found in `src/out/{Release|Debug} .`
 
 # Known Issues
 
-1. If you use existing profiles from `ungoogled-chromium`, you may encounter password sync failure. To solve this, create a new profile in dumb browser.
-
-2. [1Password extension (desktop app required)](https://chrome.google.com/webstore/detail/1password-extension-deskt/aomjjhallfgjeglblehebfpbcfeobpgk) is unavailable since it forces an allowlist-based browser signature check. Instead you can use `1Password X` which requires a valid 1Password subscription.
+1. [1Password extension (desktop app required)](https://chrome.google.com/webstore/detail/1password-extension-deskt/aomjjhallfgjeglblehebfpbcfeobpgk) is unavailable since it forces an allowlist-based browser signature check. Instead you can use `1Password X` which requires a valid 1Password subscription.
 
 # Credits
 
