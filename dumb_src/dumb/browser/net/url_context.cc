@@ -79,7 +79,7 @@ void DumbRequestInfo::FillCTX(const network::ResourceRequest& request,
   if (request.trusted_params) {
     ctx->tab_origin =
         request.trusted_params->isolation_info.network_isolation_key()
-            .GetTopFrameOrigin()
+            .GetTopFrameSite()
             .value_or(url::Origin())
             .GetURL();
   }

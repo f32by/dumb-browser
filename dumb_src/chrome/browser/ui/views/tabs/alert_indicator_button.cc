@@ -235,7 +235,7 @@ class AlertIndicatorButton::FadeAnimationDelegate
 };
 
 AlertIndicatorButton::AlertIndicatorButton(Tab* parent_tab)
-    : views::ImageButton(nullptr),
+    : views::ImageButton(),
       parent_tab_(parent_tab) {
   DCHECK(parent_tab_);
   SetEventTargeter(
