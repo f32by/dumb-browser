@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/prefs/chrome_pref_service_factory.cc b/chrome/browser/prefs/chrome_pref_service_factory.cc
-index 04f82a817690..3a5b84888498 100644
+index a2f062d51b6c..6fccc4c06233 100644
 --- a/chrome/browser/prefs/chrome_pref_service_factory.cc
 +++ b/chrome/browser/prefs/chrome_pref_service_factory.cc
-@@ -47,7 +47,6 @@
+@@ -48,7 +48,6 @@
  #include "components/prefs/pref_service.h"
  #include "components/prefs/pref_store.h"
  #include "components/prefs/pref_value_store.h"
@@ -10,7 +10,7 @@ index 04f82a817690..3a5b84888498 100644
  #include "components/search_engines/default_search_manager.h"
  #include "components/search_engines/search_engines_pref_names.h"
  #include "components/signin/public/base/signin_pref_names.h"
-@@ -145,8 +144,6 @@ const prefs::TrackedPreferenceMetadata kTrackedPrefs[] = {
+@@ -146,8 +145,6 @@ const prefs::TrackedPreferenceMetadata kTrackedPrefs[] = {
       PrefTrackingStrategy::ATOMIC, ValueType::IMPERSONAL},
      // kSyncRemainingRollbackTries is deprecated and will be removed a few
      // releases after M50.
@@ -19,7 +19,7 @@ index 04f82a817690..3a5b84888498 100644
  #if defined(OS_WIN)
      {19, prefs::kSwReporterPromptVersion, EnforcementLevel::ENFORCE_ON_LOAD,
       PrefTrackingStrategy::ATOMIC, ValueType::IMPERSONAL},
-@@ -382,8 +379,6 @@ std::unique_ptr<PrefService> CreateLocalState(
+@@ -383,8 +380,6 @@ std::unique_ptr<PrefService> CreateLocalState(
  
  std::unique_ptr<sync_preferences::PrefServiceSyncable> CreateProfilePrefs(
      const base::FilePath& profile_path,
@@ -28,7 +28,7 @@ index 04f82a817690..3a5b84888498 100644
      policy::PolicyService* policy_service,
      SupervisedUserSettingsService* supervised_user_settings,
      scoped_refptr<PrefStore> extension_prefs,
-@@ -402,8 +397,7 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreateProfilePrefs(
+@@ -403,8 +398,7 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreateProfilePrefs(
        CreateProfilePrefStoreManager(profile_path)
            ->CreateProfilePrefStore(
                GetTrackingConfiguration(), kTrackedPrefsReportingIDsCount,

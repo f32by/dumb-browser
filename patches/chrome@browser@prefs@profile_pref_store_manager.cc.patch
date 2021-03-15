@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/prefs/profile_pref_store_manager.cc b/chrome/browser/prefs/profile_pref_store_manager.cc
-index ce8e80a62cc7..b69e599cabd0 100644
+index 059a33db0f9b..4ecaf0e75daf 100644
 --- a/chrome/browser/prefs/profile_pref_store_manager.cc
 +++ b/chrome/browser/prefs/profile_pref_store_manager.cc
-@@ -86,9 +86,7 @@ PersistentPrefStore* ProfilePrefStoreManager::CreateProfilePrefStore(
+@@ -87,9 +87,7 @@ PersistentPrefStore* ProfilePrefStoreManager::CreateProfilePrefStore(
      size_t reporting_ids_count,
      scoped_refptr<base::SequencedTaskRunner> io_task_runner,
      mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
@@ -13,7 +13,7 @@ index ce8e80a62cc7..b69e599cabd0 100644
    if (!kPlatformSupportsPreferenceTracking) {
      return new JsonPrefStore(profile_path_.Append(chrome::kPreferencesFilename),
                               nullptr, io_task_runner);
-@@ -96,7 +94,7 @@ PersistentPrefStore* ProfilePrefStoreManager::CreateProfilePrefStore(
+@@ -97,7 +95,7 @@ PersistentPrefStore* ProfilePrefStoreManager::CreateProfilePrefStore(
    return CreateTrackedPersistentPrefStore(
        CreateTrackedPrefStoreConfiguration(
            std::move(tracking_configuration), reporting_ids_count,
@@ -22,7 +22,7 @@ index ce8e80a62cc7..b69e599cabd0 100644
        io_task_runner);
  }
  
-@@ -113,8 +111,7 @@ bool ProfilePrefStoreManager::InitializePrefsFromMasterPrefs(
+@@ -114,8 +112,7 @@ bool ProfilePrefStoreManager::InitializePrefsFromMasterPrefs(
    if (kPlatformSupportsPreferenceTracking) {
      InitializeMasterPrefsTracking(
          CreateTrackedPrefStoreConfiguration(std::move(tracking_configuration),
@@ -32,7 +32,7 @@ index ce8e80a62cc7..b69e599cabd0 100644
          master_prefs.get());
    }
  
-@@ -139,9 +136,7 @@ ProfilePrefStoreManager::CreateTrackedPrefStoreConfiguration(
+@@ -140,9 +137,7 @@ ProfilePrefStoreManager::CreateTrackedPrefStoreConfiguration(
          tracking_configuration,
      size_t reporting_ids_count,
      mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
@@ -43,7 +43,7 @@ index ce8e80a62cc7..b69e599cabd0 100644
    return prefs::mojom::TrackedPersistentPrefStoreConfiguration::New(
        profile_path_.Append(chrome::kPreferencesFilename),
        profile_path_.Append(chrome::kSecurePreferencesFilename),
-@@ -154,5 +149,5 @@ ProfilePrefStoreManager::CreateTrackedPrefStoreConfiguration(
+@@ -155,5 +150,5 @@ ProfilePrefStoreManager::CreateTrackedPrefStoreConfiguration(
  #else
        base::string16(),
  #endif

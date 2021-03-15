@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/extensions/resource_request_policy.cc b/chrome/renderer/extensions/resource_request_policy.cc
-index 0cd2a0d49b8f..6fca5d90e8f9 100644
+index 80a1db5421ca..02fa18f8b848 100644
 --- a/chrome/renderer/extensions/resource_request_policy.cc
 +++ b/chrome/renderer/extensions/resource_request_policy.cc
 @@ -10,7 +10,6 @@
@@ -10,7 +10,7 @@ index 0cd2a0d49b8f..6fca5d90e8f9 100644
  #include "extensions/common/manifest_constants.h"
  #include "extensions/common/manifest_handlers/icons_handler.h"
  #include "extensions/common/manifest_handlers/web_accessible_resources_info.h"
-@@ -118,11 +117,6 @@ bool ResourceRequestPolicy::CanRequestResource(
+@@ -119,11 +118,6 @@ bool ResourceRequestPolicy::CanRequestResource(
    // extensions with web accessible resources, since those are inherently
    // identifiable.
    if (!is_dev_tools && !web_accessible_ids_.count(extension_origin.host())) {
@@ -22,7 +22,7 @@ index 0cd2a0d49b8f..6fca5d90e8f9 100644
      return false;
    }
  
-@@ -155,9 +149,6 @@ bool ResourceRequestPolicy::CanRequestResource(
+@@ -156,9 +150,6 @@ bool ResourceRequestPolicy::CanRequestResource(
            .ContainsPath(resource_root_relative_path)) {
      LOG(ERROR) << "Denying load of " << resource_url.spec() << " from "
                 << "hosted app.";
@@ -32,7 +32,7 @@ index 0cd2a0d49b8f..6fca5d90e8f9 100644
      return false;
    }
  
-@@ -176,9 +167,6 @@ bool ResourceRequestPolicy::CanRequestResource(
+@@ -177,9 +168,6 @@ bool ResourceRequestPolicy::CanRequestResource(
      frame->AddMessageToConsole(
          blink::WebConsoleMessage(blink::mojom::ConsoleMessageLevel::kError,
                                   blink::WebString::FromUTF8(message)));

@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #ifndef DUMB_NET_URL_CONTEXT_H_
 #define DUMB_NET_URL_CONTEXT_H_
 
@@ -59,18 +61,22 @@ struct DumbRequestInfo {
   explicit DumbRequestInfo(const GURL& url);
 
   ~DumbRequestInfo();
+  std::string method;
   GURL request_url;
   GURL tab_origin;
   GURL tab_url;
   GURL initiator_url;
 
+  bool internal_redirect = false;
+  GURL redirect_source;
+
   GURL referrer;
   net::ReferrerPolicy referrer_policy =
-      net::ReferrerPolicy::
-          CLEAR_ON_TRANSITION_FROM_SECURE_TO_INSECURE;
+      net::ReferrerPolicy::CLEAR_ON_TRANSITION_FROM_SECURE_TO_INSECURE;
   base::Optional<GURL> new_referrer;
 
   std::string new_url_spec;
+  // TODO(iefremov): rename to shields_up.
   bool allow_brave_shields = true;
   bool allow_ads = false;
   bool allow_http_upgradable_resource = false;
@@ -82,6 +88,7 @@ struct DumbRequestInfo {
   uint64_t request_identifier = 0;
   size_t next_url_request_index = 0;
 
+  content::BrowserContext* browser_context = nullptr;
   net::HttpRequestHeaders* headers = nullptr;
   // The following two sets are populated by |OnBeforeStartTransactionCallback|.
   // |set_headers| contains headers which values were added or modified.
@@ -94,8 +101,13 @@ struct DumbRequestInfo {
   DumbNetworkDelegateEventType event_type = kUnknownEventType;
   const base::ListValue* referral_headers_list = nullptr;
   BlockedBy blocked_by = kNotBlocked;
-  bool cancel_request_explicitly = false;
   std::string mock_data_url;
+  GURL ipfs_gateway_url;
+  bool ipfs_auto_fallback = false;
+
+  bool ShouldMockRequest() const { return !mock_data_url.empty(); }
+
+  net::NetworkIsolationKey network_isolation_key = net::NetworkIsolationKey();
 
   // Default to invalid type for resource_type, so delegate helpers
   // can properly detect that the info couldn't be obtained.
@@ -107,12 +119,13 @@ struct DumbRequestInfo {
 
   std::string upload_data;
 
-  static void FillCTX(const network::ResourceRequest& request,
-                      int render_process_id,
-                      int frame_tree_node_id,
-                      uint64_t request_identifier,
-                      content::BrowserContext* browser_context,
-                      std::shared_ptr<dumb::DumbRequestInfo> ctx);
+  static std::shared_ptr<dumb::DumbRequestInfo> MakeCTX(
+      const network::ResourceRequest& request,
+      int render_process_id,
+      int frame_tree_node_id,
+      uint64_t request_identifier,
+      content::BrowserContext* browser_context,
+      std::shared_ptr<dumb::DumbRequestInfo> old_ctx);
 
  private:
   // Please don't add any more friends here if it can be avoided.

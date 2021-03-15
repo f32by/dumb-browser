@@ -1,40 +1,16 @@
 diff --git a/content/browser/renderer_host/render_frame_host_delegate.h b/content/browser/renderer_host/render_frame_host_delegate.h
-index 79d6b2f65c18..dabf51aaacc6 100644
+index 120821c3357e..4978169785e7 100644
 --- a/content/browser/renderer_host/render_frame_host_delegate.h
 +++ b/content/browser/renderer_host/render_frame_host_delegate.h
-@@ -24,7 +24,6 @@
- #include "content/public/browser/site_instance.h"
+@@ -25,7 +25,6 @@
  #include "content/public/browser/visibility.h"
  #include "content/public/common/javascript_dialog_type.h"
+ #include "media/mojo/mojom/media_player.mojom.h"
 -#include "media/mojo/services/media_metrics_provider.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "mojo/public/cpp/bindings/scoped_interface_endpoint_handle.h"
-@@ -32,7 +31,6 @@
- #include "net/http/http_response_headers.h"
- #include "services/device/public/mojom/geolocation_context.mojom.h"
- #include "services/device/public/mojom/wake_lock.mojom.h"
--#include "services/metrics/public/cpp/ukm_source_id.h"
- #include "third_party/blink/public/common/mediastream/media_stream_request.h"
- #include "third_party/blink/public/mojom/choosers/popup_menu.mojom.h"
- #include "third_party/blink/public/mojom/devtools/console_message.mojom.h"
-@@ -478,15 +476,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
-   // Returns the visibility of the delegate.
-   virtual Visibility GetVisibility();
- 
--  // Get the UKM source ID for current content from the last committed
--  // navigation, either a cross-document or same-document navigation. This is
--  // for providing data about the content to the URL-keyed metrics service.
--  // Use this method if UKM events should be attributed to the latest
--  // navigation, that is, attribute events to the new source after each
--  // same-document navigation, if any.
--  virtual ukm::SourceId
--  GetUkmSourceIdForLastCommittedSourceIncludingSameDocument() const;
--
-   // Notify observers if WebAudio AudioContext has started (or stopped) playing
-   // audible sounds.
-   virtual void AudioContextPlaybackStarted(RenderFrameHost* host,
-@@ -525,9 +514,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
+@@ -543,9 +542,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
                                     int32_t offset,
                                     bool has_user_gesture) {}
  

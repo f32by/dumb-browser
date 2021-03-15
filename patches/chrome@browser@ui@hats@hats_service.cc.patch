@@ -1,16 +1,19 @@
 diff --git a/chrome/browser/ui/hats/hats_service.cc b/chrome/browser/ui/hats/hats_service.cc
-index 98bef780f199..29b231738745 100644
+index caa94e15b594..c058f96b3c68 100644
 --- a/chrome/browser/ui/hats/hats_service.cc
 +++ b/chrome/browser/ui/hats/hats_service.cc
-@@ -62,17 +62,9 @@ constexpr double kHatsSurveyProbabilityDefault = 0;
+@@ -51,20 +51,9 @@ constexpr double kHatsSurveyProbabilityDefault = 0;
  
  constexpr char kHatsSurveyEnSiteIDDefault[] = "bhej2dndhpc33okm6xexsbyv4y";
  
+-// TODO(crbug.com/1160661): When the minimum time between any survey, and the
+-// minimum time between a specific survey, are the same, the logic supporting
+-// the latter check is superfluous.
 -constexpr base::TimeDelta kMinimumTimeBetweenSurveyStarts =
--    base::TimeDelta::FromDays(60);
+-    base::TimeDelta::FromDays(180);
 -
 -constexpr base::TimeDelta kMinimumTimeBetweenAnySurveyStarts =
--    base::TimeDelta::FromDays(7);
+-    base::TimeDelta::FromDays(180);
 -
  constexpr base::TimeDelta kMinimumTimeBetweenSurveyChecks =
      base::TimeDelta::FromDays(1);
@@ -20,7 +23,7 @@ index 98bef780f199..29b231738745 100644
  // Preferences Data Model
  // The kHatsSurveyMetadata pref points to a dictionary.
  // The valid keys and value types for this dictionary are as follows:
-@@ -377,116 +369,11 @@ void HatsService::LaunchSurveyForBrowser(Browser* browser,
+@@ -406,116 +395,11 @@ void HatsService::LaunchSurveyForBrowser(Browser* browser,
  }
  
  bool HatsService::CanShowSurvey(const std::string& trigger) const {

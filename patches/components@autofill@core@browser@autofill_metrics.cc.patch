@@ -1,0 +1,29 @@
+diff --git a/components/autofill/core/browser/autofill_metrics.cc b/components/autofill/core/browser/autofill_metrics.cc
+index 253ad6ce9da5..b44943a2be3a 100644
+--- a/components/autofill/core/browser/autofill_metrics.cc
++++ b/components/autofill/core/browser/autofill_metrics.cc
+@@ -671,12 +671,12 @@ void AutofillMetrics::LogSaveCardCardholderNameWasEdited(bool edited) {
+ void AutofillMetrics::LogCardUploadDecisionMetrics(
+     int upload_decision_metrics) {
+   DCHECK(upload_decision_metrics);
+-  DCHECK_LT(upload_decision_metrics, 1 << kNumCardUploadDecisionMetrics);
++  DCHECK_LT(upload_decision_metrics, 1 << 19);
+ 
+-  for (int metric = 0; metric < kNumCardUploadDecisionMetrics; ++metric)
++  for (int metric = 0; metric < 19; ++metric)
+     if (upload_decision_metrics & (1 << metric))
+       UMA_HISTOGRAM_ENUMERATION("Autofill.CardUploadDecisionMetric", metric,
+-                                kNumCardUploadDecisionMetrics);
++                                19);
+ }
+ 
+ // static
+@@ -2095,7 +2095,7 @@ void AutofillMetrics::LogCardUploadDecisionsUkm(ukm::UkmRecorder* ukm_recorder,
+                                                 const GURL& url,
+                                                 int upload_decision_metrics) {
+   DCHECK(upload_decision_metrics);
+-  DCHECK_LT(upload_decision_metrics, 1 << kNumCardUploadDecisionMetrics);
++  DCHECK_LT(upload_decision_metrics, 1 << 19);
+   if (!url.is_valid())
+     return;
+   ukm::builders::Autofill_CardUploadDecision(source_id)

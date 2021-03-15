@@ -1,0 +1,16 @@
+diff --git a/content/browser/direct_sockets/direct_sockets_service_impl.cc b/content/browser/direct_sockets/direct_sockets_service_impl.cc
+index 5ef284bdf68f..2fc0eddc65e0 100644
+--- a/content/browser/direct_sockets/direct_sockets_service_impl.cc
++++ b/content/browser/direct_sockets/direct_sockets_service_impl.cc
+@@ -53,11 +53,6 @@ base::Optional<net::IPEndPoint> GetLocalAddr(
+   return local_addr;
+ }
+ 
+-bool ResemblesMulticastDNSName(const std::string& hostname) {
+-  return base::EndsWith(hostname, ".local") ||
+-         base::EndsWith(hostname, ".local.");
+-}
+-
+ }  // namespace
+ 
+ DirectSocketsServiceImpl::DirectSocketsServiceImpl(RenderFrameHost& frame_host)

@@ -1,8 +1,8 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.h b/components/metrics_services_manager/metrics_services_manager.h
-index 38c955cfde54..6cf6c53a1b01 100644
+index 38c955cfde54..2db9e9a89505 100644
 --- a/components/metrics_services_manager/metrics_services_manager.h
 +++ b/components/metrics_services_manager/metrics_services_manager.h
-@@ -20,14 +20,6 @@ class MetricsService;
+@@ -20,10 +20,6 @@ class MetricsService;
  class MetricsServiceClient;
  }
  
@@ -10,27 +10,20 @@ index 38c955cfde54..6cf6c53a1b01 100644
 -class RapporServiceImpl;
 -}
 -
--namespace ukm {
--class UkmService;
--}
--
- namespace variations {
- class VariationsService;
+ namespace ukm {
+ class UkmService;
  }
-@@ -60,12 +52,6 @@ class MetricsServicesManager {
+@@ -60,9 +56,6 @@ class MetricsServicesManager {
    // additionally creating the MetricsServiceClient in that case).
    metrics::MetricsService* GetMetricsService();
  
 -  // Returns the RapporServiceImpl, creating it if it hasn't been created yet.
 -  rappor::RapporServiceImpl* GetRapporServiceImpl();
 -
--  // Returns the UkmService, creating it if it hasn't been created yet.
--  ukm::UkmService* GetUkmService();
--
-   // Returns the VariationsService, creating it if it hasn't been created yet.
-   variations::VariationsService* GetVariationsService();
+   // Returns the UkmService, creating it if it hasn't been created yet.
+   ukm::UkmService* GetUkmService();
  
-@@ -86,10 +72,6 @@ class MetricsServicesManager {
+@@ -86,10 +79,6 @@ class MetricsServicesManager {
    bool IsMetricsConsentGiven() const;
  
   private:
@@ -41,17 +34,15 @@ index 38c955cfde54..6cf6c53a1b01 100644
    // Returns the MetricsServiceClient, creating it if it hasn't been
    // created yet (and additionally creating the MetricsService in that case).
    metrics::MetricsServiceClient* GetMetricsServiceClient();
-@@ -97,9 +79,6 @@ class MetricsServicesManager {
+@@ -97,6 +86,7 @@ class MetricsServicesManager {
    // Update which services are running to match current permissions.
    void UpdateRunningServices();
  
--  // Update the state of UkmService to match current permissions.
--  void UpdateUkmService();
--
-   // Update the managed services when permissions for recording/uploading
-   // metrics change.
-   void UpdatePermissions(bool current_may_record,
-@@ -124,9 +103,6 @@ class MetricsServicesManager {
++
+   // Update the state of UkmService to match current permissions.
+   void UpdateUkmService();
+ 
+@@ -124,9 +114,6 @@ class MetricsServicesManager {
    // The MetricsServiceClient. Owns the MetricsService.
    std::unique_ptr<metrics::MetricsServiceClient> metrics_service_client_;
  

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/tabs/tab.cc b/chrome/browser/ui/views/tabs/tab.cc
-index 31de207b1ae1..1d11271d4812 100644
+index 2bd82c65b105..05e6933e6db8 100644
 --- a/chrome/browser/ui/views/tabs/tab.cc
 +++ b/chrome/browser/ui/views/tabs/tab.cc
 @@ -34,7 +34,7 @@
@@ -11,7 +11,7 @@ index 31de207b1ae1..1d11271d4812 100644
  #include "chrome/browser/ui/views/tabs/browser_tab_strip_controller.h"
  #include "chrome/browser/ui/views/tabs/tab_close_button.h"
  #include "chrome/browser/ui/views/tabs/tab_controller.h"
-@@ -219,8 +219,8 @@ Tab::Tab(TabController* controller)
+@@ -220,8 +220,8 @@ Tab::Tab(TabController* controller)
    icon_ = new TabIcon;
    AddChildView(icon_);
  
@@ -22,7 +22,7 @@ index 31de207b1ae1..1d11271d4812 100644
  
    // Unretained is safe here because this class outlives its close button, and
    // the controller outlives this Tab.
-@@ -348,7 +348,7 @@ void Tab::Layout() {
+@@ -349,7 +349,7 @@ void Tab::Layout() {
        if (extra_alert_indicator_padding_)
          right -= ui::TouchUiController::Get()->touch_ui() ? 8 : 6;
      }
@@ -31,7 +31,7 @@ index 31de207b1ae1..1d11271d4812 100644
      gfx::Rect bounds(
          std::max(contents_rect.x(), right - image_size.width()),
          contents_rect.y() + Center(contents_rect.height(), image_size.height()),
-@@ -360,9 +360,9 @@ void Tab::Layout() {
+@@ -361,9 +361,9 @@ void Tab::Layout() {
      } else {
        MaybeAdjustLeftForPinnedTab(&bounds, bounds.width());
      }
@@ -43,7 +43,7 @@ index 31de207b1ae1..1d11271d4812 100644
  
    // Size the title to fill the remaining width and use all available height.
    bool show_title = ShouldRenderAsNormalTab();
-@@ -380,7 +380,7 @@ void Tab::Layout() {
+@@ -381,7 +381,7 @@ void Tab::Layout() {
      }
      int title_right = contents_rect.right();
      if (showing_alert_indicator_) {
@@ -52,7 +52,7 @@ index 31de207b1ae1..1d11271d4812 100644
      } else if (showing_close_button_) {
        // Allow the title to overlay the close button's empty border padding.
        title_right = close_x - after_title_padding;
-@@ -491,11 +491,9 @@ bool Tab::OnMousePressed(const ui::MouseEvent& event) {
+@@ -492,11 +492,9 @@ bool Tab::OnMousePressed(const ui::MouseEvent& event) {
          }
        } else if (!IsSelected()) {
          controller_->SelectTab(this, event);
@@ -64,7 +64,7 @@ index 31de207b1ae1..1d11271d4812 100644
      }
      ui::MouseEvent cloned_event(event_in_parent, parent(),
                                  static_cast<View*>(this));
-@@ -772,10 +770,23 @@ bool Tab::IsActive() const {
+@@ -773,10 +771,23 @@ bool Tab::IsActive() const {
    return controller_->IsActiveTab(this);
  }
  
@@ -88,7 +88,7 @@ index 31de207b1ae1..1d11271d4812 100644
    Layout();
  }
  
-@@ -823,7 +834,7 @@ void Tab::SetData(TabRendererData data) {
+@@ -824,7 +835,7 @@ void Tab::SetData(TabRendererData data) {
    const auto new_alert_state = GetAlertStateToShow(data_.alert_state);
    const auto old_alert_state = GetAlertStateToShow(old.alert_state);
    if (new_alert_state != old_alert_state)
@@ -97,7 +97,7 @@ index 31de207b1ae1..1d11271d4812 100644
    if (old.pinned != data_.pinned)
      showing_alert_indicator_ = false;
  
-@@ -914,7 +925,7 @@ void Tab::UpdateIconVisibility() {
+@@ -924,7 +935,7 @@ void Tab::UpdateIconVisibility() {
  
    const bool has_favicon = data().show_icon;
    const bool has_alert_icon =
@@ -106,7 +106,7 @@ index 31de207b1ae1..1d11271d4812 100644
                          : GetAlertStateToShow(data().alert_state))
            .has_value();
  
-@@ -931,7 +942,7 @@ void Tab::UpdateIconVisibility() {
+@@ -941,7 +952,7 @@ void Tab::UpdateIconVisibility() {
  
    const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
    const int favicon_width = gfx::kFaviconSize;
@@ -115,7 +115,7 @@ index 31de207b1ae1..1d11271d4812 100644
    // In case of touch optimized UI, the close button has an extra padding on the
    // left that needs to be considered.
    const int close_button_width =
-@@ -1025,21 +1036,13 @@ void Tab::UpdateForegroundColors() {
+@@ -1034,21 +1045,13 @@ void Tab::UpdateForegroundColors() {
  
    if (foreground_color_ != colors.foreground_color) {
      foreground_color_ = colors.foreground_color;

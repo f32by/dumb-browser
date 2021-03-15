@@ -1,30 +1,14 @@
 diff --git a/chrome/renderer/previews/resource_loading_hints_agent.cc b/chrome/renderer/previews/resource_loading_hints_agent.cc
-index 2dd38106f0ca..aba2277ab8d7 100644
+index 9f0f76734461..458009427c39 100644
 --- a/chrome/renderer/previews/resource_loading_hints_agent.cc
 +++ b/chrome/renderer/previews/resource_loading_hints_agent.cc
-@@ -58,7 +58,6 @@ void ResourceLoadingHintsAgent::DidCreateNewDocument() {
-   if (!subresource_patterns_to_block_.empty()) {
-     std::unique_ptr<blink::WebLoadingHintsProvider> loading_hints =
-         std::make_unique<blink::WebLoadingHintsProvider>(
--            ukm_source_id_.value(),
-             convert_to_web_vector(subresource_patterns_to_block_));
- 
-     web_frame->GetDocumentLoader()->SetLoadingHintsProvider(
-@@ -116,8 +115,6 @@ void ResourceLoadingHintsAgent::SetResourceLoadingHints(
-   if (!IsMainFrame())
-     return;
- 
--  ukm_source_id_ = resource_loading_hints->ukm_source_id;
--
-   for (const auto& subresource :
-        resource_loading_hints->subresources_to_block) {
-     subresource_patterns_to_block_.push_back(subresource);
-@@ -134,14 +131,6 @@ void ResourceLoadingHintsAgent::SetCompressPublicImagesHints(
-   }
+@@ -83,15 +83,6 @@ bool ResourceLoadingHintsAgent::IsMainFrame() const {
+   return render_frame()->IsMainFrame();
  }
  
+-
 -void ResourceLoadingHintsAgent::SetLiteVideoHint(
--    blink::mojom::LiteVideoHintPtr lite_video_hint) {
+-    previews::mojom::LiteVideoHintPtr lite_video_hint) {
 -  auto* lite_video_hint_agent =
 -      lite_video::LiteVideoHintAgent::Get(render_frame());
 -  if (lite_video_hint_agent)
@@ -34,7 +18,7 @@ index 2dd38106f0ca..aba2277ab8d7 100644
  void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
      blink::mojom::BlinkOptimizationGuideHintsPtr hints) {
    if (!IsMainFrame())
-@@ -150,12 +139,6 @@ void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
+@@ -100,12 +91,6 @@ void ResourceLoadingHintsAgent::SetBlinkOptimizationGuideHints(
  }
  
  void ResourceLoadingHintsAgent::StopThrottlingMediaRequests() {

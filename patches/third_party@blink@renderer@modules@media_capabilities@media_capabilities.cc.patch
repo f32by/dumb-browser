@@ -1,60 +1,21 @@
 diff --git a/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc b/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc
-index 5b1db2b07175..4fd1fee7cce7 100644
+index 5021f8d6d38e..77b1e228f062 100644
 --- a/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc
 +++ b/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc
-@@ -21,7 +21,6 @@
- #include "media/learning/common/media_learning_tasks.h"
- #include "media/learning/common/target_histogram.h"
- #include "media/learning/mojo/public/mojom/learning_task_controller.mojom-blink.h"
--#include "media/mojo/mojom/media_metrics_provider.mojom-blink.h"
- #include "media/mojo/mojom/media_types.mojom-blink.h"
- #include "media/video/gpu_video_accelerator_factories.h"
- #include "media/video/supported_video_decoder_config.h"
-@@ -53,7 +52,6 @@
- #include "third_party/blink/renderer/modules/encryptedmedia/media_key_system_access.h"
- #include "third_party/blink/renderer/modules/encryptedmedia/media_key_system_access_initializer_base.h"
- #include "third_party/blink/renderer/modules/encryptedmedia/media_keys_controller.h"
--#include "third_party/blink/renderer/modules/media_capabilities/media_capabilities_identifiability_metrics.h"
- #include "third_party/blink/renderer/modules/media_capabilities_names.h"
- #include "third_party/blink/renderer/modules/mediarecorder/media_recorder_handler.h"
- #include "third_party/blink/renderer/platform/bindings/exception_state.h"
-@@ -148,8 +146,6 @@ ScriptPromise CreateResolvedPromiseToDecodingInfoWith(
-     ScriptState* script_state,
-     const MediaDecodingConfiguration* config) {
-   MediaCapabilitiesDecodingInfo* info = CreateDecodingInfoWith(value);
--  media_capabilities_identifiability_metrics::ReportDecodingInfoResult(
--      ExecutionContext::From(script_state), config, info);
-   return ScriptPromise::Cast(script_state, ToV8(info, script_state));
- }
+@@ -875,40 +875,6 @@ bool MediaCapabilities::EnsureLearningPredictors(
+     ExecutionContext* execution_context) {
+   DCHECK(execution_context && !execution_context->IsContextDestroyed());
  
-@@ -630,12 +626,10 @@ void MediaCapabilities::Trace(blink::Visitor* visitor) const {
- MediaCapabilities::PendingCallbackState::PendingCallbackState(
-     ScriptPromiseResolver* resolver,
-     MediaKeySystemAccess* access,
--    const base::TimeTicks& request_time,
--    base::Optional<IdentifiableToken> input_token)
-+    const base::TimeTicks& request_time)
-     : resolver(resolver),
-       key_system_access(access),
--      request_time(request_time),
--      input_token(input_token) {}
-+      request_time(request_time) {}
- 
- void MediaCapabilities::PendingCallbackState::Trace(
-     blink::Visitor* visitor) const {
-@@ -706,8 +700,6 @@ ScriptPromise MediaCapabilities::decodingInfo(
-       // MediaKeySystemAccess.
-       MediaCapabilitiesDecodingInfo* info =
-           CreateEncryptedDecodingInfoWith(false, nullptr);
--      media_capabilities_identifiability_metrics::ReportDecodingInfoResult(
--          ExecutionContext::From(script_state), config, info);
-       return ScriptPromise::Cast(script_state, ToV8(info, script_state));
-     }
-   }
-@@ -868,31 +860,7 @@ bool MediaCapabilities::EnsureLearningPredictors(
-   if (execution_context->IsWorkerGlobalScope())
-     return false;
- 
+-  // One or both of these will have been bound in an earlier pass.
+-  if (bad_window_predictor_.is_bound() || nnr_predictor_.is_bound())
+-    return true;
+-
+-  // MediaMetricsProvider currently only exposed via render frame.
+-  // TODO(chcunningham): Expose in worker contexts pending outcome of
+-  // media-learning experiments.
+-  if (execution_context->IsWorkerGlobalScope())
+-    return false;
+-
 -  scoped_refptr<base::SingleThreadTaskRunner> task_runner =
 -      execution_context->GetTaskRunner(TaskType::kMediaElementEvent);
 -
@@ -79,46 +40,6 @@ index 5b1db2b07175..4fd1fee7cce7 100644
 -        nnr_predictor_.BindNewPipeAndPassReceiver(task_runner));
 -  }
 -
--  return bad_window_predictor_.is_bound() || nnr_predictor_.is_bound();
-+  return false;
+   return bad_window_predictor_.is_bound() || nnr_predictor_.is_bound();
  }
  
- bool MediaCapabilities::EnsurePerfHistoryService(
-@@ -1072,8 +1040,6 @@ void MediaCapabilities::GetPerfInfo(
-     // Audio-only is always smooth and power efficient.
-     MediaCapabilitiesDecodingInfo* info = CreateDecodingInfoWith(true);
-     info->setKeySystemAccess(access);
--    media_capabilities_identifiability_metrics::ReportDecodingInfoResult(
--        execution_context, decoding_config, info);
-     resolver->Resolve(info);
-     return;
-   }
-@@ -1089,8 +1055,6 @@ void MediaCapabilities::GetPerfInfo(
- 
-   if (!EnsurePerfHistoryService(execution_context)) {
-     MediaCapabilitiesDecodingInfo* info = CreateDecodingInfoWith(true);
--    media_capabilities_identifiability_metrics::ReportDecodingInfoResult(
--        execution_context, decoding_config, info);
-     resolver->Resolve(WrapPersistent(info));
-     return;
-   }
-@@ -1099,9 +1063,7 @@ void MediaCapabilities::GetPerfInfo(
-   pending_cb_map_.insert(
-       callback_id,
-       MakeGarbageCollected<MediaCapabilities::PendingCallbackState>(
--          resolver, access, request_time,
--          media_capabilities_identifiability_metrics::
--              ComputeDecodingInfoInputToken(decoding_config)));
-+          resolver, access, request_time));
- 
-   if (base::FeatureList::IsEnabled(media::kMediaLearningSmoothnessExperiment)) {
-     GetPerfInfo_ML(execution_context, callback_id, video_codec, video_profile,
-@@ -1316,8 +1278,6 @@ void MediaCapabilities::ResolveCallbackIfReady(int callback_id) {
-                         process_time);
-   }
- 
--  media_capabilities_identifiability_metrics::ReportDecodingInfoResult(
--      execution_context, pending_cb->input_token, info);
-   pending_cb->resolver->Resolve(std::move(info));
-   pending_cb_map_.erase(callback_id);
- }

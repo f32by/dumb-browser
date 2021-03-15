@@ -1,16 +1,8 @@
 diff --git a/services/preferences/tracked/tracked_split_preference.cc b/services/preferences/tracked/tracked_split_preference.cc
-index 053f315bd85e..2c22d0e4fcab 100644
+index 053f315bd85e..df21bb5f5a04 100644
 --- a/services/preferences/tracked/tracked_split_preference.cc
 +++ b/services/preferences/tracked/tracked_split_preference.cc
-@@ -9,7 +9,6 @@
- #include "base/check.h"
- #include "base/notreached.h"
- #include "base/values.h"
--#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
- #include "services/preferences/tracked/pref_hash_store_transaction.h"
- 
- using ValueState =
-@@ -20,15 +19,13 @@ TrackedSplitPreference::TrackedSplitPreference(
+@@ -20,15 +20,13 @@ TrackedSplitPreference::TrackedSplitPreference(
      size_t reporting_id,
      size_t reporting_ids_count,
      prefs::mojom::TrackedPreferenceMetadata::EnforcementLevel enforcement_level,
@@ -28,7 +20,7 @@ index 053f315bd85e..2c22d0e4fcab 100644
  
  TrackedPreferenceType TrackedSplitPreference::GetType() const {
    return TrackedPreferenceType::SPLIT;
-@@ -74,11 +71,6 @@ bool TrackedSplitPreference::EnforceAndReport(
+@@ -74,11 +72,6 @@ bool TrackedSplitPreference::EnforceAndReport(
          external_validation_transaction->GetStoreUMASuffix());
    }
  

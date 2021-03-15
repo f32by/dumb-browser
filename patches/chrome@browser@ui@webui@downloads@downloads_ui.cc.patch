@@ -1,10 +1,10 @@
 diff --git a/chrome/browser/ui/webui/downloads/downloads_ui.cc b/chrome/browser/ui/webui/downloads/downloads_ui.cc
-index b5413d4a0c5d..1dcbd4bb8103 100644
+index f87fdcb1987c..0d336013314a 100644
 --- a/chrome/browser/ui/webui/downloads/downloads_ui.cc
 +++ b/chrome/browser/ui/webui/downloads/downloads_ui.cc
 @@ -16,8 +16,6 @@
  #include "chrome/browser/defaults.h"
- #include "chrome/browser/enterprise/connectors/connectors_manager.h"
+ #include "chrome/browser/enterprise/connectors/connectors_service.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/safe_browsing/advanced_protection_status_manager.h"
 -#include "chrome/browser/safe_browsing/advanced_protection_status_manager_factory.h"
@@ -20,7 +20,7 @@ index b5413d4a0c5d..1dcbd4bb8103 100644
  #include "content/public/browser/url_data_source.h"
  #include "content/public/browser/web_contents.h"
 @@ -60,11 +59,7 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
-       source, base::make_span(kDownloadsResources, kDownloadsResourcesSize), "",
+       source, base::make_span(kDownloadsResources, kDownloadsResourcesSize),
        IDR_DOWNLOADS_DOWNLOADS_HTML);
  
 -  bool requests_ap_verdicts =

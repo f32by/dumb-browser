@@ -1,21 +1,21 @@
 diff --git a/chrome/renderer/url_loader_throttle_provider_impl.cc b/chrome/renderer/url_loader_throttle_provider_impl.cc
-index ea47d9749a00..f9014fd22f17 100644
+index dab13c2170b6..40b3b0201754 100644
 --- a/chrome/renderer/url_loader_throttle_provider_impl.cc
 +++ b/chrome/renderer/url_loader_throttle_provider_impl.cc
-@@ -16,12 +16,9 @@
+@@ -17,12 +17,9 @@
  #include "chrome/renderer/chrome_content_renderer_client.h"
  #include "chrome/renderer/chrome_render_frame_observer.h"
  #include "chrome/renderer/chrome_render_thread_observer.h"
 -#include "chrome/renderer/lite_video/lite_video_url_loader_throttle.h"
  #include "chrome/renderer/subresource_redirect/subresource_redirect_params.h"
  #include "chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.h"
- #include "components/no_state_prefetch/renderer/prerender_helper.h"
+ #include "components/no_state_prefetch/renderer/no_state_prefetch_helper.h"
 -#include "components/safe_browsing/content/renderer/renderer_url_loader_throttle.h"
 -#include "components/safe_browsing/core/features.h"
  #include "content/public/common/content_features.h"
  #include "content/public/renderer/render_frame.h"
  #include "content/public/renderer/render_thread.h"
-@@ -95,7 +92,6 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
+@@ -96,7 +93,6 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
      : type_(type),
        chrome_content_renderer_client_(chrome_content_renderer_client) {
    DETACH_FROM_THREAD(thread_checker_);
@@ -23,7 +23,7 @@ index ea47d9749a00..f9014fd22f17 100644
  }
  
  URLLoaderThrottleProviderImpl::~URLLoaderThrottleProviderImpl() {
-@@ -107,18 +103,12 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
+@@ -108,18 +104,12 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
      : type_(other.type_),
        chrome_content_renderer_client_(other.chrome_content_renderer_client_) {
    DETACH_FROM_THREAD(thread_checker_);
@@ -42,7 +42,7 @@ index ea47d9749a00..f9014fd22f17 100644
    return base::WrapUnique(new URLLoaderThrottleProviderImpl(*this));
  }
  
-@@ -141,14 +131,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+@@ -142,14 +132,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
    DCHECK(!is_frame_resource ||
           type_ == content::URLLoaderThrottleProviderType::kFrame);
  
@@ -57,7 +57,7 @@ index ea47d9749a00..f9014fd22f17 100644
    if (type_ == content::URLLoaderThrottleProviderType::kFrame &&
        !is_frame_resource) {
      auto throttle =
-@@ -216,13 +198,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+@@ -217,13 +199,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
    if (throttle)
      throttles.push_back(std::move(throttle));
  

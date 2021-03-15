@@ -1,8 +1,8 @@
 diff --git a/weblayer/browser/tab_impl.cc b/weblayer/browser/tab_impl.cc
-index 9ee00624c5a6..311622671fdb 100644
+index d9c83e8d9a4f..09c106b08dc3 100644
 --- a/weblayer/browser/tab_impl.cc
 +++ b/weblayer/browser/tab_impl.cc
-@@ -19,7 +19,6 @@
+@@ -21,7 +21,6 @@
  #include "components/blocked_content/popup_blocker.h"
  #include "components/blocked_content/popup_blocker_tab_helper.h"
  #include "components/blocked_content/popup_opener_tab_helper.h"
@@ -10,7 +10,7 @@ index 9ee00624c5a6..311622671fdb 100644
  #include "components/captive_portal/core/buildflags.h"
  #include "components/content_settings/browser/page_specific_content_settings.h"
  #include "components/embedder_support/android/util/user_agent_utils.h"
-@@ -34,7 +33,6 @@
+@@ -36,7 +35,6 @@
  #include "components/prefs/pref_service.h"
  #include "components/sessions/content/session_tab_helper.h"
  #include "components/translate/core/browser/translate_manager.h"
@@ -18,7 +18,7 @@ index 9ee00624c5a6..311622671fdb 100644
  #include "components/webrtc/media_stream_devices_controller.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -68,7 +66,6 @@
+@@ -70,7 +68,6 @@
  #include "weblayer/browser/navigation_controller_impl.h"
  #include "weblayer/browser/navigation_entry_data.h"
  #include "weblayer/browser/no_state_prefetch/prerender_tab_helper.h"
@@ -26,7 +26,7 @@ index 9ee00624c5a6..311622671fdb 100644
  #include "weblayer/browser/page_specific_content_settings_delegate.h"
  #include "weblayer/browser/password_manager_driver_factory.h"
  #include "weblayer/browser/permissions/permission_manager_factory.h"
-@@ -334,9 +331,6 @@ TabImpl::TabImpl(ProfileImpl* profile,
+@@ -342,9 +339,6 @@ TabImpl::TabImpl(ProfileImpl* profile,
            web_contents_->GetBrowserContext()));
    PasswordManagerDriverFactory::CreateForWebContents(web_contents_.get());
  
@@ -36,7 +36,7 @@ index 9ee00624c5a6..311622671fdb 100644
  #if defined(OS_ANDROID)
    InfoBarService::CreateForWebContents(web_contents_.get());
    javascript_dialogs::TabModalDialogManager::CreateForWebContents(
-@@ -1120,13 +1114,6 @@ void TabImpl::AddNewContents(content::WebContents* source,
+@@ -1144,13 +1138,6 @@ void TabImpl::AddNewContents(content::WebContents* source,
      return;
    }
  

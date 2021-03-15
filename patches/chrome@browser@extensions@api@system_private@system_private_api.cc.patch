@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/system_private/system_private_api.cc b/chrome/browser/extensions/api/system_private/system_private_api.cc
-index ce66a7939894..7d59fe5d3458 100644
+index 802b3ddba127..b71bf2ec796a 100644
 --- a/chrome/browser/extensions/api/system_private/system_private_api.cc
 +++ b/chrome/browser/extensions/api/system_private/system_private_api.cc
-@@ -22,7 +22,6 @@
+@@ -23,7 +23,6 @@
  #include "chromeos/dbus/dbus_thread_manager.h"
  #include "chromeos/dbus/update_engine_client.h"
  #else
@@ -10,15 +10,15 @@ index ce66a7939894..7d59fe5d3458 100644
  #endif
  
  namespace {
-@@ -41,7 +40,6 @@ const char kStateKey[] = "state";
+@@ -42,7 +41,6 @@ const char kStateKey[] = "state";
  
  // System update states.
  const char kNotAvailableState[] = "NotAvailable";
 -const char kNeedRestartState[] = "NeedRestart";
  
- #if defined(OS_CHROMEOS)
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
  const char kUpdatingState[] = "Updating";
-@@ -116,12 +114,7 @@ ExtensionFunction::ResponseAction SystemPrivateGetUpdateStatusFunction::Run() {
+@@ -117,12 +115,7 @@ ExtensionFunction::ResponseAction SystemPrivateGetUpdateStatusFunction::Run() {
        NOTREACHED();
    }
  #else

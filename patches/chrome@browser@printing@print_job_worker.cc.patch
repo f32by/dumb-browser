@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/printing/print_job_worker.cc b/chrome/browser/printing/print_job_worker.cc
-index 8e648fa8d563..8736e09a4308 100644
+index 47a5b3c2a11e..445043dd9688 100644
 --- a/chrome/browser/printing/print_job_worker.cc
 +++ b/chrome/browser/printing/print_job_worker.cc
-@@ -22,7 +22,6 @@
+@@ -23,7 +23,6 @@
  #include "chrome/browser/chrome_notification_types.h"
  #include "chrome/browser/printing/print_job.h"
  #include "chrome/grit/generated_resources.h"
@@ -10,7 +10,7 @@ index 8e648fa8d563..8736e09a4308 100644
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/notification_service.h"
-@@ -208,7 +207,6 @@ void PrintJobWorker::UpdatePrintSettings(base::Value new_settings,
+@@ -209,7 +208,6 @@ void PrintJobWorker::UpdatePrintSettings(base::Value new_settings,
                                           SettingsCallback callback) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
@@ -18,12 +18,12 @@ index 8e648fa8d563..8736e09a4308 100644
    PrinterType type = static_cast<PrinterType>(
        new_settings.FindIntKey(kSettingPrinterType).value());
    if (type == PrinterType::kLocal) {
-@@ -220,8 +218,6 @@ void PrintJobWorker::UpdatePrintSettings(base::Value new_settings,
+@@ -221,8 +219,6 @@ void PrintJobWorker::UpdatePrintSettings(base::Value new_settings,
      scoped_refptr<PrintBackend> print_backend =
          PrintBackend::CreateInstance(g_browser_process->GetApplicationLocale());
      std::string printer_name = *new_settings.FindStringKey(kSettingDeviceName);
 -    crash_key = std::make_unique<crash_keys::ScopedPrinterInfo>(
 -        print_backend->GetPrinterDriverInfo(printer_name));
  
- #if defined(OS_LINUX) && defined(USE_CUPS) && !defined(OS_CHROMEOS)
+ #if (defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS)) && defined(USE_CUPS)
      PrinterBasicInfo basic_info;

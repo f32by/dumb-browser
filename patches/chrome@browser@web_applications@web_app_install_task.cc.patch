@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/web_applications/web_app_install_task.cc b/chrome/browser/web_applications/web_app_install_task.cc
-index 30daea7d77c7..0f4e103cd138 100644
+index fd54e8d5b944..676e0148134e 100644
 --- a/chrome/browser/web_applications/web_app_install_task.cc
 +++ b/chrome/browser/web_applications/web_app_install_task.cc
-@@ -205,8 +205,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
+@@ -234,8 +234,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
    install_source_ = install_source;
    background_installation_ = true;
  
@@ -11,22 +11,22 @@ index 30daea7d77c7..0f4e103cd138 100644
    InstallFinalizer::FinalizeOptions options;
    options.install_source = install_source;
    options.locally_installed = true;
-@@ -321,14 +319,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
+@@ -344,14 +342,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
    initiated_ = true;
  }
  
 -void WebAppInstallTask::RecordInstallEvent() {
 -  DCHECK(install_source_ != kNoInstallSource);
 -
--  if (InstallableMetrics::IsReportableInstallSource(install_source_)) {
--    InstallableMetrics::TrackInstallEvent(install_source_);
+-  if (webapps::InstallableMetrics::IsReportableInstallSource(install_source_)) {
+-    webapps::InstallableMetrics::TrackInstallEvent(install_source_);
 -  }
 -}
 -
  void WebAppInstallTask::CallInstallCallback(const AppId& app_id,
                                              InstallResultCode code) {
    Observe(nullptr);
-@@ -719,9 +709,6 @@ void WebAppInstallTask::OnDialogCompleted(
+@@ -756,9 +746,6 @@ void WebAppInstallTask::OnDialogCompleted(
  
    WebApplicationInfo web_app_info_copy = *web_app_info;
  
@@ -36,7 +36,7 @@ index 30daea7d77c7..0f4e103cd138 100644
    InstallFinalizer::FinalizeOptions finalize_options;
    finalize_options.install_source = install_source_;
    finalize_options.locally_installed = true;
-@@ -776,9 +763,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+@@ -803,9 +790,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
      return;
    }
  
@@ -46,7 +46,7 @@ index 30daea7d77c7..0f4e103cd138 100644
    if (install_params_ && !install_params_->locally_installed) {
      DCHECK(background_installation_);
      DCHECK(!(install_params_->add_to_applications_menu ||
-@@ -790,9 +774,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+@@ -817,9 +801,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
      return;
    }
  

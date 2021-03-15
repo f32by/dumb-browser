@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/browser.cc b/chrome/browser/ui/browser.cc
-index 2c9d816e1aff..18226804b4af 100644
+index 409f908148b3..e0ff6914a09e 100644
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
-@@ -74,7 +74,6 @@
- #include "chrome/browser/profiles/profile.h"
+@@ -76,7 +76,6 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
+ #include "chrome/browser/profiles/profile_keep_alive_types.h"
  #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
  #include "chrome/browser/profiles/profiles_state.h"
  #include "chrome/browser/repost_form_warning_controller.h"
  #include "chrome/browser/resource_coordinator/tab_load_tracker.h"
-@@ -154,7 +153,6 @@
+@@ -156,7 +155,6 @@
  #include "components/blocked_content/list_item_position.h"
  #include "components/blocked_content/popup_blocker.h"
  #include "components/blocked_content/popup_blocker_tab_helper.h"
@@ -18,7 +18,7 @@ index 2c9d816e1aff..18226804b4af 100644
  #include "components/bookmarks/browser/bookmark_model.h"
  #include "components/bookmarks/browser/bookmark_utils.h"
  #include "components/bookmarks/common/bookmark_pref_names.h"
-@@ -168,20 +166,15 @@
+@@ -170,20 +168,15 @@
  #include "components/keep_alive_registry/keep_alive_types.h"
  #include "components/keep_alive_registry/scoped_keep_alive.h"
  #include "components/omnibox/browser/location_bar_model_impl.h"
@@ -39,7 +39,7 @@ index 2c9d816e1aff..18226804b4af 100644
  #include "components/translate/core/browser/language_state.h"
  #include "components/user_manager/user_manager.h"
  #include "components/viz/common/surfaces/surface_id.h"
-@@ -500,8 +493,6 @@ Browser::Browser(const CreateParams& params)
+@@ -505,8 +498,6 @@ Browser::Browser(const CreateParams& params)
  
    UpdateBookmarkBarState(BOOKMARK_BAR_STATE_CHANGE_INIT);
  
@@ -48,7 +48,7 @@ index 2c9d816e1aff..18226804b4af 100644
    if (params.skip_window_init_for_testing)
      return;
  
-@@ -1438,10 +1429,6 @@ void Browser::OnDidBlockNavigation(
+@@ -1448,10 +1439,6 @@ void Browser::OnDidBlockNavigation(
        framebust_helper->AddBlockedUrl(blocked_url, base::BindOnce(on_click));
      }
    }
@@ -59,10 +59,10 @@ index 2c9d816e1aff..18226804b4af 100644
  }
  
  content::PictureInPictureResult Browser::EnterPictureInPicture(
-@@ -1516,10 +1503,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
- bool Browser::IsFrameLowPriority(
-     const content::WebContents* web_contents,
-     const content::RenderFrameHost* render_frame_host) {
+@@ -1525,10 +1512,7 @@ bool Browser::ShouldShowStaleContentOnEviction(content::WebContents* source) {
+ 
+ bool Browser::IsFrameLowPriority(content::WebContents* web_contents,
+                                  content::RenderFrameHost* render_frame_host) {
 -  const auto* throttle_manager = subresource_filter::
 -      ContentSubresourceFilterThrottleManager::FromWebContents(web_contents);
 -  return throttle_manager &&
@@ -71,7 +71,7 @@ index 2c9d816e1aff..18226804b4af 100644
  }
  
  void Browser::MediaWatchTimeChanged(
-@@ -1543,7 +1527,6 @@ void Browser::OnWindowDidShow() {
+@@ -1552,7 +1536,6 @@ void Browser::OnWindowDidShow() {
      return;
    window_has_shown_ = true;
  
@@ -79,20 +79,21 @@ index 2c9d816e1aff..18226804b4af 100644
  
    // Nothing to do for non-tabbed windows.
    if (!is_type_normal())
-@@ -1600,12 +1583,6 @@ WebContents* Browser::OpenURLFromTab(WebContents* source,
+@@ -1609,13 +1592,6 @@ WebContents* Browser::OpenURLFromTab(WebContents* source,
  
    content::WebContents* navigated_or_inserted_contents =
        popup_delegate->nav_params()->navigated_or_inserted_contents;
 -  if (is_popup && navigated_or_inserted_contents) {
 -    auto* tracker = blocked_content::PopupTracker::CreateForWebContents(
 -        navigated_or_inserted_contents, source, params.disposition);
--    tracker->set_is_trusted(params.triggering_event_info !=
--                            blink::TriggeringEventInfo::kFromUntrustedEvent);
+-    tracker->set_is_trusted(
+-        params.triggering_event_info !=
+-        blink::mojom::TriggeringEventInfo::kFromUntrustedEvent);
 -  }
  
    return navigated_or_inserted_contents;
  }
-@@ -1659,13 +1636,6 @@ void Browser::AddNewContents(WebContents* source,
+@@ -1669,13 +1645,6 @@ void Browser::AddNewContents(WebContents* source,
    }
  #endif
  
@@ -106,7 +107,7 @@ index 2c9d816e1aff..18226804b4af 100644
    chrome::AddWebContents(this, source, std::move(new_contents), target_url,
                           disposition, initial_rect);
  }
-@@ -1695,18 +1665,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
+@@ -1705,18 +1674,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
    if (is_type_normal())
      return;
  
@@ -125,7 +126,7 @@ index 2c9d816e1aff..18226804b4af 100644
    window_->SetBounds(bounds);
  }
  
-@@ -2375,12 +2333,6 @@ void Browser::OnTabClosing(WebContents* contents) {
+@@ -2386,12 +2343,6 @@ void Browser::OnTabClosing(WebContents* contents) {
    // associated with their tab is still valid.
    WebContentsModalDialogManager::FromWebContents(contents)->CloseAllDialogs();
  

@@ -1,18 +1,18 @@
 diff --git a/chrome/browser/profiles/profile_attributes_storage.cc b/chrome/browser/profiles/profile_attributes_storage.cc
-index a520ff8a4b50..576d4e66ec8a 100644
+index b8047cc4a9af..99bd2c339f15 100644
 --- a/chrome/browser/profiles/profile_attributes_storage.cc
 +++ b/chrome/browser/profiles/profile_attributes_storage.cc
-@@ -21,7 +21,6 @@
- #include "base/threading/scoped_blocking_call.h"
+@@ -22,7 +22,6 @@
+ #include "build/chromeos_buildflags.h"
  #include "chrome/browser/profiles/profile_avatar_downloader.h"
  #include "chrome/browser/profiles/profile_avatar_icon_util.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
  #include "chrome/grit/generated_resources.h"
  #include "components/policy/core/browser/browser_policy_connector.h"
  #include "components/profile_metrics/state.h"
-@@ -150,83 +149,6 @@ bool ProfileAttributesSortComparator::operator()(
-   return a->GetPath().value() < b->GetPath().value();
- }
+@@ -156,83 +155,6 @@ class ProfileAttributesSortComparator {
+   bool use_local_name_;
+ };
  
 -MultiProfileUserType GetMultiProfileUserType(
 -    const std::vector<ProfileAttributesEntry*>& entries) {
@@ -22,7 +22,7 @@ index a520ff8a4b50..576d4e66ec8a 100644
 -
 -  int active_count = std::count_if(
 -      entries.begin(), entries.end(), [](ProfileAttributesEntry* entry) {
--        return ProfileMetrics::IsProfileActive(entry);
+-        return ProfileMetrics::IsProfileActive(entry) && !entry->IsGuest();
 -      });
 -
 -  if (active_count <= 1)
@@ -94,7 +94,7 @@ index a520ff8a4b50..576d4e66ec8a 100644
  }  // namespace
  
  ProfileAttributesStorage::ProfileAttributesStorage(PrefService* prefs)
-@@ -394,7 +316,6 @@ void ProfileAttributesStorage::RemoveObserver(Observer* obs) {
+@@ -416,7 +338,6 @@ void ProfileAttributesStorage::RemoveObserver(Observer* obs) {
  void ProfileAttributesStorage::RecordDeletedProfileState(
      ProfileAttributesEntry* entry) {
    DCHECK(entry);
@@ -102,11 +102,12 @@ index a520ff8a4b50..576d4e66ec8a 100644
    bool is_last_profile = GetNumberOfProfiles() <= 1u;
    // If the profile has windows opened, they are still open at this moment.
    // Thus, this really means that only the profile manager is open.
-@@ -405,37 +326,6 @@ void ProfileAttributesStorage::RecordDeletedProfileState(
+@@ -427,38 +348,6 @@ void ProfileAttributesStorage::RecordDeletedProfileState(
  #endif
  
  void ProfileAttributesStorage::RecordProfilesState() {
--  std::vector<ProfileAttributesEntry*> entries = GetAllProfilesAttributes();
+-  std::vector<ProfileAttributesEntry*> entries =
+-      GetAllProfilesAttributes(/*include_guest_profile=*/false);
 -  if (entries.size() == 0)
 -    return;
 -

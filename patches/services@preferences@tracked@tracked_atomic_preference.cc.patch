@@ -1,16 +1,8 @@
 diff --git a/services/preferences/tracked/tracked_atomic_preference.cc b/services/preferences/tracked/tracked_atomic_preference.cc
-index c4f820af7009..0e00855b6263 100644
+index c4f820af7009..59c7a9d564e7 100644
 --- a/services/preferences/tracked/tracked_atomic_preference.cc
 +++ b/services/preferences/tracked/tracked_atomic_preference.cc
-@@ -5,7 +5,6 @@
- #include "services/preferences/tracked/tracked_atomic_preference.h"
- 
- #include "base/values.h"
--#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
- #include "services/preferences/tracked/pref_hash_store_transaction.h"
- 
- using ValueState =
-@@ -16,15 +15,13 @@ TrackedAtomicPreference::TrackedAtomicPreference(
+@@ -16,15 +16,13 @@ TrackedAtomicPreference::TrackedAtomicPreference(
      size_t reporting_id,
      size_t reporting_ids_count,
      prefs::mojom::TrackedPreferenceMetadata::EnforcementLevel enforcement_level,
@@ -28,7 +20,7 @@ index c4f820af7009..0e00855b6263 100644
  
  TrackedPreferenceType TrackedAtomicPreference::GetType() const {
    return TrackedPreferenceType::ATOMIC;
-@@ -54,11 +51,6 @@ bool TrackedAtomicPreference::EnforceAndReport(
+@@ -54,11 +52,6 @@ bool TrackedAtomicPreference::EnforceAndReport(
          external_validation_transaction->GetStoreUMASuffix());
    }
  

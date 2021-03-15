@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/resource_coordinator/tab_manager.cc b/chrome/browser/resource_coordinator/tab_manager.cc
-index b679c643687c..eab8af89714b 100644
+index b26b6e31d4de..53bd69f48f61 100644
 --- a/chrome/browser/resource_coordinator/tab_manager.cc
 +++ b/chrome/browser/resource_coordinator/tab_manager.cc
-@@ -40,7 +40,6 @@
+@@ -41,7 +41,6 @@
  #include "chrome/browser/resource_coordinator/tab_manager.h"
  #include "chrome/browser/resource_coordinator/tab_manager_features.h"
  #include "chrome/browser/resource_coordinator/tab_manager_resource_coordinator_signal_observer.h"
@@ -10,7 +10,7 @@ index b679c643687c..eab8af89714b 100644
  #include "chrome/browser/resource_coordinator/tab_manager_web_contents_data.h"
  #include "chrome/browser/resource_coordinator/time.h"
  #include "chrome/browser/sessions/session_restore.h"
-@@ -149,7 +148,6 @@ TabManager::TabManager(TabLoadTracker* tab_load_tracker)
+@@ -150,7 +149,6 @@ TabManager::TabManager(TabLoadTracker* tab_load_tracker)
    browser_tab_strip_tracker_.Init();
    session_restore_observer_.reset(new TabManagerSessionRestoreObserver(this));
  
@@ -18,7 +18,7 @@ index b679c643687c..eab8af89714b 100644
    tab_load_tracker_->AddObserver(this);
  }
  
-@@ -333,11 +331,6 @@ void TabManager::PauseBackgroundTabOpeningIfNeeded() {
+@@ -334,11 +332,6 @@ void TabManager::PauseBackgroundTabOpeningIfNeeded() {
    TRACE_EVENT_INSTANT0("navigation",
                         "TabManager::PauseBackgroundTabOpeningIfNeeded",
                         TRACE_EVENT_SCOPE_THREAD);
@@ -30,7 +30,7 @@ index b679c643687c..eab8af89714b 100644
    background_tab_loading_mode_ = BackgroundTabLoadingMode::kPaused;
  }
  
-@@ -347,9 +340,6 @@ void TabManager::ResumeBackgroundTabOpeningIfNeeded() {
+@@ -348,9 +341,6 @@ void TabManager::ResumeBackgroundTabOpeningIfNeeded() {
                         TRACE_EVENT_SCOPE_THREAD);
    background_tab_loading_mode_ = BackgroundTabLoadingMode::kStaggered;
    LoadNextBackgroundTabIfNeeded();
@@ -40,7 +40,7 @@ index b679c643687c..eab8af89714b 100644
  }
  
  void TabManager::OnMemoryPressure(
-@@ -398,14 +388,6 @@ void TabManager::UnregisterMemoryPressureListener() {
+@@ -399,14 +389,6 @@ void TabManager::UnregisterMemoryPressureListener() {
  
  void TabManager::OnActiveTabChanged(content::WebContents* old_contents,
                                      content::WebContents* new_contents) {
@@ -55,7 +55,7 @@ index b679c643687c..eab8af89714b 100644
    ResumeTabNavigationIfNeeded(new_contents);
  }
  
-@@ -433,17 +415,8 @@ void TabManager::OnLoadingStateChange(content::WebContents* web_contents,
+@@ -434,17 +416,8 @@ void TabManager::OnLoadingStateChange(content::WebContents* web_contents,
    GetWebContentsData(web_contents)->SetTabLoadingState(new_loading_state);
  
    if (new_loading_state == LoadingState::LOADED) {
@@ -73,7 +73,7 @@ index b679c643687c..eab8af89714b 100644
    }
  }
  
-@@ -520,19 +493,10 @@ TabManager::MaybeThrottleNavigation(BackgroundTabNavigationThrottle* throttle) {
+@@ -521,19 +494,10 @@ TabManager::MaybeThrottleNavigation(BackgroundTabNavigationThrottle* throttle) {
    if (GetWebContentsData(contents)->is_in_session_restore())
      return content::NavigationThrottle::PROCEED;
  
@@ -93,7 +93,7 @@ index b679c643687c..eab8af89714b 100644
      return content::NavigationThrottle::PROCEED;
    }
  
-@@ -590,18 +554,9 @@ void TabManager::OnDidFinishNavigation(
+@@ -591,18 +555,9 @@ void TabManager::OnDidFinishNavigation(
  }
  
  void TabManager::OnWebContentsDestroyed(content::WebContents* contents) {
@@ -112,7 +112,7 @@ index b679c643687c..eab8af89714b 100644
  }
  
  void TabManager::StartForceLoadTimer() {
-@@ -641,11 +596,9 @@ void TabManager::LoadNextBackgroundTabIfNeeded() {
+@@ -642,11 +597,9 @@ void TabManager::LoadNextBackgroundTabIfNeeded() {
    if (pending_navigations_.empty())
      return;
  
@@ -124,7 +124,7 @@ index b679c643687c..eab8af89714b 100644
  
    StartForceLoadTimer();
  }
-@@ -655,7 +608,6 @@ void TabManager::ResumeTabNavigationIfNeeded(content::WebContents* contents) {
+@@ -656,7 +609,6 @@ void TabManager::ResumeTabNavigationIfNeeded(content::WebContents* contents) {
        RemovePendingNavigationIfNeeded(contents);
    if (throttle) {
      ResumeNavigation(throttle);

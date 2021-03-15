@@ -1,5 +1,5 @@
 diff --git a/base/metrics/histogram_macros_local.h b/base/metrics/histogram_macros_local.h
-index 47e5ba42f49b..728fbc3eb38c 100644
+index 771b01a07a43..11d4aa7836b0 100644
 --- a/base/metrics/histogram_macros_local.h
 +++ b/base/metrics/histogram_macros_local.h
 @@ -8,6 +8,7 @@
@@ -69,5 +69,5 @@ index 47e5ba42f49b..728fbc3eb38c 100644
 -                                      base::HistogramBase::kNoFlags))
 +    DUMB_UNUSED(name, sample, min, max, bucket_count)
  
- //------------------------------------------------------------------------------
- // Memory histograms.
+ #define LOCAL_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES(name, sample, min, max, \
+                                                   bucket_count)           \

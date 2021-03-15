@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.cc b/chrome/browser/metrics/chrome_metrics_service_client.cc
-index ae36bc82e7ac..7b2a03018ab3 100644
+index 68ada4ae7230..fa97d52c8f95 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
 @@ -44,16 +44,12 @@
@@ -35,16 +35,7 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  #include "components/metrics/stability_metrics_helper.h"
  #include "components/metrics/ui/screen_info_metrics_provider.h"
  #include "components/metrics/url_constants.h"
-@@ -99,8 +93,6 @@
- #include "components/sync/driver/passphrase_type_metrics_provider.h"
- #include "components/sync/driver/sync_service.h"
- #include "components/sync_device_info/device_count_metrics_provider.h"
--#include "components/ukm/field_trials_provider_helper.h"
--#include "components/ukm/ukm_service.h"
- #include "components/version_info/version_info.h"
- #include "content/public/browser/browser_task_traits.h"
- #include "content/public/browser/browser_thread.h"
-@@ -117,7 +109,6 @@
+@@ -117,7 +111,6 @@
  #include "chrome/browser/metrics/page_load_metrics_provider.h"
  #include "components/metrics/android_metrics_provider.h"
  #else
@@ -52,21 +43,21 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  #endif
  
  #if defined(OS_POSIX)
-@@ -169,9 +160,6 @@
- #include "content/public/browser/system_connector.h"
+@@ -168,9 +161,6 @@
+ #include "chrome/notification_helper/notification_helper_constants.h"
  #endif
  
 -#if defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
 -#include "third_party/crashpad/crashpad/client/crashpad_info.h"
 -#endif
  
- #if !defined(OS_CHROMEOS)
+ #if !BUILDFLAG(IS_CHROMEOS_ASH)
  #include "chrome/browser/metrics/accessibility_metrics_provider.h"
-@@ -189,25 +177,11 @@
+@@ -188,25 +178,11 @@
  
  namespace {
  
--#if defined(OS_ANDROID) || defined(OS_CHROMEOS)
+-#if defined(OS_ANDROID) || BUILDFLAG(IS_CHROMEOS_ASH)
 -const int kMaxHistogramStorageKiB = 100 << 10;  // 100 MiB
 -#else
 -const int kMaxHistogramStorageKiB = 500 << 10;  // 500 MiB
@@ -88,7 +79,7 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  // A serialized environment (SystemProfileProto) that was registered with the
  // crash reporter, or the empty string if no environment was registered yet.
  // Ownership must be maintained after registration as the crash reporter does
-@@ -216,145 +190,6 @@ const uint32_t kSystemProfileMinidumpStreamType = 0x4B6B0003;
+@@ -215,145 +191,6 @@ const uint32_t kSystemProfileMinidumpStreamType = 0x4B6B0003;
  base::LazyInstance<std::string>::Leaky g_environment_for_crash_reporter;
  #endif  // defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
  
@@ -234,8 +225,8 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  ChromeMetricsServiceClient::IsProcessRunningFunction g_is_process_running =
      nullptr;
  
-@@ -430,23 +265,12 @@ class ProfileClientImpl
-   DISALLOW_COPY_AND_ASSIGN(ProfileClientImpl);
+@@ -429,23 +266,12 @@ class ProfileClientImpl
+   metrics::CachedMetricsProfile cached_metrics_profile_;
  };
  
 -std::unique_ptr<metrics::DemographicMetricsProvider>
@@ -258,7 +249,7 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  }
  
  ChromeMetricsServiceClient::~ChromeMetricsServiceClient() {
-@@ -468,13 +292,7 @@ std::unique_ptr<ChromeMetricsServiceClient> ChromeMetricsServiceClient::Create(
+@@ -467,13 +293,7 @@ std::unique_ptr<ChromeMetricsServiceClient> ChromeMetricsServiceClient::Create(
  // static
  void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
    metrics::MetricsService::RegisterPrefs(registry);
@@ -272,21 +263,15 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  
  #if BUILDFLAG(ENABLE_PLUGINS)
    PluginMetricsProvider::RegisterPrefs(registry);
-@@ -485,13 +303,8 @@ metrics::MetricsService* ChromeMetricsServiceClient::GetMetricsService() {
-   return metrics_service_.get();
- }
+@@ -490,7 +310,6 @@ ukm::UkmService* ChromeMetricsServiceClient::GetUkmService() {
  
--ukm::UkmService* ChromeMetricsServiceClient::GetUkmService() {
--  return ukm_service_.get();
--}
--
  void ChromeMetricsServiceClient::SetMetricsClientId(
      const std::string& client_id) {
 -  crash_keys::SetMetricsClientIdFromGUID(client_id);
  }
  
  int32_t ChromeMetricsServiceClient::GetProduct() {
-@@ -531,11 +344,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
+@@ -530,11 +349,6 @@ void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
  
    g_environment_for_crash_reporter.Get() = std::move(*environment);
  
@@ -298,7 +283,7 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  #endif  // OS_WIN || OS_MAC || OS_ANDROID
  }
  
-@@ -588,25 +396,7 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -587,25 +401,7 @@ void ChromeMetricsServiceClient::Initialize() {
    metrics_service_ = std::make_unique<metrics::MetricsService>(
        metrics_state_manager_, this, local_state);
  
@@ -323,9 +308,9 @@ index ae36bc82e7ac..7b2a03018ab3 100644
 -  }
 +  notification_listeners_active_ = false;
  
- #if defined(OS_CHROMEOS)
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
    metrics::structured::Recorder::GetInstance()->SetUiTaskRunner(
-@@ -614,209 +404,6 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -613,213 +409,6 @@ void ChromeMetricsServiceClient::Initialize() {
  #endif
  }
  
@@ -410,12 +395,14 @@ index ae36bc82e7ac..7b2a03018ab3 100644
 -      std::make_unique<AntiVirusMetricsProvider>());
 -#endif  // defined(OS_WIN)
 -
+-// TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
+-// of lacros-chrome is complete.
 -#if defined(OS_WIN) || defined(OS_MAC) || \
--    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-    (defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<DesktopPlatformFeaturesMetricsProvider>());
--#endif  //  defined(OS_WIN) || defined(OS_MAC) || \
--        // (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-#endif  // defined(OS_WIN) || defined(OS_MAC) || (defined(OS_LINUX) ||
+-        // BUILDFLAG(IS_CHROMEOS_LACROS))
 -
 -#if BUILDFLAG(ENABLE_PLUGINS)
 -  plugin_metrics_provider_ = new PluginMetricsProvider(local_state);
@@ -423,12 +410,14 @@ index ae36bc82e7ac..7b2a03018ab3 100644
 -      std::unique_ptr<metrics::MetricsProvider>(plugin_metrics_provider_));
 -#endif  // BUILDFLAG(ENABLE_PLUGINS)
 -
--#if BUILDFLAG(IS_LACROS)
+-#if BUILDFLAG(IS_CHROMEOS_LACROS)
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<LacrosMetricsProvider>());
--#endif  // BUILDFLAG(IS_LACROS)
+-#endif  // BUILDFLAG(IS_CHROMEOS_LACROS)
 -
--#if defined(OS_CHROMEOS)
+-// TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
+-// of lacros-chrome is complete.
+-#if BUILDFLAG(IS_CHROMEOS_ASH)
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<ChromeOSMetricsProvider>(
 -          metrics::MetricsLogUploader::UMA));
@@ -470,16 +459,16 @@ index ae36bc82e7ac..7b2a03018ab3 100644
 -    metrics_service_->RegisterMetricsProvider(
 -        std::make_unique<FamilyLinkUserMetricsProvider>());
 -  }
--#endif  // defined(OS_CHROMEOS)
+-#endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 -
--#if !defined(OS_CHROMEOS)
+-#if !BUILDFLAG(IS_CHROMEOS_ASH)
 -  metrics_service_->RegisterMetricsProvider(
 -      SigninStatusMetricsProvider::CreateInstance(
 -          std::make_unique<ChromeSigninStatusMetricsProviderDelegate>()));
 -  // ChromeOS uses ChromeOSMetricsProvider for accessibility metrics provider.
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<AccessibilityMetricsProvider>());
--#endif  // !defined(OS_CHROMEOS)
+-#endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
 -
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<syncer::DeviceCountMetricsProvider>(base::BindRepeating(
@@ -495,10 +484,10 @@ index ae36bc82e7ac..7b2a03018ab3 100644
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<CertificateReportingMetricsProvider>());
 -
--#if !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
 -  metrics_service_->RegisterMetricsProvider(
 -      std::make_unique<UpgradeMetricsProvider>());
--#endif  //! defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+-#endif  //! defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
 -
 -#if defined(OS_MAC)
 -  metrics_service_->RegisterMetricsProvider(
@@ -514,11 +503,11 @@ index ae36bc82e7ac..7b2a03018ab3 100644
 -          content::CreateNetworkConnectionTrackerAsyncGetter(),
 -          std::make_unique<metrics::NetworkQualityEstimatorProviderImpl>()));
 -
--#if defined(OS_CHROMEOS)
+-#if BUILDFLAG(IS_CHROMEOS_ASH)
 -  ukm_service_->RegisterMetricsProvider(
 -      std::make_unique<ChromeOSMetricsProvider>(
 -          metrics::MetricsLogUploader::UKM));
--#endif  // !defined(OS_CHROMEOS)
+-#endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
 -
 -  ukm_service_->RegisterMetricsProvider(
 -      std::make_unique<metrics::GPUMetricsProvider>());
@@ -535,7 +524,7 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  void ChromeMetricsServiceClient::CollectFinalHistograms() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
  
-@@ -931,12 +518,6 @@ bool ChromeMetricsServiceClient::RegisterForNotifications() {
+@@ -934,12 +523,6 @@ bool ChromeMetricsServiceClient::RegisterForNotifications() {
                &ChromeMetricsServiceClient::OnURLOpenedFromOmnibox,
                base::Unretained(this)));
  
@@ -548,12 +537,14 @@ index ae36bc82e7ac..7b2a03018ab3 100644
    bool all_profiles_succeeded = true;
    for (Profile* profile :
         g_browser_process->profile_manager()->GetLoadedProfiles()) {
-@@ -973,13 +554,6 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
+@@ -975,15 +558,6 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
          profile->GetPath());
    }
  #endif
+-// TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
+-// of lacros-chrome is complete.
 -#if defined(OS_WIN) || defined(OS_MAC) || \
--    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-    (defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
 -  // This creates the DesktopProfileSessionDurationsServices if it didn't exist
 -  // already.
 -  metrics::DesktopProfileSessionDurationsServiceFactory::GetForBrowserContext(
@@ -562,7 +553,7 @@ index ae36bc82e7ac..7b2a03018ab3 100644
  
    history::HistoryService* history_service =
        HistoryServiceFactory::GetForProfile(profile,
-@@ -988,13 +562,10 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
+@@ -992,13 +566,10 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
      return false;
    }
  
@@ -576,44 +567,3 @@ index ae36bc82e7ac..7b2a03018ab3 100644
    return true;
  }
  
-@@ -1037,25 +608,6 @@ bool ChromeMetricsServiceClient::IsUMACellularUploadLogicEnabled() {
-   return metrics::ShouldUseCellularUploadInterval();
- }
- 
--void ChromeMetricsServiceClient::OnHistoryDeleted() {
--  if (ukm_service_)
--    ukm_service_->Purge();
--}
--
--void ChromeMetricsServiceClient::OnUkmAllowedStateChanged(bool must_purge) {
--  if (!ukm_service_)
--    return;
--  if (must_purge) {
--    ukm_service_->Purge();
--    ukm_service_->ResetClientState(ukm::ResetReason::kOnUkmAllowedStateChanged);
--  } else if (!IsUkmAllowedWithExtensionsForAllProfiles()) {
--    ukm_service_->PurgeExtensions();
--  }
--
--  // Signal service manager to enable/disable UKM based on new state.
--  UpdateRunningServices();
--}
--
- // static
- bool ChromeMetricsServiceClient::IsWebstoreExtension(base::StringPiece id) {
- #if BUILDFLAG(ENABLE_EXTENSIONS)
-@@ -1110,14 +662,6 @@ void ChromeMetricsServiceClient::SetIsProcessRunningForTesting(
-   g_is_process_running = func;
- }
- 
--bool ChromeMetricsServiceClient::IsUkmAllowedForAllProfiles() {
--  return UkmConsentStateObserver::IsUkmAllowedForAllProfiles();
--}
--
--bool ChromeMetricsServiceClient::IsUkmAllowedWithExtensionsForAllProfiles() {
--  return UkmConsentStateObserver::IsUkmAllowedWithExtensionsForAllProfiles();
--}
--
- bool g_notification_listeners_failed = false;
- void ChromeMetricsServiceClient::SetNotificationListenerSetupFailedForTesting(
-     bool simulate_failure) {

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/metrics/chrome_feature_list_creator.cc b/chrome/browser/metrics/chrome_feature_list_creator.cc
-index 5b37e71696e5..1f9cf4d81b4f 100644
+index be5b586e08ac..f5f598b5aecd 100644
 --- a/chrome/browser/metrics/chrome_feature_list_creator.cc
 +++ b/chrome/browser/metrics/chrome_feature_list_creator.cc
-@@ -40,7 +40,6 @@
+@@ -42,7 +42,6 @@
  #include "components/prefs/pref_service_factory.h"
  #include "components/variations/pref_names.h"
  #include "components/variations/service/variations_service.h"
@@ -10,7 +10,7 @@ index 5b37e71696e5..1f9cf4d81b4f 100644
  #include "content/public/common/content_switch_dependent_feature_overrides.h"
  #include "ui/base/resource/resource_bundle.h"
  
-@@ -186,7 +185,6 @@ void ChromeFeatureListCreator::SetupFieldTrials() {
+@@ -198,7 +197,6 @@ void ChromeFeatureListCreator::SetupFieldTrials() {
        content::GetSwitchDependentFeatureOverrides(
            *base::CommandLine::ForCurrentProcess()),
        std::move(feature_list), browser_field_trials_.get());

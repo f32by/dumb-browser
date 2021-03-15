@@ -1,0 +1,114 @@
+diff --git a/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc b/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
+index 442f182e0e0e..3bb7c9aa2b50 100644
+--- a/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
++++ b/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
+@@ -20,7 +20,6 @@
+ #include "chrome/browser/file_system_access/file_system_access_permission_context_factory.h"
+ #include "chrome/browser/file_system_access/file_system_access_permission_request_manager.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/download_protection/download_protection_service.h"
+ #include "chrome/browser/ui/file_system_access_dialogs.h"
+ #include "chrome/common/chrome_paths.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+@@ -232,79 +231,6 @@ BindResultCallbackToCurrentSequence(
+       base::SequencedTaskRunnerHandle::Get(), std::move(callback));
+ }
+ 
+-void DoSafeBrowsingCheckOnUIThread(
+-    content::GlobalFrameRoutingId frame_id,
+-    std::unique_ptr<content::FileSystemAccessWriteItem> item,
+-    safe_browsing::CheckDownloadCallback callback) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-  // Download Protection Service is not supported on Android.
+-#if BUILDFLAG(FULL_SAFE_BROWSING)
+-  safe_browsing::SafeBrowsingService* sb_service =
+-      g_browser_process->safe_browsing_service();
+-  if (!sb_service || !sb_service->download_protection_service() ||
+-      !sb_service->download_protection_service()->enabled()) {
+-    std::move(callback).Run(safe_browsing::DownloadCheckResult::UNKNOWN);
+-    return;
+-  }
+-
+-  if (!item->browser_context) {
+-    content::RenderProcessHost* rph =
+-        content::RenderProcessHost::FromID(frame_id.child_id);
+-    if (!rph) {
+-      std::move(callback).Run(safe_browsing::DownloadCheckResult::UNKNOWN);
+-      return;
+-    }
+-    item->browser_context = rph->GetBrowserContext();
+-  }
+-
+-  if (!item->web_contents) {
+-    content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(frame_id);
+-    if (rfh)
+-      item->web_contents = content::WebContents::FromRenderFrameHost(rfh);
+-  }
+-
+-  sb_service->download_protection_service()->CheckFileSystemAccessWrite(
+-      std::move(item), std::move(callback));
+-#endif
+-}
+-
+-ChromeFileSystemAccessPermissionContext::AfterWriteCheckResult
+-InterpretSafeBrowsingResult(safe_browsing::DownloadCheckResult result) {
+-  using Result = safe_browsing::DownloadCheckResult;
+-  switch (result) {
+-    // Only allow downloads that are marked as SAFE or UNKNOWN by SafeBrowsing.
+-    // All other types are going to be blocked. UNKNOWN could be the result of a
+-    // failed safe browsing ping.
+-    case Result::UNKNOWN:
+-    case Result::SAFE:
+-    case Result::ALLOWLISTED_BY_POLICY:
+-      return ChromeFileSystemAccessPermissionContext::AfterWriteCheckResult::
+-          kAllow;
+-
+-    case Result::DANGEROUS:
+-    case Result::UNCOMMON:
+-    case Result::DANGEROUS_HOST:
+-    case Result::POTENTIALLY_UNWANTED:
+-    case Result::BLOCKED_PASSWORD_PROTECTED:
+-    case Result::BLOCKED_TOO_LARGE:
+-    case Result::BLOCKED_UNSUPPORTED_FILE_TYPE:
+-      return ChromeFileSystemAccessPermissionContext::AfterWriteCheckResult::
+-          kBlock;
+-
+-    // This shouldn't be returned for File System Access write checks.
+-    case Result::ASYNC_SCANNING:
+-    case Result::SENSITIVE_CONTENT_WARNING:
+-    case Result::SENSITIVE_CONTENT_BLOCK:
+-    case Result::DEEP_SCANNED_SAFE:
+-    case Result::PROMPT_FOR_SCANNING:
+-      NOTREACHED();
+-      return ChromeFileSystemAccessPermissionContext::AfterWriteCheckResult::
+-          kAllow;
+-  }
+-  NOTREACHED();
+-  return ChromeFileSystemAccessPermissionContext::AfterWriteCheckResult::kBlock;
+-}
+-
+ }  // namespace
+ 
+ ChromeFileSystemAccessPermissionContext::Grants::Grants() = default;
+@@ -385,21 +311,6 @@ void ChromeFileSystemAccessPermissionContext::PerformAfterWriteChecks(
+     content::GlobalFrameRoutingId frame_id,
+     base::OnceCallback<void(AfterWriteCheckResult)> callback) {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-  content::GetUIThreadTaskRunner({})->PostTask(
+-      FROM_HERE,
+-      base::BindOnce(
+-          &DoSafeBrowsingCheckOnUIThread, frame_id, std::move(item),
+-          base::BindOnce(
+-              [](scoped_refptr<base::TaskRunner> task_runner,
+-                 base::OnceCallback<void(AfterWriteCheckResult result)>
+-                     callback,
+-                 safe_browsing::DownloadCheckResult result) {
+-                task_runner->PostTask(
+-                    FROM_HERE,
+-                    base::BindOnce(std::move(callback),
+-                                   InterpretSafeBrowsingResult(result)));
+-              },
+-              base::SequencedTaskRunnerHandle::Get(), std::move(callback))));
+ }
+ 
+ void ChromeFileSystemAccessPermissionContext::

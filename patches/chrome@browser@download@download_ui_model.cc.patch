@@ -1,9 +1,9 @@
 diff --git a/chrome/browser/download/download_ui_model.cc b/chrome/browser/download/download_ui_model.cc
-index fea2833d8590..478465112211 100644
+index dbf4534f6e89..b7fbe48f971c 100644
 --- a/chrome/browser/download/download_ui_model.cc
 +++ b/chrome/browser/download/download_ui_model.cc
-@@ -9,8 +9,6 @@
- #include "base/time/time.h"
+@@ -10,8 +10,6 @@
+ #include "build/chromeos_buildflags.h"
  #include "chrome/browser/download/download_commands.h"
  #include "chrome/browser/download/offline_item_utils.h"
 -#include "chrome/browser/safe_browsing/advanced_protection_status_manager.h"
@@ -11,7 +11,7 @@ index fea2833d8590..478465112211 100644
  #include "chrome/common/url_constants.h"
  #include "chrome/grit/chromium_strings.h"
  #include "chrome/grit/generated_resources.h"
-@@ -32,7 +30,6 @@
+@@ -33,7 +31,6 @@
  
  using base::TimeDelta;
  using download::DownloadItem;
@@ -19,7 +19,7 @@ index fea2833d8590..478465112211 100644
  using offline_items_collection::FailState;
  
  namespace {
-@@ -239,7 +236,7 @@ base::string16 DownloadUIModel::GetWarningText(const base::string16& filename,
+@@ -240,7 +237,7 @@ base::string16 DownloadUIModel::GetWarningText(const base::string16& filename,
    *offset = std::string::npos;
    switch (GetDangerType()) {
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_URL:
@@ -28,7 +28,7 @@ index fea2833d8590..478465112211 100644
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_FILE:
        return IsExtensionDownload()
                   ? l10n_util::GetStringUTF16(
-@@ -248,22 +245,8 @@ base::string16 DownloadUIModel::GetWarningText(const base::string16& filename,
+@@ -249,22 +246,8 @@ base::string16 DownloadUIModel::GetWarningText(const base::string16& filename,
                                                filename, offset);
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_CONTENT:
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_HOST:
@@ -53,7 +53,7 @@ index fea2833d8590..478465112211 100644
      case download::DOWNLOAD_DANGER_TYPE_POTENTIALLY_UNWANTED:
        return l10n_util::GetStringFUTF16(IDS_PROMPT_DOWNLOAD_CHANGES_SETTINGS,
                                          filename, offset);
-@@ -395,13 +378,6 @@ bool DownloadUIModel::ShouldPreferOpeningInBrowser() const {
+@@ -396,13 +379,6 @@ bool DownloadUIModel::ShouldPreferOpeningInBrowser() const {
  
  void DownloadUIModel::SetShouldPreferOpeningInBrowser(bool preference) {}
  

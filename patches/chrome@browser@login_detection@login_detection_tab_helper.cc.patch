@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/login_detection/login_detection_tab_helper.cc b/chrome/browser/login_detection/login_detection_tab_helper.cc
-index bccb968ed7ec..d4b79196f698 100644
+index c5a202967a36..ffd5012cfdee 100644
 --- a/chrome/browser/login_detection/login_detection_tab_helper.cc
 +++ b/chrome/browser/login_detection/login_detection_tab_helper.cc
-@@ -15,10 +15,6 @@
+@@ -18,10 +18,6 @@
  #include "content/public/browser/navigation_handle.h"
  #include "content/public/browser/web_contents.h"
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
@@ -13,45 +13,18 @@ index bccb968ed7ec..d4b79196f698 100644
  
  namespace login_detection {
  
-@@ -29,15 +25,6 @@ PrefService* GetPrefs(content::WebContents* web_contents) {
-       ->GetPrefs();
- }
+@@ -34,10 +30,6 @@ PrefService* GetPrefs(content::WebContents* web_contents) {
  
--void RecordLoginDetectionMetrics(
--    LoginDetectionTabHelper::LoginDetectionType type,
--    ukm::SourceId ukm_source_id) {
+ void RecordLoginDetectionMetrics(LoginDetectionType type,
+                                  ukm::SourceId ukm_source_id) {
 -  base::UmaHistogramEnumeration("Login.PageLoad.DetectionType", type);
 -  ukm::builders::LoginDetection builder(ukm_source_id);
 -  builder.SetPage_LoginType(static_cast<int64_t>(type))
 -      .Record(ukm::UkmRecorder::Get());
--}
--
- }  // namespace
- 
- // static
-@@ -88,21 +75,14 @@ void LoginDetectionTabHelper::DidFinishNavigation(
-           prev_navigation_url, navigation_handle->GetRedirectChain())) {
-     prefs::SaveSiteToOAuthSignedInList(GetPrefs(web_contents()),
-                                        *signedin_site);
--    RecordLoginDetectionMetrics(LoginDetectionType::kOauthFirstTimeLoginFlow,
--                                navigation_handle->GetNextPageUkmSourceId());
-     return;
-   }
- 
-   // Check if OAuth login for this site was detected earlier, and remembered
-   // in prefs.
-   if (prefs::IsSiteInOAuthSignedInList(GetPrefs(web_contents()), url)) {
--    RecordLoginDetectionMetrics(LoginDetectionType::kOauthLogin,
--                                navigation_handle->GetNextPageUkmSourceId());
-     return;
-   }
--
--  RecordLoginDetectionMetrics(LoginDetectionType::kNoLogin,
--                              navigation_handle->GetNextPageUkmSourceId());
  }
  
- void LoginDetectionTabHelper::DidOpenRequestedURL(
-@@ -129,9 +109,6 @@ void LoginDetectionTabHelper::DidOpenAsPopUp(
+ }  // namespace
+@@ -130,9 +122,6 @@ void LoginDetectionTabHelper::DidOpenAsPopUp(
  
  void LoginDetectionTabHelper::WebContentsDestroyed() {
    if (auto signedin_site = oauth_login_detector_->GetPopUpLoginFlowSite()) {

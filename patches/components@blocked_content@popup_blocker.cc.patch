@@ -1,5 +1,5 @@
 diff --git a/components/blocked_content/popup_blocker.cc b/components/blocked_content/popup_blocker.cc
-index 8f8438ccd4be..9f6f24602e6c 100644
+index fd67c3ed1142..e99465a20195 100644
 --- a/components/blocked_content/popup_blocker.cc
 +++ b/components/blocked_content/popup_blocker.cc
 @@ -10,11 +10,9 @@
@@ -14,7 +14,7 @@ index 8f8438ccd4be..9f6f24602e6c 100644
  #include "content/public/browser/page_navigator.h"
  #include "content/public/browser/render_frame_host.h"
  #include "content/public/browser/web_contents.h"
-@@ -63,37 +61,9 @@ PopupBlockType ShouldBlockPopup(content::WebContents* web_contents,
+@@ -64,37 +62,9 @@ PopupBlockType ShouldBlockPopup(content::WebContents* web_contents,
      return PopupBlockType::kNotBlocked;
    }
  
@@ -52,7 +52,7 @@ index 8f8438ccd4be..9f6f24602e6c 100644
  }  // namespace
  
  bool ConsiderForPopupBlocking(WindowOpenDisposition disposition) {
-@@ -128,14 +98,8 @@ std::unique_ptr<PopupNavigationDelegate> MaybeBlockPopup(
+@@ -129,14 +99,8 @@ std::unique_ptr<PopupNavigationDelegate> MaybeBlockPopup(
  
    // AddBlockedPopup() takes ownership of the delegate, so grab the source frame
    // first.

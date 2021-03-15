@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/predictors/loading_predictor_tab_helper.cc b/chrome/browser/predictors/loading_predictor_tab_helper.cc
-index 5e3db6bbd55a..e52d8522c8a6 100644
+index c487d52438ac..24ac2a35a808 100644
 --- a/chrome/browser/predictors/loading_predictor_tab_helper.cc
 +++ b/chrome/browser/predictors/loading_predictor_tab_helper.cc
-@@ -22,7 +22,6 @@
+@@ -25,7 +25,6 @@
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/navigation_handle.h"
  #include "content/public/browser/render_frame_host.h"
@@ -10,7 +10,7 @@ index 5e3db6bbd55a..e52d8522c8a6 100644
  #include "services/network/public/mojom/fetch_api.mojom.h"
  #include "third_party/blink/public/mojom/loader/resource_load_info.mojom.h"
  
-@@ -163,8 +162,6 @@ void LoadingPredictorTabHelper::DidStartNavigation(
+@@ -181,8 +180,6 @@ void LoadingPredictorTabHelper::DidStartNavigation(
  
    auto navigation_id = NavigationID(
        web_contents(),
@@ -19,7 +19,7 @@ index 5e3db6bbd55a..e52d8522c8a6 100644
        navigation_handle->GetURL(), navigation_handle->NavigationStart());
    if (!navigation_id.is_valid())
      return;
-@@ -203,8 +200,6 @@ void LoadingPredictorTabHelper::DidRedirectNavigation(
+@@ -228,8 +225,6 @@ void LoadingPredictorTabHelper::DidRedirectNavigation(
  
    auto navigation_id = NavigationID(
        web_contents(),
@@ -28,7 +28,7 @@ index 5e3db6bbd55a..e52d8522c8a6 100644
        navigation_handle->GetURL(), navigation_handle->NavigationStart());
    if (!navigation_id.is_valid())
      return;
-@@ -244,14 +239,10 @@ void LoadingPredictorTabHelper::DidFinishNavigation(
+@@ -269,14 +264,10 @@ void LoadingPredictorTabHelper::DidFinishNavigation(
  
    auto old_navigation_id =
        NavigationID(web_contents(),
@@ -43,7 +43,7 @@ index 5e3db6bbd55a..e52d8522c8a6 100644
        navigation_handle->GetURL(), navigation_handle->NavigationStart());
    if (!old_navigation_id.is_valid() || !new_navigation_id.is_valid())
      return;
-@@ -275,9 +266,6 @@ void LoadingPredictorTabHelper::ResourceLoadComplete(
+@@ -300,9 +291,6 @@ void LoadingPredictorTabHelper::ResourceLoadComplete(
    auto navigation_id = NavigationID(web_contents());
    if (!navigation_id.is_valid())
      return;
@@ -53,7 +53,7 @@ index 5e3db6bbd55a..e52d8522c8a6 100644
  }
  
  void LoadingPredictorTabHelper::DidLoadResourceFromMemoryCache(
-@@ -302,8 +290,6 @@ void LoadingPredictorTabHelper::DidLoadResourceFromMemoryCache(
+@@ -327,8 +315,6 @@ void LoadingPredictorTabHelper::DidLoadResourceFromMemoryCache(
        GetRequestPriority(resource_load_info.request_destination);
    resource_load_info.network_info =
        blink::mojom::CommonNetworkInfo::New(false, false, base::nullopt);
@@ -62,7 +62,7 @@ index 5e3db6bbd55a..e52d8522c8a6 100644
  }
  
  void LoadingPredictorTabHelper::DocumentOnLoadCompletedInMainFrame() {
-@@ -315,9 +301,6 @@ void LoadingPredictorTabHelper::DocumentOnLoadCompletedInMainFrame() {
+@@ -340,9 +326,6 @@ void LoadingPredictorTabHelper::DocumentOnLoadCompletedInMainFrame() {
    if (!navigation_id.is_valid())
      return;
  

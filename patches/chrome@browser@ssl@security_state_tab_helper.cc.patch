@@ -1,9 +1,9 @@
 diff --git a/chrome/browser/ssl/security_state_tab_helper.cc b/chrome/browser/ssl/security_state_tab_helper.cc
-index 53cfff38ef81..8590c2a1b696 100644
+index c11f6e1ccb92..c23822a09f77 100644
 --- a/chrome/browser/ssl/security_state_tab_helper.cc
 +++ b/chrome/browser/ssl/security_state_tab_helper.cc
-@@ -15,9 +15,6 @@
- #include "build/build_config.h"
+@@ -16,9 +16,6 @@
+ #include "build/chromeos_buildflags.h"
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/reputation/reputation_web_contents_observer.h"
@@ -12,7 +12,7 @@ index 53cfff38ef81..8590c2a1b696 100644
  #include "chrome/browser/ssl/known_interception_disclosure_infobar_delegate.h"
  #include "chrome/browser/ssl/tls_deprecation_config.h"
  #include "chrome/common/chrome_features.h"
-@@ -29,7 +26,6 @@
+@@ -30,7 +27,6 @@
  #include "components/omnibox/common/omnibox_features.h"
  #include "components/password_manager/core/browser/password_manager_metrics_util.h"
  #include "components/prefs/pref_service.h"
@@ -20,9 +20,9 @@ index 53cfff38ef81..8590c2a1b696 100644
  #include "components/security_interstitials/core/features.h"
  #include "components/security_interstitials/core/pref_names.h"
  #include "components/security_state/content/content_utils.h"
-@@ -54,10 +50,6 @@
+@@ -55,10 +51,6 @@
  #include "chrome/browser/chromeos/policy/policy_cert_service_factory.h"
- #endif  // defined(OS_CHROMEOS)
+ #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  
 -#if BUILDFLAG(FULL_SAFE_BROWSING)
 -#include "chrome/browser/safe_browsing/chrome_password_protection_service.h"
@@ -31,7 +31,7 @@ index 53cfff38ef81..8590c2a1b696 100644
  namespace {
  
  void RecordSecurityLevel(
-@@ -121,7 +113,6 @@ bool IsLegacyTLS(GURL url, int connection_status) {
+@@ -122,7 +114,6 @@ bool IsLegacyTLS(GURL url, int connection_status) {
  }  // namespace
  
  using password_manager::metrics_util::PasswordType;
@@ -39,7 +39,7 @@ index 53cfff38ef81..8590c2a1b696 100644
  
  SecurityStateTabHelper::SecurityStateTabHelper(
      content::WebContents* web_contents)
-@@ -167,13 +158,8 @@ SecurityStateTabHelper::GetVisibleSecurityState() {
+@@ -168,13 +159,8 @@ SecurityStateTabHelper::GetVisibleSecurityState() {
    // information is still being initialized, thus no need to check for that.
    state->malicious_content_status = GetMaliciousContentStatus();
  
@@ -54,7 +54,7 @@ index 53cfff38ef81..8590c2a1b696 100644
                  {security_state::SafetyTipStatus::kUnknown, GURL()});
  
    // If both the on-form warning and the on-submit warning are enabled for mixed
-@@ -274,92 +260,6 @@ bool SecurityStateTabHelper::UsedPolicyInstalledCertificate() const {
+@@ -275,92 +261,6 @@ bool SecurityStateTabHelper::UsedPolicyInstalledCertificate() const {
  
  security_state::MaliciousContentStatus
  SecurityStateTabHelper::GetMaliciousContentStatus() const {

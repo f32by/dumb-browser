@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
-index e476958ec26f..96816be918ad 100644
+index 78e4af079092..f7ed976d04d4 100644
 --- a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
 +++ b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
-@@ -30,7 +30,6 @@
+@@ -32,7 +32,6 @@
  #include "chrome/browser/metrics/authenticator_utility.h"
  #include "chrome/browser/metrics/bluetooth_available_utility.h"
  #include "chrome/browser/metrics/chrome_metrics_service_accessor.h"
@@ -10,7 +10,7 @@ index e476958ec26f..96816be918ad 100644
  #include "chrome/browser/shell_integration.h"
  #include "components/flags_ui/pref_service_flags_storage.h"
  #include "content/public/browser/browser_task_traits.h"
-@@ -41,11 +40,6 @@
+@@ -43,11 +42,6 @@
  #include "ui/base/ui_base_switches.h"
  #include "ui/display/screen.h"
  
@@ -22,7 +22,7 @@ index e476958ec26f..96816be918ad 100644
  #if defined(OS_ANDROID) && defined(__arm__)
  #include <cpu-features.h>
  #endif  // defined(OS_ANDROID) && defined(__arm__)
-@@ -81,24 +75,6 @@
+@@ -85,24 +79,6 @@
  
  namespace {
  
@@ -47,7 +47,7 @@ index e476958ec26f..96816be918ad 100644
  // These values are written to logs.  New enum values can be added, but existing
  // enums must never be renumbered or deleted and reused.
  enum UMALinuxDistro {
-@@ -552,7 +528,6 @@ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
+@@ -614,7 +590,6 @@ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
  }
  
  void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
@@ -55,7 +55,7 @@ index e476958ec26f..96816be918ad 100644
    RecordLinuxGlibcVersion();
  #if defined(USE_X11)
    if (!features::IsUsingOzonePlatform()) {
-@@ -615,18 +590,6 @@ void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
+@@ -679,18 +654,6 @@ void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
                                display_count_);
    display::Screen::GetScreen()->AddObserver(this);
    is_screen_observer_ = true;

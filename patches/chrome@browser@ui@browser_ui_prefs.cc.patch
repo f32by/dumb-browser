@@ -1,10 +1,10 @@
 diff --git a/chrome/browser/ui/browser_ui_prefs.cc b/chrome/browser/ui/browser_ui_prefs.cc
-index e4fbbfc4edff..6516009aa595 100644
+index 6c6152862a54..2075c245c624 100644
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
 @@ -10,7 +10,6 @@
  #include "build/build_config.h"
- #include "chrome/browser/first_run/first_run.h"
+ #include "build/chromeos_buildflags.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/upgrade_detector/upgrade_detector.h"
  #include "chrome/common/buildflags.h"
@@ -30,7 +30,7 @@ index e4fbbfc4edff..6516009aa595 100644
 -      prefs::kEnableDoNotTrack, false,
 +      prefs::kEnableDoNotTrack, true,
        user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
- #if !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
+ #if !BUILDFLAG(IS_CHROMEOS_ASH) && !defined(OS_ANDROID)
    registry->RegisterBooleanPref(prefs::kPrintPreviewUseSystemDefaultPrinter,
 @@ -120,7 +113,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
    // late: we need the pref to be already initialized. Doing it here also saves

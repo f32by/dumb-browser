@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/download_target_determiner.h b/chrome/browser/download/download_target_determiner.h
-index 3dc27593fe8d..a9ff07ddd00d 100644
+index 3dc27593fe8d..6bf6f02ffce0 100644
 --- a/chrome/browser/download/download_target_determiner.h
 +++ b/chrome/browser/download/download_target_determiner.h
 @@ -19,7 +19,6 @@
@@ -10,15 +10,6 @@ index 3dc27593fe8d..a9ff07ddd00d 100644
  #include "content/public/browser/download_manager_delegate.h"
  #include "ppapi/buildflags/buildflags.h"
  
-@@ -267,7 +266,7 @@ class DownloadTargetDeterminer : public download::DownloadItem::Observer {
- 
-   // Callback invoked after the delegate has checked the download URL. Sets the
-   // danger type of the download to |danger_type|.
--  void CheckDownloadUrlDone(download::DownloadDangerType danger_type);
-+  void CheckDownloadUrlDone();
- 
-   // Checks if the user has visited the referrer URL of the download prior to
-   // today. The actual check is only performed if it would be needed to
 @@ -316,16 +315,6 @@ class DownloadTargetDeterminer : public download::DownloadItem::Observer {
    // operation.
    bool HasPromptedForPath() const;
@@ -36,11 +27,10 @@ index 3dc27593fe8d..a9ff07ddd00d 100644
    // Generates the download file name based on information from URL, response
    // headers and sniffed mime type.
    base::FilePath GenerateFileName() const;
-@@ -340,8 +329,6 @@ class DownloadTargetDeterminer : public download::DownloadItem::Observer {
-   bool create_target_directory_;
+@@ -341,7 +330,6 @@ class DownloadTargetDeterminer : public download::DownloadItem::Observer {
    download::DownloadPathReservationTracker::FilenameConflictAction
        conflict_action_;
--  download::DownloadDangerType danger_type_;
+   download::DownloadDangerType danger_type_;
 -  safe_browsing::DownloadFileType::DangerLevel danger_level_;
    base::FilePath virtual_path_;
    base::FilePath local_path_;

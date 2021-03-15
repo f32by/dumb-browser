@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 57d5c1c3b0a4..f58b5a0376e6 100644
+index 1f7e7ced6a98..95926acff2ac 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
 @@ -33,7 +33,6 @@
@@ -10,7 +10,7 @@ index 57d5c1c3b0a4..f58b5a0376e6 100644
  #include "chrome/browser/login_detection/login_detection_util.h"
  #include "chrome/browser/navigation_predictor/navigation_predictor_features.h"
  #include "chrome/browser/navigation_predictor/search_engine_preconnector.h"
-@@ -56,7 +55,6 @@
+@@ -57,7 +56,6 @@
  #include "chrome/browser/ui/ui_features.h"
  #include "chrome/browser/unexpire_flags.h"
  #include "chrome/browser/unexpire_flags_gen.h"
@@ -18,7 +18,7 @@ index 57d5c1c3b0a4..f58b5a0376e6 100644
  #include "chrome/common/buildflags.h"
  #include "chrome/common/channel_info.h"
  #include "chrome/common/chrome_content_client.h"
-@@ -113,7 +111,6 @@
+@@ -115,7 +113,6 @@
  #include "components/previews/core/previews_switches.h"
  #include "components/query_tiles/switches.h"
  #include "components/reading_list/features/reading_list_switches.h"
@@ -26,7 +26,7 @@ index 57d5c1c3b0a4..f58b5a0376e6 100644
  #include "components/search/ntp_features.h"
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/security_interstitials/core/features.h"
-@@ -349,35 +346,6 @@ const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
+@@ -356,35 +353,6 @@ const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
       data_reduction_proxy::switches::kDataReductionProxyExperiment,
       data_reduction_proxy::switches::kDataReductionProxyServerAlternative10}};
  
@@ -62,27 +62,17 @@ index 57d5c1c3b0a4..f58b5a0376e6 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -3116,6 +3084,9 @@ const FeatureEntry kFeatureEntries[] = {
-      flag_descriptions::kLockScreenNotificationDescription, kOsCrOS,
-      FEATURE_VALUE_TYPE(ash::features::kLockScreenNotifications)},
- #endif  // OS_CHROMEOS
+@@ -2826,6 +2794,9 @@ const FeatureEntry kFeatureEntries[] = {
+         FEATURE_VALUE_TYPE(ash::features::kWebUITabStripTabDragIntegration),
+     },
+ #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP) && BUILDFLAG(IS_CHROMEOS_ASH)
 +    {"enable-tab-audio-muting", flag_descriptions::kTabAudioMutingName,
-+     flag_descriptions::kTabAudioMutingDescription, kOsDesktop,
-+     SINGLE_VALUE_TYPE(switches::kEnableTabAudioMuting)},
-     {"reduced-referrer-granularity",
-      flag_descriptions::kReducedReferrerGranularityName,
-      flag_descriptions::kReducedReferrerGranularityDescription, kOsAll,
-@@ -3465,9 +3436,6 @@ const FeatureEntry kFeatureEntries[] = {
-      flag_descriptions::kQueryTilesInstantFetchDescription, kOsAndroid,
-      SINGLE_VALUE_TYPE(
-          query_tiles::switches::kQueryTilesInstantBackgroundTask)},
--    {"video-tutorials", flag_descriptions::kVideoTutorialsName,
--     flag_descriptions::kVideoTutorialsDescription, kOsAndroid,
--     FEATURE_VALUE_TYPE(video_tutorials::features::kVideoTutorials)},
-     {"video-tutorials-instant-fetch",
-      flag_descriptions::kVideoTutorialsInstantFetchName,
-      flag_descriptions::kVideoTutorialsInstantFetchDescription, kOsAndroid,
-@@ -5576,38 +5544,6 @@ const FeatureEntry kFeatureEntries[] = {
++      flag_descriptions::kTabAudioMutingDescription, kOsDesktop,
++      SINGLE_VALUE_TYPE(switches::kEnableTabAudioMuting)},
+     {"focus-mode", flag_descriptions::kFocusMode,
+      flag_descriptions::kFocusModeDescription, kOsDesktop,
+      FEATURE_VALUE_TYPE(features::kFocusMode)},
+@@ -5778,45 +5749,6 @@ const FeatureEntry kFeatureEntries[] = {
                                      "MetricsSettingsAndroid")},
  #endif
  
@@ -118,10 +108,17 @@ index 57d5c1c3b0a4..f58b5a0376e6 100644
 -     FEATURE_VALUE_TYPE(
 -         safe_browsing::kEnhancedProtectionMessageInInterstitials)},
 -
- #if defined(OS_CHROMEOS)
+-    {"safe-browsing-real-time-url-lookup-enterprise-ga-endpoint",
+-     flag_descriptions::kSafeBrowsingRealTimeUrlLookupEnterpriseGaEndpointName,
+-     flag_descriptions::
+-         kSafeBrowsingRealTimeUrlLookupEnterpriseGaEndpointDescription,
+-     kOsAll,
+-     FEATURE_VALUE_TYPE(safe_browsing::kRealTimeUrlLookupEnterpriseGaEndpoint)},
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
      {"gesture-properties-dbus-service",
       flag_descriptions::kEnableGesturePropertiesDBusServiceName,
-@@ -6432,20 +6368,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6634,20 +6566,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  

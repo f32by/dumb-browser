@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/global_media_controls/media_notification_service.cc b/chrome/browser/ui/global_media_controls/media_notification_service.cc
-index 751987824fce..4893e923506e 100644
+index ac63fa6e52b8..0be2f3120c6b 100644
 --- a/chrome/browser/ui/global_media_controls/media_notification_service.cc
 +++ b/chrome/browser/ui/global_media_controls/media_notification_service.cc
 @@ -24,20 +24,14 @@
@@ -49,8 +49,8 @@ index 751987824fce..4893e923506e 100644
 -
  base::WeakPtr<media_router::WebContentsPresentationManager>
  GetPresentationManager(content::WebContents* web_contents) {
-   return web_contents
-@@ -507,32 +481,6 @@ MediaNotificationService::GetTaskRunner() const {
+   if (!web_contents ||
+@@ -509,32 +483,6 @@ MediaNotificationService::GetTaskRunner() const {
    return nullptr;
  }
  

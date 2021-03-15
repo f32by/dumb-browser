@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/chrome_browser_field_trials.cc b/chrome/browser/chrome_browser_field_trials.cc
-index 2d6772e01b42..5a1b4980154e 100644
+index eb4c8c904b93..67d6d20d50d6 100644
 --- a/chrome/browser/chrome_browser_field_trials.cc
 +++ b/chrome/browser/chrome_browser_field_trials.cc
-@@ -21,8 +21,6 @@
+@@ -22,8 +22,6 @@
  #include "chrome/common/chrome_paths.h"
  #include "chrome/common/chrome_switches.h"
  #include "components/metrics/metrics_pref_names.h"
@@ -30,10 +30,10 @@ index 2d6772e01b42..5a1b4980154e 100644
    if (!has_seed) {
      CreateFallbackSamplingTrialIfNeeded(feature_list);
 -    CreateFallbackUkmSamplingTrialIfNeeded(feature_list);
- #if defined(OS_CHROMEOS)
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
      chromeos::multidevice_setup::CreateFirstRunFieldTrial(feature_list);
  #endif
-@@ -151,9 +141,4 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
+@@ -150,9 +140,4 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
  }
  
  void ChromeBrowserFieldTrials::InstantiateDynamicTrials() {

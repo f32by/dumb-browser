@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
-index 42d71231d6e7..9cffe52a1a33 100644
+index 769c765be58f..21123ba8af75 100644
 --- a/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
 +++ b/chrome/browser/performance_manager/chrome_browser_main_extra_parts_performance_manager.cc
-@@ -18,8 +18,6 @@
+@@ -19,8 +19,6 @@
  #include "chrome/browser/performance_manager/decorators/process_metrics_decorator.h"
  #include "chrome/browser/performance_manager/metrics/memory_pressure_metrics.h"
  #include "chrome/browser/performance_manager/observers/isolation_context_metrics.h"
@@ -11,7 +11,7 @@ index 42d71231d6e7..9cffe52a1a33 100644
  #include "chrome/browser/performance_manager/policies/background_tab_loading_policy.h"
  #include "chrome/browser/performance_manager/policies/high_pmf_discard_policy.h"
  #include "chrome/browser/performance_manager/policies/policy_features.h"
-@@ -85,7 +83,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::CreatePoliciesAndDecorators(
+@@ -88,7 +86,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::CreatePoliciesAndDecorators(
        std::make_unique<performance_manager::FrozenFrameAggregator>());
    graph->PassToGraph(
        std::make_unique<performance_manager::IsolationContextMetrics>());
@@ -19,7 +19,7 @@ index 42d71231d6e7..9cffe52a1a33 100644
    graph->PassToGraph(
        std::make_unique<performance_manager::ProcessMetricsDecorator>());
  
-@@ -180,8 +177,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::PostCreateThreads() {
+@@ -189,8 +186,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::PostCreateThreads() {
  
    g_browser_process->profile_manager()->AddObserver(this);
  
@@ -28,7 +28,7 @@ index 42d71231d6e7..9cffe52a1a33 100644
    page_live_state_data_helper_ =
        std::make_unique<performance_manager::PageLiveStateDecoratorHelper>();
    page_load_tracker_decorator_helper_ =
-@@ -199,7 +194,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::PostMainMessageLoopRun() {
+@@ -208,7 +203,6 @@ void ChromeBrowserMainExtraPartsPerformanceManager::PostMainMessageLoopRun() {
  
    page_load_tracker_decorator_helper_.reset();
    page_live_state_data_helper_.reset();

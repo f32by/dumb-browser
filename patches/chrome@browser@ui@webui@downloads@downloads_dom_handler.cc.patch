@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc b/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
-index 16f77f8e99ae..25cf5b59bb01 100644
+index ee3461ee5cba..25cf5b59bb01 100644
 --- a/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
 +++ b/chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
 @@ -23,7 +23,6 @@
@@ -57,8 +57,8 @@ index 16f77f8e99ae..25cf5b59bb01 100644
 -    download::DownloadItem* dangerous_item) {
 -  DownloadDangerPrompt* danger_prompt = DownloadDangerPrompt::Create(
 -      dangerous_item, GetWebUIWebContents(), false,
--      base::Bind(&DownloadsDOMHandler::DangerPromptDone,
--                 weak_ptr_factory_.GetWeakPtr(), dangerous_item->GetId()));
+-      base::BindOnce(&DownloadsDOMHandler::DangerPromptDone,
+-                     weak_ptr_factory_.GetWeakPtr(), dangerous_item->GetId()));
 -  // danger_prompt will delete itself.
 -  DCHECK(danger_prompt);
 -}

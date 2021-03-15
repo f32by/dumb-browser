@@ -1,22 +1,20 @@
 diff --git a/chrome/browser/ui/tab_helpers.cc b/chrome/browser/ui/tab_helpers.cc
-index 1358314e4df6..ddd40933de53 100644
+index 12c5a73b9c48..37c248d95bef 100644
 --- a/chrome/browser/ui/tab_helpers.cc
 +++ b/chrome/browser/ui/tab_helpers.cc
-@@ -31,13 +31,9 @@
+@@ -32,11 +32,9 @@
+ #include "chrome/browser/history/history_tab_helper.h"
  #include "chrome/browser/history/top_sites_factory.h"
  #include "chrome/browser/infobars/infobar_service.h"
- #include "chrome/browser/installable/installable_manager.h"
 -#include "chrome/browser/lite_video/lite_video_observer.h"
  #include "chrome/browser/login_detection/login_detection_tab_helper.h"
  #include "chrome/browser/media/history/media_history_contents_observer.h"
  #include "chrome/browser/media/media_engagement_service.h"
 -#include "chrome/browser/metrics/desktop_session_duration/desktop_session_duration_observer.h"
--#include "chrome/browser/metrics/oom/out_of_memory_reporter.h"
--#include "chrome/browser/metrics/renderer_uptime_web_contents_observer.h"
- #include "chrome/browser/native_file_system/native_file_system_permission_request_manager.h"
- #include "chrome/browser/native_file_system/native_file_system_tab_helper.h"
+ #include "chrome/browser/metrics/oom/out_of_memory_reporter.h"
+ #include "chrome/browser/metrics/renderer_uptime_web_contents_observer.h"
  #include "chrome/browser/navigation_predictor/navigation_predictor_preconnect_client.h"
-@@ -57,21 +53,15 @@
+@@ -56,21 +54,15 @@
  #include "chrome/browser/previews/resource_loading_hints/resource_loading_hints_web_contents_observer.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_key.h"
@@ -38,15 +36,7 @@ index 1358314e4df6..ddd40933de53 100644
  #include "chrome/browser/translate/chrome_translate_client.h"
  #include "chrome/browser/ui/autofill/chrome_autofill_client.h"
  #include "chrome/browser/ui/find_bar/find_bar_state.h"
-@@ -111,7 +101,6 @@
- #include "components/permissions/permission_request_manager.h"
- #include "components/sync/engine/sync_engine_switches.h"
- #include "components/tracing/common/tracing_switches.h"
--#include "components/ukm/content/source_url_recorder.h"
- #include "content/public/browser/web_contents.h"
- #include "extensions/buildflags/buildflags.h"
- #include "media/base/media_switches.h"
-@@ -169,7 +158,6 @@
+@@ -173,7 +165,6 @@
  #include "chrome/browser/extensions/api/web_navigation/web_navigation_api.h"
  #include "chrome/browser/extensions/chrome_extension_web_contents_observer.h"
  #include "chrome/browser/extensions/tab_helper.h"
@@ -54,7 +44,7 @@ index 1358314e4df6..ddd40933de53 100644
  #include "chrome/browser/web_applications/components/web_app_utils.h"
  #include "chrome/browser/web_applications/web_app_tab_helper.h"
  #include "extensions/browser/view_type_utils.h"
-@@ -246,8 +234,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -250,8 +241,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    ChromePasswordManagerClient::CreateForWebContentsWithAutofillClient(
        web_contents,
        autofill::ChromeAutofillClient::FromWebContents(web_contents));
@@ -63,36 +53,31 @@ index 1358314e4df6..ddd40933de53 100644
    ChromeTranslateClient::CreateForWebContents(web_contents);
    ConnectionHelpTabHelper::CreateForWebContents(web_contents);
    CoreTabHelper::CreateForWebContents(web_contents);
-@@ -264,7 +250,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -270,7 +259,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    InfoBarService::CreateForWebContents(web_contents);
-   InstallableManager::CreateForWebContents(web_contents);
+   webapps::InstallableManager::CreateForWebContents(web_contents);
    PrefetchProxyTabHelper::CreateForWebContents(web_contents);
 -  LiteVideoObserver::MaybeCreateForWebContents(web_contents);
    login_detection::LoginDetectionTabHelper::MaybeCreateForWebContents(
        web_contents);
  
-@@ -276,20 +261,15 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
-     MediaEngagementService::CreateWebContentsObserver(web_contents);
-   if (base::FeatureList::IsEnabled(media::kUseMediaHistoryStore))
-     MediaHistoryContentsObserver::CreateForWebContents(web_contents);
--  metrics::RendererUptimeWebContentsObserver::CreateForWebContents(
--      web_contents);
+@@ -285,7 +273,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+   metrics::RendererUptimeWebContentsObserver::CreateForWebContents(
+       web_contents);
    MixedContentSettingsTabHelper::CreateForWebContents(web_contents);
-   NativeFileSystemPermissionRequestManager::CreateForWebContents(web_contents);
-   NativeFileSystemTabHelper::CreateForWebContents(web_contents);
 -  NavigationMetricsRecorder::CreateForWebContents(web_contents);
    NavigationPredictorPreconnectClient::CreateForWebContents(web_contents);
    if (optimization_guide::features::IsOptimizationHintsEnabled()) {
      optimization_guide::BlinkOptimizationGuideWebContentsObserver::
-         CreateForWebContents(web_contents);
+@@ -293,7 +280,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
      OptimizationGuideWebContentsObserver::CreateForWebContents(web_contents);
    }
--  OutOfMemoryReporter::CreateForWebContents(web_contents);
+   OutOfMemoryReporter::CreateForWebContents(web_contents);
 -  chrome::InitializePageLoadMetricsForWebContents(web_contents);
    if (performance_manager::PerformanceManager::IsAvailable())
      performance_manager::TabPropertiesDecorator::SetIsTab(web_contents, true);
    permissions::PermissionRequestManager::CreateForWebContents(web_contents);
-@@ -310,12 +290,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -314,12 +300,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    resource_coordinator::ResourceCoordinatorTabHelper::CreateForWebContents(
        web_contents);
    ResourceLoadingHintsWebContentsObserver::CreateForWebContents(web_contents);
@@ -104,8 +89,8 @@ index 1358314e4df6..ddd40933de53 100644
 -  ReputationWebContentsObserver::CreateForWebContents(web_contents);
    SearchEngineTabHelper::CreateForWebContents(web_contents);
    SecurityStateTabHelper::CreateForWebContents(web_contents);
-   if (SiteEngagementService::IsEnabled())
-@@ -333,7 +307,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+   if (site_engagement::SiteEngagementService::IsEnabled()) {
+@@ -339,7 +319,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
            web_contents));
    TabUIHelper::CreateForWebContents(web_contents);
    tasks::TaskTabHelper::CreateForWebContents(web_contents);
@@ -113,24 +98,26 @@ index 1358314e4df6..ddd40933de53 100644
    vr::VrTabHelper::CreateForWebContents(web_contents);
  
    // NO! Do not just add your tab helper here. This is a large alphabetized
-@@ -408,11 +381,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -419,13 +398,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    policy::DlpContentTabHelper::CreateForWebContents(web_contents);
  #endif
  
+-// TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
+-// of lacros-chrome is complete.
 -#if defined(OS_WIN) || defined(OS_MAC) || \
--    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
+-    (defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
 -  metrics::DesktopSessionDurationObserver::CreateForWebContents(web_contents);
 -#endif
 -
  #if defined(OS_WIN) || defined(OS_MAC) || defined(OS_LINUX) || \
      defined(OS_CHROMEOS)
    if (base::FeatureList::IsEnabled(
-@@ -443,8 +411,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -456,8 +428,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    extensions::WebNavigationTabObserver::CreateForWebContents(web_contents);
    if (web_app::AreWebAppsEnabled(profile))
      web_app::WebAppTabHelper::CreateForWebContents(web_contents);
--  if (SiteEngagementService::IsEnabled())
+-  if (site_engagement::SiteEngagementService::IsEnabled())
 -    web_app::WebAppMetrics::Get(profile);
  #endif
  
- #if !defined(OS_ANDROID)
+ #if BUILDFLAG(ENABLE_OFFLINE_PAGES)

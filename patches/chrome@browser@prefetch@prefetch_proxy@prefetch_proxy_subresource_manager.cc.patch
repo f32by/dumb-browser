@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
-index 01caf12b6e89..9c22ada73fb6 100644
+index ee60dfe74c29..383093929664 100644
 --- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
 +++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
-@@ -5,7 +5,6 @@
- #include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h"
- 
- #include "base/metrics/histogram_macros.h"
--#include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_prefetch_metrics_collector.h"
- #include "chrome/browser/prefetch/prefetch_proxy/prefetched_mainframe_response_container.h"
- #include "content/public/browser/browser_context.h"
- #include "content/public/browser/render_frame_host.h"
-@@ -167,45 +166,19 @@ void PrefetchProxySubresourceManager::RemoveProxiedURLLoaderFactory(
+@@ -167,55 +167,23 @@ void PrefetchProxySubresourceManager::RemoveProxiedURLLoaderFactory(
    proxied_loader_factories_.erase(it);
  }
  
@@ -48,6 +40,16 @@ index 01caf12b6e89..9c22ada73fb6 100644
 -      /*mainframe_url=*/url_,
 -      /*subresource_url=*/url,
 -      PrefetchProxyPrefetchStatus::kSubresourceThrottled);
+ }
+ 
+ void PrefetchProxySubresourceManager::OnProxyUnavailableForResource(
+     const GURL& url) {
+-  if (!metrics_collector_)
+-    return;
+-  metrics_collector_->OnSubresourceNotEligible(
+-      /*mainframe_url=*/url_,
+-      /*subresource_url=*/url,
+-      PrefetchProxyPrefetchStatus::kPrefetchProxyNotAvailable);
  }
  
  void PrefetchProxySubresourceManager::OnResourceUsedFromCache(const GURL& url) {

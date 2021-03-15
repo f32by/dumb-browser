@@ -1,0 +1,15 @@
+diff --git a/chrome/common/previews_resource_loading_hints.mojom b/chrome/common/previews_resource_loading_hints.mojom
+index ce9038444157..d82efd9634e9 100644
+--- a/chrome/common/previews_resource_loading_hints.mojom
++++ b/chrome/common/previews_resource_loading_hints.mojom
+@@ -29,10 +29,6 @@ struct LiteVideoHint {
+ // Render process implemented interface that receives hints from the browser
+ // about how to load resources.
+ interface PreviewsResourceLoadingHintsReceiver {
+-  // Sends the hints for reducing the data-costs of streaming
+-  // media/videos from the browser to renderers.
+-  SetLiteVideoHint(LiteVideoHint lite_video_hint);
+-
+   // Sends the hints for Blink.
+   // TODO(https://crbug.com/1113980): Move this to its own mojo plumbing.
+   SetBlinkOptimizationGuideHints(blink.mojom.BlinkOptimizationGuideHints hints);

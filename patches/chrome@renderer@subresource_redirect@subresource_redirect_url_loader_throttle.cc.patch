@@ -1,26 +1,26 @@
 diff --git a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
-index 3df9ad07ab2d..2ffc5319b3f0 100644
+index 7fdff6c5572b..5e40068c30da 100644
 --- a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
 +++ b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
-@@ -153,11 +153,6 @@ void SubresourceRedirectURLLoaderThrottle::BeforeWillProcessResponse(
+@@ -222,11 +222,6 @@ void SubresourceRedirectURLLoaderThrottle::BeforeWillProcessResponse(
        net::HttpUtil::ParseRetryAfterHeader(retry_after_string,
                                             base::Time::Now(), &retry_after);
      }
--    if (auto* subresource_redirect_hints_agent =
--            SubresourceRedirectHintsAgent::Get(GetRenderFrame())) {
--      subresource_redirect_hints_agent->NotifyHttpsImageCompressionFetchFailed(
+-    if (auto* public_resource_decider_agent =
+-            GetPublicResourceDeciderAgent(render_frame_id_)) {
+-      public_resource_decider_agent->NotifyCompressedResourceFetchFailed(
 -          retry_after);
 -    }
    }
  
    // Non 2XX responses from the compression server need to have unaltered
-@@ -230,11 +225,6 @@ void SubresourceRedirectURLLoaderThrottle::OnRedirectTimeout() {
-   DCHECK(did_redirect_compressed_origin_);
-   did_redirect_compressed_origin_ = false;
+@@ -318,11 +313,6 @@ void SubresourceRedirectURLLoaderThrottle::OnRedirectTimeout() {
+   DCHECK_EQ(RedirectState::kRedirectAttempted, redirect_state_);
+   redirect_state_ = RedirectState::kRedirectFailed;
    delegate_->RestartWithURLResetAndFlagsNow(net::LOAD_NORMAL);
--  if (auto* subresource_redirect_hints_agent =
--          SubresourceRedirectHintsAgent::Get(GetRenderFrame())) {
--    subresource_redirect_hints_agent->NotifyHttpsImageCompressionFetchFailed(
+-  if (auto* public_resource_decider_agent =
+-          GetPublicResourceDeciderAgent(render_frame_id_)) {
+-    public_resource_decider_agent->NotifyCompressedResourceFetchFailed(
 -        base::TimeDelta());
 -  }
    UMA_HISTOGRAM_BOOLEAN("SubresourceRedirect.CompressionFetchTimeout", true);

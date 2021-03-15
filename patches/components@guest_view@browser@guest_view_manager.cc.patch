@@ -1,16 +1,8 @@
 diff --git a/components/guest_view/browser/guest_view_manager.cc b/components/guest_view/browser/guest_view_manager.cc
-index 4158dff0e8bb..fc011348e115 100644
+index 8c49510cfc1f..d3c5b2f96d8d 100644
 --- a/components/guest_view/browser/guest_view_manager.cc
 +++ b/components/guest_view/browser/guest_view_manager.cc
-@@ -10,7 +10,6 @@
- #include "base/macros.h"
- #include "base/memory/ptr_util.h"
- #include "build/build_config.h"
--#include "components/crash/core/common/crash_key.h"
- #include "components/guest_view/browser/bad_message.h"
- #include "components/guest_view/browser/guest_view_base.h"
- #include "components/guest_view/browser/guest_view_manager_delegate.h"
-@@ -467,13 +466,9 @@ bool GuestViewManager::GetFullPageGuestHelper(
+@@ -468,13 +468,9 @@ bool GuestViewManager::GetFullPageGuestHelper(
  bool GuestViewManager::CanEmbedderAccessInstanceID(
      int embedder_render_process_id,
      int guest_instance_id) {
@@ -24,7 +16,7 @@ index 4158dff0e8bb..fc011348e115 100644
      return false;
    }
  
-@@ -482,7 +477,6 @@ bool GuestViewManager::CanEmbedderAccessInstanceID(
+@@ -483,7 +479,6 @@ bool GuestViewManager::CanEmbedderAccessInstanceID(
    // collisions in the future, and potentially give one embedder access to a
    // guest it does not own.
    if (guest_instance_id > current_instance_id_) {
@@ -32,7 +24,7 @@ index 4158dff0e8bb..fc011348e115 100644
      return false;
    }
  
-@@ -494,7 +488,6 @@ bool GuestViewManager::CanEmbedderAccessInstanceID(
+@@ -495,7 +490,6 @@ bool GuestViewManager::CanEmbedderAccessInstanceID(
  
    auto* guest_view = GuestViewBase::FromWebContents(it->second);
    if (!guest_view) {
@@ -40,7 +32,7 @@ index 4158dff0e8bb..fc011348e115 100644
      return false;
    }
  
-@@ -510,7 +503,6 @@ bool GuestViewManager::CanEmbedderAccessInstanceID(
+@@ -511,7 +505,6 @@ bool GuestViewManager::CanEmbedderAccessInstanceID(
                  ->GetID();
  
    if (embedder_render_process_id != allowed_embedder_render_process_id) {

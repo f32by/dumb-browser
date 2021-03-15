@@ -1,0 +1,68 @@
+diff --git a/extensions/browser/updater/extension_downloader.cc b/extensions/browser/updater/extension_downloader.cc
+index a7ce86d09f17..7dc2cfdbc82a 100644
+--- a/extensions/browser/updater/extension_downloader.cc
++++ b/extensions/browser/updater/extension_downloader.cc
+@@ -101,21 +101,6 @@ const char kWebstoreOAuth2Scope[] =
+ 
+ ExtensionDownloaderTestDelegate* g_test_delegate = nullptr;
+ 
+-#define RETRY_HISTOGRAM(name, retry_count, url)                           \
+-  if ((url).DomainIs(kGoogleDotCom)) {                                    \
+-    UMA_HISTOGRAM_CUSTOM_COUNTS("Extensions." name "RetryCountGoogleUrl", \
+-                                retry_count,                              \
+-                                1,                                        \
+-                                kMaxRetries,                              \
+-                                kMaxRetries + 1);                         \
+-  } else {                                                                \
+-    UMA_HISTOGRAM_CUSTOM_COUNTS("Extensions." name "RetryCountOtherUrl",  \
+-                                retry_count,                              \
+-                                1,                                        \
+-                                kMaxRetries,                              \
+-                                kMaxRetries + 1);                         \
+-  }
+-
+ bool ShouldRetryRequest(const network::SimpleURLLoader* loader) {
+   DCHECK(loader);
+ 
+@@ -730,7 +715,6 @@ void ExtensionDownloader::RetryRequestOrHandleFailureOnManifestFetchFailure(
+     return;
+   }
+   const GURL url = loader->GetFinalURL();
+-  RETRY_HISTOGRAM("ManifestFetchFailure", request_failure_count, url);
+   if (all_force_installed_extensions) {
+     TryFetchingExtensionsFromCache(
+         manifests_queue_.active_request(),
+@@ -762,13 +746,9 @@ void ExtensionDownloader::OnManifestLoadComplete(
+ 
+   VLOG(2) << response_code << " " << url;
+ 
+-  const int request_failure_count =
+-      manifests_queue_.active_request_failure_count();
+-
+   // We want to try parsing the manifest, and if it indicates updates are
+   // available, we want to fire off requests to fetch those updates.
+   if (response_body && !response_body->empty()) {
+-    RETRY_HISTOGRAM("ManifestFetchSuccess", request_failure_count, url);
+     VLOG(2) << "beginning manifest parse for " << url;
+     NotifyExtensionsDownloadStageChanged(
+         manifests_queue_.active_request()->GetExtensionIds(),
+@@ -1280,9 +1260,6 @@ void ExtensionDownloader::OnExtensionLoadComplete(base::FilePath crx_path) {
+   ExtensionFetch& active_request = *extensions_queue_.active_request();
+   const ExtensionId& id = active_request.id;
+   if (!crx_path.empty()) {
+-    RETRY_HISTOGRAM("CrxFetchSuccess",
+-                    extensions_queue_.active_request_failure_count(),
+-                    url);
+     std::unique_ptr<ExtensionFetch> fetch_data =
+         extensions_queue_.reset_active_request();
+     delegate_->OnExtensionDownloadStageChanged(
+@@ -1307,9 +1284,6 @@ void ExtensionDownloader::OnExtensionLoadComplete(base::FilePath crx_path) {
+       extensions_queue_.RetryRequest(backoff_delay);
+       delegate_->OnExtensionDownloadRetryForTests();
+     } else {
+-      RETRY_HISTOGRAM("CrxFetchFailure",
+-                      extensions_queue_.active_request_failure_count(),
+-                      url);
+       delegate_->OnExtensionDownloadStageChanged(
+           id, ExtensionDownloaderDelegate::Stage::FINISHED);
+       ExtensionDownloaderDelegate::FailureData failure_data(

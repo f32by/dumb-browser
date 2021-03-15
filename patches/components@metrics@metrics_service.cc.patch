@@ -1,8 +1,8 @@
 diff --git a/components/metrics/metrics_service.cc b/components/metrics/metrics_service.cc
-index 7ca198daa65e..a777134405df 100644
+index 5ba33668b98b..653f86a565a7 100644
 --- a/components/metrics/metrics_service.cc
 +++ b/components/metrics/metrics_service.cc
-@@ -226,51 +226,23 @@ MetricsService::MetricsService(MetricsStateManager* state_manager,
+@@ -223,51 +223,23 @@ MetricsService::MetricsService(MetricsStateManager* state_manager,
    DCHECK(state_manager_);
    DCHECK(client_);
    DCHECK(local_state_);
@@ -58,7 +58,7 @@ index 7ca198daa65e..a777134405df 100644
    DisableReporting();
  }
  
-@@ -288,12 +260,7 @@ void MetricsService::Stop() {
+@@ -285,12 +257,7 @@ void MetricsService::Stop() {
    DisableRecording();
  }
  
@@ -72,7 +72,7 @@ index 7ca198daa65e..a777134405df 100644
  
  void MetricsService::DisableReporting() {
    reporting_service_.DisableReporting();
-@@ -311,32 +278,7 @@ bool MetricsService::WasLastShutdownClean() const {
+@@ -308,32 +275,7 @@ bool MetricsService::WasLastShutdownClean() const {
    return state_manager_->clean_exit_beacon()->exited_cleanly();
  }
  

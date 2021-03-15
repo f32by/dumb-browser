@@ -1,0 +1,45 @@
+diff --git a/components/security_interstitials/content/ssl_error_navigation_throttle.h b/components/security_interstitials/content/ssl_error_navigation_throttle.h
+index 627539ae451f..9aea3242b364 100644
+--- a/components/security_interstitials/content/ssl_error_navigation_throttle.h
++++ b/components/security_interstitials/content/ssl_error_navigation_throttle.h
+@@ -13,8 +13,6 @@
+ #include "content/public/browser/navigation_throttle.h"
+ #include "net/ssl/ssl_info.h"
+ 
+-class SSLCertReporter;
+-
+ namespace content {
+ class NavigationHandle;
+ class WebContents;
+@@ -37,7 +35,6 @@ class SSLErrorNavigationThrottle : public content::NavigationThrottle {
+       int cert_error,
+       const net::SSLInfo& ssl_info,
+       const GURL& request_url,
+-      std::unique_ptr<SSLCertReporter> ssl_cert_reporter,
+       base::OnceCallback<void(
+           std::unique_ptr<security_interstitials::SecurityInterstitialPage>)>
+           blocking_page_ready_callback)>
+@@ -57,7 +54,6 @@ class SSLErrorNavigationThrottle : public content::NavigationThrottle {
+ 
+   explicit SSLErrorNavigationThrottle(
+       content::NavigationHandle* handle,
+-      std::unique_ptr<SSLCertReporter> ssl_cert_reporter,
+       HandleSSLErrorCallback handle_ssl_error_callback,
+       IsInHostedAppCallback is_in_hosted_app_callback,
+       ShouldIgnoreInterstitialBecauseNavigationDefaultedToHttpsCallback
+@@ -76,14 +72,12 @@ class SSLErrorNavigationThrottle : public content::NavigationThrottle {
+       int net_error,
+       int cert_status,
+       const net::SSLInfo& ssl_info,
+-      const GURL& request_url,
+-      std::unique_ptr<SSLCertReporter> ssl_cert_reporter);
++      const GURL& request_url);
+   void ShowInterstitial(
+       int net_error,
+       std::unique_ptr<security_interstitials::SecurityInterstitialPage>
+           blocking_page);
+ 
+-  std::unique_ptr<SSLCertReporter> ssl_cert_reporter_;
+   HandleSSLErrorCallback handle_ssl_error_callback_;
+   IsInHostedAppCallback is_in_hosted_app_callback_;
+   ShouldIgnoreInterstitialBecauseNavigationDefaultedToHttpsCallback

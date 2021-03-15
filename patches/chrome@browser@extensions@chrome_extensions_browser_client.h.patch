@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/extensions/chrome_extensions_browser_client.h b/chrome/browser/extensions/chrome_extensions_browser_client.h
-index d9f7ad961be1..79c4dc771abb 100644
+index 2d0e97c642f2..10678babac2c 100644
 --- a/chrome/browser/extensions/chrome_extensions_browser_client.h
 +++ b/chrome/browser/extensions/chrome_extensions_browser_client.h
-@@ -14,7 +14,6 @@
- #include "base/macros.h"
+@@ -15,7 +15,6 @@
  #include "base/memory/ref_counted.h"
  #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
 -#include "chrome/browser/extensions/media_router_extension_access_logger_impl.h"
  #include "chrome/browser/extensions/user_script_listener.h"
  #include "extensions/browser/extensions_browser_client.h"
  #include "extensions/browser/kiosk/kiosk_delegate.h"
-@@ -152,8 +151,6 @@ class ChromeExtensionsBrowserClient : public ExtensionsBrowserClient {
+@@ -155,8 +154,6 @@ class ChromeExtensionsBrowserClient : public ExtensionsBrowserClient {
    base::FilePath GetSaveFilePath(content::BrowserContext* context) override;
    void SetLastSaveFilePath(content::BrowserContext* context,
                             const base::FilePath& path) override;
@@ -19,7 +19,7 @@ index d9f7ad961be1..79c4dc771abb 100644
    bool HasIsolatedStorage(const std::string& extension_id,
                            content::BrowserContext* context) override;
    bool IsScreenshotRestricted(
-@@ -161,9 +158,6 @@ class ChromeExtensionsBrowserClient : public ExtensionsBrowserClient {
+@@ -166,9 +163,6 @@ class ChromeExtensionsBrowserClient : public ExtensionsBrowserClient {
  
    static void set_did_chrome_update_for_testing(bool did_update);
  
@@ -29,7 +29,7 @@ index d9f7ad961be1..79c4dc771abb 100644
   private:
    friend struct base::LazyInstanceTraitsBase<ChromeExtensionsBrowserClient>;
  
-@@ -181,8 +175,6 @@ class ChromeExtensionsBrowserClient : public ExtensionsBrowserClient {
+@@ -186,8 +180,6 @@ class ChromeExtensionsBrowserClient : public ExtensionsBrowserClient {
  
    UserScriptListener user_script_listener_;
  

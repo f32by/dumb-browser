@@ -1,25 +1,28 @@
 diff --git a/chrome/browser/devtools/protocol/page_handler.cc b/chrome/browser/devtools/protocol/page_handler.cc
-index edbb2dea06c6..d97698c5d862 100644
+index 5822cc323a23..ea05709ecaba 100644
 --- a/chrome/browser/devtools/protocol/page_handler.cc
 +++ b/chrome/browser/devtools/protocol/page_handler.cc
-@@ -5,7 +5,6 @@
+@@ -4,7 +4,6 @@
+ 
  #include "chrome/browser/devtools/protocol/page_handler.h"
  
- #include "chrome/browser/installable/installable_manager.h"
--#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
+-#include "components/subresource_filter/content/browser/devtools_interaction_tracker.h"
+ #include "components/webapps/browser/installable/installable_manager.h"
  #include "ui/gfx/image/image.h"
  
- PageHandler::PageHandler(content::WebContents* web_contents,
-@@ -20,12 +19,6 @@ PageHandler::~PageHandler() {
- }
- 
+@@ -22,15 +21,6 @@ PageHandler::~PageHandler() {
  void PageHandler::ToggleAdBlocking(bool enabled) {
--  if (!web_contents())
--    return;
--  if (auto* client =
--          ChromeSubresourceFilterClient::FromWebContents(web_contents())) {
--    client->ToggleForceActivationInCurrentWebContents(enabled);
--  }
+   if (!web_contents())
+     return;
+-
+-  // Create the DevtoolsInteractionTracker lazily (note that this call is a
+-  // no-op if the object was already created).
+-  subresource_filter::DevtoolsInteractionTracker::CreateForWebContents(
+-      web_contents());
+-
+-  subresource_filter::DevtoolsInteractionTracker::FromWebContents(
+-      web_contents())
+-      ->ToggleForceActivation(enabled);
  }
  
  protocol::Response PageHandler::Enable() {

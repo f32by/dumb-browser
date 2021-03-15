@@ -1,23 +1,8 @@
 diff --git a/components/payments/content/payment_request.cc b/components/payments/content/payment_request.cc
-index ebafd3ccf024..469d3129d66f 100644
+index 1b1d82f4c84a..d00a5a7ff774 100644
 --- a/components/payments/content/payment_request.cc
 +++ b/components/payments/content/payment_request.cc
-@@ -33,14 +33,12 @@
- #include "components/payments/core/payments_validators.h"
- #include "components/payments/core/url_util.h"
- #include "components/prefs/pref_service.h"
--#include "components/ukm/content/source_url_recorder.h"
- #include "components/url_formatter/elide_url.h"
- #include "content/public/browser/browser_thread.h"
- #include "content/public/browser/render_frame_host.h"
- #include "content/public/browser/render_process_host.h"
- #include "content/public/browser/web_contents.h"
- #include "content/public/common/content_features.h"
--#include "services/metrics/public/cpp/ukm_source_id.h"
- #include "third_party/blink/public/common/loader/network_utils.h"
- 
- namespace payments {
-@@ -49,11 +47,6 @@ namespace {
+@@ -49,11 +49,6 @@ namespace {
  using ::payments::mojom::CanMakePaymentQueryResult;
  using ::payments::mojom::HasEnrolledInstrumentQueryResult;
  
@@ -29,7 +14,7 @@ index ebafd3ccf024..469d3129d66f 100644
  // Redact shipping address before exposing it in ShippingAddressChangeEvent.
  // https://w3c.github.io/payment-request/#shipping-address-changed-algorithm
  mojom::PaymentAddressPtr RedactShippingAddress(
-@@ -91,9 +84,7 @@ PaymentRequest::PaymentRequest(
+@@ -91,9 +86,7 @@ PaymentRequest::PaymentRequest(
        frame_origin_(url_formatter::FormatUrlForSecurityDisplay(
            render_frame_host->GetLastCommittedURL())),
        frame_security_origin_(render_frame_host->GetLastCommittedOrigin()),
@@ -38,9 +23,9 @@ index ebafd3ccf024..469d3129d66f 100644
 -                      ukm::GetSourceIdForWebContentsDocument(web_contents())) {
 +      observer_for_testing_(observer_for_testing) {
    receiver_.Bind(std::move(receiver));
-   // OnConnectionTerminated will be called when the Mojo pipe is closed. This
+   // TerminateConnection will be called when the Mojo pipe is closed. This
    // will happen as a result of many renderer-side events (both successful and
-@@ -122,8 +113,6 @@ void PaymentRequest::Init(
+@@ -122,8 +115,6 @@ void PaymentRequest::Init(
      return;
    }
  
@@ -49,7 +34,7 @@ index ebafd3ccf024..469d3129d66f 100644
    is_initialized_ = true;
    client_.Bind(std::move(client));
  
-@@ -188,32 +177,7 @@ void PaymentRequest::Init(
+@@ -209,32 +200,7 @@ void PaymentRequest::Init(
        initiator_frame, top_level_origin_, frame_origin_, frame_security_origin_,
        spec(), /*delegate=*/weak_ptr_factory_.GetWeakPtr(),
        delegate_->GetApplicationLocale(), delegate_->GetPersonalDataManager(),
@@ -83,7 +68,7 @@ index ebafd3ccf024..469d3129d66f 100644
  
    payment_handler_host_->set_payment_request_id_for_logs(*spec_->details().id);
  
-@@ -256,19 +220,12 @@ void PaymentRequest::Show(bool is_user_gesture, bool wait_for_updated_details) {
+@@ -277,19 +243,12 @@ void PaymentRequest::Show(bool is_user_gesture, bool wait_for_updated_details) {
      return;
    }
  
@@ -102,16 +87,16 @@ index ebafd3ccf024..469d3129d66f 100644
 -        JourneyLogger::NOT_SHOWN_REASON_CONCURRENT_REQUESTS);
      client_->OnError(mojom::PaymentErrorReason::ALREADY_SHOWING,
                       errors::kAnotherUiShowing);
-     OnConnectionTerminated();
-@@ -279,7 +236,6 @@ void PaymentRequest::Show(bool is_user_gesture, bool wait_for_updated_details) {
+     TerminateConnection();
+@@ -300,7 +259,6 @@ void PaymentRequest::Show(bool is_user_gesture, bool wait_for_updated_details) {
      log_.Error(errors::kCannotShowInBackgroundTab);
      DCHECK(!has_recorded_completion_);
      has_recorded_completion_ = true;
 -    journey_logger_.SetNotShown(JourneyLogger::NOT_SHOWN_REASON_OTHER);
      client_->OnError(mojom::PaymentErrorReason::USER_CANCEL,
                       errors::kCannotShowInBackgroundTab);
-     OnConnectionTerminated();
-@@ -296,9 +252,6 @@ void PaymentRequest::Show(bool is_user_gesture, bool wait_for_updated_details) {
+     TerminateConnection();
+@@ -317,9 +275,6 @@ void PaymentRequest::Show(bool is_user_gesture, bool wait_for_updated_details) {
      spec_->AddInitializationObserver(this);
    } else {
      DCHECK(spec_->details().total);
@@ -121,7 +106,7 @@ index ebafd3ccf024..469d3129d66f 100644
    }
  
    // If an app store billing payment method is one of the payment methods being
-@@ -386,9 +339,6 @@ void PaymentRequest::UpdateWith(mojom::PaymentDetailsPtr details) {
+@@ -414,9 +369,6 @@ void PaymentRequest::UpdateWith(mojom::PaymentDetailsPtr details) {
  
    if (is_resolving_promise_passed_into_show_method) {
      DCHECK(spec_->details().total);
@@ -131,7 +116,7 @@ index ebafd3ccf024..469d3129d66f 100644
      if (SatisfiesSkipUIConstraints()) {
        Pay();
      } else {
-@@ -482,12 +432,8 @@ void PaymentRequest::Complete(mojom::PaymentComplete result) {
+@@ -510,12 +462,8 @@ void PaymentRequest::Complete(mojom::PaymentComplete result) {
      ShowErrorMessageAndAbortPayment();
    } else {
      DCHECK(!has_recorded_completion_);
@@ -144,7 +129,7 @@ index ebafd3ccf024..469d3129d66f 100644
  
      delegate_->GetPrefService()->SetBoolean(kPaymentsFirstTransactionCompleted,
                                              true);
-@@ -612,8 +558,6 @@ void PaymentRequest::AreRequestedMethodsSupportedCallback(
+@@ -640,8 +588,6 @@ void PaymentRequest::AreRequestedMethodsSupportedCallback(
              << "): requested method not supported.";
      DCHECK(!has_recorded_completion_);
      has_recorded_completion_ = true;
@@ -153,7 +138,7 @@ index ebafd3ccf024..469d3129d66f 100644
      client_->OnError(mojom::PaymentErrorReason::NOT_SUPPORTED,
                       GetNotSupportedErrorMessage(
                           spec_ ? spec_->payment_method_identifiers_set()
-@@ -691,10 +635,7 @@ bool PaymentRequest::SatisfiesSkipUIConstraints() {
+@@ -719,10 +665,7 @@ bool PaymentRequest::SatisfiesSkipUIConstraints() {
        state()->selected_app() != nullptr;
    if (skipped_payment_request_ui_) {
      DCHECK(state()->IsInitialized() && spec()->IsInitialized());
@@ -164,7 +149,7 @@ index ebafd3ccf024..469d3129d66f 100644
    }
    return skipped_payment_request_ui_;
  }
-@@ -704,39 +645,6 @@ void PaymentRequest::OnPaymentResponseAvailable(
+@@ -732,39 +675,6 @@ void PaymentRequest::OnPaymentResponseAvailable(
    DCHECK(!response->method_name.empty());
    DCHECK(!response->stringified_details.empty());
  
@@ -204,7 +189,7 @@ index ebafd3ccf024..469d3129d66f 100644
    // If currently interactive, show the processing spinner. Autofill payment
    // apps request a CVC, so they are always interactive at this point. A payment
    // handler may elect to be non-interactive by not showing a confirmation page
-@@ -748,10 +656,6 @@ void PaymentRequest::OnPaymentResponseAvailable(
+@@ -776,10 +686,6 @@ void PaymentRequest::OnPaymentResponseAvailable(
  }
  
  void PaymentRequest::OnPaymentResponseError(const std::string& error_message) {
@@ -215,7 +200,7 @@ index ebafd3ccf024..469d3129d66f 100644
    reject_show_error_message_ = error_message;
    ShowErrorMessageAndAbortPayment();
  }
-@@ -776,8 +680,6 @@ void PaymentRequest::OnUserCancelled() {
+@@ -804,8 +710,6 @@ void PaymentRequest::OnUserCancelled() {
    if (!client_.is_bound())
      return;
  
@@ -224,7 +209,7 @@ index ebafd3ccf024..469d3129d66f 100644
    // This sends an error to the renderer, which informs the API user.
    client_->OnError(mojom::PaymentErrorReason::USER_CANCEL,
                     !reject_show_error_message_.empty()
-@@ -795,19 +697,12 @@ void PaymentRequest::OnUserCancelled() {
+@@ -823,19 +727,12 @@ void PaymentRequest::OnUserCancelled() {
  
  void PaymentRequest::DidStartMainFrameNavigationToDifferentDocument(
      bool is_user_initiated) {
@@ -243,8 +228,8 @@ index ebafd3ccf024..469d3129d66f 100644
 -  RecordFirstAbortReason(JourneyLogger::ABORT_REASON_ABORTED_BY_USER);
    // But don't bother sending errors to |client_| because the mojo pipe will be
    // torn down anyways when RenderFrameHost is destroyed. It's not safe to call
-   // UserCancelled() here because it is not re-entrant.
-@@ -828,14 +723,10 @@ void PaymentRequest::OnConnectionTerminated() {
+   // OnUserCancelled() here because it is not re-entrant.
+@@ -856,14 +753,10 @@ void PaymentRequest::TerminateConnection() {
    if (observer_for_testing_)
      observer_for_testing_->OnConnectionTerminated();
  
@@ -259,7 +244,7 @@ index ebafd3ccf024..469d3129d66f 100644
    DCHECK(state_->selected_app());
    VLOG(2) << "PaymentRequest (" << *spec_->details().id
            << "): paying with app: " << state_->selected_app()->GetLabel();
-@@ -862,10 +753,6 @@ bool PaymentRequest::IsOffTheRecord() const {
+@@ -890,10 +783,6 @@ bool PaymentRequest::IsOffTheRecord() const {
  
  void PaymentRequest::OnPaymentHandlerOpenWindowCalled() {
    DCHECK(state_->selected_app());
@@ -270,7 +255,7 @@ index ebafd3ccf024..469d3129d66f 100644
  }
  
  content::WebContents* PaymentRequest::web_contents() {
-@@ -875,14 +762,6 @@ content::WebContents* PaymentRequest::web_contents() {
+@@ -903,14 +792,6 @@ content::WebContents* PaymentRequest::web_contents() {
               : nullptr;
  }
  
@@ -285,7 +270,7 @@ index ebafd3ccf024..469d3129d66f 100644
  void PaymentRequest::CanMakePaymentCallback(bool can_make_payment) {
    VLOG(2) << "PaymentRequest (" << *spec_->details().id
            << "): canMakePayment = " << can_make_payment;
-@@ -890,8 +769,6 @@ void PaymentRequest::CanMakePaymentCallback(bool can_make_payment) {
+@@ -918,8 +799,6 @@ void PaymentRequest::CanMakePaymentCallback(bool can_make_payment) {
        can_make_payment ? mojom::CanMakePaymentQueryResult::CAN_MAKE_PAYMENT
                         : mojom::CanMakePaymentQueryResult::CANNOT_MAKE_PAYMENT);
  
@@ -294,7 +279,7 @@ index ebafd3ccf024..469d3129d66f 100644
    if (observer_for_testing_)
      observer_for_testing_->OnCanMakePaymentReturned();
  }
-@@ -937,7 +814,6 @@ void PaymentRequest::RespondToHasEnrolledInstrumentQuery(
+@@ -965,7 +844,6 @@ void PaymentRequest::RespondToHasEnrolledInstrumentQuery(
  
    client_->OnHasEnrolledInstrument(has_enrolled_instrument ? positive
                                                             : negative);
@@ -302,7 +287,7 @@ index ebafd3ccf024..469d3129d66f 100644
  }
  
  void PaymentRequest::OnAbortResult(bool aborted) {
-@@ -947,7 +823,6 @@ void PaymentRequest::OnAbortResult(bool aborted) {
+@@ -975,7 +853,6 @@ void PaymentRequest::OnAbortResult(bool aborted) {
      client_->OnAbort(aborted);
  
    if (aborted) {

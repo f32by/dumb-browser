@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/search/local_ntp_source.cc b/chrome/browser/search/local_ntp_source.cc
-index eb87538793eb..e55b774e4514 100644
+index 9b2ac5089845..2a8cd69f68ff 100644
 --- a/chrome/browser/search/local_ntp_source.cc
 +++ b/chrome/browser/search/local_ntp_source.cc
 @@ -33,9 +33,6 @@
@@ -12,7 +12,7 @@ index eb87538793eb..e55b774e4514 100644
  #include "chrome/browser/search/search_suggest/search_suggest_data.h"
  #include "chrome/browser/search/search_suggest/search_suggest_service_factory.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
-@@ -103,7 +100,6 @@ const char kNtpBackgroundCollectionScriptFilename[] =
+@@ -102,7 +99,6 @@ const char kNtpBackgroundCollectionScriptFilename[] =
      "ntp-background-collections.js";
  const char kNtpBackgroundImageScriptFilename[] = "ntp-background-images.js";
  const char kOneGoogleBarScriptFilename[] = "one-google.js";
@@ -20,7 +20,7 @@ index eb87538793eb..e55b774e4514 100644
  const char kSearchSuggestionsScriptFilename[] = "search-suggestions.js";
  const char kSha256[] = "sha256-";
  const char kThemeCSSFilename[] = "theme.css";
-@@ -133,7 +129,6 @@ const struct Resource{
+@@ -132,7 +128,6 @@ const struct Resource{
      {kNtpBackgroundCollectionScriptFilename, kLocalResource, "text/javascript"},
      {kNtpBackgroundImageScriptFilename, kLocalResource, "text/javascript"},
      {kOneGoogleBarScriptFilename, kLocalResource, "text/javascript"},
@@ -28,7 +28,7 @@ index eb87538793eb..e55b774e4514 100644
      {kSearchSuggestionsScriptFilename, kLocalResource, "text/javascript"},
      {kThemeCSSFilename, kLocalResource, "text/css"},
      // Image may not be a jpeg but the .jpg extension here still works for other
-@@ -440,23 +435,6 @@ scoped_refptr<base::RefCountedString> GetOGBString(
+@@ -439,23 +434,6 @@ scoped_refptr<base::RefCountedString> GetOGBString(
        base::RefCountedString::TakeString(&js));
  }
  
@@ -52,7 +52,7 @@ index eb87538793eb..e55b774e4514 100644
  std::unique_ptr<base::DictionaryValue> ConvertSearchSuggestDataToDict(
      const base::Optional<SearchSuggestData>& data) {
    auto result = std::make_unique<base::DictionaryValue>();
-@@ -786,7 +764,6 @@ LocalNtpSource::LocalNtpSource(Profile* profile)
+@@ -785,7 +763,6 @@ LocalNtpSource::LocalNtpSource(Profile* profile)
            NtpBackgroundServiceFactory::GetForProfile(profile_)),
        one_google_bar_service_(
            OneGoogleBarServiceFactory::GetForProfile(profile_)),
@@ -60,7 +60,7 @@ index eb87538793eb..e55b774e4514 100644
        search_suggest_service_(
            SearchSuggestServiceFactory::GetForProfile(profile_)),
        logo_service_(nullptr) {
-@@ -807,11 +784,6 @@ LocalNtpSource::LocalNtpSource(Profile* profile)
+@@ -806,11 +783,6 @@ LocalNtpSource::LocalNtpSource(Profile* profile)
    if (search_suggest_service_)
      search_suggest_service_observer_.Add(search_suggest_service_);
  
@@ -72,7 +72,7 @@ index eb87538793eb..e55b774e4514 100644
    logo_service_ = LogoServiceFactory::GetForProfile(profile_);
    logo_observer_ = std::make_unique<DesktopLogoObserver>();
  
-@@ -896,15 +868,6 @@ void LocalNtpSource::StartDataRequest(
+@@ -895,15 +867,6 @@ void LocalNtpSource::StartDataRequest(
      return;
    }
  
@@ -88,7 +88,7 @@ index eb87538793eb..e55b774e4514 100644
    // Search suggestions always used a cached value, so there is no need to
    // refresh the data until the old data is used.
    if (stripped_path == kSearchSuggestionsScriptFilename) {
-@@ -951,7 +914,7 @@ void LocalNtpSource::StartDataRequest(
+@@ -950,7 +913,7 @@ void LocalNtpSource::StartDataRequest(
  
    if (stripped_path == kMainHtmlFilename) {
      if (search_config_provider_->DefaultSearchProviderIsGoogle()) {
@@ -97,7 +97,7 @@ index eb87538793eb..e55b774e4514 100644
      }
  
      std::string force_doodle_param;
-@@ -1246,19 +1209,6 @@ void LocalNtpSource::OnOneGoogleBarServiceShuttingDown() {
+@@ -1245,19 +1208,6 @@ void LocalNtpSource::OnOneGoogleBarServiceShuttingDown() {
    one_google_bar_service_ = nullptr;
  }
  
@@ -117,7 +117,7 @@ index eb87538793eb..e55b774e4514 100644
  void LocalNtpSource::OnSearchSuggestDataUpdated() {
    DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
  
-@@ -1372,59 +1322,11 @@ void LocalNtpSource::ServeOneGoogleBarWhenAvailable(
+@@ -1371,59 +1321,11 @@ void LocalNtpSource::ServeOneGoogleBarWhenAvailable(
    }
  }
  

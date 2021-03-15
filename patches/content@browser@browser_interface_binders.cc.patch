@@ -1,36 +1,8 @@
 diff --git a/content/browser/browser_interface_binders.cc b/content/browser/browser_interface_binders.cc
-index 1b8ba0d052d3..899b44cf9a84 100644
+index a45f9d3db09d..d87ec6e09ad3 100644
 --- a/content/browser/browser_interface_binders.cc
 +++ b/content/browser/browser_interface_binders.cc
-@@ -60,14 +60,11 @@
- #include "device/vr/public/mojom/vr_service.mojom.h"
- #include "media/capture/mojom/image_capture.mojom.h"
- #include "media/mojo/mojom/interface_factory.mojom-forward.h"
--#include "media/mojo/mojom/media_metrics_provider.mojom.h"
- #include "media/mojo/mojom/remoting.mojom.h"
- #include "media/mojo/mojom/video_decode_perf_history.mojom.h"
- #include "media/mojo/services/video_decode_perf_history.h"
- #include "services/device/public/mojom/sensor_provider.mojom.h"
- #include "services/device/public/mojom/vibration_manager.mojom.h"
--#include "services/metrics/public/mojom/ukm_interface.mojom.h"
--#include "services/metrics/ukm_recorder_interface.h"
- #include "services/network/public/cpp/cross_origin_embedder_policy.h"
- #include "services/network/public/mojom/restricted_cookie_manager.mojom.h"
- #include "services/shape_detection/public/mojom/barcodedetection_provider.mojom.h"
-@@ -211,12 +208,6 @@ void BindTextInputHost(
- }
- #endif
- 
--void BindUkmRecorderInterface(
--    mojo::PendingReceiver<ukm::mojom::UkmRecorderInterface> receiver) {
--  metrics::UkmRecorderInterface::Create(ukm::UkmRecorder::Get(),
--                                        std::move(receiver));
--}
--
- void BindBadgeServiceForServiceWorkerOnUI(
-     int service_worker_process_id,
-     const GURL& service_worker_scope,
-@@ -687,10 +678,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+@@ -750,10 +750,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
        &RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver,
        base::Unretained(host)));
  
@@ -38,33 +10,6 @@ index 1b8ba0d052d3..899b44cf9a84 100644
 -      &RenderFrameHostImpl::BindMediaMetricsProviderReceiver,
 -      base::Unretained(host)));
 -
- #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
-   map->Add<media::mojom::RemoterFactory>(
-       base::BindRepeating(&RenderFrameHostImpl::BindMediaRemoterFactoryReceiver,
-@@ -879,8 +866,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
-       base::BindRepeating(&BindFaceDetectionProvider));
-   map->Add<shape_detection::mojom::TextDetection>(
-       base::BindRepeating(&BindTextDetection));
--  map->Add<ukm::mojom::UkmRecorderInterface>(
--      base::BindRepeating(&BindUkmRecorderInterface));
+   map->Add<media::mojom::MediaPlayerHost>(base::BindRepeating(
+       &RenderFrameHostImpl::CreateMediaPlayerHost, base::Unretained(host)));
  
-   // worker host binders
-   // base::Unretained(host) is safe because the map is owned by
-@@ -973,8 +958,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
-       base::BindRepeating(&BindFaceDetectionProvider));
-   map->Add<shape_detection::mojom::TextDetection>(
-       base::BindRepeating(&BindTextDetection));
--  map->Add<ukm::mojom::UkmRecorderInterface>(
--      base::BindRepeating(&BindUkmRecorderInterface));
- 
-   // worker host binders
-   // base::Unretained(host) is safe because the map is owned by
-@@ -1053,8 +1036,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
-       base::BindRepeating(&BindFaceDetectionProvider));
-   map->Add<shape_detection::mojom::TextDetection>(
-       base::BindRepeating(&BindTextDetection));
--  map->Add<ukm::mojom::UkmRecorderInterface>(
--      base::BindRepeating(&BindUkmRecorderInterface));
- 
-   // worker host binders
-   map->Add<blink::mojom::QuicTransportConnector>(

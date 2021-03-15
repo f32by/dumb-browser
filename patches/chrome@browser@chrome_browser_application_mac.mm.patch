@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_application_mac.mm b/chrome/browser/chrome_browser_application_mac.mm
-index 739554cabb30..b2631c824a25 100644
+index 739554cabb30..8d23cdb8e8c8 100644
 --- a/chrome/browser/chrome_browser_application_mac.mm
 +++ b/chrome/browser/chrome_browser_application_mac.mm
 @@ -15,8 +15,6 @@
@@ -74,18 +74,7 @@ index 739554cabb30..b2631c824a25 100644
  @interface BrowserCrApplication ()<NativeEventProcessor> {
    base::ObserverList<content::NativeEventProcessorObserver>::Unchecked
        _observers;
-@@ -108,10 +50,6 @@ @interface BrowserCrApplication ()<NativeEventProcessor> {
- @implementation BrowserCrApplication
- 
- + (void)initialize {
--  // Turn all deallocated Objective-C objects into zombies, keeping
--  // the most recent 10,000 of them on the treadmill.
--  ObjcEvilDoers::ZombieEnable(true, 10000);
--
-   chrome::InstallObjcExceptionPreprocessor();
- 
-   cocoa_l10n_util::ApplyForcedRTL();
-@@ -277,9 +215,6 @@ - (BOOL)sendAction:(SEL)anAction to:(id)aTarget from:(id)sender {
+@@ -277,9 +219,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
        [actionString UTF8String],
        aTarget);
  
@@ -95,7 +84,7 @@ index 739554cabb30..b2631c824a25 100644
    __block BOOL rv;
    base::mac::CallWithEHFrame(^{
      rv = [super sendAction:anAction to:aTarget from:sender];
-@@ -302,10 +237,6 @@ - (void)sendEvent:(NSEvent*)event {
+@@ -302,10 +241,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
    TRACE_EVENT_INSTANT1("toplevel", "KeyWindow", TRACE_EVENT_SCOPE_THREAD,
                         "KeyWin", [[NSApp keyWindow] windowNumber]);
  

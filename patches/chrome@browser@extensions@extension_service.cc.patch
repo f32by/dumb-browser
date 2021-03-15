@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/extension_service.cc b/chrome/browser/extensions/extension_service.cc
-index 37ba854b4958..c0a3b2f23724 100644
+index acedd41d91cb..1d7d6d099df8 100644
 --- a/chrome/browser/extensions/extension_service.cc
 +++ b/chrome/browser/extensions/extension_service.cc
-@@ -61,11 +61,9 @@
+@@ -64,11 +64,9 @@
  #include "chrome/browser/ui/webui/extensions/extension_icon_source.h"
  #include "chrome/browser/ui/webui/favicon_source.h"
  #include "chrome/browser/ui/webui/theme_source.h"
@@ -14,7 +14,7 @@ index 37ba854b4958..c0a3b2f23724 100644
  #include "chrome/common/extensions/extension_constants.h"
  #include "chrome/common/url_constants.h"
  #include "components/content_settings/core/browser/host_content_settings_map.h"
-@@ -391,8 +389,7 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -398,8 +396,7 @@ ExtensionService::ExtensionService(Profile* profile,
        ready_(ready),
        shared_module_service_(new SharedModuleService(profile_)),
        extension_registrar_(profile_, this),
@@ -24,7 +24,7 @@ index 37ba854b4958..c0a3b2f23724 100644
    CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
    TRACE_EVENT0("browser,startup", "ExtensionService::ExtensionService::ctor");
  
-@@ -411,8 +408,6 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -418,8 +415,6 @@ ExtensionService::ExtensionService(Profile* profile,
    if (g_browser_process->profile_manager())
      profile_manager_observer_.Add(g_browser_process->profile_manager());
  
@@ -33,7 +33,7 @@ index 37ba854b4958..c0a3b2f23724 100644
    ExtensionManagementFactory::GetForBrowserContext(profile_)->AddObserver(this);
  
    // Set up the ExtensionUpdater.
-@@ -455,7 +450,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
+@@ -462,7 +457,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
  }
  
  ExtensionService::~ExtensionService() {
@@ -41,7 +41,7 @@ index 37ba854b4958..c0a3b2f23724 100644
    // No need to unload extensions here because they are profile-scoped, and the
    // profile is in the process of being deleted.
    for (const auto& provider : external_extension_providers_)
-@@ -1538,11 +1532,6 @@ void ExtensionService::UpdateActiveExtensionsInCrashReporter() {
+@@ -1567,11 +1561,6 @@ void ExtensionService::UpdateActiveExtensionsInCrashReporter() {
      if (!extension->is_theme() && extension->location() != Manifest::COMPONENT)
        extension_ids.insert(extension->id());
    }

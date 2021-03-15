@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #include "dumb/browser/net/dumb_proxying_web_socket.h"
 
 #include <utility>
@@ -98,8 +100,7 @@ void DumbProxyingWebSocket::Start() {
         weak_factory_.GetWeakPtr());
   }
 
-  ctx_ = std::make_shared<dumb::DumbRequestInfo>();
-  dumb::DumbRequestInfo::FillCTX(request_, process_id_,
+  ctx_ = dumb::DumbRequestInfo::MakeCTX(request_, process_id_,
                                    frame_tree_node_id_, request_id_,
                                    browser_context_, ctx_);
   int result = request_handler_->OnBeforeURLRequest(
@@ -169,8 +170,7 @@ void DumbProxyingWebSocket::ContinueToHeadersReceived() {
   auto continuation = base::BindRepeating(
       &DumbProxyingWebSocket::OnHeadersReceivedComplete,
       weak_factory_.GetWeakPtr());
-  ctx_ = std::make_shared<dumb::DumbRequestInfo>();
-  dumb::DumbRequestInfo::FillCTX(request_, process_id_,
+  ctx_ = dumb::DumbRequestInfo::MakeCTX(request_, process_id_,
                                    frame_tree_node_id_, request_id_,
                                    browser_context_, ctx_);
   int result = request_handler_->OnHeadersReceived(
@@ -285,8 +285,7 @@ void DumbProxyingWebSocket::OnBeforeSendHeadersCompleteFromProxy(
       &DumbProxyingWebSocket::OnBeforeSendHeadersComplete,
       weak_factory_.GetWeakPtr());
 
-  ctx_ = std::make_shared<dumb::DumbRequestInfo>();
-  dumb::DumbRequestInfo::FillCTX(request_, process_id_,
+  ctx_ = dumb::DumbRequestInfo::MakeCTX(request_, process_id_,
                                    frame_tree_node_id_, request_id_,
                                    browser_context_, ctx_);
   int result = request_handler_->OnBeforeStartTransaction(

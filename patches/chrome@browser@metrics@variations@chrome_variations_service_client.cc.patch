@@ -1,17 +1,17 @@
 diff --git a/chrome/browser/metrics/variations/chrome_variations_service_client.cc b/chrome/browser/metrics/variations/chrome_variations_service_client.cc
-index 3a7cd4472617..24a23fc49ebd 100644
+index 0d9bf83c6b77..f0e59c8ba5fd 100644
 --- a/chrome/browser/metrics/variations/chrome_variations_service_client.cc
 +++ b/chrome/browser/metrics/variations/chrome_variations_service_client.cc
-@@ -32,13 +32,6 @@ namespace {
+@@ -33,13 +33,6 @@ namespace {
  // Gets the version number to use for variations seed simulation. Must be called
  // on a thread where IO is allowed.
  base::Version GetVersionForSimulation() {
--#if !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
 -  const base::Version installed_version =
 -      UpgradeDetectorImpl::GetCurrentlyInstalledVersion();
 -  if (installed_version.IsValid())
 -    return installed_version;
--#endif  // !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+-#endif  // !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
 -
    // TODO(asvitkine): Get the version that will be used on restart instead of
    // the current version on Android, iOS and ChromeOS.

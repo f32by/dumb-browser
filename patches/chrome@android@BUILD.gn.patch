@@ -1,17 +1,17 @@
 diff --git a/chrome/android/BUILD.gn b/chrome/android/BUILD.gn
-index 99515abfdf92..f755a8124985 100644
+index bdc34e6e959e..8c9422b254f6 100644
 --- a/chrome/android/BUILD.gn
 +++ b/chrome/android/BUILD.gn
-@@ -329,8 +329,6 @@ android_library("chrome_java") {
-     "//chrome/browser/preferences:java",
+@@ -332,8 +332,6 @@ android_library("chrome_java") {
      "//chrome/browser/privacy:java",
+     "//chrome/browser/privacy_sandbox/android:java",
      "//chrome/browser/profiles/android:java",
 -    "//chrome/browser/safe_browsing/android:java",
 -    "//chrome/browser/safety_check/android:java",
      "//chrome/browser/settings:java",
      "//chrome/browser/share:java",
      "//chrome/browser/share/android:java_resources",
-@@ -385,7 +383,6 @@ android_library("chrome_java") {
+@@ -392,7 +390,6 @@ android_library("chrome_java") {
      "//components/content_settings/android:content_settings_enums_java",
      "//components/content_settings/android:java",
      "//components/contextual_search/content/common/mojom:mojom_java",
@@ -19,7 +19,7 @@ index 99515abfdf92..f755a8124985 100644
      "//components/dom_distiller/content/browser/android:dom_distiller_content_java",
      "//components/dom_distiller/core/android:dom_distiller_core_java",
      "//components/dom_distiller/core/mojom:mojom_java",
-@@ -436,7 +433,6 @@ android_library("chrome_java") {
+@@ -444,7 +441,6 @@ android_library("chrome_java") {
      "//components/policy/android:policy_java",
      "//components/prefs/android:java",
      "//components/query_tiles:java",
@@ -27,16 +27,16 @@ index 99515abfdf92..f755a8124985 100644
      "//components/schema_org/common:mojom_java",
      "//components/search_engines/android:java",
      "//components/security_interstitials/content/android:java",
-@@ -819,8 +815,6 @@ junit_binary("chrome_junit_tests") {
+@@ -835,8 +831,6 @@ junit_binary("chrome_junit_tests") {
      "//chrome/browser/preferences:java",
      "//chrome/browser/preferences:preferences_junit_tests",
      "//chrome/browser/profiles/android:java",
 -    "//chrome/browser/safety_check/android:java",
 -    "//chrome/browser/safety_check/android:junit",
      "//chrome/browser/share:java",
-     "//chrome/browser/tab:java",
-     "//chrome/browser/tabmodel:factory_java",
-@@ -1041,10 +1035,6 @@ android_library("chrome_test_java") {
+     "//chrome/browser/signin/services/android:java",
+     "//chrome/browser/signin/services/android:junit",
+@@ -1090,10 +1084,6 @@ android_library("chrome_test_java") {
      "//chrome/browser/policy/android:java",
      "//chrome/browser/preferences:java",
      "//chrome/browser/profiles/android:java",
@@ -47,7 +47,7 @@ index 99515abfdf92..f755a8124985 100644
      "//chrome/browser/settings:java",
      "//chrome/browser/settings:javatests",
      "//chrome/browser/settings:test_support_java",
-@@ -1101,7 +1091,6 @@ android_library("chrome_test_java") {
+@@ -1155,7 +1145,6 @@ android_library("chrome_test_java") {
      "//components/browser_ui/widget/android:test_support_java",
      "//components/content_settings/android:content_settings_enums_java",
      "//components/content_settings/android:java",
@@ -55,15 +55,15 @@ index 99515abfdf92..f755a8124985 100644
      "//components/dom_distiller/core/android:dom_distiller_core_java",
      "//components/dom_distiller/core/mojom:mojom_java",
      "//components/download/internal/background_service:internal_java",
-@@ -1151,7 +1140,6 @@ android_library("chrome_test_java") {
+@@ -1209,7 +1198,6 @@ android_library("chrome_test_java") {
      "//components/prefs/android:java",
-     "//components/query_tiles:public_java",
+     "//components/query_tiles:java",
      "//components/query_tiles:test_support_java",
 -    "//components/safe_browsing/android:safe_browsing_java",
      "//components/schema_org/common:mojom_java",
      "//components/search_engines/android:java",
      "//components/security_interstitials/content/android:java",
-@@ -1575,7 +1563,6 @@ chrome_common_shared_library("libchromefortest") {
+@@ -1634,7 +1622,6 @@ chrome_common_shared_library("libchromefortest") {
      "//chrome/browser/password_manager/android_test_helpers:android_wrappers",
      "//chrome/browser/subresource_filter:android_test_support",
      "//components/autofill_assistant/browser:test_support",
@@ -71,7 +71,7 @@ index 99515abfdf92..f755a8124985 100644
      "//components/minidump_uploader",
      "//components/paint_preview/player/android:test_support",
      "//components/sync",
-@@ -1837,7 +1824,6 @@ template("libmonochrome_apk_or_bundle_tmpl") {
+@@ -1896,7 +1883,6 @@ template("libmonochrome_apk_or_bundle_tmpl") {
      deps = [
        "//android_webview/lib",
        "//android_webview/nonembedded",

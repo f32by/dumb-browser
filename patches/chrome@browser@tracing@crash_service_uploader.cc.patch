@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/tracing/crash_service_uploader.cc b/chrome/browser/tracing/crash_service_uploader.cc
-index d879eea5cffb..f8717b158c6a 100644
+index e59f3a4d7381..0aa655e0c076 100644
 --- a/chrome/browser/tracing/crash_service_uploader.cc
 +++ b/chrome/browser/tracing/crash_service_uploader.cc
-@@ -40,7 +40,7 @@ using std::string;
+@@ -41,7 +41,7 @@ using std::string;
  
  namespace {
  
@@ -11,7 +11,7 @@ index d879eea5cffb..f8717b158c6a 100644
  const char kCrashUploadContentType[] = "multipart/form-data";
  const char kCrashMultipartBoundary[] =
      "----**--yradnuoBgoLtrapitluMklaTelgooG--**----";
-@@ -129,11 +129,16 @@ void TraceCrashServiceUploader::DoUpload(
+@@ -130,11 +130,16 @@ void TraceCrashServiceUploader::DoUpload(
    progress_callback_ = progress_callback;
    done_callback_ = std::move(done_callback);
  
@@ -32,7 +32,7 @@ index d879eea5cffb..f8717b158c6a 100644
  }
  
  void TraceCrashServiceUploader::DoCompressOnBackgroundThread(
-@@ -306,66 +311,4 @@ bool TraceCrashServiceUploader::Compress(std::string input,
+@@ -307,66 +312,4 @@ bool TraceCrashServiceUploader::Compress(std::string input,
  void TraceCrashServiceUploader::CreateAndStartURLLoader(
      const std::string& upload_url,
      const std::string& post_data) {

@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/views/profiles/profile_picker_view.cc b/chrome/browser/ui/views/profiles/profile_picker_view.cc
+index b2c543afa5eb..3f941020d9dc 100644
+--- a/chrome/browser/ui/views/profiles/profile_picker_view.cc
++++ b/chrome/browser/ui/views/profiles/profile_picker_view.cc
+@@ -965,8 +965,6 @@ void ProfilePickerView::FinishSignedInCreationFlowImpl(
+   }
+   entry->SetLocalProfileName(name_for_signed_in_profile_,
+                              /*is_default_name=*/false);
+-  ProfileMetrics::LogProfileAddNewUser(
+-      ProfileMetrics::ADD_NEW_PROFILE_PICKER_SIGNED_IN);
+ 
+   // If sync is not enabled (and will not likely be enabled with an enterprise
+   // consent), apply a new color to the profile (otherwise, a more complicated

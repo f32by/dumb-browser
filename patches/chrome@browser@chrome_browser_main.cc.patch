@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/chrome_browser_main.cc b/chrome/browser/chrome_browser_main.cc
-index 64da51339475..185ff170f69a 100644
+index cd769147ddc1..bf03ed5cb9f9 100644
 --- a/chrome/browser/chrome_browser_main.cc
 +++ b/chrome/browser/chrome_browser_main.cc
-@@ -103,7 +103,6 @@
+@@ -104,7 +104,6 @@
  #include "chrome/common/chrome_paths.h"
  #include "chrome/common/chrome_result_codes.h"
  #include "chrome/common/chrome_switches.h"
@@ -10,7 +10,7 @@ index 64da51339475..185ff170f69a 100644
  #include "chrome/common/env_vars.h"
  #include "chrome/common/logging_chrome.h"
  #include "chrome/common/media/media_resource_provider.h"
-@@ -112,7 +111,6 @@
+@@ -113,7 +112,6 @@
  #include "chrome/common/profiler/thread_profiler.h"
  #include "chrome/common/profiler/thread_profiler_configuration.h"
  #include "chrome/grit/generated_resources.h"
@@ -18,7 +18,7 @@ index 64da51339475..185ff170f69a 100644
  #include "components/device_event_log/device_event_log.h"
  #include "components/embedder_support/switches.h"
  #include "components/flags_ui/pref_service_flags_storage.h"
-@@ -135,10 +133,8 @@
+@@ -136,10 +134,8 @@
  #include "components/prefs/pref_service.h"
  #include "components/prefs/pref_value_store.h"
  #include "components/prefs/scoped_user_pref_update.h"
@@ -29,7 +29,7 @@ index 64da51339475..185ff170f69a 100644
  #include "components/tracing/common/tracing_switches.h"
  #include "components/translate/core/browser/translate_download_manager.h"
  #include "components/variations/field_trial_config/field_trial_util.h"
-@@ -146,7 +142,6 @@
+@@ -147,7 +143,6 @@
  #include "components/variations/service/variations_service.h"
  #include "components/variations/synthetic_trials_active_group_id_provider.h"
  #include "components/variations/variations_associated_data.h"
@@ -45,9 +45,9 @@ index 64da51339475..185ff170f69a 100644
  #include "chrome/browser/usb/web_usb_detector.h"
  #include "ui/base/l10n/l10n_util.h"
  #endif  // defined(OS_ANDROID)
-@@ -213,11 +207,6 @@
+@@ -215,11 +209,6 @@
  #include "chrome/browser/first_run/upgrade_util_linux.h"
- #endif  // defined(OS_LINUX) && !defined(OS_CHROMEOS)
+ #endif  // defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS)
  
 -#if defined(OS_LINUX) || defined(OS_CHROMEOS)
 -#include "components/crash/core/app/breakpad_linux.h"
@@ -57,7 +57,7 @@ index 64da51339475..185ff170f69a 100644
  #if defined(OS_MAC)
  #include <Security/Security.h>
  
-@@ -442,10 +431,6 @@ void ProcessSingletonNotificationCallbackImpl(
+@@ -451,10 +440,6 @@ void ProcessSingletonNotificationCallbackImpl(
  
    StartupBrowserCreator::ProcessCommandLineAlreadyRunning(
        command_line, current_directory, startup_profile_dir);
@@ -68,7 +68,7 @@ index 64da51339475..185ff170f69a 100644
  }
  
  bool ProcessSingletonNotificationCallback(
-@@ -563,22 +548,6 @@ void ChromeBrowserMainParts::StartMetricsRecording() {
+@@ -572,22 +557,6 @@ void ChromeBrowserMainParts::StartMetricsRecording() {
  }
  
  void ChromeBrowserMainParts::RecordBrowserStartupTime() {
@@ -91,7 +91,7 @@ index 64da51339475..185ff170f69a 100644
  }
  
  void ChromeBrowserMainParts::SetupOriginTrialsCommandLine(
-@@ -718,7 +687,6 @@ void ChromeBrowserMainParts::PostMainMessageLoopStart() {
+@@ -727,7 +696,6 @@ void ChromeBrowserMainParts::PostMainMessageLoopStart() {
  #if !defined(OS_ANDROID)
    // Initialize the upgrade detector here after ChromeBrowserMainPartsChromeos
    // has had a chance to connect the DBus services.
@@ -99,7 +99,7 @@ index 64da51339475..185ff170f69a 100644
  #endif
  
    ThreadProfiler::SetMainThreadTaskRunner(base::ThreadTaskRunnerHandle::Get());
-@@ -774,21 +742,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
+@@ -783,21 +751,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
    if (!base::PathService::Get(chrome::DIR_USER_DATA, &user_data_dir_))
      return chrome::RESULT_CODE_MISSING_DATA;
  
@@ -121,7 +121,7 @@ index 64da51339475..185ff170f69a 100644
    std::string locale =
        startup_data_->chrome_feature_list_creator()->actual_locale();
    if (locale.empty()) {
-@@ -803,9 +756,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
+@@ -812,9 +765,6 @@ int ChromeBrowserMainParts::OnLocalStateLoaded(
  
    SetupOriginTrialsCommandLine(browser_process_->local_state());
  
@@ -131,7 +131,7 @@ index 64da51339475..185ff170f69a 100644
    return content::RESULT_CODE_NORMAL_EXIT;
  }
  
-@@ -910,11 +860,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+@@ -919,11 +869,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
    base::trace_event::TraceEventETWExport::EnableETWExport();
  #endif  // OS_WIN
  
@@ -143,9 +143,9 @@ index 64da51339475..185ff170f69a 100644
    browser_process_->browser_policy_connector()->OnResourceBundleCreated();
  
  // Android does first run in Java instead of native.
-@@ -939,13 +884,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+@@ -948,13 +893,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
    }
- #endif  // !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+ #endif  // !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
  
 -#if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_OPENBSD)
 -  // Set the product channel for crash reports.
@@ -157,23 +157,17 @@ index 64da51339475..185ff170f69a 100644
  #if defined(OS_MAC)
    // Get the Keychain API to register for distributed notifications on the main
    // thread, which has a proper CFRunloop, instead of later on the I/O thread,
-@@ -956,15 +894,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
-   SecKeychainAddCallback(&KeychainCallback, 0, nullptr);
- #endif  // defined(OS_MAC)
- 
--#if defined(OS_WIN) || defined(OS_MAC) || \
--    (defined(OS_LINUX) && !defined(OS_CHROMEOS))
--  metrics::DesktopSessionDurationTracker::Initialize();
--  ProfileActivityMetricsRecorder::Initialize();
+@@ -971,9 +909,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+     (defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
+   metrics::DesktopSessionDurationTracker::Initialize();
+   ProfileActivityMetricsRecorder::Initialize();
 -  TouchModeStatsTracker::Initialize(
 -      metrics::DesktopSessionDurationTracker::Get(),
 -      ui::TouchUiController::Get());
--#endif
--  metrics::RendererUptimeTracker::Initialize();
+ #endif
+   metrics::RendererUptimeTracker::Initialize();
  
-   // Add Site Isolation switches as dictated by policy.
-   auto* command_line = base::CommandLine::ForCurrentProcess();
-@@ -994,12 +923,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+@@ -1005,12 +940,6 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
    // this.
    browser_process_->PreCreateThreads(parsed_command_line());
  
@@ -186,7 +180,7 @@ index 64da51339475..185ff170f69a 100644
    return content::RESULT_CODE_NORMAL_EXIT;
  }
  
-@@ -1090,12 +1013,6 @@ void ChromeBrowserMainParts::PreBrowserStart() {
+@@ -1101,12 +1030,6 @@ void ChromeBrowserMainParts::PreBrowserStart() {
    // other services to start up before we start adjusting the oom priority.
    g_browser_process->GetTabManager()->Start();
  #endif
@@ -199,7 +193,7 @@ index 64da51339475..185ff170f69a 100644
  }
  
  void ChromeBrowserMainParts::PostBrowserStart() {
-@@ -1121,10 +1038,6 @@ void ChromeBrowserMainParts::PostBrowserStart() {
+@@ -1132,10 +1055,6 @@ void ChromeBrowserMainParts::PostBrowserStart() {
                     base::BindOnce(&WebUsbDetector::Initialize,
                                    base::Unretained(web_usb_detector_.get())));
    }
@@ -210,7 +204,7 @@ index 64da51339475..185ff170f69a 100644
  #endif
  
    // At this point, StartupBrowserCreator::Start has run creating initial
-@@ -1150,9 +1063,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1161,9 +1080,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    InitializeWinParentalControls();
  #endif
  
@@ -220,7 +214,7 @@ index 64da51339475..185ff170f69a 100644
    if (!base::debug::BeingDebugged()) {
      // Create watchdog thread after creating all other threads because it will
      // watch the other threads and they must be running.
-@@ -1163,9 +1073,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1174,9 +1090,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    // running.
    browser_process_->PreMainMessageLoopRun();
  
@@ -230,7 +224,17 @@ index 64da51339475..185ff170f69a 100644
  #if defined(OS_WIN)
    // On Windows, we use our startup as an opportunity to do upgrade/uninstall
    // tasks.  Those care whether the browser is already running.  On Linux/Mac,
-@@ -1437,8 +1344,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1234,9 +1147,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+   // 20 seconds to respond. Note that this needs to be done before we attempt
+   // to read the profile.
+   notify_result_ = process_singleton_->NotifyOtherProcessOrCreate();
+-  UMA_HISTOGRAM_ENUMERATION("Chrome.ProcessSingleton.NotifyResult",
+-                            notify_result_,
+-                            ProcessSingleton::kNumNotifyResults);
+   switch (notify_result_) {
+     case ProcessSingleton::PROCESS_NONE:
+       // No process already running, fall through to starting a new one.
+@@ -1448,8 +1358,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    // and preferences have been registered since some of the import code depends
    // on preferences.
    if (first_run::IsChromeFirstRun()) {
@@ -239,23 +243,23 @@ index 64da51339475..185ff170f69a 100644
      // Note: This can pop-up the first run consent dialog on Linux & Mac.
      first_run::DoPostImportTasks(profile_,
                                   master_prefs_->make_chrome_default_for_user);
-@@ -1528,13 +1433,7 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1539,13 +1447,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
  #endif
  
    HandleTestParameters(parsed_command_line());
 -  browser_process_->metrics_service()->RecordBreakpadHasDebugger(
 -      base::debug::BeingDebugged());
- 
--  language_usage_metrics::LanguageUsageMetrics::RecordAcceptLanguages(
+-
+-  language::LanguageUsageMetrics::RecordAcceptLanguages(
 -      profile_->GetPrefs()->GetString(language::prefs::kAcceptLanguages));
--  language_usage_metrics::LanguageUsageMetrics::RecordApplicationLanguage(
+-  language::LanguageUsageMetrics::RecordApplicationLanguage(
 -      browser_process_->GetApplicationLocale());
  // On ChromeOS results in a crash. https://crbug.com/1151558
- #if !defined(OS_CHROMEOS)
-   language_usage_metrics::LanguageUsageMetrics::RecordPageLanguages(
-@@ -1642,10 +1541,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+ #if !BUILDFLAG(IS_CHROMEOS_ASH)
+   language::LanguageUsageMetrics::RecordPageLanguages(
+@@ -1661,10 +1562,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
      upgrade_util::SaveLastModifiedTimeOfExe();
- #endif  // defined(OS_LINUX) && !defined(OS_CHROMEOS)
+ #endif  // defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS)
  
 -    // Record now as the last successful chrome start.
 -    if (ShouldRecordActiveUse(parsed_command_line()))
@@ -264,7 +268,7 @@ index 64da51339475..185ff170f69a 100644
  #if defined(OS_MAC)
      // Call Recycle() here as late as possible, before going into the loop
      // because Start() will add things to it while creating the main window.
-@@ -1677,15 +1572,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
+@@ -1696,15 +1593,6 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
    downgrade_manager_.DeleteMovedUserDataSoon(user_data_dir_);
  #endif
  
@@ -280,7 +284,7 @@ index 64da51339475..185ff170f69a 100644
    return result_code_;
  }
  
-@@ -1705,10 +1591,6 @@ bool ChromeBrowserMainParts::MainMessageLoopRun(int* result_code) {
+@@ -1724,10 +1612,6 @@ bool ChromeBrowserMainParts::MainMessageLoopRun(int* result_code) {
    if (!run_message_loop_)
      return true;  // Don't run the default message loop.
  
@@ -291,7 +295,7 @@ index 64da51339475..185ff170f69a 100644
  
    DCHECK(base::CurrentUIThread::IsSet());
  
-@@ -1729,7 +1611,6 @@ void ChromeBrowserMainParts::PostMainMessageLoopRun() {
+@@ -1748,7 +1632,6 @@ void ChromeBrowserMainParts::PostMainMessageLoopRun() {
  #else
    // Shutdown the UpgradeDetector here before ChromeBrowserMainPartsChromeos
    // disconnects DBus services in its PostDestroyThreads.

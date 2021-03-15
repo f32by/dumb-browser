@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/chrome_extensions_browser_client.cc b/chrome/browser/extensions/chrome_extensions_browser_client.cc
-index bca6ff57a3b1..159f9936f9bc 100644
+index da3b4b48cb2e..c58892863770 100644
 --- a/chrome/browser/extensions/chrome_extensions_browser_client.cc
 +++ b/chrome/browser/extensions/chrome_extensions_browser_client.cc
-@@ -87,10 +87,6 @@ const char kJsonUrlPath[] = "/service/update2/json";
+@@ -89,10 +89,6 @@ const char kJsonUrlPath[] = "/service/update2/json";
  // new chrome update.
  bool g_did_chrome_update_for_testing = false;
  
@@ -13,7 +13,7 @@ index bca6ff57a3b1..159f9936f9bc 100644
  bool ExtensionsDisabled(const base::CommandLine& command_line) {
    return command_line.HasSwitch(::switches::kDisableExtensions) ||
           command_line.HasSwitch(::switches::kDisableExtensionsExcept);
-@@ -562,13 +558,6 @@ void ChromeExtensionsBrowserClient::SetLastSaveFilePath(
+@@ -557,13 +553,6 @@ void ChromeExtensionsBrowserClient::SetLastSaveFilePath(
    download_prefs->SetSaveFilePath(path);
  }
  
@@ -27,8 +27,8 @@ index bca6ff57a3b1..159f9936f9bc 100644
  bool ChromeExtensionsBrowserClient::HasIsolatedStorage(
      const std::string& extension_id,
      content::BrowserContext* context) {
-@@ -580,12 +569,6 @@ bool ChromeExtensionsBrowserClient::IsScreenshotRestricted(
-   return tabs_util::IsScreenshotRestricted(web_contents);
+@@ -582,12 +571,6 @@ bool ChromeExtensionsBrowserClient::IsValidTabId(
+       tab_id, context, true /* include_incognito */, nullptr /* contents */);
  }
  
 -// static

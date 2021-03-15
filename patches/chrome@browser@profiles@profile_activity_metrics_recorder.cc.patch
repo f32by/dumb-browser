@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/profiles/profile_activity_metrics_recorder.cc b/chrome/browser/profiles/profile_activity_metrics_recorder.cc
+index be53bdcc58bf..70beab22da23 100644
+--- a/chrome/browser/profiles/profile_activity_metrics_recorder.cc
++++ b/chrome/browser/profiles/profile_activity_metrics_recorder.cc
+@@ -202,7 +202,6 @@ void ProfileActivityMetricsRecorder::OnProfileWillBeDestroyed(
+ 
+ ProfileActivityMetricsRecorder::ProfileActivityMetricsRecorder() {
+   BrowserList::AddObserver(this);
+-  metrics::DesktopSessionDurationTracker::Get()->AddObserver(this);
+   action_callback_ = base::BindRepeating(
+       &ProfileActivityMetricsRecorder::OnUserAction, base::Unretained(this));
+   base::AddActionCallback(action_callback_);
+@@ -210,7 +209,6 @@ ProfileActivityMetricsRecorder::ProfileActivityMetricsRecorder() {
+ 
+ ProfileActivityMetricsRecorder::~ProfileActivityMetricsRecorder() {
+   BrowserList::RemoveObserver(this);
+-  metrics::DesktopSessionDurationTracker::Get()->RemoveObserver(this);
+   base::RemoveActionCallback(action_callback_);
+ }
+ 

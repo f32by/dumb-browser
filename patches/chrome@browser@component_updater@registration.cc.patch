@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/component_updater/registration.cc b/chrome/browser/component_updater/registration.cc
-index 565d78c37d36..d5ba10c378d1 100644
+index 9bc1aff78fc4..d7357b8d05f5 100644
 --- a/chrome/browser/component_updater/registration.cc
 +++ b/chrome/browser/component_updater/registration.cc
-@@ -14,9 +14,7 @@
+@@ -15,9 +15,7 @@
  #include "chrome/browser/component_updater/autofill_states_component_installer.h"
  #include "chrome/browser/component_updater/crl_set_component_installer.h"
  #include "chrome/browser/component_updater/crowd_deny_component_installer.h"
@@ -20,25 +20,25 @@ index 565d78c37d36..d5ba10c378d1 100644
  #include "chrome/browser/component_updater/tls_deprecation_config_component_installer.h"
  #include "chrome/browser/component_updater/trust_token_key_commitments_component_installer.h"
  #include "chrome/browser/component_updater/zxcvbn_data_component_installer.h"
-@@ -119,9 +116,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
-   whitelist_installer->RegisterComponents();
- #endif
+@@ -113,9 +110,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+ #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+ #endif  // BUILDFLAG(ENABLE_NACL) && !defined(OS_ANDROID)
  
 -  RegisterSubresourceFilterComponent(cus);
 -  RegisterFlocComponent(cus,
 -                        g_browser_process->floc_sorting_lsh_clusters_service());
    RegisterOnDeviceHeadSuggestComponent(
        cus, g_browser_process->GetApplicationLocale());
-   RegisterOptimizationHintsComponent(cus, is_off_the_record_profile);
-@@ -143,7 +137,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+   RegisterOptimizationHintsComponent(cus);
+@@ -137,7 +131,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif
    }
    RegisterSSLErrorAssistantComponent(cus);
 -  RegisterFileTypePoliciesComponent(cus);
- #if !defined(OS_CHROMEOS)
+ #if !BUILDFLAG(IS_CHROMEOS_ASH)
    // CRLSetFetcher attempts to load a CRL set from either the local disk or
    // network.
-@@ -159,7 +152,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -153,7 +146,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    // on chromium build bots, it is always registered here and
    // RegisterSwReporterComponent() has support for running only in official
    // builds or tests.

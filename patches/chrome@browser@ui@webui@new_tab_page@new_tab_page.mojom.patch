@@ -1,0 +1,32 @@
+diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page.mojom b/chrome/browser/ui/webui/new_tab_page/new_tab_page.mojom
+index 5ba2b9747e80..d18fbf34db74 100644
+--- a/chrome/browser/ui/webui/new_tab_page/new_tab_page.mojom
++++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page.mojom
+@@ -336,8 +336,6 @@ interface PageHandler {
+   // parameters to the endpoint that serves the OneGoogleBar parts with
+   // |query_params|.
+   GetOneGoogleBarParts(string query_params) => (OneGoogleBarParts? parts);
+-  // Get the middle slot promo if it exists.
+-  GetPromo() => (Promo? promo);
+   // Called when a module the given id is dismissed.
+   OnDismissModule(string module_id);
+   // Called when a module the given id is restored.
+@@ -354,9 +352,6 @@ interface PageHandler {
+   // Logs that the One Google Bar was added to the DOM / loaded in an iframe at
+   // |time|.
+   OnOneGoogleBarRendered(double time);
+-  // Logs that the promo iframe was loaded at |time| and pings |log_url| for
+-  // promo metrics logging.
+-  OnPromoRendered(double time, url.mojom.Url? log_url);
+   // Logs that |tile| at position |index| was triggered to navigate to that
+   // most visited entry.
+   // |mouse_button| indicates which mouse button was pressed on the entry. See
+@@ -388,8 +383,6 @@ interface PageHandler {
+   OnDoodleShared(DoodleShareChannel channel,
+                  string doodle_id,
+                  string? share_id);
+-  // Logs that a link on a promo has been clicked.
+-  OnPromoLinkClicked();
+   // Logs an action performed while using voice search.
+   OnVoiceSearchAction(VoiceSearchAction action);
+   // Logs an error occurred while using voice search.

@@ -1,34 +1,8 @@
 diff --git a/content/browser/web_contents/web_contents_impl.h b/content/browser/web_contents/web_contents_impl.h
-index ff0d4b4372b9..7255baf9affb 100644
+index 84ecccc204ee..6f745bd7c14b 100644
 --- a/content/browser/web_contents/web_contents_impl.h
 +++ b/content/browser/web_contents/web_contents_impl.h
-@@ -27,7 +27,6 @@
- #include "base/values.h"
- #include "build/build_config.h"
- #include "components/download/public/common/download_url_parameters.h"
--#include "content/browser/accessibility/accessibility_event_recorder.h"
- #include "content/browser/media/audio_stream_monitor.h"
- #include "content/browser/media/forwarding_audio_stream_factory.h"
- #include "content/browser/renderer_host/frame_tree.h"
-@@ -62,7 +61,6 @@
- #include "net/http/http_response_headers.h"
- #include "ppapi/buildflags/buildflags.h"
- #include "services/device/public/mojom/geolocation_context.mojom.h"
--#include "services/metrics/public/cpp/ukm_recorder.h"
- #include "services/network/public/mojom/fetch_api.mojom-forward.h"
- #include "third_party/blink/public/common/frame/transient_allow_fullscreen.h"
- #include "third_party/blink/public/common/page/drag_operation.h"
-@@ -614,9 +612,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
-   std::string DumpAccessibilityTree(
-       bool internal,
-       std::vector<ui::AXPropertyFilter> property_filters) override;
--  void RecordAccessibilityEvents(
--      bool start_recording,
--      base::Optional<AccessibilityEventCallback> callback) override;
-   device::mojom::GeolocationContext* GetGeolocationContext() override;
-   device::mojom::WakeLockContext* GetWakeLockContext() override;
- #if defined(OS_ANDROID)
-@@ -697,8 +692,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -705,8 +705,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
                                     int context_id) override;
    void OnFrameAudioStateChanged(RenderFrameHost* host,
                                  bool is_audible) override;
@@ -36,57 +10,12 @@ index ff0d4b4372b9..7255baf9affb 100644
 -  GetRecordAggregateWatchTimeCallback() override;
    RenderFrameHostImpl* GetMainFrameForInnerDelegate(
        FrameTreeNode* frame_tree_node) override;
-   bool IsFrameLowPriority(const RenderFrameHost* render_frame_host) override;
-@@ -859,9 +852,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
-       NavigationRequest* navigation_request_to_exclude) override;
- 
-   // RenderWidgetHostDelegate --------------------------------------------------
--
--  ukm::SourceId GetUkmSourceIdForLastCommittedSourceIncludingSameDocument()
--      const override;
-   void SetTopControlsShownRatio(RenderWidgetHostImpl* render_widget_host,
-                                 float ratio) override;
-   void SetTopControlsGestureScrollInProgress(bool in_progress) override;
-@@ -934,7 +924,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+   bool IsFrameLowPriority(RenderFrameHost* render_frame_host) override;
+@@ -966,7 +964,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+   void SendScreenRects() override;
    TextInputManager* GetTextInputManager() override;
-   bool OnUpdateDragCursor() override;
    bool IsWidgetForMainFrame(RenderWidgetHostImpl* render_widget_host) override;
 -  bool AddDomainInfoToRapporSample(rappor::Sample* sample) override;
    bool IsShowingContextMenuOnPage() const override;
    void DidChangeScreenOrientation() override;
    // The following function is already listed under RenderViewHostDelegate
-@@ -1673,13 +1662,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
-   // changes.
-   void UpdateVisibilityAndNotifyPageAndView(Visibility new_visibility);
- 
--  // Returns UKM source id for the currently displayed page.
--  // Intentionally kept private, prefer using
--  // render_frame_host->GetPageUkmSourceId() if you already have a
--  // |render_frame_host| reference or GetMainFrame()->GetPageUkmSourceId()
--  // if you don't.
--  ukm::SourceId GetCurrentPageUkmSourceId() override;
--
-   std::set<RenderViewHostImpl*> GetRenderViewHostsIncludingBackForwardCached();
- 
-   // Sets the hardware-related fields in |prefs| that are slow to compute.  The
-@@ -1792,11 +1774,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
-   // The last published background color.
-   base::Optional<SkColor> last_sent_background_color_;
- 
--  // SourceId of the last committed navigation, either a cross-document or
--  // same-document navigation.
--  ukm::SourceId last_committed_source_id_including_same_document_ =
--      ukm::kInvalidSourceId;
--
-   // Data for misc internal state ----------------------------------------------
- 
-   // When either > 0, the WebContents is currently being captured (e.g.,
-@@ -1947,8 +1924,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
-   // is created, and broadcast to all frames when it changes.
-   ui::AXMode accessibility_mode_;
- 
--  std::unique_ptr<content::AccessibilityEventRecorder> event_recorder_;
--
-   // Monitors power levels for audio streams associated with this WebContents.
-   AudioStreamMonitor audio_stream_monitor_;
- 

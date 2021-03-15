@@ -1,19 +1,13 @@
 diff --git a/components/page_info/page_info.cc b/components/page_info/page_info.cc
-index 3de10082bfaa..70985f66cb6b 100644
+index 6ca97eaca7a0..a05269db88dd 100644
 --- a/components/page_info/page_info.cc
 +++ b/components/page_info/page_info.cc
-@@ -38,22 +38,16 @@
- #include "components/permissions/permission_decision_auto_blocker.h"
- #include "components/permissions/permission_manager.h"
- #include "components/permissions/permission_result.h"
--#include "components/permissions/permission_uma_util.h"
- #include "components/permissions/permission_util.h"
- #if defined(OS_ANDROID)
- #include "components/resources/android/theme_resources.h"
+@@ -45,15 +45,11 @@
  #endif
+ #include "build/chromeos_buildflags.h"
  #include "components/safe_browsing/buildflags.h"
--#include "components/safe_browsing/content/password_protection/metrics_util.h"
 -#include "components/safe_browsing/content/password_protection/password_protection_service.h"
+-#include "components/safe_browsing/core/password_protection/metrics_util.h"
 -#include "components/safe_browsing/core/proto/csd.pb.h"
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/signin/public/identity_manager/account_info.h"
@@ -21,11 +15,10 @@ index 3de10082bfaa..70985f66cb6b 100644
  #include "components/strings/grit/components_chromium_strings.h"
  #include "components/strings/grit/components_strings.h"
 -#include "components/subresource_filter/core/browser/subresource_filter_features.h"
--#include "components/ukm/content/source_url_recorder.h"
+ #include "components/ukm/content/source_url_recorder.h"
  #include "components/url_formatter/elide_url.h"
  #include "content/public/browser/browser_context.h"
- #include "content/public/browser/browser_thread.h"
-@@ -64,8 +58,6 @@
+@@ -65,8 +61,6 @@
  #include "net/cert/x509_certificate.h"
  #include "net/ssl/ssl_cipher_suite_names.h"
  #include "net/ssl/ssl_connection_status_flags.h"
@@ -34,7 +27,7 @@ index 3de10082bfaa..70985f66cb6b 100644
  #include "third_party/boringssl/src/include/openssl/ssl.h"
  #include "ui/base/l10n/l10n_util.h"
  #include "url/origin.h"
-@@ -74,8 +66,6 @@ using base::ASCIIToUTF16;
+@@ -75,8 +69,6 @@ using base::ASCIIToUTF16;
  using base::UTF16ToUTF8;
  using base::UTF8ToUTF16;
  using content::BrowserThread;
@@ -43,7 +36,7 @@ index 3de10082bfaa..70985f66cb6b 100644
  
  namespace {
  
-@@ -133,12 +123,7 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
+@@ -133,12 +125,7 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
    // Note |ContentSettingsType::ADS| will show up regardless of its default
    // value when it has been activated on the current origin.
    if (info.type == ContentSettingsType::ADS) {
@@ -57,7 +50,7 @@ index 3de10082bfaa..70985f66cb6b 100644
    }
  
    if (info.type == ContentSettingsType::SOUND) {
-@@ -306,7 +291,6 @@ PageInfo::PageInfo(std::unique_ptr<PageInfoDelegate> delegate,
+@@ -301,7 +288,6 @@ PageInfo::PageInfo(std::unique_ptr<PageInfoDelegate> delegate,
        show_info_bar_(false),
        site_url_(url),
        site_identity_status_(SITE_IDENTITY_STATUS_UNKNOWN),
@@ -65,7 +58,7 @@ index 3de10082bfaa..70985f66cb6b 100644
        safety_tip_info_({security_state::SafetyTipStatus::kUnknown, GURL()}),
        site_connection_status_(SITE_CONNECTION_STATUS_UNKNOWN),
        show_ssl_decision_revoke_button_(false),
-@@ -447,13 +431,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
+@@ -442,13 +428,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
  
    UMA_HISTOGRAM_ENUMERATION("WebsiteSettings.Action", action, PAGE_INFO_COUNT);
  
@@ -79,7 +72,7 @@ index 3de10082bfaa..70985f66cb6b 100644
    base::UmaHistogramEnumeration(
        security_state::GetSafetyTipHistogramName(
            "Security.SafetyTips.PageInfo.Action", safety_tip_info_.status),
-@@ -545,11 +522,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
+@@ -540,11 +519,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
      }
    }
  

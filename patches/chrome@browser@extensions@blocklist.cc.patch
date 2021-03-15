@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/blocklist.cc b/chrome/browser/extensions/blocklist.cc
-index cc678a66b370..5ac48117f0a4 100644
+index 4ab3bb5d05e5..f9da21b1d6c1 100644
 --- a/chrome/browser/extensions/blocklist.cc
 +++ b/chrome/browser/extensions/blocklist.cc
-@@ -18,118 +18,18 @@
+@@ -18,119 +18,18 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/extensions/blocklist_factory.h"
  #include "chrome/browser/extensions/blocklist_state_fetcher.h"
@@ -42,8 +42,8 @@ index cc678a66b370..5ac48117f0a4 100644
 -    database_changed_callback_list_.Notify();
 -  }
 -
--  std::unique_ptr<base::RepeatingClosureList::Subscription>
--  RegisterDatabaseChangedCallback(const base::RepeatingClosure& cb) {
+-  base::CallbackListSubscription RegisterDatabaseChangedCallback(
+-      const base::RepeatingClosure& cb) {
 -    return database_changed_callback_list_.Add(cb);
 -  }
 -
@@ -118,10 +118,11 @@ index cc678a66b370..5ac48117f0a4 100644
 -
 -  DISALLOW_COPY_AND_ASSIGN(SafeBrowsingClientImpl);
 -};
- 
+-
  void CheckOneExtensionState(Blocklist::IsBlocklistedCallback callback,
                              const Blocklist::BlocklistStateMap& state_map) {
-@@ -163,24 +63,7 @@ Blocklist::Observer::~Observer() {
+   std::move(callback).Run(state_map.empty() ? NOT_BLOCKLISTED
+@@ -163,24 +62,7 @@ Blocklist::Observer::~Observer() {
    blocklist_->RemoveObserver(this);
  }
  
@@ -146,7 +147,7 @@ index cc678a66b370..5ac48117f0a4 100644
    ObserveNewDatabase();
  }
  
-@@ -195,19 +78,11 @@ void Blocklist::GetBlocklistedIDs(const std::set<std::string>& ids,
+@@ -195,19 +77,11 @@ void Blocklist::GetBlocklistedIDs(const std::set<std::string>& ids,
                                    GetBlocklistedIDsCallback callback) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
@@ -167,7 +168,7 @@ index cc678a66b370..5ac48117f0a4 100644
  }
  
  void Blocklist::GetMalwareIDs(const std::set<std::string>& ids,
-@@ -338,29 +213,8 @@ void Blocklist::RemoveObserver(Observer* observer) {
+@@ -339,29 +213,8 @@ void Blocklist::RemoveObserver(Observer* observer) {
    observers_.RemoveObserver(observer);
  }
  
@@ -186,15 +187,15 @@ index cc678a66b370..5ac48117f0a4 100644
 -  auto database_manager = GetDatabaseManager();
 -  if (database_manager.get()) {
 -    // Using base::Unretained is safe because when this object goes away, the
--    // subscription to the callback list will automatically be destroyed.
+-    // subscription from the callback list will automatically be destroyed.
 -    database_updated_subscription_ =
 -        database_manager.get()->RegisterDatabaseUpdatedCallback(
 -            base::BindRepeating(&Blocklist::NotifyObservers,
 -                                base::Unretained(this)));
 -  } else {
--    database_updated_subscription_.reset();
+-    database_updated_subscription_ = {};
 -  }
-+  database_updated_subscription_.reset();
++  database_updated_subscription_ = {};
  }
  
  void Blocklist::NotifyObservers() {

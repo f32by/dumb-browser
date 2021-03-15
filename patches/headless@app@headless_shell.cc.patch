@@ -1,17 +1,8 @@
 diff --git a/headless/app/headless_shell.cc b/headless/app/headless_shell.cc
-index 17e23c3af762..5f71f7b28f66 100644
+index af0460d40fba..824be717a3fd 100644
 --- a/headless/app/headless_shell.cc
 +++ b/headless/app/headless_shell.cc
-@@ -51,8 +51,6 @@
- #include "ui/gfx/geometry/size.h"
- 
- #if defined(OS_WIN)
--#include "components/crash/core/app/crash_switches.h"
--#include "components/crash/core/app/run_as_crashpad_handler_win.h"
- #include "sandbox/win/src/sandbox_types.h"
- #endif
- 
-@@ -641,11 +639,6 @@ int HeadlessShellMain(HINSTANCE instance,
+@@ -642,11 +642,6 @@ int HeadlessShellMain(HINSTANCE instance,
    std::string process_type =
        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
            ::switches::kProcessType);

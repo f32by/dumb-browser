@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/mixed_content_download_blocking.cc b/chrome/browser/download/mixed_content_download_blocking.cc
-index 85d98a7dcf52..73d689092d15 100644
+index 5165251df36d..00ea3b4b0b35 100644
 --- a/chrome/browser/download/mixed_content_download_blocking.cc
 +++ b/chrome/browser/download/mixed_content_download_blocking.cc
 @@ -17,7 +17,6 @@
@@ -9,7 +9,7 @@ index 85d98a7dcf52..73d689092d15 100644
 -#include "components/download/public/common/download_stats.h"
  #include "content/public/browser/download_item_utils.h"
  #include "content/public/browser/web_contents.h"
- #include "third_party/blink/public/common/loader/network_utils.h"
+ #include "services/network/public/cpp/is_potentially_trustworthy.h"
 @@ -25,7 +24,6 @@
  #include "url/gurl.h"
  #include "url/origin.h"

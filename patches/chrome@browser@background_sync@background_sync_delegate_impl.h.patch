@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/background_sync/background_sync_delegate_impl.h b/chrome/browser/background_sync/background_sync_delegate_impl.h
-index aa3eda9164c6..44802eff3ab9 100644
+index 74b3c8aecfd6..795879f93049 100644
 --- a/chrome/browser/background_sync/background_sync_delegate_impl.h
 +++ b/chrome/browser/background_sync/background_sync_delegate_impl.h
 @@ -15,10 +15,6 @@
@@ -29,5 +29,5 @@ index aa3eda9164c6..44802eff3ab9 100644
    bool off_the_record_;
 -  ukm::UkmBackgroundRecorderService* ukm_background_service_;
    // Same lifetime as |profile_|.
-   SiteEngagementService* site_engagement_service_;
+   site_engagement::SiteEngagementService* site_engagement_service_;
    std::set<url::Origin> suspended_periodic_sync_origins_;

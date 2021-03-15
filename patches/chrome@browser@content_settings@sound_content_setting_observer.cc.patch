@@ -1,21 +1,8 @@
 diff --git a/chrome/browser/content_settings/sound_content_setting_observer.cc b/chrome/browser/content_settings/sound_content_setting_observer.cc
-index fe784bb734e6..d9af4d951480 100644
+index 6a089fe525b4..1f61af95960b 100644
 --- a/chrome/browser/content_settings/sound_content_setting_observer.cc
 +++ b/chrome/browser/content_settings/sound_content_setting_observer.cc
-@@ -13,12 +13,10 @@
- #include "components/content_settings/core/common/content_settings_utils.h"
- #include "components/pref_registry/pref_registry_syncable.h"
- #include "components/prefs/pref_service.h"
--#include "components/ukm/content/source_url_recorder.h"
- #include "content/public/browser/navigation_handle.h"
- #include "content/public/browser/render_view_host.h"
- #include "content/public/common/url_constants.h"
- #include "media/base/media_switches.h"
--#include "services/metrics/public/cpp/ukm_builders.h"
- #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
- #include "third_party/blink/public/mojom/autoplay/autoplay.mojom.h"
- 
-@@ -28,7 +26,7 @@
+@@ -27,7 +27,7 @@
  
  SoundContentSettingObserver::SoundContentSettingObserver(
      content::WebContents* contents)
@@ -24,7 +11,7 @@ index fe784bb734e6..d9af4d951480 100644
    Profile* profile =
        Profile::FromBrowserContext(web_contents()->GetBrowserContext());
    host_content_settings_map_ =
-@@ -91,7 +89,6 @@ void SoundContentSettingObserver::DidFinishNavigation(
+@@ -87,7 +87,6 @@ void SoundContentSettingObserver::DidFinishNavigation(
    if (navigation_handle->IsInMainFrame() && navigation_handle->HasCommitted() &&
        !navigation_handle->IsSameDocument()) {
      MuteOrUnmuteIfNecessary();
@@ -32,7 +19,7 @@ index fe784bb734e6..d9af4d951480 100644
    }
  }
  
-@@ -130,6 +127,10 @@ void SoundContentSettingObserver::MuteOrUnmuteIfNecessary() {
+@@ -126,6 +125,10 @@ void SoundContentSettingObserver::MuteOrUnmuteIfNecessary() {
  
    TabMutedReason reason = chrome::GetTabAudioMutedReason(web_contents());
  
@@ -43,7 +30,7 @@ index fe784bb734e6..d9af4d951480 100644
    // Do not override the decisions of an extension.
    if (reason == TabMutedReason::EXTENSION)
      return;
-@@ -164,23 +165,9 @@ void SoundContentSettingObserver::CheckSoundBlocked(bool is_audible) {
+@@ -160,23 +163,9 @@ void SoundContentSettingObserver::CheckSoundBlocked(bool is_audible) {
              web_contents()->GetMainFrame());
      if (settings)
        settings->OnAudioBlocked();

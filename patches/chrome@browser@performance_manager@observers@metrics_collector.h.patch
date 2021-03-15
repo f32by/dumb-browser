@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/performance_manager/observers/metrics_collector.h b/chrome/browser/performance_manager/observers/metrics_collector.h
-index 1ef40f9dbb27..cd7e300fabf1 100644
+index 1ef40f9dbb27..71062b83dbd5 100644
 --- a/chrome/browser/performance_manager/observers/metrics_collector.h
 +++ b/chrome/browser/performance_manager/observers/metrics_collector.h
-@@ -45,7 +45,6 @@ class MetricsCollector : public FrameNode::ObserverDefaultImpl,
- 
-   // PageNodeObserver implementation:
-   void OnIsVisibleChanged(const PageNode* page_node) override;
--  void OnUkmSourceIdChanged(const PageNode* page_node) override;
-   void OnFaviconUpdated(const PageNode* page_node) override;
-   void OnTitleUpdated(const PageNode* page_node) override;
- 
-@@ -82,7 +81,6 @@ class MetricsCollector : public FrameNode::ObserverDefaultImpl,
+@@ -82,7 +82,6 @@ class MetricsCollector : public FrameNode::ObserverDefaultImpl,
  
   private:
    static MetricsReportRecord* GetMetricsReportRecord(const PageNode* page_node);

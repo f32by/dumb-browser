@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index dea633771818..0b087f29021f 100644
+index d6e0a910ef96..2715e277fcfe 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
-@@ -28,7 +28,6 @@
- #include "mojo/public/cpp/bindings/pending_receiver.h"
- #include "mojo/public/cpp/bindings/pending_remote.h"
- #include "ppapi/buildflags/buildflags.h"
--#include "services/metrics/public/cpp/ukm_source_id.h"
- #include "services/network/public/mojom/network_context.mojom-forward.h"
- #include "third_party/blink/public/common/loader/previews_state.h"
- 
-@@ -65,12 +64,6 @@ class PreviewsDecider;
+@@ -67,12 +67,6 @@ class PreviewsDecider;
  class PreviewsUserData;
  }  // namespace previews
  
@@ -23,31 +15,7 @@ index dea633771818..0b087f29021f 100644
  namespace sandbox {
  class SeatbeltExecClient;
  }  // namespace sandbox
-@@ -465,7 +458,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
-       int frame_tree_node_id) override;
-   void RegisterNonNetworkNavigationURLLoaderFactories(
-       int frame_tree_node_id,
--      ukm::SourceIdObj ukm_source_id,
-       NonNetworkURLLoaderFactoryMap* factories) override;
-   void RegisterNonNetworkWorkerMainResourceURLLoaderFactories(
-       content::BrowserContext* browser_context,
-@@ -484,7 +476,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
-       URLLoaderFactoryType type,
-       const url::Origin& request_initiator,
-       base::Optional<int64_t> navigation_id,
--      ukm::SourceIdObj ukm_source_id,
-       mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver,
-       mojo::PendingRemote<network::mojom::TrustedURLLoaderHeaderClient>*
-           header_client,
-@@ -698,7 +689,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
-   bool ShouldAllowInsecurePrivateNetworkRequests(
-       content::BrowserContext* browser_context,
-       const GURL& url) override;
--  ukm::UkmService* GetUkmService() override;
- 
-   void OnKeepaliveRequestStarted() override;
-   void OnKeepaliveRequestFinished() override;
-@@ -754,26 +744,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -781,26 +775,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  
@@ -74,7 +42,7 @@ index dea633771818..0b087f29021f 100644
    void OnKeepaliveTimerFired(
        std::unique_ptr<ScopedKeepAlive> keep_alive_handle);
  
-@@ -781,10 +751,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -808,10 +782,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    // Parts are deleted in the reverse order they are added.
    std::vector<ChromeContentBrowserClientParts*> extra_parts_;
  

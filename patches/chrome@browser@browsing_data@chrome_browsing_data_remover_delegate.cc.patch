@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-index 31978bf56193..20c90f78269b 100644
+index d68b83db09ea..cd42c7853bec 100644
 --- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 +++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-@@ -31,7 +31,6 @@
+@@ -33,7 +33,6 @@
  #include "chrome/browser/browsing_data/navigation_entry_remover.h"
  #include "chrome/browser/chrome_notification_types.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -10,7 +10,7 @@ index 31978bf56193..20c90f78269b 100644
  #include "chrome/browser/custom_handlers/protocol_handler_registry.h"
  #include "chrome/browser/custom_handlers/protocol_handler_registry_factory.h"
  #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
-@@ -46,8 +45,6 @@
+@@ -48,8 +47,6 @@
  #include "chrome/browser/history/history_service_factory.h"
  #include "chrome/browser/history/web_history_service_factory.h"
  #include "chrome/browser/language/url_language_histogram_factory.h"
@@ -19,15 +19,15 @@ index 31978bf56193..20c90f78269b 100644
  #include "chrome/browser/login_detection/login_detection_prefs.h"
  #include "chrome/browser/media/history/media_history_keyed_service.h"
  #include "chrome/browser/media/history/media_history_keyed_service_factory.h"
-@@ -66,7 +63,6 @@
- #include "chrome/browser/previews/previews_service.h"
- #include "chrome/browser/previews/previews_service_factory.h"
+@@ -73,7 +70,6 @@
+ #include "chrome/browser/privacy_sandbox/privacy_sandbox_settings.h"
+ #include "chrome/browser/privacy_sandbox/privacy_sandbox_settings_factory.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
  #include "chrome/browser/spellchecker/spellcheck_factory.h"
  #include "chrome/browser/spellchecker/spellcheck_service.h"
-@@ -578,11 +574,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -584,11 +580,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
  
      AvailabilityProber::ClearData(prefs);
  
@@ -36,10 +36,10 @@ index 31978bf56193..20c90f78269b 100644
 -    if (lite_video_keyed_service)
 -      lite_video_keyed_service->ClearData(delete_begin_, delete_end_);
 -
- #if defined(OS_ANDROID)
-     OomInterventionDecider* oom_intervention_decider =
-         OomInterventionDecider::GetForBrowserContext(profile_);
-@@ -629,7 +620,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+     PrefetchProxyService* prefetch_proxy_service =
+         PrefetchProxyServiceFactory::GetForProfile(profile_);
+     if (prefetch_proxy_service) {
+@@ -641,7 +632,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      }
  #endif
  
@@ -47,7 +47,7 @@ index 31978bf56193..20c90f78269b 100644
  
      FindBarStateFactory::GetForBrowserContext(profile_)->SetLastSearchText(
          base::string16());
-@@ -656,19 +646,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -668,19 +658,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
         content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB)) {
      base::RecordAction(UserMetricsAction("ClearBrowsingData_Cookies"));
  
@@ -66,4 +66,4 @@ index 31978bf56193..20c90f78269b 100644
 -
      if (filter_builder->GetMode() ==
          BrowsingDataFilterBuilder::Mode::kPreserve) {
-       MediaDeviceIDSalt::Reset(profile_->GetPrefs());
+       PrivacySandboxSettings* privacy_sandbox_settings =

@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/resource_coordinator/tab_manager.h b/chrome/browser/resource_coordinator/tab_manager.h
-index 51da5630d990..b7a9b9fdbb96 100644
+index 44ef4576518f..204251257959 100644
 --- a/chrome/browser/resource_coordinator/tab_manager.h
 +++ b/chrome/browser/resource_coordinator/tab_manager.h
-@@ -48,7 +48,6 @@ class BackgroundTabNavigationThrottle;
- #if defined(OS_CHROMEOS)
+@@ -49,7 +49,6 @@ class BackgroundTabNavigationThrottle;
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
  class TabManagerDelegate;
  #endif
 -class TabManagerStatsCollector;
  
  // TabManager is responsible for triggering tab lifecycle state transitions.
  //
-@@ -162,8 +161,6 @@ class TabManager : public LifecycleUnitObserver,
+@@ -163,8 +162,6 @@ class TabManager : public LifecycleUnitObserver,
    static bool IsTabRestoredInForeground(content::WebContents* web_contents);
  
   private:
@@ -19,7 +19,7 @@ index 51da5630d990..b7a9b9fdbb96 100644
    FRIEND_TEST_ALL_PREFIXES(TabManagerTest, AutoDiscardable);
    FRIEND_TEST_ALL_PREFIXES(TabManagerTest, BackgroundTabLoadingMode);
    FRIEND_TEST_ALL_PREFIXES(TabManagerTest, BackgroundTabLoadingSlots);
-@@ -325,8 +322,6 @@ class TabManager : public LifecycleUnitObserver,
+@@ -326,8 +323,6 @@ class TabManager : public LifecycleUnitObserver,
      memory_pressure_listener_.reset();
    }
  
@@ -28,7 +28,7 @@ index 51da5630d990..b7a9b9fdbb96 100644
    // Returns true if the background tab force load timer is running.
    bool IsForceLoadTimerRunning() const;
  
-@@ -374,10 +369,6 @@ class TabManager : public LifecycleUnitObserver,
+@@ -375,10 +370,6 @@ class TabManager : public LifecycleUnitObserver,
    // in parallel.
    size_t loading_slots_;
  

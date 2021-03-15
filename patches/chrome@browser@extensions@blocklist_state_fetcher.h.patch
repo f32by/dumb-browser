@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/blocklist_state_fetcher.h b/chrome/browser/extensions/blocklist_state_fetcher.h
-index 9da2debfcb88..f30086d866e0 100644
+index 7ae22345f160..998f987eeb68 100644
 --- a/chrome/browser/extensions/blocklist_state_fetcher.h
 +++ b/chrome/browser/extensions/blocklist_state_fetcher.h
-@@ -11,10 +11,11 @@
+@@ -11,11 +11,13 @@
  #include <string>
  
  #include "base/callback.h"
@@ -11,25 +11,25 @@ index 9da2debfcb88..f30086d866e0 100644
  #include "base/memory/weak_ptr.h"
 -#include "components/safe_browsing/core/db/util.h"
  #include "extensions/browser/blocklist_state.h"
-+#include "url/gurl.h"
  
++class GURL;
++
  namespace network {
  class SharedURLLoaderFactory;
-@@ -34,8 +35,6 @@ class BlocklistStateFetcher {
+ class SimpleURLLoader;
+@@ -34,8 +36,6 @@ class BlocklistStateFetcher {
  
-   virtual void Request(const std::string& id, const RequestCallback& callback);
+   virtual void Request(const std::string& id, RequestCallback callback);
  
 -  void SetSafeBrowsingConfig(const safe_browsing::V4ProtocolConfig& config);
 -
   protected:
    void OnURLLoaderComplete(network::SimpleURLLoader* url_loader,
                             std::unique_ptr<std::string> response_body);
-@@ -52,9 +51,6 @@ class BlocklistStateFetcher {
+@@ -54,7 +54,6 @@ class BlocklistStateFetcher {
  
-   GURL RequestUrl() const;
+   void SendRequest(const std::string& id);
  
--  void SendRequest(const std::string& id);
--
 -  std::unique_ptr<safe_browsing::V4ProtocolConfig> safe_browsing_config_;
    scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
  

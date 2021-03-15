@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/download/download_target_determiner.cc b/chrome/browser/download/download_target_determiner.cc
-index cdeecb35a998..6dcabf2700a8 100644
+index 21ab45886df2..8612673370c7 100644
 --- a/chrome/browser/download/download_target_determiner.cc
 +++ b/chrome/browser/download/download_target_determiner.cc
-@@ -20,7 +20,6 @@
- #include "chrome/browser/download/chrome_download_manager_delegate.h"
- #include "chrome/browser/download/download_crx_util.h"
- #include "chrome/browser/download/download_prefs.h"
--#include "chrome/browser/download/download_stats.h"
- #include "chrome/browser/history/history_service_factory.h"
- #include "chrome/browser/profiles/profile.h"
- #include "chrome/common/pref_names.h"
-@@ -28,7 +27,6 @@
+@@ -28,7 +28,6 @@
  #include "components/download/public/common/download_interrupt_reasons.h"
  #include "components/history/core/browser/history_service.h"
  #include "components/prefs/pref_service.h"
@@ -18,7 +10,7 @@ index cdeecb35a998..6dcabf2700a8 100644
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -61,24 +59,12 @@
+@@ -61,24 +60,12 @@
  using content::BrowserThread;
  using download::DownloadItem;
  using download::DownloadPathReservationTracker;
@@ -43,16 +35,15 @@ index cdeecb35a998..6dcabf2700a8 100644
  #if defined(OS_WIN)
  // Keeps track of whether Adobe Reader is up to date.
  bool g_is_adobe_reader_up_to_date_ = false;
-@@ -101,8 +87,6 @@ DownloadTargetDeterminer::DownloadTargetDeterminer(
-       should_notify_extensions_(false),
+@@ -102,7 +89,6 @@ DownloadTargetDeterminer::DownloadTargetDeterminer(
        create_target_directory_(false),
        conflict_action_(conflict_action),
--      danger_type_(download->GetDangerType()),
+       danger_type_(download->GetDangerType()),
 -      danger_level_(DownloadFileType::NOT_DANGEROUS),
        virtual_path_(initial_virtual_path),
        is_filetype_handled_safely_(false),
  #if defined(OS_ANDROID)
-@@ -199,17 +183,9 @@ DownloadTargetDeterminer::Result
+@@ -199,17 +185,11 @@ DownloadTargetDeterminer::Result
    // Transient download should use the existing path.
    if (download_->IsTransient()) {
      if (is_forced_path) {
@@ -63,14 +54,14 @@ index cdeecb35a998..6dcabf2700a8 100644
 -      RecordDownloadPathGeneration(
 -          DownloadPathGenerationEvent::USE_EXISTING_VIRTUAL_PATH, true);
      } else {
--      // No path is provided, we have no idea what the target path is. Stop the
--      // target determination process and wait for self deletion.
+       // No path is provided, we have no idea what the target path is. Stop the
+       // target determination process and wait for self deletion.
 -      RecordDownloadPathGeneration(DownloadPathGenerationEvent::NO_VALID_PATH,
 -                                   true);
        ScheduleCallbackAndDeleteSelf(
            download::DOWNLOAD_INTERRUPT_REASON_USER_CANCELED);
        return QUIT_DOLOOP;
-@@ -231,8 +207,6 @@ DownloadTargetDeterminer::Result
+@@ -231,8 +211,6 @@ DownloadTargetDeterminer::Result
      // and reuse the selection.
      confirmation_reason_ = NeedsConfirmation(virtual_path_);
      conflict_action_ = DownloadPathReservationTracker::OVERWRITE;
@@ -79,7 +70,7 @@ index cdeecb35a998..6dcabf2700a8 100644
    } else if (!is_forced_path) {
      // If we don't have a forced path, we should construct a path for the
      // download. Forced paths are only specified for programmatic downloads
-@@ -247,12 +221,8 @@ DownloadTargetDeterminer::Result
+@@ -247,12 +225,8 @@ DownloadTargetDeterminer::Result
        // If the user is going to be prompted and the user has been prompted
        // before, then always prefer the last directory that the user selected.
        target_directory = download_prefs_->SaveFilePath();
@@ -92,7 +83,7 @@ index cdeecb35a998..6dcabf2700a8 100644
      }
      virtual_path_ = target_directory.Append(generated_filename);
      should_notify_extensions_ = true;
-@@ -260,8 +230,6 @@ DownloadTargetDeterminer::Result
+@@ -260,8 +234,6 @@ DownloadTargetDeterminer::Result
    } else {
      conflict_action_ = DownloadPathReservationTracker::OVERWRITE;
      virtual_path_ = download_->GetForcedFilePath();
@@ -101,7 +92,7 @@ index cdeecb35a998..6dcabf2700a8 100644
      // If this is a resumed download which was previously interrupted due to an
      // issue with the forced path, the user is still not prompted. If the path
      // supplied to a programmatic download is invalid, then the caller needs to
-@@ -292,13 +260,6 @@ base::FilePath DownloadTargetDeterminer::GenerateFileName() const {
+@@ -292,13 +264,6 @@ base::FilePath DownloadTargetDeterminer::GenerateFileName() const {
        download_->GetURL(), download_->GetContentDisposition(), referrer_charset,
        suggested_filename, sniffed_mime_type, default_filename);
  
@@ -115,7 +106,7 @@ index cdeecb35a998..6dcabf2700a8 100644
    // If no mime type or explicitly specified a name, don't replace file
    // extension.
    if (sniffed_mime_type.empty() || !suggested_filename.empty())
-@@ -435,7 +396,6 @@ void DownloadTargetDeterminer::ReserveVirtualPathDone(
+@@ -436,7 +401,6 @@ void DownloadTargetDeterminer::ReserveVirtualPathDone(
    DVLOG(20) << "Reserved path: " << path.AsUTF8Unsafe()
              << " Result:" << static_cast<int>(result);
    DCHECK_EQ(STATE_PROMPT_USER_FOR_DOWNLOAD_PATH, next_state_);
@@ -123,7 +114,7 @@ index cdeecb35a998..6dcabf2700a8 100644
    if (download_->IsTransient()) {
      DCHECK_EQ(DownloadConfirmationReason::NONE, confirmation_reason_)
          << "Transient download should not ask the user for confirmation.";
-@@ -534,7 +494,6 @@ void DownloadTargetDeterminer::RequestConfirmationDone(
+@@ -535,7 +499,6 @@ void DownloadTargetDeterminer::RequestConfirmationDone(
    download_schedule_ = std::move(download_schedule);
  #endif
    if (result == DownloadConfirmationResult::CANCELED) {
@@ -131,42 +122,16 @@ index cdeecb35a998..6dcabf2700a8 100644
      ScheduleCallbackAndDeleteSelf(
          download::DOWNLOAD_INTERRUPT_REASON_USER_CANCELED);
      return;
-@@ -779,24 +738,12 @@ DownloadTargetDeterminer::Result
-   DCHECK(!virtual_path_.empty());
-   next_state_ = STATE_CHECK_VISITED_REFERRER_BEFORE;
- 
--  // If user has validated a dangerous download, don't check.
--  if (danger_type_ == download::DOWNLOAD_DANGER_TYPE_USER_VALIDATED)
--    return CONTINUE;
--
--  delegate_->CheckDownloadUrl(
--      download_,
--      virtual_path_,
--      base::Bind(&DownloadTargetDeterminer::CheckDownloadUrlDone,
--                 weak_ptr_factory_.GetWeakPtr()));
--  return QUIT_DOLOOP;
-+  return CONTINUE;
- }
- 
--void DownloadTargetDeterminer::CheckDownloadUrlDone(
--    download::DownloadDangerType danger_type) {
-+void DownloadTargetDeterminer::CheckDownloadUrlDone() {
-   DCHECK_CURRENTLY_ON(BrowserThread::UI);
--  DVLOG(20) << "URL Check Result:" << danger_type;
-   DCHECK_EQ(STATE_CHECK_VISITED_REFERRER_BEFORE, next_state_);
--  danger_type_ = danger_type;
-   DoLoop();
- }
- 
-@@ -805,50 +752,6 @@ DownloadTargetDeterminer::Result
+@@ -804,51 +767,6 @@ DownloadTargetDeterminer::Result
+     DownloadTargetDeterminer::DoCheckVisitedReferrerBefore() {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
    next_state_ = STATE_DETERMINE_INTERMEDIATE_PATH;
- 
+-
 -  // Checking if there are prior visits to the referrer is only necessary if the
 -  // danger level of the download depends on the file type.
 -  if (danger_type_ != download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS &&
 -      danger_type_ != download::DOWNLOAD_DANGER_TYPE_MAYBE_DANGEROUS_CONTENT &&
--      danger_type_ != download::DOWNLOAD_DANGER_TYPE_WHITELISTED_BY_POLICY) {
+-      danger_type_ != download::DOWNLOAD_DANGER_TYPE_ALLOWLISTED_BY_POLICY) {
 -    return CONTINUE;
 -  }
 -
@@ -209,7 +174,7 @@ index cdeecb35a998..6dcabf2700a8 100644
    return CONTINUE;
  }
  
-@@ -856,11 +759,6 @@ void DownloadTargetDeterminer::CheckVisitedReferrerBeforeDone(
+@@ -856,11 +774,7 @@ void DownloadTargetDeterminer::CheckVisitedReferrerBeforeDone(
      bool visited_referrer_before) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
    DCHECK_EQ(STATE_DETERMINE_INTERMEDIATE_PATH, next_state_);
@@ -218,91 +183,27 @@ index cdeecb35a998..6dcabf2700a8 100644
 -  if (danger_level_ != DownloadFileType::NOT_DANGEROUS &&
 -      danger_type_ == download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS)
 -    danger_type_ = download::DOWNLOAD_DANGER_TYPE_DANGEROUS_FILE;
++  danger_type_ = download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS;
    DoLoop();
  }
  
-@@ -902,58 +800,31 @@ DownloadTargetDeterminer::Result
-   // target path. In practice the temporary download file that was created prior
-   // to download filename determination is already named
-   // download_->GetForcedFilePath().
--  if (danger_type_ == download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS &&
--      !download_->GetForcedFilePath().empty()) {
-+  if(!download_->GetForcedFilePath().empty()) {
-     DCHECK_EQ(download_->GetForcedFilePath().value(), local_path_.value());
-     intermediate_path_ = local_path_;
-     return COMPLETE;
-   }
- 
-   // Transient downloads don't need to be renamed to intermediate file.
--  if (danger_type_ == download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS &&
--      download_->IsTransient()) {
-+  if(download_->IsTransient()) {
-     intermediate_path_ = local_path_;
-     return COMPLETE;
-   }
- 
--  // Other safe downloads get a .crdownload suffix for their intermediate name.
--  if (danger_type_ == download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS) {
--    intermediate_path_ = GetCrDownloadPath(local_path_);
--    return COMPLETE;
--  }
--
-   // If this is a resumed download, then re-use the existing intermediate path
-   // if one is available. A resumed download shouldn't cause a non-dangerous
-   // download to be considered dangerous upon resumption. Therefore the
-   // intermediate file should already be in the correct form.
-   if (is_resumption_ && !download_->GetFullPath().empty() &&
-       local_path_.DirName() == download_->GetFullPath().DirName()) {
--    DCHECK_NE(download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS,
--              download_->GetDangerType());
-     DCHECK_EQ(kCrdownloadSuffix, download_->GetFullPath().Extension());
-     intermediate_path_ = download_->GetFullPath();
-     return COMPLETE;
-   }
- 
--  // Dangerous downloads receive a random intermediate name that looks like:
--  // 'Unconfirmed <random>.crdownload'.
--  const base::FilePath::CharType kUnconfirmedFormatSuffix[] =
--      FILE_PATH_LITERAL(" %d.crdownload");
--  // Range of the <random> uniquifier.
--  const int kUnconfirmedUniquifierRange = 1000000;
--#if defined(OS_WIN)
--  base::string16 unconfirmed_format =
--      l10n_util::GetStringUTF16(IDS_DOWNLOAD_UNCONFIRMED_PREFIX);
--#else
--  std::string unconfirmed_format =
--      l10n_util::GetStringUTF8(IDS_DOWNLOAD_UNCONFIRMED_PREFIX);
--#endif
--  unconfirmed_format.append(kUnconfirmedFormatSuffix);
--
--  base::FilePath::StringType file_name = base::StringPrintf(
--      unconfirmed_format.c_str(),
--      base::RandInt(0, kUnconfirmedUniquifierRange));
--  intermediate_path_ = local_path_.DirName().Append(file_name);
-+  // Other safe downloads get a .crdownload suffix for their intermediate name.
-+  intermediate_path_ = GetCrDownloadPath(local_path_);
-   return COMPLETE;
- }
- 
-@@ -964,8 +835,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
-             << " Local:" << local_path_.AsUTF8Unsafe()
+@@ -965,7 +879,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
              << " Intermediate:" << intermediate_path_.AsUTF8Unsafe()
              << " Confirmation reason:" << static_cast<int>(confirmation_reason_)
--            << " Danger type:" << danger_type_
+             << " Danger type:" << danger_type_
 -            << " Danger level:" << danger_level_
              << " Result:" << static_cast<int>(result);
    std::unique_ptr<DownloadTargetInfo> target_info(new DownloadTargetInfo);
  
-@@ -976,8 +845,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
-                confirmation_reason_ != DownloadConfirmationReason::NONE
+@@ -977,7 +890,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
             ? DownloadItem::TARGET_DISPOSITION_PROMPT
             : DownloadItem::TARGET_DISPOSITION_OVERWRITE);
--  target_info->danger_type = danger_type_;
+   target_info->danger_type = danger_type_;
 -  target_info->danger_level = danger_level_;
    target_info->intermediate_path = intermediate_path_;
    target_info->mime_type = mime_type_;
    target_info->is_filetype_handled_safely = is_filetype_handled_safely_;
-@@ -1066,55 +933,6 @@ bool DownloadTargetDeterminer::HasPromptedForPath() const {
+@@ -1066,55 +978,6 @@ bool DownloadTargetDeterminer::HasPromptedForPath() const {
                                  DownloadItem::TARGET_DISPOSITION_PROMPT);
  }
  

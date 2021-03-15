@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/settings/people_handler.cc b/chrome/browser/ui/webui/settings/people_handler.cc
-index e326ae815ea7..54dbba59c73b 100644
+index 5da199f1bea9..2a18e4b3e319 100644
 --- a/chrome/browser/ui/webui/settings/people_handler.cc
 +++ b/chrome/browser/ui/webui/settings/people_handler.cc
-@@ -19,7 +19,6 @@
+@@ -20,7 +20,6 @@
  #include "chrome/browser/lifetime/application_lifetime.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_avatar_icon_util.h"
@@ -10,7 +10,7 @@ index e326ae815ea7..54dbba59c73b 100644
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_error_controller_factory.h"
  #include "chrome/browser/signin/signin_promo.h"
-@@ -449,10 +448,6 @@ void PeopleHandler::HandleSetDatatypes(const base::ListValue* args) {
+@@ -447,10 +446,6 @@ void PeopleHandler::HandleSetDatatypes(const base::ListValue* args) {
  
    // Choosing data types to sync never fails.
    ResolveJavascriptCallback(*callback_id, base::Value(kConfigurePageStatus));
@@ -21,31 +21,33 @@ index e326ae815ea7..54dbba59c73b 100644
  }
  
  void PeopleHandler::HandleGetStoredAccounts(const base::ListValue* args) {
-@@ -544,7 +539,6 @@ void PeopleHandler::HandleSetEncryption(const base::ListValue* args) {
-   }
- 
-   if (service->GetUserSettings()->IsEncryptEverythingAllowed()) {
--    ProfileMetrics::LogProfileSyncInfo(ProfileMetrics::SYNC_ENCRYPT);
+@@ -558,8 +553,6 @@ void PeopleHandler::HandleSetEncryptionPassphrase(const base::ListValue* args) {
    } else {
-     // Don't allow "encrypt all" if the SyncService doesn't allow it.
-     // The UI is hidden, but the user may have enabled it e.g. by fiddling with
-@@ -596,9 +590,6 @@ void PeopleHandler::HandleSetEncryption(const base::ListValue* args) {
-   } else {
-     ResolveJavascriptCallback(*callback_id, base::Value(kConfigurePageStatus));
+     sync_user_settings->SetEncryptionPassphrase(passphrase);
+     successfully_set = true;
+-    ProfileMetrics::LogProfileSyncInfo(
+-        ProfileMetrics::SYNC_CREATED_NEW_PASSPHRASE);
    }
--
--  if (!configuration.set_new_passphrase && !configuration.passphrase.empty())
--    ProfileMetrics::LogProfileSyncInfo(ProfileMetrics::SYNC_PASSPHRASE);
+   ResolveJavascriptCallback(callback_id, base::Value(successfully_set));
  }
- 
- void PeopleHandler::HandleShowSyncSetupUI(const base::ListValue* args) {
-@@ -703,8 +694,7 @@ void PeopleHandler::HandleSignout(const base::ListValue* args) {
+@@ -584,10 +577,6 @@ void PeopleHandler::HandleSetDecryptionPassphrase(const base::ListValue* args) {
+   bool successfully_set = false;
+   if (!passphrase.empty() && sync_user_settings->IsPassphraseRequired()) {
+     successfully_set = sync_user_settings->SetDecryptionPassphrase(passphrase);
+-    if (successfully_set) {
+-      ProfileMetrics::LogProfileSyncInfo(
+-          ProfileMetrics::SYNC_ENTERED_EXISTING_PASSPHRASE);
+-    }
    }
+   ResolveJavascriptCallback(callback_id, base::Value(successfully_set));
+ }
+@@ -700,8 +689,7 @@ void PeopleHandler::HandleSignout(const base::ListValue* args) {
+   // CAUTION: |this| may be deleted at this point.
  
    if (delete_profile) {
--    webui::DeleteProfileAtPath(profile_->GetPath(),
+-    webui::DeleteProfileAtPath(profile_path,
 -                               ProfileMetrics::DELETE_PROFILE_SETTINGS);
-+    webui::DeleteProfileAtPath(profile_->GetPath());
++    webui::DeleteProfileAtPath(profile_path);
    }
  }
  

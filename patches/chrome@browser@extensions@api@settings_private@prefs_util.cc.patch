@@ -1,18 +1,18 @@
 diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-index d4d829255e95..42a448f4950c 100644
+index 23c5bbfb241f..61ffc68a5f03 100644
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -35,7 +35,6 @@
- #include "components/payments/core/payment_prefs.h"
+@@ -38,7 +38,6 @@
  #include "components/prefs/pref_service.h"
+ #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
  #include "components/proxy_config/proxy_config_pref_names.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
  #include "components/search_engines/default_search_manager.h"
  #include "components/spellcheck/browser/pref_names.h"
  #include "components/translate/core/browser/translate_pref_names.h"
-@@ -261,18 +260,6 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
-   (*s_allowlist)[::prefs::kDnsOverHttpsTemplates] =
-       settings_api::PrefType::PREF_TYPE_STRING;
+@@ -273,18 +272,6 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+     (*s_allowlist)[::prefs::kPrivacySandboxApisEnabled] =
+         settings_api::PrefType::PREF_TYPE_BOOLEAN;
  
 -  // Security page
 -  (*s_allowlist)[::kGeneratedPasswordLeakDetectionPref] =

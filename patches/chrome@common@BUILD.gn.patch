@@ -1,8 +1,8 @@
 diff --git a/chrome/common/BUILD.gn b/chrome/common/BUILD.gn
-index 4d104f4a9d4d..5eba6a309b15 100644
+index 737d5ea55058..629b27f9ddf5 100644
 --- a/chrome/common/BUILD.gn
 +++ b/chrome/common/BUILD.gn
-@@ -105,8 +105,6 @@ static_library("common") {
+@@ -109,8 +109,6 @@ static_library("common") {
      "common_message_generator.cc",
      "common_message_generator.h",
      "content_restriction.h",
@@ -11,15 +11,15 @@ index 4d104f4a9d4d..5eba6a309b15 100644
      "custom_handlers/protocol_handler.cc",
      "custom_handlers/protocol_handler.h",
      "google_url_loader_throttle.cc",
-@@ -159,7 +157,6 @@ static_library("common") {
+@@ -163,7 +161,6 @@ static_library("common") {
      "//chrome/app/theme:theme_resources",
      "//chrome/common:constants",
      "//chrome/common/net",
 -    "//chrome/common/privacy_budget",
      "//chrome/common/profiler",
-     "//chrome/common/qr_code_generator",
      "//chrome/common/search:mojo_bindings",
-@@ -170,7 +167,6 @@ static_library("common") {
+     "//chrome/installer/util:with_no_strings",
+@@ -173,7 +170,6 @@ static_library("common") {
      "//components/cloud_devices/common",
      "//components/component_updater",
      "//components/content_settings/core/common",
@@ -27,7 +27,7 @@ index 4d104f4a9d4d..5eba6a309b15 100644
      "//components/dom_distiller/core",
      "//components/embedder_support/origin_trials",
      "//components/error_page/common",
-@@ -188,13 +184,11 @@ static_library("common") {
+@@ -191,13 +187,11 @@ static_library("common") {
      "//components/offline_pages/buildflags",
      "//components/offline_pages/core:switches",
      "//components/omnibox/common",
@@ -41,10 +41,10 @@ index 4d104f4a9d4d..5eba6a309b15 100644
      "//components/services/app_service/public/cpp:app_share_target",
      "//components/services/heap_profiling/public/cpp",
      "//components/strings",
-@@ -235,12 +229,10 @@ static_library("common") {
- 
+@@ -239,12 +233,10 @@ static_library("common") {
    deps = [
      "//build:branding_buildflags",
+     "//build:chromeos_buildflags",
 -    "//components/crash/core/app",
      "//components/google/core/common",
      "//components/metrics:call_stack_profile_builder",
@@ -54,7 +54,7 @@ index 4d104f4a9d4d..5eba6a309b15 100644
    ]
  
    if (enable_plugins) {
-@@ -418,7 +410,6 @@ static_library("common") {
+@@ -420,7 +412,6 @@ static_library("common") {
      deps += [
        "//chrome/chrome_elf:chrome_elf_main_include",
        "//chrome/common/win:eventlog_messages",
@@ -62,7 +62,7 @@ index 4d104f4a9d4d..5eba6a309b15 100644
      ]
  
      public_deps += [
-@@ -755,10 +746,6 @@ mojom("mojo_bindings") {
+@@ -762,10 +753,6 @@ mojom("mojo_bindings") {
      public_deps += [ "//components/remote_cocoa/common:mojo" ]
    }
  

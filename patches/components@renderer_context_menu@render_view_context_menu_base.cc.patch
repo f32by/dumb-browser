@@ -1,8 +1,8 @@
 diff --git a/components/renderer_context_menu/render_view_context_menu_base.cc b/components/renderer_context_menu/render_view_context_menu_base.cc
-index f3d003f0b4e7..ea662d35620f 100644
+index a55fefdcd76b..f47eb27c8cde 100644
 --- a/components/renderer_context_menu/render_view_context_menu_base.cc
 +++ b/components/renderer_context_menu/render_view_context_menu_base.cc
-@@ -353,7 +353,6 @@ bool RenderViewContextMenuBase::IsCommandIdChecked(int id) const {
+@@ -356,7 +356,6 @@ bool RenderViewContextMenuBase::IsCommandIdChecked(int id) const {
  
  void RenderViewContextMenuBase::ExecuteCommand(int id, int event_flags) {
    command_executed_ = true;
@@ -10,7 +10,7 @@ index f3d003f0b4e7..ea662d35620f 100644
  
    // Notify all observers the command to be executed.
    for (auto& observer : observers_)
-@@ -381,14 +380,6 @@ void RenderViewContextMenuBase::ExecuteCommand(int id, int event_flags) {
+@@ -384,14 +383,6 @@ void RenderViewContextMenuBase::ExecuteCommand(int id, int event_flags) {
  }
  
  void RenderViewContextMenuBase::OnMenuWillShow(ui::SimpleMenuModel* source) {

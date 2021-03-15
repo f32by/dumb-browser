@@ -1,5 +1,5 @@
 diff --git a/media/blink/webmediaplayer_impl.h b/media/blink/webmediaplayer_impl.h
-index 995d07a7ea2c..b48c6bdab824 100644
+index be702a74d6fd..ab9a4728114d 100644
 --- a/media/blink/webmediaplayer_impl.h
 +++ b/media/blink/webmediaplayer_impl.h
 @@ -45,7 +45,6 @@
@@ -10,27 +10,17 @@ index 995d07a7ea2c..b48c6bdab824 100644
  #include "media/renderers/paint_canvas_video_renderer.h"
  #include "mojo/public/cpp/bindings/remote.h"
  #include "services/media_session/public/cpp/media_position.h"
-@@ -63,7 +62,6 @@ class WebAudioSourceProviderImpl;
- class WebLocalFrame;
- class WebMediaPlayerClient;
- class WebMediaPlayerEncryptedMediaClient;
--class WatchTimeReporter;
- }  // namespace blink
- 
- namespace base {
-@@ -500,11 +498,8 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -495,9 +494,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
    // thus we think we are idle forever).
    bool IsPrerollAttemptNeeded();
  
 -  void CreateWatchTimeReporter();
-   void UpdateSecondaryProperties();
- 
--  void CreateVideoDecodeStatsReporter();
+-  void UpdateSecondaryProperties();
 -
-   // Returns true if the player is hidden.
-   bool IsHidden() const;
+   void CreateVideoDecodeStatsReporter();
  
-@@ -897,7 +892,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+   // Returns true if the player is hidden.
+@@ -892,7 +888,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
    base::OneShotTimer background_pause_timer_;
  
    // Monitors the watch time of the played content.
@@ -38,7 +28,7 @@ index 995d07a7ea2c..b48c6bdab824 100644
    std::string audio_decoder_name_;
    std::string video_decoder_name_;
  
-@@ -911,9 +905,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -906,9 +901,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
  
    bool have_reported_time_to_play_ready_ = false;
  
@@ -48,7 +38,7 @@ index 995d07a7ea2c..b48c6bdab824 100644
    // Elapsed time since we've last reached BUFFERING_HAVE_NOTHING.
    std::unique_ptr<base::ElapsedTimer> underflow_timer_;
  
-@@ -1002,9 +993,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -997,9 +989,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
  
    base::CancelableClosure update_background_status_cb_;
  

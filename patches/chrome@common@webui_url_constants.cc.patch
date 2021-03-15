@@ -1,24 +1,24 @@
 diff --git a/chrome/common/webui_url_constants.cc b/chrome/common/webui_url_constants.cc
-index 74c62f3b1628..f7587acf60bf 100644
+index 135148845bef..c48c3567fc12 100644
 --- a/chrome/common/webui_url_constants.cc
 +++ b/chrome/common/webui_url_constants.cc
-@@ -7,7 +7,6 @@
- #include "base/stl_util.h"
+@@ -8,7 +8,6 @@
  #include "base/strings/string_piece.h"
+ #include "build/chromeos_buildflags.h"
  #include "components/nacl/common/buildflags.h"
 -#include "components/safe_browsing/core/web_ui/constants.h"
  #include "extensions/buildflags/buildflags.h"
  
  namespace chrome {
-@@ -456,7 +455,6 @@ const char* const kChromeHostURLs[] = {
+@@ -462,7 +461,6 @@ const char* const kChromeHostURLs[] = {
      kChromeUIBluetoothInternalsHost,
      kChromeUIChromeURLsHost,
      kChromeUIComponentsHost,
 -    kChromeUICrashesHost,
      kChromeUICreditsHost,
- #if defined(OS_CHROMEOS) && !defined(OFFICIAL_BUILD)
+ #if BUILDFLAG(IS_CHROMEOS_ASH) && !defined(OFFICIAL_BUILD)
      kChromeUIDeviceEmulatorHost,
-@@ -486,7 +484,6 @@ const char* const kChromeHostURLs[] = {
+@@ -491,7 +489,6 @@ const char* const kChromeHostURLs[] = {
      kChromeUISignInInternalsHost,
      kChromeUISiteEngagementHost,
      kChromeUINTPTilesInternalsHost,
@@ -26,11 +26,11 @@ index 74c62f3b1628..f7587acf60bf 100644
      kChromeUISuggestionsHost,
      kChromeUISupervisedUserInternalsHost,
      kChromeUISyncInternalsHost,
-@@ -513,7 +510,6 @@ const char* const kChromeHostURLs[] = {
+@@ -518,7 +515,6 @@ const char* const kChromeHostURLs[] = {
  #if !defined(OS_ANDROID)
      content::kChromeUITracingHost,
  #endif
 -    content::kChromeUIUkmHost,
      content::kChromeUIWebRTCInternalsHost,
  #if !defined(OS_ANDROID)
- #if !defined(OS_CHROMEOS)
+ #if !BUILDFLAG(IS_CHROMEOS_ASH)

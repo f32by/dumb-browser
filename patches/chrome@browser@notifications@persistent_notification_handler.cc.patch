@@ -1,11 +1,11 @@
 diff --git a/chrome/browser/notifications/persistent_notification_handler.cc b/chrome/browser/notifications/persistent_notification_handler.cc
-index 181a2b7d1c37..5f3a57d08d84 100644
+index 6d5ba898c61d..f61ed962c55a 100644
 --- a/chrome/browser/notifications/persistent_notification_handler.cc
 +++ b/chrome/browser/notifications/persistent_notification_handler.cc
-@@ -9,8 +9,6 @@
+@@ -8,8 +8,6 @@
+ #include "base/callback.h"
  #include "base/check_op.h"
  #include "base/metrics/histogram_macros.h"
- #include "chrome/browser/engagement/site_engagement_service.h"
 -#include "chrome/browser/notifications/metrics/notification_metrics_logger.h"
 -#include "chrome/browser/notifications/metrics/notification_metrics_logger_factory.h"
  #include "chrome/browser/notifications/notification_common.h"
@@ -53,8 +53,8 @@ index 181a2b7d1c37..5f3a57d08d84 100644
 -
    // Notification clicks are considered a form of engagement with the |origin|,
    // thus we log the interaction with the Site Engagement service.
-   SiteEngagementService::Get(profile)->HandleNotificationInteraction(origin);
-@@ -171,10 +152,6 @@ void PersistentNotificationHandler::OnClickCompleted(
+   site_engagement::SiteEngagementService::Get(profile)
+@@ -172,10 +153,6 @@ void PersistentNotificationHandler::OnClickCompleted(
  
  void PersistentNotificationHandler::DisableNotifications(Profile* profile,
                                                           const GURL& origin) {

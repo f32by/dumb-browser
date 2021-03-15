@@ -1,17 +1,17 @@
 diff --git a/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc b/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
-index 58e49ef6eb4f..f71c410168dc 100644
+index e1c9377ecaaa..428fd593a977 100644
 --- a/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
 +++ b/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
-@@ -9,7 +9,6 @@
- #include "base/bind.h"
+@@ -10,7 +10,6 @@
  #include "base/no_destructor.h"
  #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
 -#include "components/crash/core/common/crash_key.h"
  #include "ui/accessibility/aura/aura_window_properties.h"
  #include "ui/accessibility/ax_action_data.h"
  #include "ui/accessibility/ax_action_handler_base.h"
-@@ -318,11 +317,6 @@ void AutomationManagerAura::OnSerializeFailure(ax::mojom::Event event_type,
-       checker(current_tree_.get());
+@@ -329,11 +328,6 @@ void AutomationManagerAura::OnSerializeFailure(ax::mojom::Event event_type,
+       checker(tree_.get());
    checker.CheckAndGetErrorString(&error_string);
  
 -  // Add a crash key so we can figure out why this is happening.

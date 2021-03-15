@@ -1,8 +1,8 @@
 diff --git a/headless/BUILD.gn b/headless/BUILD.gn
-index c315662baff5..f5c5cc96dc73 100644
+index 1035a2618457..e9ed5b90382a 100644
 --- a/headless/BUILD.gn
 +++ b/headless/BUILD.gn
-@@ -271,13 +271,6 @@ source_set("headless_shared_sources") {
+@@ -272,13 +272,6 @@ source_set("headless_shared_sources") {
    sources += generated_devtools_api
    sources += get_target_outputs(":protocol_sources")
  
@@ -28,9 +28,9 @@ index c315662baff5..f5c5cc96dc73 100644
 -  }
 -
    configs += [ ":inside_headless_component" ]
- }
  
-@@ -446,7 +432,6 @@ component("headless_non_renderer") {
+   if (headless_use_prefs) {
+@@ -450,7 +436,6 @@ component("headless_non_renderer") {
      }
  
      deps += [
@@ -38,7 +38,7 @@ index c315662baff5..f5c5cc96dc73 100644
        "//components/security_state/content",
        "//gin",
        "//third_party/blink/public:blink",
-@@ -455,13 +440,6 @@ component("headless_non_renderer") {
+@@ -459,13 +444,6 @@ component("headless_non_renderer") {
        "//v8",
      ]
  
@@ -52,7 +52,7 @@ index c315662baff5..f5c5cc96dc73 100644
      if (enable_basic_printing) {
        deps += [
          "//components/printing/browser",
-@@ -487,7 +465,6 @@ component("headless_non_renderer") {
+@@ -491,7 +469,6 @@ component("headless_non_renderer") {
    }
  
    if (is_mac) {
@@ -60,7 +60,7 @@ index c315662baff5..f5c5cc96dc73 100644
      frameworks = [
        "AppKit.framework",
        "CoreFoundation.framework",
-@@ -555,7 +532,6 @@ if (!is_component_build) {
+@@ -568,7 +545,6 @@ if (!is_component_build) {
  
      deps = [
        ":headless",
@@ -68,18 +68,7 @@ index c315662baff5..f5c5cc96dc73 100644
        "//third_party/blink/public:blink_headers",
        "//ui/base",
        "//v8",
-@@ -600,10 +576,6 @@ test("headless_unittests") {
-     "//testing/gtest",
-   ]
- 
--  if (is_win) {
--    deps += [ "//components/crash/core/app:crash_export_thunks" ]
--  }
--
-   if (enable_basic_printing) {
-     sources += [ "lib/browser/headless_printing_unittest.cc" ]
-     deps += [
-@@ -613,16 +585,6 @@ test("headless_unittests") {
+@@ -631,16 +607,6 @@ test("headless_unittests") {
    }
  }
  
@@ -96,7 +85,7 @@ index c315662baff5..f5c5cc96dc73 100644
  test("headless_browsertests") {
    configs += [ "//net:net_test_config" ]
    sources = [
-@@ -659,10 +621,6 @@ test("headless_browsertests") {
+@@ -677,10 +643,6 @@ test("headless_browsertests") {
      "//third_party/tlslite/",
    ]
  
@@ -106,8 +95,8 @@ index c315662baff5..f5c5cc96dc73 100644
 -
    defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
  
-   deps = [
-@@ -746,10 +704,6 @@ static_library("headless_shell_lib") {
+   if (headless_use_prefs) {
+@@ -772,10 +734,6 @@ static_library("headless_shell_lib") {
      public_deps += [ ":headless_non_renderer" ]
    }
  
@@ -118,7 +107,7 @@ index c315662baff5..f5c5cc96dc73 100644
    if (enable_basic_printing) {
      deps += [
        "//components/printing/browser",
-@@ -763,8 +717,6 @@ static_library("headless_shell_lib") {
+@@ -789,8 +747,6 @@ static_library("headless_shell_lib") {
      defines = [ "HEADLESS_USE_CRASHPAD" ]
  
      deps += [

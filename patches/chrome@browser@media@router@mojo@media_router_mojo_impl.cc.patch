@@ -1,10 +1,10 @@
 diff --git a/chrome/browser/media/router/mojo/media_router_mojo_impl.cc b/chrome/browser/media/router/mojo/media_router_mojo_impl.cc
-index 12d3741d3395..e832e06f7766 100644
+index 65e82daebf60..ff4ed11329be 100644
 --- a/chrome/browser/media/router/mojo/media_router_mojo_impl.cc
 +++ b/chrome/browser/media/router/mojo/media_router_mojo_impl.cc
-@@ -17,7 +17,9 @@
- #include "base/stl_util.h"
+@@ -19,7 +19,9 @@
  #include "base/strings/stringprintf.h"
+ #include "build/chromeos_buildflags.h"
  #include "chrome/browser/media/cast_mirroring_service_host.h"
 +#if BUILDFLAG(ENABLE_MEDIA_REMOTING)
  #include "chrome/browser/media/cast_remoting_connector.h"
@@ -12,7 +12,7 @@ index 12d3741d3395..e832e06f7766 100644
  #include "chrome/browser/media/router/event_page_request_manager.h"
  #include "chrome/browser/media/router/event_page_request_manager_factory.h"
  #include "chrome/browser/media/router/media_router_feature.h"
-@@ -258,10 +260,12 @@ void MediaRouterMojoImpl::CreateRoute(const MediaSource::Id& source_id,
+@@ -260,10 +262,12 @@ void MediaRouterMojoImpl::CreateRoute(const MediaSource::Id& source_id,
  
    const MediaSource source(source_id);
    if (source.IsTabMirroringSource() || source.IsLocalFileSource()) {

@@ -1,20 +1,17 @@
 diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
-index 600f79366502..4f3dcaa96d26 100644
+index 68828c19b166..fa3ec21558a1 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
-@@ -15,11 +15,8 @@
- #include "components/permissions/permission_request.h"
- #include "components/permissions/permission_util.h"
- #include "components/permissions/permissions_client.h"
--#include "components/ukm/content/source_url_recorder.h"
- #include "content/public/browser/permission_type.h"
- #include "content/public/browser/web_contents.h"
--#include "services/metrics/public/cpp/ukm_builders.h"
--#include "services/metrics/public/cpp/ukm_recorder.h"
- #include "third_party/blink/public/common/loader/network_utils.h"
- #include "url/gurl.h"
+@@ -106,8 +106,6 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
+   }
+ }
  
-@@ -119,64 +116,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
+-const int kPriorCountCap = 10;
+-
+ std::string GetPermissionRequestString(RequestTypeForUma type) {
+   switch (type) {
+     case RequestTypeForUma::MULTIPLE:
+@@ -176,64 +174,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
    base::UmaHistogramPercentageObsoleteDoNotUse(name, engagement_score);
  }
  
@@ -79,7 +76,7 @@ index 600f79366502..4f3dcaa96d26 100644
  std::string GetPromptDispositionString(
      PermissionPromptDisposition ui_disposition) {
    switch (ui_disposition) {
-@@ -584,26 +523,6 @@ void PermissionUmaUtil::RecordPermissionAction(
+@@ -641,26 +581,6 @@ void PermissionUmaUtil::RecordPermissionAction(
      const content::WebContents* web_contents,
      content::BrowserContext* browser_context,
      base::Optional<PredictionGrantLikelihood> predicted_grant_likelihood) {

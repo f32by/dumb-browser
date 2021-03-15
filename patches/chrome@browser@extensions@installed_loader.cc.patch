@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/extensions/installed_loader.cc b/chrome/browser/extensions/installed_loader.cc
+index 46f05ceba1de..24085c17f40f 100644
+--- a/chrome/browser/extensions/installed_loader.cc
++++ b/chrome/browser/extensions/installed_loader.cc
+@@ -703,12 +703,6 @@ void InstalledLoader::RecordExtensionsMetrics() {
+                               enabled_not_allowlisted_count);
+   base::UmaHistogramCounts100("Extensions.NotAllowlistedDisabled",
+                               disabled_not_allowlisted_count);
+-  if (safe_browsing::IsEnhancedProtectionEnabled(*profile->GetPrefs())) {
+-    base::UmaHistogramCounts100("Extensions.NotAllowlistedEnabledAndEsbUser",
+-                                enabled_not_allowlisted_count);
+-    base::UmaHistogramCounts100("Extensions.NotAllowlistedDisabledAndEsbUser",
+-                                disabled_not_allowlisted_count);
+-  }
+ }
+ 
+ int InstalledLoader::GetCreationFlags(const ExtensionInfo* info) {

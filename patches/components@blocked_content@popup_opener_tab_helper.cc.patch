@@ -1,5 +1,5 @@
 diff --git a/components/blocked_content/popup_opener_tab_helper.cc b/components/blocked_content/popup_opener_tab_helper.cc
-index 69e264d9fb0b..e2422e07d52a 100644
+index 1471c40b9965..940ca0118a11 100644
 --- a/components/blocked_content/popup_opener_tab_helper.cc
 +++ b/components/blocked_content/popup_opener_tab_helper.cc
 @@ -10,15 +10,11 @@
@@ -18,7 +18,7 @@ index 69e264d9fb0b..e2422e07d52a 100644
  #include "ui/base/scoped_visibility_tracker.h"
  
  namespace blocked_content {
-@@ -50,7 +46,7 @@ PopupOpenerTabHelper::~PopupOpenerTabHelper() {
+@@ -37,7 +33,7 @@ PopupOpenerTabHelper::~PopupOpenerTabHelper() {
    UMA_HISTOGRAM_LONG_TIMES("Tab.VisibleTime", total_visible_time);
  }
  
@@ -27,7 +27,7 @@ index 69e264d9fb0b..e2422e07d52a 100644
    has_opened_popup_since_last_user_gesture_ = true;
    MaybeLogPagePopupContentSettings();
  
-@@ -107,21 +103,6 @@ void PopupOpenerTabHelper::MaybeLogPagePopupContentSettings() {
+@@ -94,21 +90,6 @@ void PopupOpenerTabHelper::MaybeLogPagePopupContentSettings() {
    const GURL& url = web_contents()->GetLastCommittedURL();
    if (!url.is_valid())
      return;

@@ -1,8 +1,17 @@
 diff --git a/components/payments/core/BUILD.gn b/components/payments/core/BUILD.gn
-index 1f6d6e3976d8..0bdbe13ba055 100644
+index 9a0e52e00d23..fb81d7c0b86c 100644
 --- a/components/payments/core/BUILD.gn
 +++ b/components/payments/core/BUILD.gn
-@@ -88,8 +88,6 @@ static_library("core") {
+@@ -24,8 +24,6 @@ static_library("core") {
+     "error_message_util.h",
+     "features.cc",
+     "features.h",
+-    "journey_logger.cc",
+-    "journey_logger.h",
+     "payer_data.cc",
+     "payer_data.h",
+     "payment_address.cc",
+@@ -90,8 +88,6 @@ static_library("core") {
      "//components/pref_registry",
      "//components/strings:components_strings_grit",
      "//net",
@@ -11,7 +20,7 @@ index 1f6d6e3976d8..0bdbe13ba055 100644
      "//services/network/public/cpp",
      "//third_party/re2",
      "//ui/base",
-@@ -192,10 +190,7 @@ source_set("unit_tests") {
+@@ -194,10 +190,7 @@ source_set("unit_tests") {
      "//components/autofill/core/browser:test_support",
      "//components/leveldb_proto:leveldb_proto",
      "//components/strings:components_strings_grit",

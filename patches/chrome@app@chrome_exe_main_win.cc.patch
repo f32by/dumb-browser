@@ -1,8 +1,8 @@
 diff --git a/chrome/app/chrome_exe_main_win.cc b/chrome/app/chrome_exe_main_win.cc
-index 784c60609a2f..c4ec66867ebc 100644
+index 1a4da34f7b3c..471aacf2bb74 100644
 --- a/chrome/app/chrome_exe_main_win.cc
 +++ b/chrome/app/chrome_exe_main_win.cc
-@@ -39,13 +39,8 @@
+@@ -41,13 +41,8 @@
  #include "chrome/install_static/install_util.h"
  #include "chrome/install_static/user_data_dir.h"
  #include "components/browser_watcher/exit_code_watcher_win.h"
@@ -16,7 +16,7 @@ index 784c60609a2f..c4ec66867ebc 100644
  
  #if defined(WIN_CONSOLE_APP)
  // Forward declaration of main.
-@@ -145,24 +140,6 @@ bool RemoveAppCompatFlagsEntry() {
+@@ -147,24 +142,6 @@ bool RemoveAppCompatFlagsEntry() {
    return false;
  }
  
@@ -41,7 +41,7 @@ index 784c60609a2f..c4ec66867ebc 100644
  }  // namespace
  
  namespace {
-@@ -249,7 +226,6 @@ int main() {
+@@ -251,7 +228,6 @@ int main() {
  #endif  // defined(ARCH_CPU_32_BITS)
  
    install_static::InitializeFromPrimaryModule();
@@ -49,7 +49,7 @@ index 784c60609a2f..c4ec66867ebc 100644
  #if defined(ARCH_CPU_32_BITS)
    // Intentionally crash if converting to a fiber failed.
    CHECK_EQ(fiber_status, FiberStatus::kSuccess);
-@@ -274,54 +250,6 @@ int main() {
+@@ -283,54 +259,6 @@ int main() {
    DCHECK(process_type.empty() ||
           HasValidWindowsPrefetchArgument(*command_line));
  

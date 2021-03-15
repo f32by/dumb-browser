@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/extensions/crx_installer.cc b/chrome/browser/extensions/crx_installer.cc
-index c43a681937f1..762130286b2e 100644
+index a9873eb68a6c..a42b316ebb17 100644
 --- a/chrome/browser/extensions/crx_installer.cc
 +++ b/chrome/browser/extensions/crx_installer.cc
-@@ -22,7 +22,6 @@
- #include "base/time/time.h"
+@@ -23,7 +23,6 @@
  #include "base/version.h"
  #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
 -#include "chrome/browser/extensions/blocklist_check.h"
  #include "chrome/browser/extensions/convert_user_script.h"
  #include "chrome/browser/extensions/convert_web_app.h"
  #include "chrome/browser/extensions/extension_assets_manager.h"
-@@ -673,12 +672,9 @@ void CrxInstaller::CheckInstall() {
+@@ -677,12 +676,9 @@ void CrxInstaller::CheckInstall() {
  
    policy_check_ = std::make_unique<PolicyCheck>(profile_, extension());
    requirements_check_ = std::make_unique<RequirementsChecker>(extension());

@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/webui/crashes_ui.cc b/chrome/browser/ui/webui/crashes_ui.cc
-index 4c857f49354a..71f524af93a3 100644
+index fa9f7c350c16..52763d75c53f 100644
 --- a/chrome/browser/ui/webui/crashes_ui.cc
 +++ b/chrome/browser/ui/webui/crashes_ui.cc
-@@ -18,7 +18,6 @@
- #include "base/system/sys_info.h"
+@@ -19,7 +19,6 @@
  #include "base/values.h"
  #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
 -#include "chrome/browser/crash_upload_list/crash_upload_list.h"
  #include "chrome/browser/metrics/chrome_metrics_service_accessor.h"
  #include "chrome/browser/metrics/metrics_reporting_state.h"
  #include "chrome/browser/profiles/profile.h"
-@@ -102,7 +101,6 @@ class CrashesDOMHandler : public WebUIMessageHandler {
+@@ -103,7 +102,6 @@ class CrashesDOMHandler : public WebUIMessageHandler {
    // Asynchronously requests a user triggered upload. Called from JS.
    void HandleRequestSingleCrashUpload(const base::ListValue* args);
  
@@ -18,7 +18,7 @@ index 4c857f49354a..71f524af93a3 100644
    bool list_available_;
    bool first_load_;
  
-@@ -111,16 +109,12 @@ class CrashesDOMHandler : public WebUIMessageHandler {
+@@ -112,16 +110,12 @@ class CrashesDOMHandler : public WebUIMessageHandler {
  
  CrashesDOMHandler::CrashesDOMHandler()
      : list_available_(false), first_load_(true) {
@@ -35,7 +35,7 @@ index 4c857f49354a..71f524af93a3 100644
    web_ui()->RegisterMessageCallback(
        crash_reporter::kCrashesUIRequestCrashList,
        base::BindRepeating(&CrashesDOMHandler::HandleRequestCrashes,
-@@ -146,8 +140,6 @@ void CrashesDOMHandler::HandleRequestCrashes(const base::ListValue* args) {
+@@ -147,8 +141,6 @@ void CrashesDOMHandler::HandleRequestCrashes(const base::ListValue* args) {
        UpdateUI();
    } else {
      list_available_ = false;
@@ -44,7 +44,7 @@ index 4c857f49354a..71f524af93a3 100644
    }
  }
  
-@@ -209,8 +201,6 @@ void CrashesDOMHandler::UpdateUI() {
+@@ -212,8 +204,6 @@ void CrashesDOMHandler::UpdateUI() {
    bool upload_list = using_crashpad || crash_reporting_enabled;
  
    base::ListValue crash_list;
@@ -53,7 +53,7 @@ index 4c857f49354a..71f524af93a3 100644
  
    base::Value enabled(crash_reporting_enabled);
    base::Value dynamic_backend(system_crash_reporter);
-@@ -245,7 +235,6 @@ void CrashesDOMHandler::HandleRequestSingleCrashUpload(
+@@ -248,7 +238,6 @@ void CrashesDOMHandler::HandleRequestSingleCrashUpload(
        IsMetricsReportingPolicyManaged()) {
      return;
    }

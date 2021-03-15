@@ -1,5 +1,5 @@
 diff --git a/components/javascript_dialogs/tab_modal_dialog_manager.cc b/components/javascript_dialogs/tab_modal_dialog_manager.cc
-index 64996961891b..2f0da1d6f3a3 100644
+index e4f89656166a..56bd492b7cfa 100644
 --- a/components/javascript_dialogs/tab_modal_dialog_manager.cc
 +++ b/components/javascript_dialogs/tab_modal_dialog_manager.cc
 @@ -14,13 +14,9 @@
@@ -66,8 +66,8 @@ index 64996961891b..2f0da1d6f3a3 100644
 -
  }  // namespace
  
- // static
-@@ -172,33 +124,6 @@ void TabModalDialogManager::RunJavaScriptDialog(
+ TabModalDialogManager::~TabModalDialogManager() {
+@@ -161,33 +113,6 @@ void TabModalDialogManager::RunJavaScriptDialog(
    GURL alerting_frame_url = render_frame_host->GetLastCommittedURL();
  
    content::WebContents* web_contents = WebContentsObserver::web_contents();
@@ -101,7 +101,7 @@ index 64996961891b..2f0da1d6f3a3 100644
  
    // Close any dialog already showing.
    CloseDialog(DismissalCause::kSubsequentDialogShown, false, base::string16());
-@@ -307,16 +232,6 @@ void TabModalDialogManager::RunBeforeUnloadDialog(
+@@ -296,16 +221,6 @@ void TabModalDialogManager::RunBeforeUnloadDialog(
    DCHECK_EQ(web_contents,
              content::WebContents::FromRenderFrameHost(render_frame_host));
  
@@ -118,7 +118,7 @@ index 64996961891b..2f0da1d6f3a3 100644
    // onbeforeunload dialogs are always handled with an app-modal dialog, because
    // - they are critical to the user not losing data
    // - they can be requested for tabs that are not foremost
-@@ -375,25 +290,6 @@ TabModalDialogManager::TabModalDialogManager(
+@@ -364,25 +279,6 @@ TabModalDialogManager::TabModalDialogManager(
      : content::WebContentsObserver(web_contents),
        delegate_(std::move(delegate)) {}
  
@@ -144,7 +144,7 @@ index 64996961891b..2f0da1d6f3a3 100644
  void TabModalDialogManager::HandleTabSwitchAway(DismissalCause cause) {
    if (!dialog_ || content::DevToolsAgentHost::IsDebuggerAttached(
                        WebContentsObserver::web_contents())) {
-@@ -418,8 +314,6 @@ void TabModalDialogManager::CloseDialog(DismissalCause cause,
+@@ -407,8 +303,6 @@ void TabModalDialogManager::CloseDialog(DismissalCause cause,
    if (!dialog_ && !pending_dialog_)
      return;
  

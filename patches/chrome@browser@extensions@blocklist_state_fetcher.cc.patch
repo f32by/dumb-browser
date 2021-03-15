@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/blocklist_state_fetcher.cc b/chrome/browser/extensions/blocklist_state_fetcher.cc
-index f1a75ca84bec..a9705e27a8a7 100644
+index fd18b0b52064..27ed70a27eb8 100644
 --- a/chrome/browser/extensions/blocklist_state_fetcher.cc
 +++ b/chrome/browser/extensions/blocklist_state_fetcher.cc
 @@ -8,10 +8,6 @@
@@ -13,9 +13,9 @@ index f1a75ca84bec..a9705e27a8a7 100644
  #include "content/public/browser/browser_thread.h"
  #include "net/base/escape.h"
  #include "net/traffic_annotation/network_traffic_annotation.h"
-@@ -32,98 +28,9 @@ BlocklistStateFetcher::~BlocklistStateFetcher() {
+@@ -32,115 +28,18 @@ BlocklistStateFetcher::~BlocklistStateFetcher() {
  void BlocklistStateFetcher::Request(const std::string& id,
-                                     const RequestCallback& callback) {
+                                     RequestCallback callback) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
 -  if (!safe_browsing_config_) {
 -    if (g_browser_process && g_browser_process->safe_browsing_service()) {
@@ -23,18 +23,16 @@ index f1a75ca84bec..a9705e27a8a7 100644
 -          g_browser_process->safe_browsing_service()->GetV4ProtocolConfig());
 -    } else {
 -      base::ThreadTaskRunnerHandle::Get()->PostTask(
--          FROM_HERE, base::BindOnce(callback, BLOCKLISTED_UNKNOWN));
+-          FROM_HERE, base::BindOnce(std::move(callback), BLOCKLISTED_UNKNOWN));
 -      return;
 -    }
 -  }
 -
 -  bool request_already_sent = base::Contains(callbacks_, id);
--  callbacks_.insert(std::make_pair(id, callback));
+-  callbacks_.insert(std::make_pair(id, std::move(callback)));
 -  if (request_already_sent)
 -    return;
-+  base::ThreadTaskRunnerHandle::Get()->PostTask(
-+    FROM_HERE, base::BindOnce(callback, BLOCKLISTED_UNKNOWN));
- 
+-
 -  if (g_browser_process && g_browser_process->safe_browsing_service()) {
 -    if (base::FeatureList::IsEnabled(
 -            safe_browsing::kSafeBrowsingRemoveCookies)) {
@@ -44,12 +42,12 @@ index f1a75ca84bec..a9705e27a8a7 100644
 -          g_browser_process->safe_browsing_service()->GetURLLoaderFactory();
 -    }
 -  }
--
--  SendRequest(id);
--}
--
--void BlocklistStateFetcher::SendRequest(const std::string& id) {
--  DCHECK_CURRENTLY_ON(BrowserThread::UI);
+ 
+   SendRequest(id);
+ }
+ 
+ void BlocklistStateFetcher::SendRequest(const std::string& id) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
 -
 -  ClientCRXListInfoRequest request;
 -  request.set_id(id);
@@ -114,10 +112,38 @@ index f1a75ca84bec..a9705e27a8a7 100644
  }
  
  void BlocklistStateFetcher::OnURLLoaderComplete(
-@@ -159,25 +66,7 @@ void BlocklistStateFetcher::OnURLLoaderCompleteInternal(
-   std::string id = it->second.second;
-   requests_.erase(it);
+     network::SimpleURLLoader* url_loader,
+     std::unique_ptr<std::string> response_body) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+-
+-  int response_code = 0;
+-  if (url_loader->ResponseInfo() && url_loader->ResponseInfo()->headers)
+-    response_code = url_loader->ResponseInfo()->headers->response_code();
+-
+-  std::string response_body_str;
+-  if (response_body.get())
+-    response_body_str = std::move(*response_body.get());
+-
+-  OnURLLoaderCompleteInternal(url_loader, response_body_str, response_code,
+-                              url_loader->NetError());
+ }
  
+ void BlocklistStateFetcher::OnURLLoaderCompleteInternal(
+@@ -148,45 +47,6 @@ void BlocklistStateFetcher::OnURLLoaderCompleteInternal(
+     const std::string& response_body,
+     int response_code,
+     int net_error) {
+-  auto it = requests_.find(url_loader);
+-  if (it == requests_.end()) {
+-    NOTREACHED();
+-    return;
+-  }
+-
+-  std::unique_ptr<network::SimpleURLLoader> loader =
+-      std::move(it->second.first);
+-  std::string id = it->second.second;
+-  requests_.erase(it);
+-
 -  BlocklistState state;
 -  if (net_error == net::OK && response_code == 200) {
 -    ClientCRXListInfoResponse response;
@@ -137,7 +163,15 @@ index f1a75ca84bec..a9705e27a8a7 100644
 -
 -    state = BLOCKLISTED_UNKNOWN;
 -  }
-+  BlocklistState state = BLOCKLISTED_UNKNOWN;
+-
+-  std::pair<CallbackMultiMap::iterator, CallbackMultiMap::iterator> range =
+-      callbacks_.equal_range(id);
+-  for (CallbackMultiMap::iterator callback_it = range.first;
+-       callback_it != range.second; ++callback_it) {
+-    std::move(callback_it->second).Run(state);
+-  }
+-
+-  callbacks_.erase(range.first, range.second);
+ }
  
-   std::pair<CallbackMultiMap::iterator, CallbackMultiMap::iterator> range =
-       callbacks_.equal_range(id);
+ }  // namespace extensions

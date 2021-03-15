@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/web_applications/system_web_app_ui_utils.cc b/chrome/browser/ui/web_applications/system_web_app_ui_utils.cc
-index 67de663c04dd..0047ade57d55 100644
+index 328a5e05f814..74b2da4f4473 100644
 --- a/chrome/browser/ui/web_applications/system_web_app_ui_utils.cc
 +++ b/chrome/browser/ui/web_applications/system_web_app_ui_utils.cc
-@@ -15,7 +15,6 @@
- #include "base/optional.h"
+@@ -16,7 +16,6 @@
  #include "base/strings/utf_string_conversions.h"
+ #include "build/chromeos_buildflags.h"
  #include "chrome/browser/apps/app_service/app_launch_params.h"
 -#include "chrome/browser/apps/app_service/app_service_metrics.h"
  #include "chrome/browser/apps/app_service/launch_utils.h"
  #include "chrome/browser/chromeos/printing/print_management/print_management_uma.h"
  #include "chrome/browser/chromeos/profiles/profile_helper.h"
-@@ -195,7 +194,6 @@ Browser* LaunchSystemWebApp(Profile* profile,
+@@ -205,7 +204,6 @@ Browser* LaunchSystemWebApp(Profile* profile,
    // used to open it. Remove this when the file manager code is moved into
    // the app service.
    if (params->launch_source != apps::mojom::LaunchSource::kFromFileManager) {
