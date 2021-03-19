@@ -2,7 +2,7 @@ diff --git a/chrome/browser/chrome_browser_main_mac.mm b/chrome/browser/chrome_b
 index c30b73c2575f..2da60e613959 100644
 --- a/chrome/browser/chrome_browser_main_mac.mm
 +++ b/chrome/browser/chrome_browser_main_mac.mm
-@@ -75,8 +75,6 @@ int ChromeBrowserMainPartsMac::PreEarlyInitialization() {
+@@ -75,8 +75,6 @@
  }
  
  void ChromeBrowserMainPartsMac::PreMainMessageLoopStart() {
@@ -11,7 +11,7 @@ index c30b73c2575f..2da60e613959 100644
    ChromeBrowserMainPartsPosix::PreMainMessageLoopStart();
  
    // ChromeBrowserMainParts should have loaded the resource bundle by this
-@@ -135,8 +133,6 @@ void ChromeBrowserMainPartsMac::PreMainMessageLoopStart() {
+@@ -135,8 +133,6 @@
  }
  
  void ChromeBrowserMainPartsMac::PostMainMessageLoopStart() {
@@ -20,7 +20,7 @@ index c30b73c2575f..2da60e613959 100644
    ChromeBrowserMainPartsPosix::PostMainMessageLoopStart();
  
    if (base::FeatureList::IsEnabled(network::features::kCertVerifierService) &&
-@@ -147,8 +143,6 @@ void ChromeBrowserMainPartsMac::PostMainMessageLoopStart() {
+@@ -147,8 +143,6 @@
  }
  
  void ChromeBrowserMainPartsMac::PreProfileInit() {
@@ -29,7 +29,7 @@ index c30b73c2575f..2da60e613959 100644
    ChromeBrowserMainPartsPosix::PreProfileInit();
  
    // This is called here so that the app shim socket is only created after
-@@ -157,13 +151,8 @@ void ChromeBrowserMainPartsMac::PreProfileInit() {
+@@ -157,13 +151,8 @@
  }
  
  void ChromeBrowserMainPartsMac::PostProfileInit() {

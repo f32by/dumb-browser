@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index 0e417d912d48..117af122e6a7 100644
+index 0e417d912d48..bfdffb7f33f1 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
 @@ -11,7 +11,6 @@
@@ -30,7 +30,18 @@ index 0e417d912d48..117af122e6a7 100644
  #include "chrome/renderer/loadtimes_extension_bindings.h"
  #include "chrome/renderer/media/flash_embed_rewrite.h"
  #include "chrome/renderer/media/webrtc_logging_agent_impl.h"
-@@ -92,15 +87,10 @@
+@@ -59,10 +54,6 @@
+ #include "chrome/renderer/plugins/non_loadable_plugin_placeholder.h"
+ #include "chrome/renderer/plugins/pdf_plugin_placeholder.h"
+ #include "chrome/renderer/plugins/plugin_uma.h"
+-#include "chrome/renderer/previews/resource_loading_hints_agent.h"
+-#include "chrome/renderer/subresource_redirect/login_robots_decider_agent.h"
+-#include "chrome/renderer/subresource_redirect/public_image_hints_decider_agent.h"
+-#include "chrome/renderer/subresource_redirect/subresource_redirect_params.h"
+ #include "chrome/renderer/sync_encryption_keys_extension.h"
+ #include "chrome/renderer/url_loader_throttle_provider_impl.h"
+ #include "chrome/renderer/v8_unwinder.h"
+@@ -92,16 +83,10 @@
  #include "components/no_state_prefetch/renderer/no_state_prefetch_helper.h"
  #include "components/no_state_prefetch/renderer/prerender_render_frame_observer.h"
  #include "components/no_state_prefetch/renderer/prerender_utils.h"
@@ -43,10 +54,11 @@ index 0e417d912d48..117af122e6a7 100644
 -#include "components/subresource_filter/content/renderer/subresource_filter_agent.h"
 -#include "components/subresource_filter/content/renderer/unverified_ruleset_dealer.h"
 -#include "components/subresource_filter/core/common/common_features.h"
- #include "components/subresource_redirect/common/subresource_redirect_features.h"
+-#include "components/subresource_redirect/common/subresource_redirect_features.h"
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/translate/content/renderer/per_frame_translate_agent.h"
-@@ -366,11 +356,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+ #include "components/translate/core/common/translate_util.h"
+@@ -366,11 +351,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
@@ -58,7 +70,7 @@ index 0e417d912d48..117af122e6a7 100644
  
    thread->RegisterExtension(extensions_v8::LoadTimesExtension::Get());
  
-@@ -451,10 +437,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -451,10 +432,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      mojo::PendingRemote<metrics::mojom::CallStackProfileCollector> collector;
      thread->BindHostReceiver(collector.InitWithNewPipeAndPassReceiver());
      ThreadProfiler::SetCollectorForChildProcess(std::move(collector));
@@ -69,7 +81,7 @@ index 0e417d912d48..117af122e6a7 100644
    }
  }
  
-@@ -587,28 +569,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -587,38 +564,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
        render_frame->GetRoutingID()));
  #endif
  
@@ -95,10 +107,20 @@ index 0e417d912d48..117af122e6a7 100644
 -  if (lite_video::IsLiteVideoEnabled())
 -    new lite_video::LiteVideoHintAgent(render_frame);
 -
-   new previews::ResourceLoadingHintsAgent(associated_interfaces, render_frame);
- 
-   if (subresource_redirect::ShouldEnablePublicImageHintsBasedCompression()) {
-@@ -1511,9 +1471,6 @@ void ChromeContentRendererClient::
+-  new previews::ResourceLoadingHintsAgent(associated_interfaces, render_frame);
+-
+-  if (subresource_redirect::ShouldEnablePublicImageHintsBasedCompression()) {
+-    new subresource_redirect::PublicImageHintsDeciderAgent(
+-        associated_interfaces, render_frame);
+-  } else if (subresource_redirect::
+-                 ShouldEnableLoginRobotsCheckedCompression()) {
+-    new subresource_redirect::LoginRobotsDeciderAgent(associated_interfaces,
+-                                                      render_frame);
+-  }
+   if (translate::IsSubFrameTranslationEnabled()) {
+     new translate::PerFrameTranslateAgent(
+         render_frame, ISOLATED_WORLD_ID_TRANSLATE, associated_interfaces);
+@@ -1511,9 +1456,6 @@ void ChromeContentRendererClient::
      defined(OS_ANDROID)
      blink::WebRuntimeFeatures::EnableWebShare(true);
  #endif

@@ -1,0 +1,63 @@
+diff --git a/chrome/browser/ui/webui/system_info_ui.cc b/chrome/browser/ui/webui/system_info_ui.cc
+index 5515358df3a9..54bdec8c7118 100644
+--- a/chrome/browser/ui/webui/system_info_ui.cc
++++ b/chrome/browser/ui/webui/system_info_ui.cc
+@@ -20,14 +20,12 @@
+ #include "base/time/time.h"
+ #include "base/values.h"
+ #include "chrome/browser/browser_process.h"
+-#include "chrome/browser/feedback/system_logs/about_system_logs_fetcher.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/ui/webui/webui_util.h"
+ #include "chrome/common/chrome_paths.h"
+ #include "chrome/common/url_constants.h"
+ #include "chrome/grit/browser_resources.h"
+ #include "chrome/grit/generated_resources.h"
+-#include "components/feedback/system_logs/system_logs_fetcher.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/web_contents.h"
+ #include "content/public/browser/web_ui.h"
+@@ -42,7 +40,6 @@
+ 
+ using content::WebContents;
+ using content::WebUIMessageHandler;
+-using system_logs::SystemLogsResponse;
+ 
+ namespace {
+ 
+@@ -85,8 +82,6 @@ class SystemInfoHandler : public WebUIMessageHandler {
+   // system info and eventually returns it to the front end.
+   void HandleRequestSystemInfo(const base::ListValue*);
+ 
+-  void OnSystemInfo(std::unique_ptr<SystemLogsResponse> sys_info);
+-
+  private:
+   base::WeakPtrFactory<SystemInfoHandler> weak_ptr_factory_{this};
+   DISALLOW_COPY_AND_ASSIGN(SystemInfoHandler);
+@@ -110,26 +105,6 @@ void SystemInfoHandler::RegisterMessages() {
+ 
+ void SystemInfoHandler::HandleRequestSystemInfo(const base::ListValue*) {
+   AllowJavascript();
+-  system_logs::SystemLogsFetcher* fetcher =
+-      system_logs::BuildAboutSystemLogsFetcher();
+-  fetcher->Fetch(base::BindOnce(&SystemInfoHandler::OnSystemInfo,
+-                                weak_ptr_factory_.GetWeakPtr()));
+-}
+-
+-void SystemInfoHandler::OnSystemInfo(
+-    std::unique_ptr<SystemLogsResponse> sys_info) {
+-  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+-  if (!sys_info)
+-    return;
+-  base::ListValue data;
+-  for (SystemLogsResponse::const_iterator it = sys_info->begin();
+-       it != sys_info->end(); ++it) {
+-    auto val = std::make_unique<base::DictionaryValue>();
+-    val->SetString("statName", it->first);
+-    val->SetString("statValue", it->second);
+-    data.Append(std::move(val));
+-  }
+-  CallJavascriptFunction("returnSystemInfo", data);
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////

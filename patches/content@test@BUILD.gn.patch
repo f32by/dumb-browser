@@ -1,0 +1,15 @@
+diff --git a/content/test/BUILD.gn b/content/test/BUILD.gn
+index 7034d08134d8..2f9ccf6450eb 100644
+--- a/content/test/BUILD.gn
++++ b/content/test/BUILD.gn
+@@ -2322,10 +2322,6 @@ test("content_unittests") {
+     deps += [ "//services/tracing:test_utils" ]
+   }
+ 
+-  if (is_linux || is_chromeos) {
+-    deps += [ "//components/crash/content/browser/error_reporting" ]
+-  }
+-
+   if (enable_plugins) {
+     sources += [
+       "../browser/renderer_host/pepper/browser_ppapi_host_test.cc",

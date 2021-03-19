@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/extensions/api/chrome_extensions_api_client.cc b/chrome/browser/extensions/api/chrome_extensions_api_client.cc
+index 750671715d77..3ca30558db9f 100644
+--- a/chrome/browser/extensions/api/chrome_extensions_api_client.cc
++++ b/chrome/browser/extensions/api/chrome_extensions_api_client.cc
+@@ -19,7 +19,6 @@
+ #include "chrome/browser/extensions/api/declarative_content/chrome_content_rules_registry.h"
+ #include "chrome/browser/extensions/api/declarative_content/default_content_predicate_evaluators.h"
+ #include "chrome/browser/extensions/api/extension_action/extension_action_api.h"
+-#include "chrome/browser/extensions/api/feedback_private/chrome_feedback_private_delegate.h"
+ #include "chrome/browser/extensions/api/file_system/chrome_file_system_delegate.h"
+ #include "chrome/browser/extensions/api/management/chrome_management_api_delegate.h"
+ #include "chrome/browser/extensions/api/messaging/chrome_messaging_delegate.h"
+@@ -378,15 +377,6 @@ MessagingDelegate* ChromeExtensionsAPIClient::GetMessagingDelegate() {
+   return messaging_delegate_.get();
+ }
+ 
+-FeedbackPrivateDelegate*
+-ChromeExtensionsAPIClient::GetFeedbackPrivateDelegate() {
+-  if (!feedback_private_delegate_) {
+-    feedback_private_delegate_ =
+-        std::make_unique<ChromeFeedbackPrivateDelegate>();
+-  }
+-  return feedback_private_delegate_.get();
+-}
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+ MediaPerceptionAPIDelegate*
+ ChromeExtensionsAPIClient::GetMediaPerceptionAPIDelegate() {

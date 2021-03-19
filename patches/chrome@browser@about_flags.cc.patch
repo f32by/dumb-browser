@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 1f7e7ced6a98..95926acff2ac 100644
+index 1f7e7ced6a98..073d7320543c 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
 @@ -33,7 +33,6 @@
@@ -26,10 +26,43 @@ index 1f7e7ced6a98..95926acff2ac 100644
  #include "components/search/ntp_features.h"
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/security_interstitials/core/features.h"
-@@ -356,35 +353,6 @@ const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
-      data_reduction_proxy::switches::kDataReductionProxyExperiment,
-      data_reduction_proxy::switches::kDataReductionProxyServerAlternative10}};
+@@ -323,68 +320,6 @@ const FeatureEntry::Choice kPassiveListenersChoices[] = {
+      blink::switches::kPassiveListenersDefault, "forcealltrue"},
+ };
  
+-const FeatureEntry::Choice kDataReductionProxyServerExperiment[] = {
+-    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+-    {flag_descriptions::kDataReductionProxyServerAlternative1,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative1},
+-    {flag_descriptions::kDataReductionProxyServerAlternative2,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative2},
+-    {flag_descriptions::kDataReductionProxyServerAlternative3,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative3},
+-    {flag_descriptions::kDataReductionProxyServerAlternative4,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative4},
+-    {flag_descriptions::kDataReductionProxyServerAlternative5,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative5},
+-    {flag_descriptions::kDataReductionProxyServerAlternative6,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative6},
+-    {flag_descriptions::kDataReductionProxyServerAlternative7,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative7},
+-    {flag_descriptions::kDataReductionProxyServerAlternative8,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative8},
+-    {flag_descriptions::kDataReductionProxyServerAlternative9,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative9},
+-    {flag_descriptions::kDataReductionProxyServerAlternative10,
+-     data_reduction_proxy::switches::kDataReductionProxyExperiment,
+-     data_reduction_proxy::switches::kDataReductionProxyServerAlternative10}};
+-
 -const FeatureEntry::Choice kLiteVideoDefaultDownlinkBandwidthKbps[] = {
 -    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
 -    {"100", lite_video::switches::kLiteVideoDefaultDownlinkBandwidthKbps,
@@ -62,7 +95,35 @@ index 1f7e7ced6a98..95926acff2ac 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -2826,6 +2794,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2499,27 +2434,6 @@ const FeatureEntry::FeatureVariation kPrerender2Variations[] = {
+      base::size(kPrerender2DisableActivation), nullptr},
+ };
+ 
+-const FeatureEntry::FeatureParam kSubresourceRedirectPublicImageHints[] = {
+-    {"enable_public_image_hints_based_compression", "true"},
+-    {"enable_subresource_server_redirect", "true"},
+-    {"enable_login_robots_based_compression", "false"},
+-};
+-
+-const FeatureEntry::FeatureParam
+-    kSubresourceRedirectLoginRobotsBasedCompression[] = {
+-        {"enable_login_robots_based_compression", "true"},
+-        {"enable_subresource_server_redirect", "true"},
+-        {"enable_public_image_hints_based_compression", "false"},
+-};
+-
+-const FeatureEntry::FeatureVariation kSubresourceRedirectVariations[] = {
+-    {"Public image hints based compression",
+-     kSubresourceRedirectPublicImageHints,
+-     base::size(kSubresourceRedirectPublicImageHints), nullptr},
+-    {"robots.txt allowed image compression in non logged-in pages",
+-     kSubresourceRedirectLoginRobotsBasedCompression,
+-     base::size(kSubresourceRedirectLoginRobotsBasedCompression), nullptr}};
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+ const FeatureEntry::FeatureVariation
+     kOmniboxRichEntitiesInLauncherVariations[] = {
+@@ -2826,6 +2740,9 @@ const FeatureEntry kFeatureEntries[] = {
          FEATURE_VALUE_TYPE(ash::features::kWebUITabStripTabDragIntegration),
      },
  #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP) && BUILDFLAG(IS_CHROMEOS_ASH)
@@ -72,7 +133,39 @@ index 1f7e7ced6a98..95926acff2ac 100644
      {"focus-mode", flag_descriptions::kFocusMode,
       flag_descriptions::kFocusModeDescription, kOsDesktop,
       FEATURE_VALUE_TYPE(features::kFocusMode)},
-@@ -5778,45 +5749,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -3347,31 +3264,14 @@ const FeatureEntry kFeatureEntries[] = {
+     {"enable-use-zoom-for-dsf", flag_descriptions::kEnableUseZoomForDsfName,
+      flag_descriptions::kEnableUseZoomForDsfDescription, kOsAll,
+      MULTI_VALUE_TYPE(kEnableUseZoomForDSFChoices)},
+-    {"allow-previews", flag_descriptions::kPreviewsAllowedName,
+-     flag_descriptions::kPreviewsAllowedDescription, kOsAll,
+-     FEATURE_VALUE_TYPE(previews::features::kPreviews)},
+     {"ignore-previews-blocklist",
+      flag_descriptions::kIgnorePreviewsBlocklistName,
+      flag_descriptions::kIgnorePreviewsBlocklistDescription, kOsAll,
+      SINGLE_VALUE_TYPE(previews::switches::kIgnorePreviewsBlocklist)},
+-    {"enable-data-reduction-proxy-server-experiment",
+-     flag_descriptions::kEnableDataReductionProxyServerExperimentName,
+-     flag_descriptions::kEnableDataReductionProxyServerExperimentDescription,
+-     kOsAll, MULTI_VALUE_TYPE(kDataReductionProxyServerExperiment)},
+-    {"enable-subresource-redirect",
+-     flag_descriptions::kEnableSubresourceRedirectName,
+-     flag_descriptions::kEnableSubresourceRedirectDescription, kOsAll,
+-     FEATURE_WITH_PARAMS_VALUE_TYPE(blink::features::kSubresourceRedirect,
+-                                    kSubresourceRedirectVariations,
+-                                    "SubresourceRedirect")},
+     {"enable-login-detection", flag_descriptions::kEnableLoginDetectionName,
+      flag_descriptions::kEnableLoginDetectionDescription, kOsAll,
+      FEATURE_VALUE_TYPE(login_detection::kLoginDetection)},
+ #if defined(OS_CHROMEOS) || defined(OS_LINUX)
+-    {"enable-save-data", flag_descriptions::kEnableSaveDataName,
+-     flag_descriptions::kEnableSaveDataDescription, kOsCrOS | kOsLinux,
+-     SINGLE_VALUE_TYPE(
+-         data_reduction_proxy::switches::kEnableDataReductionProxy)},
+     {"enable-navigation-predictor",
+      flag_descriptions::kEnableNavigationPredictorName,
+      flag_descriptions::kEnableNavigationPredictorDescription,
+@@ -5778,45 +5678,6 @@ const FeatureEntry kFeatureEntries[] = {
                                      "MetricsSettingsAndroid")},
  #endif
  
@@ -118,7 +211,7 @@ index 1f7e7ced6a98..95926acff2ac 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      {"gesture-properties-dbus-service",
       flag_descriptions::kEnableGesturePropertiesDBusServiceName,
-@@ -6634,20 +6566,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6634,20 +6495,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  

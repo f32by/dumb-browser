@@ -1,5 +1,5 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.cc b/components/metrics_services_manager/metrics_services_manager.cc
-index 107632b0ad8f..b91d7bf161ca 100644
+index 107632b0ad8f..fafbfe2ca498 100644
 --- a/components/metrics_services_manager/metrics_services_manager.cc
 +++ b/components/metrics_services_manager/metrics_services_manager.cc
 @@ -15,7 +15,6 @@
@@ -10,7 +10,7 @@ index 107632b0ad8f..b91d7bf161ca 100644
  #include "components/ukm/ukm_service.h"
  #include "components/variations/service/variations_service.h"
  #include "services/network/public/cpp/shared_url_loader_factory.h"
-@@ -43,15 +42,6 @@ metrics::MetricsService* MetricsServicesManager::GetMetricsService() {
+@@ -43,18 +42,9 @@ metrics::MetricsService* MetricsServicesManager::GetMetricsService() {
    return GetMetricsServiceClient()->GetMetricsService();
  }
  
@@ -25,7 +25,11 @@ index 107632b0ad8f..b91d7bf161ca 100644
 -
  ukm::UkmService* MetricsServicesManager::GetUkmService() {
    DCHECK(thread_checker_.CalledOnValidThread());
-   return GetMetricsServiceClient()->GetUkmService();
+-  return GetMetricsServiceClient()->GetUkmService();
++  return nullptr;
+ }
+ 
+ variations::VariationsService* MetricsServicesManager::GetVariationsService() {
 @@ -115,26 +105,14 @@ void MetricsServicesManager::UpdateRunningServices() {
    const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
    if (cmdline->HasSwitch(metrics::switches::kMetricsRecordingOnly)) {

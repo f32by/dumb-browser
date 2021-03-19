@@ -1,5 +1,5 @@
 diff --git a/components/BUILD.gn b/components/BUILD.gn
-index 440e9a7b273f..2fce3b8f3475 100644
+index 440e9a7b273f..97f96e5c7d36 100644
 --- a/components/BUILD.gn
 +++ b/components/BUILD.gn
 @@ -80,7 +80,6 @@ test("components_unittests") {
@@ -10,15 +10,19 @@ index 440e9a7b273f..2fce3b8f3475 100644
      "//components/crx_file:unit_tests",
      "//components/device_event_log:unit_tests",
      "//components/dom_distiller/core:unit_tests",
-@@ -129,7 +128,6 @@ test("components_unittests") {
-     "//components/proxy_config:unit_tests",
+@@ -125,11 +124,8 @@ test("components_unittests") {
+     "//components/policy/core/browser:unit_tests",
+     "//components/policy/core/common:unit_tests",
+     "//components/prefs:unit_tests",
+-    "//components/previews/core:unit_tests",
+-    "//components/proxy_config:unit_tests",
      "//components/qr_code_generator:unit_tests",
      "//components/query_parser:unit_tests",
 -    "//components/rappor:unit_tests",
      "//components/reading_list/core:unit_tests",
      "//components/reputation/core:unit_tests",
      "//components/safe_search_api:unit_tests",
-@@ -221,7 +219,6 @@ test("components_unittests") {
+@@ -221,7 +217,6 @@ test("components_unittests") {
        "//components/password_manager/core/common:unit_tests",
        "//components/password_manager/ios:unit_tests",
        "//components/previous_session_info:unit_tests",
@@ -26,7 +30,7 @@ index 440e9a7b273f..2fce3b8f3475 100644
        "//components/security_state/ios:unit_tests",
        "//components/signin/ios/browser:unit_tests",
        "//components/translate/ios/browser:unit_tests",
-@@ -233,7 +230,6 @@ test("components_unittests") {
+@@ -233,7 +228,6 @@ test("components_unittests") {
        "//components/autofill/content/renderer:unit_tests",
        "//components/autofill/core/common/mojom:unit_tests",
        "//components/background_sync:unit_tests",
@@ -34,7 +38,7 @@ index 440e9a7b273f..2fce3b8f3475 100644
        "//components/browsing_data/content:unit_tests",
        "//components/captive_portal/content:unit_tests",
        "//components/cast_certificate:unit_tests",
-@@ -270,8 +266,6 @@ test("components_unittests") {
+@@ -270,8 +264,6 @@ test("components_unittests") {
        "//components/optimization_guide/core:unit_tests",
        "//components/page_image_annotation/content/renderer:unit_tests",
        "//components/page_image_annotation/core:unit_tests",
@@ -43,9 +47,11 @@ index 440e9a7b273f..2fce3b8f3475 100644
        "//components/paint_preview/browser:unit_tests",
        "//components/paint_preview/common:unit_tests",
        "//components/paint_preview/player:unit_tests",
-@@ -285,13 +279,6 @@ test("components_unittests") {
+@@ -283,15 +275,7 @@ test("components_unittests") {
+       "//components/permissions:unit_tests",
+       "//components/permissions/prediction_service:unit_tests",
        "//components/policy/content:unit_tests",
-       "//components/previews/content:unit_tests",
+-      "//components/previews/content:unit_tests",
        "//components/query_tiles:unit_tests",
 -      "//components/safe_browsing/content/password_protection:password_protection_unittest",
 -      "//components/safe_browsing/content/triggers:unit_tests",
@@ -57,16 +63,23 @@ index 440e9a7b273f..2fce3b8f3475 100644
        "//components/safety_check:unit_tests",
        "//components/security_interstitials/content:unit_tests",
        "//components/security_state/content:unit_tests",
-@@ -325,8 +312,6 @@ test("components_unittests") {
+@@ -323,15 +307,6 @@ test("components_unittests") {
+       deps += [ "//components/cast:unit_tests" ]
+     }
  
-     if (!is_fuchsia) {  # !iOS and !Fuchsia
-       deps += [
+-    if (!is_fuchsia) {  # !iOS and !Fuchsia
+-      deps += [
 -        "//components/crash/content/browser:unit_tests",
 -        "//components/crash/core/app:unit_tests",
-         "//components/data_reduction_proxy/core/browser:unit_tests",
-         "//components/data_reduction_proxy/core/common:unit_tests",
-       ]
-@@ -352,8 +337,6 @@ test("components_unittests") {
+-        "//components/data_reduction_proxy/core/browser:unit_tests",
+-        "//components/data_reduction_proxy/core/common:unit_tests",
+-      ]
+-    }
+-
+     data_deps = [
+       ":components_tests_pak",
+       "//third_party/mesa_headers",
+@@ -352,8 +327,6 @@ test("components_unittests") {
        "//base:base_java_unittest_support",
        "//components/autofill_assistant/browser:unit_tests",
        "//components/cdm/browser:unit_tests",
@@ -75,7 +88,16 @@ index 440e9a7b273f..2fce3b8f3475 100644
        "//components/download/internal/common:internal_java",
        "//components/embedder_support/android:native_java_unittests_java",
        "//components/embedder_support/android/metrics:test_support_java",
-@@ -440,10 +423,6 @@ test("components_unittests") {
+@@ -401,8 +374,6 @@ test("components_unittests") {
+   # Desktop-only deps.
+   if (!is_android && !is_ios) {
+     deps += [
+-      "//components/feedback:unit_tests",
+-
+       # See comment in components/guest_view/browser/BUILD.gn for why
+       # guest_view is currently non-mobile.
+       "//components/guest_view/browser:unit_tests",
+@@ -440,10 +411,6 @@ test("components_unittests") {
      deps += [ "//components/constrained_window:unit_tests" ]
    }
  
@@ -86,7 +108,7 @@ index 440e9a7b273f..2fce3b8f3475 100644
    if (enable_basic_printing) {
      deps += [
        "//components/printing/common:unit_tests",
-@@ -603,7 +582,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -603,7 +570,6 @@ if (!is_ios && !is_fuchsia) {
        "metrics/content/subprocess_metrics_provider_browsertest.cc",
        "paint_preview/renderer/paint_preview_recorder_browsertest.cc",
        "security_state/content/content_utils_browsertest.cc",
@@ -94,7 +116,7 @@ index 440e9a7b273f..2fce3b8f3475 100644
      ]
  
      data = [
-@@ -784,16 +762,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -784,16 +750,6 @@ if (!is_ios && !is_fuchsia) {
          deps += [ "//v8:v8_external_startup_data_assets" ]
        }
      }

@@ -1,12 +1,28 @@
 diff --git a/extensions/browser/BUILD.gn b/extensions/browser/BUILD.gn
-index 1ac4dc4cb696..c7cae4d8d17f 100644
+index 1ac4dc4cb696..731f6db80edd 100644
 --- a/extensions/browser/BUILD.gn
 +++ b/extensions/browser/BUILD.gn
-@@ -599,7 +599,6 @@ source_set("test_support") {
+@@ -546,7 +546,6 @@ source_set("browser_tests") {
+       "//chromeos/dbus/upstart",
+       "//chromeos/login/login_state",
+       "//chromeos/network",
+-      "//components/crash/content/browser/error_reporting:mock_crash_endpoint",
+       "//extensions/common:mojom",
+     ]
+   }
+@@ -599,7 +598,6 @@ source_set("test_support") {
        "api/feedback_private/mock_feedback_service.h",
      ]
      deps += [
 -      "//components/crash/core/app:app",
        "//net:test_support",
+     ]
+   }
+@@ -788,7 +786,6 @@ source_set("unit_tests") {
+       "//chromeos/dbus/upstart",
+       "//chromeos/login/login_state",
+       "//chromeos/network:test_support",
+-      "//components/feedback",
+       "//extensions/shell:app_shell_lib",
      ]
    }

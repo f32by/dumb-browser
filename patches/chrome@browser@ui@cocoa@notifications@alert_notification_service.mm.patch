@@ -38,7 +38,7 @@ index 2a9282d47f69..efa34a95ea80 100644
  }
  
  - (instancetype)initWithTransactionHandler:(XPCTransactionHandler*)handler
-@@ -49,35 +25,7 @@ crashpad::SimpleStringDictionary* GetCrashpadAnnotations() {
+@@ -49,35 +25,7 @@ - (instancetype)initWithTransactionHandler:(XPCTransactionHandler*)handler
    return self;
  }
  
@@ -74,7 +74,7 @@ index 2a9282d47f69..efa34a95ea80 100644
    DCHECK(_notificationDelivery);
  
    [_notificationDelivery deliverNotification:notificationData];
-@@ -85,7 +33,6 @@ crashpad::SimpleStringDictionary* GetCrashpadAnnotations() {
+@@ -85,7 +33,6 @@ - (void)deliverNotification:(NSDictionary*)notificationData {
  
  - (void)closeNotificationWithId:(NSString*)notificationId
                    withProfileId:(NSString*)profileId {
@@ -82,7 +82,7 @@ index 2a9282d47f69..efa34a95ea80 100644
    DCHECK(_notificationDelivery);
  
    [_notificationDelivery closeNotificationWithId:notificationId
-@@ -93,7 +40,6 @@ crashpad::SimpleStringDictionary* GetCrashpadAnnotations() {
+@@ -93,7 +40,6 @@ - (void)closeNotificationWithId:(NSString*)notificationId
  }
  
  - (void)closeAllNotifications {

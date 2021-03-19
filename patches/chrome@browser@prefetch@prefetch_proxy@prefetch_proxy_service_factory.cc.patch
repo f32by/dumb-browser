@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.cc
+index e13404c87d4e..875ddb9f8400 100644
+--- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.cc
++++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.cc
+@@ -4,7 +4,6 @@
+ 
+ #include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.h"
+ 
+-#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
+ #include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+@@ -26,7 +25,6 @@ PrefetchProxyServiceFactory::PrefetchProxyServiceFactory()
+     : BrowserContextKeyedServiceFactory(
+           "PrefetchProxyService",
+           BrowserContextDependencyManager::GetInstance()) {
+-  DependsOn(DataReductionProxyChromeSettingsFactory::GetInstance());
+ }
+ 
+ PrefetchProxyServiceFactory::~PrefetchProxyServiceFactory() = default;

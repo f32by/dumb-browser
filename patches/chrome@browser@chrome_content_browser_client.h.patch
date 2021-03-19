@@ -1,11 +1,24 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index d6e0a910ef96..2715e277fcfe 100644
+index d6e0a910ef96..cd09247e4508 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
-@@ -67,12 +67,6 @@ class PreviewsDecider;
- class PreviewsUserData;
- }  // namespace previews
+@@ -31,7 +31,6 @@
+ #include "ppapi/buildflags/buildflags.h"
+ #include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/mojom/network_context.mojom-forward.h"
+-#include "third_party/blink/public/common/loader/previews_state.h"
  
+ class ChromeContentBrowserClientParts;
+ class PrefRegistrySimple;
+@@ -62,17 +61,6 @@ namespace data_reduction_proxy {
+ class DataReductionProxyData;
+ }  // namespace data_reduction_proxy
+ 
+-namespace previews {
+-class PreviewsDecider;
+-class PreviewsUserData;
+-}  // namespace previews
+-
 -namespace safe_browsing {
 -class RealTimeUrlLookupServiceBase;
 -class SafeBrowsingService;
@@ -15,7 +28,49 @@ index d6e0a910ef96..2715e277fcfe 100644
  namespace sandbox {
  class SeatbeltExecClient;
  }  // namespace sandbox
-@@ -781,26 +775,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -605,15 +593,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+                                      int64_t sent_bytes) override;
+   base::FilePath GetSandboxedStorageServiceDataDirectory() override;
+   bool ShouldSandboxAudioService() override;
+-  blink::PreviewsState DetermineAllowedPreviews(
+-      blink::PreviewsState initial_state,
+-      content::NavigationHandle* navigation_handle,
+-      const GURL& current_navigation_url) override;
+-
+-  blink::PreviewsState DetermineCommittedPreviews(
+-      blink::PreviewsState initial_state,
+-      content::NavigationHandle* navigation_handle,
+-      const net::HttpResponseHeaders* response_headers) override;
+ 
+   void LogWebFeatureForCurrentPage(content::RenderFrameHost* render_frame_host,
+                                    blink::mojom::WebFeature feature) override;
+@@ -668,25 +647,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+       const GURL& site_for_cookies,
+       const base::Optional<url::Origin>& top_frame_origin) override;
+ 
+-  blink::PreviewsState DetermineAllowedPreviewsWithoutHoldback(
+-      blink::PreviewsState initial_state,
+-      content::NavigationHandle* navigation_handle,
+-      const GURL& current_navigation_url);
+-
+-  blink::PreviewsState DetermineCommittedPreviewsWithoutHoldback(
+-      blink::PreviewsState initial_state,
+-      content::NavigationHandle* navigation_handle,
+-      const net::HttpResponseHeaders* response_headers);
+-
+-  // Determines the committed previews state for the passed in params.
+-  static blink::PreviewsState DetermineCommittedPreviewsForURL(
+-      const GURL& url,
+-      data_reduction_proxy::DataReductionProxyData* drp_data,
+-      previews::PreviewsUserData* previews_user_data,
+-      const previews::PreviewsDecider* previews_decider,
+-      blink::PreviewsState initial_state,
+-      content::NavigationHandle* navigation_handle);
+-
+ #if !defined(OS_ANDROID)
+   void FetchRemoteSms(
+       content::BrowserContext* browser_context,
+@@ -781,26 +741,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  
@@ -42,7 +97,7 @@ index d6e0a910ef96..2715e277fcfe 100644
    void OnKeepaliveTimerFired(
        std::unique_ptr<ScopedKeepAlive> keep_alive_handle);
  
-@@ -808,10 +782,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -808,10 +748,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    // Parts are deleted in the reverse order they are added.
    std::vector<ChromeContentBrowserClientParts*> extra_parts_;
  

@@ -1,8 +1,15 @@
 diff --git a/chrome/browser/profiles/profile_impl.cc b/chrome/browser/profiles/profile_impl.cc
-index 4db0fc518259..adb708fde799 100644
+index 4db0fc518259..85871dd9b41e 100644
 --- a/chrome/browser/profiles/profile_impl.cc
 +++ b/chrome/browser/profiles/profile_impl.cc
-@@ -64,8 +64,6 @@
+@@ -57,15 +57,11 @@
+ #include "chrome/browser/content_index/content_index_provider_impl.h"
+ #include "chrome/browser/content_settings/cookie_settings_factory.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+-#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
+-#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
+ #include "chrome/browser/dom_distiller/profile_utils.h"
+ #include "chrome/browser/download/chrome_download_manager_delegate.h"
  #include "chrome/browser/download/download_core_service.h"
  #include "chrome/browser/download/download_core_service_factory.h"
  #include "chrome/browser/download/download_manager_utils.h"
@@ -11,7 +18,7 @@ index 4db0fc518259..adb708fde799 100644
  #include "chrome/browser/file_system_access/chrome_file_system_access_permission_context.h"
  #include "chrome/browser/file_system_access/file_system_access_permission_context_factory.h"
  #include "chrome/browser/heavy_ad_intervention/heavy_ad_service.h"
-@@ -91,10 +89,8 @@
+@@ -91,10 +87,8 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
  #include "chrome/browser/profiles/profile_key.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -22,7 +29,16 @@ index 4db0fc518259..adb708fde799 100644
  #include "chrome/browser/sharing/sharing_service_factory.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_ui_util.h"
-@@ -164,7 +160,6 @@
+@@ -121,8 +115,6 @@
+ #include "components/content_settings/core/browser/cookie_settings.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+ #include "components/content_settings/core/common/pref_names.h"
+-#include "components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.h"
+-#include "components/data_reduction_proxy/core/browser/data_store_impl.h"
+ #include "components/history/core/common/pref_names.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "components/keyed_service/core/simple_dependency_manager.h"
+@@ -164,7 +156,6 @@
  #include "printing/buildflags/buildflags.h"
  #include "services/data_decoder/public/cpp/data_decoder.h"
  #include "services/preferences/public/mojom/preferences.mojom.h"
@@ -30,7 +46,7 @@ index 4db0fc518259..adb708fde799 100644
  #include "services/service_manager/public/cpp/service.h"
  #include "ui/base/l10n/l10n_util.h"
  
-@@ -456,7 +451,7 @@ void ProfileImpl::RegisterProfilePrefs(
+@@ -456,7 +447,7 @@ void ProfileImpl::RegisterProfilePrefs(
  #endif
  
    registry->RegisterBooleanPref(prefs::kForceEphemeralProfiles, false);
@@ -39,7 +55,7 @@ index 4db0fc518259..adb708fde799 100644
  #if !defined(OS_ANDROID)
    registry->RegisterBooleanPref(prefs::kShowCastIconInToolbar, false);
  #endif  // !defined(OS_ANDROID)
-@@ -637,25 +632,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
+@@ -637,25 +628,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
                           g_browser_process->GetApplicationLocale(),
                           pref_registry_.get());
  
@@ -66,7 +82,16 @@ index 4db0fc518259..adb708fde799 100644
                          key_.get(), path_, async_prefs);
    key_->SetPrefs(prefs_.get());
  }
-@@ -802,10 +783,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -779,8 +756,6 @@ void ProfileImpl::DoFinalInit() {
+ 
+   site_isolation::SiteIsolationPolicy::ApplyPersistedIsolatedOrigins(this);
+ 
+-  InitializeDataReductionProxy();
+-
+   content::URLDataSource::Add(this,
+                               std::make_unique<PrefsInternalsSource>(this));
+ 
+@@ -802,10 +777,6 @@ void ProfileImpl::DoFinalInit() {
    // initialized. https://crbug.com/171406
    SharingServiceFactory::GetForBrowserContext(this);
  
@@ -77,3 +102,18 @@ index 4db0fc518259..adb708fde799 100644
    content::NotificationService::current()->Notify(
        chrome::NOTIFICATION_PROFILE_CREATED, content::Source<Profile>(this),
        content::NotificationService::NoDetails());
+@@ -1620,14 +1591,3 @@ void ProfileImpl::UpdateIsEphemeralInStorage() {
+         GetPrefs()->GetBoolean(prefs::kForceEphemeralProfiles));
+   }
+ }
+-
+-void ProfileImpl::InitializeDataReductionProxy() {
+-  scoped_refptr<base::SequencedTaskRunner> db_task_runner =
+-      base::ThreadPool::CreateSequencedTaskRunner(
+-          {base::MayBlock(), base::TaskPriority::BEST_EFFORT,
+-           base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN});
+-  std::unique_ptr<data_reduction_proxy::DataStore> store(
+-      new data_reduction_proxy::DataStoreImpl(GetPath()));
+-  DataReductionProxyChromeSettingsFactory::GetForBrowserContext(this)
+-      ->InitDataReductionProxySettings(this, std::move(store), db_task_runner);
+-}

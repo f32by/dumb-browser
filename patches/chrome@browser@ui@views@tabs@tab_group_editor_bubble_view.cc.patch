@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/views/tabs/tab_group_editor_bubble_view.cc b/chrome/browser/ui/views/tabs/tab_group_editor_bubble_view.cc
+index 16c799b60258..6390dabead87 100644
+--- a/chrome/browser/ui/views/tabs/tab_group_editor_bubble_view.cc
++++ b/chrome/browser/ui/views/tabs/tab_group_editor_bubble_view.cc
+@@ -332,15 +332,6 @@ void TabGroupEditorBubbleView::MoveGroupToNewWindowPressed() {
+ }
+ 
+ void TabGroupEditorBubbleView::SendFeedbackPressed() {
+-  base::RecordAction(
+-      base::UserMetricsAction("TabGroups_TabGroupBubble_SendFeedback"));
+-  chrome::ShowFeedbackPage(
+-      browser_, chrome::FeedbackSource::kFeedbackSourceDesktopTabGroups,
+-      /*description_template=*/std::string(),
+-      /*description_placeholder_text=*/std::string(),
+-      /*category_tag=*/std::string(),
+-      /*extra_diagnostics=*/std::string());
+-  GetWidget()->CloseWithReason(views::Widget::ClosedReason::kUnspecified);
+ }
+ 
+ void TabGroupEditorBubbleView::OnBubbleClose() {

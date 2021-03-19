@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-index 0a9160031aba..db6477caf0fd 100644
+index 0a9160031aba..af2325d42f1f 100644
 --- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 +++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 @@ -34,7 +34,6 @@
@@ -34,15 +34,17 @@ index 0a9160031aba..db6477caf0fd 100644
  #include "chrome/browser/sync/model_type_store_service_factory.h"
  #include "chrome/browser/sync/profile_sync_service_factory.h"
  #include "chrome/browser/sync/user_event_service_factory.h"
-@@ -127,7 +123,6 @@
+@@ -125,9 +121,7 @@
+ #include "chrome/browser/browsing_data/chrome_browsing_data_lifetime_manager_factory.h"
+ #include "chrome/browser/cart/cart_db_content.pb.h"
  #include "chrome/browser/cart/cart_service_factory.h"
- #include "chrome/browser/feedback/feedback_uploader_factory_chrome.h"
+-#include "chrome/browser/feedback/feedback_uploader_factory_chrome.h"
  #include "chrome/browser/media/feeds/media_feeds_service_factory.h"
 -#include "chrome/browser/metrics/desktop_session_duration/desktop_profile_session_durations_service_factory.h"
  #include "chrome/browser/performance_manager/persistence/site_data/site_data_cache_facade_factory.h"
  #include "chrome/browser/profiles/profile_theme_update_service_factory.h"
  #include "chrome/browser/search/instant_service_factory.h"
-@@ -161,7 +156,6 @@
+@@ -161,7 +155,6 @@
  #include "chrome/browser/apps/platform_apps/api/browser_context_keyed_service_factories.h"
  #include "chrome/browser/apps/platform_apps/browser_context_keyed_service_factories.h"
  #include "chrome/browser/extensions/browser_context_keyed_service_factories.h"
@@ -50,7 +52,7 @@ index 0a9160031aba..db6477caf0fd 100644
  #include "chrome/browser/web_applications/web_app_provider_factory.h"
  #include "extensions/browser/browser_context_keyed_service_factories.h"
  #endif
-@@ -264,7 +258,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -264,7 +257,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(ENABLE_CAPTIVE_PORTAL_DETECTION)
    CaptivePortalServiceFactory::GetInstance();
  #endif
@@ -58,7 +60,15 @@ index 0a9160031aba..db6477caf0fd 100644
  #if !defined(OS_ANDROID)
    ChromeBrowsingDataLifetimeManagerFactory::GetInstance();
  #endif
-@@ -299,11 +292,9 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -291,19 +283,14 @@ void ChromeBrowserMainExtraPartsProfiles::
+ #endif
+   FaviconServiceFactory::GetInstance();
+   feature_engagement::TrackerFactory::GetInstance();
+-#if !defined(OS_ANDROID)
+-  feedback::FeedbackUploaderFactoryChrome::GetInstance();
+-#endif
+   FindBarStateFactory::GetInstance();
+   GAIAInfoUpdateServiceFactory::GetInstance();
  #if !defined(OS_ANDROID)
    GlobalErrorServiceFactory::GetInstance();
  #endif
@@ -70,7 +80,7 @@ index 0a9160031aba..db6477caf0fd 100644
    IdentityManagerFactory::EnsureFactoryAndDependeeFactoriesBuilt();
    InMemoryURLIndexFactory::GetInstance();
  #if !defined(OS_ANDROID)
-@@ -333,12 +324,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -333,12 +320,6 @@ void ChromeBrowserMainExtraPartsProfiles::
    media_router::ChromeMediaRouterFactory::GetInstance();
  #if !defined(OS_ANDROID)
    media_router::MediaRouterUIServiceFactory::GetInstance();
@@ -83,7 +93,7 @@ index 0a9160031aba..db6477caf0fd 100644
  #endif
    ModelTypeStoreServiceFactory::GetInstance();
  #if BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -392,7 +377,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -392,7 +373,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(FULL_SAFE_BROWSING)
    safe_browsing::AdvancedProtectionStatusManagerFactory::GetInstance();
  #endif
@@ -91,7 +101,7 @@ index 0a9160031aba..db6477caf0fd 100644
  #if defined(OS_ANDROID)
    SearchPermissionsService::Factory::GetInstance();
  #endif
-@@ -441,7 +425,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -441,7 +421,6 @@ void ChromeBrowserMainExtraPartsProfiles::
    UsbChooserContextFactory::GetInstance();
  #endif
  #if BUILDFLAG(ENABLE_EXTENSIONS)

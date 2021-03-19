@@ -1,8 +1,17 @@
 diff --git a/chrome/browser/net/profile_network_context_service.cc b/chrome/browser/net/profile_network_context_service.cc
-index 0ccb74571b85..eeabc9d0994c 100644
+index 0ccb74571b85..efd696b7a073 100644
 --- a/chrome/browser/net/profile_network_context_service.cc
 +++ b/chrome/browser/net/profile_network_context_service.cc
-@@ -43,7 +43,6 @@
+@@ -23,8 +23,6 @@
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/content_settings/cookie_settings_factory.h"
+ #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+-#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
+-#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
+ #include "chrome/browser/domain_reliability/service_factory.h"
+ #include "chrome/browser/net/system_network_context_manager.h"
+ #include "chrome/browser/profiles/profile.h"
+@@ -43,7 +41,6 @@
  #include "components/pref_registry/pref_registry_syncable.h"
  #include "components/prefs/pref_registry_simple.h"
  #include "components/prefs/pref_service.h"
@@ -10,7 +19,7 @@ index 0ccb74571b85..eeabc9d0994c 100644
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/network_service_instance.h"
-@@ -756,10 +755,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+@@ -756,10 +753,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
  
    // Initialize the network context to do SCT auditing only if the current
    // profile is opted in to Safe Browsing Extended Reporting.
@@ -22,3 +31,19 @@ index 0ccb74571b85..eeabc9d0994c 100644
  
    network_context_params->ct_policy = GetCTPolicy();
  
+@@ -813,15 +807,6 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+                   metrics::prefs::kMetricsReportingEnabled);
+   }
+ 
+-  auto* drp_settings =
+-      DataReductionProxyChromeSettingsFactory::GetForBrowserContext(profile_);
+-  if (drp_settings) {
+-    mojo::Remote<network::mojom::CustomProxyConfigClient> config_client;
+-    network_context_params->custom_proxy_config_client_receiver =
+-        config_client.BindNewPipeAndPassReceiver();
+-    drp_settings->AddCustomProxyConfigClient(std::move(config_client));
+-  }
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+   bool profile_supports_policy_certs = false;
+   if (chromeos::ProfileHelper::IsSigninProfile(profile_))

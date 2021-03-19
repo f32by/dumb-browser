@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/about_handler.cc b/chrome/browser/ui/webui/settings/about_handler.cc
-index c5214569d93e..658d225a9072 100644
+index c5214569d93e..46e9f36615bf 100644
 --- a/chrome/browser/ui/webui/settings/about_handler.cc
 +++ b/chrome/browser/ui/webui/settings/about_handler.cc
 @@ -34,7 +34,6 @@
@@ -22,3 +22,26 @@ index c5214569d93e..658d225a9072 100644
  }
  
  void AboutHandler::RegisterMessages() {
+@@ -271,10 +268,6 @@ void AboutHandler::RegisterMessages() {
+       "refreshUpdateStatus",
+       base::BindRepeating(&AboutHandler::HandleRefreshUpdateStatus,
+                           base::Unretained(this)));
+-  web_ui()->RegisterMessageCallback(
+-      "openFeedbackDialog",
+-      base::BindRepeating(&AboutHandler::HandleOpenFeedbackDialog,
+-                          base::Unretained(this)));
+   web_ui()->RegisterMessageCallback(
+       "openHelpPage", base::BindRepeating(&AboutHandler::HandleOpenHelpPage,
+                                           base::Unretained(this)));
+@@ -409,11 +402,6 @@ void AboutHandler::PromoteUpdater(const base::ListValue* args) {
+ #endif
+ 
+ void AboutHandler::HandleOpenFeedbackDialog(const base::ListValue* args) {
+-  DCHECK(args->empty());
+-  Browser* browser =
+-      chrome::FindBrowserWithWebContents(web_ui()->GetWebContents());
+-  chrome::OpenFeedbackDialog(browser,
+-                             chrome::kFeedbackSourceMdSettingsAboutPage);
+ }
+ 
+ void AboutHandler::HandleOpenHelpPage(const base::ListValue* args) {
