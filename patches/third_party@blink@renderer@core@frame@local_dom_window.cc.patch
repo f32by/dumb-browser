@@ -1,0 +1,108 @@
+diff --git a/third_party/blink/renderer/core/frame/local_dom_window.cc b/third_party/blink/renderer/core/frame/local_dom_window.cc
+index 74539b9e48b0..7f13c5a929f0 100644
+--- a/third_party/blink/renderer/core/frame/local_dom_window.cc
++++ b/third_party/blink/renderer/core/frame/local_dom_window.cc
+@@ -89,8 +89,6 @@
+ #include "third_party/blink/renderer/core/frame/local_frame_client.h"
+ #include "third_party/blink/renderer/core/frame/local_frame_view.h"
+ #include "third_party/blink/renderer/core/frame/navigator.h"
+-#include "third_party/blink/renderer/core/frame/report.h"
+-#include "third_party/blink/renderer/core/frame/reporting_context.h"
+ #include "third_party/blink/renderer/core/frame/screen.h"
+ #include "third_party/blink/renderer/core/frame/settings.h"
+ #include "third_party/blink/renderer/core/frame/viewport_data.h"
+@@ -466,33 +464,6 @@ void LocalDOMWindow::ReportFeaturePolicyViolation(
+     mojom::blink::FeaturePolicyFeature feature,
+     mojom::blink::PolicyDisposition disposition,
+     const String& message) const {
+-  if (!RuntimeEnabledFeatures::FeaturePolicyReportingEnabled(this))
+-    return;
+-  if (!GetFrame())
+-    return;
+-
+-  // Construct the feature policy violation report.
+-  const String& feature_name = GetNameForFeature(feature);
+-  const String& disp_str =
+-      (disposition == mojom::blink::PolicyDisposition::kReport ? "report"
+-                                                               : "enforce");
+-
+-  FeaturePolicyViolationReportBody* body =
+-      MakeGarbageCollected<FeaturePolicyViolationReportBody>(feature_name,
+-                                                             message, disp_str);
+-
+-  Report* report = MakeGarbageCollected<Report>(
+-      ReportType::kFeaturePolicyViolation, Url().GetString(), body);
+-
+-  // Send the feature policy violation report to any ReportingObservers.
+-  ReportingContext::From(this)->QueueReport(report);
+-
+-  // TODO(iclelland): Report something different in report-only mode
+-  if (disposition == mojom::blink::PolicyDisposition::kEnforce) {
+-    GetFrame()->Console().AddMessage(MakeGarbageCollected<ConsoleMessage>(
+-        mojom::blink::ConsoleMessageSource::kViolation,
+-        mojom::blink::ConsoleMessageLevel::kError, body->message()));
+-  }
+ }
+ 
+ void LocalDOMWindow::ReportDocumentPolicyViolation(
+@@ -500,60 +471,6 @@ void LocalDOMWindow::ReportDocumentPolicyViolation(
+     mojom::blink::PolicyDisposition disposition,
+     const String& message,
+     const String& source_file) const {
+-  if (!GetFrame())
+-    return;
+-
+-  // Construct the document policy violation report.
+-  const String& feature_name =
+-      GetDocumentPolicyFeatureInfoMap().at(feature).feature_name.c_str();
+-  bool is_report_only = disposition == mojom::blink::PolicyDisposition::kReport;
+-  const String& disp_str = is_report_only ? "report" : "enforce";
+-  const DocumentPolicy* relevant_document_policy =
+-      is_report_only ? GetSecurityContext().GetReportOnlyDocumentPolicy()
+-                     : GetSecurityContext().GetDocumentPolicy();
+-
+-  DocumentPolicyViolationReportBody* body =
+-      MakeGarbageCollected<DocumentPolicyViolationReportBody>(
+-          feature_name, message, disp_str, source_file);
+-
+-  Report* report = MakeGarbageCollected<Report>(
+-      ReportType::kDocumentPolicyViolation, Url().GetString(), body);
+-
+-  // Avoids sending duplicate reports, by comparing the generated MatchId.
+-  // The match ids are not guaranteed to be unique.
+-  // There are trade offs on storing full objects and storing match ids. Storing
+-  // full objects takes more memory. Storing match id has the potential of hash
+-  // collision. Since reporting is not a part critical system or have security
+-  // concern, dropping a valid report due to hash collision seems a reasonable
+-  // price to pay for the memory saving.
+-  unsigned report_id = report->MatchId();
+-  DCHECK(report_id);
+-
+-  if (document_policy_violation_reports_sent_.Contains(report_id))
+-    return;
+-  document_policy_violation_reports_sent_.insert(report_id);
+-
+-  // Send the document policy violation report to any ReportingObservers.
+-  const base::Optional<std::string> endpoint =
+-      relevant_document_policy->GetFeatureEndpoint(feature);
+-
+-  if (is_report_only) {
+-    UMA_HISTOGRAM_ENUMERATION("Blink.UseCounter.DocumentPolicy.ReportOnly",
+-                              feature);
+-  } else {
+-    UMA_HISTOGRAM_ENUMERATION("Blink.UseCounter.DocumentPolicy.Enforced",
+-                              feature);
+-  }
+-
+-  ReportingContext::From(this)->QueueReport(
+-      report, endpoint ? Vector<String>{endpoint->c_str()} : Vector<String>{});
+-
+-  // TODO(iclelland): Report something different in report-only mode
+-  if (!is_report_only) {
+-    GetFrame()->Console().AddMessage(MakeGarbageCollected<ConsoleMessage>(
+-        mojom::blink::ConsoleMessageSource::kViolation,
+-        mojom::blink::ConsoleMessageLevel::kError, body->message()));
+-  }
+ }
+ 
+ static void RunAddConsoleMessageTask(mojom::ConsoleMessageSource source,

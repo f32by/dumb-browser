@@ -1,0 +1,13 @@
+diff --git a/content/browser/renderer_host/render_process_host_impl.h b/content/browser/renderer_host/render_process_host_impl.h
+index cb236a188db0..02863434ff2b 100644
+--- a/content/browser/renderer_host/render_process_host_impl.h
++++ b/content/browser/renderer_host/render_process_host_impl.h
+@@ -255,8 +255,6 @@ class CONTENT_EXPORT RenderProcessHostImpl
+   bool IsProcessLockedToSiteForTesting() override;
+   void BindCacheStorage(
+       const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter,
+       const url::Origin& origin,
+       mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) override;
+   void BindIndexedDB(

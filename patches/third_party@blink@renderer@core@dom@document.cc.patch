@@ -1,0 +1,55 @@
+diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
+index 93b923688e9d..9acd7d984500 100644
+--- a/third_party/blink/renderer/core/dom/document.cc
++++ b/third_party/blink/renderer/core/dom/document.cc
+@@ -6265,16 +6265,6 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
+   return promise;
+ }
+ 
+-mojom::blink::FlocService* Document::GetFlocService(
+-    ExecutionContext* execution_context) {
+-  if (!data_->floc_service_.is_bound()) {
+-    execution_context->GetBrowserInterfaceBroker().GetInterface(
+-        data_->floc_service_.BindNewPipeAndPassReceiver(
+-            execution_context->GetTaskRunner(TaskType::kMiscPlatformAPI)));
+-  }
+-  return data_->floc_service_.get();
+-}
+-
+ ScriptPromise Document::interestCohort(ScriptState* script_state,
+                                        ExceptionState& exception_state) {
+   if (!GetFrame()) {
+@@ -6298,33 +6288,6 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
+ 
+   ScriptPromise promise = resolver->Promise();
+ 
+-  GetFlocService(ExecutionContext::From(script_state))
+-      ->GetInterestCohort(WTF::Bind(
+-          [](ScriptPromiseResolver* resolver, Document* document,
+-             mojom::blink::InterestCohortPtr interest_cohort) {
+-            DCHECK(resolver);
+-            DCHECK(document);
+-
+-            if (interest_cohort->version.IsEmpty()) {
+-              ScriptState* state = resolver->GetScriptState();
+-              ScriptState::Scope scope(state);
+-
+-              // TODO(yaoxia): Distinguish between the different causes.
+-              resolver->Reject(V8ThrowDOMException::CreateOrEmpty(
+-                  state->GetIsolate(), DOMExceptionCode::kDataError,
+-                  "Failed to get the interest cohort: either it is "
+-                  "unavailable, or the preferences or content settings has "
+-                  "denined the access."));
+-            } else {
+-              InterestCohort* result = InterestCohort::Create();
+-              result->setId(interest_cohort->id);
+-              result->setVersion(interest_cohort->version);
+-
+-              resolver->Resolve(result);
+-            }
+-          },
+-          WrapPersistent(resolver), WrapPersistent(this)));
+-
+   return promise;
+ }
+ 

@@ -1,0 +1,22 @@
+diff --git a/content/browser/cache_storage/cache_storage_context_impl.cc b/content/browser/cache_storage/cache_storage_context_impl.cc
+index 6c8ac385f688..edaa74b2fe84 100644
+--- a/content/browser/cache_storage/cache_storage_context_impl.cc
++++ b/content/browser/cache_storage/cache_storage_context_impl.cc
+@@ -100,8 +100,6 @@ void CacheStorageContextImpl::Shutdown() {
+ 
+ void CacheStorageContextImpl::AddReceiver(
+     const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-        coep_reporter,
+     const url::Origin& origin,
+     storage::mojom::CacheStorageOwner owner,
+     mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) {
+@@ -113,7 +111,7 @@ void CacheStorageContextImpl::AddReceiver(
+                           base::RetainedRef(this));
+   }
+   dispatcher_host_.Post(FROM_HERE, &CacheStorageDispatcherHost::AddReceiver,
+-                        cross_origin_embedder_policy, std::move(coep_reporter),
++                        cross_origin_embedder_policy,
+                         origin, owner, std::move(receiver));
+ }
+ 

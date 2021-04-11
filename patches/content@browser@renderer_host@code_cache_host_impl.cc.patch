@@ -1,0 +1,13 @@
+diff --git a/content/browser/renderer_host/code_cache_host_impl.cc b/content/browser/renderer_host/code_cache_host_impl.cc
+index 285c870c74c8..1f882218e825 100644
+--- a/content/browser/renderer_host/code_cache_host_impl.cc
++++ b/content/browser/renderer_host/code_cache_host_impl.cc
+@@ -210,7 +210,7 @@ void CodeCacheHostImpl::DidGenerateCacheableMetadataInCacheStorage(
+   // TODO(enne): replace this direct use of CacheStorageContext with a new
+   // storage::mojom::CacheStorageControl remote, similar to IndexedDBControl.
+   cache_storage_context_->AddReceiver(
+-      cross_origin_embedder_policy, mojo::NullRemote(), cache_storage_origin,
++      cross_origin_embedder_policy, cache_storage_origin,
+       storage::mojom::CacheStorageOwner::kCacheAPI,
+       remote.BindNewPipeAndPassReceiver());
+ 

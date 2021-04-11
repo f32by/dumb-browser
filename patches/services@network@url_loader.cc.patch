@@ -1,0 +1,40 @@
+diff --git a/services/network/url_loader.cc b/services/network/url_loader.cc
+index c02cabc51eb5..81d6450344ea 100644
+--- a/services/network/url_loader.cc
++++ b/services/network/url_loader.cc
+@@ -453,7 +453,6 @@ URLLoader::URLLoader(
+     base::Optional<DataPipeUseTracker> response_body_use_tracker,
+     const net::NetworkTrafficAnnotationTag& traffic_annotation,
+     const mojom::URLLoaderFactoryParams* factory_params,
+-    mojom::CrossOriginEmbedderPolicyReporter* coep_reporter,
+     uint32_t request_id,
+     int keepalive_request_size,
+     bool require_network_isolation_key,
+@@ -474,7 +473,6 @@ URLLoader::URLLoader(
+       resource_type_(request.resource_type),
+       is_load_timing_enabled_(request.enable_load_timing),
+       factory_params_(factory_params),
+-      coep_reporter_(coep_reporter),
+       render_frame_id_(request.render_frame_id),
+       request_id_(request_id),
+       keepalive_request_size_(keepalive_request_size),
+@@ -1120,8 +1118,7 @@ void URLLoader::OnReceivedRedirect(net::URLRequest* url_request,
+               url_request_->url(), url_request_->original_url(),
+               url_request_->initiator(), *response, request_mode_,
+               factory_params_->request_initiator_origin_lock,
+-              request_destination_, cross_origin_embedder_policy,
+-              coep_reporter_)) {
++              request_destination_, cross_origin_embedder_policy)) {
+     CompleteBlockedResponse(net::ERR_BLOCKED_BY_RESPONSE, false,
+                             blocked_reason);
+     // TODO(https://crbug.com/1154250):  Close the socket here.
+@@ -1363,8 +1360,7 @@ void URLLoader::ContinueOnResponseStarted() {
+               url_request_->url(), url_request_->original_url(),
+               url_request_->initiator(), *response_, request_mode_,
+               factory_params_->request_initiator_origin_lock,
+-              request_destination_, cross_origin_embedder_policy,
+-              coep_reporter_)) {
++              request_destination_, cross_origin_embedder_policy)) {
+     CompleteBlockedResponse(net::ERR_BLOCKED_BY_RESPONSE, false,
+                             blocked_reason);
+     // Close the socket associated with the request, to prevent leaking

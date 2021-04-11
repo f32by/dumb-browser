@@ -1,13 +1,9 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `89.0.4389.90`.
-
-**Some patches are experimental and build may fail.**
+Current version: `89.0.4389.114`.
 
 # Features
-
-> All patches are in `patches` folder.
 
 Following components are removed/disabled:
 1. [Safe Browsing](https://safebrowsing.google.com)
@@ -23,8 +19,9 @@ Following components are removed/disabled:
 12. Promotions in New Tab Page
 13. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
 14. Chromium Updater
-15. Subresource filter (which is used by Chrome's integrated AdBlocking feature.)
+15. Subresource filter (used by Chrome's integrated ad-block feature.)
 16. [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
+17. [Floc](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox/floc)
 
 Other changes:
 1. [UI] Restore mute button on tab
@@ -33,18 +30,9 @@ Other changes:
 
 # Installation
 
-## 1. [Recommended] Build from Sources
-
-It's impossible to build Dumb Browser via GitHub Actions due to GitHub free account's resource limitations.
-Please build on your own or wait for official binaries.
-
-Tested on following OS:
-1. macOS 11.2.1
-2. Windows 10 1909 18363.1082
+Tested on macOS 11.3 Beta 7 (20E5229a). Windows is not tested and build may fail.
 
 ### Prerequisites
-
-Android: Currently not supported.
 
 Windows: [Building Dumb Browser for Windows](docs/windows.md)
 
@@ -53,7 +41,7 @@ macOS: [Building Dumb Browser for macOS](docs/macos.md)
 ### Build Instruction
 
 ```shell
-git clone https://github.com/bytanuky/dumb-browser
+git clone https://github.com/f32/dumb-browser
 cd dumb-browser
 # install dependencies
 ./scripts/prepare.py
@@ -67,18 +55,7 @@ cd dumb-browser
 # wait patiently :)
 ```
 
-Binaries will be found in `src/out/{Release|Debug} .`
-
-## 2. Official Binaries
-*Coming soon*
-
-> Note: Provided binaries do not contain any Google API keys thus you can't use Chrome Sync by default.
-> To solve this, follow [Chromium's Official How-Tos](https://www.chromium.org/developers/how-tos/api-keys)
-> and add your own API keys to environment variables.
-
-# Known Issues
-
-1. [1Password extension (desktop app required)](https://chrome.google.com/webstore/detail/1password-extension-deskt/aomjjhallfgjeglblehebfpbcfeobpgk) is unavailable since it forces an allowlist-based browser signature check. Instead you can use `1Password X` which requires a valid 1Password subscription.
+Final binaries will be found in `src/out/{Release|Debug} .`
 
 # Credits
 

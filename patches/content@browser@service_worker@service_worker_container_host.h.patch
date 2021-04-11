@@ -1,0 +1,25 @@
+diff --git a/content/browser/service_worker/service_worker_container_host.h b/content/browser/service_worker/service_worker_container_host.h
+index a6ec8410adf9..261ef4de1b4d 100644
+--- a/content/browser/service_worker/service_worker_container_host.h
++++ b/content/browser/service_worker/service_worker_container_host.h
+@@ -266,8 +266,6 @@ class CONTENT_EXPORT ServiceWorkerContainerHost final
+       int container_process_id,
+       int container_frame_id,
+       const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter,
+       ukm::SourceId document_ukm_source_id);
+ 
+   // For service worker window clients. Called after the navigation commits to a
+@@ -700,11 +698,6 @@ class CONTENT_EXPORT ServiceWorkerContainerHost final
+   base::Optional<network::CrossOriginEmbedderPolicy>
+       cross_origin_embedder_policy_;
+ 
+-  // An endpoint connected to the COEP reporter. A clone of this connection is
+-  // passed to the service worker. Bound on response commit.
+-  mojo::Remote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-      coep_reporter_;
+-
+   // Indicates if this container host is in the back-forward cache.
+   //
+   // TODO(yuzus): This bit will be unnecessary once ServiceWorkerContainerHost

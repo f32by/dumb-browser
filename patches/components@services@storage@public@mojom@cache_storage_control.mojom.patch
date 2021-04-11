@@ -1,0 +1,13 @@
+diff --git a/components/services/storage/public/mojom/cache_storage_control.mojom b/components/services/storage/public/mojom/cache_storage_control.mojom
+index 3bec5b02a1a5..489c8edfec51 100644
+--- a/components/services/storage/public/mojom/cache_storage_control.mojom
++++ b/components/services/storage/public/mojom/cache_storage_control.mojom
+@@ -27,8 +27,6 @@ interface CacheStorageControl {
+   // the cache storage for a particular origin and owner.
+   AddReceiver(
+       network.mojom.CrossOriginEmbedderPolicy policy,
+-      pending_remote<network.mojom.CrossOriginEmbedderPolicyReporter>?
+-          coep_reporter,
+       url.mojom.Origin origin,
+       CacheStorageOwner owner,
+       pending_receiver<blink.mojom.CacheStorage> receiver);

@@ -1,0 +1,13 @@
+diff --git a/content/public/browser/render_process_host.h b/content/public/browser/render_process_host.h
+index ef51dcc952e1..0f918c966abe 100644
+--- a/content/public/browser/render_process_host.h
++++ b/content/public/browser/render_process_host.h
+@@ -478,8 +478,6 @@ class CONTENT_EXPORT RenderProcessHost : public IPC::Sender,
+   // exposed here to support MockRenderProcessHost usage in tests.
+   virtual void BindCacheStorage(
+       const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter_remote,
+       const url::Origin& origin,
+       mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) = 0;
+   virtual void BindFileSystemManager(

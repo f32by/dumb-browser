@@ -1,0 +1,29 @@
+diff --git a/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc b/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc
+index 452159e62874..26df85b18f70 100644
+--- a/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc
++++ b/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc
+@@ -18,8 +18,6 @@
+ #include "third_party/blink/renderer/core/frame/local_dom_window.h"
+ #include "third_party/blink/renderer/core/frame/local_frame.h"
+ #include "third_party/blink/renderer/core/frame/local_frame_client.h"
+-#include "third_party/blink/renderer/core/frame/report.h"
+-#include "third_party/blink/renderer/core/frame/reporting_context.h"
+ #include "third_party/blink/renderer/core/loader/document_loader.h"
+ #include "third_party/blink/renderer/core/loader/ping_loader.h"
+ #include "third_party/blink/renderer/core/probe/core_probes.h"
+@@ -182,15 +180,6 @@ void ExecutionContextCSPDelegate::PostViolationReport(
+   scoped_refptr<EncodedFormData> report =
+       EncodedFormData::Create(stringified_report.Utf8());
+ 
+-  // Construct and route the report to the ReportingContext, to be observed
+-  // by any ReportingObservers.
+-  auto* body = MakeGarbageCollected<CSPViolationReportBody>(violation_data);
+-  Report* observed_report = MakeGarbageCollected<Report>(
+-      ReportType::kCSPViolation, Url().GetString(), body);
+-  ReportingContext::From(execution_context_.Get())
+-      ->QueueReport(observed_report,
+-                    use_reporting_api ? report_endpoints : Vector<String>());
+-
+   if (use_reporting_api)
+     return;
+ 

@@ -1,8 +1,39 @@
 diff --git a/content/browser/browser_interface_binders.cc b/content/browser/browser_interface_binders.cc
-index a45f9d3db09d..d87ec6e09ad3 100644
+index a45f9d3db09d..62094a933c14 100644
 --- a/content/browser/browser_interface_binders.cc
 +++ b/content/browser/browser_interface_binders.cc
-@@ -750,10 +750,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+@@ -20,7 +20,6 @@
+ #include "content/browser/cookie_store/cookie_store_context.h"
+ #include "content/browser/eye_dropper_chooser_impl.h"
+ #include "content/browser/feature_observer.h"
+-#include "content/browser/federated_learning/floc_service_impl.h"
+ #include "content/browser/gpu/gpu_process_host.h"
+ #include "content/browser/image_capture/image_capture_impl.h"
+ #include "content/browser/keyboard_lock/keyboard_lock_service_impl.h"
+@@ -158,10 +157,6 @@
+ #include "media/mojo/mojom/remoting.mojom-forward.h"
+ #endif
+ 
+-#if BUILDFLAG(ENABLE_REPORTING)
+-#include "content/browser/net/reporting_service_proxy.h"
+-#endif
+-
+ #if defined(OS_MAC)
+ #include "content/browser/renderer_host/text_input_host_impl.h"
+ #include "third_party/blink/public/mojom/input/text_input_host.mojom.h"
+@@ -623,11 +618,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+   map->Add<blink::mojom::QuotaManagerHost>(
+       base::BindRepeating(&BindQuotaManagerHost, base::Unretained(host)));
+ 
+-#if BUILDFLAG(ENABLE_REPORTING)
+-  map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+-      &CreateReportingServiceProxyForFrame, base::Unretained(host)));
+-#endif
+-
+   map->Add<blink::mojom::SharedWorkerConnector>(
+       base::BindRepeating(&BindSharedWorkerConnector, base::Unretained(host)));
+ 
+@@ -750,10 +740,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
        &RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver,
        base::Unretained(host)));
  
@@ -13,3 +44,45 @@ index a45f9d3db09d..d87ec6e09ad3 100644
    map->Add<media::mojom::MediaPlayerHost>(base::BindRepeating(
        &RenderFrameHostImpl::CreateMediaPlayerHost, base::Unretained(host)));
  
+@@ -875,8 +861,6 @@ void PopulateBinderMapWithContext(
+       base::BindRepeating(&ContentIndexServiceImpl::CreateForFrame));
+   map->Add<blink::mojom::KeyboardLockService>(
+       base::BindRepeating(&KeyboardLockServiceImpl::CreateMojoService));
+-  map->Add<blink::mojom::FlocService>(
+-      base::BindRepeating(&FlocServiceImpl::CreateMojoService));
+   map->Add<blink::mojom::MediaSessionService>(
+       base::BindRepeating(&MediaSessionServiceImpl::Create));
+   map->Add<blink::mojom::PictureInPictureService>(
+@@ -975,10 +959,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
+                           base::Unretained(host)));
+   map->Add<blink::mojom::CacheStorage>(base::BindRepeating(
+       &DedicatedWorkerHost::BindCacheStorage, base::Unretained(host)));
+-#if BUILDFLAG(ENABLE_REPORTING)
+-  map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+-      &CreateReportingServiceProxyForDedicatedWorker, base::Unretained(host)));
+-#endif
+ #if !defined(OS_ANDROID)
+   map->Add<blink::mojom::SerialService>(base::BindRepeating(
+       &DedicatedWorkerHost::BindSerialService, base::Unretained(host)));
+@@ -1057,10 +1037,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
+       &SharedWorkerHost::CreateQuicTransportConnector, base::Unretained(host)));
+   map->Add<blink::mojom::CacheStorage>(base::BindRepeating(
+       &SharedWorkerHost::BindCacheStorage, base::Unretained(host)));
+-#if BUILDFLAG(ENABLE_REPORTING)
+-  map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+-      &CreateReportingServiceProxyForSharedWorker, base::Unretained(host)));
+-#endif
+ 
+   // render process host binders
+   map->Add<media::mojom::VideoDecodePerfHistory>(BindWorkerReceiver(
+@@ -1142,10 +1118,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
+       &ServiceWorkerHost::BindCacheStorage, base::Unretained(host)));
+   map->Add<blink::mojom::BadgeService>(
+       base::BindRepeating(&BindBadgeServiceForServiceWorker, host));
+-#if BUILDFLAG(ENABLE_REPORTING)
+-  map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+-      &CreateReportingServiceProxyForServiceWorker, base::Unretained(host)));
+-#endif
+ 
+   // render process host binders
+   map->Add<media::mojom::VideoDecodePerfHistory>(BindServiceWorkerReceiver(

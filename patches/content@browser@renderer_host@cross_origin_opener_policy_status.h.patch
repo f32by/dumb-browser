@@ -1,0 +1,31 @@
+diff --git a/content/browser/renderer_host/cross_origin_opener_policy_status.h b/content/browser/renderer_host/cross_origin_opener_policy_status.h
+index 6c91bbc690c4..26ecae27b55a 100644
+--- a/content/browser/renderer_host/cross_origin_opener_policy_status.h
++++ b/content/browser/renderer_host/cross_origin_opener_policy_status.h
+@@ -16,7 +16,6 @@ class NetworkIsolationKey;
+ }  // namespace net
+ 
+ namespace content {
+-class CrossOriginOpenerPolicyReporter;
+ class FrameTreeNode;
+ class StoragePartition;
+ 
+@@ -73,8 +72,6 @@ class CrossOriginOpenerPolicyStatus {
+     return current_coop_;
+   }
+ 
+-  std::unique_ptr<CrossOriginOpenerPolicyReporter> TakeCoopReporter();
+-
+   // Called when a RenderFrameHost has been created to use its process's
+   // storage partition. Until then, the reporter uses the current process
+   // storage partition.
+@@ -117,9 +114,6 @@ class CrossOriginOpenerPolicyStatus {
+   // used instead.
+   bool use_current_document_coop_reporter_ = true;
+ 
+-  // The reporter currently in use by COOP.
+-  std::unique_ptr<CrossOriginOpenerPolicyReporter> coop_reporter_;
+-
+   // Whether the current context tracked by this CrossOriginOpenerPolicy is the
+   // source of the current navigation. This is updated every time we receive a
+   // redirect, as redirects are considered the source of the navigation to the

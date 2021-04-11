@@ -1,0 +1,14 @@
+diff --git a/content/browser/service_worker/service_worker_version.cc b/content/browser/service_worker/service_worker_version.cc
+index 798d0bd35097..2a9119a7b153 100644
+--- a/content/browser/service_worker/service_worker_version.cc
++++ b/content/browser/service_worker/service_worker_version.cc
+@@ -1043,8 +1043,7 @@ void ServiceWorkerVersion::InitializeGlobalScope(
+       worker_host_->container_host()->CreateServiceWorkerRegistrationObjectInfo(
+           std::move(registration)),
+       worker_host_->container_host()->CreateServiceWorkerObjectInfoToSend(this),
+-      fetch_handler_existence_, std::move(subresource_loader_factories),
+-      std::move(reporting_observer_receiver_));
++      fetch_handler_existence_, std::move(subresource_loader_factories));
+ 
+   is_endpoint_ready_ = true;
+ }

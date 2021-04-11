@@ -1,0 +1,14 @@
+diff --git a/services/network/public/mojom/network_context.mojom b/services/network/public/mojom/network_context.mojom
+index 8ac73cae1530..0f53344ff25a 100644
+--- a/services/network/public/mojom/network_context.mojom
++++ b/services/network/public/mojom/network_context.mojom
+@@ -688,9 +688,6 @@ struct URLLoaderFactoryParams {
+   // URLLoader based on the Fetch client state.
+   ClientSecurityState? client_security_state;
+ 
+-  // Used to report CORP violations caused by COEP.
+-  pending_remote<CrossOriginEmbedderPolicyReporter>? coep_reporter;
+-
+   // Used to notify clients about cookie reads or writes.
+   pending_remote<CookieAccessObserver>? cookie_observer;
+ 

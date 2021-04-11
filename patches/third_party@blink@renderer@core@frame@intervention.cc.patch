@@ -1,0 +1,21 @@
+diff --git a/third_party/blink/renderer/core/frame/intervention.cc b/third_party/blink/renderer/core/frame/intervention.cc
+index e3f1c7d41d2f..258b1b1f1118 100644
+--- a/third_party/blink/renderer/core/frame/intervention.cc
++++ b/third_party/blink/renderer/core/frame/intervention.cc
+@@ -30,16 +30,6 @@ void Intervention::GenerateReport(LocalFrame* frame,
+   window->AddConsoleMessage(MakeGarbageCollected<ConsoleMessage>(
+       mojom::ConsoleMessageSource::kIntervention,
+       mojom::ConsoleMessageLevel::kError, message));
+-
+-  // Construct the intervention report.
+-  InterventionReportBody* body =
+-      MakeGarbageCollected<InterventionReportBody>(id, message);
+-  Report* report = MakeGarbageCollected<Report>(
+-      ReportType::kIntervention, window->document()->Url().GetString(), body);
+-
+-  // Send the intervention report to the Reporting API and any
+-  // ReportingObservers.
+-  ReportingContext::From(window)->QueueReport(report);
+ }
+ 
+ }  // namespace blink

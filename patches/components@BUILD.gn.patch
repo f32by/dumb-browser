@@ -1,5 +1,5 @@
 diff --git a/components/BUILD.gn b/components/BUILD.gn
-index 440e9a7b273f..97f96e5c7d36 100644
+index 440e9a7b273f..9c258cb77974 100644
 --- a/components/BUILD.gn
 +++ b/components/BUILD.gn
 @@ -80,7 +80,6 @@ test("components_unittests") {
@@ -38,7 +38,15 @@ index 440e9a7b273f..97f96e5c7d36 100644
        "//components/browsing_data/content:unit_tests",
        "//components/captive_portal/content:unit_tests",
        "//components/cast_certificate:unit_tests",
-@@ -270,8 +264,6 @@ test("components_unittests") {
+@@ -251,7 +245,6 @@ test("components_unittests") {
+       "//components/drive:unit_tests",
+       "//components/embedder_support:unit_tests",
+       "//components/favicon/content:unit_tests",
+-      "//components/federated_learning:unit_tests",
+       "//components/feed:unit_tests",
+       "//components/gcm_driver/instance_id:unit_tests",
+       "//components/history/content/browser:unit_tests",
+@@ -270,8 +263,6 @@ test("components_unittests") {
        "//components/optimization_guide/core:unit_tests",
        "//components/page_image_annotation/content/renderer:unit_tests",
        "//components/page_image_annotation/core:unit_tests",
@@ -47,7 +55,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
        "//components/paint_preview/browser:unit_tests",
        "//components/paint_preview/common:unit_tests",
        "//components/paint_preview/player:unit_tests",
-@@ -283,15 +275,7 @@ test("components_unittests") {
+@@ -283,15 +274,7 @@ test("components_unittests") {
        "//components/permissions:unit_tests",
        "//components/permissions/prediction_service:unit_tests",
        "//components/policy/content:unit_tests",
@@ -63,7 +71,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
        "//components/safety_check:unit_tests",
        "//components/security_interstitials/content:unit_tests",
        "//components/security_state/content:unit_tests",
-@@ -323,15 +307,6 @@ test("components_unittests") {
+@@ -323,15 +306,6 @@ test("components_unittests") {
        deps += [ "//components/cast:unit_tests" ]
      }
  
@@ -79,7 +87,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
      data_deps = [
        ":components_tests_pak",
        "//third_party/mesa_headers",
-@@ -352,8 +327,6 @@ test("components_unittests") {
+@@ -352,8 +326,6 @@ test("components_unittests") {
        "//base:base_java_unittest_support",
        "//components/autofill_assistant/browser:unit_tests",
        "//components/cdm/browser:unit_tests",
@@ -88,7 +96,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
        "//components/download/internal/common:internal_java",
        "//components/embedder_support/android:native_java_unittests_java",
        "//components/embedder_support/android/metrics:test_support_java",
-@@ -401,8 +374,6 @@ test("components_unittests") {
+@@ -401,8 +373,6 @@ test("components_unittests") {
    # Desktop-only deps.
    if (!is_android && !is_ios) {
      deps += [
@@ -97,7 +105,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
        # See comment in components/guest_view/browser/BUILD.gn for why
        # guest_view is currently non-mobile.
        "//components/guest_view/browser:unit_tests",
-@@ -440,10 +411,6 @@ test("components_unittests") {
+@@ -440,10 +410,6 @@ test("components_unittests") {
      deps += [ "//components/constrained_window:unit_tests" ]
    }
  
@@ -108,7 +116,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
    if (enable_basic_printing) {
      deps += [
        "//components/printing/common:unit_tests",
-@@ -603,7 +570,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -603,7 +569,6 @@ if (!is_ios && !is_fuchsia) {
        "metrics/content/subprocess_metrics_provider_browsertest.cc",
        "paint_preview/renderer/paint_preview_recorder_browsertest.cc",
        "security_state/content/content_utils_browsertest.cc",
@@ -116,7 +124,7 @@ index 440e9a7b273f..97f96e5c7d36 100644
      ]
  
      data = [
-@@ -784,16 +750,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -784,16 +749,6 @@ if (!is_ios && !is_fuchsia) {
          deps += [ "//v8:v8_external_startup_data_assets" ]
        }
      }

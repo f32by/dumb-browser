@@ -1,0 +1,39 @@
+diff --git a/content/browser/service_worker/embedded_worker_instance.h b/content/browser/service_worker/embedded_worker_instance.h
+index 7dbcf40f5c14..2529e064f386 100644
+--- a/content/browser/service_worker/embedded_worker_instance.h
++++ b/content/browser/service_worker/embedded_worker_instance.h
+@@ -43,12 +43,10 @@
+ 
+ namespace content {
+ 
+-class CrossOriginEmbedderPolicyReporter;
+ class RenderProcessHost;
+ class ServiceWorkerContentSettingsProxyImpl;
+ class ServiceWorkerContextCore;
+ class ServiceWorkerVersion;
+-class CrossOriginEmbedderPolicyReporter;
+ 
+ namespace service_worker_new_script_loader_unittest {
+ class ServiceWorkerNewScriptLoaderTest;
+@@ -238,8 +236,6 @@ class CONTENT_EXPORT EmbeddedWorkerInstance
+       const url::Origin& origin,
+       const base::Optional<network::CrossOriginEmbedderPolicy>&
+           cross_origin_embedder_policy,
+-      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter,
+       ContentBrowserClient::URLLoaderFactoryType factory_type);
+ 
+   // Creates a set of factory bundles for scripts and subresources. This must be
+@@ -389,12 +385,6 @@ class CONTENT_EXPORT EmbeddedWorkerInstance
+   std::vector<mojo::PendingReceiver<blink::mojom::CacheStorage>>
+       pending_cache_storage_receivers_;
+ 
+-  // COEP Reporter connected to the URLLoaderFactories that handles subresource
+-  // requests initiated from the service worker. The impl lives on the UI
+-  // thread, and |coep_reporter_| has the ownership of the impl instance.
+-  mojo::Remote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-      coep_reporter_;
+-
+   // A unique identifier for this service worker instance. This is unique across
+   // the browser process, but not persistent across service worker restarts.
+   // This token is set every time the worker starts, and is plumbed through to

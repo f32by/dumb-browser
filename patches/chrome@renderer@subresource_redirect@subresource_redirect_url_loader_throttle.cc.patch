@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
-index 7fdff6c5572b..5e40068c30da 100644
+index 0fcd6db52edb..bc8f483ea287 100644
 --- a/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
 +++ b/chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.cc
-@@ -222,11 +222,6 @@ void SubresourceRedirectURLLoaderThrottle::BeforeWillProcessResponse(
+@@ -260,11 +260,6 @@ void SubresourceRedirectURLLoaderThrottle::BeforeWillProcessResponse(
        net::HttpUtil::ParseRetryAfterHeader(retry_after_string,
                                             base::Time::Now(), &retry_after);
      }
@@ -14,7 +14,7 @@ index 7fdff6c5572b..5e40068c30da 100644
    }
  
    // Non 2XX responses from the compression server need to have unaltered
-@@ -318,11 +313,6 @@ void SubresourceRedirectURLLoaderThrottle::OnRedirectTimeout() {
+@@ -372,11 +367,6 @@ void SubresourceRedirectURLLoaderThrottle::OnRedirectTimeout() {
    DCHECK_EQ(RedirectState::kRedirectAttempted, redirect_state_);
    redirect_state_ = RedirectState::kRedirectFailed;
    delegate_->RestartWithURLResetAndFlagsNow(net::LOAD_NORMAL);

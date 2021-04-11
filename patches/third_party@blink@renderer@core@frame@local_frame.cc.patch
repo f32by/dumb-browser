@@ -1,0 +1,56 @@
+diff --git a/third_party/blink/renderer/core/frame/local_frame.cc b/third_party/blink/renderer/core/frame/local_frame.cc
+index 4ceaa30497d2..7f9e0b025cd3 100644
+--- a/third_party/blink/renderer/core/frame/local_frame.cc
++++ b/third_party/blink/renderer/core/frame/local_frame.cc
+@@ -57,7 +57,6 @@
+ #include "third_party/blink/public/mojom/frame/frame_owner_properties.mojom-blink.h"
+ #include "third_party/blink/public/mojom/frame/lifecycle.mojom-blink.h"
+ #include "third_party/blink/public/mojom/frame/media_player_action.mojom-blink.h"
+-#include "third_party/blink/public/mojom/frame/reporting_observer.mojom-blink.h"
+ #include "third_party/blink/public/mojom/scroll/scrollbar_mode.mojom-blink.h"
+ #include "third_party/blink/public/platform/interface_registry.h"
+ #include "third_party/blink/public/platform/scheduler/web_resource_loading_task_runner_handle.h"
+@@ -113,7 +112,6 @@
+ #include "third_party/blink/renderer/core/frame/remote_frame.h"
+ #include "third_party/blink/renderer/core/frame/remote_frame_owner.h"
+ #include "third_party/blink/renderer/core/frame/report.h"
+-#include "third_party/blink/renderer/core/frame/reporting_context.h"
+ #include "third_party/blink/renderer/core/frame/root_frame_viewport.h"
+ #include "third_party/blink/renderer/core/frame/savable_resources.h"
+ #include "third_party/blink/renderer/core/frame/settings.h"
+@@ -551,7 +549,6 @@ void LocalFrame::Trace(Visitor* visitor) const {
+   visitor->Trace(raw_system_clipboard_);
+   visitor->Trace(virtual_keyboard_overlay_changed_observers_);
+   visitor->Trace(pause_handle_receivers_);
+-  visitor->Trace(reporting_service_);
+ #if defined(OS_MAC)
+   visitor->Trace(text_input_host_);
+ #endif
+@@ -2273,15 +2270,6 @@ const base::UnguessableToken& LocalFrame::GetAgentClusterId() const {
+   return base::UnguessableToken::Null();
+ }
+ 
+-mojom::blink::ReportingServiceProxy* LocalFrame::GetReportingService() {
+-  if (!reporting_service_.is_bound()) {
+-    GetBrowserInterfaceBroker().GetInterface(
+-        reporting_service_.BindNewPipeAndPassReceiver(
+-            GetTaskRunner(blink::TaskType::kInternalDefault)));
+-  }
+-  return reporting_service_.get();
+-}
+-
+ // static
+ void LocalFrame::NotifyUserActivation(
+     LocalFrame* frame,
+@@ -3366,11 +3354,6 @@ void LocalFrame::PostMessageEvent(
+                                       : base::UnguessableToken());
+ }
+ 
+-void LocalFrame::BindReportingObserver(
+-    mojo::PendingReceiver<mojom::blink::ReportingObserver> receiver) {
+-  ReportingContext::From(DomWindow())->Bind(std::move(receiver));
+-}
+-
+ void LocalFrame::UpdateOpener(
+     const base::Optional<base::UnguessableToken>& opener_frame_token) {
+   if (auto* web_frame = WebFrame::FromCoreFrame(this)) {

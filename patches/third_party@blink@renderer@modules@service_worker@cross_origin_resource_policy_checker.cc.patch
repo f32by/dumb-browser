@@ -1,0 +1,29 @@
+diff --git a/third_party/blink/renderer/modules/service_worker/cross_origin_resource_policy_checker.cc b/third_party/blink/renderer/modules/service_worker/cross_origin_resource_policy_checker.cc
+index da1d20a9bb8b..428e52b30003 100644
+--- a/third_party/blink/renderer/modules/service_worker/cross_origin_resource_policy_checker.cc
++++ b/third_party/blink/renderer/modules/service_worker/cross_origin_resource_policy_checker.cc
+@@ -11,13 +11,8 @@
+ namespace blink {
+ 
+ CrossOriginResourcePolicyChecker::CrossOriginResourcePolicyChecker(
+-    network::CrossOriginEmbedderPolicy policy,
+-    mojo::PendingRemote<
+-        network::mojom::blink::CrossOriginEmbedderPolicyReporter> reporter)
++    network::CrossOriginEmbedderPolicy policy)
+     : policy_(std::move(policy)) {
+-  if (reporter) {
+-    reporter_.Bind(ToCrossVariantMojoType(std::move(reporter)));
+-  }
+ }
+ 
+ bool CrossOriginResourcePolicyChecker::IsBlocked(
+@@ -42,8 +37,7 @@ bool CrossOriginResourcePolicyChecker::IsBlocked(
+              response.InternalURLList().back(),
+              response.InternalURLList().front(), initiator_origin,
+              corp_header_value, request_mode, initiator_origin,
+-             request_destination, policy_,
+-             reporter_ ? reporter_.get() : nullptr)
++             request_destination, policy_)
+       .has_value();
+ }
+ 

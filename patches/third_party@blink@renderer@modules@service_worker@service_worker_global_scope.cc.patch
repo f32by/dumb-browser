@@ -1,0 +1,42 @@
+diff --git a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
+index dcb01a871702..33110786df00 100644
+--- a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
++++ b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
+@@ -1616,13 +1616,10 @@ void ServiceWorkerGlobalScope::DispatchFetchEventForSubresource(
+ 
+ void ServiceWorkerGlobalScope::Clone(
+     mojo::PendingReceiver<mojom::blink::ControllerServiceWorker> receiver,
+-    const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-    mojo::PendingRemote<
+-        network::mojom::blink::CrossOriginEmbedderPolicyReporter>
+-        coep_reporter) {
++    const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy) {
+   DCHECK(IsContextThread());
+   auto checker = std::make_unique<CrossOriginResourcePolicyChecker>(
+-      cross_origin_embedder_policy, std::move(coep_reporter));
++      cross_origin_embedder_policy);
+ 
+   controller_receivers_.Add(
+       std::move(receiver), std::move(checker),
+@@ -1635,9 +1632,7 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
+     mojom::blink::ServiceWorkerRegistrationObjectInfoPtr registration_info,
+     mojom::blink::ServiceWorkerObjectInfoPtr service_worker_info,
+     mojom::blink::FetchHandlerExistence fetch_hander_existence,
+-    std::unique_ptr<PendingURLLoaderFactoryBundle> subresource_loader_factories,
+-    mojo::PendingReceiver<mojom::blink::ReportingObserver>
+-        reporting_observer_receiver) {
++    std::unique_ptr<PendingURLLoaderFactoryBundle> subresource_loader_factories) {
+   DCHECK(IsContextThread());
+   DCHECK(!global_scope_initialized_);
+ 
+@@ -1671,10 +1666,6 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
+ 
+   SetFetchHandlerExistence(fetch_hander_existence);
+ 
+-  if (reporting_observer_receiver) {
+-    ReportingContext::From(this)->Bind(std::move(reporting_observer_receiver));
+-  }
+-
+   global_scope_initialized_ = true;
+   if (!pause_evaluation_)
+     ReadyToRunWorkerScript();

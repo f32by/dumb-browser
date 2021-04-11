@@ -1,0 +1,27 @@
+diff --git a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h
+index 931a4a37e527..7ae42e57e01d 100644
+--- a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h
++++ b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h
+@@ -402,10 +402,8 @@ class MODULES_EXPORT ServiceWorkerGlobalScope final
+       DispatchFetchEventForSubresourceCallback callback) override;
+   void Clone(
+       mojo::PendingReceiver<mojom::blink::ControllerServiceWorker> receiver,
+-      const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-      mojo::PendingRemote<
+-          network::mojom::blink::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter) override;
++      const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy)
++    override;
+ 
+   // Implements mojom::blink::ServiceWorker.
+   void InitializeGlobalScope(
+@@ -415,8 +413,7 @@ class MODULES_EXPORT ServiceWorkerGlobalScope final
+       mojom::blink::ServiceWorkerObjectInfoPtr service_worker_info,
+       mojom::blink::FetchHandlerExistence fetch_handler_existence,
+       std::unique_ptr<PendingURLLoaderFactoryBundle>
+-          subresource_loader_factories,
+-      mojo::PendingReceiver<mojom::blink::ReportingObserver>) override;
++          subresource_loader_factories) override;
+   void DispatchInstallEvent(DispatchInstallEventCallback callback) override;
+   void AbortInstallEvent(int event_id,
+                          mojom::blink::ServiceWorkerEventStatus status);

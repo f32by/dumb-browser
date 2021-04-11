@@ -1,0 +1,34 @@
+diff --git a/services/network/public/cpp/cross_origin_resource_policy.h b/services/network/public/cpp/cross_origin_resource_policy.h
+index d01e65f25cb2..9e95b674f2ea 100644
+--- a/services/network/public/cpp/cross_origin_resource_policy.h
++++ b/services/network/public/cpp/cross_origin_resource_policy.h
+@@ -47,8 +47,7 @@ class COMPONENT_EXPORT(NETWORK_CPP) CrossOriginResourcePolicy {
+       mojom::RequestMode request_mode,
+       base::Optional<url::Origin> request_initiator_origin_lock,
+       mojom::RequestDestination request_destination,
+-      const CrossOriginEmbedderPolicy& embedder_policy,
+-      mojom::CrossOriginEmbedderPolicyReporter* reporter) WARN_UNUSED_RESULT;
++      const CrossOriginEmbedderPolicy& embedder_policy) WARN_UNUSED_RESULT;
+ 
+   // Same as IsBlocked(), but this method can take a raw value of
+   // Cross-Origin-Resource-Policy header instead of using a URLResponseHead.
+@@ -60,8 +59,7 @@ class COMPONENT_EXPORT(NETWORK_CPP) CrossOriginResourcePolicy {
+       mojom::RequestMode request_mode,
+       base::Optional<url::Origin> request_initiator_origin_lock,
+       mojom::RequestDestination request_destination,
+-      const CrossOriginEmbedderPolicy& embedder_policy,
+-      mojom::CrossOriginEmbedderPolicyReporter* reporter) WARN_UNUSED_RESULT;
++      const CrossOriginEmbedderPolicy& embedder_policy) WARN_UNUSED_RESULT;
+ 
+   // The CORP check for navigation requests. This is expected to be called
+   // from the navigation algorithm.
+@@ -72,8 +70,7 @@ class COMPONENT_EXPORT(NETWORK_CPP) CrossOriginResourcePolicy {
+       const network::mojom::URLResponseHead& response,
+       base::Optional<url::Origin> request_initiator_origin_lock,
+       mojom::RequestDestination request_destination,
+-      const CrossOriginEmbedderPolicy& embedder_policy,
+-      mojom::CrossOriginEmbedderPolicyReporter* reporter);
++      const CrossOriginEmbedderPolicy& embedder_policy);
+ 
+   // Parsing of the Cross-Origin-Resource-Policy http response header.
+   enum ParsedHeader {

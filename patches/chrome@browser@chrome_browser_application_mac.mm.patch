@@ -74,7 +74,7 @@ index 739554cabb30..b2631c824a25 100644
  @interface BrowserCrApplication ()<NativeEventProcessor> {
    base::ObserverList<content::NativeEventProcessorObserver>::Unchecked
        _observers;
-@@ -108,10 +50,6 @@ @interface BrowserCrApplication ()<NativeEventProcessor> {
+@@ -108,10 +50,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
  @implementation BrowserCrApplication
  
  + (void)initialize {
@@ -85,7 +85,7 @@ index 739554cabb30..b2631c824a25 100644
    chrome::InstallObjcExceptionPreprocessor();
  
    cocoa_l10n_util::ApplyForcedRTL();
-@@ -277,9 +215,6 @@ - (BOOL)sendAction:(SEL)anAction to:(id)aTarget from:(id)sender {
+@@ -277,9 +215,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
        [actionString UTF8String],
        aTarget);
  
@@ -95,7 +95,7 @@ index 739554cabb30..b2631c824a25 100644
    __block BOOL rv;
    base::mac::CallWithEHFrame(^{
      rv = [super sendAction:anAction to:aTarget from:sender];
-@@ -302,10 +237,6 @@ - (void)sendEvent:(NSEvent*)event {
+@@ -302,10 +237,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
    TRACE_EVENT_INSTANT1("toplevel", "KeyWindow", TRACE_EVENT_SCOPE_THREAD,
                         "KeyWin", [[NSApp keyWindow] windowNumber]);
  

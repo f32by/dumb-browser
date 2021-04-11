@@ -1,0 +1,40 @@
+diff --git a/third_party/blink/renderer/core/frame/deprecation.cc b/third_party/blink/renderer/core/frame/deprecation.cc
+index f3986e34f4dc..a96c1af83718 100644
+--- a/third_party/blink/renderer/core/frame/deprecation.cc
++++ b/third_party/blink/renderer/core/frame/deprecation.cc
+@@ -587,22 +587,6 @@ DeprecationInfo GetDeprecationInfo(WebFeature feature) {
+   }
+ }
+ 
+-Report* CreateReportInternal(const KURL& context_url,
+-                             const DeprecationInfo& info) {
+-  base::Optional<base::Time> optional_removal_date;
+-  if (info.anticipated_removal != kUnknown) {
+-    base::Time removal_date;
+-    bool result = base::Time::FromUTCExploded(
+-        MilestoneDate(info.anticipated_removal), &removal_date);
+-    DCHECK(result);
+-    optional_removal_date = removal_date;
+-  }
+-  DeprecationReportBody* body = MakeGarbageCollected<DeprecationReportBody>(
+-      info.id, optional_removal_date, info.message);
+-  return MakeGarbageCollected<Report>(ReportType::kDeprecation, context_url,
+-                                      body);
+-}
+-
+ }  // anonymous namespace
+ 
+ Deprecation::Deprecation() : mute_count_(0) {}
+@@ -722,12 +706,6 @@ void Deprecation::CountDeprecation(ExecutionContext* context,
+       mojom::ConsoleMessageSource::kDeprecation,
+       mojom::ConsoleMessageLevel::kWarning, info.message);
+   context->AddConsoleMessage(console_message);
+-
+-  Report* report = CreateReportInternal(context->Url(), info);
+-
+-  // Send the deprecation report to the Reporting API and any
+-  // ReportingObservers.
+-  ReportingContext::From(context)->QueueReport(report);
+ }
+ 
+ // static

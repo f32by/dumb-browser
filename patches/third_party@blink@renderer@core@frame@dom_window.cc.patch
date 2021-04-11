@@ -1,0 +1,30 @@
+diff --git a/third_party/blink/renderer/core/frame/dom_window.cc b/third_party/blink/renderer/core/frame/dom_window.cc
+index 5a768a029f92..3a70f6ac3a1e 100644
+--- a/third_party/blink/renderer/core/frame/dom_window.cc
++++ b/third_party/blink/renderer/core/frame/dom_window.cc
+@@ -27,8 +27,6 @@
+ #include "third_party/blink/renderer/core/frame/frame_console.h"
+ #include "third_party/blink/renderer/core/frame/local_dom_window.h"
+ #include "third_party/blink/renderer/core/frame/location.h"
+-#include "third_party/blink/renderer/core/frame/report.h"
+-#include "third_party/blink/renderer/core/frame/reporting_context.h"
+ #include "third_party/blink/renderer/core/frame/settings.h"
+ #include "third_party/blink/renderer/core/frame/user_activation.h"
+ #include "third_party/blink/renderer/core/input/input_device_capabilities.h"
+@@ -538,16 +536,6 @@ void DOMWindow::ReportCoopAccess(const char* property_name) {
+       it->reporter->QueueAccessReport(it->report_type, property_name,
+                                       std::move(source_location),
+                                       std::move(it->reported_window_url));
+-      // Send a coop-access-violation report.
+-      if (network::IsAccessFromCoopPage(it->report_type)) {
+-        ReportingContext::From(accessing_main_frame.DomWindow())
+-            ->QueueReport(MakeGarbageCollected<Report>(
+-                ReportType::kCoopAccessViolation,
+-                accessing_main_frame.GetDocument()->Url().GetString(),
+-                MakeGarbageCollected<CoopAccessViolationReportBody>(
+-                    std::move(location), it->report_type, String(property_name),
+-                    it->reported_window_url)));
+-      }
+     }
+ 
+     // CoopAccessMonitor are used once and destroyed. This avoids sending

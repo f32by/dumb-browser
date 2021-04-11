@@ -1,0 +1,51 @@
+diff --git a/third_party/blink/renderer/core/frame/local_frame.h b/third_party/blink/renderer/core/frame/local_frame.h
+index 7635e2c40c4a..f61412c30822 100644
+--- a/third_party/blink/renderer/core/frame/local_frame.h
++++ b/third_party/blink/renderer/core/frame/local_frame.h
+@@ -44,14 +44,12 @@
+ #include "third_party/blink/public/mojom/frame/frame.mojom-blink.h"
+ #include "third_party/blink/public/mojom/frame/frame_owner_properties.mojom-blink-forward.h"
+ #include "third_party/blink/public/mojom/frame/lifecycle.mojom-blink-forward.h"
+-#include "third_party/blink/public/mojom/frame/reporting_observer.mojom-blink-forward.h"
+ #include "third_party/blink/public/mojom/frame/viewport_intersection_state.mojom-blink.h"
+ #include "third_party/blink/public/mojom/input/focus_type.mojom-blink-forward.h"
+ #include "third_party/blink/public/mojom/link_to_text/link_to_text.mojom-blink.h"
+ #include "third_party/blink/public/mojom/loader/pause_subresource_loading_handle.mojom-blink-forward.h"
+ #include "third_party/blink/public/mojom/media/fullscreen_video_element.mojom-blink.h"
+ #include "third_party/blink/public/mojom/optimization_guide/optimization_guide.mojom-blink.h"
+-#include "third_party/blink/public/mojom/reporting/reporting.mojom-blink.h"
+ #include "third_party/blink/public/mojom/web_feature/web_feature.mojom-blink-forward.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/public/platform/web_rect.h"
+@@ -522,8 +520,6 @@ class CORE_EXPORT LocalFrame final
+ 
+   SmoothScrollSequencer& GetSmoothScrollSequencer();
+ 
+-  mojom::blink::ReportingServiceProxy* GetReportingService();
+-
+   // Returns the frame host ptr. The interface returned is backed by an
+   // associated interface with the legacy Chrome IPC channel.
+   mojom::blink::LocalFrameHost& GetLocalFrameHostRemote() const;
+@@ -659,8 +655,6 @@ class CORE_EXPORT LocalFrame final
+       const String& source_origin,
+       const String& target_origin,
+       BlinkTransferableMessage message) final;
+-  void BindReportingObserver(
+-      mojo::PendingReceiver<mojom::blink::ReportingObserver> receiver) final;
+   void UpdateOpener(
+       const base::Optional<base::UnguessableToken>& opener_routing_id) final;
+   void GetSavableResourceLinks(GetSavableResourceLinksCallback callback) final;
+@@ -899,13 +893,6 @@ class CORE_EXPORT LocalFrame final
+   Member<ContentCaptureManager> content_capture_manager_;
+ 
+   InterfaceRegistry* const interface_registry_;
+-  // This is declared mutable so that the service endpoint can be cached by
+-  // const methods.
+-  //
+-  // LocalFrame can be reused by multiple ExecutionContext.
+-  mutable HeapMojoRemote<mojom::blink::ReportingServiceProxy,
+-                         HeapMojoWrapperMode::kWithoutContextObserver>
+-      reporting_service_{nullptr};
+ 
+ #if defined(OS_MAC)
+   // LocalFrame can be reused by multiple ExecutionContext.

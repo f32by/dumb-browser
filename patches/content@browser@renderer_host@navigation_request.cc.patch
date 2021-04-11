@@ -1,0 +1,111 @@
+diff --git a/content/browser/renderer_host/navigation_request.cc b/content/browser/renderer_host/navigation_request.cc
+index 24450c34eaed..00b1f5588a5d 100644
+--- a/content/browser/renderer_host/navigation_request.cc
++++ b/content/browser/renderer_host/navigation_request.cc
+@@ -38,8 +38,6 @@
+ #include "content/browser/loader/browser_initiated_resource_request.h"
+ #include "content/browser/loader/cached_navigation_url_loader.h"
+ #include "content/browser/loader/navigation_url_loader.h"
+-#include "content/browser/net/cross_origin_embedder_policy_reporter.h"
+-#include "content/browser/net/cross_origin_opener_policy_reporter.h"
+ #include "content/browser/network_service_instance_impl.h"
+ #include "content/browser/prerender/prerender_host_registry.h"
+ #include "content/browser/renderer_host/cookie_utils.h"
+@@ -943,7 +941,6 @@ std::unique_ptr<NavigationRequest> NavigationRequest::CreateForCommit(
+     const std::vector<GURL>& redirects,
+     const GURL& original_url,
+     const blink::PageState& page_state,
+-    std::unique_ptr<CrossOriginEmbedderPolicyReporter> coep_reporter,
+     std::unique_ptr<WebBundleNavigationInfo> web_bundle_navigation_info,
+     int http_response_code) {
+   // TODO(clamy): Improve the *NavigationParams and *CommitParams to avoid
+@@ -1018,7 +1015,6 @@ std::unique_ptr<NavigationRequest> NavigationRequest::CreateForCommit(
+   navigation_request->web_bundle_navigation_info_ =
+       std::move(web_bundle_navigation_info);
+   navigation_request->render_frame_host_ = render_frame_host;
+-  navigation_request->coep_reporter_ = std::move(coep_reporter);
+   navigation_request->isolation_info_for_subresources_ =
+       isolation_info_for_subresources;
+   navigation_request->StartNavigation(true);
+@@ -1800,22 +1796,6 @@ NavigationRequest::TakePolicyContainerHost() {
+   return std::move(policy_container_host_);
+ }
+ 
+-void NavigationRequest::CreateCoepReporter(
+-    StoragePartition* storage_partition) {
+-  DCHECK(!isolation_info_for_subresources_.IsEmpty());
+-
+-  coep_reporter_ = std::make_unique<CrossOriginEmbedderPolicyReporter>(
+-      storage_partition, common_params_->url,
+-      cross_origin_embedder_policy_.reporting_endpoint,
+-      cross_origin_embedder_policy_.report_only_reporting_endpoint,
+-      isolation_info_for_subresources_.network_isolation_key());
+-}
+-
+-std::unique_ptr<CrossOriginEmbedderPolicyReporter>
+-NavigationRequest::TakeCoepReporter() {
+-  return std::move(coep_reporter_);
+-}
+-
+ ukm::SourceId NavigationRequest::GetPreviousPageUkmSourceId() {
+   return previous_page_ukm_source_id_;
+ }
+@@ -2378,19 +2358,8 @@ void NavigationRequest::OnResponseStarted(
+           cross_origin_embedder_policy.value = kRequireCorp;
+         }
+ 
+-        auto* const coep_reporter = parent->coep_reporter();
+-        if (parent_coep.report_only_value == kRequireCorp &&
+-            !has_allowed_scheme &&
+-            cross_origin_embedder_policy.value == kNone && coep_reporter) {
+-          coep_reporter->QueueNavigationReport(redirect_chain_[0],
+-                                               /*report_only=*/true);
+-        }
+         if (parent_coep.value == kRequireCorp &&
+             cross_origin_embedder_policy.value == kNone) {
+-          if (coep_reporter) {
+-            coep_reporter->QueueNavigationReport(redirect_chain_[0],
+-                                                 /*report_only=*/false);
+-          }
+           // TODO(https://crbug.com/1172169): Investigate what must be done in
+           // case of a download.
+           OnRequestFailedInternal(network::URLLoaderCompletionStatus(
+@@ -3376,10 +3345,6 @@ void NavigationRequest::CommitNavigation() {
+     }
+   }
+ 
+-  CreateCoepReporter(render_frame_host_->GetProcess()->GetStoragePartition());
+-  coop_status_.UpdateReporterStoragePartition(
+-      render_frame_host_->GetProcess()->GetStoragePartition());
+-
+   BrowserContext* browser_context =
+       frame_tree_node_->navigator().GetController()->GetBrowserContext();
+   ClientHintsControllerDelegate* client_hints_delegate =
+@@ -3411,16 +3376,12 @@ void NavigationRequest::CommitNavigation() {
+   blink::mojom::ServiceWorkerContainerInfoForClientPtr
+       service_worker_container_info;
+   if (service_worker_handle_) {
+-    DCHECK(coep_reporter());
+-    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-        reporter_remote;
+-    coep_reporter()->Clone(reporter_remote.InitWithNewPipeAndPassReceiver());
+     // Notify the service worker navigation handle that navigation commit is
+     // about to go.
+     service_worker_handle_->OnBeginNavigationCommit(
+         render_frame_host_->GetProcess()->GetID(),
+         render_frame_host_->GetRoutingID(), cross_origin_embedder_policy_,
+-        std::move(reporter_remote), &service_worker_container_info,
++        &service_worker_container_info,
+         commit_params_->document_ukm_source_id);
+   }
+ 
+@@ -5245,8 +5206,7 @@ NavigationRequest::EnforceCOEP() {
+   return network::CrossOriginResourcePolicy::IsNavigationBlocked(
+       url, redirect_chain_[0], parent_frame->GetLastCommittedOrigin(),
+       *response_head_, parent_frame->GetLastCommittedOrigin(),
+-      request_destination(), parent_frame->cross_origin_embedder_policy(),
+-      parent_frame->coep_reporter());
++      request_destination(), parent_frame->cross_origin_embedder_policy());
+ }
+ 
+ std::unique_ptr<PeakGpuMemoryTracker>

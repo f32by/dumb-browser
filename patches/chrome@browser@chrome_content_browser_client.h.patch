@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index d6e0a910ef96..cd09247e4508 100644
+index d6e0a910ef96..fc7ecfbed0b1 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
 @@ -31,7 +31,6 @@
@@ -44,7 +44,19 @@ index d6e0a910ef96..cd09247e4508 100644
  
    void LogWebFeatureForCurrentPage(content::RenderFrameHost* render_frame_host,
                                     blink::mojom::WebFeature feature) override;
-@@ -668,25 +647,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -647,11 +626,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+       bool user_gesture,
+       content::NavigationDownloadPolicy* download_policy) override;
+ 
+-  blink::mojom::InterestCohortPtr GetInterestCohortForJsApi(
+-      content::WebContents* web_contents,
+-      const GURL& url,
+-      const base::Optional<url::Origin>& top_frame_origin) override;
+-
+   bool IsBluetoothScanningBlocked(content::BrowserContext* browser_context,
+                                   const url::Origin& requesting_origin,
+                                   const url::Origin& embedding_origin) override;
+@@ -668,25 +642,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        const GURL& site_for_cookies,
        const base::Optional<url::Origin>& top_frame_origin) override;
  
@@ -70,7 +82,7 @@ index d6e0a910ef96..cd09247e4508 100644
  #if !defined(OS_ANDROID)
    void FetchRemoteSms(
        content::BrowserContext* browser_context,
-@@ -781,26 +741,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -781,26 +736,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  
@@ -97,7 +109,7 @@ index d6e0a910ef96..cd09247e4508 100644
    void OnKeepaliveTimerFired(
        std::unique_ptr<ScopedKeepAlive> keep_alive_handle);
  
-@@ -808,10 +748,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -808,10 +743,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    // Parts are deleted in the reverse order they are added.
    std::vector<ChromeContentBrowserClientParts*> extra_parts_;
  

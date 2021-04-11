@@ -1,8 +1,72 @@
 diff --git a/content/browser/renderer_host/render_frame_host_impl.cc b/content/browser/renderer_host/render_frame_host_impl.cc
-index 0e1a439de32f..e06ef1522526 100644
+index 0e1a439de32f..d1e2b0ca66c5 100644
 --- a/content/browser/renderer_host/render_frame_host_impl.cc
 +++ b/content/browser/renderer_host/render_frame_host_impl.cc
-@@ -5748,11 +5748,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
+@@ -73,8 +73,6 @@
+ #include "content/browser/media/media_interface_proxy.h"
+ #include "content/browser/media/webaudio/audio_context_manager_impl.h"
+ #include "content/browser/navigation_subresource_loader_params.h"
+-#include "content/browser/net/cross_origin_embedder_policy_reporter.h"
+-#include "content/browser/net/cross_origin_opener_policy_reporter.h"
+ #include "content/browser/payments/payment_app_context_impl.h"
+ #include "content/browser/permissions/permission_controller_impl.h"
+ #include "content/browser/permissions/permission_service_context.h"
+@@ -1119,13 +1117,6 @@ RenderFrameHostImpl::RenderFrameHostImpl(
+   }
+   ResetFeaturePolicy();
+ 
+-  // New RenderFrameHostImpl are put in their own virtual browsing context
+-  // group. Then, they can inherit from:
+-  // 1) Their opener in RenderFrameHostImpl::CreateNewWindow().
+-  // 2) Their navigation in RenderFrameHostImpl::DidCommitNavigationInternal().
+-  virtual_browsing_context_group_ =
+-      CrossOriginOpenerPolicyReporter::NextVirtualBrowsingContextGroup();
+-
+   // IdleManager should be unique per RenderFrame to provide proper isolation
+   // of overrides.
+   idle_manager_ =
+@@ -1708,7 +1699,7 @@ RenderFrameHostImpl::CreateURLLoaderFactoriesForIsolatedWorlds(
+       network::mojom::TrustTokenRedemptionPolicy::kForbid;
+   ExtractFactoryParamsFromNavigationRequestOrLastCommittedNavigation(
+       navigation_request, &main_world_origin, &isolation_info,
+-      &client_security_state, nullptr /* coep_reporter_remote */,
++      &client_security_state,
+       &trust_token_redemption_policy);
+ 
+   blink::PendingURLLoaderFactoryBundle::OriginMap result;
+@@ -5299,11 +5290,6 @@ void RenderFrameHostImpl::CreateNewWindow(
+   if (!params->opener_suppressed)
+     popup_coep = cross_origin_embedder_policy();
+ 
+-  int popup_virtual_browsing_context_group =
+-      params->opener_suppressed
+-          ? CrossOriginOpenerPolicyReporter::NextVirtualBrowsingContextGroup()
+-          : top_level_opener->virtual_browsing_context_group();
+-
+   // If the opener is suppressed or script access is disallowed, we should
+   // open the window in a new BrowsingInstance, and thus a new process. That
+   // means the current renderer process will not be able to route messages to
+@@ -5341,19 +5327,6 @@ void RenderFrameHostImpl::CreateNewWindow(
+   main_frame->SetOriginDependentStateOfNewFrame(GetLastCommittedOrigin());
+   main_frame->cross_origin_opener_policy_ = popup_coop;
+   main_frame->cross_origin_embedder_policy_ = popup_coep;
+-  main_frame->virtual_browsing_context_group_ =
+-      popup_virtual_browsing_context_group;
+-
+-  // If inheriting coop (checking this via |opener_suppressed|) and the original
+-  // coop page has a reporter we make sure the the newly created popup also has
+-  // a reporter.
+-  if (!params->opener_suppressed && GetMainFrame()->coop_reporter()) {
+-    main_frame->set_coop_reporter(
+-        std::make_unique<CrossOriginOpenerPolicyReporter>(
+-            GetProcess()->GetStoragePartition(), GetLastCommittedURL(),
+-            params->referrer->url, popup_coop,
+-            isolation_info_.network_isolation_key()));
+-  }
+ 
+   if (main_frame->waiting_for_init_) {
+     // Need to check |waiting_for_init_| as some paths inside CreateNewWindow
+@@ -5748,11 +5721,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
    delegate_->AccessibilityLocationChangesReceived(details);
  }
  
@@ -14,7 +78,83 @@ index 0e1a439de32f..e06ef1522526 100644
  void RenderFrameHostImpl::ResetWaitingState() {
    // We don't allow resetting waiting state when the RenderFrameHost is either
    // in BackForwardCache or in pending deletion state, as we don't allow
-@@ -7781,58 +7776,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
+@@ -7363,37 +7331,29 @@ void RenderFrameHostImpl::
+         url::Origin* out_main_world_origin,
+         net::IsolationInfo* out_isolation_info,
+         network::mojom::ClientSecurityStatePtr* out_client_security_state,
+-        mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>*
+-            coep_reporter_pending_remote,
+         network::mojom::TrustTokenRedemptionPolicy*
+             out_trust_token_redemption_policy) {
+   // |navigation_request| is optional.
+   DCHECK(out_main_world_origin);
+   DCHECK(out_client_security_state);
+-  // |coep_reporter_receiver| is optional.
+   DCHECK(out_trust_token_redemption_policy);
+ 
+-  CrossOriginEmbedderPolicyReporter* coep_reporter = nullptr;
+-
+   if (navigation_request) {
+     // Return values based on the |navigation_request|.
+     *out_main_world_origin = navigation_request->GetOriginForURLLoaderFactory();
+     *out_client_security_state = navigation_request->BuildClientSecurityState();
+ 
+     // TODO(lukasza): Consider pushing the ok-vs-error differentiation into
+-    // NavigationRequest methods (e.g. into |isolation_info_for_subresources|
+-    // and/or |coep_reporter| methods).
++    // NavigationRequest methods (e.g. into |isolation_info_for_subresources|).
+     if (navigation_request->GetNetErrorCode() == net::OK) {
+       *out_isolation_info =
+           navigation_request->isolation_info_for_subresources();
+-      coep_reporter = navigation_request->coep_reporter();
+       *out_trust_token_redemption_policy =
+           DetermineWhetherToForbidTrustTokenRedemption(
+               GetParent(), navigation_request->commit_params(),
+               *out_main_world_origin);
+     } else {
+       *out_isolation_info = net::IsolationInfo::CreateTransient();
+-      coep_reporter = nullptr;
+       *out_trust_token_redemption_policy =
+           network::mojom::TrustTokenRedemptionPolicy::kForbid;
+     }
+@@ -7402,15 +7362,9 @@ void RenderFrameHostImpl::
+     *out_main_world_origin = last_committed_origin_;
+     *out_isolation_info = isolation_info_;
+     *out_client_security_state = BuildClientSecurityState();
+-    coep_reporter = coep_reporter_.get();
+     *out_trust_token_redemption_policy =
+         DetermineAfterCommitWhetherToForbidTrustTokenRedemption(this);
+   }
+-
+-  if (coep_reporter && coep_reporter_pending_remote) {
+-    coep_reporter->Clone(
+-        coep_reporter_pending_remote->InitWithNewPipeAndPassReceiver());
+-  }
+ }
+ 
+ network::mojom::URLLoaderFactoryParamsPtr
+@@ -7420,18 +7374,16 @@ RenderFrameHostImpl::CreateURLLoaderFactoryParamsForMainWorld(
+   url::Origin main_world_origin;
+   net::IsolationInfo isolation_info;
+   network::mojom::ClientSecurityStatePtr client_security_state;
+-  mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-      coep_reporter_remote;
+   network::mojom::TrustTokenRedemptionPolicy trust_token_redemption_policy =
+       network::mojom::TrustTokenRedemptionPolicy::kForbid;
+   ExtractFactoryParamsFromNavigationRequestOrLastCommittedNavigation(
+       navigation_request, &main_world_origin, &isolation_info,
+-      &client_security_state, &coep_reporter_remote,
++      &client_security_state,
+       &trust_token_redemption_policy);
+ 
+   return URLLoaderFactoryParamsHelper::CreateForFrame(
+       this, main_world_origin, isolation_info, std::move(client_security_state),
+-      std::move(coep_reporter_remote), GetProcess(),
++      GetProcess(),
+       trust_token_redemption_policy, debug_tag);
+ }
+ 
+@@ -7781,58 +7733,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
    media_interface_proxy_->Bind(std::move(receiver));
  }
  
@@ -73,3 +213,120 @@ index 0e1a439de32f..e06ef1522526 100644
  void RenderFrameHostImpl::CreateMediaPlayerHost(
      mojo::PendingReceiver<media::mojom::MediaPlayerHost> receiver) {
    delegate_->CreateMediaPlayerHostForRenderFrameHost(this, std::move(receiver));
+@@ -7880,12 +7780,6 @@ void RenderFrameHostImpl::CreateDedicatedWorkerHostFactory(
+   // Allocate the worker in the same process as the creator.
+   int worker_process_id = GetProcess()->GetID();
+ 
+-  mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-      coep_reporter;
+-  auto coep_reporter_endpoint = coep_reporter.InitWithNewPipeAndPassReceiver();
+-  if (coep_reporter_)
+-    coep_reporter_->Clone(std::move(coep_reporter_endpoint));
+-
+   // When a dedicated worker is created from the frame script, the frame is both
+   // the creator and the ancestor.
+   mojo::MakeSelfOwnedReceiver(
+@@ -7895,7 +7789,7 @@ void RenderFrameHostImpl::CreateDedicatedWorkerHostFactory(
+           /*creator_worker_token=*/base::nullopt,
+           /*ancestor_render_frame_host_id=*/GetGlobalFrameRoutingId(),
+           last_committed_origin_, isolation_info_,
+-          cross_origin_embedder_policy_, std::move(coep_reporter)),
++          cross_origin_embedder_policy_),
+       std::move(receiver));
+ }
+ 
+@@ -7989,14 +7883,7 @@ void RenderFrameHostImpl::GetSensorProvider(
+ 
+ void RenderFrameHostImpl::BindCacheStorage(
+     mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) {
+-  mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-      coep_reporter_remote;
+-  if (coep_reporter_) {
+-    coep_reporter_->Clone(
+-        coep_reporter_remote.InitWithNewPipeAndPassReceiver());
+-  }
+   GetProcess()->BindCacheStorage(cross_origin_embedder_policy_,
+-                                 std::move(coep_reporter_remote),
+                                  GetLastCommittedOrigin(), std::move(receiver));
+ }
+ 
+@@ -8239,16 +8126,6 @@ RenderFrameHostImpl::CreateNavigationRequestForCommit(
+   net::IsolationInfo isolation_info = ComputeIsolationInfoInternal(
+       origin, net::IsolationInfo::RequestType::kOther);
+ 
+-  std::unique_ptr<CrossOriginEmbedderPolicyReporter> coep_reporter;
+-  // We don't switch the COEP reporter on same-document navigations, so create
+-  // one only for cross-document navigations.
+-  if (!is_same_document) {
+-    coep_reporter = std::make_unique<CrossOriginEmbedderPolicyReporter>(
+-        GetProcess()->GetStoragePartition(), url,
+-        cross_origin_embedder_policy_.reporting_endpoint,
+-        cross_origin_embedder_policy_.report_only_reporting_endpoint,
+-        isolation_info.network_isolation_key());
+-  }
+   std::unique_ptr<WebBundleNavigationInfo> web_bundle_navigation_info;
+   if (is_same_document && web_bundle_handle_ &&
+       web_bundle_handle_->navigation_info()) {
+@@ -8281,7 +8158,7 @@ RenderFrameHostImpl::CreateNavigationRequestForCommit(
+       frame_tree_node_, this, is_same_document, url, origin, isolation_info,
+       std::move(referrer), transition, should_replace_current_entry, method,
+       gesture, is_overriding_user_agent, redirects, original_request_url,
+-      page_state, std::move(coep_reporter),
++      page_state,
+       std::move(web_bundle_navigation_info), http_status_code);
+ }
+ 
+@@ -8925,10 +8802,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
+         navigation_request->cross_origin_embedder_policy();
+   }
+ 
+-  coop_reporter_ = navigation_request->coop_status().TakeCoopReporter();
+-  virtual_browsing_context_group_ =
+-      navigation_request->coop_status().virtual_browsing_context_group();
+-
+   // Store the required CSP (it will be used by the AncestorThrottle if
+   // this frame embeds a subframe when that subframe navigates).
+   required_csp_ = navigation_request->TakeRequiredCSP();
+@@ -8952,20 +8825,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
+   VerifyThatBrowserAndRendererCalculatedOriginsToCommitMatch(navigation_request,
+                                                              params);
+ 
+-  coep_reporter_ = navigation_request->TakeCoepReporter();
+-  if (coep_reporter_) {
+-    mojo::PendingRemote<blink::mojom::ReportingObserver> remote;
+-    mojo::PendingReceiver<blink::mojom::ReportingObserver> receiver =
+-        remote.InitWithNewPipeAndPassReceiver();
+-    coep_reporter_->BindObserver(std::move(remote));
+-    // As some tests override the associated frame after commit, do not
+-    // call GetAssociatedLocalFrame now.
+-    base::ThreadTaskRunnerHandle::Get()->PostTask(
+-        FROM_HERE,
+-        base::BindOnce(&RenderFrameHostImpl::BindReportingObserver,
+-                       weak_ptr_factory_.GetWeakPtr(), std::move(receiver)));
+-  }
+-
+   // We move the PolicyContainerHost of |navigation_request| into the
+   // RenderFrameHost unless this is the initial, "fake" navigation to
+   // about:blank (because otherwise we would overwrite the PolicyContainerHost
+@@ -9002,9 +8861,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
+           frame_tree_node_->IsMainFrame(), navigation_request->common_params(),
+           data_url_as_string);
+ 
+-  CrossOriginOpenerPolicyReporter::InstallAccessMonitorsIfNeeded(
+-      frame_tree_node_);
+-
+   // Reset the salt so that media device IDs are reset for the new document
+   // if necessary.
+   media_device_id_salt_base_ = BrowserContext::CreateRandomMediaDeviceIDSalt();
+@@ -10287,11 +10143,6 @@ void RenderFrameHostImpl::RecordDocumentCreatedUkmEvent(
+       .Record(ukm_recorder);
+ }
+ 
+-void RenderFrameHostImpl::BindReportingObserver(
+-    mojo::PendingReceiver<blink::mojom::ReportingObserver> receiver) {
+-  GetAssociatedLocalFrame()->BindReportingObserver(std::move(receiver));
+-}
+-
+ mojo::PendingRemote<network::mojom::CookieAccessObserver>
+ RenderFrameHostImpl::CreateCookieAccessObserver() {
+   mojo::PendingRemote<network::mojom::CookieAccessObserver> remote;

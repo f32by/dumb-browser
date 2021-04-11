@@ -1,0 +1,13 @@
+diff --git a/content/browser/cache_storage/cache_storage_context_impl.h b/content/browser/cache_storage/cache_storage_context_impl.h
+index ad02266b43f2..cab6d5ab6401 100644
+--- a/content/browser/cache_storage/cache_storage_context_impl.h
++++ b/content/browser/cache_storage/cache_storage_context_impl.h
+@@ -90,8 +90,6 @@ class CONTENT_EXPORT CacheStorageContextImpl
+   // Only callable on the UI thread.
+   void AddReceiver(
+       const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter_remote,
+       const url::Origin& origin,
+       storage::mojom::CacheStorageOwner owner,
+       mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) override;

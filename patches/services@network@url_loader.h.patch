@@ -1,0 +1,21 @@
+diff --git a/services/network/url_loader.h b/services/network/url_loader.h
+index 193733544750..2985aafc6b56 100644
+--- a/services/network/url_loader.h
++++ b/services/network/url_loader.h
+@@ -121,7 +121,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) URLLoader
+       base::Optional<DataPipeUseTracker> response_body_use_tracker,
+       const net::NetworkTrafficAnnotationTag& traffic_annotation,
+       const mojom::URLLoaderFactoryParams* factory_params,
+-      mojom::CrossOriginEmbedderPolicyReporter* reporter,
+       uint32_t request_id,
+       int keepalive_request_size,
+       bool require_network_isolation_key,
+@@ -385,8 +384,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) URLLoader
+   // URLLoaderFactory is guaranteed to outlive URLLoader, so it is safe to
+   // store a raw pointer to mojom::URLLoaderFactoryParams.
+   const mojom::URLLoaderFactoryParams* const factory_params_;
+-  // This also belongs to URLLoaderFactory and outlives this loader.
+-  mojom::CrossOriginEmbedderPolicyReporter* const coep_reporter_;
+ 
+   int render_frame_id_;
+   uint32_t request_id_;

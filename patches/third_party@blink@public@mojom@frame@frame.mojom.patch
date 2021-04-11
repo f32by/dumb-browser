@@ -1,0 +1,23 @@
+diff --git a/third_party/blink/public/mojom/frame/frame.mojom b/third_party/blink/public/mojom/frame/frame.mojom
+index ae80513384c6..5111278fa636 100644
+--- a/third_party/blink/public/mojom/frame/frame.mojom
++++ b/third_party/blink/public/mojom/frame/frame.mojom
+@@ -36,7 +36,6 @@ import "third_party/blink/public/mojom/frame/intrinsic_sizing_info.mojom";
+ import "third_party/blink/public/mojom/frame/lifecycle.mojom";
+ import "third_party/blink/public/mojom/frame/media_player_action.mojom";
+ import "third_party/blink/public/mojom/frame/policy_container.mojom";
+-import "third_party/blink/public/mojom/frame/reporting_observer.mojom";
+ import "third_party/blink/public/mojom/frame/sudden_termination_disabler_type.mojom";
+ import "third_party/blink/public/mojom/frame/user_activation_notification_type.mojom";
+ import "third_party/blink/public/mojom/frame/user_activation_update_types.mojom";
+@@ -641,10 +640,6 @@ interface LocalFrame {
+   GetStringForRange(gfx.mojom.Range range)
+       => (ui.mojom.AttributedString? string, gfx.mojom.Point baseline_point);
+ 
+-  // Binds |receiver| to the document of this frame.
+-  BindReportingObserver(
+-      pending_receiver<blink.mojom.ReportingObserver> receiver);
+-
+   // Requests that the blink::LocalFrame updates its opener to the specified
+   // frame. The frame token may be "empty" if the opener was disowned.
+   UpdateOpener(mojo_base.mojom.UnguessableToken? opener_frame_token);

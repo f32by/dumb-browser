@@ -1,0 +1,19 @@
+diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
+index 09eb09f2fad4..b3833b458875 100644
+--- a/content/browser/renderer_host/render_process_host_impl.cc
++++ b/content/browser/renderer_host/render_process_host_impl.cc
+@@ -1943,13 +1943,11 @@ void RenderProcessHostImpl::CreateMessageFilters() {
+ 
+ void RenderProcessHostImpl::BindCacheStorage(
+     const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-        coep_reporter_remote,
+     const url::Origin& origin,
+     mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+   storage_partition_impl_->GetCacheStorageContext()->AddReceiver(
+-      cross_origin_embedder_policy, std::move(coep_reporter_remote), origin,
++      cross_origin_embedder_policy, origin,
+       storage::mojom::CacheStorageOwner::kCacheAPI, std::move(receiver));
+ }
+ 

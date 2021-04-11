@@ -1,0 +1,13 @@
+diff --git a/content/browser/cache_storage/cache_storage_dispatcher_host.h b/content/browser/cache_storage/cache_storage_dispatcher_host.h
+index b3fe63a6f3c9..1eb404fe00c5 100644
+--- a/content/browser/cache_storage/cache_storage_dispatcher_host.h
++++ b/content/browser/cache_storage/cache_storage_dispatcher_host.h
+@@ -48,8 +48,6 @@ class CacheStorageDispatcherHost {
+   // client to provide its origin at every method call.
+   void AddReceiver(
+       const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-          coep_reporter,
+       const url::Origin& origin,
+       storage::mojom::CacheStorageOwner owner,
+       mojo::PendingReceiver<blink::mojom::CacheStorage> receiver);

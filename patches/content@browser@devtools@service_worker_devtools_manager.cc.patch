@@ -1,0 +1,41 @@
+diff --git a/content/browser/devtools/service_worker_devtools_manager.cc b/content/browser/devtools/service_worker_devtools_manager.cc
+index fd1c524607ab..064f4435d73f 100644
+--- a/content/browser/devtools/service_worker_devtools_manager.cc
++++ b/content/browser/devtools/service_worker_devtools_manager.cc
+@@ -54,8 +54,6 @@ void ServiceWorkerDevToolsManager::WorkerStarting(
+     bool is_installed_version,
+     base::Optional<network::CrossOriginEmbedderPolicy>
+         cross_origin_embedder_policy,
+-    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-        coep_reporter,
+     base::UnguessableToken* devtools_worker_token,
+     bool* pause_on_start) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+@@ -77,7 +75,7 @@ void ServiceWorkerDevToolsManager::WorkerStarting(
+       new ServiceWorkerDevToolsAgentHost(
+           worker_process_id, worker_route_id, std::move(context_wrapper),
+           version_id, url, scope, is_installed_version,
+-          cross_origin_embedder_policy, std::move(coep_reporter),
++          cross_origin_embedder_policy,
+           *devtools_worker_token);
+   live_hosts_[worker_id] = host;
+   *pause_on_start = debug_service_worker_on_start_;
+@@ -110,16 +108,14 @@ void ServiceWorkerDevToolsManager::WorkerReadyForInspection(
+ void ServiceWorkerDevToolsManager::UpdateCrossOriginEmbedderPolicy(
+     int worker_process_id,
+     int worker_route_id,
+-    network::CrossOriginEmbedderPolicy cross_origin_embedder_policy,
+-    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-        coep_reporter) {
++    network::CrossOriginEmbedderPolicy cross_origin_embedder_policy) {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+   const WorkerId worker_id(worker_process_id, worker_route_id);
+   auto it = live_hosts_.find(worker_id);
+   if (it == live_hosts_.end())
+     return;
+   it->second->UpdateCrossOriginEmbedderPolicy(
+-      std::move(cross_origin_embedder_policy), std::move(coep_reporter));
++      std::move(cross_origin_embedder_policy));
+ }
+ 
+ void ServiceWorkerDevToolsManager::WorkerVersionInstalled(int worker_process_id,
