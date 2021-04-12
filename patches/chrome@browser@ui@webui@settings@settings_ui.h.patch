@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/webui/settings/settings_ui.h b/chrome/browser/ui/webui/settings/settings_ui.h
+index e8e71c921c85..309f11be4b6b 100644
+--- a/chrome/browser/ui/webui/settings/settings_ui.h
++++ b/chrome/browser/ui/webui/settings/settings_ui.h
+@@ -68,9 +68,6 @@ class SettingsUI :
+   void AddSettingsPageUIHandler(
+       std::unique_ptr<content::WebUIMessageHandler> handler);
+ 
+-  // Makes a request to show a HaTS survey.
+-  void TryShowHatsSurveyWithTimeout();
+-
+ #if !BUILDFLAG(IS_CHROMEOS_ASH)
+   // customize_themes::mojom::CustomizeThemesHandlerFactory:
+   void CreateCustomizeThemesHandler(

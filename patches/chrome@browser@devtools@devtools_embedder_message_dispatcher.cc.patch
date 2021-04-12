@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/devtools/devtools_embedder_message_dispatcher.cc b/chrome/browser/devtools/devtools_embedder_message_dispatcher.cc
+index 52a9e6666454..435fafb89d5a 100644
+--- a/chrome/browser/devtools/devtools_embedder_message_dispatcher.cc
++++ b/chrome/browser/devtools/devtools_embedder_message_dispatcher.cc
+@@ -233,8 +233,5 @@ DevToolsEmbedderMessageDispatcher::CreateForDevToolsFrontend(
+                      &Delegate::SetOpenNewWindowForPopups, delegate);
+   d->RegisterHandler("registerExtensionsAPI", &Delegate::RegisterExtensionsAPI,
+                      delegate);
+-  d->RegisterHandlerWithCallback("showSurvey", &Delegate::ShowSurvey, delegate);
+-  d->RegisterHandlerWithCallback("canShowSurvey", &Delegate::CanShowSurvey,
+-                                 delegate);
+   return d;
+ }

@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/devtools/devtools_embedder_message_dispatcher.h b/chrome/browser/devtools/devtools_embedder_message_dispatcher.h
+index 9b36edc985c2..af9a914c8c94 100644
+--- a/chrome/browser/devtools/devtools_embedder_message_dispatcher.h
++++ b/chrome/browser/devtools/devtools_embedder_message_dispatcher.h
+@@ -103,10 +103,6 @@ class DevToolsEmbedderMessageDispatcher {
+     virtual void SetOpenNewWindowForPopups(bool value) = 0;
+     virtual void RegisterExtensionsAPI(const std::string& origin,
+                                        const std::string& script) = 0;
+-    virtual void ShowSurvey(DispatchCallback callback,
+-                            const std::string& trigger) = 0;
+-    virtual void CanShowSurvey(DispatchCallback callback,
+-                               const std::string& trigger) = 0;
+   };
+ 
+   using DispatchCallback = Delegate::DispatchCallback;
