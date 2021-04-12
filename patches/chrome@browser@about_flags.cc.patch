@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 1f7e7ced6a98..073d7320543c 100644
+index 1f7e7ced6a98..f871cb45f2e4 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
 @@ -33,7 +33,6 @@
@@ -95,7 +95,33 @@ index 1f7e7ced6a98..073d7320543c 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -2499,27 +2434,6 @@ const FeatureEntry::FeatureVariation kPrerender2Variations[] = {
+@@ -2461,25 +2396,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
+ };
+ #endif  // defined(OS_ANDROID)
+ 
+-#if !defined(OS_ANDROID)
+-// SCT Auditing feature variations.
+-const FeatureEntry::FeatureParam kSCTAuditingSamplingRateNone[] = {
+-    {"sampling_rate", "0.0"}};
+-const FeatureEntry::FeatureParam kSCTAuditingSamplingRateAlternativeOne[] = {
+-    {"sampling_rate", "0.0001"}};
+-const FeatureEntry::FeatureParam kSCTAuditingSamplingRateAlternativeTwo[] = {
+-    {"sampling_rate", "0.001"}};
+-
+-const FeatureEntry::FeatureVariation kSCTAuditingVariations[] = {
+-    {"Sampling rate 0%", kSCTAuditingSamplingRateNone,
+-     base::size(kSCTAuditingSamplingRateNone), nullptr},
+-    {"Sampling rate 0.01%", kSCTAuditingSamplingRateAlternativeOne,
+-     base::size(kSCTAuditingSamplingRateAlternativeOne), nullptr},
+-    {"Sampling rate 0.1%", kSCTAuditingSamplingRateAlternativeTwo,
+-     base::size(kSCTAuditingSamplingRateAlternativeTwo), nullptr},
+-};
+-#endif  // !defined(OS_ANDROID)
+-
+ const FeatureEntry::FeatureParam kCheckOfflineCapabilityWarnOnly[] = {
+     {"check_mode", "warn_only"}};
+ const FeatureEntry::FeatureParam kCheckOfflineCapabilityEnforce[] = {
+@@ -2499,27 +2415,6 @@ const FeatureEntry::FeatureVariation kPrerender2Variations[] = {
       base::size(kPrerender2DisableActivation), nullptr},
  };
  
@@ -123,7 +149,7 @@ index 1f7e7ced6a98..073d7320543c 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
  const FeatureEntry::FeatureVariation
      kOmniboxRichEntitiesInLauncherVariations[] = {
-@@ -2826,6 +2740,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2826,6 +2721,9 @@ const FeatureEntry kFeatureEntries[] = {
          FEATURE_VALUE_TYPE(ash::features::kWebUITabStripTabDragIntegration),
      },
  #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP) && BUILDFLAG(IS_CHROMEOS_ASH)
@@ -133,7 +159,7 @@ index 1f7e7ced6a98..073d7320543c 100644
      {"focus-mode", flag_descriptions::kFocusMode,
       flag_descriptions::kFocusModeDescription, kOsDesktop,
       FEATURE_VALUE_TYPE(features::kFocusMode)},
-@@ -3347,31 +3264,14 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -3347,31 +3245,14 @@ const FeatureEntry kFeatureEntries[] = {
      {"enable-use-zoom-for-dsf", flag_descriptions::kEnableUseZoomForDsfName,
       flag_descriptions::kEnableUseZoomForDsfDescription, kOsAll,
       MULTI_VALUE_TYPE(kEnableUseZoomForDSFChoices)},
@@ -165,7 +191,7 @@ index 1f7e7ced6a98..073d7320543c 100644
      {"enable-navigation-predictor",
       flag_descriptions::kEnableNavigationPredictorName,
       flag_descriptions::kEnableNavigationPredictorDescription,
-@@ -5778,45 +5678,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -5778,45 +5659,6 @@ const FeatureEntry kFeatureEntries[] = {
                                      "MetricsSettingsAndroid")},
  #endif
  
@@ -211,7 +237,24 @@ index 1f7e7ced6a98..073d7320543c 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      {"gesture-properties-dbus-service",
       flag_descriptions::kEnableGesturePropertiesDBusServiceName,
-@@ -6634,20 +6495,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6190,16 +6032,6 @@ const FeatureEntry kFeatureEntries[] = {
+      FEATURE_VALUE_TYPE(games::features::kGamesHub)},
+ #endif  // defined(OS_ANDROID)
+ 
+-    {"enable-heavy-ad-intervention",
+-     flag_descriptions::kHeavyAdInterventionName,
+-     flag_descriptions::kHeavyAdInterventionDescription, kOsAll,
+-     FEATURE_VALUE_TYPE(features::kHeavyAdIntervention)},
+-
+-    {"heavy-ad-privacy-mitigations",
+-     flag_descriptions::kHeavyAdPrivacyMitigationsName,
+-     flag_descriptions::kHeavyAdPrivacyMitigationsDescription, kOsAll,
+-     FEATURE_VALUE_TYPE(features::kHeavyAdPrivacyMitigations)},
+-
+ #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+     {"enable-ftp", flag_descriptions::kEnableFtpName,
+      flag_descriptions::kEnableFtpDescription, kOsAll,
+@@ -6634,20 +6466,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  
@@ -232,3 +275,18 @@ index 1f7e7ced6a98..073d7320543c 100644
      {"edit-passwords-in-settings",
       flag_descriptions::kEditPasswordsInSettingsName,
       flag_descriptions::kEditPasswordsInSettingsDescription, kOsAll,
+@@ -6877,14 +6695,6 @@ const FeatureEntry kFeatureEntries[] = {
+      FEATURE_VALUE_TYPE(feature_engagement::kIPHDesktopSnoozeFeature)},
+ #endif  // defined(TOOLKIT_VIEWS)
+ 
+-#if !defined(OS_ANDROID)
+-    {"sct-auditing", flag_descriptions::kSCTAuditingName,
+-     flag_descriptions::kSCTAuditingDescription, kOsDesktop,
+-     FEATURE_WITH_PARAMS_VALUE_TYPE(features::kSCTAuditing,
+-                                    kSCTAuditingVariations,
+-                                    "SCTAuditingVariations")},
+-#endif  // !defined(OS_ANDROID)
+-
+     {"kaleidoscope-ntp-module", flag_descriptions::kKaleidoscopeModuleName,
+      flag_descriptions::kKaleidoscopeModuleDescription, kOsDesktop,
+      FEATURE_VALUE_TYPE(media::kKaleidoscopeModule)},

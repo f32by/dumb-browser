@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/profiles/off_the_record_profile_impl.cc b/chrome/browser/profiles/off_the_record_profile_impl.cc
+index e204dd55f7f3..abcf535773fb 100644
+--- a/chrome/browser/profiles/off_the_record_profile_impl.cc
++++ b/chrome/browser/profiles/off_the_record_profile_impl.cc
+@@ -33,8 +33,6 @@
+ #include "chrome/browser/download/download_core_service_factory.h"
+ #include "chrome/browser/file_system_access/chrome_file_system_access_permission_context.h"
+ #include "chrome/browser/file_system_access/file_system_access_permission_context_factory.h"
+-#include "chrome/browser/heavy_ad_intervention/heavy_ad_service.h"
+-#include "chrome/browser/heavy_ad_intervention/heavy_ad_service_factory.h"
+ #include "chrome/browser/permissions/permission_manager_factory.h"
+ #include "chrome/browser/prefs/browser_prefs.h"
+ #include "chrome/browser/prefs/incognito_mode_prefs.h"
+@@ -185,8 +183,6 @@ void OffTheRecordProfileImpl::Init() {
+   // AccessibilityLabelsService has a default prefs behavior in incognito.
+   AccessibilityLabelsService::InitOffTheRecordPrefs(this);
+ 
+-  HeavyAdServiceFactory::GetForBrowserContext(this)->InitializeOffTheRecord();
+-
+   key_->SetProtoDatabaseProvider(
+       GetDefaultStoragePartition(this)->GetProtoDatabaseProvider());
+ }
