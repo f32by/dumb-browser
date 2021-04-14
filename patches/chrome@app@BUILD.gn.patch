@@ -1,16 +1,18 @@
 diff --git a/chrome/app/BUILD.gn b/chrome/app/BUILD.gn
-index 999ac3c02fab..7dc1468cd6c1 100644
+index 999ac3c02fab..22257b0b4998 100644
 --- a/chrome/app/BUILD.gn
 +++ b/chrome/app/BUILD.gn
-@@ -132,7 +132,6 @@ static_library("test_support") {
+@@ -130,9 +130,7 @@ static_library("test_support") {
+     "//chrome/renderer",
+     "//chrome/utility",
      "//components/gwp_asan/buildflags",
-     "//components/heap_profiling/in_process",
+-    "//components/heap_profiling/in_process",
      "//components/nacl/common:buildflags",
 -    "//components/startup_metric_utils/browser",
      "//content/public/app",
      "//content/public/common",
      "//pdf:pdf_ppapi",
-@@ -144,11 +143,6 @@ static_library("test_support") {
+@@ -144,11 +142,6 @@ static_library("test_support") {
    ]
  
    if (!is_fuchsia) {
@@ -22,7 +24,7 @@ index 999ac3c02fab..7dc1468cd6c1 100644
    }
  
    if (is_mac) {
-@@ -161,7 +155,6 @@ static_library("test_support") {
+@@ -161,7 +154,6 @@ static_library("test_support") {
      deps += [
        "//chrome/chrome_elf:test_stubs",
        "//chrome/install_static:install_static_util",

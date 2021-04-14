@@ -1,0 +1,35 @@
+diff --git a/chrome/browser/ui/views/session_crashed_bubble_view.cc b/chrome/browser/ui/views/session_crashed_bubble_view.cc
+index 6de057cc465f..0982549d63bd 100644
+--- a/chrome/browser/ui/views/session_crashed_bubble_view.cc
++++ b/chrome/browser/ui/views/session_crashed_bubble_view.cc
+@@ -17,7 +17,6 @@
+ #include "base/task_runner_util.h"
+ #include "build/branding_buildflags.h"
+ #include "build/build_config.h"
+-#include "chrome/browser/metrics/metrics_reporting_state.h"
+ #include "chrome/browser/prefs/session_startup_pref.h"
+ #include "chrome/browser/sessions/session_restore.h"
+ #include "chrome/browser/ui/browser_dialogs.h"
+@@ -127,13 +126,6 @@ class SessionCrashedBubbleDelegate : public ui::DialogModelDelegate {
+     // There's no opt-out choice in the crash restore bubble.
+     if (!dialog_model()->HasField(kUmaConsentCheckboxId))
+       return;
+-
+-    if (dialog_model()
+-            ->GetCheckboxByUniqueId(kUmaConsentCheckboxId)
+-            ->is_checked()) {
+-      ChangeMetricsReportingState(true);
+-      RecordBubbleHistogramValue(SESSION_CRASHED_BUBBLE_UMA_OPTIN);
+-    }
+   }
+ 
+  private:
+@@ -199,7 +191,7 @@ void SessionCrashedBubbleView::Show(
+   bool offer_uma_optin = false;
+ 
+   if (DoesSupportConsentCheck() && !uma_opted_in_already)
+-    offer_uma_optin = !IsMetricsReportingPolicyManaged();
++    offer_uma_optin = false;
+ 
+   Browser* browser = browser_observer->browser();
+ 

@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index db85b6b2fcf5..97da88d9ab34 100644
+index db85b6b2fcf5..6b5edf8b680f 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
 @@ -41,7 +41,6 @@
@@ -10,7 +10,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #include "chrome/common/logging_chrome.h"
  #include "chrome/common/url_constants.h"
  #include "chrome/gpu/chrome_content_gpu_client.h"
-@@ -49,14 +48,10 @@
+@@ -49,14 +48,8 @@
  #include "chrome/utility/chrome_content_utility_client.h"
  #include "components/component_updater/component_updater_paths.h"
  #include "components/content_settings/core/common/content_settings_pattern.h"
@@ -18,14 +18,14 @@ index db85b6b2fcf5..97da88d9ab34 100644
 -#include "components/crash/core/common/crash_key.h"
 -#include "components/crash/core/common/crash_keys.h"
  #include "components/gwp_asan/buildflags/buildflags.h"
- #include "components/heap_profiling/in_process/heap_profiler_controller.h"
+-#include "components/heap_profiling/in_process/heap_profiler_controller.h"
  #include "components/nacl/common/buildflags.h"
- #include "components/services/heap_profiling/public/cpp/profiling_client.h"
+-#include "components/services/heap_profiling/public/cpp/profiling_client.h"
 -#include "components/startup_metric_utils/browser/startup_metric_utils.h"
  #include "components/version_info/version_info.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_constants.h"
-@@ -82,11 +77,9 @@
+@@ -82,11 +75,9 @@
  #include "base/debug/close_handle_hook_win.h"
  #include "base/files/important_file_writer_cleaner.h"
  #include "base/win/atl.h"
@@ -37,7 +37,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #include "sandbox/win/src/sandbox.h"
  #include "ui/base/resource/resource_bundle_win.h"
  #endif
-@@ -97,7 +90,6 @@
+@@ -97,7 +88,6 @@
  #include "chrome/browser/chrome_browser_application_mac.h"
  #include "chrome/browser/mac/relauncher.h"
  #include "chrome/browser/shell_integration.h"
@@ -45,7 +45,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #include "ui/base/l10n/l10n_util_mac.h"
  #endif
  
-@@ -105,7 +97,6 @@
+@@ -105,7 +95,6 @@
  #include <locale.h>
  #include <signal.h>
  
@@ -53,7 +53,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #include "chrome/app/shutdown_signal_handlers_posix.h"
  #endif
  
-@@ -144,7 +135,6 @@
+@@ -144,7 +133,6 @@
  #endif
  
  #if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_ANDROID)
@@ -61,7 +61,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #include "v8/include/v8-wasm-trap-handler-posix.h"
  #include "v8/include/v8.h"
  #endif
-@@ -156,7 +146,6 @@
+@@ -156,7 +144,6 @@
  #if defined(OS_MAC) || defined(OS_WIN) || defined(OS_ANDROID) || \
      defined(OS_LINUX) || defined(OS_CHROMEOS)
  #include "chrome/browser/policy/policy_path_parser.h"
@@ -69,7 +69,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #endif
  
  #if BUILDFLAG(ENABLE_NACL)
-@@ -233,31 +222,6 @@ bool IsSandboxedProcess() {
+@@ -233,31 +220,6 @@ bool IsSandboxedProcess() {
    return is_sandboxed_process_func && is_sandboxed_process_func();
  }
  
@@ -101,7 +101,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #endif  // defined(OS_WIN)
  
  #if defined(OS_LINUX) || defined(OS_CHROMEOS)
-@@ -470,46 +434,12 @@ void InitLogging(const std::string& process_type) {
+@@ -470,46 +432,12 @@ void InitLogging(const std::string& process_type) {
  }
  #endif
  
@@ -148,15 +148,31 @@ index db85b6b2fcf5..97da88d9ab34 100644
  }
  
  ChromeMainDelegate::~ChromeMainDelegate() {
-@@ -658,7 +588,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -641,12 +569,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
+ #endif
+ 
+-  // Start heap profiling as early as possible so it can start recording
+-  // memory allocations.
+-  if (is_browser_process) {
+-    heap_profiler_controller_ = std::make_unique<HeapProfilerController>();
+-    heap_profiler_controller_->Start();
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+     chromeos::ConfigureSwap();
+     chromeos::InitializeKstaled();
+@@ -655,10 +577,8 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+     // that now.
+     chromeos::LockMainProgramText();
+ #endif
+-  }
  
  #if defined(OS_WIN)
 -  SetUpExtendedCrashReporting(is_browser_process);
    base::sequence_manager::internal::ThreadControllerPowerMonitor::
        InitializeOnMainThread();
  #endif
-@@ -705,29 +634,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -705,29 +625,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
      return true;
    }
  #endif
@@ -186,7 +202,18 @@ index db85b6b2fcf5..97da88d9ab34 100644
  
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
-@@ -878,81 +791,12 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -867,92 +771,15 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+   }
+ #endif
+ 
+-  // The TLS slot used by the memlog allocator shim needs to be initialized
+-  // early to ensure that it gets assigned a low slot number. If it gets
+-  // initialized too late, the glibc TLS system will require a malloc call in
+-  // order to allocate storage for a higher slot number. Since malloc is hooked,
+-  // this causes re-entrancy into the allocator shim, while the TLS object is
+-  // partially-initialized, which the TLS object is supposed to protect again.
+-  heap_profiling::InitTLSSlot();
+-
    return false;
  }
  
@@ -268,7 +295,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  
  #if defined(OS_WIN)
    child_process_logging::Init();
-@@ -1075,39 +919,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -1075,39 +902,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
          locale;
    }
  
@@ -308,7 +335,7 @@ index db85b6b2fcf5..97da88d9ab34 100644
  #if BUILDFLAG(ENABLE_PDF)
    MaybeInitializeGDI();
  #endif
-@@ -1204,23 +1021,6 @@ void ChromeMainDelegate::ZygoteForked() {
+@@ -1204,23 +1004,6 @@ void ChromeMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

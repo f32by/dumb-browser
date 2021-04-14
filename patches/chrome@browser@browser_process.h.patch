@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/browser_process.h b/chrome/browser/browser_process.h
-index 1ea08a7ad6ae..07b92e9fbb65 100644
+index 1ea08a7ad6ae..e4bc11303fb4 100644
 --- a/chrome/browser/browser_process.h
 +++ b/chrome/browser/browser_process.h
-@@ -50,18 +50,6 @@ class NetworkQualityTracker;
+@@ -37,7 +37,6 @@ class PrefService;
+ class ProfileManager;
+ class StatusTray;
+ class SystemNetworkContextManager;
+-class WatchDogThread;
+ class WebRtcLogUploader;
+ class StartupData;
+ 
+@@ -50,18 +49,6 @@ class NetworkQualityTracker;
  class SharedURLLoaderFactory;
  }
  
@@ -21,7 +29,7 @@ index 1ea08a7ad6ae..07b92e9fbb65 100644
  namespace variations {
  class VariationsService;
  }
-@@ -101,10 +89,6 @@ class PrintJobManager;
+@@ -101,10 +88,6 @@ class PrintJobManager;
  class PrintPreviewDialogController;
  }
  
@@ -32,7 +40,7 @@ index 1ea08a7ad6ae..07b92e9fbb65 100644
  namespace resource_coordinator {
  class ResourceCoordinatorParts;
  class TabManager;
-@@ -134,7 +118,6 @@ class BrowserProcess {
+@@ -134,7 +117,6 @@ class BrowserProcess {
  
    // Services: any of these getters may return NULL
    virtual metrics::MetricsService* metrics_service() = 0;
@@ -40,7 +48,17 @@ index 1ea08a7ad6ae..07b92e9fbb65 100644
    virtual ProfileManager* profile_manager() = 0;
    virtual PrefService* local_state() = 0;
    virtual scoped_refptr<network::SharedURLLoaderFactory>
-@@ -212,19 +195,6 @@ class BrowserProcess {
+@@ -162,9 +144,6 @@ class BrowserProcess {
+   // network quality change events.
+   virtual network::NetworkQualityTracker* network_quality_tracker() = 0;
+ 
+-  // Returns the thread that is used for health check of all browser threads.
+-  virtual WatchDogThread* watchdog_thread() = 0;
+-
+   // Starts and manages the policy system.
+   virtual policy::ChromeBrowserPolicyConnector* browser_policy_connector() = 0;
+ 
+@@ -212,19 +191,6 @@ class BrowserProcess {
    // on this platform (or this is a unit test).
    virtual StatusTray* status_tray() = 0;
  
@@ -60,7 +78,7 @@ index 1ea08a7ad6ae..07b92e9fbb65 100644
    // Returns the StartupData which owns any pre-created objects in //chrome
    // before the full browser starts.
    virtual StartupData* startup_data() = 0;
-@@ -263,8 +233,6 @@ class BrowserProcess {
+@@ -263,8 +229,6 @@ class BrowserProcess {
    virtual resource_coordinator::ResourceCoordinatorParts*
    resource_coordinator_parts() = 0;
  

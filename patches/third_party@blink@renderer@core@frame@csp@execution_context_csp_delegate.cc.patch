@@ -1,8 +1,17 @@
 diff --git a/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc b/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc
-index 452159e62874..26df85b18f70 100644
+index 452159e62874..67bce06a2d99 100644
 --- a/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc
 +++ b/third_party/blink/renderer/core/frame/csp/execution_context_csp_delegate.cc
-@@ -18,8 +18,6 @@
+@@ -10,16 +10,14 @@
+ #include "third_party/blink/public/mojom/devtools/inspector_issue.mojom-blink.h"
+ #include "third_party/blink/public/mojom/security_context/insecure_request_policy.mojom-blink.h"
+ #include "third_party/blink/renderer/bindings/core/v8/source_location.h"
++#include "third_party/blink/renderer/bindings/core/v8/v8_security_policy_violation_event_init.h"
+ #include "third_party/blink/renderer/core/dom/document.h"
+ #include "third_party/blink/renderer/core/events/security_policy_violation_event.h"
+ #include "third_party/blink/renderer/core/execution_context/execution_context.h"
+ #include "third_party/blink/renderer/core/execution_context/security_context.h"
+-#include "third_party/blink/renderer/core/frame/csp/csp_violation_report_body.h"
  #include "third_party/blink/renderer/core/frame/local_dom_window.h"
  #include "third_party/blink/renderer/core/frame/local_frame.h"
  #include "third_party/blink/renderer/core/frame/local_frame_client.h"
@@ -11,10 +20,27 @@ index 452159e62874..26df85b18f70 100644
  #include "third_party/blink/renderer/core/loader/document_loader.h"
  #include "third_party/blink/renderer/core/loader/ping_loader.h"
  #include "third_party/blink/renderer/core/probe/core_probes.h"
-@@ -182,15 +180,6 @@ void ExecutionContextCSPDelegate::PostViolationReport(
-   scoped_refptr<EncodedFormData> report =
-       EncodedFormData::Create(stringified_report.Utf8());
- 
+@@ -165,55 +163,6 @@ void ExecutionContextCSPDelegate::PostViolationReport(
+     bool is_frame_ancestors_violation,
+     const Vector<String>& report_endpoints,
+     bool use_reporting_api) {
+-  DCHECK_EQ(is_frame_ancestors_violation,
+-            network::mojom::blink::CSPDirectiveName::FrameAncestors ==
+-                ContentSecurityPolicy::GetDirectiveType(
+-                    violation_data.effectiveDirective()));
+-
+-  // TODO(crbug/929370): Support POSTing violation reports from a Worker.
+-  Document* document = GetDocument();
+-  if (!document)
+-    return;
+-
+-  LocalFrame* frame = document->GetFrame();
+-  if (!frame)
+-    return;
+-
+-  scoped_refptr<EncodedFormData> report =
+-      EncodedFormData::Create(stringified_report.Utf8());
+-
 -  // Construct and route the report to the ReportingContext, to be observed
 -  // by any ReportingObservers.
 -  auto* body = MakeGarbageCollected<CSPViolationReportBody>(violation_data);
@@ -24,6 +50,29 @@ index 452159e62874..26df85b18f70 100644
 -      ->QueueReport(observed_report,
 -                    use_reporting_api ? report_endpoints : Vector<String>());
 -
-   if (use_reporting_api)
-     return;
+-  if (use_reporting_api)
+-    return;
+-
+-  for (const auto& report_endpoint : report_endpoints) {
+-    // Use the frame's document to complete the endpoint URL, overriding its URL
+-    // with the blocked document's URL.
+-    // https://w3c.github.io/webappsec-csp/#report-violation
+-    // Step 3.4.2.1. Let endpoint be the result of executing the URL parser with
+-    // token as the input, and violation’s url as the base URL. [spec text]
+-    KURL url = is_frame_ancestors_violation
+-                   ? document->CompleteURLWithOverride(
+-                         report_endpoint, KURL(violation_data.blockedURI()))
+-                   // We use the FallbackBaseURL to ensure that we don't
+-                   // respect base elements when determining the report
+-                   // endpoint URL.
+-                   // Note: According to Step 3.4.2.1 mentioned above, the base
+-                   // URL is "violation’s url" which should be violation's
+-                   // global object's URL. So using FallbackBaseURL() might be
+-                   // inconsistent.
+-                   : document->CompleteURLWithOverride(
+-                         report_endpoint, document->FallbackBaseURL());
+-    PingLoader::SendViolationReport(frame, url, report);
+-  }
+ }
  
+ void ExecutionContextCSPDelegate::Count(WebFeature feature) {

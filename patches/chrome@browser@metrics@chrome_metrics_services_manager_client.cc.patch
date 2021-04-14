@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-index 9be5e5f98c35..c7d1457dec4c 100644
+index 9be5e5f98c35..5153299e6a7e 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 @@ -28,7 +28,6 @@
@@ -19,7 +19,32 @@ index 9be5e5f98c35..c7d1457dec4c 100644
  #endif  // OS_WIN
  
  #if BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -257,13 +254,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
+@@ -64,12 +61,6 @@ namespace internal {
+ const base::Feature kMetricsReportingFeature{"MetricsReporting",
+                                              base::FEATURE_ENABLED_BY_DEFAULT};
+ 
+-// A feature controlling whether all clients in the OutOfReportingSample group
+-// should discard their uploads, regardless of which user consent flow they
+-// went through. When disabled, only opt-out users will discard uploads.
+-const base::Feature kMetricsDownsampleConsistentlyFeature{
+-    "MetricsDownsampleConsistently", base::FEATURE_DISABLED_BY_DEFAULT};
+-
+ }  // namespace internal
+ }  // namespace metrics
+ 
+@@ -101,10 +92,7 @@ void AppendSamplingTrialGroup(const std::string& group_name,
+ // Unless the DownsampleConsistently feature is enabled, only clients that were
+ // given an opt-out metrics-reporting consent flow are eligible for sampling.
+ bool IsClientEligibleForSampling(PrefService* local_state) {
+-  return base::FeatureList::IsEnabled(
+-             metrics::internal::kMetricsDownsampleConsistentlyFeature) ||
+-         metrics::GetMetricsReportingDefaultState(local_state) ==
+-             metrics::EnableMetricsDefault::OPT_OUT;
++  return false;
+ }
+ 
+ // Implementation of IsClientInSample() that takes a PrefService param.
+@@ -257,13 +245,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
    return *enabled_state_provider_;
  }
  
@@ -33,7 +58,7 @@ index 9be5e5f98c35..c7d1457dec4c 100644
  std::unique_ptr<variations::VariationsService>
  ChromeMetricsServicesManagerClient::CreateVariationsService() {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-@@ -336,11 +326,5 @@ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
+@@ -336,11 +317,5 @@ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
    // First, set the registry value so that Crashpad will have the sampling state
    // now and for subsequent runs.
    install_static::SetCollectStatsInSample(IsClientInSample());

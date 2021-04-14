@@ -1,0 +1,29 @@
+diff --git a/components/metrics/metrics_state_manager.cc b/components/metrics/metrics_state_manager.cc
+index b093e6e5ae41..f87602357350 100644
+--- a/components/metrics/metrics_state_manager.cc
++++ b/components/metrics/metrics_state_manager.cc
+@@ -22,7 +22,6 @@
+ #include "components/metrics/cloned_install_detector.h"
+ #include "components/metrics/enabled_state_provider.h"
+ #include "components/metrics/entropy_state.h"
+-#include "components/metrics/metrics_log.h"
+ #include "components/metrics/metrics_pref_names.h"
+ #include "components/metrics/metrics_provider.h"
+ #include "components/metrics/metrics_switches.h"
+@@ -109,7 +108,7 @@ class MetricsStateMetricsProvider : public MetricsProvider {
+         // of the previous session. This allows better attribution of crashes
+         // to earlier behavior. If the previous client id is unknown, leave
+         // the current client id.
+-        uma_proto->set_client_id(MetricsLog::Hash(previous_client_id_));
++        uma_proto->set_client_id(0);
+       }
+     }
+   }
+@@ -148,7 +147,6 @@ MetricsStateManager::MetricsStateManager(
+       enabled_state_provider_(enabled_state_provider),
+       store_client_info_(std::move(store_client_info)),
+       load_client_info_(std::move(retrieve_client_info)),
+-      clean_exit_beacon_(backup_registry_key, local_state),
+       entropy_state_(local_state),
+       entropy_source_returned_(ENTROPY_SOURCE_NONE),
+       metrics_ids_were_reset_(false) {

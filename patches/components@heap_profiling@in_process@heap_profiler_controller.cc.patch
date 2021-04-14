@@ -1,0 +1,39 @@
+diff --git a/components/heap_profiling/in_process/heap_profiler_controller.cc b/components/heap_profiling/in_process/heap_profiler_controller.cc
+index a90461f4dc13..10a05a8fa5a6 100644
+--- a/components/heap_profiling/in_process/heap_profiler_controller.cc
++++ b/components/heap_profiling/in_process/heap_profiler_controller.cc
+@@ -18,8 +18,6 @@
+ #include "base/task/thread_pool.h"
+ #include "base/threading/sequenced_task_runner_handle.h"
+ #include "build/build_config.h"
+-#include "components/metrics/call_stack_profile_builder.h"
+-#include "components/metrics/call_stack_profile_metrics_provider.h"
+ 
+ namespace {
+ 
+@@ -45,9 +43,7 @@ int GetCollectionIntervalInMinutes() {
+   const int kDefaultValueInMinutes = 24 * 60;
+ #endif
+ 
+-  return base::GetFieldTrialParamByFeatureAsInt(
+-      metrics::CallStackProfileMetricsProvider::kHeapProfilerReporting,
+-      "heap-profiler-collection-interval-minutes", kDefaultValueInMinutes);
++  return kDefaultValueInMinutes;
+ }
+ 
+ }  // namespace
+@@ -60,13 +56,7 @@ HeapProfilerController::~HeapProfilerController() {
+ }
+ 
+ void HeapProfilerController::Start() {
+-  if (!base::FeatureList::IsEnabled(
+-          metrics::CallStackProfileMetricsProvider::kHeapProfilerReporting)) {
+-    return;
+-  }
+-  int sampling_rate = base::GetFieldTrialParamByFeatureAsInt(
+-      metrics::CallStackProfileMetricsProvider::kHeapProfilerReporting,
+-      kHeapProfilerSamplingRate, 0);
++  int sampling_rate = GetCollectionIntervalInMinutes();
+   if (sampling_rate > 0)
+     base::SamplingHeapProfiler::Get()->SetSamplingInterval(sampling_rate);
+   base::SamplingHeapProfiler::Get()->Start();

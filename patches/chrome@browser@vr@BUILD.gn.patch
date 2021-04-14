@@ -1,20 +1,23 @@
 diff --git a/chrome/browser/vr/BUILD.gn b/chrome/browser/vr/BUILD.gn
-index b081811aa083..0ab678852cd0 100644
+index b081811aa083..26be4730e1a6 100644
 --- a/chrome/browser/vr/BUILD.gn
 +++ b/chrome/browser/vr/BUILD.gn
-@@ -259,7 +259,6 @@ component("vr_common") {
+@@ -259,8 +259,6 @@ component("vr_common") {
      "//chrome/common:constants",
      "//components/omnibox/browser",
      "//components/omnibox/browser",
 -    "//components/rappor/public:public",
-     "//components/ukm/content",
+-    "//components/ukm/content",
      "//content/public/browser",
      "//device/base",
-@@ -386,7 +385,6 @@ component("vr_base") {
+     "//device/vr",
+@@ -386,9 +384,7 @@ component("vr_base") {
    deps = [
      "//base",
      "//chrome/app:generated_resources",
 -    "//components/rappor:rappor",
      "//components/security_state/core",
-     "//components/ukm/content",
+-    "//components/ukm/content",
      "//components/url_formatter",
+     "//content/public/browser",
+     "//device/vr/public/mojom:isolated_xr_service",

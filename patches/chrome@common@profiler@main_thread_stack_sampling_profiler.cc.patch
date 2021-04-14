@@ -1,0 +1,21 @@
+diff --git a/chrome/common/profiler/main_thread_stack_sampling_profiler.cc b/chrome/common/profiler/main_thread_stack_sampling_profiler.cc
+index ca8bbe934720..208a0a835e0f 100644
+--- a/chrome/common/profiler/main_thread_stack_sampling_profiler.cc
++++ b/chrome/common/profiler/main_thread_stack_sampling_profiler.cc
+@@ -9,7 +9,6 @@
+ #include "base/threading/platform_thread.h"
+ #include "chrome/common/profiler/process_type.h"
+ #include "chrome/common/profiler/thread_profiler.h"
+-#include "components/metrics/call_stack_profile_metrics_provider.h"
+ #include "content/public/common/content_switches.h"
+ 
+ namespace {
+@@ -21,8 +20,6 @@ std::unique_ptr<ThreadProfiler> CreateThreadProfiler() {
+ 
+   // TODO(wittman): Do this for other process types too.
+   if (process == metrics::CallStackProfileParams::BROWSER_PROCESS) {
+-    ThreadProfiler::SetBrowserProcessReceiverCallback(base::BindRepeating(
+-        &metrics::CallStackProfileMetricsProvider::ReceiveProfile));
+     return ThreadProfiler::CreateAndStartOnMainThread();
+   }
+ 

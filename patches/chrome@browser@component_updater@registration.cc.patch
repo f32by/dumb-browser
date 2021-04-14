@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/component_updater/registration.cc b/chrome/browser/component_updater/registration.cc
-index 9bc1aff78fc4..d7357b8d05f5 100644
+index 9bc1aff78fc4..ab0fa84d1279 100644
 --- a/chrome/browser/component_updater/registration.cc
 +++ b/chrome/browser/component_updater/registration.cc
 @@ -15,9 +15,7 @@
@@ -20,7 +20,15 @@ index 9bc1aff78fc4..d7357b8d05f5 100644
  #include "chrome/browser/component_updater/tls_deprecation_config_component_installer.h"
  #include "chrome/browser/component_updater/trust_token_key_commitments_component_installer.h"
  #include "chrome/browser/component_updater/zxcvbn_data_component_installer.h"
-@@ -113,9 +110,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -36,7 +33,6 @@
+ #include "components/component_updater/crl_set_remover.h"
+ #include "components/component_updater/installer_policies/on_device_head_suggest_component_installer.h"
+ #include "components/component_updater/installer_policies/optimization_hints_component_installer.h"
+-#include "components/component_updater/installer_policies/safety_tips_component_installer.h"
+ #include "components/nacl/common/buildflags.h"
+ #include "device/vr/buildflags/buildflags.h"
+ #include "third_party/widevine/cdm/buildflags.h"
+@@ -113,9 +109,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  #endif  // BUILDFLAG(ENABLE_NACL) && !defined(OS_ANDROID)
  
@@ -30,7 +38,7 @@ index 9bc1aff78fc4..d7357b8d05f5 100644
    RegisterOnDeviceHeadSuggestComponent(
        cus, g_browser_process->GetApplicationLocale());
    RegisterOptimizationHintsComponent(cus);
-@@ -137,7 +131,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -137,7 +130,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif
    }
    RegisterSSLErrorAssistantComponent(cus);
@@ -38,7 +46,7 @@ index 9bc1aff78fc4..d7357b8d05f5 100644
  #if !BUILDFLAG(IS_CHROMEOS_ASH)
    // CRLSetFetcher attempts to load a CRL set from either the local disk or
    // network.
-@@ -153,7 +146,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -153,7 +145,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    // on chromium build bots, it is always registered here and
    // RegisterSwReporterComponent() has support for running only in official
    // builds or tests.
@@ -46,3 +54,11 @@ index 9bc1aff78fc4..d7357b8d05f5 100644
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
    RegisterThirdPartyModuleListComponent(cus);
  #endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
+@@ -165,7 +156,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+   }
+ #endif
+ 
+-  RegisterSafetyTipsComponent(cus);
+   RegisterCrowdDenyComponent(cus);
+   RegisterTLSDeprecationConfigComponent(cus);
+ 

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view.h b/chrome/browser/ui/views/frame/browser_view.h
-index 986798357dbc..d18f28fc5a17 100644
+index 986798357dbc..07cfdb771d5d 100644
 --- a/chrome/browser/ui/views/frame/browser_view.h
 +++ b/chrome/browser/ui/views/frame/browser_view.h
 @@ -468,9 +468,6 @@ class BrowserView : public BrowserWindow,
@@ -12,3 +12,12 @@ index 986798357dbc..d18f28fc5a17 100644
    ExclusiveAccessContext* GetExclusiveAccessContext() override;
    std::string GetWorkspace() const override;
    bool IsVisibleOnAllWorkspaces() const override;
+@@ -940,8 +937,6 @@ class BrowserView : public BrowserWindow,
+   std::unique_ptr<ExtensionKeybindingRegistryViews>
+       extension_keybinding_registry_;
+ 
+-  std::unique_ptr<BrowserWindowHistogramHelper> histogram_helper_;
+-
+   std::unique_ptr<FullscreenControlHost> fullscreen_control_host_;
+ 
+   // If the Window Placement experiment is enabled and fullscreen is requested

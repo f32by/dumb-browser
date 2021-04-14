@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/sync/chrome_sync_client.cc b/chrome/browser/sync/chrome_sync_client.cc
+index 6e4cd8a84eb0..b937dfc7835f 100644
+--- a/chrome/browser/sync/chrome_sync_client.cc
++++ b/chrome/browser/sync/chrome_sync_client.cc
+@@ -66,7 +66,6 @@
+ #include "components/history/core/common/pref_names.h"
+ #include "components/invalidation/impl/invalidation_switches.h"
+ #include "components/invalidation/impl/profile_invalidation_provider.h"
+-#include "components/metrics/demographics/user_demographics.h"
+ #include "components/password_manager/core/browser/password_store.h"
+ #include "components/prefs/pref_service.h"
+ #include "components/reading_list/core/reading_list_model.h"
+@@ -701,7 +700,6 @@ syncer::SyncTypePreferenceProvider* ChromeSyncClient::GetPreferenceProvider() {
+ }
+ 
+ void ChromeSyncClient::OnLocalSyncTransportDataCleared() {
+-  metrics::ClearDemographicsPrefs(profile_->GetPrefs());
+ }
+ 
+ #if BUILDFLAG(ENABLE_EXTENSIONS)

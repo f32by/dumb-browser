@@ -1,0 +1,37 @@
+diff --git a/components/metrics/metrics_state_manager.h b/components/metrics/metrics_state_manager.h
+index 1f6b58222dbf..999a6b030b6a 100644
+--- a/components/metrics/metrics_state_manager.h
++++ b/components/metrics/metrics_state_manager.h
+@@ -13,7 +13,6 @@
+ #include "base/macros.h"
+ #include "base/metrics/field_trial.h"
+ #include "base/strings/string16.h"
+-#include "components/metrics/clean_exit_beacon.h"
+ #include "components/metrics/client_info.h"
+ #include "components/metrics/cloned_install_detector.h"
+ #include "components/metrics/entropy_state.h"
+@@ -60,13 +59,6 @@ class MetricsStateManager final {
+   // Returns the low entropy source for this client.
+   int GetLowEntropySource();
+ 
+-  // The CleanExitBeacon, used to determine whether the previous Chrome browser
+-  // session terminated gracefully.
+-  CleanExitBeacon* clean_exit_beacon() { return &clean_exit_beacon_; }
+-  const CleanExitBeacon* clean_exit_beacon() const {
+-    return &clean_exit_beacon_;
+-  }
+-
+   // Forces the client ID to be generated. This is useful in case it's needed
+   // before recording.
+   void ForceClientIdCreation();
+@@ -197,10 +189,6 @@ class MetricsStateManager final {
+   // its typical location and wants to attempt loading it from this backup.
+   const LoadClientInfoCallback load_client_info_;
+ 
+-  // A beacon used to determine whether the previous Chrome browser session
+-  // terminated gracefully.
+-  CleanExitBeacon clean_exit_beacon_;
+-
+   // The identifier that's sent to the server with the log reports.
+   std::string client_id_;
+ 

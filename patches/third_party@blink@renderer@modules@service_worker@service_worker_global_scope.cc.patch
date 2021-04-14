@@ -1,8 +1,16 @@
 diff --git a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
-index dcb01a871702..33110786df00 100644
+index dcb01a871702..8e306d8c360e 100644
 --- a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
 +++ b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
-@@ -1616,13 +1616,10 @@ void ServiceWorkerGlobalScope::DispatchFetchEventForSubresource(
+@@ -68,7 +68,6 @@
+ #include "third_party/blink/renderer/core/execution_context/agent.h"
+ #include "third_party/blink/renderer/core/execution_context/execution_context.h"
+ #include "third_party/blink/renderer/core/fetch/global_fetch.h"
+-#include "third_party/blink/renderer/core/frame/reporting_context.h"
+ #include "third_party/blink/renderer/core/inspector/console_message.h"
+ #include "third_party/blink/renderer/core/inspector/request_debug_header_scope.h"
+ #include "third_party/blink/renderer/core/inspector/worker_inspector_controller.h"
+@@ -1616,13 +1615,10 @@ void ServiceWorkerGlobalScope::DispatchFetchEventForSubresource(
  
  void ServiceWorkerGlobalScope::Clone(
      mojo::PendingReceiver<mojom::blink::ControllerServiceWorker> receiver,
@@ -18,7 +26,7 @@ index dcb01a871702..33110786df00 100644
  
    controller_receivers_.Add(
        std::move(receiver), std::move(checker),
-@@ -1635,9 +1632,7 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
+@@ -1635,9 +1631,7 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
      mojom::blink::ServiceWorkerRegistrationObjectInfoPtr registration_info,
      mojom::blink::ServiceWorkerObjectInfoPtr service_worker_info,
      mojom::blink::FetchHandlerExistence fetch_hander_existence,
@@ -29,7 +37,7 @@ index dcb01a871702..33110786df00 100644
    DCHECK(IsContextThread());
    DCHECK(!global_scope_initialized_);
  
-@@ -1671,10 +1666,6 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
+@@ -1671,10 +1665,6 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
  
    SetFetchHandlerExistence(fetch_hander_existence);
  

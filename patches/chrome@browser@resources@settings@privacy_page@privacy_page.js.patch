@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/resources/settings/privacy_page/privacy_page.js b/chrome/browser/resources/settings/privacy_page/privacy_page.js
-index 4d489414e5fe..b8969271bd75 100644
+index 4d489414e5fe..729d65a188c7 100644
 --- a/chrome/browser/resources/settings/privacy_page/privacy_page.js
 +++ b/chrome/browser/resources/settings/privacy_page/privacy_page.js
-@@ -76,14 +76,6 @@ Polymer({
+@@ -25,7 +25,6 @@ import {I18nBehavior} from 'chrome://resources/js/i18n_behavior.m.js';
+ import {WebUIListenerBehavior} from 'chrome://resources/js/web_ui_listener_behavior.m.js';
+ import {html, Polymer} from 'chrome://resources/polymer/v3_0/polymer/polymer_bundled.min.js';
+ 
+-import {HatsBrowserProxyImpl} from '../hats_browser_proxy.js';
+ import {loadTimeData} from '../i18n_setup.js';
+ import {MetricsBrowserProxy, MetricsBrowserProxyImpl, PrivacyElementInteractions} from '../metrics_browser_proxy.js';
+ import {PrefsBehavior} from '../prefs/prefs_behavior.m.js';
+@@ -76,14 +75,6 @@ Polymer({
      /** @private */
      showClearBrowsingDataDialog_: Boolean,
  
@@ -17,3 +25,44 @@ index 4d489414e5fe..b8969271bd75 100644
      /** @private */
      cookieSettingDescription_: String,
  
+@@ -276,15 +267,11 @@ Polymer({
+ 
+   /** @private */
+   onClearBrowsingDataTap_() {
+-    this.tryShowHatsSurvey_();
+-
+     Router.getInstance().navigateTo(routes.CLEAR_BROWSER_DATA);
+   },
+ 
+   /** @private */
+   onCookiesClick_() {
+-    this.tryShowHatsSurvey_();
+-
+     Router.getInstance().navigateTo(routes.COOKIES);
+   },
+ 
+@@ -300,14 +287,11 @@ Polymer({
+ 
+   /** @private */
+   onPermissionsPageClick_() {
+-    this.tryShowHatsSurvey_();
+-
+     Router.getInstance().navigateTo(routes.SITE_SETTINGS);
+   },
+ 
+   /** @private */
+   onSecurityPageClick_() {
+-    this.tryShowHatsSurvey_();
+     this.metricsBrowserProxy_.recordAction(
+         'SafeBrowsing.Settings.ShowedFromParentSettings');
+     Router.getInstance().navigateTo(routes.SECURITY);
+@@ -331,9 +315,4 @@ Polymer({
+     return value ? this.i18n('siteSettingsProtectedContentEnableIdentifiers') :
+                    this.i18n('siteSettingsBlocked');
+   },
+-
+-  /** @private */
+-  tryShowHatsSurvey_() {
+-    HatsBrowserProxyImpl.getInstance().tryShowSurvey();
+-  },
+ });

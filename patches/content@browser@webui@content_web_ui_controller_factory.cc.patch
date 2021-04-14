@@ -1,0 +1,21 @@
+diff --git a/content/browser/webui/content_web_ui_controller_factory.cc b/content/browser/webui/content_web_ui_controller_factory.cc
+index 67f48bbc3e9f..165ca262f55f 100644
+--- a/content/browser/webui/content_web_ui_controller_factory.cc
++++ b/content/browser/webui/content_web_ui_controller_factory.cc
+@@ -15,7 +15,6 @@
+ #include "content/browser/process_internals/process_internals_ui.h"
+ #include "content/browser/service_worker/service_worker_internals_ui.h"
+ #include "content/browser/tracing/tracing_ui.h"
+-#include "content/browser/ukm_internals_ui.h"
+ #include "content/browser/webrtc/webrtc_internals_ui.h"
+ #include "content/public/browser/storage_partition.h"
+ #include "content/public/browser/web_contents.h"
+@@ -85,8 +84,6 @@ ContentWebUIControllerFactory::CreateWebUIControllerForURL(WebUI* web_ui,
+     return std::make_unique<ProcessInternalsUI>(web_ui);
+   if (url.host_piece() == kChromeUIConversionInternalsHost)
+     return std::make_unique<ConversionInternalsUI>(web_ui);
+-  if (url.host_piece() == kChromeUIUkmHost)
+-    return std::make_unique<UkmInternalsUI>(web_ui);
+   if (url.host_piece() == kChromeUIMediaInternalsHost) {
+     if (base::FeatureList::IsEnabled(media::kEnableMediaInternals))
+       return std::make_unique<MediaInternalsUI>(web_ui);

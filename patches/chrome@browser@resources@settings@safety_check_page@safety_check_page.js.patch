@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/resources/settings/safety_check_page/safety_check_page.js b/chrome/browser/resources/settings/safety_check_page/safety_check_page.js
+index 24f74999c2c6..bf3ddf88da28 100644
+--- a/chrome/browser/resources/settings/safety_check_page/safety_check_page.js
++++ b/chrome/browser/resources/settings/safety_check_page/safety_check_page.js
+@@ -30,7 +30,6 @@ import {WebUIListenerBehavior} from 'chrome://resources/js/web_ui_listener_behav
+ import {IronA11yAnnouncer} from 'chrome://resources/polymer/v3_0/iron-a11y-announcer/iron-a11y-announcer.js';
+ import {flush, html, Polymer} from 'chrome://resources/polymer/v3_0/polymer/polymer_bundled.min.js';
+ 
+-import {HatsBrowserProxyImpl} from '../hats_browser_proxy.js';
+ import {loadTimeData} from '../i18n_setup.js';
+ import {MetricsBrowserProxy, MetricsBrowserProxyImpl, SafetyCheckInteractions} from '../metrics_browser_proxy.js';
+ 
+@@ -162,8 +161,6 @@ Polymer({
+ 
+   /** @private */
+   onRunSafetyCheckClick_: function() {
+-    HatsBrowserProxyImpl.getInstance().tryShowSurvey();
+-
+     this.runSafetyCheck_();
+   },
+ 

@@ -1,5 +1,5 @@
 diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
-index c84ae68f2f27..e3afd75c62bd 100644
+index c84ae68f2f27..8f0e65956911 100644
 --- a/content/public/browser/content_browser_client.cc
 +++ b/content/public/browser/content_browser_client.cc
 @@ -54,7 +54,6 @@
@@ -24,3 +24,14 @@ index c84ae68f2f27..e3afd75c62bd 100644
  bool ContentBrowserClient::IsBluetoothScanningBlocked(
      content::BrowserContext* browser_context,
      const url::Origin& requesting_origin,
+@@ -1144,10 +1136,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+   return false;
+ }
+ 
+-ukm::UkmService* ContentBrowserClient::GetUkmService() {
+-  return nullptr;
+-}
+-
+ void ContentBrowserClient::OnKeepaliveRequestStarted() {}
+ 
+ void ContentBrowserClient::OnKeepaliveRequestFinished() {}

@@ -1,16 +1,35 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.cc b/components/metrics_services_manager/metrics_services_manager.cc
-index 107632b0ad8f..fafbfe2ca498 100644
+index 107632b0ad8f..3fdca721e1b7 100644
 --- a/components/metrics_services_manager/metrics_services_manager.cc
 +++ b/components/metrics_services_manager/metrics_services_manager.cc
-@@ -15,7 +15,6 @@
+@@ -9,14 +9,11 @@
+ #include "base/bind.h"
+ #include "base/check.h"
+ #include "base/command_line.h"
+-#include "base/metrics/histogram_macros.h"
+ #include "components/metrics/metrics_service.h"
+ #include "components/metrics/metrics_service_client.h"
  #include "components/metrics/metrics_state_manager.h"
  #include "components/metrics/metrics_switches.h"
  #include "components/metrics_services_manager/metrics_services_manager_client.h"
 -#include "components/rappor/rappor_service_impl.h"
- #include "components/ukm/ukm_service.h"
+-#include "components/ukm/ukm_service.h"
  #include "components/variations/service/variations_service.h"
  #include "services/network/public/cpp/shared_url_loader_factory.h"
-@@ -43,18 +42,9 @@ metrics::MetricsService* MetricsServicesManager::GetMetricsService() {
+ 
+@@ -24,10 +21,7 @@ namespace metrics_services_manager {
+ 
+ MetricsServicesManager::MetricsServicesManager(
+     std::unique_ptr<MetricsServicesManagerClient> client)
+-    : client_(std::move(client)),
+-      may_upload_(false),
+-      may_record_(false),
+-      consent_given_(false) {
++    : client_(std::move(client)) {
+   DCHECK(client_);
+ }
+ 
+@@ -43,20 +37,6 @@ metrics::MetricsService* MetricsServicesManager::GetMetricsService() {
    return GetMetricsServiceClient()->GetMetricsService();
  }
  
@@ -23,23 +42,73 @@ index 107632b0ad8f..fafbfe2ca498 100644
 -  return rappor_service_.get();
 -}
 -
- ukm::UkmService* MetricsServicesManager::GetUkmService() {
-   DCHECK(thread_checker_.CalledOnValidThread());
+-ukm::UkmService* MetricsServicesManager::GetUkmService() {
+-  DCHECK(thread_checker_.CalledOnValidThread());
 -  return GetMetricsServiceClient()->GetUkmService();
-+  return nullptr;
+-}
+-
+ variations::VariationsService* MetricsServicesManager::GetVariationsService() {
+   DCHECK(thread_checker_.CalledOnValidThread());
+   if (!variations_service_)
+@@ -64,11 +44,6 @@ variations::VariationsService* MetricsServicesManager::GetVariationsService() {
+   return variations_service_.get();
  }
  
- variations::VariationsService* MetricsServicesManager::GetVariationsService() {
-@@ -115,26 +105,14 @@ void MetricsServicesManager::UpdateRunningServices() {
-   const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
-   if (cmdline->HasSwitch(metrics::switches::kMetricsRecordingOnly)) {
-     metrics->StartRecordingForTests();
--    GetRapporServiceImpl()->Update(true, false);
-     return;
+-void MetricsServicesManager::OnPluginLoadingError(
+-    const base::FilePath& plugin_path) {
+-  GetMetricsServiceClient()->OnPluginLoadingError(plugin_path);
+-}
+-
+ void MetricsServicesManager::OnRendererProcessCrash() {
+   GetMetricsServiceClient()->OnRendererProcessCrash();
+ }
+@@ -78,107 +53,8 @@ MetricsServicesManager::GetMetricsServiceClient() {
+   DCHECK(thread_checker_.CalledOnValidThread());
+   if (!metrics_service_client_) {
+     metrics_service_client_ = client_->CreateMetricsServiceClient();
+-    // base::Unretained is safe since |this| owns the metrics_service_client_.
+-    metrics_service_client_->SetUpdateRunningServicesCallback(
+-        base::BindRepeating(&MetricsServicesManager::UpdateRunningServices,
+-                            base::Unretained(this)));
    }
+   return metrics_service_client_.get();
+ }
  
-   client_->UpdateRunningServices(may_record_, may_upload_);
- 
+-void MetricsServicesManager::UpdatePermissions(bool current_may_record,
+-                                               bool current_consent_given,
+-                                               bool current_may_upload) {
+-  DCHECK(thread_checker_.CalledOnValidThread());
+-  // If the user has opted out of metrics, delete local UKM state. We only check
+-  // consent for UKM.
+-  if (consent_given_ && !current_consent_given) {
+-    ukm::UkmService* ukm = GetUkmService();
+-    if (ukm) {
+-      ukm->Purge();
+-      ukm->ResetClientState(ukm::ResetReason::kUpdatePermissions);
+-    }
+-  }
+-
+-  // Stash the current permissions so that we can update the RapporServiceImpl
+-  // correctly when the Rappor preference changes.
+-  may_record_ = current_may_record;
+-  consent_given_ = current_consent_given;
+-  may_upload_ = current_may_upload;
+-  UpdateRunningServices();
+-}
+-
+-void MetricsServicesManager::UpdateRunningServices() {
+-  DCHECK(thread_checker_.CalledOnValidThread());
+-  metrics::MetricsService* metrics = GetMetricsService();
+-
+-  const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
+-  if (cmdline->HasSwitch(metrics::switches::kMetricsRecordingOnly)) {
+-    metrics->StartRecordingForTests();
+-    GetRapporServiceImpl()->Update(true, false);
+-    return;
+-  }
+-
+-  client_->UpdateRunningServices(may_record_, may_upload_);
+-
 -  if (may_record_) {
 -    if (!metrics->recording_active())
 -      metrics->Start();
@@ -50,18 +119,39 @@ index 107632b0ad8f..fafbfe2ca498 100644
 -  } else {
 -    metrics->Stop();
 -  }
-+  metrics->Stop();
- 
-   UpdateUkmService();
+-
+-  UpdateUkmService();
 -
 -  GetRapporServiceImpl()->Update(may_record_, may_upload_);
- }
- 
- void MetricsServicesManager::UpdateUkmService() {
-@@ -164,13 +142,7 @@ void MetricsServicesManager::UpdateUkmService() {
- }
- 
- void MetricsServicesManager::UpdateUploadPermissions(bool may_upload) {
+-}
+-
+-void MetricsServicesManager::UpdateUkmService() {
+-  ukm::UkmService* ukm = GetUkmService();
+-  if (!ukm)
+-    return;
+-
+-  bool listeners_active =
+-      metrics_service_client_->AreNotificationListenersEnabledOnAllProfiles();
+-  bool sync_enabled =
+-      metrics_service_client_->IsMetricsReportingForceEnabled() ||
+-      metrics_service_client_->IsUkmAllowedForAllProfiles();
+-  bool is_incognito = client_->IsOffTheRecordSessionActive();
+-
+-  if (consent_given_ && listeners_active && sync_enabled && !is_incognito) {
+-    // TODO(skare): revise this - merged in a big change
+-    ukm->EnableRecording(
+-        metrics_service_client_->IsUkmAllowedWithExtensionsForAllProfiles());
+-    if (may_upload_)
+-      ukm->EnableReporting();
+-    else
+-      ukm->DisableReporting();
+-  } else {
+-    ukm->DisableRecording();
+-    ukm->DisableReporting();
+-  }
+-}
+-
+-void MetricsServicesManager::UpdateUploadPermissions(bool may_upload) {
 -  if (metrics_service_client_->IsMetricsReportingForceEnabled()) {
 -    UpdatePermissions(true, true, true);
 -    return;
@@ -69,7 +159,14 @@ index 107632b0ad8f..fafbfe2ca498 100644
 -
 -  UpdatePermissions(client_->IsMetricsReportingEnabled(),
 -                    client_->IsMetricsConsentGiven(), may_upload);
-+  UpdatePermissions(false, false, false);
- }
- 
- bool MetricsServicesManager::IsMetricsReportingEnabled() const {
+-}
+-
+-bool MetricsServicesManager::IsMetricsReportingEnabled() const {
+-  return client_->IsMetricsReportingEnabled();
+-}
+-
+-bool MetricsServicesManager::IsMetricsConsentGiven() const {
+-  return client_->IsMetricsConsentGiven();
+-}
+-
+ }  // namespace metrics_services_manager

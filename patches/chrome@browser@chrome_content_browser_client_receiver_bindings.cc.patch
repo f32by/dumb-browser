@@ -1,16 +1,19 @@
 diff --git a/chrome/browser/chrome_content_browser_client_receiver_bindings.cc b/chrome/browser/chrome_content_browser_client_receiver_bindings.cc
-index 9351dd050ecf..2ca74a2aa19b 100644
+index 9351dd050ecf..da6e14c0d28b 100644
 --- a/chrome/browser/chrome_content_browser_client_receiver_bindings.cc
 +++ b/chrome/browser/chrome_content_browser_client_receiver_bindings.cc
-@@ -28,7 +28,6 @@
- #include "components/metrics/call_stack_profile_collector.h"
+@@ -25,10 +25,8 @@
+ #include "components/content_capture/browser/content_capture_receiver_manager.h"
+ #include "components/data_reduction_proxy/core/browser/data_reduction_proxy_service.h"
+ #include "components/data_reduction_proxy/core/common/data_reduction_proxy_params.h"
+-#include "components/metrics/call_stack_profile_collector.h"
  #include "components/password_manager/content/browser/content_password_manager_driver_factory.h"
  #include "components/safe_browsing/buildflags.h"
 -#include "components/safe_browsing/content/browser/mojo_safe_browsing_impl.h"
  #include "components/spellcheck/spellcheck_buildflags.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -72,43 +71,6 @@
+@@ -72,43 +70,6 @@
  #endif
  #endif
  
@@ -54,3 +57,33 @@ index 9351dd050ecf..2ca74a2aa19b 100644
  void ChromeContentBrowserClient::ExposeInterfacesToRenderer(
      service_manager::BinderRegistry* registry,
      blink::AssociatedInterfaceRegistry* associated_registry,
+@@ -123,8 +84,6 @@ void ChromeContentBrowserClient::ExposeInterfacesToRenderer(
+ 
+   scoped_refptr<base::SingleThreadTaskRunner> ui_task_runner =
+       content::GetUIThreadTaskRunner({});
+-  registry->AddInterface(
+-      base::BindRepeating(&metrics::CallStackProfileCollector::Create));
+ 
+   if (NetBenchmarking::CheckBenchmarkingEnabled()) {
+     Profile* profile =
+@@ -290,11 +249,6 @@ void ChromeContentBrowserClient::BindBadgeServiceReceiverFromServiceWorker(
+ 
+ void ChromeContentBrowserClient::BindGpuHostReceiver(
+     mojo::GenericPendingReceiver receiver) {
+-  if (auto r = receiver.As<metrics::mojom::CallStackProfileCollector>()) {
+-    metrics::CallStackProfileCollector::Create(std::move(r));
+-    return;
+-  }
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+   if (auto r = receiver.As<chromeos::cdm::mojom::CdmFactoryDaemon>())
+     chromeos::CdmFactoryDaemonProxy::Create(std::move(r));
+@@ -303,8 +257,6 @@ void ChromeContentBrowserClient::BindGpuHostReceiver(
+ 
+ void ChromeContentBrowserClient::BindUtilityHostReceiver(
+     mojo::GenericPendingReceiver receiver) {
+-  if (auto r = receiver.As<metrics::mojom::CallStackProfileCollector>())
+-    metrics::CallStackProfileCollector::Create(std::move(r));
+ }
+ 
+ void ChromeContentBrowserClient::BindHostReceiverForRenderer(

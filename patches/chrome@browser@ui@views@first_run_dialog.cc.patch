@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/ui/views/first_run_dialog.cc b/chrome/browser/ui/views/first_run_dialog.cc
+index 22675ed4589d..984198d902e3 100644
+--- a/chrome/browser/ui/views/first_run_dialog.cc
++++ b/chrome/browser/ui/views/first_run_dialog.cc
+@@ -9,7 +9,6 @@
+ #include "base/bind.h"
+ #include "base/run_loop.h"
+ #include "chrome/browser/first_run/first_run.h"
+-#include "chrome/browser/metrics/metrics_reporting_state.h"
+ #include "chrome/browser/platform_util.h"
+ #include "chrome/browser/shell_integration.h"
+ #include "chrome/browser/ui/browser_dialogs.h"
+@@ -100,7 +99,6 @@ FirstRunDialog::FirstRunDialog(Profile* profile) {
+   // Having this box checked means the user has to opt-out of metrics recording.
+   report_crashes->SetChecked(!first_run::IsMetricsReportingOptIn());
+   report_crashes_ = layout->AddView(std::move(report_crashes));
+-  chrome::RecordDialogCreation(chrome::DialogIdentifier::FIRST_RUN_DIALOG);
+ }
+ 
+ FirstRunDialog::~FirstRunDialog() {
+@@ -114,10 +112,6 @@ void FirstRunDialog::Done() {
+ bool FirstRunDialog::Accept() {
+   GetWidget()->Hide();
+ 
+-  ChangeMetricsReportingStateWithReply(
+-      report_crashes_->GetChecked(),
+-      base::BindOnce(&InitCrashReporterIfEnabled));
+-
+   if (make_default_->GetChecked())
+     shell_integration::SetAsDefaultBrowser();
+ 

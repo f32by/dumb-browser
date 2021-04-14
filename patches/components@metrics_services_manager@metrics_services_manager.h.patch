@@ -1,8 +1,8 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.h b/components/metrics_services_manager/metrics_services_manager.h
-index 38c955cfde54..2db9e9a89505 100644
+index 38c955cfde54..5f14667a6b24 100644
 --- a/components/metrics_services_manager/metrics_services_manager.h
 +++ b/components/metrics_services_manager/metrics_services_manager.h
-@@ -20,10 +20,6 @@ class MetricsService;
+@@ -20,14 +20,6 @@ class MetricsService;
  class MetricsServiceClient;
  }
  
@@ -10,22 +10,42 @@ index 38c955cfde54..2db9e9a89505 100644
 -class RapporServiceImpl;
 -}
 -
- namespace ukm {
- class UkmService;
+-namespace ukm {
+-class UkmService;
+-}
+-
+ namespace variations {
+ class VariationsService;
  }
-@@ -60,9 +56,6 @@ class MetricsServicesManager {
+@@ -60,51 +52,18 @@ class MetricsServicesManager {
    // additionally creating the MetricsServiceClient in that case).
    metrics::MetricsService* GetMetricsService();
  
 -  // Returns the RapporServiceImpl, creating it if it hasn't been created yet.
 -  rappor::RapporServiceImpl* GetRapporServiceImpl();
 -
-   // Returns the UkmService, creating it if it hasn't been created yet.
-   ukm::UkmService* GetUkmService();
+-  // Returns the UkmService, creating it if it hasn't been created yet.
+-  ukm::UkmService* GetUkmService();
+-
+   // Returns the VariationsService, creating it if it hasn't been created yet.
+   variations::VariationsService* GetVariationsService();
  
-@@ -86,10 +79,6 @@ class MetricsServicesManager {
-   bool IsMetricsConsentGiven() const;
+-  // Should be called when a plugin loading error occurs.
+-  void OnPluginLoadingError(const base::FilePath& plugin_path);
+-
+   // Some embedders use this method to notify the metrics system when a
+   // renderer process exits unexpectedly.
+   void OnRendererProcessCrash();
  
+-  // Update the managed services when permissions for uploading metrics change.
+-  void UpdateUploadPermissions(bool may_upload);
+-
+-  // Gets the current state of metric reporting.
+-  bool IsMetricsReportingEnabled() const;
+-
+-  // Gets the current state of metrics consent.
+-  bool IsMetricsConsentGiven() const;
+-
   private:
 -  // Update the managed services when permissions for recording/uploading
 -  // metrics change.
@@ -34,15 +54,34 @@ index 38c955cfde54..2db9e9a89505 100644
    // Returns the MetricsServiceClient, creating it if it hasn't been
    // created yet (and additionally creating the MetricsService in that case).
    metrics::MetricsServiceClient* GetMetricsServiceClient();
-@@ -97,6 +86,7 @@ class MetricsServicesManager {
-   // Update which services are running to match current permissions.
-   void UpdateRunningServices();
  
-+
-   // Update the state of UkmService to match current permissions.
-   void UpdateUkmService();
+-  // Update which services are running to match current permissions.
+-  void UpdateRunningServices();
+-
+-  // Update the state of UkmService to match current permissions.
+-  void UpdateUkmService();
+-
+-  // Update the managed services when permissions for recording/uploading
+-  // metrics change.
+-  void UpdatePermissions(bool current_may_record,
+-                         bool current_consent_given,
+-                         bool current_may_upload);
  
-@@ -124,9 +114,6 @@ class MetricsServicesManager {
+   // The client passed in from the embedder.
+   const std::unique_ptr<MetricsServicesManagerClient> client_;
+@@ -112,21 +71,9 @@ class MetricsServicesManager {
+   // Ensures that all functions are called from the same thread.
+   base::ThreadChecker thread_checker_;
+ 
+-  // The current metrics reporting setting.
+-  bool may_upload_;
+-
+-  // The current metrics recording setting.
+-  bool may_record_;
+-
+-  // The current metrics setting reflecting if consent was given.
+-  bool consent_given_;
+-
    // The MetricsServiceClient. Owns the MetricsService.
    std::unique_ptr<metrics::MetricsServiceClient> metrics_service_client_;
  

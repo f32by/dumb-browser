@@ -1,5 +1,5 @@
 diff --git a/components/metrics/metrics_service_accessor.cc b/components/metrics/metrics_service_accessor.cc
-index ca1fb8ca159d..e9bf4ed6c2fd 100644
+index ca1fb8ca159d..a88cbc4ba180 100644
 --- a/components/metrics/metrics_service_accessor.cc
 +++ b/components/metrics/metrics_service_accessor.cc
 @@ -17,23 +17,12 @@ namespace {
@@ -27,3 +27,16 @@ index ca1fb8ca159d..e9bf4ed6c2fd 100644
  }
  
  // static
+@@ -51,12 +40,6 @@ bool MetricsServiceAccessor::RegisterSyntheticFieldTrialWithNameAndGroupHash(
+     MetricsService* metrics_service,
+     uint32_t trial_name_hash,
+     uint32_t group_name_hash) {
+-  if (!metrics_service)
+-    return false;
+-
+-  variations::SyntheticTrialGroup trial_group(trial_name_hash, group_name_hash);
+-  metrics_service->synthetic_trial_registry()->RegisterSyntheticFieldTrial(
+-      trial_group);
+   return true;
+ }
+ 

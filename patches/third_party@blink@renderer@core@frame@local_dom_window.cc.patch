@@ -1,8 +1,19 @@
 diff --git a/third_party/blink/renderer/core/frame/local_dom_window.cc b/third_party/blink/renderer/core/frame/local_dom_window.cc
-index 74539b9e48b0..7f13c5a929f0 100644
+index 74539b9e48b0..eb7c3b7827df 100644
 --- a/third_party/blink/renderer/core/frame/local_dom_window.cc
 +++ b/third_party/blink/renderer/core/frame/local_dom_window.cc
-@@ -89,8 +89,6 @@
+@@ -78,19 +78,15 @@
+ #include "third_party/blink/renderer/core/execution_context/window_agent.h"
+ #include "third_party/blink/renderer/core/frame/bar_prop.h"
+ #include "third_party/blink/renderer/core/frame/csp/content_security_policy.h"
+-#include "third_party/blink/renderer/core/frame/document_policy_violation_report_body.h"
+ #include "third_party/blink/renderer/core/frame/dom_visual_viewport.h"
+ #include "third_party/blink/renderer/core/frame/event_handler_registry.h"
+ #include "third_party/blink/renderer/core/frame/external.h"
+-#include "third_party/blink/renderer/core/frame/feature_policy_violation_report_body.h"
+ #include "third_party/blink/renderer/core/frame/frame_console.h"
+ #include "third_party/blink/renderer/core/frame/history.h"
+ #include "third_party/blink/renderer/core/frame/local_frame.h"
  #include "third_party/blink/renderer/core/frame/local_frame_client.h"
  #include "third_party/blink/renderer/core/frame/local_frame_view.h"
  #include "third_party/blink/renderer/core/frame/navigator.h"
@@ -11,7 +22,7 @@ index 74539b9e48b0..7f13c5a929f0 100644
  #include "third_party/blink/renderer/core/frame/screen.h"
  #include "third_party/blink/renderer/core/frame/settings.h"
  #include "third_party/blink/renderer/core/frame/viewport_data.h"
-@@ -466,33 +464,6 @@ void LocalDOMWindow::ReportFeaturePolicyViolation(
+@@ -466,33 +462,6 @@ void LocalDOMWindow::ReportFeaturePolicyViolation(
      mojom::blink::FeaturePolicyFeature feature,
      mojom::blink::PolicyDisposition disposition,
      const String& message) const {
@@ -45,7 +56,7 @@ index 74539b9e48b0..7f13c5a929f0 100644
  }
  
  void LocalDOMWindow::ReportDocumentPolicyViolation(
-@@ -500,60 +471,6 @@ void LocalDOMWindow::ReportDocumentPolicyViolation(
+@@ -500,60 +469,6 @@ void LocalDOMWindow::ReportDocumentPolicyViolation(
      mojom::blink::PolicyDisposition disposition,
      const String& message,
      const String& source_file) const {

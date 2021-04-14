@@ -1,0 +1,48 @@
+diff --git a/dumb/BUILD.gn b/dumb/BUILD.gn
+new file mode 100644
+index 000000000000..6ec70f5b8982
+--- /dev/null
++++ b/dumb/BUILD.gn
+@@ -0,0 +1,42 @@
++# Copyright (c) 2020 The Dumb Browser Authors. All rights reserved.
++# Use of this source code is governed by GPLv3.
++
++import("//build/config/features.gni")
++
++source_set("all") {
++  sources = [
++    "base/compiler_specific.h",
++    "browser/net/dumb_proxying_url_loader_factory.cc",
++    "browser/net/dumb_proxying_url_loader_factory.h",
++    "browser/net/dumb_proxying_web_socket.cc",
++    "browser/net/dumb_proxying_web_socket.h",
++    "browser/net/dumb_request_handler.cc",
++    "browser/net/dumb_request_handler.h",
++    "browser/net/dumb_stp_util.cc",
++    "browser/net/dumb_stp_util.h",
++    "browser/net/resource_context_data.cc",
++    "browser/net/resource_context_data.h",
++    "browser/net/url_context.cc",
++    "browser/net/url_context.h",
++    "browser/net/url_purify/dumb_url_purify_delegate_helper.cc",
++    "browser/net/url_purify/dumb_url_purify_delegate_helper.h",
++  ]
++
++  defines = []
++
++  deps = [
++    "//base",
++    "//components/prefs",
++    "//content/public/browser",
++    "//content/public/common",
++    "//components/content_settings/core/browser",
++    "//extensions/common:common_constants",
++    "//mojo/public/cpp/bindings",
++    "//mojo/public/cpp/system",
++    "//net",
++    "//services/network/public/cpp",
++    "//services/network/public/mojom",
++    "//third_party/blink/public/mojom:mojom_platform_headers",
++    "//third_party/re2",
++  ]
++}

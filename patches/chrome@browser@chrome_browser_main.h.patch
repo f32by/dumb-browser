@@ -1,0 +1,41 @@
+diff --git a/chrome/browser/chrome_browser_main.h b/chrome/browser/chrome_browser_main.h
+index cc214ddc9e02..e525cedfb70d 100644
+--- a/chrome/browser/chrome_browser_main.h
++++ b/chrome/browser/chrome_browser_main.h
+@@ -30,7 +30,6 @@ class StartupData;
+ class PrefService;
+ class Profile;
+ class StartupBrowserCreator;
+-class ShutdownWatcherHelper;
+ class WebUsbDetector;
+ 
+ namespace base {
+@@ -104,16 +103,6 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
+  private:
+   friend class ChromeBrowserMainPartsTestApi;
+ 
+-  // Constructs the metrics service and initializes metrics recording.
+-  void SetupMetrics();
+-
+-  // Starts recording of metrics. This can only be called after we have a file
+-  // thread.
+-  static void StartMetricsRecording();
+-
+-  // Record time from process startup to present time in an UMA histogram.
+-  void RecordBrowserStartupTime();
+-
+   // Reads origin trial policy data from local state and configures command line
+   // for child processes.
+   void SetupOriginTrialsCommandLine(PrefService* local_state);
+@@ -144,11 +133,6 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
+   int result_code_;
+ 
+ #if !defined(OS_ANDROID)
+-  // Create ShutdownWatcherHelper object for watching jank during shutdown.
+-  // Please keep |shutdown_watcher| as the first object constructed, and hence
+-  // it is destroyed last.
+-  std::unique_ptr<ShutdownWatcherHelper> shutdown_watcher_;
+-
+   std::unique_ptr<WebUsbDetector> web_usb_detector_;
+ #endif  // !defined(OS_ANDROID)
+ 

@@ -30,8 +30,6 @@ gn_args['is_official_build'] = '!is_debug'
 # no debug symbols
 gn_args['blink_symbol_level'] = '0'
 gn_args['symbol_level'] = '0'
-# do not build dawn tests
-gn_args['build_dawn_tests'] = 'false'
 # disable click to call
 gn_args['enable_click_to_call'] = 'false'
 gn_args['enable_dsyms'] = 'false'
@@ -63,11 +61,8 @@ gn_args['use_official_google_api_keys'] = 'false'
 # use Chromium branding
 gn_args['is_chrome_branded'] = 'false'
 gn_args['use_unofficial_version_number'] = 'false'
-# do not build WebRTC samples
-gn_args['rtc_build_examples'] = 'false'
 # enable V8 pointer compression
 gn_args['v8_enable_pointer_compression'] = 'true'
-gn_args['enable_resource_allowlist_generation'] = 'is_debug'
 
 
 def main(args):
