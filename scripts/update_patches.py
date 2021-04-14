@@ -60,6 +60,9 @@ def main(args):
             continue
 
         filename = regex.findall(entry)[0]
+        # skip dumb source
+        if filename.startswith('dumb/'):
+            continue
 
         if filename in EXCLUSION_FILES:
             # copy file to dumb_src
