@@ -1,8 +1,16 @@
 diff --git a/third_party/blink/renderer/core/frame/local_dom_window.cc b/third_party/blink/renderer/core/frame/local_dom_window.cc
-index 74539b9e48b0..eb7c3b7827df 100644
+index 664fd015bc9e..73f7d69f18c1 100644
 --- a/third_party/blink/renderer/core/frame/local_dom_window.cc
 +++ b/third_party/blink/renderer/core/frame/local_dom_window.cc
-@@ -78,19 +78,15 @@
+@@ -49,6 +49,7 @@
+ #include "third_party/blink/renderer/bindings/core/v8/source_location.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_impression_params.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_scroll_to_options.h"
++#include "third_party/blink/renderer/bindings/core/v8/v8_security_policy_violation_event_init.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_void_function.h"
+ #include "third_party/blink/renderer/bindings/core/v8/window_proxy.h"
+ #include "third_party/blink/renderer/core/accessibility/ax_context.h"
+@@ -79,19 +80,15 @@
  #include "third_party/blink/renderer/core/execution_context/window_agent.h"
  #include "third_party/blink/renderer/core/frame/bar_prop.h"
  #include "third_party/blink/renderer/core/frame/csp/content_security_policy.h"
@@ -22,15 +30,10 @@ index 74539b9e48b0..eb7c3b7827df 100644
  #include "third_party/blink/renderer/core/frame/screen.h"
  #include "third_party/blink/renderer/core/frame/settings.h"
  #include "third_party/blink/renderer/core/frame/viewport_data.h"
-@@ -466,33 +462,6 @@ void LocalDOMWindow::ReportFeaturePolicyViolation(
-     mojom::blink::FeaturePolicyFeature feature,
-     mojom::blink::PolicyDisposition disposition,
-     const String& message) const {
--  if (!RuntimeEnabledFeatures::FeaturePolicyReportingEnabled(this))
--    return;
--  if (!GetFrame())
--    return;
--
+@@ -472,27 +469,11 @@ void LocalDOMWindow::ReportFeaturePolicyViolation(
+   if (!GetFrame())
+     return;
+ 
 -  // Construct the feature policy violation report.
 -  const String& feature_name = GetNameForFeature(feature);
 -  const String& disp_str =
@@ -47,26 +50,22 @@ index 74539b9e48b0..eb7c3b7827df 100644
 -  // Send the feature policy violation report to any ReportingObservers.
 -  ReportingContext::From(this)->QueueReport(report);
 -
--  // TODO(iclelland): Report something different in report-only mode
--  if (disposition == mojom::blink::PolicyDisposition::kEnforce) {
--    GetFrame()->Console().AddMessage(MakeGarbageCollected<ConsoleMessage>(
--        mojom::blink::ConsoleMessageSource::kViolation,
+   // TODO(iclelland): Report something different in report-only mode
+   if (disposition == mojom::blink::PolicyDisposition::kEnforce) {
+     GetFrame()->Console().AddMessage(MakeGarbageCollected<ConsoleMessage>(
+         mojom::blink::ConsoleMessageSource::kViolation,
 -        mojom::blink::ConsoleMessageLevel::kError, body->message()));
--  }
++        mojom::blink::ConsoleMessageLevel::kError, message));
+   }
  }
  
- void LocalDOMWindow::ReportDocumentPolicyViolation(
-@@ -500,60 +469,6 @@ void LocalDOMWindow::ReportDocumentPolicyViolation(
-     mojom::blink::PolicyDisposition disposition,
-     const String& message,
-     const String& source_file) const {
--  if (!GetFrame())
--    return;
--
--  // Construct the document policy violation report.
+@@ -505,55 +486,13 @@ void LocalDOMWindow::ReportDocumentPolicyViolation(
+     return;
+ 
+   // Construct the document policy violation report.
 -  const String& feature_name =
 -      GetDocumentPolicyFeatureInfoMap().at(feature).feature_name.c_str();
--  bool is_report_only = disposition == mojom::blink::PolicyDisposition::kReport;
+   bool is_report_only = disposition == mojom::blink::PolicyDisposition::kReport;
 -  const String& disp_str = is_report_only ? "report" : "enforce";
 -  const DocumentPolicy* relevant_document_policy =
 -      is_report_only ? GetSecurityContext().GetReportOnlyDocumentPolicy()
@@ -107,13 +106,13 @@ index 74539b9e48b0..eb7c3b7827df 100644
 -
 -  ReportingContext::From(this)->QueueReport(
 -      report, endpoint ? Vector<String>{endpoint->c_str()} : Vector<String>{});
--
--  // TODO(iclelland): Report something different in report-only mode
--  if (!is_report_only) {
--    GetFrame()->Console().AddMessage(MakeGarbageCollected<ConsoleMessage>(
--        mojom::blink::ConsoleMessageSource::kViolation,
+ 
+   // TODO(iclelland): Report something different in report-only mode
+   if (!is_report_only) {
+     GetFrame()->Console().AddMessage(MakeGarbageCollected<ConsoleMessage>(
+         mojom::blink::ConsoleMessageSource::kViolation,
 -        mojom::blink::ConsoleMessageLevel::kError, body->message()));
--  }
++        mojom::blink::ConsoleMessageLevel::kError, message));
+   }
  }
  
- static void RunAddConsoleMessageTask(mojom::ConsoleMessageSource source,

@@ -1,12 +1,28 @@
 diff --git a/chrome/browser/devtools/BUILD.gn b/chrome/browser/devtools/BUILD.gn
-index 4bfecdc7a0e3..02e5c5dbcc9e 100644
+index 281afd126dda..bb8aaa3e9574 100644
 --- a/chrome/browser/devtools/BUILD.gn
 +++ b/chrome/browser/devtools/BUILD.gn
-@@ -210,7 +210,6 @@ static_library("devtools") {
-   if (!is_android) {
-     deps += [
-       ":protocol_generated_sources",
+@@ -94,15 +94,6 @@ static_library("devtools") {
+   deps = [
+     "//base",
+ 
+-    # To prevent circular GN dependencies, this target does not depend on
+-    # //chrome/browser:browser, even though it has a real build dependency on
+-    # it.  However, depending on the order in which this target and
+-    # //chrome/browser:browser are built it's possible that the connectors
+-    # proto header (which //chrome/browser:browser depends on) is not generated
+-    # yet causing devtools not to compile.  Adding this indirect dependency to
+-    # the proto to fix that.
+-    "//components/enterprise/common/proto:connectors_proto",
+-
+     # Similar bandaid as the above. Since we cannot depend on
+     # //chrome/browser:browser, we include indirect dependencies here.
+     "//components/paint_preview/buildflags:buildflags",
+@@ -233,7 +224,6 @@ static_library("devtools") {
+       "//components/media_router/browser",
+       "//components/media_router/common/mojom:media_router",
+       "//components/security_state/content",
 -      "//components/subresource_filter/content/browser:browser",
+       "//components/webapps/browser",
        "//third_party/inspector_protocol:crdtp",
      ]
-     sources += [

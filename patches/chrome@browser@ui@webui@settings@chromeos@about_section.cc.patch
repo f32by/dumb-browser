@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/webui/settings/chromeos/about_section.cc b/chrome/browser/ui/webui/settings/chromeos/about_section.cc
+index 8a8384d6426c..16dec5fadc15 100644
+--- a/chrome/browser/ui/webui/settings/chromeos/about_section.cc
++++ b/chrome/browser/ui/webui/settings/chromeos/about_section.cc
+@@ -14,7 +14,6 @@
+ #include "base/system/sys_info.h"
+ #include "chrome/browser/chromeos/arc/arc_util.h"
+ #include "chrome/browser/obsolete_system/obsolete_system.h"
+-#include "chrome/browser/ui/webui/management/management_ui.h"
+ #include "chrome/browser/ui/webui/settings/about_handler.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/device_name_handler.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/search/search_tag_registry.h"
+@@ -287,8 +286,6 @@ void AboutSection::AddLoadTimeData(content::WebUIDataSource* html_source) {
+   html_source->AddString(
+       "aboutUpgradeUpToDate",
+       ui::SubstituteChromeOSDeviceType(IDS_SETTINGS_UPGRADE_UP_TO_DATE));
+-  html_source->AddString("managementPage",
+-                         ManagementUI::GetManagementPageSubtitle(profile()));
+ 
+   if (user_manager::UserManager::IsInitialized()) {
+     user_manager::UserManager* user_manager = user_manager::UserManager::Get();

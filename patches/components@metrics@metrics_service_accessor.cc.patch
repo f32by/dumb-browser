@@ -1,8 +1,8 @@
 diff --git a/components/metrics/metrics_service_accessor.cc b/components/metrics/metrics_service_accessor.cc
-index ca1fb8ca159d..a88cbc4ba180 100644
+index 5dee1b19e93a..a175b88fc12c 100644
 --- a/components/metrics/metrics_service_accessor.cc
 +++ b/components/metrics/metrics_service_accessor.cc
-@@ -17,23 +17,12 @@ namespace {
+@@ -18,30 +18,12 @@ namespace {
  
  bool g_force_official_enabled_test = false;
  
@@ -15,6 +15,13 @@ index ca1fb8ca159d..a88cbc4ba180 100644
  // static
  bool MetricsServiceAccessor::IsMetricsReportingEnabled(
      PrefService* pref_service) {
+-  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+-          switches::kForceEnableMetricsReporting)) {
+-    LOG(WARNING)
+-        << "Force Enable Metrics Reporting is enabled, data will be sent to "
+-           "servers. Should not be used for tests.";
+-    return true;
+-  }
 -#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
 -  return IsMetricsReportingEnabledForOfficialBuild(pref_service);
 -#else
@@ -27,7 +34,7 @@ index ca1fb8ca159d..a88cbc4ba180 100644
  }
  
  // static
-@@ -51,12 +40,6 @@ bool MetricsServiceAccessor::RegisterSyntheticFieldTrialWithNameAndGroupHash(
+@@ -59,12 +41,6 @@ bool MetricsServiceAccessor::RegisterSyntheticFieldTrialWithNameAndGroupHash(
      MetricsService* metrics_service,
      uint32_t trial_name_hash,
      uint32_t group_name_hash) {

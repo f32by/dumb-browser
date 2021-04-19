@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_application_mac.mm b/chrome/browser/chrome_browser_application_mac.mm
-index 739554cabb30..b2631c824a25 100644
+index 07d9bc3d9fa4..040bf4a095fa 100644
 --- a/chrome/browser/chrome_browser_application_mac.mm
 +++ b/chrome/browser/chrome_browser_application_mac.mm
 @@ -15,8 +15,6 @@
@@ -11,7 +11,7 @@ index 739554cabb30..b2631c824a25 100644
  #include "content/public/browser/browser_accessibility_state.h"
  #include "content/public/browser/native_event_processor_mac.h"
  #include "content/public/browser/native_event_processor_observer_mac.h"
-@@ -43,62 +41,6 @@ void CancelTerminate() {
+@@ -43,72 +41,6 @@ void CancelTerminate() {
  
  }  // namespace chrome_browser_application_mac
  
@@ -30,14 +30,24 @@ index 739554cabb30..b2631c824a25 100644
 -    case NSEventTypeKeyDown:
 -    case NSEventTypeKeyUp: {
 -      // Some NSEvents return a string with NUL in event.characters, see
--      // <https://crbug.com/826908>.
--      std::string characters = base::SysNSStringToUTF8([event.characters
--          stringByReplacingOccurrencesOfString:@"\0"
--                                    withString:@"\\x00"]);
--      std::string unmodified_characters =
--          base::SysNSStringToUTF8([event.charactersIgnoringModifiers
--              stringByReplacingOccurrencesOfString:@"\0"
--                                        withString:@"\\x00"]);
+-      // <https://crbug.com/826908>. To make matters worse, in rare cases,
+-      // NSEvent.characters or NSEvent.charactersIgnoringModifiers can throw an
+-      // NSException complaining that "TSMProcessRawKeyCode failed". Since we're
+-      // trying to gather a crash key here, if that exception happens, just
+-      // remark that it happened and continue rather than crashing the browser.
+-      std::string characters, unmodified_characters;
+-      @try {
+-        characters = base::SysNSStringToUTF8([event.characters
+-            stringByReplacingOccurrencesOfString:@"\0"
+-                                      withString:@"\\x00"]);
+-        unmodified_characters =
+-            base::SysNSStringToUTF8([event.charactersIgnoringModifiers
+-                stringByReplacingOccurrencesOfString:@"\0"
+-                                          withString:@"\\x00"]);
+-      } @catch (id exception) {
+-        characters = "(exception)";
+-        unmodified_characters = "(exception)";
+-      }
 -      desc += base::StringPrintf(
 -          " keyCode=0x%d ARepeat=%d characters='%s' unmodifiedCharacters='%s'",
 -          event.keyCode, event.ARepeat, characters.c_str(),
@@ -74,7 +84,7 @@ index 739554cabb30..b2631c824a25 100644
  @interface BrowserCrApplication ()<NativeEventProcessor> {
    base::ObserverList<content::NativeEventProcessorObserver>::Unchecked
        _observers;
-@@ -108,10 +50,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
+@@ -118,10 +50,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
  @implementation BrowserCrApplication
  
  + (void)initialize {
@@ -85,7 +95,7 @@ index 739554cabb30..b2631c824a25 100644
    chrome::InstallObjcExceptionPreprocessor();
  
    cocoa_l10n_util::ApplyForcedRTL();
-@@ -277,9 +215,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
+@@ -287,9 +215,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
        [actionString UTF8String],
        aTarget);
  
@@ -95,7 +105,7 @@ index 739554cabb30..b2631c824a25 100644
    __block BOOL rv;
    base::mac::CallWithEHFrame(^{
      rv = [super sendAction:anAction to:aTarget from:sender];
-@@ -302,10 +237,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
+@@ -312,10 +237,6 @@ std::string DescriptionForNSEvent(NSEvent* event) {
    TRACE_EVENT_INSTANT1("toplevel", "KeyWindow", TRACE_EVENT_SCOPE_THREAD,
                         "KeyWin", [[NSApp keyWindow] windowNumber]);
  

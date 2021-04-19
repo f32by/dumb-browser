@@ -1,12 +1,12 @@
 diff --git a/components/signin/public/identity_manager/identity_manager.cc b/components/signin/public/identity_manager/identity_manager.cc
-index c31a0658d152..841e7212d98d 100644
+index 33bfa6bd025c..eae2c241b94c 100644
 --- a/components/signin/public/identity_manager/identity_manager.cc
 +++ b/components/signin/public/identity_manager/identity_manager.cc
-@@ -102,6 +102,7 @@ IdentityManager::~IdentityManager() {
+@@ -103,6 +103,7 @@ IdentityManager::~IdentityManager() {
      Java_IdentityManager_destroy(base::android::AttachCurrentThread(),
                                   java_identity_manager_);
  #endif
 +  observer_list_.Clear();
  }
  
- void IdentityManager::AddObserver(Observer* observer) {
+ void IdentityManager::Shutdown() {

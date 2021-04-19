@@ -1,8 +1,8 @@
 diff --git a/content/renderer/media/media_factory.cc b/content/renderer/media/media_factory.cc
-index 09dc449e43be..06e936f8a423 100644
+index fb3d7337de11..f48a45d1e7de 100644
 --- a/content/renderer/media/media_factory.cc
 +++ b/content/renderer/media/media_factory.cc
-@@ -440,10 +440,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
+@@ -446,10 +446,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
    DCHECK_EQ(static_cast<FrameFetchContext*>(fetch_context_.get())->frame(),
              web_frame);
  
@@ -13,7 +13,7 @@ index 09dc449e43be..06e936f8a423 100644
    std::unique_ptr<media::PowerStatusHelper> power_status_helper;
    if (base::FeatureList::IsEnabled(media::kMediaPowerExperiment)) {
      // The battery monitor is only available through the blink provider.
-@@ -497,7 +493,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
+@@ -503,7 +499,6 @@ blink::WebMediaPlayer* MediaFactory::CreateMediaPlayer(
                base::Unretained(blink::MainThreadIsolate())),
            initial_cdm, request_routing_token_cb_, media_observer,
            enable_instant_source_buffer_gc, embedded_media_experience_enabled,

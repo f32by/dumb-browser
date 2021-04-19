@@ -1,16 +1,19 @@
 diff --git a/chrome/browser/permissions/chrome_permissions_client.cc b/chrome/browser/permissions/chrome_permissions_client.cc
-index a8d98435c834..afc4cb954458 100644
+index e94eaa1f34d4..f1dfae7a0e91 100644
 --- a/chrome/browser/permissions/chrome_permissions_client.cc
 +++ b/chrome/browser/permissions/chrome_permissions_client.cc
-@@ -14,7 +14,6 @@
+@@ -14,10 +14,7 @@
  #include "chrome/browser/content_settings/cookie_settings_factory.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
  #include "chrome/browser/engagement/important_sites_util.h"
 -#include "chrome/browser/metrics/ukm_background_recorder_service.h"
- #include "chrome/browser/permissions/abusive_origin_permission_revocation_request.h"
+-#include "chrome/browser/permissions/abusive_origin_permission_revocation_request.h"
  #include "chrome/browser/permissions/adaptive_quiet_notification_permission_ui_enabler.h"
- #include "chrome/browser/permissions/contextual_notification_permission_ui_selector.h"
-@@ -25,7 +24,6 @@
+-#include "chrome/browser/permissions/contextual_notification_permission_ui_selector.h"
+ #include "chrome/browser/permissions/permission_actions_history.h"
+ #include "chrome/browser/permissions/permission_decision_auto_blocker_factory.h"
+ #include "chrome/browser/permissions/permission_manager_factory.h"
+@@ -26,7 +23,6 @@
  #include "chrome/browser/permissions/quiet_notification_permission_ui_config.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/search_engines/ui_thread_search_terms_data.h"
@@ -18,7 +21,7 @@ index a8d98435c834..afc4cb954458 100644
  #include "chrome/browser/usb/usb_chooser_context.h"
  #include "chrome/browser/usb/usb_chooser_context_factory.h"
  #include "chrome/common/pref_names.h"
-@@ -36,9 +34,6 @@
+@@ -37,9 +33,6 @@
  #include "components/permissions/request_type.h"
  #include "components/prefs/pref_service.h"
  #include "components/site_engagement/content/site_engagement_service.h"
@@ -28,7 +31,7 @@ index a8d98435c834..afc4cb954458 100644
  #include "extensions/common/constants.h"
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
  #include "url/origin.h"
-@@ -83,10 +78,7 @@ ChromePermissionsClient::GetCookieSettings(
+@@ -84,10 +77,7 @@ ChromePermissionsClient::GetCookieSettings(
  bool ChromePermissionsClient::IsSubresourceFilterActivated(
      content::BrowserContext* browser_context,
      const GURL& url) {
@@ -40,7 +43,7 @@ index a8d98435c834..afc4cb954458 100644
  }
  
  permissions::ChooserContextBase* ChromePermissionsClient::GetChooserContext(
-@@ -179,18 +171,7 @@ void ChromePermissionsClient::GetUkmSourceId(
+@@ -180,18 +170,7 @@ void ChromePermissionsClient::GetUkmSourceId(
      const content::WebContents* web_contents,
      const GURL& requesting_origin,
      GetUkmSourceIdCallback callback) {
@@ -60,13 +63,44 @@ index a8d98435c834..afc4cb954458 100644
  }
  
  permissions::IconId ChromePermissionsClient::GetOverrideIconId(
-@@ -226,9 +207,6 @@ void ChromePermissionsClient::OnPromptResolved(
+@@ -209,8 +188,6 @@ ChromePermissionsClient::CreateNotificationPermissionUiSelectors(
+     content::BrowserContext* browser_context) {
+   std::vector<std::unique_ptr<permissions::NotificationPermissionUiSelector>>
+       selectors;
+-  selectors.emplace_back(
+-      std::make_unique<ContextualNotificationPermissionUiSelector>());
+   selectors.emplace_back(std::make_unique<PrefNotificationPermissionUiSelector>(
+       Profile::FromBrowserContext(browser_context)));
+   selectors.emplace_back(std::make_unique<PredictionBasedPermissionUiSelector>(
+@@ -232,16 +209,6 @@ void ChromePermissionsClient::OnPromptResolved(
    if (request_type == permissions::RequestType::kNotifications) {
-     Profile* profile = Profile::FromBrowserContext(browser_context);
- 
--    AdaptiveQuietNotificationPermissionUiEnabler::GetForProfile(profile)
--        ->RecordPermissionPromptOutcome(action);
+     AdaptiveQuietNotificationPermissionUiEnabler::GetForProfile(profile)
+         ->PermissionPromptResolved();
 -
-     if (action == permissions::PermissionAction::GRANTED &&
-         quiet_ui_reason.has_value() &&
-         (quiet_ui_reason.value() ==
+-    if (action == permissions::PermissionAction::GRANTED &&
+-        quiet_ui_reason.has_value() &&
+-        (quiet_ui_reason.value() ==
+-             QuietUiReason::kTriggeredDueToAbusiveRequests ||
+-         quiet_ui_reason.value() ==
+-             QuietUiReason::kTriggeredDueToAbusiveContent)) {
+-      AbusiveOriginPermissionRevocationRequest::
+-          ExemptOriginFromFutureRevocations(profile, origin);
+-    }
+   }
+ }
+ 
+@@ -260,13 +227,7 @@ ChromePermissionsClient::HasPreviouslyAutoRevokedPermission(
+     content::BrowserContext* browser_context,
+     const GURL& origin,
+     ContentSettingsType permission) {
+-  if (permission != ContentSettingsType::NOTIFICATIONS) {
+-    return base::nullopt;
+-  }
+-
+-  Profile* profile = Profile::FromBrowserContext(browser_context);
+-  return AbusiveOriginPermissionRevocationRequest::
+-      HasPreviouslyRevokedPermission(profile, origin);
++  return base::nullopt;
+ }
+ 
+ base::Optional<url::Origin> ChromePermissionsClient::GetAutoApprovalOrigin() {

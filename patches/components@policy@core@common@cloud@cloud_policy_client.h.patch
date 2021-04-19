@@ -1,0 +1,159 @@
+diff --git a/components/policy/core/common/cloud/cloud_policy_client.h b/components/policy/core/common/cloud/cloud_policy_client.h
+index ddc61135c47f..3777d547a1a1 100644
+--- a/components/policy/core/common/cloud/cloud_policy_client.h
++++ b/components/policy/core/common/cloud/cloud_policy_client.h
+@@ -237,16 +237,6 @@ class POLICY_EXPORT CloudPolicyClient {
+   // requests and the latest request will eventually trigger notifications.
+   virtual void FetchPolicy();
+ 
+-  // Upload a policy validation report to the server. Like FetchPolicy, this
+-  // method requires that the client is in a registered state. This method
+-  // should only be called if the policy was rejected (e.g. validation or
+-  // serialization error).
+-  virtual void UploadPolicyValidationReport(
+-      CloudPolicyValidatorBase::Status status,
+-      const std::vector<ValueValidationIssue>& value_validation_issues,
+-      const std::string& policy_type,
+-      const std::string& policy_token);
+-
+   // Requests OAuth2 auth codes for the device robot account. The client being
+   // registered is a prerequisite to this operation and this call will CHECK if
+   // the client is not in registered state. |oauth_scopes| is the scopes for
+@@ -286,72 +276,6 @@ class POLICY_EXPORT CloudPolicyClient {
+   virtual void UploadEnterpriseEnrollmentId(const std::string& enrollment_id,
+                                             StatusCallback callback);
+ 
+-  // Uploads status to the server. The client must be in a registered state.
+-  // Only non-null statuses will be included in the upload status request. The
+-  // |callback| will be called when the operation completes.
+-  virtual void UploadDeviceStatus(
+-      const enterprise_management::DeviceStatusReportRequest* device_status,
+-      const enterprise_management::SessionStatusReportRequest* session_status,
+-      const enterprise_management::ChildStatusReportRequest* child_status,
+-      StatusCallback callback);
+-
+-  // Uploads Chrome Desktop report to the server. As above, the client must be
+-  // in a registered state. |chrome_desktop_report| will be included in the
+-  // upload request. The |callback| will be called when the operation completes.
+-  virtual void UploadChromeDesktopReport(
+-      std::unique_ptr<enterprise_management::ChromeDesktopReportRequest>
+-          chrome_desktop_report,
+-      StatusCallback callback);
+-
+-  // Uploads Chrome OS User report to the server. The user dm token must be set
+-  // properly. |chrome_os_user_report| will be included in the upload request.
+-  // The |callback| will be called when the operation completes.
+-  virtual void UploadChromeOsUserReport(
+-      std::unique_ptr<enterprise_management::ChromeOsUserReportRequest>
+-          chrome_os_user_report,
+-      StatusCallback callback);
+-
+-  // Uploads a report containing enterprise connectors real-time security
+-  // events for |context|. As above, the client must be in a registered state.
+-  // If |include_device_info| is true, information specific to the device such
+-  // as the device name, user, id and OS will be included in the report. The
+-  // |callback| will be called when the operation completes.
+-  virtual void UploadSecurityEventReport(content::BrowserContext* context,
+-                                         bool include_device_info,
+-                                         base::Value report,
+-                                         StatusCallback callback);
+-
+-  // Uploads a report containing |merging_payload| (merged into the default
+-  // payload of the job). The client must be in a registered state. The
+-  // |callback| will be called when the operation completes.
+-  virtual void UploadEncryptedReport(base::Value merging_payload,
+-                                     base::Optional<base::Value> context,
+-                                     ResponseCallback callback);
+-
+-  // Uploads a report on the status of app push-installs. The client must be in
+-  // a registered state. The |callback| will be called when the operation
+-  // completes.
+-  // Only one outstanding app push-install report upload is allowed.
+-  // In case the new push-installs report upload is started, the previous one
+-  // will be canceled.
+-  virtual void UploadAppInstallReport(base::Value report,
+-                                      StatusCallback callback);
+-
+-  // Cancels the pending app push-install status report upload, if exists.
+-  virtual void CancelAppInstallReportUpload();
+-
+-  // Uploads a report on the status of extension installs. The client must be in
+-  // a registered state. The |callback| will be called when the operation
+-  // completes.
+-  // Only one outstanding extension install report upload is allowed.
+-  // In case the new installs report upload is started, the previous one
+-  // will be canceled.
+-  virtual void UploadExtensionInstallReport(base::Value report,
+-                                            StatusCallback callback);
+-
+-  // Cancels the pending extension install status report upload, if exists.
+-  virtual void CancelExtensionInstallReportUpload();
+-
+   // Attempts to fetch remote commands, with |last_command_id| being the ID of
+   // the last command that finished execution and |command_results| being
+   // results for previous commands which have not been reported yet. The
+@@ -637,28 +561,6 @@ class POLICY_EXPORT CloudPolicyClient {
+       int net_error,
+       const enterprise_management::DeviceManagementResponse& response);
+ 
+-  // Callback for several types of status/report upload requests.
+-  void OnReportUploadCompleted(
+-      StatusCallback callback,
+-      DeviceManagementService::Job* job,
+-      DeviceManagementStatus status,
+-      int net_error,
+-      const enterprise_management::DeviceManagementResponse& response);
+-
+-  // Callback for realtime report upload requests.
+-  void OnRealtimeReportUploadCompleted(StatusCallback callback,
+-                                       DeviceManagementService::Job* job,
+-                                       DeviceManagementStatus status,
+-                                       int net_error,
+-                                       const base::Value& response);
+-
+-  // Callback for encrypted report upload requests.
+-  void OnEncryptedReportUploadCompleted(ResponseCallback callback,
+-                                        DeviceManagementService::Job* job,
+-                                        DeviceManagementStatus status,
+-                                        int net_error,
+-                                        const base::Value& response);
+-
+   // Callback for remote command fetch requests.
+   void OnRemoteCommandsFetched(
+       RemoteCommandCallback callback,
+@@ -774,14 +676,6 @@ class POLICY_EXPORT CloudPolicyClient {
+   // silently cancelled if Unregister() is called.
+   std::vector<std::unique_ptr<DeviceManagementService::Job>> request_jobs_;
+ 
+-  // Only one outstanding app push-install report upload is allowed, and it must
+-  // be accessible so that it can be canceled.
+-  DeviceManagementService::Job* app_install_report_request_job_ = nullptr;
+-
+-  // Only one outstanding extension install report upload is allowed, and it
+-  // must be accessible so that it can be canceled.
+-  DeviceManagementService::Job* extension_install_report_request_job_ = nullptr;
+-
+   // The policy responses returned by the last policy fetch operation.
+   ResponseMap responses_;
+   DeviceManagementStatus status_ = DM_STATUS_SUCCESS;
+@@ -793,20 +687,6 @@ class POLICY_EXPORT CloudPolicyClient {
+   scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
+ 
+  private:
+-  // Creates a new real-time reporting job and appends it to |request_jobs_|.
+-  // The job will send its report to the |server_url| endpoint.  If
+-  // |include_device_info| is true, information specific to the device such as
+-  // the device name, user, id and OS will be included in the report. If
+-  // |add_connector_url_params| is true then URL paramaters specific to
+-  // enterprise connectors are added to the request uploading the report.
+-  // |callback| is invoked once the report is uploaded.
+-  DeviceManagementService::Job* CreateNewRealtimeReportingJob(
+-      base::Value report,
+-      const std::string& server_url,
+-      bool include_device_info,
+-      bool add_connector_url_params,
+-      StatusCallback callback);
+-
+   void SetClientId(const std::string& client_id);
+   // Fills in the common fields of a DeviceRegisterRequest for |Register| and
+   // |RegisterWithCertificate|.

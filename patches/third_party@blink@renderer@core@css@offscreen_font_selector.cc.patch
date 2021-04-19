@@ -1,0 +1,98 @@
+diff --git a/third_party/blink/renderer/core/css/offscreen_font_selector.cc b/third_party/blink/renderer/core/css/offscreen_font_selector.cc
+index 20391b979d30..b92c3988afbe 100644
+--- a/third_party/blink/renderer/core/css/offscreen_font_selector.cc
++++ b/third_party/blink/renderer/core/css/offscreen_font_selector.cc
+@@ -44,12 +44,9 @@ scoped_refptr<FontData> OffscreenFontSelector::GetFontData(
+     const AtomicString& family_name) {
+   if (CSSSegmentedFontFace* face =
+           font_face_cache_->Get(font_description, family_name)) {
+-    worker_->GetFontMatchingMetrics()->ReportWebFontFamily(family_name);
+     return face->GetFontData(font_description);
+   }
+ 
+-  worker_->GetFontMatchingMetrics()->ReportSystemFontFamily(family_name);
+-
+   // Try to return the correct font based off our settings, in case we were
+   // handed the generic font family name.
+   AtomicString settings_family_name = FamilyNameFromSettings(
+@@ -57,16 +54,9 @@ scoped_refptr<FontData> OffscreenFontSelector::GetFontData(
+   if (settings_family_name.IsEmpty())
+     return nullptr;
+ 
+-  worker_->GetFontMatchingMetrics()->ReportFontFamilyLookupByGenericFamily(
+-      family_name, font_description.GetScript(),
+-      font_description.GenericFamily(), settings_family_name);
+-
+   auto font_data = FontCache::GetFontCache()->GetFontData(font_description,
+                                                           settings_family_name);
+ 
+-  worker_->GetFontMatchingMetrics()->ReportFontLookupByUniqueOrFamilyName(
+-      settings_family_name, font_description, font_data.get());
+-
+   return font_data;
+ }
+ 
+@@ -104,27 +94,21 @@ void OffscreenFontSelector::ReportNotDefGlyph() const {}
+ void OffscreenFontSelector::ReportSuccessfulFontFamilyMatch(
+     const AtomicString& font_family_name) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportSuccessfulFontFamilyMatch(
+-      font_family_name);
+ }
+ 
+ void OffscreenFontSelector::ReportFailedFontFamilyMatch(
+     const AtomicString& font_family_name) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportFailedFontFamilyMatch(
+-      font_family_name);
+ }
+ 
+ void OffscreenFontSelector::ReportSuccessfulLocalFontMatch(
+     const AtomicString& font_name) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportSuccessfulLocalFontMatch(font_name);
+ }
+ 
+ void OffscreenFontSelector::ReportFailedLocalFontMatch(
+     const AtomicString& font_name) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportFailedLocalFontMatch(font_name);
+ }
+ 
+ void OffscreenFontSelector::ReportFontLookupByUniqueOrFamilyName(
+@@ -132,8 +116,6 @@ void OffscreenFontSelector::ReportFontLookupByUniqueOrFamilyName(
+     const FontDescription& font_description,
+     SimpleFontData* resulting_font_data) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportFontLookupByUniqueOrFamilyName(
+-      name, font_description, resulting_font_data);
+ }
+ 
+ void OffscreenFontSelector::ReportFontLookupByUniqueNameOnly(
+@@ -142,8 +124,6 @@ void OffscreenFontSelector::ReportFontLookupByUniqueNameOnly(
+     SimpleFontData* resulting_font_data,
+     bool is_loading_fallback) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportFontLookupByUniqueNameOnly(
+-      name, font_description, resulting_font_data, is_loading_fallback);
+ }
+ 
+ void OffscreenFontSelector::ReportFontLookupByFallbackCharacter(
+@@ -152,17 +132,12 @@ void OffscreenFontSelector::ReportFontLookupByFallbackCharacter(
+     const FontDescription& font_description,
+     SimpleFontData* resulting_font_data) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportFontLookupByFallbackCharacter(
+-      fallback_character, fallback_priority, font_description,
+-      resulting_font_data);
+ }
+ 
+ void OffscreenFontSelector::ReportLastResortFallbackFontLookup(
+     const FontDescription& font_description,
+     SimpleFontData* resulting_font_data) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportLastResortFallbackFontLookup(
+-      font_description, resulting_font_data);
+ }
+ 
+ void OffscreenFontSelector::FontCacheInvalidated() {

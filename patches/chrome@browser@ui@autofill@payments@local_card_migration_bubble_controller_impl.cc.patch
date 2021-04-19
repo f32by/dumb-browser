@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/autofill/payments/local_card_migration_bubble_controller_impl.cc b/chrome/browser/ui/autofill/payments/local_card_migration_bubble_controller_impl.cc
-index a1216bf8a668..fcb067af6c8e 100644
+index ad05426c15ba..cb2c89dd25f0 100644
 --- a/chrome/browser/ui/autofill/payments/local_card_migration_bubble_controller_impl.cc
 +++ b/chrome/browser/ui/autofill/payments/local_card_migration_bubble_controller_impl.cc
 @@ -14,7 +14,6 @@
@@ -9,96 +9,63 @@ index a1216bf8a668..fcb067af6c8e 100644
 -#include "components/autofill/core/browser/autofill_metrics.h"
  #include "components/autofill/core/browser/payments/local_card_migration_strike_database.h"
  #include "components/autofill/core/browser/payments/strike_database.h"
- #include "components/autofill/core/common/autofill_features.h"
-@@ -49,8 +48,6 @@ void LocalCardMigrationBubbleControllerImpl::ShowBubble(
+ #include "components/autofill/core/common/autofill_clock.h"
+@@ -44,9 +43,6 @@ void LocalCardMigrationBubbleControllerImpl::ShowBubble(
    local_card_migration_bubble_closure_ =
        std::move(local_card_migration_bubble_closure);
  
 -  AutofillMetrics::LogLocalCardMigrationBubbleOfferMetric(
 -      AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_REQUESTED, is_reshow_);
- 
-   ShowBubbleImplementation();
+-
+   Show();
  }
-@@ -67,8 +64,6 @@ void LocalCardMigrationBubbleControllerImpl::ReshowBubble() {
+ 
+@@ -55,8 +51,6 @@ void LocalCardMigrationBubbleControllerImpl::ReshowBubble() {
      return;
  
    is_reshow_ = true;
 -  AutofillMetrics::LogLocalCardMigrationBubbleOfferMetric(
 -      AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_REQUESTED, is_reshow_);
  
-   ShowBubbleImplementation();
+   Show();
  }
-@@ -89,15 +84,11 @@ void LocalCardMigrationBubbleControllerImpl::OnConfirmButtonClicked() {
-   std::move(local_card_migration_bubble_closure_).Run();
-   should_add_strikes_on_bubble_close_ = false;
- 
--  AutofillMetrics::LogLocalCardMigrationBubbleUserInteractionMetric(
--      AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_CLOSED_ACCEPTED, is_reshow_);
- }
- 
- void LocalCardMigrationBubbleControllerImpl::OnCancelButtonClicked() {
-   local_card_migration_bubble_closure_.Reset();
- 
--  AutofillMetrics::LogLocalCardMigrationBubbleUserInteractionMetric(
--      AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_CLOSED_DENIED, is_reshow_);
- }
- 
- void LocalCardMigrationBubbleControllerImpl::OnBubbleClosed(
-@@ -108,34 +99,6 @@ void LocalCardMigrationBubbleControllerImpl::OnBubbleClosed(
+@@ -90,30 +84,6 @@ void LocalCardMigrationBubbleControllerImpl::OnBubbleClosed(
      should_add_strikes_on_bubble_close_ = false;
      AddStrikesForBubbleClose();
    }
 -
 -  // Log local card migration bubble result according to the closed reason.
--  if (base::FeatureList::IsEnabled(
--          features::kAutofillEnableFixedPaymentsBubbleLogging)) {
--    AutofillMetrics::LocalCardMigrationBubbleResultMetric metric;
--    switch (closed_reason) {
--      case PaymentsBubbleClosedReason::kAccepted:
--        metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_ACCEPTED;
--        break;
--      case PaymentsBubbleClosedReason::kClosed:
--        metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_CLOSED;
--        break;
--      case PaymentsBubbleClosedReason::kNotInteracted:
--        metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_NOT_INTERACTED;
--        break;
--      case PaymentsBubbleClosedReason::kLostFocus:
--        metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_LOST_FOCUS;
--        break;
--      case PaymentsBubbleClosedReason::kUnknown:
--        metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_RESULT_UNKNOWN;
--        break;
--      case PaymentsBubbleClosedReason::kCancelled:
--        NOTREACHED();
--        return;
--    }
--    AutofillMetrics::LogLocalCardMigrationBubbleResultMetric(metric,
--                                                             is_reshow_);
+-  AutofillMetrics::LocalCardMigrationBubbleResultMetric metric;
+-  switch (closed_reason) {
+-    case PaymentsBubbleClosedReason::kAccepted:
+-      metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_ACCEPTED;
+-      break;
+-    case PaymentsBubbleClosedReason::kClosed:
+-      metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_CLOSED;
+-      break;
+-    case PaymentsBubbleClosedReason::kNotInteracted:
+-      metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_NOT_INTERACTED;
+-      break;
+-    case PaymentsBubbleClosedReason::kLostFocus:
+-      metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_LOST_FOCUS;
+-      break;
+-    case PaymentsBubbleClosedReason::kUnknown:
+-      metric = AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_RESULT_UNKNOWN;
+-      break;
+-    case PaymentsBubbleClosedReason::kCancelled:
+-      NOTREACHED();
+-      return;
 -  }
+-  AutofillMetrics::LogLocalCardMigrationBubbleResultMetric(metric, is_reshow_);
  }
  
- base::TimeDelta LocalCardMigrationBubbleControllerImpl::Elapsed() const {
-@@ -177,13 +140,6 @@ void LocalCardMigrationBubbleControllerImpl::DidFinishNavigation(
-     UpdateLocalCardMigrationIcon();
-   }
- 
--  AutofillMetrics::LogLocalCardMigrationBubbleUserInteractionMetric(
--      bubble_was_visible
--          ? AutofillMetrics::
--                LOCAL_CARD_MIGRATION_BUBBLE_CLOSED_NAVIGATED_WHILE_SHOWING
--          : AutofillMetrics::
--                LOCAL_CARD_MIGRATION_BUBBLE_CLOSED_NAVIGATED_WHILE_HIDDEN,
--      is_reshow_);
- }
- 
- void LocalCardMigrationBubbleControllerImpl::OnVisibilityChanged(
-@@ -213,8 +169,6 @@ void LocalCardMigrationBubbleControllerImpl::ShowBubbleImplementation() {
-   UpdateLocalCardMigrationIcon();
-   timer_ = std::make_unique<base::ElapsedTimer>();
+ PageActionIconType
+@@ -132,8 +102,6 @@ void LocalCardMigrationBubbleControllerImpl::DoShowBubble() {
+           ->ShowLocalCardMigrationBubble(web_contents(), this, is_reshow_));
+   DCHECK(bubble_view());
  
 -  AutofillMetrics::LogLocalCardMigrationBubbleOfferMetric(
 -      AutofillMetrics::LOCAL_CARD_MIGRATION_BUBBLE_SHOWN, is_reshow_);
  }
  
- void LocalCardMigrationBubbleControllerImpl::UpdateLocalCardMigrationIcon() {
+ void LocalCardMigrationBubbleControllerImpl::AddStrikesForBubbleClose() {

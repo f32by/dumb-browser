@@ -1,30 +1,26 @@
 diff --git a/content/browser/worker_host/dedicated_worker_host.h b/content/browser/worker_host/dedicated_worker_host.h
-index 4efb8d17392a..caac598544ee 100644
+index 7493ce9b5385..29901ae5a46c 100644
 --- a/content/browser/worker_host/dedicated_worker_host.h
 +++ b/content/browser/worker_host/dedicated_worker_host.h
-@@ -38,7 +38,6 @@
- 
- namespace content {
- 
--class CrossOriginEmbedderPolicyReporter;
- class DedicatedWorkerServiceImpl;
- class ServiceWorkerMainResourceHandle;
- class ServiceWorkerObjectHost;
-@@ -58,9 +57,7 @@ class DedicatedWorkerHost final : public RenderProcessHostObserver {
-       GlobalFrameRoutingId ancestor_render_frame_host_id,
+@@ -60,8 +60,6 @@ class DedicatedWorkerHost final : public blink::mojom::DedicatedWorkerHost,
        const url::Origin& creator_origin,
        const net::IsolationInfo& isolation_info,
--      const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+       const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
 -      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
--          coep_reporter);
-+      const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy);
+-          coep_reporter,
+       mojo::PendingReceiver<blink::mojom::DedicatedWorkerHost> host);
    ~DedicatedWorkerHost() final;
  
-   void BindBrowserInterfaceBrokerReceiver(
-@@ -244,8 +241,6 @@ class DedicatedWorkerHost final : public RenderProcessHostObserver {
-   // TODO(arthursonzogni): After landing PlzDedicatedWorker, make the
-   // DedicatedWorkerHost to have its own COEP reporter using the right
-   // context_url.
+@@ -252,14 +250,6 @@ class DedicatedWorkerHost final : public blink::mojom::DedicatedWorkerHost,
+   mojo::Remote<blink::mojom::SubresourceLoaderUpdater>
+       subresource_loader_updater_;
+ 
+-  // The endpoint of this mojo interface is the RenderFrameHostImpl's COEP
+-  // reporter. The COEP endpoint is correct, but the context_url is the
+-  // Document's URL.
+-  // TODO(arthursonzogni): After landing PlzDedicatedWorker, make the
+-  // DedicatedWorkerHost to have its own COEP reporter using the right
+-  // context_url.
 -  mojo::Remote<network::mojom::CrossOriginEmbedderPolicyReporter>
 -      coep_reporter_;  // Never null.
    // Will be set once the worker script started loading.

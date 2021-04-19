@@ -1,0 +1,37 @@
+diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
+index b3ef16c347ac..3f84d096934e 100644
+--- a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
++++ b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
+@@ -36,8 +36,6 @@
+ #include "base/metrics/histogram_functions.h"
+ #include "base/rand_util.h"
+ #include "third_party/blink/public/common/features.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metrics.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/renderer/bindings/modules/v8/rendering_context.h"
+@@ -511,8 +509,6 @@ void CanvasRenderingContext2D::setFont(const String& new_font) {
+   // documents.
+   if (!canvas()->GetDocument().GetFrame())
+     return;
+-  identifiability_study_helper_.MaybeUpdateBuilder(
+-      CanvasOps::kSetFont, IdentifiabilityBenignStringToken(new_font));
+ 
+   base::TimeTicks start_time = base::TimeTicks::Now();
+   canvas()->GetDocument().UpdateStyleAndLayoutTreeForNode(canvas());
+@@ -1016,14 +1012,6 @@ void CanvasRenderingContext2D::DrawTextInternal(
+   if (max_width && (!std::isfinite(*max_width) || *max_width <= 0))
+     return;
+ 
+-  identifiability_study_helper_.MaybeUpdateBuilder(
+-      paint_type == CanvasRenderingContext2DState::kFillPaintType
+-          ? CanvasOps::kFillText
+-          : CanvasOps::kStrokeText,
+-      IdentifiabilitySensitiveStringToken(text), x, y,
+-      max_width ? *max_width : -1);
+-  identifiability_study_helper_.set_encountered_sensitive_ops();
+-
+   const Font& font = AccessFont();
+   const SimpleFontData* font_data = font.PrimaryFont();
+   DCHECK(font_data);

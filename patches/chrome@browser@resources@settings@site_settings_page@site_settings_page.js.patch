@@ -1,11 +1,11 @@
 diff --git a/chrome/browser/resources/settings/site_settings_page/site_settings_page.js b/chrome/browser/resources/settings/site_settings_page/site_settings_page.js
-index 01f45ea9babe..e6effebf4930 100644
+index 3150ab8f896b..1fcb0b1c770d 100644
 --- a/chrome/browser/resources/settings/site_settings_page/site_settings_page.js
 +++ b/chrome/browser/resources/settings/site_settings_page/site_settings_page.js
-@@ -51,8 +51,7 @@ function getCategoryItemMap() {
-       icon: 'settings:ads',
-       enabledLabel: 'siteSettingsAllowed',
-       disabledLabel: 'siteSettingsAdsBlock',
+@@ -55,8 +55,7 @@ function getCategoryItemMap() {
+                                       'siteSettingsAllowed',
+       disabledLabel: redesignEnabled ? 'siteSettingsAdsBlocked' :
+                                        'siteSettingsAdsBlock',
 -      shouldShow: () =>
 -          loadTimeData.getBoolean('enableSafeBrowsingSubresourceFilter'),
 +      shouldShow: () => false,

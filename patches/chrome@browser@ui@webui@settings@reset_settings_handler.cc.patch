@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/ui/webui/settings/reset_settings_handler.cc b/chrome/browser/ui/webui/settings/reset_settings_handler.cc
+index 7f63fe98b0ee..15b60a634f26 100644
+--- a/chrome/browser/ui/webui/settings/reset_settings_handler.cc
++++ b/chrome/browser/ui/webui/settings/reset_settings_handler.cc
+@@ -168,10 +168,6 @@ void ResetSettingsHandler::OnResetProfileSettingsDone(
+       setting_snapshot_->Subtract(current_snapshot);
+       std::unique_ptr<reset_report::ChromeResetReport> report_proto =
+           SerializeSettingsReportToProto(*setting_snapshot_, difference);
+-      if (report_proto) {
+-        report_proto->set_reset_request_origin(request_origin);
+-        SendSettingsFeedbackProto(*report_proto, profile_);
+-      }
+     }
+   }
+   setting_snapshot_.reset();

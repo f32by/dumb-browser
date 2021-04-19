@@ -1,0 +1,22 @@
+diff --git a/third_party/blink/renderer/modules/webgl/webgl_multi_draw_instanced_base_vertex_base_instance.cc b/third_party/blink/renderer/modules/webgl/webgl_multi_draw_instanced_base_vertex_base_instance.cc
+index 9c81715fe4fe..94f2dd14de72 100644
+--- a/third_party/blink/renderer/modules/webgl/webgl_multi_draw_instanced_base_vertex_base_instance.cc
++++ b/third_party/blink/renderer/modules/webgl/webgl_multi_draw_instanced_base_vertex_base_instance.cc
+@@ -84,8 +84,6 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::
+     return;
+   }
+ 
+-  scoped.Context()->RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+   scoped.Context()->ContextGL()->MultiDrawArraysInstancedBaseInstanceWEBGL(
+       mode, &firsts[firsts_offset], &counts[counts_offset],
+       &instance_counts[instance_counts_offset],
+@@ -135,8 +133,6 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::
+     return;
+   }
+ 
+-  scoped.Context()->RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+   scoped.Context()
+       ->ContextGL()
+       ->MultiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(

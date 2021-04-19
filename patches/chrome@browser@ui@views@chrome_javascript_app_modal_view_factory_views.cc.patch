@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/ui/views/chrome_javascript_app_modal_view_factory_views.cc b/chrome/browser/ui/views/chrome_javascript_app_modal_view_factory_views.cc
+index 4c46577fbdc6..0606a0b99839 100644
+--- a/chrome/browser/ui/views/chrome_javascript_app_modal_view_factory_views.cc
++++ b/chrome/browser/ui/views/chrome_javascript_app_modal_view_factory_views.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "base/macros.h"
+ #include "build/build_config.h"
+-#include "chrome/browser/ui/blocked_content/popunder_preventer.h"
+ #include "chrome/browser/ui/views/javascript_app_modal_event_blocker.h"
+ #include "components/constrained_window/constrained_window_views.h"
+ #include "components/javascript_dialogs/app_modal_dialog_controller.h"
+@@ -46,8 +45,7 @@ class ChromeJavaScriptAppModalDialogViews
+  public:
+   explicit ChromeJavaScriptAppModalDialogViews(
+       javascript_dialogs::AppModalDialogController* parent)
+-      : javascript_dialogs::AppModalDialogViewViews(parent),
+-        popunder_preventer_(parent->web_contents()) {}
++      : javascript_dialogs::AppModalDialogViewViews(parent) {}
+   ~ChromeJavaScriptAppModalDialogViews() override = default;
+ 
+   // JavaScriptAppModalDialogViews:
+@@ -71,8 +69,6 @@ class ChromeJavaScriptAppModalDialogViews
+   // Blocks events to other browser windows while the dialog is open.
+   std::unique_ptr<JavascriptAppModalEventBlocker> event_blocker_;
+ 
+-  PopunderPreventer popunder_preventer_;
+-
+   DISALLOW_COPY_AND_ASSIGN(ChromeJavaScriptAppModalDialogViews);
+ };
+ 

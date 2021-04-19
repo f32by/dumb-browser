@@ -1,5 +1,5 @@
 diff --git a/content/browser/renderer_host/navigation_request.cc b/content/browser/renderer_host/navigation_request.cc
-index 24450c34eaed..00b1f5588a5d 100644
+index dae1c91d2d72..033e3da67647 100644
 --- a/content/browser/renderer_host/navigation_request.cc
 +++ b/content/browser/renderer_host/navigation_request.cc
 @@ -38,8 +38,6 @@
@@ -11,15 +11,15 @@ index 24450c34eaed..00b1f5588a5d 100644
  #include "content/browser/network_service_instance_impl.h"
  #include "content/browser/prerender/prerender_host_registry.h"
  #include "content/browser/renderer_host/cookie_utils.h"
-@@ -943,7 +941,6 @@ std::unique_ptr<NavigationRequest> NavigationRequest::CreateForCommit(
+@@ -1006,7 +1004,6 @@ std::unique_ptr<NavigationRequest> NavigationRequest::CreateForCommit(
      const std::vector<GURL>& redirects,
      const GURL& original_url,
      const blink::PageState& page_state,
 -    std::unique_ptr<CrossOriginEmbedderPolicyReporter> coep_reporter,
      std::unique_ptr<WebBundleNavigationInfo> web_bundle_navigation_info,
      int http_response_code) {
-   // TODO(clamy): Improve the *NavigationParams and *CommitParams to avoid
-@@ -1018,7 +1015,6 @@ std::unique_ptr<NavigationRequest> NavigationRequest::CreateForCommit(
+   TRACE_EVENT0("navigation", "NavigationRequest::CreateForCommit");
+@@ -1084,7 +1081,6 @@ std::unique_ptr<NavigationRequest> NavigationRequest::CreateForCommit(
    navigation_request->web_bundle_navigation_info_ =
        std::move(web_bundle_navigation_info);
    navigation_request->render_frame_host_ = render_frame_host;
@@ -27,8 +27,8 @@ index 24450c34eaed..00b1f5588a5d 100644
    navigation_request->isolation_info_for_subresources_ =
        isolation_info_for_subresources;
    navigation_request->StartNavigation(true);
-@@ -1800,22 +1796,6 @@ NavigationRequest::TakePolicyContainerHost() {
-   return std::move(policy_container_host_);
+@@ -1873,22 +1869,6 @@ NavigationRequest::TakePolicyContainerHost() {
+   return host;
  }
  
 -void NavigationRequest::CreateCoepReporter(
@@ -50,27 +50,27 @@ index 24450c34eaed..00b1f5588a5d 100644
  ukm::SourceId NavigationRequest::GetPreviousPageUkmSourceId() {
    return previous_page_ukm_source_id_;
  }
-@@ -2378,19 +2358,8 @@ void NavigationRequest::OnResponseStarted(
-           cross_origin_embedder_policy.value = kRequireCorp;
-         }
+@@ -2520,19 +2500,8 @@ void NavigationRequest::OnResponseStarted(
+         cross_origin_embedder_policy.value = kRequireCorp;
+       }
  
--        auto* const coep_reporter = parent->coep_reporter();
--        if (parent_coep.report_only_value == kRequireCorp &&
--            !has_allowed_scheme &&
--            cross_origin_embedder_policy.value == kNone && coep_reporter) {
+-      auto* const coep_reporter = parent->coep_reporter();
+-      if (parent_coep.report_only_value == kRequireCorp &&
+-          !has_allowed_scheme && cross_origin_embedder_policy.value == kNone &&
+-          coep_reporter) {
+-        coep_reporter->QueueNavigationReport(redirect_chain_[0],
+-                                             /*report_only=*/true);
+-      }
+       if (parent_coep.value == kRequireCorp &&
+           cross_origin_embedder_policy.value == kNone) {
+-        if (coep_reporter) {
 -          coep_reporter->QueueNavigationReport(redirect_chain_[0],
--                                               /*report_only=*/true);
+-                                               /*report_only=*/false);
 -        }
-         if (parent_coep.value == kRequireCorp &&
-             cross_origin_embedder_policy.value == kNone) {
--          if (coep_reporter) {
--            coep_reporter->QueueNavigationReport(redirect_chain_[0],
--                                                 /*report_only=*/false);
--          }
-           // TODO(https://crbug.com/1172169): Investigate what must be done in
-           // case of a download.
-           OnRequestFailedInternal(network::URLLoaderCompletionStatus(
-@@ -3376,10 +3345,6 @@ void NavigationRequest::CommitNavigation() {
+         // TODO(https://crbug.com/1172169): Investigate what must be done in
+         // case of a download.
+         OnRequestFailedInternal(network::URLLoaderCompletionStatus(
+@@ -3546,10 +3515,6 @@ void NavigationRequest::CommitNavigation() {
      }
    }
  
@@ -79,9 +79,9 @@ index 24450c34eaed..00b1f5588a5d 100644
 -      render_frame_host_->GetProcess()->GetStoragePartition());
 -
    BrowserContext* browser_context =
-       frame_tree_node_->navigator().GetController()->GetBrowserContext();
+       frame_tree_node_->navigator().controller().GetBrowserContext();
    ClientHintsControllerDelegate* client_hints_delegate =
-@@ -3411,16 +3376,12 @@ void NavigationRequest::CommitNavigation() {
+@@ -3581,16 +3546,12 @@ void NavigationRequest::CommitNavigation() {
    blink::mojom::ServiceWorkerContainerInfoForClientPtr
        service_worker_container_info;
    if (service_worker_handle_) {
@@ -99,7 +99,7 @@ index 24450c34eaed..00b1f5588a5d 100644
          commit_params_->document_ukm_source_id);
    }
  
-@@ -5245,8 +5206,7 @@ NavigationRequest::EnforceCOEP() {
+@@ -5538,8 +5499,7 @@ NavigationRequest::EnforceCOEP() {
    return network::CrossOriginResourcePolicy::IsNavigationBlocked(
        url, redirect_chain_[0], parent_frame->GetLastCommittedOrigin(),
        *response_head_, parent_frame->GetLastCommittedOrigin(),

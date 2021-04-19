@@ -1,0 +1,31 @@
+diff --git a/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc b/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
+index efd549225cc0..b95cc4639902 100644
+--- a/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
++++ b/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
+@@ -8,9 +8,6 @@
+ #include <utility>
+ 
+ #include "base/metrics/histogram_functions.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metrics.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/scheduler/web_agent_group_scheduler.h"
+ #include "third_party/blink/renderer/core/css/css_font_selector.h"
+@@ -226,16 +223,6 @@ ImageBitmap* OffscreenCanvas::transferToImageBitmap(
+   return image;
+ }
+ 
+-void OffscreenCanvas::RecordIdentifiabilityMetric(
+-    const blink::IdentifiableSurface& surface,
+-    const IdentifiableToken& token) const {
+-  if (!IdentifiabilityStudySettings::Get()->ShouldSample(surface))
+-    return;
+-  blink::IdentifiabilityMetricBuilder(GetExecutionContext()->UkmSourceID())
+-      .Set(surface, token)
+-      .Record(GetExecutionContext()->UkmRecorder());
+-}
+-
+ scoped_refptr<Image> OffscreenCanvas::GetSourceImageForCanvas(
+     SourceImageStatus* status,
+     const FloatSize& size) {

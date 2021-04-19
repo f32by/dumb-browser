@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/policy/device_management_service_configuration.cc b/chrome/browser/policy/device_management_service_configuration.cc
+index ce90fd83712a..2e7d99fbd71d 100644
+--- a/chrome/browser/policy/device_management_service_configuration.cc
++++ b/chrome/browser/policy/device_management_service_configuration.cc
+@@ -97,20 +97,7 @@ DeviceManagementServiceConfiguration::GetEncryptedReportingServerUrl() {
+ std::string
+ DeviceManagementServiceConfiguration::GetReportingConnectorServerUrl(
+     content::BrowserContext* context) {
+-#if defined(OS_WIN) || defined(OS_MAC) || \
+-    ((defined(OS_LINUX) || defined(OS_CHROMEOS)) && !defined(OS_ANDROID))
+-  auto* service =
+-      enterprise_connectors::ConnectorsServiceFactory::GetForBrowserContext(
+-          context);
+-  if (!service)
+-    return std::string();
+-
+-  auto settings = service->GetReportingSettings(
+-      enterprise_connectors::ReportingConnector::SECURITY_EVENT);
+-  return settings ? settings->reporting_url.spec() : std::string();
+-#else
+   return std::string();
+-#endif
+ }
+ 
+ }  // namespace policy

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/app_controller_mac.mm b/chrome/browser/app_controller_mac.mm
-index 3422b6409e40..cb625a039711 100644
+index 596eabd15f44..b79c9229dbb7 100644
 --- a/chrome/browser/app_controller_mac.mm
 +++ b/chrome/browser/app_controller_mac.mm
 @@ -46,7 +46,6 @@
@@ -10,7 +10,15 @@ index 3422b6409e40..cb625a039711 100644
  #include "chrome/browser/policy/chrome_browser_policy_connector.h"
  #include "chrome/browser/prefs/incognito_mode_prefs.h"
  #include "chrome/browser/profiles/profile_attributes_entry.h"
-@@ -402,8 +401,6 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
+@@ -99,7 +98,6 @@
+ #include "chrome/common/webui_url_constants.h"
+ #include "chrome/grit/chromium_strings.h"
+ #include "chrome/grit/generated_resources.h"
+-#include "components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h"
+ #include "components/handoff/handoff_manager.h"
+ #include "components/handoff/handoff_utility.h"
+ #include "components/keep_alive_registry/keep_alive_types.h"
+@@ -402,8 +400,6 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
  // the profile is loaded or any preferences have been registered). Defer any
  // user-data initialization until -applicationDidFinishLaunching:.
  - (void)mainMenuCreated {
@@ -19,7 +27,7 @@ index 3422b6409e40..cb625a039711 100644
    // We need to register the handlers early to catch events fired on launch.
    NSAppleEventManager* em = [NSAppleEventManager sharedAppleEventManager];
    [em setEventHandler:self
-@@ -472,9 +469,6 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
+@@ -472,9 +468,6 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
  // (NSApplicationDelegate protocol) This is the Apple-approved place to override
  // the default handlers.
  - (void)applicationWillFinishLaunching:(NSNotification*)notification {
@@ -29,10 +37,18 @@ index 3422b6409e40..cb625a039711 100644
    if (@available(macOS 10.12, *)) {
      NSWindow.allowsAutomaticWindowTabbing = NO;
    }
-@@ -811,10 +805,6 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
-     return;
-   }
- 
+@@ -803,18 +796,6 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
+ // This is called after profiles have been loaded and preferences registered.
+ // It is safe to access the default profile here.
+ - (void)applicationDidFinishLaunching:(NSNotification*)notify {
+-  if (g_browser_process->browser_policy_connector()
+-          ->chrome_browser_cloud_management_controller()
+-          ->IsEnterpriseStartupDialogShowing()) {
+-    // As Chrome is not ready when the Enterprise startup dialog is being shown.
+-    // Store the notification as it will be reposted when the dialog is closed.
+-    return;
+-  }
+-
 -  MacStartupProfiler::GetInstance()->Profile(
 -      MacStartupProfiler::DID_FINISH_LAUNCHING);
 -  MacStartupProfiler::GetInstance()->RecordMetrics();
@@ -40,3 +56,14 @@ index 3422b6409e40..cb625a039711 100644
    // Notify BrowserList to keep the application running so it doesn't go away
    // when all the browser windows get closed.
    _keep_alive.reset(new ScopedKeepAlive(KeepAliveOrigin::APP_CONTROLLER,
+@@ -1832,9 +1813,7 @@ static base::mac::ScopedObjCClassSwizzler* g_swizzle_imk_input_session;
+ }
+ 
+ - (BOOL)isProfileReady {
+-  return !g_browser_process->browser_policy_connector()
+-              ->chrome_browser_cloud_management_controller()
+-              ->IsEnterpriseStartupDialogShowing();
++  return true;
+ }
+ 
+ #pragma mark - HandoffActiveURLObserverBridgeDelegate

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_impl.cc b/chrome/browser/profiles/profile_impl.cc
-index 4db0fc518259..22e17331706b 100644
+index e33b9cff8827..d383eff73309 100644
 --- a/chrome/browser/profiles/profile_impl.cc
 +++ b/chrome/browser/profiles/profile_impl.cc
-@@ -57,19 +57,13 @@
+@@ -56,19 +56,13 @@
  #include "chrome/browser/content_index/content_index_provider_impl.h"
  #include "chrome/browser/content_settings/cookie_settings_factory.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -22,7 +22,7 @@ index 4db0fc518259..22e17331706b 100644
  #include "chrome/browser/media/media_device_id_salt.h"
  #include "chrome/browser/permissions/permission_manager_factory.h"
  #include "chrome/browser/policy/chrome_browser_policy_connector.h"
-@@ -91,10 +85,8 @@
+@@ -90,10 +84,8 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
  #include "chrome/browser/profiles/profile_key.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -33,7 +33,7 @@ index 4db0fc518259..22e17331706b 100644
  #include "chrome/browser/sharing/sharing_service_factory.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_ui_util.h"
-@@ -121,8 +113,6 @@
+@@ -120,8 +112,6 @@
  #include "components/content_settings/core/browser/cookie_settings.h"
  #include "components/content_settings/core/browser/host_content_settings_map.h"
  #include "components/content_settings/core/common/pref_names.h"
@@ -42,7 +42,7 @@ index 4db0fc518259..22e17331706b 100644
  #include "components/history/core/common/pref_names.h"
  #include "components/keyed_service/content/browser_context_dependency_manager.h"
  #include "components/keyed_service/core/simple_dependency_manager.h"
-@@ -164,7 +154,6 @@
+@@ -161,7 +151,6 @@
  #include "printing/buildflags/buildflags.h"
  #include "services/data_decoder/public/cpp/data_decoder.h"
  #include "services/preferences/public/mojom/preferences.mojom.h"
@@ -50,7 +50,7 @@ index 4db0fc518259..22e17331706b 100644
  #include "services/service_manager/public/cpp/service.h"
  #include "ui/base/l10n/l10n_util.h"
  
-@@ -456,7 +445,7 @@ void ProfileImpl::RegisterProfilePrefs(
+@@ -449,7 +438,7 @@ void ProfileImpl::RegisterProfilePrefs(
  #endif
  
    registry->RegisterBooleanPref(prefs::kForceEphemeralProfiles, false);
@@ -59,7 +59,7 @@ index 4db0fc518259..22e17331706b 100644
  #if !defined(OS_ANDROID)
    registry->RegisterBooleanPref(prefs::kShowCastIconInToolbar, false);
  #endif  // !defined(OS_ANDROID)
-@@ -637,25 +626,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
+@@ -627,25 +616,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
                           g_browser_process->GetApplicationLocale(),
                           pref_registry_.get());
  
@@ -86,7 +86,7 @@ index 4db0fc518259..22e17331706b 100644
                          key_.get(), path_, async_prefs);
    key_->SetPrefs(prefs_.get());
  }
-@@ -769,8 +744,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -759,8 +734,6 @@ void ProfileImpl::DoFinalInit() {
    model->AddObserver(new BookmarkModelLoadedObserver(this));
  #endif
  
@@ -95,7 +95,7 @@ index 4db0fc518259..22e17331706b 100644
    PushMessagingServiceImpl::InitializeForProfile(this);
  
  #if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -779,8 +752,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -769,8 +742,6 @@ void ProfileImpl::DoFinalInit() {
  
    site_isolation::SiteIsolationPolicy::ApplyPersistedIsolatedOrigins(this);
  
@@ -104,7 +104,7 @@ index 4db0fc518259..22e17331706b 100644
    content::URLDataSource::Add(this,
                                std::make_unique<PrefsInternalsSource>(this));
  
-@@ -802,10 +773,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -792,10 +763,6 @@ void ProfileImpl::DoFinalInit() {
    // initialized. https://crbug.com/171406
    SharingServiceFactory::GetForBrowserContext(this);
  
@@ -112,10 +112,10 @@ index 4db0fc518259..22e17331706b 100644
 -  // profile session, so initialize it here.
 -  federated_learning::FlocIdProviderFactory::GetForProfile(this);
 -
-   content::NotificationService::current()->Notify(
-       chrome::NOTIFICATION_PROFILE_CREATED, content::Source<Profile>(this),
-       content::NotificationService::NoDetails());
-@@ -1620,14 +1587,3 @@ void ProfileImpl::UpdateIsEphemeralInStorage() {
+   AnnouncementNotificationServiceFactory::GetForProfile(this)
+       ->MaybeShowNotification();
+ }
+@@ -1565,14 +1532,3 @@ void ProfileImpl::UpdateIsEphemeralInStorage() {
          GetPrefs()->GetBoolean(prefs::kForceEphemeralProfiles));
    }
  }

@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/extensions/api/preference/preference_api.cc b/chrome/browser/extensions/api/preference/preference_api.cc
-index 94a2eb7ad868..de156ece8453 100644
+index 78f159442f6e..fa437c91d735 100644
 --- a/chrome/browser/extensions/api/preference/preference_api.cc
 +++ b/chrome/browser/extensions/api/preference/preference_api.cc
-@@ -33,7 +33,6 @@
- #include "components/password_manager/core/common/password_manager_pref_names.h"
+@@ -34,7 +34,6 @@
  #include "components/prefs/pref_service.h"
+ #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
  #include "components/proxy_config/proxy_config_pref_names.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
  #include "components/spellcheck/browser/pref_names.h"
  #include "components/translate/core/browser/translate_pref_names.h"
  #include "extensions/browser/extension_pref_value_map.h"
-@@ -105,11 +104,6 @@ const PrefMappingEntry kPrefMapping[] = {
+@@ -106,11 +105,6 @@ const PrefMappingEntry kPrefMapping[] = {
       APIPermission::kPrivacy},
      {"doNotTrackEnabled", prefs::kEnableDoNotTrack, APIPermission::kPrivacy,
       APIPermission::kPrivacy},
@@ -22,7 +22,7 @@ index 94a2eb7ad868..de156ece8453 100644
      {"searchSuggestEnabled", prefs::kSearchSuggestEnabled,
       APIPermission::kPrivacy, APIPermission::kPrivacy},
      {"spellingServiceEnabled", spellcheck::prefs::kSpellCheckUseSpellingService,
-@@ -803,18 +797,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
+@@ -811,18 +805,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
          base::Value(browser_pref_value->GetBool()));
    }
  
@@ -41,7 +41,7 @@ index 94a2eb7ad868..de156ece8453 100644
    preference_api->SetExtensionControlledPref(
        extension_id(), browser_pref, scope,
        base::Value::FromUniquePtrValue(std::move(browser_pref_value)));
-@@ -868,18 +850,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
+@@ -876,18 +858,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
    PreferenceAPI::Get(browser_context())
        ->RemoveExtensionControlledPref(extension_id(), browser_pref, scope);
  

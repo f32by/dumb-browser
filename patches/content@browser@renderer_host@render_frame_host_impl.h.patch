@@ -1,5 +1,5 @@
 diff --git a/content/browser/renderer_host/render_frame_host_impl.h b/content/browser/renderer_host/render_frame_host_impl.h
-index ef37788ae723..35e499394f9f 100644
+index 7e278445da38..0ccc6f5dc008 100644
 --- a/content/browser/renderer_host/render_frame_host_impl.h
 +++ b/content/browser/renderer_host/render_frame_host_impl.h
 @@ -40,7 +40,6 @@
@@ -8,17 +8,19 @@ index ef37788ae723..35e499394f9f 100644
  #include "content/browser/idle/idle_manager_impl.h"
 -#include "content/browser/net/cross_origin_opener_policy_reporter.h"
  #include "content/browser/renderer_host/back_forward_cache_metrics.h"
+ #include "content/browser/renderer_host/keep_alive_handle_factory.h"
  #include "content/browser/renderer_host/media/render_frame_audio_input_stream_factory.h"
- #include "content/browser/renderer_host/media/render_frame_audio_output_stream_factory.h"
-@@ -69,7 +68,6 @@
+@@ -68,9 +67,7 @@
+ #include "content/public/browser/render_process_host_observer.h"
+ #include "content/public/common/javascript_dialog_type.h"
  #include "media/mojo/mojom/interface_factory.mojom-forward.h"
- #include "media/mojo/mojom/media_metrics_provider.mojom-forward.h"
+-#include "media/mojo/mojom/media_metrics_provider.mojom-forward.h"
  #include "media/mojo/mojom/media_player.mojom-forward.h"
 -#include "media/mojo/services/media_metrics_provider.h"
  #include "mojo/public/cpp/bindings/associated_receiver.h"
  #include "mojo/public/cpp/bindings/associated_remote.h"
  #include "mojo/public/cpp/bindings/message.h"
-@@ -78,6 +76,7 @@
+@@ -79,6 +76,7 @@
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "mojo/public/cpp/bindings/receiver.h"
  #include "mojo/public/cpp/bindings/remote.h"
@@ -26,7 +28,7 @@ index ef37788ae723..35e499394f9f 100644
  #include "mojo/public/cpp/system/data_pipe.h"
  #include "net/base/isolation_info.h"
  #include "net/base/network_isolation_key.h"
-@@ -115,7 +114,6 @@
+@@ -117,7 +115,6 @@
  #include "third_party/blink/public/mojom/frame/frame_owner_element_type.mojom.h"
  #include "third_party/blink/public/mojom/frame/frame_owner_properties.mojom-forward.h"
  #include "third_party/blink/public/mojom/frame/navigation_initiator.mojom.h"
@@ -34,7 +36,7 @@ index ef37788ae723..35e499394f9f 100644
  #include "third_party/blink/public/mojom/frame/tree_scope_type.mojom.h"
  #include "third_party/blink/public/mojom/frame/user_activation_update_types.mojom.h"
  #include "third_party/blink/public/mojom/idle/idle_manager.mojom.h"
-@@ -206,7 +204,6 @@ class AgentSchedulingGroupHost;
+@@ -210,7 +207,6 @@ class AgentSchedulingGroupHost;
  class AppCacheNavigationHandle;
  class AuthenticatorImpl;
  class BackForwardCacheMetrics;
@@ -42,9 +44,9 @@ index ef37788ae723..35e499394f9f 100644
  class FrameTree;
  class FrameTreeNode;
  class GeolocationServiceImpl;
-@@ -701,9 +698,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
-   // typically mean that the frame has been detached from the frame tree.
-   virtual RenderWidgetHostImpl* GetRenderWidgetHost();
+@@ -692,9 +688,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+     return !is_main_frame() && is_local_root();
+   }
  
 -  media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
 -  GetRecordAggregateWatchTimeCallback();
@@ -52,17 +54,17 @@ index ef37788ae723..35e499394f9f 100644
    // The unique ID of the latest NavigationEntry that this RenderFrameHost is
    // showing. This may change even when this frame hasn't committed a page,
    // such as for a new subframe navigation in a different frame.
-@@ -1474,9 +1468,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -1485,9 +1478,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    void BindMediaInterfaceFactoryReceiver(
        mojo::PendingReceiver<media::mojom::InterfaceFactory> receiver);
  
 -  void BindMediaMetricsProviderReceiver(
 -      mojo::PendingReceiver<media::mojom::MediaMetricsProvider> receiver);
 -
-   void CreateMediaPlayerHost(
-       mojo::PendingReceiver<media::mojom::MediaPlayerHost> receiver);
- 
-@@ -1521,13 +1512,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+ #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
+   void BindMediaRemoterFactoryReceiver(
+       mojo::PendingReceiver<media::mojom::RemoterFactory> receiver);
+@@ -1532,13 +1522,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
        network::CrossOriginEmbedderPolicy policy) {
      cross_origin_embedder_policy_ = policy;
    }
@@ -76,7 +78,7 @@ index ef37788ae723..35e499394f9f 100644
  
    // Semi-formal definition of COOP:
    // https://gist.github.com/annevk/6f2dd8c79c77123f39797f6bdac43f3e
-@@ -1538,9 +1522,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -1549,9 +1532,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
        const network::CrossOriginOpenerPolicy& cross_origin_opener_policy) {
      cross_origin_opener_policy_ = cross_origin_opener_policy;
    }
@@ -86,7 +88,7 @@ index ef37788ae723..35e499394f9f 100644
    int virtual_browsing_context_group() const {
      return virtual_browsing_context_group_;
    }
-@@ -2252,8 +2233,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -2297,8 +2277,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
        url::Origin* out_main_world_origin,
        net::IsolationInfo* out_isolation_info,
        network::mojom::ClientSecurityStatePtr* out_client_security_state,
@@ -95,7 +97,7 @@ index ef37788ae723..35e499394f9f 100644
        network::mojom::TrustTokenRedemptionPolicy*
            out_trust_token_redemption_policy);
  
-@@ -2631,10 +2610,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -2678,10 +2656,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    // RenderFrameHost LifecycleState.
    void SetLifecycleState(LifecycleState state);
  
@@ -106,7 +108,7 @@ index ef37788ae723..35e499394f9f 100644
    // Check the renderer provided sandbox flags matches with what the browser
    // process computed on its own. This triggers DCHECK and DumpWithoutCrashing()
    //
-@@ -3322,9 +3297,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -3413,9 +3387,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    // This time is used to record the last WebXR DOM Overlay setup request.
    base::TimeTicks last_xr_overlay_setup_time_;
  

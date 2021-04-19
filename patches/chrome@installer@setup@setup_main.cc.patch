@@ -1,8 +1,8 @@
 diff --git a/chrome/installer/setup/setup_main.cc b/chrome/installer/setup/setup_main.cc
-index d9d76be21226..cb76b6e9c237 100644
+index 64823b849b1f..4b13bbc11643 100644
 --- a/chrome/installer/setup/setup_main.cc
 +++ b/chrome/installer/setup/setup_main.cc
-@@ -61,7 +61,6 @@
+@@ -60,7 +60,6 @@
  #include "chrome/installer/setup/install.h"
  #include "chrome/installer/setup/install_params.h"
  #include "chrome/installer/setup/install_worker.h"
@@ -10,7 +10,7 @@ index d9d76be21226..cb76b6e9c237 100644
  #include "chrome/installer/setup/installer_state.h"
  #include "chrome/installer/setup/launch_chrome.h"
  #include "chrome/installer/setup/modify_params.h"
-@@ -90,8 +89,6 @@
+@@ -89,8 +88,6 @@
  #include "chrome/installer/util/self_cleaning_temp_dir.h"
  #include "chrome/installer/util/shell_util.h"
  #include "chrome/installer/util/util_constants.h"
@@ -19,7 +19,7 @@ index d9d76be21226..cb76b6e9c237 100644
  #include "content/public/common/content_switches.h"
  
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -1303,16 +1300,6 @@ int WINAPI wWinMain(HINSTANCE instance,
+@@ -1302,16 +1299,6 @@ int WINAPI wWinMain(HINSTANCE instance,
        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
            switches::kProcessType);
  
@@ -36,7 +36,7 @@ index d9d76be21226..cb76b6e9c237 100644
    // install_util uses chrome paths.
    chrome::RegisterPathProvider();
  
-@@ -1337,10 +1324,6 @@ int WINAPI wWinMain(HINSTANCE instance,
+@@ -1336,10 +1323,6 @@ int WINAPI wWinMain(HINSTANCE instance,
    persistent_histogram_storage.set_storage_base_dir(
        installer_state.target_path());
  

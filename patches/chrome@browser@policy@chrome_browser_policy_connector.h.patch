@@ -1,0 +1,49 @@
+diff --git a/chrome/browser/policy/chrome_browser_policy_connector.h b/chrome/browser/policy/chrome_browser_policy_connector.h
+index e5683cee0269..b374783fd543 100644
+--- a/chrome/browser/policy/chrome_browser_policy_connector.h
++++ b/chrome/browser/policy/chrome_browser_policy_connector.h
+@@ -25,11 +25,6 @@ class PrefService;
+ namespace policy {
+ class ConfigurationPolicyProvider;
+ 
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-class ChromeBrowserCloudManagementController;
+-class MachineLevelUserCloudPolicyManager;
+-#endif
+-
+ // Extends BrowserPolicyConnector with the setup shared among the desktop
+ // implementations and Android.
+ class ChromeBrowserPolicyConnector : public BrowserPolicyConnector {
+@@ -60,17 +55,6 @@ class ChromeBrowserPolicyConnector : public BrowserPolicyConnector {
+ 
+   ConfigurationPolicyProvider* GetPlatformProvider();
+ 
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-  ChromeBrowserCloudManagementController*
+-  chrome_browser_cloud_management_controller() {
+-    return chrome_browser_cloud_management_controller_.get();
+-  }
+-  MachineLevelUserCloudPolicyManager*
+-  machine_level_user_cloud_policy_manager() {
+-    return machine_level_user_cloud_policy_manager_;
+-  }
+-#endif
+-
+   // BrowserPolicyConnector:
+   // Command line switch only supports Dev and Canary channel, trunk and browser
+   // tests on Win, Mac, Linux and Android.
+@@ -89,14 +73,6 @@ class ChromeBrowserPolicyConnector : public BrowserPolicyConnector {
+   // Owned by base class.
+   ConfigurationPolicyProvider* platform_provider_ = nullptr;
+ 
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-  std::unique_ptr<ChromeBrowserCloudManagementController>
+-      chrome_browser_cloud_management_controller_;
+-  // Owned by base class.
+-  MachineLevelUserCloudPolicyManager* machine_level_user_cloud_policy_manager_ =
+-      nullptr;
+-#endif
+-
+   ConfigurationPolicyProvider* command_line_provider_ = nullptr;
+ 
+ #if defined(OS_ANDROID)

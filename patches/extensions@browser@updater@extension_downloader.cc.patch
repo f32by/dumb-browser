@@ -1,5 +1,5 @@
 diff --git a/extensions/browser/updater/extension_downloader.cc b/extensions/browser/updater/extension_downloader.cc
-index a7ce86d09f17..7dc2cfdbc82a 100644
+index b3d7fac6be79..4f610d973a50 100644
 --- a/extensions/browser/updater/extension_downloader.cc
 +++ b/extensions/browser/updater/extension_downloader.cc
 @@ -101,21 +101,6 @@ const char kWebstoreOAuth2Scope[] =
@@ -24,7 +24,7 @@ index a7ce86d09f17..7dc2cfdbc82a 100644
  bool ShouldRetryRequest(const network::SimpleURLLoader* loader) {
    DCHECK(loader);
  
-@@ -730,7 +715,6 @@ void ExtensionDownloader::RetryRequestOrHandleFailureOnManifestFetchFailure(
+@@ -732,7 +717,6 @@ void ExtensionDownloader::RetryRequestOrHandleFailureOnManifestFetchFailure(
      return;
    }
    const GURL url = loader->GetFinalURL();
@@ -32,7 +32,7 @@ index a7ce86d09f17..7dc2cfdbc82a 100644
    if (all_force_installed_extensions) {
      TryFetchingExtensionsFromCache(
          manifests_queue_.active_request(),
-@@ -762,13 +746,9 @@ void ExtensionDownloader::OnManifestLoadComplete(
+@@ -764,13 +748,9 @@ void ExtensionDownloader::OnManifestLoadComplete(
  
    VLOG(2) << response_code << " " << url;
  
@@ -46,7 +46,7 @@ index a7ce86d09f17..7dc2cfdbc82a 100644
      VLOG(2) << "beginning manifest parse for " << url;
      NotifyExtensionsDownloadStageChanged(
          manifests_queue_.active_request()->GetExtensionIds(),
-@@ -1280,9 +1260,6 @@ void ExtensionDownloader::OnExtensionLoadComplete(base::FilePath crx_path) {
+@@ -1285,9 +1265,6 @@ void ExtensionDownloader::OnExtensionLoadComplete(base::FilePath crx_path) {
    ExtensionFetch& active_request = *extensions_queue_.active_request();
    const ExtensionId& id = active_request.id;
    if (!crx_path.empty()) {
@@ -56,7 +56,7 @@ index a7ce86d09f17..7dc2cfdbc82a 100644
      std::unique_ptr<ExtensionFetch> fetch_data =
          extensions_queue_.reset_active_request();
      delegate_->OnExtensionDownloadStageChanged(
-@@ -1307,9 +1284,6 @@ void ExtensionDownloader::OnExtensionLoadComplete(base::FilePath crx_path) {
+@@ -1312,9 +1289,6 @@ void ExtensionDownloader::OnExtensionLoadComplete(base::FilePath crx_path) {
        extensions_queue_.RetryRequest(backoff_delay);
        delegate_->OnExtensionDownloadRetryForTests();
      } else {

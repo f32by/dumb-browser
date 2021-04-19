@@ -1,0 +1,61 @@
+diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
+index 98b485c09115..3136b8a04c2a 100644
+--- a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
++++ b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
+@@ -202,20 +202,6 @@ static inline void ConvertCanvasStyleToUnionType(
+   return_value.SetString(style->GetColor());
+ }
+ 
+-void BaseRenderingContext2D::IdentifiabilityMaybeUpdateForStyleUnion(
+-    const StringOrCanvasGradientOrCanvasPattern& style) {
+-  if (style.IsString()) {
+-    identifiability_study_helper_.MaybeUpdateBuilder(
+-        IdentifiabilityBenignStringToken(style.GetAsString()));
+-  } else if (style.IsCanvasPattern()) {
+-    identifiability_study_helper_.MaybeUpdateBuilder(
+-        style.GetAsCanvasPattern()->GetIdentifiableToken());
+-  } else if (style.IsCanvasGradient()) {
+-    identifiability_study_helper_.MaybeUpdateBuilder(
+-        style.GetAsCanvasGradient()->GetIdentifiableToken());
+-  }
+-}
+-
+ RespectImageOrientationEnum
+ BaseRenderingContext2D::RespectImageOrientationInternal(
+     CanvasImageSource* image_source) {
+@@ -233,8 +219,6 @@ void BaseRenderingContext2D::strokeStyle(
+ void BaseRenderingContext2D::setStrokeStyle(
+     const StringOrCanvasGradientOrCanvasPattern& style) {
+   DCHECK(!style.IsNull());
+-  identifiability_study_helper_.MaybeUpdateBuilder(CanvasOps::kSetStrokeStyle);
+-  IdentifiabilityMaybeUpdateForStyleUnion(style);
+ 
+   String color_string;
+   CanvasStyle* canvas_style = nullptr;
+@@ -278,8 +262,6 @@ void BaseRenderingContext2D::setFillStyle(
+     const StringOrCanvasGradientOrCanvasPattern& style) {
+   DCHECK(!style.IsNull());
+   ValidateStateStack();
+-  identifiability_study_helper_.MaybeUpdateBuilder(CanvasOps::kSetFillStyle);
+-  IdentifiabilityMaybeUpdateForStyleUnion(style);
+ 
+   String color_string;
+   CanvasStyle* canvas_style = nullptr;
+@@ -2312,8 +2294,6 @@ String BaseRenderingContext2D::textAlign() const {
+ }
+ 
+ void BaseRenderingContext2D::setTextAlign(const String& s) {
+-  identifiability_study_helper_.MaybeUpdateBuilder(
+-      CanvasOps::kSetTextAlign, IdentifiabilityBenignStringToken(s));
+   TextAlign align;
+   if (!ParseTextAlign(s, align))
+     return;
+@@ -2327,8 +2307,6 @@ String BaseRenderingContext2D::textBaseline() const {
+ }
+ 
+ void BaseRenderingContext2D::setTextBaseline(const String& s) {
+-  identifiability_study_helper_.MaybeUpdateBuilder(
+-      CanvasOps::kSetTextBaseline, IdentifiabilityBenignStringToken(s));
+   TextBaseline baseline;
+   if (!ParseTextBaseline(s, baseline))
+     return;

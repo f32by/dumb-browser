@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/dom/document.h b/third_party/blink/renderer/core/dom/document.h
-index f1d7d46f4e16..34db6e54e5aa 100644
+index 4269e8813f0d..6c737eae9eff 100644
 --- a/third_party/blink/renderer/core/dom/document.h
 +++ b/third_party/blink/renderer/core/dom/document.h
 @@ -41,7 +41,6 @@
@@ -10,7 +10,15 @@ index f1d7d46f4e16..34db6e54e5aa 100644
  #include "third_party/blink/public/mojom/frame/color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/permissions/permission.mojom-blink-forward.h"
-@@ -1060,11 +1059,6 @@ class CORE_EXPORT Document : public ContainerNode,
+@@ -138,7 +137,6 @@ template <typename EventType>
+ class EventWithHitTestResults;
+ class FloatQuad;
+ class FloatRect;
+-class FontMatchingMetrics;
+ class FormController;
+ class FrameCallback;
+ class HTMLAllCollection;
+@@ -1075,11 +1073,6 @@ class CORE_EXPORT Document : public ContainerNode,
                                const String& issuer,
                                ExceptionState&);
  
@@ -22,3 +30,25 @@ index f1d7d46f4e16..34db6e54e5aa 100644
    // Sends a query via Mojo to ask for the interest cohort. This can reject on
    // permissions errors (e.g. preferences, content settings, feature policy,
    // etc.) or when the interest cohort is unavailable.
+@@ -1494,10 +1487,6 @@ class CORE_EXPORT Document : public ContainerNode,
+   ukm::UkmRecorder* UkmRecorder();
+   ukm::SourceId UkmSourceID() const;
+ 
+-  // Tracks and reports UKM metrics of the number of attempted font family match
+-  // attempts (both successful and not successful) by the page.
+-  FontMatchingMetrics* GetFontMatchingMetrics();
+-
+   scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner(TaskType);
+ 
+   bool CurrentFrameHadRAF() const;
+@@ -2113,10 +2102,6 @@ class CORE_EXPORT Document : public ContainerNode,
+   std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
+   const int64_t ukm_source_id_;
+ 
+-  // Tracks and reports metrics of attempted font match attempts (both
+-  // successful and not successful) by the page.
+-  std::unique_ptr<FontMatchingMetrics> font_matching_metrics_;
+-
+ #if DCHECK_IS_ON()
+   unsigned slot_assignment_recalc_forbidden_recursion_depth_ = 0;
+ #endif

@@ -1,5 +1,5 @@
 diff --git a/content/browser/url_loader_factory_params_helper.h b/content/browser/url_loader_factory_params_helper.h
-index 07c84348831e..afe25fcf9e2d 100644
+index b7b8bc2a9bc5..59cfa1f05061 100644
 --- a/content/browser/url_loader_factory_params_helper.h
 +++ b/content/browser/url_loader_factory_params_helper.h
 @@ -8,7 +8,6 @@
@@ -25,6 +25,6 @@ index 07c84348831e..afe25fcf9e2d 100644
        const net::IsolationInfo& isolation_info,
 -      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
 -          coep_reporter,
+       mojo::PendingRemote<network::mojom::AuthenticationAndCertificateObserver>
+           auth_cert_observer,
        base::StringPiece debug_tag);
- 
-   // TODO(kinuko, lukasza): https://crbug.com/1114822: Remove, once all

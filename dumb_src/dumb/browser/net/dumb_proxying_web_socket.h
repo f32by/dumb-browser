@@ -28,7 +28,6 @@
 #include "dumb/browser/net/resource_context_data.h"
 #include "dumb/browser/net/url_context.h"
 #include "content/public/browser/content_browser_client.h"
-#include "mojo/public/cpp/bindings/binding_set.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/bindings/receiver.h"
 #include "mojo/public/cpp/bindings/remote.h"
@@ -47,9 +46,10 @@ class RenderFrameHost;
 
 // Ensures that all web socket requests go through Brave network request
 // handling framework. Cargoculted from |WebRequestProxyingWebSocket|.
-class DumbProxyingWebSocket : public network::mojom::WebSocketHandshakeClient,
-                               public network::mojom::AuthenticationHandler,
-                               public network::mojom::TrustedHeaderClient {
+class DumbProxyingWebSocket
+    : public network::mojom::WebSocketHandshakeClient,
+      public network::mojom::WebSocketAuthenticationHandler,
+      public network::mojom::TrustedHeaderClient {
  public:
   using WebSocketFactory = content::ContentBrowserClient::WebSocketFactory;
   using DisconnectCallback =
@@ -115,7 +115,8 @@ class DumbProxyingWebSocket : public network::mojom::WebSocketHandshakeClient,
       std::vector<network::mojom::HttpHeaderPtr> additional_headers,
       mojo::PendingRemote<network::mojom::WebSocketHandshakeClient>
           handshake_client,
-      mojo::PendingRemote<network::mojom::AuthenticationHandler> auth_handler,
+      mojo::PendingRemote<network::mojom::WebSocketAuthenticationHandler>
+          auth_handler,
       mojo::PendingRemote<network::mojom::TrustedHeaderClient>
           trusted_header_client);
 
@@ -152,7 +153,7 @@ class DumbProxyingWebSocket : public network::mojom::WebSocketHandshakeClient,
       forwarding_handshake_client_;
   mojo::Receiver<network::mojom::WebSocketHandshakeClient>
       receiver_as_handshake_client_;
-  mojo::Receiver<network::mojom::AuthenticationHandler>
+  mojo::Receiver<network::mojom::WebSocketAuthenticationHandler>
       receiver_as_auth_handler_;
   mojo::Receiver<network::mojom::TrustedHeaderClient>
       receiver_as_header_client_;
@@ -168,7 +169,8 @@ class DumbProxyingWebSocket : public network::mojom::WebSocketHandshakeClient,
 
   // chrome websocket proxy
   GURL proxy_url_;
-  mojo::Remote<network::mojom::AuthenticationHandler> proxy_auth_handler_;
+  mojo::Remote<network::mojom::WebSocketAuthenticationHandler>
+      proxy_auth_handler_;
   mojo::Remote<network::mojom::TrustedHeaderClient>
       proxy_trusted_header_client_;
 

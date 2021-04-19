@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/chrome_extensions_api_client.cc b/chrome/browser/extensions/api/chrome_extensions_api_client.cc
-index 750671715d77..3ca30558db9f 100644
+index 8380ebe47680..a6fda56b83f5 100644
 --- a/chrome/browser/extensions/api/chrome_extensions_api_client.cc
 +++ b/chrome/browser/extensions/api/chrome_extensions_api_client.cc
-@@ -19,7 +19,6 @@
+@@ -19,13 +19,11 @@
  #include "chrome/browser/extensions/api/declarative_content/chrome_content_rules_registry.h"
  #include "chrome/browser/extensions/api/declarative_content/default_content_predicate_evaluators.h"
  #include "chrome/browser/extensions/api/extension_action/extension_action_api.h"
@@ -10,7 +10,24 @@ index 750671715d77..3ca30558db9f 100644
  #include "chrome/browser/extensions/api/file_system/chrome_file_system_delegate.h"
  #include "chrome/browser/extensions/api/management/chrome_management_api_delegate.h"
  #include "chrome/browser/extensions/api/messaging/chrome_messaging_delegate.h"
-@@ -378,15 +377,6 @@ MessagingDelegate* ChromeExtensionsAPIClient::GetMessagingDelegate() {
+ #include "chrome/browser/extensions/api/metrics_private/chrome_metrics_private_delegate.h"
+ #include "chrome/browser/extensions/api/networking_cast_private/chrome_networking_cast_private_delegate.h"
+-#include "chrome/browser/extensions/api/storage/managed_value_store_cache.h"
+ #include "chrome/browser/extensions/api/storage/sync_value_store_cache.h"
+ #include "chrome/browser/extensions/chrome_extension_web_contents_observer.h"
+ #include "chrome/browser/extensions/extension_action_runner.h"
+@@ -100,10 +98,6 @@ void ChromeExtensionsAPIClient::AddAdditionalValueStoreCaches(
+   // Add support for chrome.storage.sync.
+   (*caches)[settings_namespace::SYNC] =
+       new SyncValueStoreCache(factory, observers, context->GetPath());
+-
+-  // Add support for chrome.storage.managed.
+-  (*caches)[settings_namespace::MANAGED] =
+-      new ManagedValueStoreCache(context, factory, observers);
+ }
+ 
+ void ChromeExtensionsAPIClient::AttachWebContentsHelpers(
+@@ -397,15 +391,6 @@ MessagingDelegate* ChromeExtensionsAPIClient::GetMessagingDelegate() {
    return messaging_delegate_.get();
  }
  

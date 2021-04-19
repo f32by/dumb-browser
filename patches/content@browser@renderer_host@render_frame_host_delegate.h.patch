@@ -1,5 +1,5 @@
 diff --git a/content/browser/renderer_host/render_frame_host_delegate.h b/content/browser/renderer_host/render_frame_host_delegate.h
-index 120821c3357e..4978169785e7 100644
+index 94309dbf9749..5cb4fe36a32d 100644
 --- a/content/browser/renderer_host/render_frame_host_delegate.h
 +++ b/content/browser/renderer_host/render_frame_host_delegate.h
 @@ -25,7 +25,6 @@
@@ -7,12 +7,12 @@ index 120821c3357e..4978169785e7 100644
  #include "content/public/common/javascript_dialog_type.h"
  #include "media/mojo/mojom/media_player.mojom.h"
 -#include "media/mojo/services/media_metrics_provider.h"
+ #include "mojo/public/cpp/bindings/pending_associated_receiver.h"
+ #include "mojo/public/cpp/bindings/pending_associated_remote.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
- #include "mojo/public/cpp/bindings/pending_remote.h"
- #include "mojo/public/cpp/bindings/scoped_interface_endpoint_handle.h"
-@@ -543,9 +542,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
-                                    int32_t offset,
-                                    bool has_user_gesture) {}
+@@ -522,9 +521,6 @@ class CONTENT_EXPORT RenderFrameHostDelegate {
+   // the given offset (ie, -1 will return the "back" item).
+   virtual bool IsAllowedToGoToEntryAtOffset(int32_t offset);
  
 -  virtual media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
 -  GetRecordAggregateWatchTimeCallback();

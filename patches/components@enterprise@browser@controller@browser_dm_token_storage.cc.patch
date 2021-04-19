@@ -1,0 +1,53 @@
+diff --git a/components/enterprise/browser/controller/browser_dm_token_storage.cc b/components/enterprise/browser/controller/browser_dm_token_storage.cc
+index aed51335c6c2..fa1f1dd7dc78 100644
+--- a/components/enterprise/browser/controller/browser_dm_token_storage.cc
++++ b/components/enterprise/browser/controller/browser_dm_token_storage.cc
+@@ -23,6 +23,18 @@
+ #include "base/threading/thread_task_runner_handle.h"
+ #include "build/build_config.h"
+ 
++#if defined(OS_MAC)
++#include "chrome/browser/policy/browser_dm_token_storage_mac.h"
++#endif  // defined(OS_MAC)
++
++#if defined(OS_LINUX) || defined(OS_CHROMEOS)
++#include "chrome/browser/policy/browser_dm_token_storage_linux.h"
++#endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
++
++#if defined(OS_WIN)
++#include "chrome/browser/policy/browser_dm_token_storage_win.h"
++#endif  // defined(OS_WIN)
++
+ namespace policy {
+ 
+ namespace {
+@@ -60,9 +72,20 @@ BrowserDMTokenStorage* BrowserDMTokenStorage::Get() {
+ void BrowserDMTokenStorage::SetDelegate(std::unique_ptr<Delegate> delegate) {
+   auto* storage = BrowserDMTokenStorage::Get();
+ 
+-  if (!delegate || storage->delegate_) {
++  if(storage->delegate_) {
+     return;
+   }
++  else if (!delegate) {
++#if defined(OS_MAC)
++    delegate = std::make_unique<BrowserDMTokenStorageMac>();
++#elif defined(OS_LINUX) || defined(OS_CHROMEOS)
++    delegate = std::make_unique<BrowserDMTokenStorageLinux>();
++#elif defined(OS_WIN)
++    delegate = std::make_unique<BrowserDMTokenStorageWin>();
++#else
++    NOT_REACHED();
++#endif
++  }
+ 
+   BrowserDMTokenStorage::Get()->delegate_ = std::move(delegate);
+ }
+@@ -146,6 +169,7 @@ bool BrowserDMTokenStorage::ShouldDisplayErrorMessageOnFailure() {
+ 
+ void BrowserDMTokenStorage::InitIfNeeded() {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
++  SetDelegate(nullptr);
+   DCHECK(delegate_) << "DM storage delegate has not been set. If this is a "
+                        "test, you may need to add an instance of "
+                        "FakeBrowserDMTokenStorage to the test fixture.";

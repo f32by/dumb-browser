@@ -1,0 +1,193 @@
+diff --git a/chrome/browser/policy/cloud/cloud_policy_invalidator.cc b/chrome/browser/policy/cloud/cloud_policy_invalidator.cc
+index 1a3810e877ed..5399494ab4d8 100644
+--- a/chrome/browser/policy/cloud/cloud_policy_invalidator.cc
++++ b/chrome/browser/policy/cloud/cloud_policy_invalidator.cc
+@@ -10,7 +10,6 @@
+ #include "base/bind.h"
+ #include "base/hash/hash.h"
+ #include "base/location.h"
+-#include "base/metrics/histogram_functions.h"
+ #include "base/rand_util.h"
+ #include "base/sequenced_task_runner.h"
+ #include "base/strings/strcat.h"
+@@ -24,67 +23,12 @@
+ #include "components/invalidation/public/topic_invalidation_map.h"
+ #include "components/policy/core/common/cloud/cloud_policy_client.h"
+ #include "components/policy/core/common/cloud/cloud_policy_refresh_scheduler.h"
+-#include "components/policy/core/common/cloud/enterprise_metrics.h"
+ #include "components/policy/policy_constants.h"
+ 
+ namespace policy {
+ 
+ namespace {
+ 
+-MetricPolicyRefresh GetPolicyRefreshMetric(bool invalidations_enabled,
+-                                           bool policy_changed,
+-                                           bool invalidated) {
+-  if (policy_changed) {
+-    if (invalidated)
+-      return METRIC_POLICY_REFRESH_INVALIDATED_CHANGED;
+-    if (invalidations_enabled)
+-      return METRIC_POLICY_REFRESH_CHANGED;
+-    return METRIC_POLICY_REFRESH_CHANGED_NO_INVALIDATIONS;
+-  }
+-  if (invalidated)
+-    return METRIC_POLICY_REFRESH_INVALIDATED_UNCHANGED;
+-  return METRIC_POLICY_REFRESH_UNCHANGED;
+-}
+-
+-PolicyInvalidationType GetInvalidationMetric(bool is_missing_payload,
+-                                             bool is_expired) {
+-  if (is_expired) {
+-    if (is_missing_payload)
+-      return POLICY_INVALIDATION_TYPE_NO_PAYLOAD_EXPIRED;
+-    return POLICY_INVALIDATION_TYPE_EXPIRED;
+-  }
+-  if (is_missing_payload)
+-    return POLICY_INVALIDATION_TYPE_NO_PAYLOAD;
+-  return POLICY_INVALIDATION_TYPE_NORMAL;
+-}
+-
+-void RecordPolicyRefreshMetric(PolicyInvalidationScope scope,
+-                               bool invalidations_enabled,
+-                               bool policy_changed,
+-                               bool invalidated) {
+-  const MetricPolicyRefresh metric_policy_refresh = GetPolicyRefreshMetric(
+-      invalidations_enabled, policy_changed, invalidated);
+-  base::UmaHistogramEnumeration(
+-      CloudPolicyInvalidator::GetPolicyRefreshMetricName(scope),
+-      metric_policy_refresh, METRIC_POLICY_REFRESH_SIZE);
+-  base::UmaHistogramEnumeration(
+-      CloudPolicyInvalidator::GetPolicyRefreshFcmMetricName(scope),
+-      metric_policy_refresh, METRIC_POLICY_REFRESH_SIZE);
+-}
+-
+-void RecordPolicyInvalidationMetric(PolicyInvalidationScope scope,
+-                                    bool is_expired,
+-                                    bool is_missing_payload) {
+-  const PolicyInvalidationType policy_invalidation_type =
+-      GetInvalidationMetric(is_missing_payload, is_expired);
+-  base::UmaHistogramEnumeration(
+-      CloudPolicyInvalidator::GetPolicyInvalidationMetricName(scope),
+-      policy_invalidation_type, POLICY_INVALIDATION_TYPE_SIZE);
+-  base::UmaHistogramEnumeration(
+-      CloudPolicyInvalidator::GetPolicyInvalidationFcmMetricName(scope),
+-      policy_invalidation_type, POLICY_INVALIDATION_TYPE_SIZE);
+-}
+-
+ std::string ComposeOwnerName(PolicyInvalidationScope scope,
+                              const std::string& device_local_account_id) {
+   if (!base::FeatureList::IsEnabled(features::kInvalidatorUniqueOwnerName)) {
+@@ -113,66 +57,6 @@ const int CloudPolicyInvalidator::kMaxFetchDelayMin = 1000;
+ const int CloudPolicyInvalidator::kMaxFetchDelayMax = 300000;
+ const int CloudPolicyInvalidator::kInvalidationGracePeriod = 10;
+ 
+-// static
+-const char* CloudPolicyInvalidator::GetPolicyRefreshMetricName(
+-    PolicyInvalidationScope scope) {
+-  switch (scope) {
+-    case PolicyInvalidationScope::kUser:
+-      return kMetricUserPolicyRefresh;
+-    case PolicyInvalidationScope::kDevice:
+-      return kMetricDevicePolicyRefresh;
+-    case PolicyInvalidationScope::kDeviceLocalAccount:
+-      return kMetricDeviceLocalAccountPolicyRefresh;
+-    case PolicyInvalidationScope::kCBCM:
+-      return kMetricCBCMPolicyRefresh;
+-  }
+-}
+-
+-// static
+-const char* CloudPolicyInvalidator::GetPolicyRefreshFcmMetricName(
+-    PolicyInvalidationScope scope) {
+-  switch (scope) {
+-    case PolicyInvalidationScope::kUser:
+-      return kMetricUserPolicyRefreshFcm;
+-    case PolicyInvalidationScope::kDevice:
+-      return kMetricDevicePolicyRefreshFcm;
+-    case PolicyInvalidationScope::kDeviceLocalAccount:
+-      return kMetricDeviceLocalAccountPolicyRefreshFcm;
+-    case PolicyInvalidationScope::kCBCM:
+-      return kMetricCBCMPolicyRefreshFcm;
+-  }
+-}
+-
+-// static
+-const char* CloudPolicyInvalidator::GetPolicyInvalidationMetricName(
+-    PolicyInvalidationScope scope) {
+-  switch (scope) {
+-    case PolicyInvalidationScope::kUser:
+-      return kMetricUserPolicyInvalidations;
+-    case PolicyInvalidationScope::kDevice:
+-      return kMetricDevicePolicyInvalidations;
+-    case PolicyInvalidationScope::kDeviceLocalAccount:
+-      return kMetricDeviceLocalAccountPolicyInvalidations;
+-    case PolicyInvalidationScope::kCBCM:
+-      return kMetricCBCMPolicyInvalidations;
+-  }
+-}
+-
+-// static
+-const char* CloudPolicyInvalidator::GetPolicyInvalidationFcmMetricName(
+-    PolicyInvalidationScope scope) {
+-  switch (scope) {
+-    case PolicyInvalidationScope::kUser:
+-      return kMetricUserPolicyInvalidationsFcm;
+-    case PolicyInvalidationScope::kDevice:
+-      return kMetricDevicePolicyInvalidationsFcm;
+-    case PolicyInvalidationScope::kDeviceLocalAccount:
+-      return kMetricDeviceLocalAccountPolicyInvalidationsFcm;
+-    case PolicyInvalidationScope::kCBCM:
+-      return kMetricCBCMPolicyInvalidationsFcm;
+-  }
+-}
+-
+ CloudPolicyInvalidator::CloudPolicyInvalidator(
+     PolicyInvalidationScope scope,
+     CloudPolicyCore* core,
+@@ -194,7 +78,6 @@ CloudPolicyInvalidator::CloudPolicyInvalidator(
+     int64_t highest_handled_invalidation_version,
+     const std::string& device_local_account_id)
+     : state_(UNINITIALIZED),
+-      scope_(scope),
+       owner_name_(ComposeOwnerName(scope, device_local_account_id)),
+       core_(core),
+       task_runner_(task_runner),
+@@ -316,7 +199,6 @@ void CloudPolicyInvalidator::OnCoreDisconnecting(CloudPolicyCore* core) {
+ void CloudPolicyInvalidator::OnStoreLoaded(CloudPolicyStore* store) {
+   DCHECK(state_ == STARTED);
+   DCHECK(thread_checker_.CalledOnValidThread());
+-  bool policy_changed = IsPolicyChanged(store->policy());
+ 
+   if (is_registered_) {
+     const int64_t store_invalidation_version = store->invalidation_version();
+@@ -324,10 +206,6 @@ void CloudPolicyInvalidator::OnStoreLoaded(CloudPolicyStore* store) {
+     const bool invalidated =
+         invalid_ && store_invalidation_version == invalidation_version_;
+ 
+-    const bool invalidations_enabled = GetInvalidationsEnabled();
+-    RecordPolicyRefreshMetric(scope_, invalidations_enabled, policy_changed,
+-                              invalidated);
+-
+     // If the policy was invalid and the version stored matches the latest
+     // invalidation version, acknowledge the latest invalidation.
+     if (invalidated)
+@@ -385,9 +263,6 @@ void CloudPolicyInvalidator::HandleInvalidation(
+   const auto current_time = clock_->Now();
+   const bool is_expired =
+       IsInvalidationExpired(invalidation, last_fetch_time, current_time);
+-  const bool is_missing_payload = payload.empty();
+-
+-  RecordPolicyInvalidationMetric(scope_, is_expired, is_missing_payload);
+ 
+   if (is_expired) {
+     invalidation.Acknowledge();
+@@ -463,8 +338,6 @@ void CloudPolicyInvalidator::Register(const invalidation::Topic& topic) {
+     LOG(ERROR) << "Failed to subscribe to " << topic
+                << " for policy invalidations";
+   }
+-  base::UmaHistogramBoolean(kMetricPolicyInvalidationRegistration, success);
+-  base::UmaHistogramBoolean(kMetricPolicyInvalidationRegistrationFcm, success);
+ }
+ 
+ void CloudPolicyInvalidator::Unregister() {

@@ -1,5 +1,5 @@
 diff --git a/components/security_interstitials/core/unsafe_resource.h b/components/security_interstitials/core/unsafe_resource.h
-index a582672f68ef..b006b39fc21f 100644
+index ea8acd297c08..5051285f4064 100644
 --- a/components/security_interstitials/core/unsafe_resource.h
 +++ b/components/security_interstitials/core/unsafe_resource.h
 @@ -10,8 +10,6 @@
@@ -8,20 +8,19 @@ index a582672f68ef..b006b39fc21f 100644
  #include "base/single_thread_task_runner.h"
 -#include "components/safe_browsing/core/common/safebrowsing_constants.h"
 -#include "components/safe_browsing/core/db/hit_report.h"
+ #include "services/network/public/mojom/fetch_api.mojom.h"
  #include "url/gurl.h"
  
- namespace content {
-@@ -55,9 +53,6 @@ struct UnsafeResource {
+@@ -56,8 +54,6 @@ struct UnsafeResource {
    std::vector<GURL> redirect_urls;
    bool is_subresource;
    bool is_subframe;
 -  safe_browsing::SBThreatType threat_type;
 -  safe_browsing::ThreatMetadata threat_metadata;
--  safe_browsing::ResourceType resource_type;
+   network::mojom::RequestDestination request_destination;
    UrlCheckCallback callback;  // This is called back on |callback_thread|.
    scoped_refptr<base::SingleThreadTaskRunner> callback_thread;
-   // TODO(crbug.com/1073315): |web_state_getter| is only used on iOS, and
-@@ -66,7 +61,6 @@ struct UnsafeResource {
+@@ -67,7 +63,6 @@ struct UnsafeResource {
    // platforms.
    base::RepeatingCallback<content::WebContents*(void)> web_contents_getter;
    base::RepeatingCallback<web::WebState*(void)> web_state_getter;

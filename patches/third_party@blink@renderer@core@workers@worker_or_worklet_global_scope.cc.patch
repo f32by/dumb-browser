@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/workers/worker_or_worklet_global_scope.cc b/third_party/blink/renderer/core/workers/worker_or_worklet_global_scope.cc
+index a0c5b61e367e..850494a17528 100644
+--- a/third_party/blink/renderer/core/workers/worker_or_worklet_global_scope.cc
++++ b/third_party/blink/renderer/core/workers/worker_or_worklet_global_scope.cc
+@@ -251,7 +251,6 @@ void WorkerOrWorkletGlobalScope::CountUse(WebFeature feature) {
+   if (used_features_[static_cast<size_t>(feature)])
+     return;
+   used_features_.set(static_cast<size_t>(feature));
+-  ReportingProxy().CountFeature(feature);
+ }
+ 
+ ResourceLoadScheduler::ThrottleOptionOverride

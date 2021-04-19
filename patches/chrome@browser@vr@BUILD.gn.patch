@@ -1,23 +1,34 @@
 diff --git a/chrome/browser/vr/BUILD.gn b/chrome/browser/vr/BUILD.gn
-index b081811aa083..26be4730e1a6 100644
+index d1dc18f4d56a..9ee9ec8f0dd4 100644
 --- a/chrome/browser/vr/BUILD.gn
 +++ b/chrome/browser/vr/BUILD.gn
-@@ -259,8 +259,6 @@ component("vr_common") {
+@@ -254,7 +254,6 @@ component("vr_common") {
      "//chrome/common:constants",
      "//components/omnibox/browser",
      "//components/omnibox/browser",
--    "//components/rappor/public:public",
 -    "//components/ukm/content",
      "//content/public/browser",
      "//device/base",
-     "//device/vr",
-@@ -386,9 +384,7 @@ component("vr_base") {
-   deps = [
+     "//device/vr:vr_util",
+@@ -263,7 +262,6 @@ component("vr_common") {
+     "//media",
+     "//net",
+     "//services/audio/public/cpp",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//skia",
+     "//ui/base",
+     "//ui/display",
+@@ -381,13 +379,11 @@ component("vr_base") {
      "//base",
      "//chrome/app:generated_resources",
--    "//components/rappor:rappor",
      "//components/security_state/core",
 -    "//components/ukm/content",
      "//components/url_formatter",
      "//content/public/browser",
      "//device/vr/public/mojom:isolated_xr_service",
+     "//media",
+     "//net",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//skia",
+   ]
+ 

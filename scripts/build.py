@@ -63,6 +63,7 @@ gn_args['is_chrome_branded'] = 'false'
 gn_args['use_unofficial_version_number'] = 'false'
 # enable V8 pointer compression
 gn_args['v8_enable_pointer_compression'] = 'true'
+gn_args['enable_paint_preview'] = 'false'
 
 
 def main(args):

@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `89.0.4389.128`.
+Current version: `90.0.4430.72`.
 
 # Features
 
@@ -12,7 +12,7 @@ Following components are removed/disabled:
 4. WebRTC Log Uploader
 5. Network Time Tracker
 6. [RLZ](https://blog.chromium.org/2010/06/in-open-for-rlz.html)
-7. [Rappor](https://github.com/google/rappor)
+7. Chrome Enterprise
 8. (macOS only) Download Quarantine
 10. (Windows only) Chrome Cleaner
 11. Field trails fetching
@@ -23,18 +23,17 @@ Following components are removed/disabled:
 16. [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
 17. [FLoC](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox/floc)
 19. [HaTS](https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/ui/hats/)
-
-And many other removals can be found in `patches` folder.
+20. CSP report
 
 Other changes:
-1. [UI] Restore mute button on tab
+1. [UI] Audio mute button on tab
 2. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
 3. [History] Unlimited browsing history.
 4. [UI] Force popups to be opened in new tabs.
 
 # Installation
 
-Tested on macOS 11.3 Beta 7 (20E5229a). Windows is not tested and build may fail.
+Tested on macOS 11.3 Beta 8 (20E5231a). Windows is not tested and build may fail.
 
 ### Prerequisites
 

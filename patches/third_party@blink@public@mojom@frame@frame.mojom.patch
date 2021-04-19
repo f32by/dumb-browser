@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/public/mojom/frame/frame.mojom b/third_party/blink/public/mojom/frame/frame.mojom
-index ae80513384c6..5111278fa636 100644
+index 9f4a84e55c75..5e559834e261 100644
 --- a/third_party/blink/public/mojom/frame/frame.mojom
 +++ b/third_party/blink/public/mojom/frame/frame.mojom
-@@ -36,7 +36,6 @@ import "third_party/blink/public/mojom/frame/intrinsic_sizing_info.mojom";
+@@ -39,7 +39,6 @@ import "third_party/blink/public/mojom/frame/intrinsic_sizing_info.mojom";
  import "third_party/blink/public/mojom/frame/lifecycle.mojom";
  import "third_party/blink/public/mojom/frame/media_player_action.mojom";
  import "third_party/blink/public/mojom/frame/policy_container.mojom";
@@ -10,7 +10,7 @@ index ae80513384c6..5111278fa636 100644
  import "third_party/blink/public/mojom/frame/sudden_termination_disabler_type.mojom";
  import "third_party/blink/public/mojom/frame/user_activation_notification_type.mojom";
  import "third_party/blink/public/mojom/frame/user_activation_update_types.mojom";
-@@ -641,10 +640,6 @@ interface LocalFrame {
+@@ -684,10 +683,6 @@ interface LocalFrame {
    GetStringForRange(gfx.mojom.Range range)
        => (ui.mojom.AttributedString? string, gfx.mojom.Point baseline_point);
  
@@ -20,4 +20,12 @@ index ae80513384c6..5111278fa636 100644
 -
    // Requests that the blink::LocalFrame updates its opener to the specified
    // frame. The frame token may be "empty" if the opener was disowned.
-   UpdateOpener(mojo_base.mojom.UnguessableToken? opener_frame_token);
+   UpdateOpener(blink.mojom.FrameToken? opener_frame_token);
+@@ -1040,7 +1035,6 @@ interface LocalMainFrame {
+   InstallCoopAccessMonitor(
+       network.mojom.CoopAccessReportType report_type,
+       blink.mojom.FrameToken accessed_window,
+-      pending_remote<network.mojom.CrossOriginOpenerPolicyReporter> reporter,
+       bool endpoint_defined,
+       string reported_window_url);
+ 

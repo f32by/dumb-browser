@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/frame/build.gni b/third_party/blink/renderer/core/frame/build.gni
-index 393d5d2f006d..3cfa1f1cac05 100644
+index 1aba36c7cd86..ecbae86bbd55 100644
 --- a/third_party/blink/renderer/core/frame/build.gni
 +++ b/third_party/blink/renderer/core/frame/build.gni
-@@ -9,16 +9,12 @@ blink_core_sources_frame = [
+@@ -9,8 +9,6 @@ blink_core_sources_frame = [
    "bar_prop.h",
    "browser_controls.cc",
    "browser_controls.h",
@@ -10,7 +10,8 @@ index 393d5d2f006d..3cfa1f1cac05 100644
 -  "coop_access_violation_report_body.h",
    "csp/content_security_policy.cc",
    "csp/content_security_policy.h",
-   "csp/csp_directive_list.cc",
+   "csp/conversion_util.cc",
+@@ -19,8 +17,6 @@ blink_core_sources_frame = [
    "csp/csp_directive_list.h",
    "csp/csp_source.cc",
    "csp/csp_source.h",
@@ -18,8 +19,16 @@ index 393d5d2f006d..3cfa1f1cac05 100644
 -  "csp/csp_violation_report_body.h",
    "csp/execution_context_csp_delegate.cc",
    "csp/execution_context_csp_delegate.h",
-   "csp/media_list_directive.cc",
-@@ -37,14 +33,10 @@ blink_core_sources_frame = [
+   "csp/navigation_initiator_impl.cc",
+@@ -31,22 +27,16 @@ blink_core_sources_frame = [
+   "csp/source_list_directive.h",
+   "csp/trusted_types_directive.cc",
+   "csp/trusted_types_directive.h",
+-  "dactyloscoper.cc",
+-  "dactyloscoper.h",
+   "frame_content_as_text.h",
+   "frame_content_as_text.cc",
+   "deprecated_schedule_style_recalc_during_layout.cc",
    "deprecated_schedule_style_recalc_during_layout.h",
    "deprecation.cc",
    "deprecation.h",
@@ -34,7 +43,7 @@ index 393d5d2f006d..3cfa1f1cac05 100644
    "dom_timer.cc",
    "dom_timer.h",
    "dom_timer_coordinator.cc",
-@@ -58,8 +50,6 @@ blink_core_sources_frame = [
+@@ -60,8 +50,6 @@ blink_core_sources_frame = [
    "event_handler_registry.cc",
    "event_handler_registry.h",
    "external.h",
@@ -43,7 +52,7 @@ index 393d5d2f006d..3cfa1f1cac05 100644
    "find_in_page.cc",
    "find_in_page.h",
    "fragment_directive.h",
-@@ -88,8 +78,6 @@ blink_core_sources_frame = [
+@@ -90,8 +78,6 @@ blink_core_sources_frame = [
    "history.h",
    "intervention.cc",
    "intervention.h",
@@ -52,7 +61,7 @@ index 393d5d2f006d..3cfa1f1cac05 100644
    "layout_subtree_root_list.cc",
    "layout_subtree_root_list.h",
    "local_dom_window.cc",
-@@ -103,8 +91,6 @@ blink_core_sources_frame = [
+@@ -105,8 +91,6 @@ blink_core_sources_frame = [
    "local_frame_view.h",
    "location.cc",
    "location.h",
@@ -61,7 +70,7 @@ index 393d5d2f006d..3cfa1f1cac05 100644
    "navigation_rate_limiter.cc",
    "navigation_rate_limiter.h",
    "navigator.cc",
-@@ -157,14 +143,6 @@ blink_core_sources_frame = [
+@@ -159,14 +143,6 @@ blink_core_sources_frame = [
    "remote_frame_owner.h",
    "remote_frame_view.cc",
    "remote_frame_view.h",
@@ -76,7 +85,7 @@ index 393d5d2f006d..3cfa1f1cac05 100644
    "resize_viewport_anchor.cc",
    "resize_viewport_anchor.h",
    "root_frame_viewport.cc",
-@@ -187,8 +165,6 @@ blink_core_sources_frame = [
+@@ -189,8 +165,6 @@ blink_core_sources_frame = [
    "smart_clip.h",
    "sticky_ad_detector.cc",
    "sticky_ad_detector.h",

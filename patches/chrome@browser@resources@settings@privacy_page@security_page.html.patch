@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/privacy_page/security_page.html b/chrome/browser/resources/settings/privacy_page/security_page.html
-index b3fd1b8aea67..e2804870d7d1 100644
+index 5e24fa6af3cd..9e0c386ba7a2 100644
 --- a/chrome/browser/resources/settings/privacy_page/security_page.html
 +++ b/chrome/browser/resources/settings/privacy_page/security_page.html
 @@ -3,10 +3,6 @@
@@ -13,7 +13,7 @@ index b3fd1b8aea67..e2804870d7d1 100644
        .bullet-line {
          align-items: center;
          display: flex;
-@@ -49,101 +45,6 @@
+@@ -49,106 +45,6 @@
        <img id="banner" alt=""
            src="chrome://settings/images/safe_browsing_banner.svg">
      </picture>
@@ -28,6 +28,8 @@ index b3fd1b8aea67..e2804870d7d1 100644
 -            pref="[[prefs.generated.safe_browsing]]"
 -            label="$i18n{safeBrowsingEnhanced}"
 -            sub-label="$i18n{safeBrowsingEnhancedDesc}"
+-            indicator-aria-label="$i18n{controlledSettingPolicy}"
+-            expand-aria-label="$i18n{safeBrowsingEnhancedExpandA11yLabel}"
 -            hidden="[[!safeBrowsingEnhancedEnabled_]]"
 -            on-expand-clicked="onEnhancedProtectionExpandButtonClicked_"
 -            no-automatic-collapse>
@@ -69,6 +71,8 @@ index b3fd1b8aea67..e2804870d7d1 100644
 -            pref="[[prefs.generated.safe_browsing]]"
 -            label="$i18n{safeBrowsingStandard}"
 -            sub-label="$i18n{safeBrowsingStandardDesc}"
+-            indicator-aria-label="$i18n{controlledSettingPolicy}"
+-            expand-aria-label="$i18n{safeBrowsingStandardExpandA11yLabel}"
 -            info-opened="{{infoOpened_}}"
 -            on-expand-clicked="onStandardProtectionExpandButtonClicked_"
 -            no-automatic-collapse>
@@ -108,14 +112,15 @@ index b3fd1b8aea67..e2804870d7d1 100644
 -            name="[[safeBrowsingSettingEnum_.DISABLED]]"
 -            pref="[[prefs.generated.safe_browsing]]"
 -            label="$i18n{safeBrowsingNone}"
--            sub-label="$i18n{safeBrowsingNoneDesc}">
+-            sub-label="$i18n{safeBrowsingNoneDesc}"
+-            indicator-aria-label="$i18n{controlledSettingPolicy}">
 -        </settings-collapse-radio-button>
 -      </settings-radio-group>
 -    </div>
      <div class="cr-row first">
        <h2>$i18n{advancedPageTitle}</h2>
      </div>
-@@ -171,15 +72,3 @@
+@@ -176,15 +72,3 @@
          sub-label="$i18n{manageCertificatesDescription}"
          on-click="onManageCertificatesClick_"></cr-link-row>
  </if>

@@ -1,17 +1,9 @@
 diff --git a/content/browser/web_contents/web_contents_impl.cc b/content/browser/web_contents/web_contents_impl.cc
-index f4751d821d34..ab381e07645b 100644
+index 6e024c146ec6..c75d3ad4faf2 100644
 --- a/content/browser/web_contents/web_contents_impl.cc
 +++ b/content/browser/web_contents/web_contents_impl.cc
-@@ -47,7 +47,6 @@
- #include "build/build_config.h"
- #include "build/chromeos_buildflags.h"
- #include "components/download/public/common/download_stats.h"
--#include "components/rappor/public/rappor_utils.h"
- #include "components/url_formatter/url_formatter.h"
- #include "content/browser/accessibility/accessibility_event_recorder.h"
- #include "content/browser/accessibility/browser_accessibility.h"
-@@ -8506,28 +8505,6 @@ void WebContentsImpl::OnFrameAudioStateChanged(RenderFrameHost* host,
-   });
+@@ -8395,28 +8395,6 @@ void WebContentsImpl::OnFrameAudioStateChanged(RenderFrameHost* host,
+                              host, is_audible);
  }
  
 -media::MediaMetricsProvider::RecordAggregateWatchTimeCallback
@@ -39,20 +31,3 @@ index f4751d821d34..ab381e07645b 100644
  RenderFrameHostImpl* WebContentsImpl::GetMainFrameForInnerDelegate(
      FrameTreeNode* frame_tree_node) {
    if (auto* web_contents = node_.GetInnerWebContentsInFrame(frame_tree_node))
-@@ -8661,16 +8638,6 @@ void WebContentsImpl::RemoveReceiverSet(const std::string& interface_name) {
-     receiver_sets_.erase(it);
- }
- 
--bool WebContentsImpl::AddDomainInfoToRapporSample(rappor::Sample* sample) {
--  OPTIONAL_TRACE_EVENT0("content",
--                        "WebContentsImpl::AddDomainInfoToRapporSample");
--  // Here we associate this metric to the main frame URL regardless of what
--  // caused it.
--  sample->SetStringField("Domain", ::rappor::GetDomainAndRegistrySampleFromGURL(
--                                       GetLastCommittedURL()));
--  return true;
--}
--
- void WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded() {
-   OPTIONAL_TRACE_EVENT0(
-       "content", "WebContentsImpl::ShowInsecureLocalhostWarningIfNeeded");

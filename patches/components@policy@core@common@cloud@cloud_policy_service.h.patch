@@ -1,0 +1,25 @@
+diff --git a/components/policy/core/common/cloud/cloud_policy_service.h b/components/policy/core/common/cloud/cloud_policy_service.h
+index 64e5a12de8bb..2fa8d6af255d 100644
+--- a/components/policy/core/common/cloud/cloud_policy_service.h
++++ b/components/policy/core/common/cloud/cloud_policy_service.h
+@@ -77,8 +77,6 @@ class POLICY_EXPORT CloudPolicyService : public CloudPolicyClient::Observer,
+   void OnStoreLoaded(CloudPolicyStore* store) override;
+   void OnStoreError(CloudPolicyStore* store) override;
+ 
+-  void ReportValidationResult(CloudPolicyStore* store);
+-
+   bool IsInitializationComplete() const {
+     DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+     return initialization_complete_;
+@@ -152,11 +150,6 @@ class POLICY_EXPORT CloudPolicyService : public CloudPolicyClient::Observer,
+   // initializing.
+   base::ObserverList<Observer, true>::Unchecked observers_;
+ 
+-  // Identifier from the stored policy. Policy validations results are only
+-  // reported once if the validated policy's data signature matches with this
+-  // one. Will be cleared once we send the validation report.
+-  std::string policy_pending_validation_signature_;
+-
+   DISALLOW_COPY_AND_ASSIGN(CloudPolicyService);
+ };
+ 

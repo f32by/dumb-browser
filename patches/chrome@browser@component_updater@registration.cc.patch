@@ -1,34 +1,33 @@
 diff --git a/chrome/browser/component_updater/registration.cc b/chrome/browser/component_updater/registration.cc
-index 9bc1aff78fc4..ab0fa84d1279 100644
+index 0bb63aad2213..eddca25f3359 100644
 --- a/chrome/browser/component_updater/registration.cc
 +++ b/chrome/browser/component_updater/registration.cc
-@@ -15,9 +15,7 @@
- #include "chrome/browser/component_updater/autofill_states_component_installer.h"
+@@ -15,16 +15,12 @@
+ #include "chrome/browser/component_updater/autofill_regex_component_installer.h"
+ #include "chrome/browser/component_updater/chrome_origin_trials_component_installer.h"
  #include "chrome/browser/component_updater/crl_set_component_installer.h"
- #include "chrome/browser/component_updater/crowd_deny_component_installer.h"
+-#include "chrome/browser/component_updater/crowd_deny_component_installer.h"
 -#include "chrome/browser/component_updater/file_type_policies_component_installer.h"
  #include "chrome/browser/component_updater/first_party_sets_component_installer.h"
 -#include "chrome/browser/component_updater/floc_component_installer.h"
- #include "chrome/browser/component_updater/games_component_installer.h"
  #include "chrome/browser/component_updater/hyphenation_component_installer.h"
  #include "chrome/browser/component_updater/mei_preload_component_installer.h"
-@@ -25,7 +23,6 @@
  #include "chrome/browser/component_updater/pepper_flash_component_installer.h"
  #include "chrome/browser/component_updater/ssl_error_assistant_component_installer.h"
  #include "chrome/browser/component_updater/sth_set_component_remover.h"
 -#include "chrome/browser/component_updater/subresource_filter_component_installer.h"
- #include "chrome/browser/component_updater/tls_deprecation_config_component_installer.h"
  #include "chrome/browser/component_updater/trust_token_key_commitments_component_installer.h"
  #include "chrome/browser/component_updater/zxcvbn_data_component_installer.h"
-@@ -36,7 +33,6 @@
- #include "components/component_updater/crl_set_remover.h"
+ #include "chrome/common/buildflags.h"
+@@ -35,7 +31,6 @@
+ #include "components/component_updater/installer_policies/autofill_states_component_installer.h"
  #include "components/component_updater/installer_policies/on_device_head_suggest_component_installer.h"
  #include "components/component_updater/installer_policies/optimization_hints_component_installer.h"
 -#include "components/component_updater/installer_policies/safety_tips_component_installer.h"
  #include "components/nacl/common/buildflags.h"
  #include "device/vr/buildflags/buildflags.h"
  #include "third_party/widevine/cdm/buildflags.h"
-@@ -113,9 +109,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -113,9 +108,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  #endif  // BUILDFLAG(ENABLE_NACL) && !defined(OS_ANDROID)
  
@@ -38,7 +37,7 @@ index 9bc1aff78fc4..ab0fa84d1279 100644
    RegisterOnDeviceHeadSuggestComponent(
        cus, g_browser_process->GetApplicationLocale());
    RegisterOptimizationHintsComponent(cus);
-@@ -137,7 +130,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -137,7 +129,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif
    }
    RegisterSSLErrorAssistantComponent(cus);
@@ -46,7 +45,7 @@ index 9bc1aff78fc4..ab0fa84d1279 100644
  #if !BUILDFLAG(IS_CHROMEOS_ASH)
    // CRLSetFetcher attempts to load a CRL set from either the local disk or
    // network.
-@@ -153,7 +145,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -153,7 +144,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    // on chromium build bots, it is always registered here and
    // RegisterSwReporterComponent() has support for running only in official
    // builds or tests.
@@ -54,11 +53,13 @@ index 9bc1aff78fc4..ab0fa84d1279 100644
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
    RegisterThirdPartyModuleListComponent(cus);
  #endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -165,7 +156,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -165,9 +155,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    }
  #endif
  
 -  RegisterSafetyTipsComponent(cus);
-   RegisterCrowdDenyComponent(cus);
-   RegisterTLSDeprecationConfigComponent(cus);
- 
+-  RegisterCrowdDenyComponent(cus);
+-
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+   RegisterSmartDimComponent(cus);
+ #endif  // !BUILDFLAG(IS_CHROMEOS_ASH)

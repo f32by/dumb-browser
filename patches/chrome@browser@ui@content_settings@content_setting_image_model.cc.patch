@@ -1,0 +1,60 @@
+diff --git a/chrome/browser/ui/content_settings/content_setting_image_model.cc b/chrome/browser/ui/content_settings/content_setting_image_model.cc
+index c3a860dad6a5..0542b088f1ce 100644
+--- a/chrome/browser/ui/content_settings/content_setting_image_model.cc
++++ b/chrome/browser/ui/content_settings/content_setting_image_model.cc
+@@ -21,7 +21,6 @@
+ #include "chrome/browser/permissions/quiet_notification_permission_ui_config.h"
+ #include "chrome/browser/permissions/quiet_notification_permission_ui_state.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/ui/blocked_content/framebust_block_tab_helper.h"
+ #include "chrome/browser/ui/content_settings/content_setting_image_model_states.h"
+ #include "chrome/browser/ui/layout_constants.h"
+ #include "chrome/common/chrome_features.h"
+@@ -301,7 +300,7 @@ ContentSettingImageModel::CreateForContentType(ImageType image_type) {
+       return std::make_unique<ContentSettingBlockedImageModel>(
+           ImageType::SOUND, ContentSettingsType::SOUND);
+     case ImageType::FRAMEBUST:
+-      return std::make_unique<ContentSettingFramebustBlockImageModel>();
++      return nullptr;
+     case ImageType::CLIPBOARD_READ_WRITE:
+       return std::make_unique<ContentSettingClipboardReadWriteImageModel>();
+     case ImageType::SENSORS:
+@@ -818,30 +817,6 @@ ContentSettingMediaImageModel::CreateBubbleModelImpl(
+                                                                 web_contents);
+ }
+ 
+-// Blocked Framebust -----------------------------------------------------------
+-ContentSettingFramebustBlockImageModel::ContentSettingFramebustBlockImageModel()
+-    : ContentSettingImageModel(ImageType::FRAMEBUST) {}
+-
+-bool ContentSettingFramebustBlockImageModel::UpdateAndGetVisibility(
+-    WebContents* web_contents) {
+-  // Early exit if no blocked Framebust.
+-  if (!FramebustBlockTabHelper::FromWebContents(web_contents)->HasBlockedUrls())
+-    return false;
+-
+-  set_icon(kBlockedRedirectIcon, vector_icons::kBlockedBadgeIcon);
+-  set_explanatory_string_id(IDS_REDIRECT_BLOCKED_TITLE);
+-  set_tooltip(l10n_util::GetStringUTF16(IDS_REDIRECT_BLOCKED_TOOLTIP));
+-  return true;
+-}
+-
+-std::unique_ptr<ContentSettingBubbleModel>
+-ContentSettingFramebustBlockImageModel::CreateBubbleModelImpl(
+-    ContentSettingBubbleModel::Delegate* delegate,
+-    WebContents* web_contents) {
+-  return std::make_unique<ContentSettingFramebustBlockBubbleModel>(
+-      delegate, web_contents);
+-}
+-
+ // Sensors ---------------------------------------------------------------------
+ 
+ ContentSettingSensorsImageModel::ContentSettingSensorsImageModel()
+@@ -1000,7 +975,6 @@ ContentSettingImageModel::GenerateContentSettingImageModels() {
+       ImageType::AUTOMATIC_DOWNLOADS,
+       ImageType::MIDI_SYSEX,
+       ImageType::SOUND,
+-      ImageType::FRAMEBUST,
+       ImageType::CLIPBOARD_READ_WRITE,
+       ImageType::NOTIFICATIONS_QUIET_PROMPT,
+   };

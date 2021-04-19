@@ -1,27 +1,24 @@
 diff --git a/chrome/browser/browser_process_impl.h b/chrome/browser/browser_process_impl.h
-index 1d3c566cc59b..fe4d803ce636 100644
+index b4ceefbccd08..5f1214b1d338 100644
 --- a/chrome/browser/browser_process_impl.h
 +++ b/chrome/browser/browser_process_impl.h
-@@ -35,11 +35,7 @@
+@@ -35,15 +35,10 @@
  #include "services/network/public/cpp/network_quality_tracker.h"
  #include "services/network/public/mojom/network_service.mojom-forward.h"
  
 -#if !defined(OS_ANDROID)
 -#include "chrome/browser/upgrade_detector/build_state.h"
 -#endif
+-
+ #if defined(OS_ANDROID)
+ #include "base/android/application_status_listener.h"
+ #endif  // defined(OS_ANDROID)
  
 -class BatteryMetrics;
  class ChromeMetricsServicesManagerClient;
  class DevToolsAutoOpener;
  class RemoteDebuggingServer;
-@@ -133,14 +129,12 @@ class BrowserProcessImpl : public BrowserProcess,
-   metrics_services_manager::MetricsServicesManager* GetMetricsServicesManager()
-       override;
-   metrics::MetricsService* metrics_service() override;
--  rappor::RapporServiceImpl* rappor_service() override;
-   // TODO(qinmin): Remove this method as callers can retrieve the global
-   // instance from SystemNetworkContextManager directly.
-   SystemNetworkContextManager* system_network_context_manager() override;
+@@ -143,7 +138,6 @@ class BrowserProcessImpl : public BrowserProcess,
    scoped_refptr<network::SharedURLLoaderFactory> shared_url_loader_factory()
        override;
    network::NetworkQualityTracker* network_quality_tracker() override;
@@ -29,9 +26,9 @@ index 1d3c566cc59b..fe4d803ce636 100644
    ProfileManager* profile_manager() override;
    PrefService* local_state() override;
    variations::VariationsService* variations_service() override;
-@@ -170,11 +164,6 @@ class BrowserProcessImpl : public BrowserProcess,
-   void set_background_mode_manager_for_test(
+@@ -175,11 +169,6 @@ class BrowserProcessImpl : public BrowserProcess,
        std::unique_ptr<BackgroundModeManager> manager) override;
+ #endif
    StatusTray* status_tray() override;
 -  safe_browsing::SafeBrowsingService* safe_browsing_service() override;
 -  subresource_filter::RulesetService* subresource_filter_ruleset_service()
@@ -41,15 +38,16 @@ index 1d3c566cc59b..fe4d803ce636 100644
  
    StartupData* startup_data() override;
  
-@@ -195,7 +184,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -200,8 +189,6 @@ class BrowserProcessImpl : public BrowserProcess,
    resource_coordinator::ResourceCoordinatorParts* resource_coordinator_parts()
        override;
  
 -  BuildState* GetBuildState() override;
- 
+-
    static void RegisterPrefs(PrefRegistrySimple* registry);
  
-@@ -210,17 +198,12 @@ class BrowserProcessImpl : public BrowserProcess,
+  private:
+@@ -215,17 +202,12 @@ class BrowserProcessImpl : public BrowserProcess,
    // changes to the render process.
    void CreateNetworkQualityObserver();
  
@@ -67,7 +65,7 @@ index 1d3c566cc59b..fe4d803ce636 100644
    void CreateOptimizationGuideService();
    void CreateStatusTray();
    void CreateBackgroundModeManager();
-@@ -235,9 +218,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -240,9 +222,6 @@ class BrowserProcessImpl : public BrowserProcess,
  
    StartupData* const startup_data_;
  
@@ -77,7 +75,7 @@ index 1d3c566cc59b..fe4d803ce636 100644
    // Must be destroyed after |local_state_|.
    std::unique_ptr<policy::ChromeBrowserPolicyConnector>
        browser_policy_connector_;
-@@ -318,16 +298,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -323,16 +302,6 @@ class BrowserProcessImpl : public BrowserProcess,
    std::unique_ptr<BackgroundModeManager> background_mode_manager_;
  #endif
  
@@ -94,7 +92,7 @@ index 1d3c566cc59b..fe4d803ce636 100644
    bool shutting_down_ = false;
  
    bool tearing_down_ = false;
-@@ -348,8 +318,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -353,8 +322,6 @@ class BrowserProcessImpl : public BrowserProcess,
    // notifications are properly added and removed.
    PrefChangeRegistrar pref_change_registrar_;
  
@@ -103,11 +101,11 @@ index 1d3c566cc59b..fe4d803ce636 100644
  // TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
  // of lacros-chrome is complete.
  #if defined(OS_WIN) || (defined(OS_LINUX) || BUILDFLAG(IS_CHROMEOS_LACROS))
-@@ -398,7 +366,6 @@ class BrowserProcessImpl : public BrowserProcess,
+@@ -403,7 +370,6 @@ class BrowserProcessImpl : public BrowserProcess,
    // Called to signal the process' main message loop to exit.
    base::OnceClosure quit_closure_;
  
 -  BuildState build_state_;
  #endif
  
-   SEQUENCE_CHECKER(sequence_checker_);
+ #if defined(OS_ANDROID)

@@ -1,0 +1,34 @@
+diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.h b/third_party/blink/renderer/core/workers/worker_global_scope.h
+index d716adec520b..5bfd79d9eb80 100644
+--- a/third_party/blink/renderer/core/workers/worker_global_scope.h
++++ b/third_party/blink/renderer/core/workers/worker_global_scope.h
+@@ -54,7 +54,6 @@ struct BlinkTransferableMessage;
+ class ConsoleMessage;
+ class FetchClientSettingsObjectSnapshot;
+ class FontFaceSet;
+-class FontMatchingMetrics;
+ class InstalledScriptsManager;
+ class OffscreenFontSelector;
+ class WorkerResourceTimingNotifier;
+@@ -222,10 +221,6 @@ class CORE_EXPORT WorkerGlobalScope
+   // match the actual worker type.
+   virtual WorkerToken GetWorkerToken() const = 0;
+ 
+-  // Tracks and reports metrics of attempted font match attempts (both
+-  // successful and not successful) by the worker.
+-  FontMatchingMetrics* GetFontMatchingMetrics();
+-
+   scoped_refptr<base::SingleThreadTaskRunner>
+   GetAgentGroupSchedulerCompositorTaskRunner() {
+     return agent_group_scheduler_compositor_task_runner_;
+@@ -301,10 +296,6 @@ class CORE_EXPORT WorkerGlobalScope
+ 
+   Member<OffscreenFontSelector> font_selector_;
+ 
+-  // Tracks and reports UKM metrics of the number of attempted font family match
+-  // attempts (both successful and not successful) by the worker.
+-  std::unique_ptr<FontMatchingMetrics> font_matching_metrics_;
+-
+   blink::BrowserInterfaceBrokerProxy browser_interface_broker_proxy_;
+ 
+   // State transition about worker top-level script evaluation.

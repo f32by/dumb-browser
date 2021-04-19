@@ -1,23 +1,14 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view.h b/chrome/browser/ui/views/frame/browser_view.h
-index 986798357dbc..07cfdb771d5d 100644
+index e4955ccbb929..9e2f8b21a0b1 100644
 --- a/chrome/browser/ui/views/frame/browser_view.h
 +++ b/chrome/browser/ui/views/frame/browser_view.h
-@@ -468,9 +468,6 @@ class BrowserView : public BrowserWindow,
+@@ -465,9 +465,6 @@ class BrowserView : public BrowserWindow,
        AvatarBubbleMode mode,
        signin_metrics::AccessPoint access_point,
        bool is_source_keyboard) override;
--  void ShowHatsBubble(const std::string& site_id,
+-  void ShowHatsDialog(const std::string& site_id,
 -                      base::OnceClosure success_callback,
 -                      base::OnceClosure failure_callback) override;
    ExclusiveAccessContext* GetExclusiveAccessContext() override;
    std::string GetWorkspace() const override;
    bool IsVisibleOnAllWorkspaces() const override;
-@@ -940,8 +937,6 @@ class BrowserView : public BrowserWindow,
-   std::unique_ptr<ExtensionKeybindingRegistryViews>
-       extension_keybinding_registry_;
- 
--  std::unique_ptr<BrowserWindowHistogramHelper> histogram_helper_;
--
-   std::unique_ptr<FullscreenControlHost> fullscreen_control_host_;
- 
-   // If the Window Placement experiment is enabled and fullscreen is requested

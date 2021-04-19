@@ -1,0 +1,34 @@
+diff --git a/chrome/browser/push_messaging/push_messaging_service_impl.h b/chrome/browser/push_messaging/push_messaging_service_impl.h
+index 34109be5ab7b..d758aa1e05bb 100644
+--- a/chrome/browser/push_messaging/push_messaging_service_impl.h
++++ b/chrome/browser/push_messaging/push_messaging_service_impl.h
+@@ -19,7 +19,6 @@
+ #include "base/optional.h"
+ #include "base/scoped_observer.h"
+ #include "base/time/time.h"
+-#include "chrome/browser/permissions/abusive_origin_permission_revocation_request.h"
+ #include "chrome/browser/push_messaging/push_messaging_notification_manager.h"
+ #include "chrome/browser/push_messaging/push_messaging_refresher.h"
+ #include "chrome/common/buildflags.h"
+@@ -210,11 +209,6 @@ class PushMessagingServiceImpl : public content::PushMessagingService,
+                         base::OnceClosure completion_closure,
+                         bool did_show_generic_notification);
+ 
+-  void OnCheckedOriginForAbuse(
+-      const std::string& app_id,
+-      const gcm::IncomingMessage& message,
+-      AbusiveOriginPermissionRevocationRequest::Outcome outcome);
+-
+   void CheckOriginForAbuseAndDispatchNextMessage();
+ 
+   base::OnceClosure message_handled_callback() {
+@@ -403,9 +397,6 @@ class PushMessagingServiceImpl : public content::PushMessagingService,
+   }
+ 
+   Profile* profile_;
+-  std::unique_ptr<AbusiveOriginPermissionRevocationRequest>
+-      abusive_origin_revocation_request_;
+-  std::queue<PendingMessage> messages_pending_permission_check_;
+ 
+   int push_subscription_count_;
+   int pending_push_subscription_count_;

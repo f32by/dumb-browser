@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/navigation_request.h b/content/browser/renderer_host/navigation_request.h
-index a5c8cafef454..a475a7f6bb63 100644
+index a20a7c4c9442..d56b8c4f91b5 100644
 --- a/content/browser/renderer_host/navigation_request.h
 +++ b/content/browser/renderer_host/navigation_request.h
-@@ -75,7 +75,6 @@ struct URLLoaderCompletionStatus;
+@@ -78,7 +78,6 @@ struct URLLoaderCompletionStatus;
  namespace content {
  
  class AppCacheNavigationHandle;
@@ -10,7 +10,7 @@ index a5c8cafef454..a475a7f6bb63 100644
  class WebBundleHandleTracker;
  class WebBundleNavigationInfo;
  class FrameNavigationEntry;
-@@ -225,7 +224,6 @@ class CONTENT_EXPORT NavigationRequest
+@@ -227,7 +226,6 @@ class CONTENT_EXPORT NavigationRequest
        const std::vector<GURL>& redirects,
        const GURL& original_url,
        const blink::PageState& page_state,
@@ -18,9 +18,9 @@ index a5c8cafef454..a475a7f6bb63 100644
        std::unique_ptr<WebBundleNavigationInfo> web_bundle_navigation_info,
        int http_response_code);
  
-@@ -675,12 +673,6 @@ class CONTENT_EXPORT NavigationRequest
-     return policy_container_host_.get();
-   }
+@@ -674,12 +672,6 @@ class CONTENT_EXPORT NavigationRequest
+   // Must only be called after ReadyToCommitNavigation().
+   scoped_refptr<PolicyContainerHost> TakePolicyContainerHost();
  
 -  CrossOriginEmbedderPolicyReporter* coep_reporter() {
 -    return coep_reporter_.get();
@@ -31,9 +31,9 @@ index a5c8cafef454..a475a7f6bb63 100644
    // Returns UKM SourceId for the page we are navigating away from.
    // Equal to GetRenderFrameHost()->GetPageUkmSourceId() for subframe
    // and same-document navigations and to
-@@ -1507,8 +1499,6 @@ class CONTENT_EXPORT NavigationRequest
-   // DidCommitNavigation time.
-   std::unique_ptr<PolicyContainerHost> policy_container_host_;
+@@ -1547,8 +1539,6 @@ class CONTENT_EXPORT NavigationRequest
+   base::Optional<PolicyContainerNavigationBundle>
+       policy_container_navigation_bundle_;
  
 -  std::unique_ptr<CrossOriginEmbedderPolicyReporter> coep_reporter_;
 -

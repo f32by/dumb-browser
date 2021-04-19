@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc b/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
-index e1c9377ecaaa..428fd593a977 100644
+index 0555e3e1520f..595d030f0b03 100644
 --- a/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
 +++ b/chrome/browser/ui/aura/accessibility/automation_manager_aura.cc
 @@ -10,7 +10,6 @@
@@ -10,8 +10,8 @@ index e1c9377ecaaa..428fd593a977 100644
  #include "ui/accessibility/aura/aura_window_properties.h"
  #include "ui/accessibility/ax_action_data.h"
  #include "ui/accessibility/ax_action_handler_base.h"
-@@ -329,11 +328,6 @@ void AutomationManagerAura::OnSerializeFailure(ax::mojom::Event event_type,
-       checker(tree_.get());
+@@ -342,11 +341,6 @@ void AutomationManagerAura::OnSerializeFailure(ax::mojom::Event event_type,
+   ui::AXTreeSourceChecker<views::AXAuraObjWrapper*> checker(tree_.get());
    checker.CheckAndGetErrorString(&error_string);
  
 -  // Add a crash key so we can figure out why this is happening.

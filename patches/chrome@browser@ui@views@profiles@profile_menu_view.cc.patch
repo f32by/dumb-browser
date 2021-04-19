@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/views/profiles/profile_menu_view.cc b/chrome/browser/ui/views/profiles/profile_menu_view.cc
-index 9f8580c052e2..edf79b10c53a 100644
+index 6ffad7479f0c..ac584231a2d1 100644
 --- a/chrome/browser/ui/views/profiles/profile_menu_view.cc
 +++ b/chrome/browser/ui/views/profiles/profile_menu_view.cc
-@@ -20,7 +20,6 @@
- #include "chrome/browser/lifetime/application_lifetime.h"
+@@ -21,7 +21,6 @@
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_avatar_icon_util.h"
+ #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
+ #include "chrome/browser/profiles/profile_window.h"
  #include "chrome/browser/profiles/profiles_state.h"
  #include "chrome/browser/signin/account_consistency_mode_manager.h"
- #include "chrome/browser/signin/chrome_signin_client_factory.h"
-@@ -369,7 +368,6 @@ void ProfileMenuView::OnSyncErrorButtonClicked(
+@@ -374,7 +373,6 @@ void ProfileMenuView::OnSyncErrorButtonClicked(
            signin_metrics::AccessPoint::ACCESS_POINT_AVATAR_BUBBLE_SIGN_IN);
        break;
      case sync_ui_util::UPGRADE_CLIENT_ERROR:

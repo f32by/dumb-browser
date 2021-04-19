@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_main.h b/chrome/browser/chrome_browser_main.h
-index cc214ddc9e02..e525cedfb70d 100644
+index bbddfaa5799d..1bb9b833f98b 100644
 --- a/chrome/browser/chrome_browser_main.h
 +++ b/chrome/browser/chrome_browser_main.h
 @@ -30,7 +30,6 @@ class StartupData;
@@ -10,7 +10,7 @@ index cc214ddc9e02..e525cedfb70d 100644
  class WebUsbDetector;
  
  namespace base {
-@@ -104,16 +103,6 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
+@@ -100,16 +99,6 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
   private:
    friend class ChromeBrowserMainPartsTestApi;
  
@@ -27,7 +27,7 @@ index cc214ddc9e02..e525cedfb70d 100644
    // Reads origin trial policy data from local state and configures command line
    // for child processes.
    void SetupOriginTrialsCommandLine(PrefService* local_state);
-@@ -144,11 +133,6 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
+@@ -140,11 +129,6 @@ class ChromeBrowserMainParts : public content::BrowserMainParts {
    int result_code_;
  
  #if !defined(OS_ANDROID)

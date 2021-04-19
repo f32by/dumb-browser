@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/tab_search/tab_search_page_handler.cc b/chrome/browser/ui/webui/tab_search/tab_search_page_handler.cc
-index c2a6da8822d5..a10fcf2dbdea 100644
+index c0110fff2366..c93aad51a787 100644
 --- a/chrome/browser/ui/webui/tab_search/tab_search_page_handler.cc
 +++ b/chrome/browser/ui/webui/tab_search/tab_search_page_handler.cc
 @@ -31,12 +31,6 @@
@@ -15,12 +15,15 @@ index c2a6da8822d5..a10fcf2dbdea 100644
  }
  
  TabSearchPageHandler::TabSearchPageHandler(
-@@ -143,15 +137,6 @@ void TabSearchPageHandler::GetTabGroups(GetTabGroupsCallback callback) {
+@@ -129,18 +123,6 @@ void TabSearchPageHandler::GetTabGroups(GetTabGroupsCallback callback) {
    NOTIMPLEMENTED();
  }
  
 -void TabSearchPageHandler::ShowFeedbackPage() {
--  chrome::ShowFeedbackPage(browser_,
+-  Browser* browser = chrome::FindLastActive();
+-  if (!browser)
+-    return;
+-  chrome::ShowFeedbackPage(browser,
 -                           chrome::FeedbackSource::kFeedbackSourceTabSearch,
 -                           std::string() /* description_template */,
 -                           std::string() /* description_placeholder_text */,

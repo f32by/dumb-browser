@@ -1,8 +1,24 @@
 diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
-index 68828c19b166..fa3ec21558a1 100644
+index 8255cdfc3392..d944c0d1dc5f 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
-@@ -106,8 +106,6 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
+@@ -20,6 +20,7 @@
+ #include "components/ukm/content/source_url_recorder.h"
+ #include "content/public/browser/permission_type.h"
+ #include "content/public/browser/web_contents.h"
++#include "dumb/base/compiler_specific.h"
+ #include "services/metrics/public/cpp/metrics_utils.h"
+ #include "services/metrics/public/cpp/ukm_builders.h"
+ #include "services/metrics/public/cpp/ukm_recorder.h"
+@@ -51,6 +52,7 @@ using content::PermissionType;
+ 
+ namespace {
+ 
++DUMB_ALLOW_UNUSED_TYPE
+ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
+   switch (request_type) {
+     case RequestType::kAccessibilityEvents:
+@@ -108,8 +110,6 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
    }
  }
  
@@ -11,87 +27,40 @@ index 68828c19b166..fa3ec21558a1 100644
  std::string GetPermissionRequestString(RequestTypeForUma type) {
    switch (type) {
      case RequestTypeForUma::MULTIPLE:
-@@ -176,64 +174,6 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
+@@ -178,6 +178,7 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
    base::UmaHistogramPercentageObsoleteDoNotUse(name, engagement_score);
  }
  
--void RecordPermissionActionUkm(
--    PermissionAction action,
--    PermissionRequestGestureType gesture_type,
--    ContentSettingsType permission,
--    int dismiss_count,
--    int ignore_count,
--    PermissionSourceUI source_ui,
--    PermissionPromptDisposition ui_disposition,
--    base::Optional<PermissionPromptDispositionReason> ui_reason,
--    base::Optional<bool> has_three_consecutive_denies,
--    base::Optional<bool> has_previously_revoked_permission,
--    base::Optional<PermissionUmaUtil::PredictionGrantLikelihood>
--        predicted_grant_likelihood,
--    base::Optional<ukm::SourceId> source_id) {
--  // Only record the permission change if the origin is in the history.
--  if (!source_id.has_value())
--    return;
--
--  size_t num_values = 0;
--
--  ukm::builders::Permission builder(source_id.value());
--  builder.SetAction(static_cast<int64_t>(action))
--      .SetGesture(static_cast<int64_t>(gesture_type))
--      .SetPermissionType(static_cast<int64_t>(
--          ContentSettingTypeToHistogramValue(permission, &num_values)))
--      .SetPriorDismissals(std::min(kPriorCountCap, dismiss_count))
--      .SetPriorIgnores(std::min(kPriorCountCap, ignore_count))
--      .SetSource(static_cast<int64_t>(source_ui))
--      .SetPromptDisposition(static_cast<int64_t>(ui_disposition));
--
--  if (ui_reason.has_value())
--    builder.SetPromptDispositionReason(static_cast<int64_t>(ui_reason.value()));
--
--  if (predicted_grant_likelihood.has_value()) {
--    builder.SetPredictionsApiResponse_GrantLikelihood(
--        static_cast<int64_t>(predicted_grant_likelihood.value()));
--  }
--
--  if (has_three_consecutive_denies.has_value()) {
--    int64_t satisfied_adaptive_triggers = 0;
--    if (has_three_consecutive_denies.value())
--      satisfied_adaptive_triggers |=
--          static_cast<int64_t>(AdaptiveTriggers::THREE_CONSECUTIVE_DENIES);
--    builder.SetSatisfiedAdaptiveTriggers(satisfied_adaptive_triggers);
--  }
--
--  if (has_previously_revoked_permission.has_value()) {
--    int64_t previously_revoked_permission = 0;
--    if (has_previously_revoked_permission.value()) {
--      previously_revoked_permission = static_cast<int64_t>(
--          PermissionAutoRevocationHistory::PREVIOUSLY_AUTO_REVOKED);
--    }
--    builder.SetPermissionAutoRevocationHistory(previously_revoked_permission);
--  }
--
--  builder.Record(ukm::UkmRecorder::Get());
--}
--
++#if 0
+ void RecordPermissionActionUkm(
+     PermissionAction action,
+     PermissionRequestGestureType gesture_type,
+@@ -241,6 +242,7 @@ void RecordPermissionActionUkm(
+ 
+   builder.Record(ukm::UkmRecorder::Get());
+ }
++#endif
+ 
  std::string GetPromptDispositionString(
      PermissionPromptDisposition ui_disposition) {
-   switch (ui_disposition) {
-@@ -641,26 +581,6 @@ void PermissionUmaUtil::RecordPermissionAction(
+@@ -649,6 +651,7 @@ void PermissionUmaUtil::RecordPermissionAction(
      const content::WebContents* web_contents,
      content::BrowserContext* browser_context,
      base::Optional<PredictionGrantLikelihood> predicted_grant_likelihood) {
--  PermissionDecisionAutoBlocker* autoblocker =
--      PermissionsClient::Get()->GetPermissionDecisionAutoBlocker(
--          browser_context);
--  int dismiss_count =
--      autoblocker->GetDismissCount(requesting_origin, permission);
--  int ignore_count = autoblocker->GetIgnoreCount(requesting_origin, permission);
--
++#if 0
+   DCHECK(PermissionUtil::IsPermission(permission));
+   PermissionDecisionAutoBlocker* autoblocker =
+       PermissionsClient::Get()->GetPermissionDecisionAutoBlocker(
+@@ -657,21 +660,6 @@ void PermissionUmaUtil::RecordPermissionAction(
+       autoblocker->GetDismissCount(requesting_origin, permission);
+   int ignore_count = autoblocker->GetIgnoreCount(requesting_origin, permission);
+ 
 -  PermissionsClient::Get()->GetUkmSourceId(
 -      browser_context, web_contents, requesting_origin,
 -      base::BindOnce(
 -          &RecordPermissionActionUkm, action, gesture_type, permission,
--          dismiss_count, ignore_count, source_ui, ui_disposition, ui_reason,
+-          dismiss_count, ignore_count, source_ui, time_to_decision,
+-          ui_disposition, ui_reason,
 -          permission == ContentSettingsType::NOTIFICATIONS
 -              ? PermissionsClient::Get()
 -                    ->HadThreeConsecutiveNotificationPermissionDenies(
@@ -100,6 +69,15 @@ index 68828c19b166..fa3ec21558a1 100644
 -          PermissionsClient::Get()->HasPreviouslyAutoRevokedPermission(
 -              browser_context, requesting_origin, permission),
 -          predicted_grant_likelihood));
- 
+-
    switch (permission) {
      case ContentSettingsType::GEOLOCATION:
+       base::UmaHistogramEnumeration("Permissions.Action.Geolocation", action,
+@@ -744,6 +732,7 @@ void PermissionUmaUtil::RecordPermissionAction(
+                    << PermissionUtil::GetPermissionString(permission)
+                    << " not accounted for";
+   }
++#endif
+ }
+ 
+ // static

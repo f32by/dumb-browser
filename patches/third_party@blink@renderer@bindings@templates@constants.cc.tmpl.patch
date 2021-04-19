@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/bindings/templates/constants.cc.tmpl b/third_party/blink/renderer/bindings/templates/constants.cc.tmpl
+index 2ba625e541f0..2612bea77882 100644
+--- a/third_party/blink/renderer/bindings/templates/constants.cc.tmpl
++++ b/third_party/blink/renderer/bindings/templates/constants.cc.tmpl
+@@ -10,9 +10,6 @@ void {{v8_class_or_partial}}::{{constant.camel_case_name}}ConstantGetterCallback
+   {% if constant.measure_as %}
+   ExecutionContext* execution_context_for_measurement = CurrentExecutionContext(info.GetIsolate());
+   UseCounter::Count(execution_context_for_measurement, WebFeature::k{{constant.measure_as('ConstantGetter')}});
+-  {% if constant.high_entropy %}
+-  Dactyloscoper::Record(execution_context_for_measurement, WebFeature::k{{constant.measure_as('ConstantGetter')}});
+-  {% endif %}
+   {% endif %}
+   {% if constant.idl_type in ('Double', 'Float') %}
+   V8SetReturnValue(info, {{constant.value}});

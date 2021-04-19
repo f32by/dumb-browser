@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/background/background_mode_manager.cc b/chrome/browser/background/background_mode_manager.cc
-index 481bfdda58e7..c2f0eaa3a246 100644
+index ec091fb851e7..6a06d416245c 100644
 --- a/chrome/browser/background/background_mode_manager.cc
 +++ b/chrome/browser/background/background_mode_manager.cc
-@@ -64,7 +64,6 @@
+@@ -65,7 +65,6 @@
  #include "components/keep_alive_registry/keep_alive_types.h"
  #include "components/prefs/pref_registry_simple.h"
  #include "components/prefs/pref_service.h"
@@ -10,7 +10,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
  #include "content/public/browser/notification_service.h"
  #include "extensions/browser/extension_system.h"
  #include "extensions/common/constants.h"
-@@ -80,7 +79,6 @@
+@@ -81,7 +80,6 @@
  #include "chrome/browser/win/app_icon.h"
  #endif
  
@@ -18,7 +18,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
  using extensions::Extension;
  
  namespace {
-@@ -97,10 +95,6 @@ enum MenuItem {
+@@ -98,10 +96,6 @@ enum MenuItem {
    MENU_ITEM_NUM_STATES
  };
  
@@ -29,7 +29,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
  }  // namespace
  
  // static
-@@ -158,7 +152,6 @@ void BackgroundModeManager::BackgroundModeData::ExecuteCommand(
+@@ -159,7 +153,6 @@ void BackgroundModeManager::BackgroundModeData::ExecuteCommand(
        break;
      default:
        DCHECK(!command_id_handler_vector_->at(command_id).is_null());
@@ -37,7 +37,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
        command_id_handler_vector_->at(command_id).Run();
        break;
    }
-@@ -603,7 +596,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
+@@ -602,7 +595,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
    BackgroundModeData* bmd = GetBackgroundModeDataForLastProfile();
    switch (command_id) {
      case IDC_ABOUT:
@@ -45,7 +45,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
        if (bmd) {
          chrome::ShowAboutChrome(bmd->GetBrowserWindow());
        } else {
-@@ -612,7 +604,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
+@@ -611,7 +603,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
        }
        break;
      case IDC_TASK_MANAGER:
@@ -53,7 +53,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
        if (bmd) {
          chrome::OpenTaskManager(bmd->GetBrowserWindow());
        } else {
-@@ -621,8 +612,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
+@@ -620,8 +611,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
        }
        break;
      case IDC_EXIT:
@@ -62,7 +62,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
        chrome::CloseAllBrowsers();
        break;
      case IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND: {
-@@ -631,8 +620,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
+@@ -630,8 +619,6 @@ void BackgroundModeManager::ExecuteCommand(int command_id, int event_flags) {
        DCHECK(IsBackgroundModePrefEnabled());
        DCHECK(KeepAliveRegistry::GetInstance()->IsKeepingAlive());
  
@@ -71,7 +71,7 @@ index 481bfdda58e7..c2f0eaa3a246 100644
        // Set the background mode pref to "disabled" - the resulting notification
        // will result in a call to DisableBackgroundMode().
        PrefService* service = g_browser_process->local_state();
-@@ -693,8 +680,6 @@ void BackgroundModeManager::StartBackgroundMode() {
+@@ -691,8 +678,6 @@ void BackgroundModeManager::StartBackgroundMode() {
    if (in_background_mode_)
      return;
  

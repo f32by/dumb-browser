@@ -1,8 +1,27 @@
 diff --git a/extensions/browser/extension_protocols.cc b/extensions/browser/extension_protocols.cc
-index fe04db6a1901..d72ad28a00ec 100644
+index 0e5d56c08b65..4c199f3ddc8e 100644
 --- a/extensions/browser/extension_protocols.cc
 +++ b/extensions/browser/extension_protocols.cc
-@@ -592,20 +592,6 @@ class ExtensionURLLoaderFactory
+@@ -70,7 +70,6 @@
+ #include "extensions/common/extension.h"
+ #include "extensions/common/extension_resource.h"
+ #include "extensions/common/file_util.h"
+-#include "extensions/common/identifiability_metrics.h"
+ #include "extensions/common/manifest_handlers/background_info.h"
+ #include "extensions/common/manifest_handlers/csp_info.h"
+ #include "extensions/common/manifest_handlers/icons_handler.h"
+@@ -157,10 +156,6 @@ class ResultRecordingClient : public network::mojom::URLLoaderClient {
+   }
+ 
+   void OnComplete(const network::URLLoaderCompletionStatus& status) override {
+-    RecordExtensionResourceAccessResult(
+-        ukm_source_id_, url_,
+-        status.error_code == net::OK ? ExtensionResourceAccessResult::kSuccess
+-                                     : ExtensionResourceAccessResult::kFailure);
+     real_client_->OnComplete(status);
+   }
+ 
+@@ -591,20 +586,6 @@ class ExtensionURLLoaderFactory : public network::SelfDeletingURLLoaderFactory {
                                &follow_symlinks_anywhere);
      }
  

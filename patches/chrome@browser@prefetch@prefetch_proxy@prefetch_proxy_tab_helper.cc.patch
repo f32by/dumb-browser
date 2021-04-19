@@ -1,16 +1,17 @@
 diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-index 202237039a03..da816035e0a9 100644
+index 38ded707e6ef..e04c09fad544 100644
 --- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
 +++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-@@ -34,7 +34,6 @@
+@@ -35,8 +35,6 @@
  #include "components/google/core/common/google_util.h"
  #include "components/language/core/browser/pref_names.h"
- #include "components/no_state_prefetch/browser/prerender_manager.h"
+ #include "components/no_state_prefetch/browser/no_state_prefetch_manager.h"
 -#include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
+-#include "components/page_load_metrics/browser/page_load_metrics_event.h"
  #include "components/prefs/pref_service.h"
  #include "components/search_engines/template_url_service.h"
  #include "components/version_info/version_info.h"
-@@ -96,17 +95,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
+@@ -97,17 +95,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
    return end - start;
  }
  
@@ -22,13 +23,13 @@ index 202237039a03..da816035e0a9 100644
 -    return;
 -
 -  metrics_web_contents_observer->BroadcastEventToObservers(
--      PrefetchProxyTabHelper::PrefetchingLikelyEventKey());
+-      page_load_metrics::PageLoadMetricsEvent::PREFETCH_LIKELY);
 -}
 -
  void OnGotCookieList(
      const GURL& url,
      PrefetchProxyTabHelper::OnEligibilityResultCallback result_callback,
-@@ -354,11 +342,6 @@ void PrefetchProxyTabHelper::NotifyPrefetchProbeLatency(
+@@ -396,11 +383,6 @@ void PrefetchProxyTabHelper::NotifyPrefetchProbeLatency(
  void PrefetchProxyTabHelper::ReportProbeResult(
      const GURL& url,
      PrefetchProxyProbeResult result) {
@@ -40,7 +41,7 @@ index 202237039a03..da816035e0a9 100644
  }
  
  void PrefetchProxyTabHelper::OnPrefetchStatusUpdate(
-@@ -564,8 +547,6 @@ void PrefetchProxyTabHelper::DidFinishNavigation(
+@@ -608,8 +590,6 @@ void PrefetchProxyTabHelper::DidFinishNavigation(
        std::make_unique<CurrentPageLoad>(navigation_handle);
  
    if (page_->srp_metrics_->predicted_urls_count_ > 0) {
@@ -49,8 +50,19 @@ index 202237039a03..da816035e0a9 100644
      // If the previous page load was a Google SRP, the AfterSRPMetrics class
      // needs to be created now from the SRP's |page_| and then set on the new
      // one when we set it at the end of this method.
-@@ -805,13 +786,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
-   base::UmaHistogramSparse("IsolatedPrerender.Prefetch.Mainframe.NetError",
+@@ -871,10 +851,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
+ 
+   if (page_->decoy_urls_.find(url) != page_->decoy_urls_.end()) {
+     if (loader->CompletionStatus()) {
+-      page_->prefetch_metrics_collector_->OnDecoyPrefetchComplete(
+-          url, page_->original_prediction_ordering_.find(url)->second,
+-          loader->ResponseInfo() ? loader->ResponseInfo()->Clone() : nullptr,
+-          loader->CompletionStatus().value());
+     }
+ 
+     for (auto& observer : observer_list_) {
+@@ -888,13 +864,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
+   base::UmaHistogramSparse("PrefetchProxy.Prefetch.Mainframe.NetError",
                             std::abs(loader->NetError()));
  
 -  if (loader->CompletionStatus()) {
@@ -63,7 +75,7 @@ index 202237039a03..da816035e0a9 100644
    if (loader->NetError() != net::OK) {
      OnPrefetchStatusUpdate(
          url, PrefetchProxyPrefetchStatus::kPrefetchFailedNetError);
-@@ -974,8 +948,6 @@ void PrefetchProxyTabHelper::DoNoStatePrefetch() {
+@@ -1056,8 +1025,6 @@ void PrefetchProxyTabHelper::DoNoStatePrefetch() {
        service->OnAboutToNoStatePrefetch(url, CopyPrefetchResponseForNSP(url));
    DCHECK_EQ(manager, service->GetSubresourceManagerForURL(url));
  
@@ -72,7 +84,7 @@ index 202237039a03..da816035e0a9 100644
    manager->SetCreateIsolatedLoaderFactoryCallback(
        base::BindRepeating(&PrefetchProxyTabHelper::CreateNewURLLoaderFactory,
                            weak_factory_.GetWeakPtr()));
-@@ -1103,17 +1075,6 @@ void PrefetchProxyTabHelper::OnPredictionUpdated(
+@@ -1185,17 +1152,6 @@ void PrefetchProxyTabHelper::OnPredictionUpdated(
      return;
    }
  
@@ -90,16 +102,15 @@ index 202237039a03..da816035e0a9 100644
    page_->srp_metrics_->predicted_urls_count_ +=
        prediction.value().sorted_predicted_urls().size();
  
-@@ -1256,12 +1217,6 @@ void PrefetchProxyTabHelper::OnGotEligibilityResult(
+@@ -1350,11 +1306,6 @@ void PrefetchProxyTabHelper::OnGotEligibilityResult(
    if (!eligible) {
      if (status) {
-       OnPrefetchStatusUpdate(url, status.value());
--
+       OnPrefetchStatusUpdate(url, *status);
 -      if (page_->prefetch_metrics_collector_) {
 -        page_->prefetch_metrics_collector_->OnMainframeResourceNotEligible(
 -            url, page_->original_prediction_ordering_.find(url)->second,
 -            *status);
 -      }
-     }
-     return;
-   }
+ 
+       // Consider whether to send a decoy request to mask any user state (i.e.:
+       // cookies), and if so randomly decide whether to send a decoy request.

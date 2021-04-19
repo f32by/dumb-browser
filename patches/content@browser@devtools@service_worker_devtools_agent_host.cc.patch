@@ -1,5 +1,5 @@
 diff --git a/content/browser/devtools/service_worker_devtools_agent_host.cc b/content/browser/devtools/service_worker_devtools_agent_host.cc
-index e91535d8aee6..4e130190a361 100644
+index 46c6708c4de5..7c05a8dfcf91 100644
 --- a/content/browser/devtools/service_worker_devtools_agent_host.cc
 +++ b/content/browser/devtools/service_worker_devtools_agent_host.cc
 @@ -59,8 +59,6 @@ ServiceWorkerDevToolsAgentHost::ServiceWorkerDevToolsAgentHost(
@@ -11,18 +11,17 @@ index e91535d8aee6..4e130190a361 100644
      const base::UnguessableToken& devtools_worker_token)
      : DevToolsAgentHostImpl(devtools_worker_token.ToString()),
        state_(WORKER_NOT_READY),
-@@ -73,8 +71,8 @@ ServiceWorkerDevToolsAgentHost::ServiceWorkerDevToolsAgentHost(
+@@ -73,8 +71,7 @@ ServiceWorkerDevToolsAgentHost::ServiceWorkerDevToolsAgentHost(
        scope_(scope),
        version_installed_time_(is_installed_version ? base::Time::Now()
                                                     : base::Time()),
 -      cross_origin_embedder_policy_(std::move(cross_origin_embedder_policy)),
 -      coep_reporter_(std::move(coep_reporter)) {
-+      cross_origin_embedder_policy_(std::move(cross_origin_embedder_policy))
-+      {
++      cross_origin_embedder_policy_(std::move(cross_origin_embedder_policy)) {
+   UpdateProcessHost();
    NotifyCreated();
  }
- 
-@@ -160,11 +158,8 @@ void ServiceWorkerDevToolsAgentHost::WorkerReadyForInspection(
+@@ -161,11 +158,8 @@ void ServiceWorkerDevToolsAgentHost::WorkerReadyForInspection(
  }
  
  void ServiceWorkerDevToolsAgentHost::UpdateCrossOriginEmbedderPolicy(
@@ -35,7 +34,7 @@ index e91535d8aee6..4e130190a361 100644
  }
  
  void ServiceWorkerDevToolsAgentHost::WorkerRestarted(int worker_process_id,
-@@ -202,16 +197,6 @@ void ServiceWorkerDevToolsAgentHost::UpdateLoaderFactories(
+@@ -223,16 +217,6 @@ void ServiceWorkerDevToolsAgentHost::UpdateLoaderFactories(
    }
    const url::Origin origin = url::Origin::Create(url_);
  
@@ -52,13 +51,13 @@ index e91535d8aee6..4e130190a361 100644
    // Use the default CrossOriginEmbedderPolicy if
    // |cross_origin_embedder_policy_| is nullopt. It's acceptable because the
    // factory bundles are updated with correct COEP value before any subresource
-@@ -220,13 +205,11 @@ void ServiceWorkerDevToolsAgentHost::UpdateLoaderFactories(
+@@ -241,13 +225,11 @@ void ServiceWorkerDevToolsAgentHost::UpdateLoaderFactories(
        rph, worker_route_id_, origin,
        cross_origin_embedder_policy_ ? cross_origin_embedder_policy_.value()
                                      : network::CrossOriginEmbedderPolicy(),
 -      std::move(coep_reporter_for_script_loader),
        ContentBrowserClient::URLLoaderFactoryType::kServiceWorkerScript);
-   auto subresource_bundle = EmbeddedWorkerInstance::CreateFactoryBundleOnUI(
+   auto subresource_bundle = EmbeddedWorkerInstance::CreateFactoryBundle(
        rph, worker_route_id_, origin,
        cross_origin_embedder_policy_ ? cross_origin_embedder_policy_.value()
                                      : network::CrossOriginEmbedderPolicy(),
@@ -66,11 +65,11 @@ index e91535d8aee6..4e130190a361 100644
        ContentBrowserClient::URLLoaderFactoryType::kServiceWorkerSubResource);
  
    auto* version = context_wrapper_->GetLiveVersion(version_id_);
-@@ -247,7 +230,6 @@ ServiceWorkerDevToolsAgentHost::CreateNetworkFactoryParamsForDevTools() {
+@@ -268,7 +250,6 @@ ServiceWorkerDevToolsAgentHost::CreateNetworkFactoryParamsForDevTools() {
        net::IsolationInfo::Create(net::IsolationInfo::RequestType::kOther,
                                   origin, origin,
                                   net::SiteForCookies::FromOrigin(origin)),
 -      /*coep_reporter=*/mojo::NullRemote(),
+       static_cast<StoragePartitionImpl*>(rph->GetStoragePartition())
+           ->CreateAuthCertObserverForServiceWorker(),
        /*debug_tag=*/"SWDTAH::CreateNetworkFactoryParamsForDevTools");
-   return {url::Origin::Create(GetURL()), net::SiteForCookies::FromUrl(GetURL()),
-           std::move(factory)};

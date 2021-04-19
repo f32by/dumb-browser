@@ -1,8 +1,8 @@
 diff --git a/content/browser/web_contents/web_contents_impl.h b/content/browser/web_contents/web_contents_impl.h
-index 84ecccc204ee..6f745bd7c14b 100644
+index a9ae74257380..a4759a747658 100644
 --- a/content/browser/web_contents/web_contents_impl.h
 +++ b/content/browser/web_contents/web_contents_impl.h
-@@ -705,8 +705,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
+@@ -710,8 +710,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
                                     int context_id) override;
    void OnFrameAudioStateChanged(RenderFrameHost* host,
                                  bool is_audible) override;
@@ -10,12 +10,4 @@ index 84ecccc204ee..6f745bd7c14b 100644
 -  GetRecordAggregateWatchTimeCallback() override;
    RenderFrameHostImpl* GetMainFrameForInnerDelegate(
        FrameTreeNode* frame_tree_node) override;
-   bool IsFrameLowPriority(RenderFrameHost* render_frame_host) override;
-@@ -966,7 +964,6 @@ class CONTENT_EXPORT WebContentsImpl : public WebContents,
-   void SendScreenRects() override;
-   TextInputManager* GetTextInputManager() override;
-   bool IsWidgetForMainFrame(RenderWidgetHostImpl* render_widget_host) override;
--  bool AddDomainInfoToRapporSample(rappor::Sample* sample) override;
-   bool IsShowingContextMenuOnPage() const override;
-   void DidChangeScreenOrientation() override;
-   // The following function is already listed under RenderViewHostDelegate
+   void RegisterProtocolHandler(RenderFrameHostImpl* source,

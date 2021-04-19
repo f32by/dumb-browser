@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d_api_test.cc b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d_api_test.cc
+index 9b5fe27f2172..6b8a0263afe3 100644
+--- a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d_api_test.cc
++++ b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d_api_test.cc
+@@ -413,8 +413,6 @@ class StudyParticipationRaii {
+ TEST_F(CanvasRenderingContext2DAPITest, IdentifiabilityStudyMaxOperations) {
+   StudyParticipationRaii study_participation_raii;
+   constexpr int kMaxOperations = 5;
+-  IdentifiabilityStudyHelper::ScopedMaxOperationsSetter max_operations_setter(
+-      kMaxOperations);
+   CreateContext(kNonOpaque);
+ 
+   int64_t last_digest = INT64_C(0);

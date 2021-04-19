@@ -1,0 +1,40 @@
+diff --git a/third_party/blink/renderer/modules/webgl/webgl_multi_draw.cc b/third_party/blink/renderer/modules/webgl/webgl_multi_draw.cc
+index 787111f14993..d3dcaca00a89 100644
+--- a/third_party/blink/renderer/modules/webgl/webgl_multi_draw.cc
++++ b/third_party/blink/renderer/modules/webgl/webgl_multi_draw.cc
+@@ -48,8 +48,6 @@ void WebGLMultiDraw::multiDrawArraysImpl(
+     return;
+   }
+ 
+-  scoped.Context()->RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+   scoped.Context()->ContextGL()->MultiDrawArraysWEBGL(
+       mode, &firsts[firstsOffset], &counts[countsOffset], drawcount);
+ }
+@@ -74,8 +72,6 @@ void WebGLMultiDraw::multiDrawElementsImpl(
+     return;
+   }
+ 
+-  scoped.Context()->RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+   scoped.Context()->ContextGL()->MultiDrawElementsWEBGL(
+       mode, &counts[countsOffset], type, &offsets[offsetsOffset], drawcount);
+ }
+@@ -105,8 +101,6 @@ void WebGLMultiDraw::multiDrawArraysInstancedImpl(
+     return;
+   }
+ 
+-  scoped.Context()->RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+   scoped.Context()->ContextGL()->MultiDrawArraysInstancedWEBGL(
+       mode, &firsts[firstsOffset], &counts[countsOffset],
+       &instanceCounts[instanceCountsOffset], drawcount);
+@@ -138,8 +132,6 @@ void WebGLMultiDraw::multiDrawElementsInstancedImpl(
+     return;
+   }
+ 
+-  scoped.Context()->RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+   scoped.Context()->ContextGL()->MultiDrawElementsInstancedWEBGL(
+       mode, &counts[countsOffset], type, &offsets[offsetsOffset],
+       &instanceCounts[instanceCountsOffset], drawcount);

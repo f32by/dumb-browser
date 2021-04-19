@@ -1,10 +1,10 @@
 diff --git a/chrome/browser/background_sync/background_sync_delegate_impl.h b/chrome/browser/background_sync/background_sync_delegate_impl.h
-index 74b3c8aecfd6..795879f93049 100644
+index 8159bd2f72d0..40c2933b0db3 100644
 --- a/chrome/browser/background_sync/background_sync_delegate_impl.h
 +++ b/chrome/browser/background_sync/background_sync_delegate_impl.h
-@@ -15,10 +15,6 @@
- class Profile;
- class HostContentSettingsMap;
+@@ -22,10 +22,6 @@ class HostContentSettingsMap;
+ class ScopedKeepAlive;
+ class ScopedProfileKeepAlive;
  
 -namespace ukm {
 -class UkmBackgroundRecorderService;
@@ -13,9 +13,9 @@ index 74b3c8aecfd6..795879f93049 100644
  // Chrome's customization of the logic in components/background_sync
  class BackgroundSyncDelegateImpl
      : public background_sync::BackgroundSyncDelegate,
-@@ -32,9 +28,6 @@ class BackgroundSyncDelegateImpl
-   explicit BackgroundSyncDelegateImpl(Profile* profile);
-   ~BackgroundSyncDelegateImpl() override;
+@@ -59,9 +55,6 @@ class BackgroundSyncDelegateImpl
+   CreateBackgroundSyncEventKeepAlive() override;
+ #endif
  
 -  void GetUkmSourceId(const url::Origin& origin,
 -                      base::OnceCallback<void(base::Optional<ukm::SourceId>)>
@@ -23,7 +23,7 @@ index 74b3c8aecfd6..795879f93049 100644
    void Shutdown() override;
    HostContentSettingsMap* GetHostContentSettingsMap() override;
    bool IsProfileOffTheRecord() override;
-@@ -60,7 +53,6 @@ class BackgroundSyncDelegateImpl
+@@ -87,7 +80,6 @@ class BackgroundSyncDelegateImpl
   private:
    Profile* profile_;
    bool off_the_record_;

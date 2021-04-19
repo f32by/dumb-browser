@@ -1,13 +1,13 @@
 diff --git a/chrome/browser/ui/login/login_handler.cc b/chrome/browser/ui/login/login_handler.cc
-index c88d6e2be3f0..16dfd1443615 100644
+index 4e52654f965b..1bd5bbfc4e4c 100644
 --- a/chrome/browser/ui/login/login_handler.cc
 +++ b/chrome/browser/ui/login/login_handler.cc
 @@ -20,7 +20,6 @@
  #include "chrome/browser/password_manager/chrome_password_manager_client.h"
- #include "chrome/browser/prefetch/no_state_prefetch/chrome_prerender_contents_delegate.h"
+ #include "chrome/browser/prefetch/no_state_prefetch/chrome_no_state_prefetch_contents_delegate.h"
  #include "chrome/browser/tab_contents/tab_util.h"
 -#include "components/autofill/core/browser/logging/log_manager.h"
- #include "components/no_state_prefetch/browser/prerender_contents.h"
+ #include "components/no_state_prefetch/browser/no_state_prefetch_contents.h"
  #include "components/password_manager/core/browser/browser_save_password_progress_logger.h"
  #include "components/password_manager/core/browser/http_auth_manager.h"
 @@ -148,23 +147,7 @@ void LoginHandler::SetAuth(const base::string16& username,

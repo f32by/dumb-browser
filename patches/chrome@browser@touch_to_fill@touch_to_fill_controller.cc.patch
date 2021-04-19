@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/touch_to_fill/touch_to_fill_controller.cc b/chrome/browser/touch_to_fill/touch_to_fill_controller.cc
-index 569014bf3e55..62081f644550 100644
+index 7d69cf1b09e4..8734e055575a 100644
 --- a/chrome/browser/touch_to_fill/touch_to_fill_controller.cc
 +++ b/chrome/browser/touch_to_fill/touch_to_fill_controller.cc
-@@ -15,11 +15,7 @@
+@@ -16,11 +16,7 @@
  #include "components/password_manager/core/browser/origin_credential_store.h"
  #include "components/password_manager/core/browser/password_manager_driver.h"
  #include "components/password_manager/core/browser/password_manager_metrics_util.h"
@@ -14,7 +14,7 @@ index 569014bf3e55..62081f644550 100644
  #include "services/network/public/cpp/is_potentially_trustworthy.h"
  #include "url/origin.h"
  
-@@ -33,9 +29,7 @@ TouchToFillController::TouchToFillController(
+@@ -53,9 +49,7 @@ TouchToFillController::TouchToFillController(
  
  TouchToFillController::TouchToFillController(
      ChromePasswordManagerClient* password_client)
@@ -25,7 +25,7 @@ index 569014bf3e55..62081f644550 100644
  
  TouchToFillController::~TouchToFillController() = default;
  
-@@ -72,15 +66,9 @@ void TouchToFillController::OnCredentialSelected(
+@@ -92,15 +86,9 @@ void TouchToFillController::OnCredentialSelected(
    if (!driver_)
      return;
  
@@ -41,7 +41,7 @@ index 569014bf3e55..62081f644550 100644
  }
  
  void TouchToFillController::OnManagePasswordsSelected() {
-@@ -92,10 +80,6 @@ void TouchToFillController::OnManagePasswordsSelected() {
+@@ -112,10 +100,6 @@ void TouchToFillController::OnManagePasswordsSelected() {
        ->TouchToFillClosed(ShowVirtualKeyboard(false));
    password_client_->NavigateToManagePasswordsPage(
        password_manager::ManagePasswordsReferrer::kTouchToFill);
@@ -52,7 +52,7 @@ index 569014bf3e55..62081f644550 100644
  }
  
  void TouchToFillController::OnDismiss() {
-@@ -104,10 +88,6 @@ void TouchToFillController::OnDismiss() {
+@@ -124,10 +108,6 @@ void TouchToFillController::OnDismiss() {
      return;
  
    std::exchange(driver_, nullptr)->TouchToFillClosed(ShowVirtualKeyboard(true));

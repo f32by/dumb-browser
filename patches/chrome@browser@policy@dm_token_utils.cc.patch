@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/policy/dm_token_utils.cc b/chrome/browser/policy/dm_token_utils.cc
+index 9c99cc234cdd..5ec91ee74883 100644
+--- a/chrome/browser/policy/dm_token_utils.cc
++++ b/chrome/browser/policy/dm_token_utils.cc
+@@ -17,7 +17,6 @@
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/policy/chrome_browser_policy_connector.h"
+ #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
+-#include "components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h"
+ #endif
+ 
+ namespace policy {
+@@ -48,9 +47,7 @@ DMToken GetDMToken(Profile* const profile, bool only_affiliated) {
+                        policy_manager->core()->client()->dm_token());
+   }
+ #elif !defined(OS_ANDROID)
+-  if (dm_token.is_empty() && g_browser_process->browser_policy_connector()
+-                                 ->chrome_browser_cloud_management_controller()
+-                                 ->IsEnabled()) {
++  if (dm_token.is_empty()) {
+     dm_token = BrowserDMTokenStorage::Get()->RetrieveDMToken();
+   }
+ #endif

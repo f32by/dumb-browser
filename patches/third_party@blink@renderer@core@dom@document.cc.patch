@@ -1,8 +1,47 @@
 diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
-index 93b923688e9d..9acd7d984500 100644
+index c067ee55319f..6db65d2c6f7c 100644
 --- a/third_party/blink/renderer/core/dom/document.cc
 +++ b/third_party/blink/renderer/core/dom/document.cc
-@@ -6265,16 +6265,6 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
+@@ -60,8 +60,6 @@
+ #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/common/feature_policy/document_policy_features.h"
+ #include "third_party/blink/public/common/features.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_sample_collector.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom-blink-forward.h"
+ #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
+@@ -308,7 +306,6 @@
+ #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
+ #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
+ #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
+-#include "third_party/blink/renderer/platform/fonts/font_matching_metrics.h"
+ #include "third_party/blink/renderer/platform/geometry/length_functions.h"
+ #include "third_party/blink/renderer/platform/heap/heap.h"
+ #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
+@@ -2980,8 +2977,6 @@ void Document::Shutdown() {
+   if (num_canvases_ > 0)
+     UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
+ 
+-  GetFontMatchingMetrics()->PublishAllMetrics();
+-
+   GetViewportData().Shutdown();
+ 
+   View()->Dispose();
+@@ -3089,12 +3084,6 @@ void Document::Shutdown() {
+   lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
+   DCHECK(!View()->IsAttached());
+ 
+-  // Don't create a |ukm_recorder_| and |ukm_source_id_| unless necessary.
+-  if (IdentifiabilityStudySettings::Get()->IsActive()) {
+-    IdentifiabilitySampleCollector::Get()->FlushSource(UkmRecorder(),
+-                                                       UkmSourceID());
+-  }
+-
+   mime_handler_view_before_unload_event_listener_ = nullptr;
+ 
+   resource_coordinator_.reset();
+@@ -6219,16 +6208,6 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
    return promise;
  }
  
@@ -19,7 +58,7 @@ index 93b923688e9d..9acd7d984500 100644
  ScriptPromise Document::interestCohort(ScriptState* script_state,
                                         ExceptionState& exception_state) {
    if (!GetFrame()) {
-@@ -6298,33 +6288,6 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
+@@ -6252,33 +6231,6 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
  
    ScriptPromise promise = resolver->Promise();
  
@@ -53,3 +92,19 @@ index 93b923688e9d..9acd7d984500 100644
    return promise;
  }
  
+@@ -7143,15 +7095,6 @@ ukm::SourceId Document::UkmSourceID() const {
+   return ukm_source_id_;
+ }
+ 
+-FontMatchingMetrics* Document::GetFontMatchingMetrics() {
+-  if (font_matching_metrics_)
+-    return font_matching_metrics_.get();
+-  font_matching_metrics_ = std::make_unique<FontMatchingMetrics>(
+-      IsInMainFrame(), UkmRecorder(), UkmSourceID(),
+-      GetTaskRunner(TaskType::kInternalDefault));
+-  return font_matching_metrics_.get();
+-}
+-
+ bool Document::AllowInlineEventHandler(Node* node,
+                                        EventListener* listener,
+                                        const String& context_url,

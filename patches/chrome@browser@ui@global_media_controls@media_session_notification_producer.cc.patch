@@ -1,0 +1,90 @@
+diff --git a/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc b/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
+index e0b3cc932c95..6e2b418c3a41 100644
+--- a/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
++++ b/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
+@@ -20,42 +20,6 @@
+ #include "services/metrics/public/cpp/ukm_builders.h"
+ #include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+-namespace {
+-
+-// The maximum number of actions we will record to UKM for a specific source.
+-constexpr int kMaxActionsRecordedToUKM = 100;
+-
+-// These values are persisted to logs. Entries should not be renumbered and
+-// numeric values should never be reused.
+-enum class MediaNotificationClickSource {
+-  kMedia = 0,
+-  kPresentation,
+-  kMediaFling,
+-  kMaxValue = kMediaFling
+-};
+-
+-// Here we check to see if the WebContents is focused. Note that since Session
+-// is a WebContentsObserver, we could in theory listen for
+-// |OnWebContentsFocused()| and |OnWebContentsLostFocus()|. However, this won't
+-// actually work since focusing the MediaDialogView causes the WebContents to
+-// "lose focus", so we'd never be focused.
+-bool IsWebContentsFocused(content::WebContents* web_contents) {
+-  DCHECK(web_contents);
+-  Browser* browser = chrome::FindBrowserWithWebContents(web_contents);
+-  if (!browser)
+-    return false;
+-
+-  // If the given WebContents is not in the focused window, then it's not
+-  // focused. Note that we know a Browser is focused because otherwise the user
+-  // could not interact with the MediaDialogView.
+-  if (BrowserList::GetInstance()->GetLastActive() != browser)
+-    return false;
+-
+-  return browser->tab_strip_model()->GetActiveWebContents() == web_contents;
+-}
+-
+-}  // namespace
+-
+ MediaSessionNotificationProducer::MediaSessionNotificationProducer(
+     MediaNotificationService* service,
+     Profile* profile,
+@@ -187,9 +151,6 @@ void MediaSessionNotificationProducer::OnContainerClicked(
+   if (!delegate)
+     return;
+ 
+-  base::UmaHistogramEnumeration("Media.Notification.Click",
+-                                MediaNotificationClickSource::kMedia);
+-
+   delegate->ActivateContents(web_contents);
+ }
+ 
+@@ -343,32 +304,6 @@ bool MediaSessionNotificationProducer::HasSessionForWebContents(
+                      });
+ }
+ 
+-void MediaSessionNotificationProducer::LogMediaSessionActionButtonPressed(
+-    const std::string& id,
+-    media_session::mojom::MediaSessionAction action) {
+-  auto it = sessions_.find(id);
+-  if (it == sessions_.end())
+-    return;
+-
+-  content::WebContents* web_contents = it->second.web_contents();
+-  if (!web_contents)
+-    return;
+-
+-  base::UmaHistogramBoolean("Media.GlobalMediaControls.UserActionFocus",
+-                            IsWebContentsFocused(web_contents));
+-
+-  ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
+-  ukm::SourceId source_id =
+-      ukm::GetSourceIdForWebContentsDocument(web_contents);
+-
+-  if (++actions_recorded_to_ukm_[source_id] > kMaxActionsRecordedToUKM)
+-    return;
+-
+-  ukm::builders::Media_GlobalMediaControls_ActionButtonPressed(source_id)
+-      .SetMediaSessionAction(static_cast<int64_t>(action))
+-      .Record(recorder);
+-}
+-
+ base::CallbackListSubscription
+ MediaSessionNotificationProducer::RegisterAudioOutputDeviceDescriptionsCallback(
+     MediaNotificationDeviceProvider::GetOutputDevicesCallback callback) {

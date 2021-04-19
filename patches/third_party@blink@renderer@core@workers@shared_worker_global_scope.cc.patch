@@ -1,16 +1,8 @@
 diff --git a/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc b/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
-index 8121568e065f..fb83beb971fe 100644
+index 361d98430087..19bcc4df8c45 100644
 --- a/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
-@@ -48,7 +48,6 @@
- #include "third_party/blink/renderer/core/workers/shared_worker_thread.h"
- #include "third_party/blink/renderer/core/workers/worker_classic_script_loader.h"
- #include "third_party/blink/renderer/core/workers/worker_module_tree_client.h"
--#include "third_party/blink/renderer/core/workers/worker_reporting_proxy.h"
- #include "third_party/blink/renderer/platform/loader/fetch/fetch_client_settings_object_snapshot.h"
- #include "third_party/blink/renderer/platform/weborigin/security_policy.h"
- 
-@@ -240,10 +239,8 @@ void SharedWorkerGlobalScope::DidFetchClassicScript(
+@@ -240,10 +240,8 @@ void SharedWorkerGlobalScope::DidFetchClassicScript(
      // Step 12.1. "Queue a task to fire an event named error at worker."
      // Step 12.2. "Run the environment discarding steps for inside settings."
      // Step 12.3. "Return."

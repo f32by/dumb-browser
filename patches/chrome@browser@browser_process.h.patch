@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process.h b/chrome/browser/browser_process.h
-index 1ea08a7ad6ae..e4bc11303fb4 100644
+index 3d634db18900..66469242d23c 100644
 --- a/chrome/browser/browser_process.h
 +++ b/chrome/browser/browser_process.h
 @@ -37,7 +37,6 @@ class PrefService;
@@ -29,26 +29,7 @@ index 1ea08a7ad6ae..e4bc11303fb4 100644
  namespace variations {
  class VariationsService;
  }
-@@ -101,10 +88,6 @@ class PrintJobManager;
- class PrintPreviewDialogController;
- }
- 
--namespace rappor {
--class RapporServiceImpl;
--}
--
- namespace resource_coordinator {
- class ResourceCoordinatorParts;
- class TabManager;
-@@ -134,7 +117,6 @@ class BrowserProcess {
- 
-   // Services: any of these getters may return NULL
-   virtual metrics::MetricsService* metrics_service() = 0;
--  virtual rappor::RapporServiceImpl* rappor_service() = 0;
-   virtual ProfileManager* profile_manager() = 0;
-   virtual PrefService* local_state() = 0;
-   virtual scoped_refptr<network::SharedURLLoaderFactory>
-@@ -162,9 +144,6 @@ class BrowserProcess {
+@@ -157,9 +144,6 @@ class BrowserProcess {
    // network quality change events.
    virtual network::NetworkQualityTracker* network_quality_tracker() = 0;
  
@@ -58,7 +39,7 @@ index 1ea08a7ad6ae..e4bc11303fb4 100644
    // Starts and manages the policy system.
    virtual policy::ChromeBrowserPolicyConnector* browser_policy_connector() = 0;
  
-@@ -212,19 +191,6 @@ class BrowserProcess {
+@@ -209,19 +193,6 @@ class BrowserProcess {
    // on this platform (or this is a unit test).
    virtual StatusTray* status_tray() = 0;
  
@@ -78,7 +59,7 @@ index 1ea08a7ad6ae..e4bc11303fb4 100644
    // Returns the StartupData which owns any pre-created objects in //chrome
    // before the full browser starts.
    virtual StartupData* startup_data() = 0;
-@@ -263,8 +229,6 @@ class BrowserProcess {
+@@ -260,8 +231,6 @@ class BrowserProcess {
    virtual resource_coordinator::ResourceCoordinatorParts*
    resource_coordinator_parts() = 0;
  

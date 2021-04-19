@@ -1,8 +1,13 @@
 diff --git a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
-index fa2de73d0439..25a3a185c749 100644
+index 8fe1b461720b..3a9ee873cc2a 100644
 --- a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
 +++ b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
-@@ -19,8 +19,6 @@
+@@ -14,13 +14,10 @@
+ #include "base/path_service.h"
+ #include "base/task/post_task.h"
+ #include "base/task/thread_pool.h"
+-#include "base/threading/thread_task_runner_handle.h"
+ #include "build/build_config.h"
  #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
  #include "components/enterprise/browser/controller/chrome_browser_cloud_management_helper.h"
  #include "components/enterprise/browser/enterprise_switches.h"
@@ -11,22 +16,22 @@ index fa2de73d0439..25a3a185c749 100644
  #include "components/policy/core/browser/browser_policy_connector.h"
  #include "components/policy/core/common/cloud/chrome_browser_cloud_management_metrics.h"
  #include "components/policy/core/common/cloud/cloud_external_data_manager.h"
-@@ -163,14 +161,6 @@ void ChromeBrowserCloudManagementController::Init(
+@@ -163,14 +160,6 @@ void ChromeBrowserCloudManagementController::Init(
      delegate_->InitializeOAuthTokenFactory(url_loader_factory, local_state);
    }
  
--  base::ThreadPool::PostTask(
+-  // Post the task of CreateReportScheduler to run on best effort after launch
+-  // is completed.
+-  delegate_->GetBestEffortTaskRunner()->PostTask(
 -      FROM_HERE,
--      {base::TaskPriority::BEST_EFFORT,
--       base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN},
 -      base::BindOnce(
--          &ChromeBrowserCloudManagementController::CreateReportSchedulerAsync,
--          base::Unretained(this), base::ThreadTaskRunnerHandle::Get()));
+-          &ChromeBrowserCloudManagementController::CreateReportScheduler,
+-          weak_factory_.GetWeakPtr()));
 -
    MachineLevelUserCloudPolicyManager* policy_manager =
        delegate_->GetMachineLevelUserCloudPolicyManager();
    DeviceManagementService* device_management_service =
-@@ -270,11 +260,6 @@ void ChromeBrowserCloudManagementController::InvalidatePolicies() {
+@@ -271,11 +260,6 @@ void ChromeBrowserCloudManagementController::InvalidatePolicies() {
      policy_fetcher_->RemoveClientObserver(this);
      policy_fetcher_->Disconnect();
    }
@@ -38,7 +43,7 @@ index fa2de73d0439..25a3a185c749 100644
  }
  
  void ChromeBrowserCloudManagementController::InvalidateDMTokenCallback(
-@@ -317,8 +302,6 @@ void ChromeBrowserCloudManagementController::OnServiceAccountSet(
+@@ -318,8 +302,6 @@ void ChromeBrowserCloudManagementController::OnServiceAccountSet(
  
  void ChromeBrowserCloudManagementController::ShutDown() {
    delegate_->ShutDown();
@@ -47,7 +52,7 @@ index fa2de73d0439..25a3a185c749 100644
  }
  
  void ChromeBrowserCloudManagementController::NotifyPolicyRegisterFinished(
-@@ -397,9 +380,6 @@ void ChromeBrowserCloudManagementController::
+@@ -398,25 +380,10 @@ void ChromeBrowserCloudManagementController::
    VLOG(1) << "Fetch policy after enrollment.";
    policy_fetcher_->SetupRegistrationAndFetchPolicy(
        BrowserDMTokenStorage::Get()->RetrieveDMToken(), client_id);
@@ -57,12 +62,19 @@ index fa2de73d0439..25a3a185c749 100644
  
    NotifyPolicyRegisterFinished(true);
  }
-@@ -419,8 +399,6 @@ void ChromeBrowserCloudManagementController::CreateReportScheduler() {
-       delegate_->GetSharedURLLoaderFactory(),
-       CloudPolicyClient::DeviceDMTokenCallback());
-   cloud_policy_client_->AddObserver(this);
+ 
+-void ChromeBrowserCloudManagementController::CreateReportScheduler() {
+-  cloud_policy_client_ = std::make_unique<policy::CloudPolicyClient>(
+-      delegate_->GetDeviceManagementService(),
+-      delegate_->GetSharedURLLoaderFactory(),
+-      CloudPolicyClient::DeviceDMTokenCallback());
+-  cloud_policy_client_->AddObserver(this);
 -  report_scheduler_ =
 -      delegate_->CreateReportScheduler(cloud_policy_client_.get());
- 
-   NotifyCloudReportingLaunched();
- }
+-
+-  NotifyCloudReportingLaunched();
+-}
+-
+ void ChromeBrowserCloudManagementController::SetGaiaURLLoaderFactory(
+     scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory) {
+   delegate_->SetGaiaURLLoaderFactory(url_loader_factory);

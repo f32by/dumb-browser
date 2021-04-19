@@ -1,5 +1,5 @@
 diff --git a/components/download/internal/common/download_utils.cc b/components/download/internal/common/download_utils.cc
-index 452f1e1fdf10..09a372492c8d 100644
+index 6ad1043959eb..4ddc3c80a10a 100644
 --- a/components/download/internal/common/download_utils.cc
 +++ b/components/download/internal/common/download_utils.cc
 @@ -20,7 +20,6 @@
@@ -10,7 +10,7 @@ index 452f1e1fdf10..09a372492c8d 100644
  #include "components/download/public/common/download_task_runner.h"
  #include "components/download/public/common/download_url_parameters.h"
  #include "net/base/isolation_info.h"
-@@ -435,8 +434,6 @@ DownloadDBEntry CreateDownloadDBEntryFromItem(const DownloadItemImpl& item) {
+@@ -441,8 +440,6 @@ DownloadDBEntry CreateDownloadDBEntryFromItem(const DownloadItemImpl& item) {
  
    download_info.in_progress_info = in_progress_info;
  
@@ -19,7 +19,7 @@ index 452f1e1fdf10..09a372492c8d 100644
    entry.download_info = download_info;
    return entry;
  }
-@@ -448,14 +445,12 @@ std::unique_ptr<DownloadEntry> CreateDownloadEntryFromDownloadDBEntry(
+@@ -454,14 +451,12 @@ std::unique_ptr<DownloadEntry> CreateDownloadEntryFromDownloadDBEntry(
  
    base::Optional<InProgressInfo> in_progress_info =
        entry->download_info->in_progress_info;

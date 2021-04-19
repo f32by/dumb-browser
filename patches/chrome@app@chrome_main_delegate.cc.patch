@@ -1,8 +1,8 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index db85b6b2fcf5..6b5edf8b680f 100644
+index 826ef32f3033..5acced89331e 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
-@@ -41,7 +41,6 @@
+@@ -42,7 +42,6 @@
  #include "chrome/common/chrome_paths_internal.h"
  #include "chrome/common/chrome_result_codes.h"
  #include "chrome/common/chrome_switches.h"
@@ -10,7 +10,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #include "chrome/common/logging_chrome.h"
  #include "chrome/common/url_constants.h"
  #include "chrome/gpu/chrome_content_gpu_client.h"
-@@ -49,14 +48,8 @@
+@@ -50,14 +49,8 @@
  #include "chrome/utility/chrome_content_utility_client.h"
  #include "components/component_updater/component_updater_paths.h"
  #include "components/content_settings/core/common/content_settings_pattern.h"
@@ -25,7 +25,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #include "components/version_info/version_info.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_constants.h"
-@@ -82,11 +75,9 @@
+@@ -83,11 +76,9 @@
  #include "base/debug/close_handle_hook_win.h"
  #include "base/files/important_file_writer_cleaner.h"
  #include "base/win/atl.h"
@@ -37,7 +37,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #include "sandbox/win/src/sandbox.h"
  #include "ui/base/resource/resource_bundle_win.h"
  #endif
-@@ -97,7 +88,6 @@
+@@ -98,7 +89,6 @@
  #include "chrome/browser/chrome_browser_application_mac.h"
  #include "chrome/browser/mac/relauncher.h"
  #include "chrome/browser/shell_integration.h"
@@ -45,7 +45,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #include "ui/base/l10n/l10n_util_mac.h"
  #endif
  
-@@ -105,7 +95,6 @@
+@@ -106,7 +96,6 @@
  #include <locale.h>
  #include <signal.h>
  
@@ -53,7 +53,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #include "chrome/app/shutdown_signal_handlers_posix.h"
  #endif
  
-@@ -144,7 +133,6 @@
+@@ -145,7 +134,6 @@
  #endif
  
  #if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_ANDROID)
@@ -61,7 +61,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #include "v8/include/v8-wasm-trap-handler-posix.h"
  #include "v8/include/v8.h"
  #endif
-@@ -156,7 +144,6 @@
+@@ -157,7 +145,6 @@
  #if defined(OS_MAC) || defined(OS_WIN) || defined(OS_ANDROID) || \
      defined(OS_LINUX) || defined(OS_CHROMEOS)
  #include "chrome/browser/policy/policy_path_parser.h"
@@ -69,7 +69,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #endif
  
  #if BUILDFLAG(ENABLE_NACL)
-@@ -233,31 +220,6 @@ bool IsSandboxedProcess() {
+@@ -234,29 +221,6 @@ bool IsSandboxedProcess() {
    return is_sandboxed_process_func && is_sandboxed_process_func();
  }
  
@@ -87,21 +87,19 @@ index db85b6b2fcf5..6b5edf8b680f 100644
 -  wchar_t exe_file[MAX_PATH] = {};
 -  CHECK(::GetModuleFileName(nullptr, exe_file, base::size(exe_file)));
 -
--  base::string16 product_name;
--  base::string16 version_number;
--  base::string16 channel_name;
--  base::string16 special_build;
+-  std::wstring product_name, version_number, channel_name, special_build;
 -  install_static::GetExecutableVersionDetails(
 -      exe_file, &product_name, &version_number, &special_build, &channel_name);
 -
--  extended_crash_reporting->SetProductStrings(product_name, version_number,
--                                              channel_name, special_build);
+-  extended_crash_reporting->SetProductStrings(
+-      base::WideToUTF16(product_name), base::WideToUTF16(version_number),
+-      base::WideToUTF16(channel_name), base::WideToUTF16(special_build));
 -}
 -
  #endif  // defined(OS_WIN)
  
  #if defined(OS_LINUX) || defined(OS_CHROMEOS)
-@@ -470,46 +432,12 @@ void InitLogging(const std::string& process_type) {
+@@ -469,46 +433,12 @@ void InitLogging(const std::string& process_type) {
  }
  #endif
  
@@ -148,7 +146,25 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  }
  
  ChromeMainDelegate::~ChromeMainDelegate() {
-@@ -641,12 +569,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -569,17 +499,6 @@ void ChromeMainDelegate::PostEarlyInitialization(bool is_running_tests) {
+       new net::NetworkChangeNotifierFactoryAndroid());
+ #endif
+ 
+-  if (base::FeatureList::IsEnabled(
+-          features::kWriteBasicSystemProfileToPersistentHistogramsFile)) {
+-    bool record = true;
+-#if defined(OS_ANDROID)
+-    record =
+-        base::FeatureList::IsEnabled(chrome::android::kUmaBackgroundSessions);
+-#endif
+-    if (record)
+-      chrome_content_browser_client_->startup_data()->RecordCoreSystemProfile();
+-  }
+-
+ #if defined(OS_ANDROID)
+   UmaSessionStats::OnStartup();
+ #endif
+@@ -640,12 +559,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
  #endif
  
@@ -161,7 +177,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      chromeos::ConfigureSwap();
      chromeos::InitializeKstaled();
-@@ -655,10 +577,8 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -654,10 +567,8 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
      // that now.
      chromeos::LockMainProgramText();
  #endif
@@ -172,7 +188,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
    base::sequence_manager::internal::ThreadControllerPowerMonitor::
        InitializeOnMainThread();
  #endif
-@@ -705,29 +625,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -712,29 +623,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
      return true;
    }
  #endif
@@ -202,7 +218,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
-@@ -867,92 +771,15 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -874,92 +769,15 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    }
  #endif
  
@@ -295,7 +311,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  
  #if defined(OS_WIN)
    child_process_logging::Init();
-@@ -1075,39 +902,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -1083,39 +901,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
          locale;
    }
  
@@ -335,7 +351,7 @@ index db85b6b2fcf5..6b5edf8b680f 100644
  #if BUILDFLAG(ENABLE_PDF)
    MaybeInitializeGDI();
  #endif
-@@ -1204,23 +1004,6 @@ void ChromeMainDelegate::ZygoteForked() {
+@@ -1212,23 +1003,6 @@ void ChromeMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

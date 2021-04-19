@@ -1,16 +1,32 @@
 diff --git a/content/browser/browser_interface_binders.cc b/content/browser/browser_interface_binders.cc
-index a45f9d3db09d..62094a933c14 100644
+index 158b443d3e4a..bfb3691a0b17 100644
 --- a/content/browser/browser_interface_binders.cc
 +++ b/content/browser/browser_interface_binders.cc
-@@ -20,7 +20,6 @@
+@@ -21,7 +21,6 @@
  #include "content/browser/cookie_store/cookie_store_context.h"
  #include "content/browser/eye_dropper_chooser_impl.h"
  #include "content/browser/feature_observer.h"
 -#include "content/browser/federated_learning/floc_service_impl.h"
  #include "content/browser/gpu/gpu_process_host.h"
+ #include "content/browser/handwriting/handwriting_recognition_service_factory.h"
  #include "content/browser/image_capture/image_capture_impl.h"
- #include "content/browser/keyboard_lock/keyboard_lock_service_impl.h"
-@@ -158,10 +157,6 @@
+@@ -69,15 +68,12 @@
+ #include "device/vr/public/mojom/vr_service.mojom.h"
+ #include "media/capture/mojom/image_capture.mojom.h"
+ #include "media/mojo/mojom/interface_factory.mojom-forward.h"
+-#include "media/mojo/mojom/media_metrics_provider.mojom.h"
+ #include "media/mojo/mojom/remoting.mojom.h"
+ #include "media/mojo/mojom/video_decode_perf_history.mojom.h"
+ #include "media/mojo/services/video_decode_perf_history.h"
+ #include "services/device/public/mojom/battery_monitor.mojom.h"
+ #include "services/device/public/mojom/sensor_provider.mojom.h"
+ #include "services/device/public/mojom/vibration_manager.mojom.h"
+-#include "services/metrics/public/mojom/ukm_interface.mojom.h"
+-#include "services/metrics/ukm_recorder_interface.h"
+ #include "services/network/public/cpp/cross_origin_embedder_policy.h"
+ #include "services/network/public/mojom/restricted_cookie_manager.mojom.h"
+ #include "services/shape_detection/public/mojom/barcodedetection_provider.mojom.h"
+@@ -163,10 +159,6 @@
  #include "media/mojo/mojom/remoting.mojom-forward.h"
  #endif
  
@@ -21,7 +37,20 @@ index a45f9d3db09d..62094a933c14 100644
  #if defined(OS_MAC)
  #include "content/browser/renderer_host/text_input_host_impl.h"
  #include "third_party/blink/public/mojom/input/text_input_host.mojom.h"
-@@ -623,11 +618,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+@@ -237,12 +229,6 @@ void BindTextInputHost(
+ }
+ #endif
+ 
+-void BindUkmRecorderInterface(
+-    mojo::PendingReceiver<ukm::mojom::UkmRecorderInterface> receiver) {
+-  metrics::UkmRecorderInterface::Create(ukm::UkmRecorder::Get(),
+-                                        std::move(receiver));
+-}
+-
+ void BindBadgeServiceForServiceWorkerOnUI(
+     int service_worker_process_id,
+     const GURL& service_worker_scope,
+@@ -628,11 +614,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
    map->Add<blink::mojom::QuotaManagerHost>(
        base::BindRepeating(&BindQuotaManagerHost, base::Unretained(host)));
  
@@ -33,7 +62,7 @@ index a45f9d3db09d..62094a933c14 100644
    map->Add<blink::mojom::SharedWorkerConnector>(
        base::BindRepeating(&BindSharedWorkerConnector, base::Unretained(host)));
  
-@@ -750,10 +740,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+@@ -764,10 +745,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
        &RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver,
        base::Unretained(host)));
  
@@ -41,10 +70,10 @@ index a45f9d3db09d..62094a933c14 100644
 -      &RenderFrameHostImpl::BindMediaMetricsProviderReceiver,
 -      base::Unretained(host)));
 -
-   map->Add<media::mojom::MediaPlayerHost>(base::BindRepeating(
-       &RenderFrameHostImpl::CreateMediaPlayerHost, base::Unretained(host)));
- 
-@@ -875,8 +861,6 @@ void PopulateBinderMapWithContext(
+ #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
+   map->Add<media::mojom::RemoterFactory>(
+       base::BindRepeating(&RenderFrameHostImpl::BindMediaRemoterFactoryReceiver,
+@@ -886,8 +863,6 @@ void PopulateBinderMapWithContext(
        base::BindRepeating(&ContentIndexServiceImpl::CreateForFrame));
    map->Add<blink::mojom::KeyboardLockService>(
        base::BindRepeating(&KeyboardLockServiceImpl::CreateMojoService));
@@ -53,7 +82,16 @@ index a45f9d3db09d..62094a933c14 100644
    map->Add<blink::mojom::MediaSessionService>(
        base::BindRepeating(&MediaSessionServiceImpl::Create));
    map->Add<blink::mojom::PictureInPictureService>(
-@@ -975,10 +959,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
+@@ -956,8 +931,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
+       base::BindRepeating(&BindFaceDetectionProvider));
+   map->Add<shape_detection::mojom::TextDetection>(
+       base::BindRepeating(&BindTextDetection));
+-  map->Add<ukm::mojom::UkmRecorderInterface>(
+-      base::BindRepeating(&BindUkmRecorderInterface));
+ 
+   // worker host binders
+   // base::Unretained(host) is safe because the map is owned by
+@@ -993,10 +966,6 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
                            base::Unretained(host)));
    map->Add<blink::mojom::CacheStorage>(base::BindRepeating(
        &DedicatedWorkerHost::BindCacheStorage, base::Unretained(host)));
@@ -64,7 +102,16 @@ index a45f9d3db09d..62094a933c14 100644
  #if !defined(OS_ANDROID)
    map->Add<blink::mojom::SerialService>(base::BindRepeating(
        &DedicatedWorkerHost::BindSerialService, base::Unretained(host)));
-@@ -1057,10 +1037,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
+@@ -1063,8 +1032,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
+       base::BindRepeating(&BindFaceDetectionProvider));
+   map->Add<shape_detection::mojom::TextDetection>(
+       base::BindRepeating(&BindTextDetection));
+-  map->Add<ukm::mojom::UkmRecorderInterface>(
+-      base::BindRepeating(&BindUkmRecorderInterface));
+ 
+   // worker host binders
+   // base::Unretained(host) is safe because the map is owned by
+@@ -1084,10 +1051,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
        &SharedWorkerHost::CreateQuicTransportConnector, base::Unretained(host)));
    map->Add<blink::mojom::CacheStorage>(base::BindRepeating(
        &SharedWorkerHost::BindCacheStorage, base::Unretained(host)));
@@ -75,7 +122,16 @@ index a45f9d3db09d..62094a933c14 100644
  
    // render process host binders
    map->Add<media::mojom::VideoDecodePerfHistory>(BindWorkerReceiver(
-@@ -1142,10 +1118,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
+@@ -1160,8 +1123,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
+       base::BindRepeating(&BindFaceDetectionProvider));
+   map->Add<shape_detection::mojom::TextDetection>(
+       base::BindRepeating(&BindTextDetection));
+-  map->Add<ukm::mojom::UkmRecorderInterface>(
+-      base::BindRepeating(&BindUkmRecorderInterface));
+ 
+   // worker host binders
+   map->Add<blink::mojom::QuicTransportConnector>(
+@@ -1171,10 +1132,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
        &ServiceWorkerHost::BindCacheStorage, base::Unretained(host)));
    map->Add<blink::mojom::BadgeService>(
        base::BindRepeating(&BindBadgeServiceForServiceWorker, host));

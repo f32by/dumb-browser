@@ -1,0 +1,22 @@
+diff --git a/content/browser/cache_storage/cache_storage_control_wrapper.cc b/content/browser/cache_storage/cache_storage_control_wrapper.cc
+index 75d8f1c57cf9..9c24b2517e24 100644
+--- a/content/browser/cache_storage/cache_storage_control_wrapper.cc
++++ b/content/browser/cache_storage/cache_storage_control_wrapper.cc
+@@ -38,8 +38,6 @@ CacheStorageControlWrapper::~CacheStorageControlWrapper() {
+ 
+ void CacheStorageControlWrapper::AddReceiver(
+     const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
+-    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
+-        coep_reporter_remote,
+     const url::Origin& origin,
+     storage::mojom::CacheStorageOwner owner,
+     mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) {
+@@ -48,7 +46,7 @@ void CacheStorageControlWrapper::AddReceiver(
+   if (storage_policy_observer_)
+     storage_policy_observer_->StartTrackingOrigin(origin);
+   cache_storage_control_->AddReceiver(cross_origin_embedder_policy,
+-                                      std::move(coep_reporter_remote), origin,
++                                      origin,
+                                       owner, std::move(receiver));
+ }
+ 

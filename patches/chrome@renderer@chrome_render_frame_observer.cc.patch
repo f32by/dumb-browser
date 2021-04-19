@@ -1,15 +1,15 @@
 diff --git a/chrome/renderer/chrome_render_frame_observer.cc b/chrome/renderer/chrome_render_frame_observer.cc
-index f61dfc44aaac..1425510b0ce9 100644
+index 77d02bc13b15..451eb380739a 100644
 --- a/chrome/renderer/chrome_render_frame_observer.cc
 +++ b/chrome/renderer/chrome_render_frame_observer.cc
-@@ -26,7 +26,6 @@
+@@ -24,7 +24,6 @@
+ #include "chrome/common/open_search_description_document_handler.mojom.h"
  #include "chrome/renderer/chrome_content_settings_agent_delegate.h"
  #include "chrome/renderer/media/media_feeds.h"
- #include "chrome/renderer/web_page_metadata_extraction.h"
 -#include "components/crash/core/common/crash_key.h"
  #include "components/no_state_prefetch/renderer/no_state_prefetch_helper.h"
  #include "components/offline_pages/buildflags/buildflags.h"
- #include "components/translate/content/renderer/translate_agent.h"
+ #include "components/optimization_guide/content/renderer/page_text_agent.h"
 @@ -245,10 +244,6 @@ void ChromeRenderFrameObserver::DidCommitProvisionalLoad(
    if (frame->Parent())
      return;

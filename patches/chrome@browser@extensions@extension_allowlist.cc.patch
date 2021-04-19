@@ -1,0 +1,35 @@
+diff --git a/chrome/browser/extensions/extension_allowlist.cc b/chrome/browser/extensions/extension_allowlist.cc
+index fdb9b5b66384..0ea60f9a3530 100644
+--- a/chrome/browser/extensions/extension_allowlist.cc
++++ b/chrome/browser/extensions/extension_allowlist.cc
+@@ -6,7 +6,6 @@
+ 
+ #include "chrome/browser/extensions/extension_service.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "extensions/browser/allowlist_state.h"
+ #include "extensions/browser/extension_registry.h"
+ #include "extensions/browser/extension_system.h"
+@@ -28,10 +27,6 @@ void ExtensionAllowlist::Init() {
+   // Register to Enhanced Safe Browsing setting changes for allowlist
+   // enforcements.
+   pref_change_registrar_.Init(profile_->GetPrefs());
+-  pref_change_registrar_.Add(
+-      prefs::kSafeBrowsingEnhanced,
+-      base::BindRepeating(&ExtensionAllowlist::OnSafeBrowsingEnhancedChanged,
+-                          base::Unretained(this)));
+ 
+   if (is_allowlist_enforced_) {
+     ActivateAllowlistEnforcement();
+@@ -93,10 +88,7 @@ bool ExtensionAllowlist::ShouldDisplayWarning(
+ }
+ 
+ void ExtensionAllowlist::SetAllowlistEnforcedField() {
+-  is_allowlist_enforced_ =
+-      base::FeatureList::IsEnabled(
+-          extensions_features::kEnforceSafeBrowsingExtensionAllowlist) &&
+-      safe_browsing::IsEnhancedProtectionEnabled(*profile_->GetPrefs());
++  is_allowlist_enforced_ = false;
+ }
+ 
+ void ExtensionAllowlist::ActivateAllowlistEnforcement() {

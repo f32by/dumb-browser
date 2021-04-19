@@ -1,29 +1,29 @@
 diff --git a/chrome/browser/renderer_host/chrome_navigation_ui_data.cc b/chrome/browser/renderer_host/chrome_navigation_ui_data.cc
-index 996f0452ea48..26d4fa90ef39 100644
+index 78982fd08979..e84e86c0728b 100644
 --- a/chrome/browser/renderer_host/chrome_navigation_ui_data.cc
 +++ b/chrome/browser/renderer_host/chrome_navigation_ui_data.cc
 @@ -6,7 +6,6 @@
  
- #include "chrome/browser/prefetch/no_state_prefetch/chrome_prerender_contents_delegate.h"
- #include "components/no_state_prefetch/browser/prerender_contents.h"
+ #include "chrome/browser/prefetch/no_state_prefetch/chrome_no_state_prefetch_contents_delegate.h"
+ #include "components/no_state_prefetch/browser/no_state_prefetch_contents.h"
 -#include "components/no_state_prefetch/browser/prerender_histograms.h"
  #include "content/public/browser/navigation_handle.h"
  #include "extensions/buildflags/buildflags.h"
  #include "ui/base/window_open_disposition.h"
-@@ -39,9 +38,6 @@ ChromeNavigationUIData::ChromeNavigationUIData(
-       prerender::ChromePrerenderContentsDelegate::FromWebContents(web_contents);
-   if (prerender_contents) {
-     prerender_mode_ = prerender_contents->prerender_mode();
+@@ -40,9 +39,6 @@ ChromeNavigationUIData::ChromeNavigationUIData(
+           web_contents);
+   if (no_state_prefetch_contents) {
+     is_no_state_prefetching_ = true;
 -    prerender_histogram_prefix_ =
 -        prerender::PrerenderHistograms::GetHistogramPrefix(
--            prerender_contents->origin());
+-            no_state_prefetch_contents->origin());
    }
  }
  
-@@ -92,7 +88,6 @@ std::unique_ptr<content::NavigationUIData> ChromeNavigationUIData::Clone() {
+@@ -93,7 +89,6 @@ std::unique_ptr<content::NavigationUIData> ChromeNavigationUIData::Clone() {
  #endif
  
-   copy->prerender_mode_ = prerender_mode_;
+   copy->is_no_state_prefetching_ = is_no_state_prefetching_;
 -  copy->prerender_histogram_prefix_ = prerender_histogram_prefix_;
  
    return std::move(copy);

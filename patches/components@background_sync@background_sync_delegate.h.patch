@@ -1,18 +1,10 @@
 diff --git a/components/background_sync/background_sync_delegate.h b/components/background_sync/background_sync_delegate.h
-index fcaa77d57678..37c5c94767c0 100644
+index 5a4566b8cdb6..8e00918d8718 100644
 --- a/components/background_sync/background_sync_delegate.h
 +++ b/components/background_sync/background_sync_delegate.h
-@@ -11,7 +11,6 @@
- #include "base/optional.h"
- #include "base/time/time.h"
- #include "build/build_config.h"
--#include "services/metrics/public/cpp/ukm_source_id.h"
- #include "third_party/blink/public/mojom/background_sync/background_sync.mojom-forward.h"
- #include "url/origin.h"
- 
-@@ -27,12 +26,6 @@ class BackgroundSyncDelegate {
-  public:
-   virtual ~BackgroundSyncDelegate() = default;
+@@ -36,12 +36,6 @@ class BackgroundSyncDelegate {
+   CreateBackgroundSyncEventKeepAlive() = 0;
+ #endif
  
 -  // Gets the source_ID to log the UKM event for, and calls |callback| with that
 -  // source_id, or with base::nullopt if UKM recording is not allowed.

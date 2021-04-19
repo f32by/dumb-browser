@@ -29,7 +29,9 @@
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/common/url_utils.h"
 #include "dumb/browser/net/dumb_request_handler.h"
-#include "mojo/public/cpp/bindings/binding.h"
+#include "mojo/public/cpp/bindings/pending_receiver.h"
+#include "mojo/public/cpp/bindings/receiver.h"
+#include "mojo/public/cpp/bindings/remote.h"
 #include "mojo/public/cpp/system/data_pipe_producer.h"
 #include "mojo/public/cpp/system/string_data_source.h"
 #include "net/base/completion_repeating_callback.h"
@@ -366,7 +368,7 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::
     // Create a data pipe for transmitting the response.
     mojo::ScopedDataPipeProducerHandle producer;
     mojo::ScopedDataPipeConsumerHandle consumer;
-    if (CreateDataPipe(nullptr, &producer, &consumer) != MOJO_RESULT_OK) {
+    if (CreateDataPipe(nullptr, producer, consumer) != MOJO_RESULT_OK) {
       OnRequestError(
           network::URLLoaderCompletionStatus(net::ERR_INSUFFICIENT_RESOURCES));
       return;

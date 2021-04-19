@@ -1,20 +1,20 @@
 diff --git a/components/permissions/permission_request_manager.cc b/components/permissions/permission_request_manager.cc
-index 6e98cd072ed1..a34297f9a977 100644
+index 758cbee48cb5..652deb37e07d 100644
 --- a/components/permissions/permission_request_manager.cc
 +++ b/components/permissions/permission_request_manager.cc
-@@ -610,11 +610,6 @@ void PermissionRequestManager::ResetViewStateForCurrentRequest() {
- void PermissionRequestManager::FinalizeCurrentRequests(
-     PermissionAction permission_action) {
-   DCHECK(IsRequestInProgress());
+@@ -621,11 +621,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
+       permission_action != PermissionAction::IGNORED) {
+     time_to_decision = base::Time::Now() - current_request_first_display_time_;
+   }
 -  PermissionUmaUtil::PermissionPromptResolved(
--      requests_, web_contents(), permission_action,
+-      requests_, web_contents(), permission_action, time_to_decision,
 -      DetermineCurrentRequestUIDispositionForUMA(),
 -      DetermineCurrentRequestUIDispositionReasonForUMA(),
 -      prediction_grant_likelihood_);
  
    content::BrowserContext* browser_context =
        web_contents()->GetBrowserContext();
-@@ -652,7 +647,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
+@@ -663,7 +658,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
          embargo_status = PermissionEmbargoStatus::REPEATED_IGNORES;
        }
      }

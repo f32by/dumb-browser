@@ -1,8 +1,8 @@
 diff --git a/extensions/renderer/BUILD.gn b/extensions/renderer/BUILD.gn
-index d29525e2f46d..1526e59463d9 100644
+index 2ef54dde7aa2..ac94bc3634a9 100644
 --- a/extensions/renderer/BUILD.gn
 +++ b/extensions/renderer/BUILD.gn
-@@ -268,7 +268,6 @@ source_set("renderer") {
+@@ -260,7 +260,6 @@ source_set("renderer") {
      "//extensions/common/api",
      "//gin",
      "//mojo/public/js:resources",
@@ -10,13 +10,13 @@ index d29525e2f46d..1526e59463d9 100644
      "//skia",
      "//storage/common",
      "//third_party/blink/public:blink",
-@@ -277,9 +276,6 @@ source_set("renderer") {
+@@ -268,9 +267,6 @@ source_set("renderer") {
+     "//third_party/cld_3/src/src:cld_3",
      "//third_party/zlib/google:compression_utils",
    ]
- 
+-
 -  # Temporarily allow crash_key; see https://crbug.com/1034755
 -  deps += [ "//components/crash/core/common:crash_key" ]
--
-   if (proprietary_codecs && enable_wifi_display) {
-     sources += [
-       "api/display_source/wifi_display/wifi_display_audio_encoder.cc",
+ }
+ 
+ static_library("unit_test_support") {

@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-index 9be5e5f98c35..5153299e6a7e 100644
+index 0ea86d5d980d..a5388e7f516c 100644
 --- a/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_services_manager_client.cc
-@@ -28,7 +28,6 @@
- #include "components/metrics/enabled_state_provider.h"
- #include "components/metrics/metrics_state_manager.h"
- #include "components/prefs/pref_service.h"
--#include "components/rappor/rappor_service_impl.h"
- #include "components/variations/service/variations_service.h"
- #include "components/variations/variations_associated_data.h"
- #include "components/version_info/version_info.h"
-@@ -47,8 +46,6 @@
+@@ -46,8 +46,6 @@
  #include "base/win/registry.h"
  #include "chrome/common/chrome_constants.h"
  #include "chrome/install_static/install_util.h"
@@ -19,49 +11,13 @@ index 9be5e5f98c35..5153299e6a7e 100644
  #endif  // OS_WIN
  
  #if BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -64,12 +61,6 @@ namespace internal {
- const base::Feature kMetricsReportingFeature{"MetricsReporting",
-                                              base::FEATURE_ENABLED_BY_DEFAULT};
- 
--// A feature controlling whether all clients in the OutOfReportingSample group
--// should discard their uploads, regardless of which user consent flow they
--// went through. When disabled, only opt-out users will discard uploads.
--const base::Feature kMetricsDownsampleConsistentlyFeature{
--    "MetricsDownsampleConsistently", base::FEATURE_DISABLED_BY_DEFAULT};
--
- }  // namespace internal
- }  // namespace metrics
- 
-@@ -101,10 +92,7 @@ void AppendSamplingTrialGroup(const std::string& group_name,
- // Unless the DownsampleConsistently feature is enabled, only clients that were
- // given an opt-out metrics-reporting consent flow are eligible for sampling.
- bool IsClientEligibleForSampling(PrefService* local_state) {
--  return base::FeatureList::IsEnabled(
--             metrics::internal::kMetricsDownsampleConsistentlyFeature) ||
--         metrics::GetMetricsReportingDefaultState(local_state) ==
--             metrics::EnableMetricsDefault::OPT_OUT;
-+  return false;
- }
- 
- // Implementation of IsClientInSample() that takes a PrefService param.
-@@ -257,13 +245,6 @@ ChromeMetricsServicesManagerClient::GetEnabledStateProviderForTesting() {
-   return *enabled_state_provider_;
- }
- 
--std::unique_ptr<rappor::RapporServiceImpl>
--ChromeMetricsServicesManagerClient::CreateRapporServiceImpl() {
--  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
--  return std::make_unique<rappor::RapporServiceImpl>(
--      local_state_, base::BindRepeating(&chrome::IsOffTheRecordSessionActive));
--}
--
- std::unique_ptr<variations::VariationsService>
- ChromeMetricsServicesManagerClient::CreateVariationsService() {
-   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-@@ -336,11 +317,5 @@ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
-   // First, set the registry value so that Crashpad will have the sampling state
-   // now and for subsequent runs.
-   install_static::SetCollectStatsInSample(IsClientInSample());
+@@ -300,14 +298,5 @@ bool ChromeMetricsServicesManagerClient::IsOffTheRecordSessionActive() {
+ void ChromeMetricsServicesManagerClient::UpdateRunningServices(
+     bool may_record,
+     bool may_upload) {
+-  // First, set the registry value so that Crashpad will have the sampling state
+-  // now and for subsequent runs.
+-  install_static::SetCollectStatsInSample(IsClientInSample());
 -
 -  // Next, get Crashpad to pick up the sampling state for this session.
 -  // Crashpad will use the kRegUsageStatsInSample registry value to apply

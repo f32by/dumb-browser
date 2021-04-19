@@ -1,5 +1,5 @@
 diff --git a/components/metrics/metrics_service.h b/components/metrics/metrics_service.h
-index 0dff15d32ccf..32709b158562 100644
+index 8594e50d8460..33057f676887 100644
 --- a/components/metrics/metrics_service.h
 +++ b/components/metrics/metrics_service.h
 @@ -19,18 +19,10 @@
@@ -76,7 +76,7 @@ index 0dff15d32ccf..32709b158562 100644
    // Returns the client ID for this client, or the empty string if metrics
    // recording is not currently running.
    std::string GetClientId() const;
-@@ -101,108 +76,18 @@ class MetricsService : public base::HistogramFlattener {
+@@ -101,99 +76,18 @@ class MetricsService : public base::HistogramFlattener {
    // Returns the install date of the application, in seconds since the epoch.
    int64_t GetInstallDate();
  
@@ -118,14 +118,6 @@ index 0dff15d32ccf..32709b158562 100644
 -  // Set the dirty flag, which will require a later call to LogCleanShutdown().
 -  void LogNeedForCleanShutdown();
 -#endif  // defined(OS_ANDROID) || defined(OS_IOS)
--
--  // Saves in the preferences if the crash report registration was successful.
--  // This count is eventually send via UMA logs.
--  void RecordBreakpadRegistration(bool success);
--
--  // Saves in the preferences if the browser is running under a debugger.
--  // This count is eventually send via UMA logs.
--  void RecordBreakpadHasDebugger(bool has_debugger);
 -
 -  bool recording_active() const;
 -  bool reporting_active() const;
@@ -181,11 +173,10 @@ index 0dff15d32ccf..32709b158562 100644
 -      MetricsLog* log,
 -      PrefService* local_state,
 -      DelegatingProvider* delegating_provider);
--
+ 
    // The MetricsService has a lifecycle that is stored as a state.
    // See metrics_service.cc for description of this lifecycle.
-   enum State {
-@@ -229,127 +114,6 @@ class MetricsService : public base::HistogramFlattener {
+@@ -222,127 +116,6 @@ class MetricsService : public base::HistogramFlattener {
      UNSET
    };
  
@@ -313,7 +304,7 @@ index 0dff15d32ccf..32709b158562 100644
    // Used to manage various metrics reporting state prefs, such as client id,
    // low entropy source and whether metrics reporting is enabled. Weak pointer.
    MetricsStateManager* const state_manager_;
-@@ -363,13 +127,6 @@ class MetricsService : public base::HistogramFlattener {
+@@ -356,13 +129,6 @@ class MetricsService : public base::HistogramFlattener {
  
    PrefService* local_state_;
  
@@ -327,7 +318,7 @@ index 0dff15d32ccf..32709b158562 100644
    // Indicate whether test mode is enabled, where the initial log should never
    // be cut, and logs are neither persisted nor uploaded.
    bool test_mode_active_;
-@@ -390,9 +147,6 @@ class MetricsService : public base::HistogramFlattener {
+@@ -383,9 +149,6 @@ class MetricsService : public base::HistogramFlattener {
    // A number that identifies the how many times the app has been launched.
    int session_id_;
  

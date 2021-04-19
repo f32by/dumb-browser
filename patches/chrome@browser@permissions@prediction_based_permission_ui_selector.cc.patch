@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/permissions/prediction_based_permission_ui_selector.cc b/chrome/browser/permissions/prediction_based_permission_ui_selector.cc
+index d2e6710e420f..41f014283bc8 100644
+--- a/chrome/browser/permissions/prediction_based_permission_ui_selector.cc
++++ b/chrome/browser/permissions/prediction_based_permission_ui_selector.cc
+@@ -19,7 +19,6 @@
+ #include "components/permissions/prediction_service/prediction_service.h"
+ #include "components/permissions/prediction_service/prediction_service_messages.pb.h"
+ #include "components/prefs/pref_service.h"
+-#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ 
+ namespace {
+ 
+@@ -181,9 +180,7 @@ void PredictionBasedPermissionUiSelector::LookupReponseReceived(
+ bool PredictionBasedPermissionUiSelector::IsAllowedToUseAssistedPrompts() {
+   // We need to also check `kQuietNotificationPrompts` here since there is no
+   // generic safeguard anywhere else in the stack.
+-  return base::FeatureList::IsEnabled(features::kQuietNotificationPrompts) &&
+-         base::FeatureList::IsEnabled(features::kPermissionPredictions) &&
+-         safe_browsing::IsSafeBrowsingEnabled(*(profile_->GetPrefs()));
++  return false;
+ }
+ 
+ // static

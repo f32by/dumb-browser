@@ -1,0 +1,34 @@
+diff --git a/chrome/browser/policy/cloud/cloud_policy_invalidator.h b/chrome/browser/policy/cloud/cloud_policy_invalidator.h
+index 90e44b00232b..6a179f71b691 100644
+--- a/chrome/browser/policy/cloud/cloud_policy_invalidator.h
++++ b/chrome/browser/policy/cloud/cloud_policy_invalidator.h
+@@ -52,19 +52,6 @@ class CloudPolicyInvalidator : public invalidation::InvalidationHandler,
+   // once the invalidation service starts up.
+   static const int kInvalidationGracePeriod;
+ 
+-  // Returns a name of a refresh metric associated with the given scope.
+-  static const char* GetPolicyRefreshMetricName(PolicyInvalidationScope scope);
+-  // Returns a name of a FCM refresh metric associated with the given scope.
+-  static const char* GetPolicyRefreshFcmMetricName(
+-      PolicyInvalidationScope scope);
+-  // Returns a name of an invalidation metric associated with the given scope.
+-  static const char* GetPolicyInvalidationMetricName(
+-      PolicyInvalidationScope scope);
+-  // Returns a name of an FCM invalidation metric associated with the given
+-  // scope.
+-  static const char* GetPolicyInvalidationFcmMetricName(
+-      PolicyInvalidationScope scope);
+-
+   // |scope| indicates the invalidation scope that this invalidator
+   // is responsible for.
+   // |core| is the cloud policy core which connects the various policy objects.
+@@ -183,9 +170,6 @@ class CloudPolicyInvalidator : public invalidation::InvalidationHandler,
+   };
+   State state_;
+ 
+-  // The invalidation scope this invalidator is responsible for.
+-  const PolicyInvalidationScope scope_;
+-
+   // The unique name to be returned with by GetOwnerName().
+   const std::string owner_name_;
+ 

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_main_win.cc b/chrome/browser/chrome_browser_main_win.cc
-index e6854151e4e2..333cd17dea55 100644
+index 16290f3f5e9a..aefa30f5b8a3 100644
 --- a/chrome/browser/chrome_browser_main_win.cc
 +++ b/chrome/browser/chrome_browser_main_win.cc
 @@ -49,9 +49,6 @@
@@ -30,7 +30,7 @@ index e6854151e4e2..333cd17dea55 100644
  #include "components/os_crypt/os_crypt.h"
  #include "components/prefs/pref_service.h"
  #include "components/version_info/channel.h"
-@@ -107,7 +100,6 @@
+@@ -106,7 +99,6 @@
  #include "ui/display/win/dpi.h"
  #include "ui/gfx/switches.h"
  #include "ui/gfx/system_fonts_win.h"
@@ -38,7 +38,7 @@ index e6854151e4e2..333cd17dea55 100644
  #include "ui/strings/grit/app_locale_settings.h"
  
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -121,15 +113,10 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
+@@ -120,15 +112,10 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
      DWORD flags);
  
  void InitializeWindowProcExceptions() {
@@ -54,7 +54,7 @@ index e6854151e4e2..333cd17dea55 100644
  }
  
  // gfx::Font callbacks
-@@ -449,15 +436,6 @@ void ShowCloseBrowserFirstMessageBox() {
+@@ -448,15 +435,6 @@ void ShowCloseBrowserFirstMessageBox() {
        l10n_util::GetStringUTF16(IDS_UNINSTALL_CLOSE_APP));
  }
  
@@ -70,7 +70,7 @@ index e6854151e4e2..333cd17dea55 100644
  // Updates all Progressive Web App launchers in |profile_dir| to the latest
  // version.
  void UpdatePwaLaunchersForProfile(const base::FilePath& profile_dir) {
-@@ -578,7 +556,6 @@ ChromeBrowserMainPartsWin::~ChromeBrowserMainPartsWin() = default;
+@@ -577,7 +555,6 @@ ChromeBrowserMainPartsWin::~ChromeBrowserMainPartsWin() = default;
  
  void ChromeBrowserMainPartsWin::ToolkitInitialized() {
    DCHECK_NE(base::PlatformThread::CurrentId(), base::kInvalidThreadId);
@@ -78,30 +78,7 @@ index e6854151e4e2..333cd17dea55 100644
    ChromeBrowserMainParts::ToolkitInitialized();
    gfx::win::SetAdjustFontCallback(&AdjustUIFont);
    gfx::win::SetGetMinimumFontSizeCallback(&GetMinimumFontSize);
-@@ -605,22 +582,6 @@ void ChromeBrowserMainPartsWin::PreMainMessageLoopStart() {
- }
- 
- int ChromeBrowserMainPartsWin::PreCreateThreads() {
--  // Record whether the machine is enterprise managed in a crash key. This will
--  // be used to better identify whether crashes are from enterprise users.
--  static crash_reporter::CrashKeyString<4> is_enterprise_managed(
--      "is-enterprise-managed");
--  is_enterprise_managed.Set(base::IsMachineExternallyManaged() ? "yes" : "no");
--
--  // Set crash keys containing the registry values used to determine Chrome's
--  // update channel at process startup; see https://crbug.com/579504.
--  const auto& details = install_static::InstallDetails::Get();
--
--  static crash_reporter::CrashKeyString<50> ap_value("ap");
--  ap_value.Set(base::UTF16ToUTF8(details.update_ap()));
--
--  static crash_reporter::CrashKeyString<32> update_cohort_name("cohort-name");
--  update_cohort_name.Set(base::UTF16ToUTF8(details.update_cohort_name()));
--
-   if (chrome::GetChannel() == version_info::Channel::CANARY) {
-     content::RenderProcessHost::SetHungRendererAnalysisFunction(
-         &DumpHungRendererProcessImpl);
-@@ -682,19 +643,8 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -680,19 +657,8 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
    // complete run of the Chrome Cleanup tool. If post-cleanup settings reset is
    // enabled, we delay checks for settings reset prompt until the scheduled
    // reset is finished.
@@ -123,7 +100,7 @@ index e6854151e4e2..333cd17dea55 100644
    // Record UMA data about whether the fault-tolerant heap is enabled.
    // Use a delayed task to minimize the impact on startup time.
    content::GetUIThreadTaskRunner({})->PostDelayedTask(
-@@ -729,11 +679,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -727,11 +693,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
          base::BindOnce(&UpdatePwaLaunchersForProfile, profile()->GetPath()));
    }
  

@@ -1,7 +1,16 @@
 diff --git a/content/browser/service_worker/service_worker_container_host.cc b/content/browser/service_worker/service_worker_container_host.cc
-index 0b1981efd9eb..456d07b55e4f 100644
+index 0b1981efd9eb..218182f7914f 100644
 --- a/content/browser/service_worker/service_worker_container_host.cc
 +++ b/content/browser/service_worker/service_worker_container_host.cc
+@@ -533,7 +533,7 @@ void ServiceWorkerContainerHost::CountFeature(
+ void ServiceWorkerContainerHost::SendSetControllerServiceWorker(
+     bool notify_controllerchange) {
+   DCHECK_CURRENTLY_ON(ServiceWorkerContext::GetCoreThreadId());
+-  DCHECK(IsContainerForClient());
++  // DCHECK(IsContainerForClient());
+ 
+   auto controller_info = blink::mojom::ControllerServiceWorkerInfo::New();
+   controller_info->client_id = client_uuid();
 @@ -745,8 +745,6 @@ void ServiceWorkerContainerHost::OnBeginNavigationCommit(
      int container_process_id,
      int container_frame_id,
@@ -42,7 +51,7 @@ index 0b1981efd9eb..456d07b55e4f 100644
    }
  
    DCHECK_EQ(ukm_source_id_, ukm::kInvalidSourceId);
-@@ -918,22 +908,13 @@ ServiceWorkerContainerHost::GetRemoteControllerServiceWorker() {
+@@ -918,22 +908,9 @@ ServiceWorkerContainerHost::GetRemoteControllerServiceWorker() {
      pending_controller_receiver_ =
          remote_controller.BindNewPipeAndPassReceiver();
    } else {
@@ -57,10 +66,7 @@ index 0b1981efd9eb..456d07b55e4f 100644
 -      // SharedWorker cases.
 -      DCHECK(IsContainerForWorkerClient());
 -    }
-+    // TODO(https://crbug.com/999049): Implement DedicatedWorker and
-+    // SharedWorker cases.
-+    DCHECK(IsContainerForWorkerClient());    
- 
+-
      controller_->controller()->Clone(
          remote_controller.BindNewPipeAndPassReceiver(),
 -        cross_origin_embedder_policy_.value(),
@@ -69,10 +75,11 @@ index 0b1981efd9eb..456d07b55e4f 100644
    }
    return remote_controller;
  }
-@@ -1302,21 +1283,12 @@ void ServiceWorkerContainerHost::StartControllerComplete(
+@@ -1301,22 +1278,8 @@ void ServiceWorkerContainerHost::StartControllerComplete(
+ 
    if (status == blink::ServiceWorkerStatusCode::kOk) {
      DCHECK(is_response_committed());
- 
+-
 -    mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>
 -        coep_reporter_to_be_passed;
 -    if (coep_reporter_) {
@@ -84,10 +91,7 @@ index 0b1981efd9eb..456d07b55e4f 100644
 -      // SharedWorker cases.
 -      DCHECK(IsContainerForWorkerClient());
 -    }
-+    // TODO(https://crbug.com/999049): Implement DedicatedWorker and
-+    // SharedWorker cases.
-+    DCHECK(IsContainerForWorkerClient());
- 
+-
      controller_->controller()->Clone(std::move(receiver),
 -                                     cross_origin_embedder_policy_.value(),
 -                                     std::move(coep_reporter_to_be_passed));

@@ -1,20 +1,20 @@
 diff --git a/chrome/browser/content_index/content_index_provider_impl.h b/chrome/browser/content_index/content_index_provider_impl.h
-index 26473fdbf666..34a1fce4d792 100644
+index c4857fd1cf5f..f5ca5ec3f8d6 100644
 --- a/chrome/browser/content_index/content_index_provider_impl.h
 +++ b/chrome/browser/content_index/content_index_provider_impl.h
-@@ -11,7 +11,6 @@
+@@ -10,7 +10,6 @@
+ #include "base/macros.h"
  #include "base/memory/weak_ptr.h"
- #include "base/observer_list.h"
  #include "base/optional.h"
 -#include "chrome/browser/content_index/content_index_metrics.h"
  #include "components/keyed_service/core/keyed_service.h"
  #include "components/offline_items_collection/core/offline_content_provider.h"
  #include "components/offline_items_collection/core/offline_item.h"
-@@ -100,7 +99,6 @@ class ContentIndexProviderImpl
+@@ -97,7 +96,6 @@ class ContentIndexProviderImpl
        const content::ContentIndexEntry& entry);
  
    Profile* profile_;
 -  ContentIndexMetrics metrics_;
    offline_items_collection::OfflineContentAggregator* aggregator_;
    site_engagement::SiteEngagementService* site_engagement_service_;
-   base::ObserverList<Observer>::Unchecked observers_;
+   base::Optional<std::vector<gfx::Size>> icon_sizes_for_testing_;

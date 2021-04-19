@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.cc b/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.cc
-index aea04050c849..1110e4887ba8 100644
+index bcd8d6e96d85..af0af0cde00b 100644
 --- a/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.cc
-@@ -363,7 +363,6 @@ void DedicatedWorkerGlobalScope::DidFetchClassicScript(
+@@ -377,7 +377,6 @@ void DedicatedWorkerGlobalScope::DidFetchClassicScript(
    if (classic_script_loader->Failed()) {
      // Step 12.1. "Queue a task to fire an event named error at worker."
      // DidFailToFetchClassicScript() will asynchronously fire the event.
@@ -10,7 +10,7 @@ index aea04050c849..1110e4887ba8 100644
  
      // Step 12.2. "Run the environment discarding steps for inside settings."
      // Do nothing because the HTML spec doesn't define these steps for web
-@@ -375,7 +374,6 @@ void DedicatedWorkerGlobalScope::DidFetchClassicScript(
+@@ -389,7 +388,6 @@ void DedicatedWorkerGlobalScope::DidFetchClassicScript(
      // Step 12.3. "Return."
      return;
    }

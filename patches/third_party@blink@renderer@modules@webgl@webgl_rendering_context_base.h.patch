@@ -1,0 +1,29 @@
+diff --git a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.h b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.h
+index 4971c9ada0cb..d50452530698 100644
+--- a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.h
++++ b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.h
+@@ -1832,10 +1832,6 @@ class MODULES_EXPORT WebGLRenderingContextBase : public CanvasRenderingContext,
+                         DOMArrayBufferView* pixels,
+                         int64_t offset);
+ 
+-  // Record Canvas/OffscreenCanvas.RenderingContextDrawnTo at the first draw
+-  // call.
+-  void RecordUKMCanvasDrawnToAtFirstDrawCall();
+-
+  private:
+   WebGLRenderingContextBase(CanvasRenderingContextHost*,
+                             scoped_refptr<base::SingleThreadTaskRunner>,
+@@ -1896,13 +1892,6 @@ class MODULES_EXPORT WebGLRenderingContextBase : public CanvasRenderingContext,
+       WebGraphicsContext3DProvider* context_provider);
+   static unsigned CurrentMaxGLContexts();
+ 
+-  void RecordIdentifiableGLParameterDigest(GLenum pname,
+-                                           IdentifiableToken value);
+-
+-  void RecordShaderPrecisionFormatForStudy(GLenum shader_type,
+-                                           GLenum precision_type,
+-                                           WebGLShaderPrecisionFormat* format);
+-
+   // PushFrameWithCopy will make a potential copy if the resource is accelerated
+   // or a drawImage if the resource is non accelerated.
+   bool PushFrameWithCopy();

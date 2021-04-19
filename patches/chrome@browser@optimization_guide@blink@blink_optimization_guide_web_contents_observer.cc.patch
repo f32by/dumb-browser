@@ -1,0 +1,34 @@
+diff --git a/chrome/browser/optimization_guide/blink/blink_optimization_guide_web_contents_observer.cc b/chrome/browser/optimization_guide/blink/blink_optimization_guide_web_contents_observer.cc
+index a117955c909f..aea504a2ad7f 100644
+--- a/chrome/browser/optimization_guide/blink/blink_optimization_guide_web_contents_observer.cc
++++ b/chrome/browser/optimization_guide/blink/blink_optimization_guide_web_contents_observer.cc
+@@ -12,7 +12,6 @@
+ #include "chrome/browser/optimization_guide/optimization_guide_keyed_service.h"
+ #include "chrome/browser/optimization_guide/optimization_guide_keyed_service_factory.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/common/previews_resource_loading_hints.mojom.h"
+ #include "components/optimization_guide/proto/hints.pb.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/navigation_handle.h"
+@@ -57,21 +56,6 @@ void BlinkOptimizationGuideWebContentsObserver::ReadyToCommitNavigation(
+   // available on navigation commit ready.
+   blink::mojom::BlinkOptimizationGuideHintsPtr hints =
+       current_inquirer_->GetHints();
+-
+-  // Tentatively use the Previews interface to talk with the renderer.
+-  // TODO(https://crbug.com/1113980): Implement our own interface.
+-  mojo::AssociatedRemote<previews::mojom::PreviewsResourceLoadingHintsReceiver>
+-      hints_receiver_associated;
+-  if (navigation_handle->GetRenderFrameHost()
+-          ->GetRemoteAssociatedInterfaces()) {
+-    navigation_handle->GetRenderFrameHost()
+-        ->GetRemoteAssociatedInterfaces()
+-        ->GetInterface(&hints_receiver_associated);
+-  }
+-
+-  // Sends the hints currently available to the renderer.
+-  hints_receiver_associated->SetBlinkOptimizationGuideHints(
+-      current_inquirer_->GetHints());
+ }
+ 
+ BlinkOptimizationGuideWebContentsObserver::

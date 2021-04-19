@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/download_target_determiner.cc b/chrome/browser/download/download_target_determiner.cc
-index 21ab45886df2..8612673370c7 100644
+index f094105ac70c..8a8ca8a7ea35 100644
 --- a/chrome/browser/download/download_target_determiner.cc
 +++ b/chrome/browser/download/download_target_determiner.cc
 @@ -28,7 +28,6 @@
@@ -96,7 +96,7 @@ index 21ab45886df2..8612673370c7 100644
        download_->GetURL(), download_->GetContentDisposition(), referrer_charset,
        suggested_filename, sniffed_mime_type, default_filename);
  
--  // We don't replace the file extension if safe browsing consider the file
+-  // We don't replace the file extension if sfafe browsing consider the file
 -  // extension to be unsafe. Just let safe browsing scan the generated file.
 -  if (safe_browsing::FileTypePolicies::GetInstance()->IsCheckedBinaryFile(
 -          generated_filename)) {
@@ -106,7 +106,7 @@ index 21ab45886df2..8612673370c7 100644
    // If no mime type or explicitly specified a name, don't replace file
    // extension.
    if (sniffed_mime_type.empty() || !suggested_filename.empty())
-@@ -436,7 +401,6 @@ void DownloadTargetDeterminer::ReserveVirtualPathDone(
+@@ -448,7 +413,6 @@ void DownloadTargetDeterminer::ReserveVirtualPathDone(
    DVLOG(20) << "Reserved path: " << path.AsUTF8Unsafe()
              << " Result:" << static_cast<int>(result);
    DCHECK_EQ(STATE_PROMPT_USER_FOR_DOWNLOAD_PATH, next_state_);
@@ -114,7 +114,7 @@ index 21ab45886df2..8612673370c7 100644
    if (download_->IsTransient()) {
      DCHECK_EQ(DownloadConfirmationReason::NONE, confirmation_reason_)
          << "Transient download should not ask the user for confirmation.";
-@@ -535,7 +499,6 @@ void DownloadTargetDeterminer::RequestConfirmationDone(
+@@ -547,7 +511,6 @@ void DownloadTargetDeterminer::RequestConfirmationDone(
    download_schedule_ = std::move(download_schedule);
  #endif
    if (result == DownloadConfirmationResult::CANCELED) {
@@ -122,7 +122,7 @@ index 21ab45886df2..8612673370c7 100644
      ScheduleCallbackAndDeleteSelf(
          download::DOWNLOAD_INTERRUPT_REASON_USER_CANCELED);
      return;
-@@ -804,51 +767,6 @@ DownloadTargetDeterminer::Result
+@@ -816,51 +779,6 @@ DownloadTargetDeterminer::Result
      DownloadTargetDeterminer::DoCheckVisitedReferrerBefore() {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
    next_state_ = STATE_DETERMINE_INTERMEDIATE_PATH;
@@ -174,7 +174,7 @@ index 21ab45886df2..8612673370c7 100644
    return CONTINUE;
  }
  
-@@ -856,11 +774,7 @@ void DownloadTargetDeterminer::CheckVisitedReferrerBeforeDone(
+@@ -868,11 +786,7 @@ void DownloadTargetDeterminer::CheckVisitedReferrerBeforeDone(
      bool visited_referrer_before) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
    DCHECK_EQ(STATE_DETERMINE_INTERMEDIATE_PATH, next_state_);
@@ -187,7 +187,7 @@ index 21ab45886df2..8612673370c7 100644
    DoLoop();
  }
  
-@@ -965,7 +879,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
+@@ -972,7 +886,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
              << " Intermediate:" << intermediate_path_.AsUTF8Unsafe()
              << " Confirmation reason:" << static_cast<int>(confirmation_reason_)
              << " Danger type:" << danger_type_
@@ -195,7 +195,7 @@ index 21ab45886df2..8612673370c7 100644
              << " Result:" << static_cast<int>(result);
    std::unique_ptr<DownloadTargetInfo> target_info(new DownloadTargetInfo);
  
-@@ -977,7 +890,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
+@@ -984,7 +897,6 @@ void DownloadTargetDeterminer::ScheduleCallbackAndDeleteSelf(
             ? DownloadItem::TARGET_DISPOSITION_PROMPT
             : DownloadItem::TARGET_DISPOSITION_OVERWRITE);
    target_info->danger_type = danger_type_;
@@ -203,7 +203,7 @@ index 21ab45886df2..8612673370c7 100644
    target_info->intermediate_path = intermediate_path_;
    target_info->mime_type = mime_type_;
    target_info->is_filetype_handled_safely = is_filetype_handled_safely_;
-@@ -1066,55 +978,6 @@ bool DownloadTargetDeterminer::HasPromptedForPath() const {
+@@ -1073,55 +985,6 @@ bool DownloadTargetDeterminer::HasPromptedForPath() const {
                                  DownloadItem::TARGET_DISPOSITION_PROMPT);
  }
  

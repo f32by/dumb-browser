@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/frame/local_frame.cc b/third_party/blink/renderer/core/frame/local_frame.cc
-index 4ceaa30497d2..7f9e0b025cd3 100644
+index 74d1e79e332c..f759f027e59e 100644
 --- a/third_party/blink/renderer/core/frame/local_frame.cc
 +++ b/third_party/blink/renderer/core/frame/local_frame.cc
 @@ -57,7 +57,6 @@
@@ -10,15 +10,16 @@ index 4ceaa30497d2..7f9e0b025cd3 100644
  #include "third_party/blink/public/mojom/scroll/scrollbar_mode.mojom-blink.h"
  #include "third_party/blink/public/platform/interface_registry.h"
  #include "third_party/blink/public/platform/scheduler/web_resource_loading_task_runner_handle.h"
-@@ -113,7 +112,6 @@
+@@ -112,8 +111,6 @@
+ #include "third_party/blink/renderer/core/frame/picture_in_picture_controller.h"
  #include "third_party/blink/renderer/core/frame/remote_frame.h"
  #include "third_party/blink/renderer/core/frame/remote_frame_owner.h"
- #include "third_party/blink/renderer/core/frame/report.h"
+-#include "third_party/blink/renderer/core/frame/report.h"
 -#include "third_party/blink/renderer/core/frame/reporting_context.h"
  #include "third_party/blink/renderer/core/frame/root_frame_viewport.h"
  #include "third_party/blink/renderer/core/frame/savable_resources.h"
  #include "third_party/blink/renderer/core/frame/settings.h"
-@@ -551,7 +549,6 @@ void LocalFrame::Trace(Visitor* visitor) const {
+@@ -545,7 +542,6 @@ void LocalFrame::Trace(Visitor* visitor) const {
    visitor->Trace(raw_system_clipboard_);
    visitor->Trace(virtual_keyboard_overlay_changed_observers_);
    visitor->Trace(pause_handle_receivers_);
@@ -26,7 +27,7 @@ index 4ceaa30497d2..7f9e0b025cd3 100644
  #if defined(OS_MAC)
    visitor->Trace(text_input_host_);
  #endif
-@@ -2273,15 +2270,6 @@ const base::UnguessableToken& LocalFrame::GetAgentClusterId() const {
+@@ -2261,15 +2257,6 @@ const base::UnguessableToken& LocalFrame::GetAgentClusterId() const {
    return base::UnguessableToken::Null();
  }
  
@@ -42,7 +43,25 @@ index 4ceaa30497d2..7f9e0b025cd3 100644
  // static
  void LocalFrame::NotifyUserActivation(
      LocalFrame* frame,
-@@ -3366,11 +3354,6 @@ void LocalFrame::PostMessageEvent(
+@@ -2745,8 +2732,6 @@ void LocalFrame::GetStringForRange(const gfx::Range& range,
+ void LocalFrame::InstallCoopAccessMonitor(
+     network::mojom::blink::CoopAccessReportType report_type,
+     const FrameToken& accessed_window,
+-    mojo::PendingRemote<network::mojom::blink::CrossOriginOpenerPolicyReporter>
+-        reporter,
+     bool endpoint_defined,
+     const WTF::String& reported_window_url) {
+   blink::Frame* accessed_frame = Frame::ResolveFrame(accessed_window);
+@@ -2755,7 +2740,7 @@ void LocalFrame::InstallCoopAccessMonitor(
+     return;
+ 
+   accessed_frame->DomWindow()->InstallCoopAccessMonitor(
+-      report_type, this, std::move(reporter), endpoint_defined,
++      report_type, this, endpoint_defined,
+       std::move(reported_window_url));
+ }
+ 
+@@ -3382,11 +3367,6 @@ void LocalFrame::PostMessageEvent(
                                        : base::UnguessableToken());
  }
  
@@ -52,5 +71,5 @@ index 4ceaa30497d2..7f9e0b025cd3 100644
 -}
 -
  void LocalFrame::UpdateOpener(
-     const base::Optional<base::UnguessableToken>& opener_frame_token) {
+     const base::Optional<blink::FrameToken>& opener_frame_token) {
    if (auto* web_frame = WebFrame::FromCoreFrame(this)) {

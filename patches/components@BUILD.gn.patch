@@ -1,5 +1,5 @@
 diff --git a/components/BUILD.gn b/components/BUILD.gn
-index 440e9a7b273f..ea0011116851 100644
+index abf17f45f5d9..7343546fbde7 100644
 --- a/components/BUILD.gn
 +++ b/components/BUILD.gn
 @@ -80,7 +80,6 @@ test("components_unittests") {
@@ -10,19 +10,15 @@ index 440e9a7b273f..ea0011116851 100644
      "//components/crx_file:unit_tests",
      "//components/device_event_log:unit_tests",
      "//components/dom_distiller/core:unit_tests",
-@@ -125,11 +124,8 @@ test("components_unittests") {
-     "//components/policy/core/browser:unit_tests",
+@@ -125,7 +124,6 @@ test("components_unittests") {
      "//components/policy/core/common:unit_tests",
+     "//components/power_scheduler:unit_tests",
      "//components/prefs:unit_tests",
 -    "//components/previews/core:unit_tests",
--    "//components/proxy_config:unit_tests",
+     "//components/proxy_config:unit_tests",
      "//components/qr_code_generator:unit_tests",
      "//components/query_parser:unit_tests",
--    "//components/rappor:unit_tests",
-     "//components/reading_list/core:unit_tests",
-     "//components/reputation/core:unit_tests",
-     "//components/safe_search_api:unit_tests",
-@@ -166,7 +162,6 @@ test("components_unittests") {
+@@ -168,7 +166,6 @@ test("components_unittests") {
      "//components/translate/core/browser:unit_tests",
      "//components/translate/core/common:unit_tests",
      "//components/translate/core/language_detection:unit_tests",
@@ -30,19 +26,7 @@ index 440e9a7b273f..ea0011116851 100644
      "//components/undo:unit_tests",
      "//components/unified_consent:unit_tests",
      "//components/upload_list:unit_tests",
-@@ -221,11 +216,9 @@ test("components_unittests") {
-       "//components/password_manager/core/common:unit_tests",
-       "//components/password_manager/ios:unit_tests",
-       "//components/previous_session_info:unit_tests",
--      "//components/safe_browsing/ios:unit_tests",
-       "//components/security_state/ios:unit_tests",
-       "//components/signin/ios/browser:unit_tests",
-       "//components/translate/ios/browser:unit_tests",
--      "//components/ukm/ios:unit_tests",
-     ]
-   } else {  # !is_ios
-     deps += [
-@@ -233,7 +226,6 @@ test("components_unittests") {
+@@ -238,7 +235,6 @@ test("components_unittests") {
        "//components/autofill/content/renderer:unit_tests",
        "//components/autofill/core/common/mojom:unit_tests",
        "//components/background_sync:unit_tests",
@@ -50,7 +34,7 @@ index 440e9a7b273f..ea0011116851 100644
        "//components/browsing_data/content:unit_tests",
        "//components/captive_portal/content:unit_tests",
        "//components/cast_certificate:unit_tests",
-@@ -251,7 +243,6 @@ test("components_unittests") {
+@@ -257,7 +253,6 @@ test("components_unittests") {
        "//components/drive:unit_tests",
        "//components/embedder_support:unit_tests",
        "//components/favicon/content:unit_tests",
@@ -58,7 +42,7 @@ index 440e9a7b273f..ea0011116851 100644
        "//components/feed:unit_tests",
        "//components/gcm_driver/instance_id:unit_tests",
        "//components/history/content/browser:unit_tests",
-@@ -270,8 +261,6 @@ test("components_unittests") {
+@@ -278,8 +273,6 @@ test("components_unittests") {
        "//components/optimization_guide/core:unit_tests",
        "//components/page_image_annotation/content/renderer:unit_tests",
        "//components/page_image_annotation/core:unit_tests",
@@ -67,23 +51,7 @@ index 440e9a7b273f..ea0011116851 100644
        "//components/paint_preview/browser:unit_tests",
        "//components/paint_preview/common:unit_tests",
        "//components/paint_preview/player:unit_tests",
-@@ -283,15 +272,7 @@ test("components_unittests") {
-       "//components/permissions:unit_tests",
-       "//components/permissions/prediction_service:unit_tests",
-       "//components/policy/content:unit_tests",
--      "//components/previews/content:unit_tests",
-       "//components/query_tiles:unit_tests",
--      "//components/safe_browsing/content/password_protection:password_protection_unittest",
--      "//components/safe_browsing/content/triggers:unit_tests",
--      "//components/safe_browsing/content/web_ui:unit_tests",
--      "//components/safe_browsing/core/browser:token_fetcher_unit_tests",
--      "//components/safe_browsing/core/common:unit_tests",
--      "//components/safe_browsing/core/realtime:unit_tests",
--      "//components/safe_browsing/core/triggers:unit_tests",
-       "//components/safety_check:unit_tests",
-       "//components/security_interstitials/content:unit_tests",
-       "//components/security_state/content:unit_tests",
-@@ -309,7 +290,6 @@ test("components_unittests") {
+@@ -321,7 +314,6 @@ test("components_unittests") {
        "//components/tracing:unit_tests",
        "//components/translate/content/browser:unit_tests",
        "//components/translate/content/renderer:unit_tests",
@@ -91,32 +59,7 @@ index 440e9a7b273f..ea0011116851 100644
        "//components/visitedlink/test:unit_tests",
        "//components/web_cache/browser:unit_tests",
        "//components/web_package:unit_tests",
-@@ -323,15 +303,6 @@ test("components_unittests") {
-       deps += [ "//components/cast:unit_tests" ]
-     }
- 
--    if (!is_fuchsia) {  # !iOS and !Fuchsia
--      deps += [
--        "//components/crash/content/browser:unit_tests",
--        "//components/crash/core/app:unit_tests",
--        "//components/data_reduction_proxy/core/browser:unit_tests",
--        "//components/data_reduction_proxy/core/common:unit_tests",
--      ]
--    }
--
-     data_deps = [
-       ":components_tests_pak",
-       "//third_party/mesa_headers",
-@@ -352,8 +323,6 @@ test("components_unittests") {
-       "//base:base_java_unittest_support",
-       "//components/autofill_assistant/browser:unit_tests",
-       "//components/cdm/browser:unit_tests",
--      "//components/crash/android:java",
--      "//components/crash/android:unit_tests",
-       "//components/download/internal/common:internal_java",
-       "//components/embedder_support/android:native_java_unittests_java",
-       "//components/embedder_support/android/metrics:test_support_java",
-@@ -401,8 +370,6 @@ test("components_unittests") {
+@@ -417,8 +409,6 @@ test("components_unittests") {
    # Desktop-only deps.
    if (!is_android && !is_ios) {
      deps += [
@@ -125,7 +68,7 @@ index 440e9a7b273f..ea0011116851 100644
        # See comment in components/guest_view/browser/BUILD.gn for why
        # guest_view is currently non-mobile.
        "//components/guest_view/browser:unit_tests",
-@@ -440,10 +407,6 @@ test("components_unittests") {
+@@ -456,10 +446,6 @@ test("components_unittests") {
      deps += [ "//components/constrained_window:unit_tests" ]
    }
  
@@ -134,17 +77,17 @@ index 440e9a7b273f..ea0011116851 100644
 -  }
 -
    if (enable_basic_printing) {
-     deps += [
-       "//components/printing/common:unit_tests",
-@@ -603,7 +566,6 @@ if (!is_ios && !is_fuchsia) {
-       "metrics/content/subprocess_metrics_provider_browsertest.cc",
+     deps += [ "//components/services/print_compositor:unit_tests" ]
+   }
+@@ -618,7 +604,6 @@ if (!is_ios && !is_fuchsia) {
+       "optimization_guide/content/renderer/page_text_agent_browsertest.cc",
        "paint_preview/renderer/paint_preview_recorder_browsertest.cc",
        "security_state/content/content_utils_browsertest.cc",
 -      "ukm/content/source_url_recorder_browsertest.cc",
      ]
  
      data = [
-@@ -640,8 +602,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -658,8 +643,6 @@ if (!is_ios && !is_fuchsia) {
        "//components/security_state/core",
        "//components/shared_highlighting/core/common",
        "//components/strings",
@@ -153,7 +96,7 @@ index 440e9a7b273f..ea0011116851 100644
        "//content/public/browser",
        "//content/shell:content_shell_lib",
        "//content/test:browsertest_support",
-@@ -784,16 +744,6 @@ if (!is_ios && !is_fuchsia) {
+@@ -802,16 +785,6 @@ if (!is_ios && !is_fuchsia) {
          deps += [ "//v8:v8_external_startup_data_assets" ]
        }
      }

@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h
-index 931a4a37e527..7ae42e57e01d 100644
+index d345f8338bf1..77b81d26992e 100644
 --- a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h
 +++ b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.h
-@@ -402,10 +402,8 @@ class MODULES_EXPORT ServiceWorkerGlobalScope final
+@@ -404,10 +404,8 @@ class MODULES_EXPORT ServiceWorkerGlobalScope final
        DispatchFetchEventForSubresourceCallback callback) override;
    void Clone(
        mojo::PendingReceiver<mojom::blink::ControllerServiceWorker> receiver,
@@ -11,11 +11,11 @@ index 931a4a37e527..7ae42e57e01d 100644
 -          network::mojom::blink::CrossOriginEmbedderPolicyReporter>
 -          coep_reporter) override;
 +      const network::CrossOriginEmbedderPolicy& cross_origin_embedder_policy)
-+    override;
++      override;
  
    // Implements mojom::blink::ServiceWorker.
    void InitializeGlobalScope(
-@@ -415,8 +413,7 @@ class MODULES_EXPORT ServiceWorkerGlobalScope final
+@@ -417,8 +415,7 @@ class MODULES_EXPORT ServiceWorkerGlobalScope final
        mojom::blink::ServiceWorkerObjectInfoPtr service_worker_info,
        mojom::blink::FetchHandlerExistence fetch_handler_existence,
        std::unique_ptr<PendingURLLoaderFactoryBundle>

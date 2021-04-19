@@ -1,8 +1,8 @@
 diff --git a/components/metrics/metrics_state_manager.cc b/components/metrics/metrics_state_manager.cc
-index b093e6e5ae41..f87602357350 100644
+index 44f3df50adff..3f3f7c395851 100644
 --- a/components/metrics/metrics_state_manager.cc
 +++ b/components/metrics/metrics_state_manager.cc
-@@ -22,7 +22,6 @@
+@@ -23,7 +23,6 @@
  #include "components/metrics/cloned_install_detector.h"
  #include "components/metrics/enabled_state_provider.h"
  #include "components/metrics/entropy_state.h"
@@ -10,7 +10,7 @@ index b093e6e5ae41..f87602357350 100644
  #include "components/metrics/metrics_pref_names.h"
  #include "components/metrics/metrics_provider.h"
  #include "components/metrics/metrics_switches.h"
-@@ -109,7 +108,7 @@ class MetricsStateMetricsProvider : public MetricsProvider {
+@@ -110,7 +109,7 @@ class MetricsStateMetricsProvider : public MetricsProvider {
          // of the previous session. This allows better attribution of crashes
          // to earlier behavior. If the previous client id is unknown, leave
          // the current client id.
@@ -19,7 +19,7 @@ index b093e6e5ae41..f87602357350 100644
        }
      }
    }
-@@ -148,7 +147,6 @@ MetricsStateManager::MetricsStateManager(
+@@ -149,7 +148,6 @@ MetricsStateManager::MetricsStateManager(
        enabled_state_provider_(enabled_state_provider),
        store_client_info_(std::move(store_client_info)),
        load_client_info_(std::move(retrieve_client_info)),

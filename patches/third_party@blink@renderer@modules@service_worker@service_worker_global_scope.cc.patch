@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
-index dcb01a871702..8e306d8c360e 100644
+index 862a8a747c39..b432c5bdb34a 100644
 --- a/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
 +++ b/third_party/blink/renderer/modules/service_worker/service_worker_global_scope.cc
 @@ -68,7 +68,6 @@
@@ -10,7 +10,65 @@ index dcb01a871702..8e306d8c360e 100644
  #include "third_party/blink/renderer/core/inspector/console_message.h"
  #include "third_party/blink/renderer/core/inspector/request_debug_header_scope.h"
  #include "third_party/blink/renderer/core/inspector/worker_inspector_controller.h"
-@@ -1616,13 +1615,10 @@ void ServiceWorkerGlobalScope::DispatchFetchEventForSubresource(
+@@ -426,18 +425,10 @@ void ServiceWorkerGlobalScope::DidFetchClassicScript(
+ 
+   // Step 9. "If the algorithm asynchronously completes with null, then:"
+   if (classic_script_loader->Failed()) {
+-    // Step 9.1. "Invoke Reject Job Promise with job and TypeError."
+-    // Step 9.2. "If newestWorker is null, invoke Clear Registration algorithm
+-    // passing registration as its argument."
+-    // Step 9.3. "Invoke Finish Job with job and abort these steps."
+-    // The browser process takes care of these steps.
+-    ReportingProxy().DidFailToFetchClassicScript();
+     // Close the worker global scope to terminate the thread.
+     close();
+     return;
+   }
+-  // The app cache ID is not used.
+-  ReportingProxy().DidFetchScript();
+   probe::ScriptImported(this, classic_script_loader->Identifier(),
+                         classic_script_loader->SourceText());
+ 
+@@ -541,13 +532,11 @@ void ServiceWorkerGlobalScope::LoadAndRunInstalledClassicScript(
+   std::unique_ptr<InstalledScriptsManager::ScriptData> script_data =
+       installed_scripts_manager_->GetScriptData(script_url);
+   if (!script_data) {
+-    ReportingProxy().DidFailToFetchClassicScript();
+     // This will eventually initiate worker thread termination. See
+     // ServiceWorkerGlobalScopeProxy::DidCloseWorkerGlobalScope() for details.
+     close();
+     return;
+   }
+-  ReportingProxy().DidLoadClassicScript();
+ 
+   auto referrer_policy = network::mojom::ReferrerPolicy::kDefault;
+   if (!script_data->GetReferrerPolicy().IsNull()) {
+@@ -1357,12 +1346,6 @@ void ServiceWorkerGlobalScope::OnIdleTimeout() {
+   // RequestedTermination() returns true if ServiceWorkerEventQueue agrees
+   // we should request the host to terminate this worker now.
+   DCHECK(RequestedTermination());
+-  // We use CrossThreadBindOnce() here because the callback may be destroyed on
+-  // the main thread if the worker thread has already terminated.
+-  To<ServiceWorkerGlobalScopeProxy>(ReportingProxy())
+-      .RequestTermination(
+-          CrossThreadBindOnce(&ServiceWorkerGlobalScope::OnRequestedTermination,
+-                              WrapCrossThreadWeakPersistent(this)));
+ }
+ 
+ void ServiceWorkerGlobalScope::OnRequestedTermination(bool will_be_terminated) {
+@@ -1509,11 +1492,6 @@ void ServiceWorkerGlobalScope::StartFetchEvent(
+ 
+   // Set up for navigation preload (FetchEvent#preloadResponse) if needed.
+   const bool navigation_preload_sent = !!params->preload_handle;
+-  if (navigation_preload_sent) {
+-    To<ServiceWorkerGlobalScopeProxy>(ReportingProxy())
+-        .SetupNavigationPreload(event_id, params->request->url,
+-                                std::move(params->preload_handle));
+-  }
+ 
+   ScriptState::Scope scope(ScriptController()->GetScriptState());
+   auto* wait_until_observer = MakeGarbageCollected<WaitUntilObserver>(
+@@ -1611,13 +1589,10 @@ void ServiceWorkerGlobalScope::DispatchFetchEventForSubresource(
  
  void ServiceWorkerGlobalScope::Clone(
      mojo::PendingReceiver<mojom::blink::ControllerServiceWorker> receiver,
@@ -26,18 +84,19 @@ index dcb01a871702..8e306d8c360e 100644
  
    controller_receivers_.Add(
        std::move(receiver), std::move(checker),
-@@ -1635,9 +1631,7 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
+@@ -1630,9 +1605,8 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
      mojom::blink::ServiceWorkerRegistrationObjectInfoPtr registration_info,
      mojom::blink::ServiceWorkerObjectInfoPtr service_worker_info,
      mojom::blink::FetchHandlerExistence fetch_hander_existence,
 -    std::unique_ptr<PendingURLLoaderFactoryBundle> subresource_loader_factories,
 -    mojo::PendingReceiver<mojom::blink::ReportingObserver>
 -        reporting_observer_receiver) {
-+    std::unique_ptr<PendingURLLoaderFactoryBundle> subresource_loader_factories) {
++    std::unique_ptr<PendingURLLoaderFactoryBundle> subresource_loader_factories
++    ) {
    DCHECK(IsContextThread());
    DCHECK(!global_scope_initialized_);
  
-@@ -1671,10 +1665,6 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
+@@ -1666,10 +1640,6 @@ void ServiceWorkerGlobalScope::InitializeGlobalScope(
  
    SetFetchHandlerExistence(fetch_hander_existence);
  

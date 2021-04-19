@@ -1,5 +1,5 @@
 diff --git a/media/blink/webmediaplayer_impl.h b/media/blink/webmediaplayer_impl.h
-index be702a74d6fd..ab9a4728114d 100644
+index bcb8e52a6ddb..9635c8fec6e4 100644
 --- a/media/blink/webmediaplayer_impl.h
 +++ b/media/blink/webmediaplayer_impl.h
 @@ -45,7 +45,6 @@
@@ -10,7 +10,15 @@ index be702a74d6fd..ab9a4728114d 100644
  #include "media/renderers/paint_canvas_video_renderer.h"
  #include "mojo/public/cpp/bindings/remote.h"
  #include "services/media_session/public/cpp/media_position.h"
-@@ -495,9 +494,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -63,7 +62,6 @@ class WebAudioSourceProviderImpl;
+ class WebLocalFrame;
+ class WebMediaPlayerClient;
+ class WebMediaPlayerEncryptedMediaClient;
+-class WatchTimeReporter;
+ }  // namespace blink
+ 
+ namespace base {
+@@ -462,9 +460,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
    // thus we think we are idle forever).
    bool IsPrerollAttemptNeeded();
  
@@ -20,15 +28,15 @@ index be702a74d6fd..ab9a4728114d 100644
    void CreateVideoDecodeStatsReporter();
  
    // Returns true if the player is hidden.
-@@ -892,7 +888,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -859,7 +854,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
    base::OneShotTimer background_pause_timer_;
  
    // Monitors the watch time of the played content.
 -  std::unique_ptr<blink::WatchTimeReporter> watch_time_reporter_;
-   std::string audio_decoder_name_;
-   std::string video_decoder_name_;
+   AudioDecoderType audio_decoder_type_ = AudioDecoderType::kUnknown;
+   VideoDecoderType video_decoder_type_ = VideoDecoderType::kUnknown;
  
-@@ -906,9 +901,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+@@ -873,9 +867,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
  
    bool have_reported_time_to_play_ready_ = false;
  
@@ -38,9 +46,9 @@ index be702a74d6fd..ab9a4728114d 100644
    // Elapsed time since we've last reached BUFFERING_HAVE_NOTHING.
    std::unique_ptr<base::ElapsedTimer> underflow_timer_;
  
-@@ -997,9 +989,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
- 
-   base::CancelableClosure update_background_status_cb_;
+@@ -970,9 +961,6 @@ class MEDIA_BLINK_EXPORT WebMediaPlayerImpl
+   // base::CancellableOnceClosure.
+   bool is_background_status_change_cancelled_ = true;
  
 -  mojo::Remote<mojom::MediaMetricsProvider> media_metrics_provider_;
 -  mojo::Remote<mojom::PlaybackEventsRecorder> playback_events_recorder_;

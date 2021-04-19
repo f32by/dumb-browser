@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/download/download_ui_controller.cc b/chrome/browser/download/download_ui_controller.cc
+index c2c787ab46c9..e7e584272fd6 100644
+--- a/chrome/browser/download/download_ui_controller.cc
++++ b/chrome/browser/download/download_ui_controller.cc
+@@ -166,12 +166,6 @@ void DownloadUIController::OnDownloadCreated(content::DownloadManager* manager,
+     }
+   }
+ 
+-  if (web_contents) {
+-    // TODO(crbug.com/1179196): Add test for this metric.
+-    RecordDownloadStartPerProfileType(
+-        Profile::FromBrowserContext(web_contents->GetBrowserContext()));
+-  }
+-
+   // SavePackage downloads are created in a state where they can be shown in the
+   // browser. Call OnDownloadUpdated() once to notify the UI immediately.
+   OnDownloadUpdated(manager, item);

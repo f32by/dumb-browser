@@ -1,0 +1,82 @@
+diff --git a/chrome/browser/policy/chrome_browser_policy_connector.cc b/chrome/browser/policy/chrome_browser_policy_connector.cc
+index fd2085d4e2f8..ad9c1d636ce2 100644
+--- a/chrome/browser/policy/chrome_browser_policy_connector.cc
++++ b/chrome/browser/policy/chrome_browser_policy_connector.cc
+@@ -23,10 +23,6 @@
+ #include "chrome/common/channel_info.h"
+ #include "chrome/common/chrome_paths.h"
+ #include "components/policy/core/common/async_policy_provider.h"
+-#include "components/policy/core/common/cloud/cloud_external_data_manager.h"
+-#include "components/policy/core/common/cloud/cloud_policy_client_registration_helper.h"
+-#include "components/policy/core/common/cloud/device_management_service.h"
+-#include "components/policy/core/common/cloud/user_cloud_policy_manager.h"
+ #include "components/policy/core/common/command_line_policy_provider.h"
+ #include "components/policy/core/common/configuration_policy_provider.h"
+ #include "components/policy/core/common/policy_map.h"
+@@ -53,12 +49,6 @@
+ #include "components/policy/core/common/android/android_combined_policy_provider.h"
+ #endif
+ 
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-#include "chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h"
+-#include "components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h"
+-#include "components/policy/core/common/cloud/machine_level_user_cloud_policy_manager.h"
+-#endif
+-
+ #if defined(OS_WIN)
+ #include "chrome/browser/browser_switcher/browser_switcher_policy_migrator.h"
+ #endif
+@@ -74,11 +64,6 @@ bool command_line_enabled_for_testing = false;
+ 
+ ChromeBrowserPolicyConnector::ChromeBrowserPolicyConnector()
+     : BrowserPolicyConnector(base::BindRepeating(&BuildHandlerList)) {
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-  chrome_browser_cloud_management_controller_ =
+-      std::make_unique<ChromeBrowserCloudManagementController>(
+-          std::make_unique<ChromeBrowserCloudManagementControllerDesktop>());
+-#endif
+ }
+ 
+ ChromeBrowserPolicyConnector::~ChromeBrowserPolicyConnector() {}
+@@ -115,22 +100,12 @@ bool ChromeBrowserPolicyConnector::IsEnterpriseManaged() const {
+ bool ChromeBrowserPolicyConnector::HasMachineLevelPolicies() {
+   if (ProviderHasPolicies(GetPlatformProvider()))
+     return true;
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-  if (ProviderHasPolicies(machine_level_user_cloud_policy_manager_))
+-    return true;
+-#endif  // !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+   if (ProviderHasPolicies(command_line_provider_))
+     return true;
+   return false;
+ }
+ 
+ void ChromeBrowserPolicyConnector::Shutdown() {
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-  // Reset the controller before calling base class so that
+-  // shutdown occurs in correct sequence.
+-  chrome_browser_cloud_management_controller_.reset();
+-#endif
+-
+   BrowserPolicyConnector::Shutdown();
+ }
+ 
+@@ -166,18 +141,6 @@ ChromeBrowserPolicyConnector::CreatePolicyProviders() {
+     providers.insert(providers.begin(), std::move(platform_provider));
+   }
+ 
+-#if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
+-  std::unique_ptr<MachineLevelUserCloudPolicyManager>
+-      machine_level_user_cloud_policy_manager =
+-          chrome_browser_cloud_management_controller_->CreatePolicyManager(
+-              platform_provider_);
+-  if (machine_level_user_cloud_policy_manager) {
+-    machine_level_user_cloud_policy_manager_ =
+-        machine_level_user_cloud_policy_manager.get();
+-    providers.push_back(std::move(machine_level_user_cloud_policy_manager));
+-  }
+-#endif
+-
+   std::unique_ptr<CommandLinePolicyProvider> command_line_provider =
+       CommandLinePolicyProvider::CreateIfAllowed(
+           *base::CommandLine::ForCurrentProcess(), chrome::GetChannel());

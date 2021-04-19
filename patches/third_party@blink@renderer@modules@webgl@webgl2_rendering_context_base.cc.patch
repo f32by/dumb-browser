@@ -1,0 +1,72 @@
+diff --git a/third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.cc b/third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.cc
+index be9b6fa1cad9..c5baa0d34bcb 100644
+--- a/third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.cc
++++ b/third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.cc
+@@ -10,8 +10,6 @@
+ #include "base/numerics/safe_conversions.h"
+ #include "base/stl_util.h"
+ #include "gpu/command_buffer/client/gles2_interface.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
+ #include "third_party/blink/public/platform/web_graphics_context_3d_provider.h"
+ #include "third_party/blink/renderer/bindings/modules/v8/webgl_any.h"
+ #include "third_party/blink/renderer/core/html/canvas/html_canvas_element.h"
+@@ -584,7 +582,6 @@ ScriptValue WebGL2RenderingContextBase::getInternalformatParameter(
+ 
+       ContextGL()->GetInternalformativ(target, internalformat, GL_SAMPLES,
+                                        length, values.get());
+-      RecordInternalFormatParameter(internalformat, values.get(), length);
+       return WebGLAny(script_state,
+                       DOMInt32Array::Create(values.get(), length));
+     }
+@@ -595,26 +592,6 @@ ScriptValue WebGL2RenderingContextBase::getInternalformatParameter(
+   }
+ }
+ 
+-void WebGL2RenderingContextBase::RecordInternalFormatParameter(
+-    GLenum internalformat,
+-    GLint* values,
+-    GLint length) {
+-  if (!IdentifiabilityStudySettings::Get()->ShouldSample(
+-          IdentifiableSurface::Type::kWebGLInternalFormatParameter))
+-    return;
+-  const auto& ukm_params = GetUkmParameters();
+-  IdentifiableTokenBuilder builder;
+-  for (GLint i = 0; i < length; i++) {
+-    builder.AddValue(values[i]);
+-  }
+-  IdentifiabilityMetricBuilder(ukm_params.source_id)
+-      .Set(IdentifiableSurface::FromTypeAndToken(
+-               IdentifiableSurface::Type::kWebGLInternalFormatParameter,
+-               internalformat),
+-           builder.GetToken())
+-      .Record(ukm_params.ukm_recorder);
+-}
+-
+ bool WebGL2RenderingContextBase::CheckAndTranslateAttachments(
+     const char* function_name,
+     GLenum target,
+@@ -3612,7 +3589,6 @@ void WebGL2RenderingContextBase::drawArraysInstanced(GLenum mode,
+                                                    drawing_buffer_.get());
+   OnBeforeDrawCall();
+   ContextGL()->DrawArraysInstancedANGLE(mode, first, count, instance_count);
+-  RecordUKMCanvasDrawnToAtFirstDrawCall();
+ }
+ 
+ void WebGL2RenderingContextBase::drawElementsInstanced(GLenum mode,
+@@ -3635,7 +3611,6 @@ void WebGL2RenderingContextBase::drawElementsInstanced(GLenum mode,
+   ContextGL()->DrawElementsInstancedANGLE(
+       mode, count, type, reinterpret_cast<void*>(static_cast<intptr_t>(offset)),
+       instance_count);
+-  RecordUKMCanvasDrawnToAtFirstDrawCall();
+ }
+ 
+ void WebGL2RenderingContextBase::drawRangeElements(GLenum mode,
+@@ -3659,7 +3634,6 @@ void WebGL2RenderingContextBase::drawRangeElements(GLenum mode,
+   ContextGL()->DrawRangeElements(
+       mode, start, end, count, type,
+       reinterpret_cast<void*>(static_cast<intptr_t>(offset)));
+-  RecordUKMCanvasDrawnToAtFirstDrawCall();
+ }
+ 
+ void WebGL2RenderingContextBase::drawBuffers(const Vector<GLenum>& buffers) {

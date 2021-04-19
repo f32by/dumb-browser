@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/cocoa/javascript_app_modal_dialog_cocoa.h b/chrome/browser/ui/cocoa/javascript_app_modal_dialog_cocoa.h
+index 426d2b730997..e8481a0dbb5c 100644
+--- a/chrome/browser/ui/cocoa/javascript_app_modal_dialog_cocoa.h
++++ b/chrome/browser/ui/cocoa/javascript_app_modal_dialog_cocoa.h
+@@ -16,8 +16,6 @@
+ #include "components/remote_cocoa/common/alert.mojom.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+ 
+-class PopunderPreventer;
+-
+ namespace javascript_dialogs {
+ class AppModalDialogController;
+ }
+@@ -55,7 +53,6 @@ class JavaScriptAppModalDialogCocoa
+   mojo::Remote<remote_cocoa::mojom::AlertBridge> alert_bridge_;
+ 
+   std::unique_ptr<javascript_dialogs::AppModalDialogController> controller_;
+-  std::unique_ptr<PopunderPreventer> popunder_preventer_;
+ 
+   int num_buttons_ = 0;
+   bool is_showing_ = false;

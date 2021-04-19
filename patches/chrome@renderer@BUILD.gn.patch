@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/BUILD.gn b/chrome/renderer/BUILD.gn
-index d90a361dba12..5ce6c5d9aef1 100644
+index a69e547cdaa1..e8f45bc2e3cf 100644
 --- a/chrome/renderer/BUILD.gn
 +++ b/chrome/renderer/BUILD.gn
-@@ -62,12 +62,6 @@ static_library("renderer") {
+@@ -63,12 +63,6 @@ static_library("renderer") {
      "chrome_render_thread_observer.h",
      "custom_menu_commands.h",
      "instant_restricted_id_cache.h",
@@ -15,10 +15,12 @@ index d90a361dba12..5ce6c5d9aef1 100644
      "loadtimes_extension_bindings.cc",
      "loadtimes_extension_bindings.h",
      "media/chrome_key_systems.cc",
-@@ -96,26 +90,6 @@ static_library("renderer") {
+@@ -95,28 +89,6 @@ static_library("renderer") {
+     "plugins/pdf_plugin_placeholder.h",
+     "plugins/plugin_uma.cc",
      "plugins/plugin_uma.h",
-     "previews/resource_loading_hints_agent.cc",
-     "previews/resource_loading_hints_agent.h",
+-    "previews/resource_loading_hints_agent.cc",
+-    "previews/resource_loading_hints_agent.h",
 -    "subresource_redirect/login_robots_compression_metrics.cc",
 -    "subresource_redirect/login_robots_compression_metrics.h",
 -    "subresource_redirect/login_robots_decider_agent.cc",
@@ -42,7 +44,7 @@ index d90a361dba12..5ce6c5d9aef1 100644
      "sync_encryption_keys_extension.cc",
      "sync_encryption_keys_extension.h",
      "url_loader_throttle_provider_impl.cc",
-@@ -162,32 +136,20 @@ static_library("renderer") {
+@@ -161,7 +133,6 @@ static_library("renderer") {
      "//components/content_settings/common:mojom",
      "//components/content_settings/renderer",
      "//components/contextual_search/content:renderer",
@@ -50,15 +52,16 @@ index d90a361dba12..5ce6c5d9aef1 100644
      "//components/dom_distiller/content/renderer",
      "//components/network_hints/renderer",
      "//components/no_state_prefetch/common",
-     "//components/no_state_prefetch/renderer",
+@@ -169,25 +140,15 @@ static_library("renderer") {
      "//components/omnibox/common",
+     "//components/optimization_guide/content/renderer",
      "//components/page_image_annotation/content/renderer",
 -    "//components/page_load_metrics/renderer",
      "//components/paint_preview/buildflags",
      "//components/plugins/renderer",
      "//components/resources:components_resources",
      "//components/resources:components_scaled_resources",
--    "//components/safe_browsing:buildflags",
+     "//components/safe_browsing:buildflags",
 -    "//components/safe_browsing/content/common:interfaces",
 -    "//components/safe_browsing/content/renderer",
 -    "//components/safe_browsing/content/renderer:throttles",
@@ -75,7 +78,7 @@ index d90a361dba12..5ce6c5d9aef1 100644
      "//components/sync/driver",
      "//components/translate/content/renderer",
      "//components/translate/core/common",
-@@ -207,9 +169,6 @@ static_library("renderer") {
+@@ -208,9 +169,6 @@ static_library("renderer") {
      "//net",
      "//ppapi/buildflags",
      "//printing/buildflags",

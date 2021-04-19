@@ -1,15 +1,11 @@
 diff --git a/components/metrics_services_manager/metrics_services_manager.h b/components/metrics_services_manager/metrics_services_manager.h
-index 38c955cfde54..5f14667a6b24 100644
+index c705745f44f2..3f0081019be4 100644
 --- a/components/metrics_services_manager/metrics_services_manager.h
 +++ b/components/metrics_services_manager/metrics_services_manager.h
-@@ -20,14 +20,6 @@ class MetricsService;
+@@ -20,10 +20,6 @@ class MetricsService;
  class MetricsServiceClient;
  }
  
--namespace rappor {
--class RapporServiceImpl;
--}
--
 -namespace ukm {
 -class UkmService;
 -}
@@ -17,13 +13,10 @@ index 38c955cfde54..5f14667a6b24 100644
  namespace variations {
  class VariationsService;
  }
-@@ -60,51 +52,18 @@ class MetricsServicesManager {
+@@ -56,60 +52,24 @@ class MetricsServicesManager {
    // additionally creating the MetricsServiceClient in that case).
    metrics::MetricsService* GetMetricsService();
  
--  // Returns the RapporServiceImpl, creating it if it hasn't been created yet.
--  rappor::RapporServiceImpl* GetRapporServiceImpl();
--
 -  // Returns the UkmService, creating it if it hasn't been created yet.
 -  ukm::UkmService* GetUkmService();
 -
@@ -47,10 +40,6 @@ index 38c955cfde54..5f14667a6b24 100644
 -  bool IsMetricsConsentGiven() const;
 -
   private:
--  // Update the managed services when permissions for recording/uploading
--  // metrics change.
--  void UpdateRapporServiceImpl();
--
    // Returns the MetricsServiceClient, creating it if it hasn't been
    // created yet (and additionally creating the MetricsService in that case).
    metrics::MetricsServiceClient* GetMetricsServiceClient();
@@ -66,10 +55,10 @@ index 38c955cfde54..5f14667a6b24 100644
 -  void UpdatePermissions(bool current_may_record,
 -                         bool current_consent_given,
 -                         bool current_may_upload);
- 
+-
    // The client passed in from the embedder.
    const std::unique_ptr<MetricsServicesManagerClient> client_;
-@@ -112,21 +71,9 @@ class MetricsServicesManager {
+ 
    // Ensures that all functions are called from the same thread.
    base::ThreadChecker thread_checker_;
  
@@ -84,10 +73,4 @@ index 38c955cfde54..5f14667a6b24 100644
 -
    // The MetricsServiceClient. Owns the MetricsService.
    std::unique_ptr<metrics::MetricsServiceClient> metrics_service_client_;
- 
--  // The RapporServiceImpl, for RAPPOR metric uploads.
--  std::unique_ptr<rappor::RapporServiceImpl> rappor_service_;
--
-   // The VariationsService, for server-side experiments infrastructure.
-   std::unique_ptr<variations::VariationsService> variations_service_;
  

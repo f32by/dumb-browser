@@ -1,8 +1,8 @@
 diff --git a/services/network/public/cpp/cross_origin_resource_policy.cc b/services/network/public/cpp/cross_origin_resource_policy.cc
-index b24addd5a5ec..48e091d1c073 100644
+index 74a96f33f3c2..5e6966a1e10c 100644
 --- a/services/network/public/cpp/cross_origin_resource_policy.cc
 +++ b/services/network/public/cpp/cross_origin_resource_policy.cc
-@@ -221,26 +221,7 @@ base::Optional<mojom::BlockedByResponseReason> IsBlockedInternalWithReporting(
+@@ -216,26 +216,7 @@ base::Optional<mojom::BlockedByResponseReason> IsBlockedInternalWithReporting(
      mojom::RequestMode request_mode,
      base::Optional<url::Origin> request_initiator_origin_lock,
      mojom::RequestDestination request_destination,
@@ -30,7 +30,7 @@ index b24addd5a5ec..48e091d1c073 100644
    if (request_mode == mojom::RequestMode::kNavigate &&
        embedder_policy.value == mojom::CrossOriginEmbedderPolicyValue::kNone) {
      return base::nullopt;
-@@ -251,12 +232,7 @@ base::Optional<mojom::BlockedByResponseReason> IsBlockedInternalWithReporting(
+@@ -246,12 +227,7 @@ base::Optional<mojom::BlockedByResponseReason> IsBlockedInternalWithReporting(
                          request_initiator_origin_lock, embedder_policy.value);
    UMA_HISTOGRAM_ENUMERATION("NetworkService.CrossOriginResourcePolicy.Result",
                              ToCorpResult(result));
@@ -44,7 +44,7 @@ index b24addd5a5ec..48e091d1c073 100644
    return result;
  }
  
-@@ -276,8 +252,7 @@ CrossOriginResourcePolicy::IsBlocked(
+@@ -271,8 +247,7 @@ CrossOriginResourcePolicy::IsBlocked(
      mojom::RequestMode request_mode,
      base::Optional<url::Origin> request_initiator_origin_lock,
      mojom::RequestDestination request_destination,
@@ -54,7 +54,7 @@ index b24addd5a5ec..48e091d1c073 100644
    // From https://fetch.spec.whatwg.org/#cross-origin-resource-policy-header:
    // > 1. If request’s mode is not "no-cors", then return allowed.
    if (request_mode != mojom::RequestMode::kNoCors)
-@@ -295,8 +270,7 @@ CrossOriginResourcePolicy::IsBlocked(
+@@ -290,8 +265,7 @@ CrossOriginResourcePolicy::IsBlocked(
  
    return IsBlockedInternalWithReporting(
        policy, request_url, original_url, request_initiator, request_mode,
@@ -64,7 +64,7 @@ index b24addd5a5ec..48e091d1c073 100644
  }
  
  // static
-@@ -309,8 +283,7 @@ CrossOriginResourcePolicy::IsBlockedByHeaderValue(
+@@ -304,8 +278,7 @@ CrossOriginResourcePolicy::IsBlockedByHeaderValue(
      mojom::RequestMode request_mode,
      base::Optional<url::Origin> request_initiator_origin_lock,
      mojom::RequestDestination request_destination,
@@ -74,7 +74,7 @@ index b24addd5a5ec..48e091d1c073 100644
    // From https://fetch.spec.whatwg.org/#cross-origin-resource-policy-header:
    // > 1. If request’s mode is not "no-cors", then return allowed.
    if (request_mode != mojom::RequestMode::kNoCors)
-@@ -320,8 +293,7 @@ CrossOriginResourcePolicy::IsBlockedByHeaderValue(
+@@ -315,8 +288,7 @@ CrossOriginResourcePolicy::IsBlockedByHeaderValue(
  
    return IsBlockedInternalWithReporting(
        policy, request_url, original_url, request_initiator, request_mode,
@@ -84,7 +84,7 @@ index b24addd5a5ec..48e091d1c073 100644
  }
  
  // static
-@@ -333,15 +305,14 @@ CrossOriginResourcePolicy::IsNavigationBlocked(
+@@ -328,15 +300,14 @@ CrossOriginResourcePolicy::IsNavigationBlocked(
      const network::mojom::URLResponseHead& response,
      base::Optional<url::Origin> request_initiator_origin_lock,
      mojom::RequestDestination request_destination,

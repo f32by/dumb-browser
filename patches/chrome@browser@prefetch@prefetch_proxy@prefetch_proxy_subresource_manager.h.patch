@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
-index 5bf8967c05e3..3737913f8e15 100644
+index bcd3d0408915..c2ef98a7fbcc 100644
 --- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
 +++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
-@@ -33,7 +33,6 @@ class PrerenderHandle;
+@@ -33,7 +33,6 @@ class NoStatePrefetchHandle;
  }
  
  class PrefetchedMainframeResponseContainer;
@@ -10,7 +10,7 @@ index 5bf8967c05e3..3737913f8e15 100644
  class PrefetchProxyProxyingURLLoaderFactory;
  
  // This class manages the prefetch proxy of a page and its subresources.
-@@ -64,10 +63,6 @@ class PrefetchProxySubresourceManager
+@@ -65,10 +64,6 @@ class PrefetchProxySubresourceManager
      return successfully_loaded_subresources_;
    }
  
@@ -21,7 +21,7 @@ index 5bf8967c05e3..3737913f8e15 100644
    // Takes ownership of |mainframe_response_|.
    std::unique_ptr<PrefetchedMainframeResponseContainer> TakeMainframeResponse();
  
-@@ -153,10 +148,6 @@ class PrefetchProxySubresourceManager
+@@ -154,10 +149,6 @@ class PrefetchProxySubresourceManager
    // The mainframe response headers and body.
    std::unique_ptr<PrefetchedMainframeResponseContainer> mainframe_response_;
  

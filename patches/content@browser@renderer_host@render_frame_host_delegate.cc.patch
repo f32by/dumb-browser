@@ -1,5 +1,5 @@
 diff --git a/content/browser/renderer_host/render_frame_host_delegate.cc b/content/browser/renderer_host/render_frame_host_delegate.cc
-index 83080d9f92bd..0f553eda87db 100644
+index b0a3039ad4cb..d2f7195b85fa 100644
 --- a/content/browser/renderer_host/render_frame_host_delegate.cc
 +++ b/content/browser/renderer_host/render_frame_host_delegate.cc
 @@ -150,11 +150,6 @@ RenderFrameHostImpl* RenderFrameHostDelegate::GetMainFrameForInnerDelegate(
@@ -11,6 +11,6 @@ index 83080d9f92bd..0f553eda87db 100644
 -  return base::NullCallback();
 -}
 -
- bool RenderFrameHostDelegate::IsFrameLowPriority(
-     RenderFrameHost* render_frame_host) {
-   return false;
+ void RenderFrameHostDelegate::IsClipboardPasteContentAllowed(
+     const GURL& url,
+     const ui::ClipboardFormatType& data_type,

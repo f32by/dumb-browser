@@ -1,5 +1,5 @@
 diff --git a/chrome/app/settings_chromium_strings.grdp b/chrome/app/settings_chromium_strings.grdp
-index a8125c5b273e..0b1b6f2c5f70 100644
+index fd1010a14d25..37d14620a627 100644
 --- a/chrome/app/settings_chromium_strings.grdp
 +++ b/chrome/app/settings_chromium_strings.grdp
 @@ -3,23 +3,23 @@
@@ -32,7 +32,7 @@ index a8125c5b273e..0b1b6f2c5f70 100644
      </message>
    </if>
    <if expr="chromeos">
-@@ -39,33 +39,33 @@
+@@ -39,59 +39,59 @@
  
    <!-- Cookie Settings Page -->
    <message name="IDS_SETTINGS_SITE_SETTINGS_DELETE_DATA_POST_SESSION" desc="Label for the checkbox that allows the user to automatically delete their cookies and site data at the end of the browser session.">
@@ -74,9 +74,12 @@ index a8125c5b273e..0b1b6f2c5f70 100644
 +    Dumb Browser will notify you when you sign in with a compromised password
    </message>
    <message name="IDS_SETTINGS_SIGNED_OUT_USER_LABEL" desc="Label which is shown at the top of the compromised password section if user is signed out.">
-     To check if your passwords are safe from data breaches and other security issues, <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>sign in to Chromium<ph name="END_LINK">&lt;/a&gt;</ph>.
-@@ -74,24 +74,24 @@
-     To check if your other passwords are safe from data breaches and other security issues, <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>sign in to Chromium<ph name="END_LINK">&lt;/a&gt;</ph>.
+-    To check if your passwords are safe from data breaches and other security issues, <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>sign in to Chromium<ph name="END_LINK">&lt;/a&gt;</ph>.
++    To check if your passwords are safe from data breaches and other security issues, <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>sign in to Dumb Browser<ph name="END_LINK">&lt;/a&gt;</ph>.
+   </message>
+   <message name="IDS_SETTINGS_SIGNED_OUT_USER_HAS_COMPROMISED_CREDENTIALS_LABEL" desc="Label which is shown at the bottom of the compromised password section if user is signed out and has compromised credentials.">
+-    To check if your other passwords are safe from data breaches and other security issues, <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>sign in to Chromium<ph name="END_LINK">&lt;/a&gt;</ph>.
++    To check if your other passwords are safe from data breaches and other security issues, <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>sign in to Dumb Browser<ph name="END_LINK">&lt;/a&gt;</ph>.
    </message>
    <message name="IDS_SETTINGS_WEAK_PASSWORDS_DESCRIPTION_GENERATION" desc="Information about why weak passwords are a security issue and what syncing user should do to fix the problem. Has a link.">
 -    Weak passwords are easy to guess. Let Chromium <ph name="BEGIN_LINK">&lt;a target='_blank' href='$1'&gt;</ph>create and remember strong passwords for you<ph name="END_LINK">&lt;/a&gt;</ph>.
@@ -137,7 +140,7 @@ index a8125c5b273e..0b1b6f2c5f70 100644
    </message>
    <message name="IDS_SETTINGS_SAFETY_CHECK_UPDATES_FAILED" desc="This text describes that Chromium cannot update due to an unknown error.">
 -    Chromium didn't update, something went wrong. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Fix Chromium update problems and failed updates.<ph name="END_LINK">&lt;/a&gt;</ph>
-+    Dumb Browser didn't update, something went wrong. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Fix Chromium update problems and failed updates.<ph name="END_LINK">&lt;/a&gt;</ph>
++    Dumb Browser didn't update, something went wrong. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Fix Dumb Browser update problems and failed updates.<ph name="END_LINK">&lt;/a&gt;</ph>
    </message>
    <message name="IDS_SETTINGS_SAFETY_CHECK_UPDATES_UNKNOWN" desc="This text displays the installed version of Chromium when it is not possible to check for updates on non-Chrome branded browsers.">
 -    Chromium version <ph name="PRODUCT_VERSION">$1<ex>15.0.865.0</ex></ph> is installed
@@ -170,13 +173,13 @@ index a8125c5b273e..0b1b6f2c5f70 100644
 +    This will delete your browsing data from this device. To retrieve your data later, sign in to Dumb Browser as <ph name="USER_EMAIL">$1<ex>foo@example.com</ex></ph>.
    </message>
  <if expr="not chromeos">
-   <message name="IDS_SETTINGS_PROFILE_NAME_AND_PICTURE" desc="Label of the link that takes you to the page to edit your name and picture for your chrome profile.">
--    Chromium name and picture
-+    Dumb Browser name and picture
-   </message>
    <message name="IDS_SETTINGS_CUSTOMIZE_YOUR_CHROME_PROFILE" desc="Label of the link that takes you to the page to customize your chrome profile.">
 -    Customize your Chromium profile
 +    Customize your Dumb Browser profile
+   </message>
+   <message name="IDS_SETTING_NAME_YOUR_PROFILE" desc="Title of the edit local profile name section on the manage profile page.">
+-    Name your Chromium profile
++    Name your Dumb Browser profile
    </message>
  </if>
    <message name="IDS_SETTINGS_PEOPLE_SIGN_IN_PROMPT_SECONDARY_WITH_ACCOUNT" desc="The secondary text displayed to prompt users to enable sync for an account that is alredy present in Chromium.">
@@ -185,8 +188,8 @@ index a8125c5b273e..0b1b6f2c5f70 100644
    </message>
  <if expr="chromeos">
    <message name="IDS_SETTINGS_ACCOUNT_MANAGER_DESCRIPTION_V2" desc="Description of the Account Manager Settings page. Shown just below the title of the page.">
--    If you have multiple Google Accounts, you can add them to your <ph name="DEVICE_TYPE">$1<ex>Chromebook</ex></ph>. Your accounts will be available in Chromium browser and Play Store, as well as services like Gmail, Drive, and YouTube. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
-+    If you have multiple Google Accounts, you can add them to your <ph name="DEVICE_TYPE">$1<ex>Chromebook</ex></ph>. Your accounts will be available in Dumb Browser browser and Play Store, as well as services like Gmail, Drive, and YouTube. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
+-    This page allows you to manage your signed-in Google accounts. These accounts will be available in Chromium browser and Play Store apps, as well as services like Gmail, Drive, and YouTube. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
++    This page allows you to manage your signed-in Google accounts. These accounts will be available in Dumb Browser browser and Play Store apps, as well as services like Gmail, Drive, and YouTube. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
    </message>
  </if>
  

@@ -1,0 +1,36 @@
+diff --git a/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h b/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
+index a31ea8750a35..6f0d61daebae 100644
+--- a/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
++++ b/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
+@@ -10,7 +10,6 @@
+ #include "base/location.h"
+ #include "base/single_thread_task_runner.h"
+ #include "services/metrics/public/cpp/ukm_source_id.h"
+-#include "third_party/blink/public/common/privacy_budget/identifiable_token.h"
+ #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_blob_callback.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_image_encode_options.h"
+@@ -62,7 +61,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+                          ToBlobFunctionType function_type,
+                          base::TimeTicks start_time,
+                          ExecutionContext*,
+-                         const IdentifiableToken& input_digest,
+                          ScriptPromiseResolver*);
+   CanvasAsyncBlobCreator(scoped_refptr<StaticBitmapImage>,
+                          const ImageEncodeOptions*,
+@@ -70,7 +68,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+                          V8BlobCallback*,
+                          base::TimeTicks start_time,
+                          ExecutionContext*,
+-                         const IdentifiableToken& input_digest,
+                          ScriptPromiseResolver* = nullptr);
+   virtual ~CanvasAsyncBlobCreator();
+ 
+@@ -129,7 +126,6 @@ class CORE_EXPORT CanvasAsyncBlobCreator
+   base::TimeTicks start_time_;
+   base::TimeTicks schedule_idle_task_start_time_;
+   bool static_bitmap_image_loaded_;
+-  IdentifiableToken input_digest_;
+ 
+   // Used when CanvasAsyncBlobCreator runs on main thread only
+   scoped_refptr<base::SingleThreadTaskRunner> parent_frame_task_runner_;

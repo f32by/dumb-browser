@@ -1,16 +1,20 @@
 diff --git a/content/browser/direct_sockets/direct_sockets_service_impl.cc b/content/browser/direct_sockets/direct_sockets_service_impl.cc
-index 5ef284bdf68f..2fc0eddc65e0 100644
+index c6970c5bd54d..166a546b25b0 100644
 --- a/content/browser/direct_sockets/direct_sockets_service_impl.cc
 +++ b/content/browser/direct_sockets/direct_sockets_service_impl.cc
-@@ -53,11 +53,6 @@ base::Optional<net::IPEndPoint> GetLocalAddr(
+@@ -17,6 +17,7 @@
+ #include "content/public/browser/storage_partition.h"
+ #include "content/public/browser/web_contents.h"
+ #include "content/public/common/content_features.h"
++#include "dumb/base/compiler_specific.h"
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+ #include "mojo/public/cpp/system/data_pipe.h"
+ #include "net/base/address_list.h"
+@@ -68,6 +69,7 @@ base::Optional<net::IPEndPoint> GetLocalAddr(
    return local_addr;
  }
  
--bool ResemblesMulticastDNSName(const std::string& hostname) {
--  return base::EndsWith(hostname, ".local") ||
--         base::EndsWith(hostname, ".local.");
--}
--
- }  // namespace
- 
- DirectSocketsServiceImpl::DirectSocketsServiceImpl(RenderFrameHost& frame_host)
++DUMB_ALLOW_UNUSED_TYPE
+ bool ResemblesMulticastDNSName(const std::string& hostname) {
+   return base::EndsWith(hostname, ".local") ||
+          base::EndsWith(hostname, ".local.");

@@ -1,8 +1,8 @@
 diff --git a/content/browser/cache_storage/cache_storage_dispatcher_host.cc b/content/browser/cache_storage/cache_storage_dispatcher_host.cc
-index 7c7d29794e9d..29f05d27fa2a 100644
+index 9bf9cad48e73..f005bb0086e0 100644
 --- a/content/browser/cache_storage/cache_storage_dispatcher_host.cc
 +++ b/content/browser/cache_storage/cache_storage_dispatcher_host.cc
-@@ -122,9 +122,7 @@ blink::mojom::MatchResultPtr EagerlyReadResponseBody(
+@@ -121,9 +121,7 @@ blink::mojom::MatchResultPtr EagerlyReadResponseBody(
  bool ResponseBlockedByCrossOriginResourcePolicy(
      const blink::mojom::FetchAPIResponse* response,
      const url::Origin& document_origin,
@@ -13,7 +13,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
    // optional short-circuit to avoid parsing CORP again and again when no COEP
    // policy is defined.
    if (document_coep.value ==
-@@ -150,7 +148,7 @@ bool ResponseBlockedByCrossOriginResourcePolicy(
+@@ -149,7 +147,7 @@ bool ResponseBlockedByCrossOriginResourcePolicy(
               response->url_list.back(), response->url_list.front(),
               document_origin, corp_header_value, RequestMode::kNoCors,
               document_origin, network::mojom::RequestDestination::kEmpty,
@@ -22,7 +22,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
        .has_value();
  }
  
-@@ -168,14 +166,11 @@ class CacheStorageDispatcherHost::CacheImpl
+@@ -167,14 +165,11 @@ class CacheStorageDispatcherHost::CacheImpl
        CacheStorageCacheHandle cache_handle,
        const url::Origin& origin,
        const CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
@@ -37,7 +37,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
          owner_(owner) {
      DCHECK(host_);
    }
-@@ -248,7 +243,7 @@ class CacheStorageDispatcherHost::CacheImpl
+@@ -247,7 +242,7 @@ class CacheStorageDispatcherHost::CacheImpl
            // Cross-Origin-Embedder-Policy (COEP).
            if (ResponseBlockedByCrossOriginResourcePolicy(
                    response.get(), self->origin_,
@@ -46,7 +46,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
              std::move(callback).Run(blink::mojom::MatchResult::NewStatus(
                  CacheStorageError::kErrorCrossOriginResourcePolicy));
              return;
-@@ -332,8 +327,7 @@ class CacheStorageDispatcherHost::CacheImpl
+@@ -331,8 +326,7 @@ class CacheStorageDispatcherHost::CacheImpl
            for (const auto& response : responses) {
              if (ResponseBlockedByCrossOriginResourcePolicy(
                      response.get(), self->origin_,
@@ -56,7 +56,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
                std::move(callback).Run(blink::mojom::MatchAllResult::NewStatus(
                    CacheStorageError::kErrorCrossOriginResourcePolicy));
                return;
-@@ -413,8 +407,7 @@ class CacheStorageDispatcherHost::CacheImpl
+@@ -412,8 +406,7 @@ class CacheStorageDispatcherHost::CacheImpl
            for (const auto& entry : entries) {
              if (ResponseBlockedByCrossOriginResourcePolicy(
                      entry->response.get(), self->origin_,
@@ -66,7 +66,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
                std::move(callback).Run(
                    blink::mojom::GetAllMatchedEntriesResult::NewStatus(
                        CacheStorageError::kErrorCrossOriginResourcePolicy));
-@@ -605,8 +598,6 @@ class CacheStorageDispatcherHost::CacheImpl
+@@ -604,8 +597,6 @@ class CacheStorageDispatcherHost::CacheImpl
    CacheStorageCacheHandle cache_handle_;
    const url::Origin origin_;
    const CrossOriginEmbedderPolicy cross_origin_embedder_policy_;
@@ -75,7 +75,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
    const storage::mojom::CacheStorageOwner owner_;
    SEQUENCE_CHECKER(sequence_checker_);
  
-@@ -626,13 +617,10 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
+@@ -625,13 +616,10 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
        const url::Origin& origin,
        bool incognito,
        const CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
@@ -89,7 +89,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
          owner_(owner) {
      // Eagerly initialize the backend when the mojo connection is bound.
      //
-@@ -823,7 +811,7 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
+@@ -822,7 +810,7 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
            // Cross-Origin-Embedder-Policy (COEP).
            if (ResponseBlockedByCrossOriginResourcePolicy(
                    response.get(), self->origin_,
@@ -98,7 +98,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
              std::move(callback).Run(blink::mojom::MatchResult::NewStatus(
                  CacheStorageError::kErrorCrossOriginResourcePolicy));
              return;
-@@ -901,15 +889,10 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
+@@ -900,15 +888,10 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
  
            mojo::PendingAssociatedRemote<blink::mojom::CacheStorageCache>
                pending_remote;
@@ -116,7 +116,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
                self->owner_);
            self->host_->AddCacheReceiver(
                std::move(cache_impl),
-@@ -948,8 +931,6 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
+@@ -947,8 +930,6 @@ class CacheStorageDispatcherHost::CacheStorageImpl final
  
    const url::Origin origin_;
    const CrossOriginEmbedderPolicy cross_origin_embedder_policy_;
@@ -125,7 +125,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
    const storage::mojom::CacheStorageOwner owner_;
    CacheStorageHandle cache_storage_handle_;
  
-@@ -971,8 +952,6 @@ void CacheStorageDispatcherHost::Init(CacheStorageContextImpl* context) {
+@@ -969,8 +950,6 @@ CacheStorageDispatcherHost::~CacheStorageDispatcherHost() {
  
  void CacheStorageDispatcherHost::AddReceiver(
      const CrossOriginEmbedderPolicy& cross_origin_embedder_policy,
@@ -134,7 +134,7 @@ index 7c7d29794e9d..29f05d27fa2a 100644
      const url::Origin& origin,
      storage::mojom::CacheStorageOwner owner,
      mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) {
-@@ -980,7 +959,7 @@ void CacheStorageDispatcherHost::AddReceiver(
+@@ -978,7 +957,7 @@ void CacheStorageDispatcherHost::AddReceiver(
    bool incognito = context_ ? context_->is_incognito() : false;
    auto impl = std::make_unique<CacheStorageImpl>(
        this, origin, incognito, cross_origin_embedder_policy,

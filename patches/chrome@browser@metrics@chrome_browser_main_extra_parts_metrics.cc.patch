@@ -1,28 +1,8 @@
 diff --git a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
-index 78e4af079092..f7ed976d04d4 100644
+index 5174562ac1af..2abff096cbbd 100644
 --- a/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
 +++ b/chrome/browser/metrics/chrome_browser_main_extra_parts_metrics.cc
-@@ -32,7 +32,6 @@
- #include "chrome/browser/metrics/authenticator_utility.h"
- #include "chrome/browser/metrics/bluetooth_available_utility.h"
- #include "chrome/browser/metrics/chrome_metrics_service_accessor.h"
--#include "chrome/browser/metrics/process_memory_metrics_emitter.h"
- #include "chrome/browser/shell_integration.h"
- #include "components/flags_ui/pref_service_flags_storage.h"
- #include "content/public/browser/browser_task_traits.h"
-@@ -43,11 +42,6 @@
- #include "ui/base/ui_base_switches.h"
- #include "ui/display/screen.h"
- 
--#if !defined(OS_ANDROID)
--#include "chrome/browser/metrics/first_web_contents_profiler.h"
--#include "chrome/browser/metrics/tab_stats_tracker.h"
--#endif  // !defined(OS_ANDROID)
--
- #if defined(OS_ANDROID) && defined(__arm__)
- #include <cpu-features.h>
- #endif  // defined(OS_ANDROID) && defined(__arm__)
-@@ -85,24 +79,6 @@
+@@ -88,24 +88,6 @@
  
  namespace {
  
@@ -47,7 +27,7 @@ index 78e4af079092..f7ed976d04d4 100644
  // These values are written to logs.  New enum values can be added, but existing
  // enums must never be renumbered or deleted and reused.
  enum UMALinuxDistro {
-@@ -614,7 +590,6 @@ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
+@@ -615,7 +597,6 @@ void ChromeBrowserMainExtraPartsMetrics::PreBrowserStart() {
  }
  
  void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
@@ -55,22 +35,3 @@ index 78e4af079092..f7ed976d04d4 100644
    RecordLinuxGlibcVersion();
  #if defined(USE_X11)
    if (!features::IsUsingOzonePlatform()) {
-@@ -679,18 +654,6 @@ void ChromeBrowserMainExtraPartsMetrics::PostBrowserStart() {
-                               display_count_);
-   display::Screen::GetScreen()->AddObserver(this);
-   is_screen_observer_ = true;
--
--#if !defined(OS_ANDROID)
--  metrics::BeginFirstWebContentsProfiling();
--  // Only instantiate the tab stats tracker if a local state exists. This is
--  // always the case for Chrome but not for the unittests.
--  if (g_browser_process != nullptr &&
--      g_browser_process->local_state() != nullptr) {
--    metrics::TabStatsTracker::SetInstance(
--        std::make_unique<metrics::TabStatsTracker>(
--            g_browser_process->local_state()));
--  }
--#endif  // !defined(OS_ANDROID)
- }
- 
- void ChromeBrowserMainExtraPartsMetrics::PreMainMessageLoopRun() {

@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/extensions/extension_management.cc b/chrome/browser/extensions/extension_management.cc
+index a4ac2264d34e..5ece7a163be9 100644
+--- a/chrome/browser/extensions/extension_management.cc
++++ b/chrome/browser/extensions/extension_management.cc
+@@ -43,12 +43,6 @@
+ #include "extensions/common/url_pattern.h"
+ #include "url/gurl.h"
+ 
+-#if BUILDFLAG(IS_CHROMEOS_ASH)
+-#include "chrome/browser/ash/profiles/profile_helper.h"
+-#else
+-#include "components/enterprise/browser/reporting/common_pref_names.h"
+-#endif
+-
+ namespace extensions {
+ 
+ ExtensionManagement::ExtensionManagement(Profile* profile)
+@@ -76,10 +70,6 @@ ExtensionManagement::ExtensionManagement(Profile* profile)
+                              pref_change_callback);
+   pref_change_registrar_.Add(prefs::kCloudExtensionRequestEnabled,
+                              pref_change_callback);
+-#if !BUILDFLAG(IS_CHROMEOS_ASH)
+-  pref_change_registrar_.Add(enterprise_reporting::kCloudReportingEnabled,
+-                             pref_change_callback);
+-#endif
+   // Note that both |global_settings_| and |default_settings_| will be null
+   // before first call to Refresh(), so in order to resolve this, Refresh() must
+   // be called in the initialization of ExtensionManagement.

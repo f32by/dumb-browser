@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/searchbox/searchbox_extension.cc b/chrome/renderer/searchbox/searchbox_extension.cc
-index 0f8395b167f0..9c76d24761fa 100644
+index cb6c34b7b5fd..0b693531e60f 100644
 --- a/chrome/renderer/searchbox/searchbox_extension.cc
 +++ b/chrome/renderer/searchbox/searchbox_extension.cc
 @@ -876,7 +876,6 @@ class NewTabPageBindings : public gin::Wrappable<NewTabPageBindings> {
@@ -10,7 +10,7 @@ index 0f8395b167f0..9c76d24761fa 100644
    static void OpenExtensionsPage(double button,
                                   bool alt_key,
                                   bool ctrl_key,
-@@ -957,7 +956,6 @@ gin::ObjectTemplateBuilder NewTabPageBindings::GetObjectTemplateBuilder(
+@@ -964,7 +963,6 @@ gin::ObjectTemplateBuilder NewTabPageBindings::GetObjectTemplateBuilder(
        .SetMethod("confirmThemeChanges",
                   &NewTabPageBindings::ConfirmThemeChanges)
        .SetMethod("getColorsInfo", &NewTabPageBindings::GetColorsInfo)
@@ -18,7 +18,7 @@ index 0f8395b167f0..9c76d24761fa 100644
        .SetMethod("openExtensionsPage", &NewTabPageBindings::OpenExtensionsPage);
  }
  
-@@ -1433,13 +1431,6 @@ v8::Local<v8::Value> NewTabPageBindings::GetColorsInfo(v8::Isolate* isolate) {
+@@ -1440,13 +1438,6 @@ v8::Local<v8::Value> NewTabPageBindings::GetColorsInfo(v8::Isolate* isolate) {
    return v8_colors;
  }
  

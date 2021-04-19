@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/render_frame_host_impl.cc b/content/browser/renderer_host/render_frame_host_impl.cc
-index 0e1a439de32f..d1e2b0ca66c5 100644
+index dac922a6bd56..94a12933bde4 100644
 --- a/content/browser/renderer_host/render_frame_host_impl.cc
 +++ b/content/browser/renderer_host/render_frame_host_impl.cc
-@@ -73,8 +73,6 @@
+@@ -74,8 +74,6 @@
  #include "content/browser/media/media_interface_proxy.h"
  #include "content/browser/media/webaudio/audio_context_manager_impl.h"
  #include "content/browser/navigation_subresource_loader_params.h"
@@ -11,8 +11,8 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
  #include "content/browser/payments/payment_app_context_impl.h"
  #include "content/browser/permissions/permission_controller_impl.h"
  #include "content/browser/permissions/permission_service_context.h"
-@@ -1119,13 +1117,6 @@ RenderFrameHostImpl::RenderFrameHostImpl(
-   }
+@@ -1163,13 +1161,6 @@ RenderFrameHostImpl::RenderFrameHostImpl(
+   DCHECK_EQ(setup_local_render_widget_host, is_local_root());
    ResetFeaturePolicy();
  
 -  // New RenderFrameHostImpl are put in their own virtual browsing context
@@ -25,7 +25,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
    // IdleManager should be unique per RenderFrame to provide proper isolation
    // of overrides.
    idle_manager_ =
-@@ -1708,7 +1699,7 @@ RenderFrameHostImpl::CreateURLLoaderFactoriesForIsolatedWorlds(
+@@ -1750,7 +1741,7 @@ RenderFrameHostImpl::CreateURLLoaderFactoriesForIsolatedWorlds(
        network::mojom::TrustTokenRedemptionPolicy::kForbid;
    ExtractFactoryParamsFromNavigationRequestOrLastCommittedNavigation(
        navigation_request, &main_world_origin, &isolation_info,
@@ -34,7 +34,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
        &trust_token_redemption_policy);
  
    blink::PendingURLLoaderFactoryBundle::OriginMap result;
-@@ -5299,11 +5290,6 @@ void RenderFrameHostImpl::CreateNewWindow(
+@@ -5384,11 +5375,6 @@ void RenderFrameHostImpl::CreateNewWindow(
    if (!params->opener_suppressed)
      popup_coep = cross_origin_embedder_policy();
  
@@ -46,7 +46,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
    // If the opener is suppressed or script access is disallowed, we should
    // open the window in a new BrowsingInstance, and thus a new process. That
    // means the current renderer process will not be able to route messages to
-@@ -5341,19 +5327,6 @@ void RenderFrameHostImpl::CreateNewWindow(
+@@ -5426,19 +5412,6 @@ void RenderFrameHostImpl::CreateNewWindow(
    main_frame->SetOriginDependentStateOfNewFrame(GetLastCommittedOrigin());
    main_frame->cross_origin_opener_policy_ = popup_coop;
    main_frame->cross_origin_embedder_policy_ = popup_coep;
@@ -64,9 +64,9 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
 -            isolation_info_.network_isolation_key()));
 -  }
  
-   if (main_frame->waiting_for_init_) {
-     // Need to check |waiting_for_init_| as some paths inside CreateNewWindow
-@@ -5748,11 +5721,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
+   mojo::PendingAssociatedRemote<mojom::Frame> pending_frame_remote;
+   mojo::PendingAssociatedReceiver<mojom::Frame> pending_frame_receiver =
+@@ -5832,11 +5805,6 @@ void RenderFrameHostImpl::HandleAXLocationChanges(
    delegate_->AccessibilityLocationChangesReceived(details);
  }
  
@@ -78,7 +78,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
  void RenderFrameHostImpl::ResetWaitingState() {
    // We don't allow resetting waiting state when the RenderFrameHost is either
    // in BackForwardCache or in pending deletion state, as we don't allow
-@@ -7363,37 +7331,29 @@ void RenderFrameHostImpl::
+@@ -7464,37 +7432,29 @@ void RenderFrameHostImpl::
          url::Origin* out_main_world_origin,
          net::IsolationInfo* out_isolation_info,
          network::mojom::ClientSecurityStatePtr* out_client_security_state,
@@ -117,7 +117,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
        *out_trust_token_redemption_policy =
            network::mojom::TrustTokenRedemptionPolicy::kForbid;
      }
-@@ -7402,15 +7362,9 @@ void RenderFrameHostImpl::
+@@ -7503,15 +7463,9 @@ void RenderFrameHostImpl::
      *out_main_world_origin = last_committed_origin_;
      *out_isolation_info = isolation_info_;
      *out_client_security_state = BuildClientSecurityState();
@@ -133,7 +133,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
  }
  
  network::mojom::URLLoaderFactoryParamsPtr
-@@ -7420,18 +7374,16 @@ RenderFrameHostImpl::CreateURLLoaderFactoryParamsForMainWorld(
+@@ -7521,18 +7475,16 @@ RenderFrameHostImpl::CreateURLLoaderFactoryParamsForMainWorld(
    url::Origin main_world_origin;
    net::IsolationInfo isolation_info;
    network::mojom::ClientSecurityStatePtr client_security_state;
@@ -154,7 +154,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
        trust_token_redemption_policy, debug_tag);
  }
  
-@@ -7781,58 +7733,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
+@@ -7892,58 +7844,6 @@ void RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver(
    media_interface_proxy_->Bind(std::move(receiver));
  }
  
@@ -210,10 +210,10 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
 -      std::move(receiver));
 -}
 -
- void RenderFrameHostImpl::CreateMediaPlayerHost(
-     mojo::PendingReceiver<media::mojom::MediaPlayerHost> receiver) {
-   delegate_->CreateMediaPlayerHostForRenderFrameHost(this, std::move(receiver));
-@@ -7880,12 +7780,6 @@ void RenderFrameHostImpl::CreateDedicatedWorkerHostFactory(
+ #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
+ void RenderFrameHostImpl::BindMediaRemoterFactoryReceiver(
+     mojo::PendingReceiver<media::mojom::RemoterFactory> receiver) {
+@@ -7986,12 +7886,6 @@ void RenderFrameHostImpl::CreateDedicatedWorkerHostFactory(
    // Allocate the worker in the same process as the creator.
    int worker_process_id = GetProcess()->GetID();
  
@@ -226,7 +226,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
    // When a dedicated worker is created from the frame script, the frame is both
    // the creator and the ancestor.
    mojo::MakeSelfOwnedReceiver(
-@@ -7895,7 +7789,7 @@ void RenderFrameHostImpl::CreateDedicatedWorkerHostFactory(
+@@ -8001,7 +7895,7 @@ void RenderFrameHostImpl::CreateDedicatedWorkerHostFactory(
            /*creator_worker_token=*/base::nullopt,
            /*ancestor_render_frame_host_id=*/GetGlobalFrameRoutingId(),
            last_committed_origin_, isolation_info_,
@@ -235,7 +235,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
        std::move(receiver));
  }
  
-@@ -7989,14 +7883,7 @@ void RenderFrameHostImpl::GetSensorProvider(
+@@ -8095,14 +7989,7 @@ void RenderFrameHostImpl::GetSensorProvider(
  
  void RenderFrameHostImpl::BindCacheStorage(
      mojo::PendingReceiver<blink::mojom::CacheStorage> receiver) {
@@ -250,7 +250,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
                                   GetLastCommittedOrigin(), std::move(receiver));
  }
  
-@@ -8239,16 +8126,6 @@ RenderFrameHostImpl::CreateNavigationRequestForCommit(
+@@ -8357,16 +8244,6 @@ RenderFrameHostImpl::CreateNavigationRequestForCommit(
    net::IsolationInfo isolation_info = ComputeIsolationInfoInternal(
        origin, net::IsolationInfo::RequestType::kOther);
  
@@ -267,7 +267,7 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
    std::unique_ptr<WebBundleNavigationInfo> web_bundle_navigation_info;
    if (is_same_document && web_bundle_handle_ &&
        web_bundle_handle_->navigation_info()) {
-@@ -8281,7 +8158,7 @@ RenderFrameHostImpl::CreateNavigationRequestForCommit(
+@@ -8399,7 +8276,7 @@ RenderFrameHostImpl::CreateNavigationRequestForCommit(
        frame_tree_node_, this, is_same_document, url, origin, isolation_info,
        std::move(referrer), transition, should_replace_current_entry, method,
        gesture, is_overriding_user_agent, redirects, original_request_url,
@@ -276,9 +276,19 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
        std::move(web_bundle_navigation_info), http_status_code);
  }
  
-@@ -8925,10 +8802,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
-         navigation_request->cross_origin_embedder_policy();
-   }
+@@ -9000,9 +8877,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
+ 
+   TakeNewDocumentPropertiesFromNavigation(navigation_request);
+ 
+-  CrossOriginOpenerPolicyReporter::InstallAccessMonitorsIfNeeded(
+-      frame_tree_node_);
+-
+   // Reset the salt so that media device IDs are reset for the new document
+   // if necessary.
+   media_device_id_salt_base_ = BrowserContext::CreateRandomMediaDeviceIDSalt();
+@@ -9020,28 +8894,10 @@ void RenderFrameHostImpl::TakeNewDocumentPropertiesFromNavigation(
+   cross_origin_opener_policy_ =
+       navigation_request->coop_status().current_coop();
  
 -  coop_reporter_ = navigation_request->coop_status().TakeCoopReporter();
 -  virtual_browsing_context_group_ =
@@ -287,9 +297,6 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
    // Store the required CSP (it will be used by the AncestorThrottle if
    // this frame embeds a subframe when that subframe navigates).
    required_csp_ = navigation_request->TakeRequiredCSP();
-@@ -8952,20 +8825,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
-   VerifyThatBrowserAndRendererCalculatedOriginsToCommitMatch(navigation_request,
-                                                              params);
  
 -  coep_reporter_ = navigation_request->TakeCoepReporter();
 -  if (coep_reporter_) {
@@ -305,20 +312,10 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
 -                       weak_ptr_factory_.GetWeakPtr(), std::move(receiver)));
 -  }
 -
-   // We move the PolicyContainerHost of |navigation_request| into the
-   // RenderFrameHost unless this is the initial, "fake" navigation to
-   // about:blank (because otherwise we would overwrite the PolicyContainerHost
-@@ -9002,9 +8861,6 @@ void RenderFrameHostImpl::DidCommitNewDocument(
-           frame_tree_node_->IsMainFrame(), navigation_request->common_params(),
-           data_url_as_string);
- 
--  CrossOriginOpenerPolicyReporter::InstallAccessMonitorsIfNeeded(
--      frame_tree_node_);
--
-   // Reset the salt so that media device IDs are reset for the new document
-   // if necessary.
-   media_device_id_salt_base_ = BrowserContext::CreateRandomMediaDeviceIDSalt();
-@@ -10287,11 +10143,6 @@ void RenderFrameHostImpl::RecordDocumentCreatedUkmEvent(
+   // Set the state whether this navigation is to an MHTML document, since there
+   // are certain security checks that we cannot apply to subframes in MHTML
+   // documents. Do not trust renderer data when determining that, rather use
+@@ -10420,11 +10276,6 @@ void RenderFrameHostImpl::RecordDocumentCreatedUkmEvent(
        .Record(ukm_recorder);
  }
  
@@ -327,6 +324,6 @@ index 0e1a439de32f..d1e2b0ca66c5 100644
 -  GetAssociatedLocalFrame()->BindReportingObserver(std::move(receiver));
 -}
 -
- mojo::PendingRemote<network::mojom::CookieAccessObserver>
- RenderFrameHostImpl::CreateCookieAccessObserver() {
-   mojo::PendingRemote<network::mojom::CookieAccessObserver> remote;
+ mojo::PendingRemote<network::mojom::AuthenticationAndCertificateObserver>
+ RenderFrameHostImpl::CreateAuthAndCertObserver() {
+   return static_cast<StoragePartitionImpl*>(GetStoragePartition())

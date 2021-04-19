@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/bindings/templates/interface.cc.tmpl b/third_party/blink/renderer/bindings/templates/interface.cc.tmpl
+index b8f328b78176..4138cac092f4 100644
+--- a/third_party/blink/renderer/bindings/templates/interface.cc.tmpl
++++ b/third_party/blink/renderer/bindings/templates/interface.cc.tmpl
+@@ -873,9 +873,6 @@ static void Constructor(const v8::FunctionCallbackInfo<v8::Value>& info) {
+   {% if measure_as %}
+   ExecutionContext* execution_context_for_measurement = CurrentExecutionContext(info.GetIsolate());
+   UseCounter::Count(execution_context_for_measurement, WebFeature::k{{measure_as('Constructor')}});
+-  {% if high_entropy %}
+-  Dactyloscoper::Record(execution_context_for_measurement, WebFeature::k{{measure_as('Constructor')}});
+-  {% endif %}
+   {% endif %}
+   if (!info.IsConstructCall()) {
+     V8ThrowException::ThrowTypeError(

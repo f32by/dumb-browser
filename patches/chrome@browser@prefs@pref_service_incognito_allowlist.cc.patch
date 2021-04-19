@@ -1,27 +1,16 @@
 diff --git a/chrome/browser/prefs/pref_service_incognito_allowlist.cc b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
-index 449610c22c87..40bfe362957d 100644
+index 63db3b0071e9..6300914063f3 100644
 --- a/chrome/browser/prefs/pref_service_incognito_allowlist.cc
 +++ b/chrome/browser/prefs/pref_service_incognito_allowlist.cc
-@@ -13,9 +13,7 @@
- #include "components/bookmarks/common/bookmark_pref_names.h"
+@@ -14,7 +14,6 @@
  #include "components/content_settings/core/common/pref_names.h"
  #include "components/metrics/metrics_pref_names.h"
--#include "components/rappor/rappor_pref_names.h"
  #include "components/reading_list/core/reading_list_pref_names.h"
 -#include "components/ukm/ukm_pref_names.h"
  
  #if !defined(OS_ANDROID)
  #include "chrome/browser/accessibility/animation_policy_prefs.h"
-@@ -142,22 +140,9 @@ const char* const kPersistentPrefNames[] = {
-     prefs::kUseCustomChromeFrame,
- #endif
- 
--    // Rappor preferences are not used in incognito mode, but they are written
--    // in startup if they don't exist. So if the startup would be in incognito,
--    // they need to be persisted.
--    rappor::prefs::kRapporCohortSeed,
--    rappor::prefs::kRapporSecret,
--
+@@ -147,13 +146,6 @@ const char* const kPersistentPrefNames[] = {
      // Reading list preferences are common between incognito and regular mode.
      reading_list::prefs::kReadingListHasUnseenEntries,
  

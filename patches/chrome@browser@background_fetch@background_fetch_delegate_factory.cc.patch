@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/background_fetch/background_fetch_delegate_factory.cc b/chrome/browser/background_fetch/background_fetch_delegate_factory.cc
-index 7978578490d3..c406d3a3bab7 100644
+index e94afaa907f7..60d165dfcc0a 100644
 --- a/chrome/browser/background_fetch/background_fetch_delegate_factory.cc
 +++ b/chrome/browser/background_fetch/background_fetch_delegate_factory.cc
-@@ -8,7 +8,6 @@
+@@ -9,7 +9,6 @@
  #include "chrome/browser/background_fetch/background_fetch_delegate_impl.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
  #include "chrome/browser/download/download_service_factory.h"
@@ -10,7 +10,41 @@ index 7978578490d3..c406d3a3bab7 100644
  #include "chrome/browser/offline_items_collection/offline_content_aggregator_factory.h"
  #include "chrome/browser/profiles/incognito_helpers.h"
  #include "chrome/browser/profiles/profile.h"
-@@ -39,7 +38,6 @@ BackgroundFetchDelegateFactory::BackgroundFetchDelegateFactory()
+@@ -18,8 +17,6 @@
+ #include "components/offline_items_collection/core/offline_content_aggregator.h"
+ #include "components/offline_items_collection/core/offline_item.h"
+ #include "content/public/browser/background_fetch_delegate.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace {
+ 
+@@ -61,24 +58,12 @@ class ChromeBackgroundFetchDelegateHelper
+ 
+   void OnJobCompleted(const url::Origin& origin,
+                       bool user_initiated_abort) override {
+-    auto* ukm_background_service =
+-        ukm::UkmBackgroundRecorderFactory::GetForProfile(profile_);
+-    ukm_background_service->GetBackgroundSourceIdIfAllowed(
+-        origin,
+-        base::BindOnce(&DidGetBackgroundSourceId, user_initiated_abort));
+   }
+ 
+  private:
+   static void DidGetBackgroundSourceId(
+       bool user_initiated_abort,
+       base::Optional<ukm::SourceId> source_id) {
+-    // This background event did not meet the requirements for the UKM service.
+-    if (!source_id)
+-      return;
+-
+-    ukm::builders::BackgroundFetchDeletingRegistration(*source_id)
+-        .SetUserInitiatedAbort(user_initiated_abort)
+-        .Record(ukm::UkmRecorder::Get());
+   }
+ 
+   Profile* profile_;
+@@ -105,7 +90,6 @@ BackgroundFetchDelegateFactory::BackgroundFetchDelegateFactory()
    DependsOn(DownloadServiceFactory::GetInstance());
    DependsOn(HostContentSettingsMapFactory::GetInstance());
    DependsOn(OfflineContentAggregatorFactory::GetInstance());

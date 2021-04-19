@@ -1,0 +1,51 @@
+diff --git a/extensions/browser/api/web_request/web_request_api.cc b/extensions/browser/api/web_request/web_request_api.cc
+index a0507b8e1b5c..30f2b5d7fe26 100644
+--- a/extensions/browser/api/web_request/web_request_api.cc
++++ b/extensions/browser/api/web_request/web_request_api.cc
+@@ -77,7 +77,6 @@
+ #include "extensions/common/extension_features.h"
+ #include "extensions/common/features/feature.h"
+ #include "extensions/common/features/feature_provider.h"
+-#include "extensions/common/identifiability_metrics.h"
+ #include "extensions/common/permissions/permissions_data.h"
+ #include "extensions/common/url_pattern.h"
+ #include "extensions/strings/grit/extensions_strings.h"
+@@ -799,11 +798,8 @@ void WebRequestAPI::ProxyWebSocket(
+       ExtensionWebRequestEventRouter::GetInstance()->HasAnyExtraHeadersListener(
+           frame->GetProcess()->GetBrowserContext());
+ 
+-  auto* web_contents = content::WebContents::FromRenderFrameHost(frame);
+   const ukm::SourceIdObj ukm_source_id =
+-      web_contents ? ukm::SourceIdObj::FromInt64(
+-                         ukm::GetSourceIdForWebContentsDocument(web_contents))
+-                   : ukm::kInvalidSourceIdObj;
++      ukm::kInvalidSourceIdObj;
+   WebRequestProxyingWebSocket::StartProxying(
+       std::move(factory), url, site_for_cookies, user_agent,
+       std::move(handshake_client), has_extra_headers,
+@@ -1094,16 +1090,12 @@ int ExtensionWebRequestEventRouter::OnBeforeRequest(
+         ClearPendingCallbacks(*request);
+         DCHECK_EQ(1u, actions.size());
+         OnDNRActionMatched(browser_context, *request, action);
+-        RecordNetworkRequestBlocked(request->ukm_source_id,
+-                                    action.extension_id);
+         return net::ERR_BLOCKED_BY_CLIENT;
+       case DNRRequestAction::Type::COLLAPSE:
+         ClearPendingCallbacks(*request);
+         DCHECK_EQ(1u, actions.size());
+         OnDNRActionMatched(browser_context, *request, action);
+         *should_collapse_initiator = true;
+-        RecordNetworkRequestBlocked(request->ukm_source_id,
+-                                    action.extension_id);
+         return net::ERR_BLOCKED_BY_CLIENT;
+       case DNRRequestAction::Type::ALLOW:
+       case DNRRequestAction::Type::ALLOW_ALL_REQUESTS:
+@@ -2325,8 +2317,6 @@ int ExtensionWebRequestEventRouter::ExecuteDeltas(
+   int rv = net::OK;
+   if (canceled_by_extension) {
+     rv = net::ERR_BLOCKED_BY_CLIENT;
+-    RecordNetworkRequestBlocked(request->ukm_source_id,
+-                                canceled_by_extension.value());
+   }
+ 
+   if (!blocked_request.callback.is_null()) {

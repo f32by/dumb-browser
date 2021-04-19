@@ -1,5 +1,5 @@
 diff --git a/chrome/chrome_elf/chrome_elf_main.cc b/chrome/chrome_elf/chrome_elf_main.cc
-index f1ca45aa2459..4d90683b558c 100644
+index 4a2c09cfd4c1..617a11c96341 100644
 --- a/chrome/chrome_elf/chrome_elf_main.cc
 +++ b/chrome/chrome_elf/chrome_elf_main.cc
 @@ -7,7 +7,6 @@
@@ -29,7 +29,7 @@ index f1ca45aa2459..4d90683b558c 100644
  void SignalChromeElf() {
    third_party_dlls::ResetBeacon();
  }
-@@ -68,25 +55,15 @@ BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID reserved) {
+@@ -68,27 +55,17 @@ BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID reserved) {
          // the safety beacon succeeds.
          if (third_party_dlls::LeaveSetupBeacon())
            third_party_dlls::Init();
@@ -56,3 +56,5 @@ index f1ca45aa2459..4d90683b558c 100644
  void SetMetricsClientId(const char* client_id) {
 -  elf_crash::SetMetricsClientIdImpl(client_id);
  }
+ 
+ bool IsBrowserProcess() {

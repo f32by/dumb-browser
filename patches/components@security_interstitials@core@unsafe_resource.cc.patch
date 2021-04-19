@@ -1,8 +1,8 @@
 diff --git a/components/security_interstitials/core/unsafe_resource.cc b/components/security_interstitials/core/unsafe_resource.cc
-index 683b6c829721..2b0a8c5162c3 100644
+index 3715b6d1acf2..f1c4458462f6 100644
 --- a/components/security_interstitials/core/unsafe_resource.cc
 +++ b/components/security_interstitials/core/unsafe_resource.cc
-@@ -4,16 +4,11 @@
+@@ -4,16 +4,12 @@
  
  #include "components/security_interstitials/core/unsafe_resource.h"
  
@@ -14,12 +14,12 @@ index 683b6c829721..2b0a8c5162c3 100644
      : is_subresource(false),
        is_subframe(false),
 -      threat_type(safe_browsing::SB_THREAT_TYPE_SAFE),
--      resource_type(safe_browsing::ResourceType::kMainFrame),
+       request_destination(network::mojom::RequestDestination::kDocument),
 -      threat_source(safe_browsing::ThreatSource::UNKNOWN),
        is_delayed_warning(false) {}
  
  UnsafeResource::UnsafeResource(const UnsafeResource& other) = default;
-@@ -21,41 +16,7 @@ UnsafeResource::UnsafeResource(const UnsafeResource& other) = default;
+@@ -21,41 +17,7 @@ UnsafeResource::UnsafeResource(const UnsafeResource& other) = default;
  UnsafeResource::~UnsafeResource() = default;
  
  bool UnsafeResource::IsMainPageLoadBlocked() const {

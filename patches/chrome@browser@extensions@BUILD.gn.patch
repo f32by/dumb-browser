@@ -1,8 +1,14 @@
 diff --git a/chrome/browser/extensions/BUILD.gn b/chrome/browser/extensions/BUILD.gn
-index b7365d5cea21..69c9181cf538 100644
+index d4435c818602..da8e7856bd84 100644
 --- a/chrome/browser/extensions/BUILD.gn
 +++ b/chrome/browser/extensions/BUILD.gn
-@@ -153,8 +153,6 @@ static_library("extensions") {
+@@ -147,14 +147,10 @@ static_library("extensions") {
+     "api/downloads/downloads_api.h",
+     "api/downloads_internal/downloads_internal_api.cc",
+     "api/downloads_internal/downloads_internal_api.h",
+-    "api/enterprise_hardware_platform/enterprise_hardware_platform_api.cc",
+-    "api/enterprise_hardware_platform/enterprise_hardware_platform_api.h",
+     "api/extension_action/extension_action_api.cc",
      "api/extension_action/extension_action_api.h",
      "api/extension_action/extension_page_actions_api_constants.cc",
      "api/extension_action/extension_page_actions_api_constants.h",
@@ -11,7 +17,7 @@ index b7365d5cea21..69c9181cf538 100644
      "api/file_system/chrome_file_system_delegate.cc",
      "api/file_system/chrome_file_system_delegate.h",
      "api/file_system/file_entry_picker.cc",
-@@ -302,14 +300,6 @@ static_library("extensions") {
+@@ -304,14 +300,6 @@ static_library("extensions") {
      "api/resources_private/resources_private_api.h",
      "api/runtime/chrome_runtime_api_delegate.cc",
      "api/runtime/chrome_runtime_api_delegate.h",
@@ -26,7 +32,16 @@ index b7365d5cea21..69c9181cf538 100644
      "api/scripting/scripting_api.cc",
      "api/scripting/scripting_api.h",
      "api/search/search_api.cc",
-@@ -606,8 +596,6 @@ static_library("extensions") {
+@@ -346,8 +334,6 @@ static_library("extensions") {
+     "api/signed_in_devices/signed_in_devices_api.h",
+     "api/signed_in_devices/signed_in_devices_manager.cc",
+     "api/signed_in_devices/signed_in_devices_manager.h",
+-    "api/storage/managed_value_store_cache.cc",
+-    "api/storage/managed_value_store_cache.h",
+     "api/storage/policy_value_store.cc",
+     "api/storage/policy_value_store.h",
+     "api/storage/setting_sync_data.cc",
+@@ -608,8 +594,6 @@ static_library("extensions") {
      "external_pref_loader.h",
      "external_provider_impl.cc",
      "external_provider_impl.h",
@@ -35,7 +50,7 @@ index b7365d5cea21..69c9181cf538 100644
      "forced_extensions/force_installed_tracker.cc",
      "forced_extensions/force_installed_tracker.h",
      "forced_extensions/install_stage_tracker.cc",
-@@ -637,8 +625,6 @@ static_library("extensions") {
+@@ -639,8 +623,6 @@ static_library("extensions") {
      "launch_util.h",
      "load_error_reporter.cc",
      "load_error_reporter.h",
@@ -44,7 +59,7 @@ index b7365d5cea21..69c9181cf538 100644
      "menu_manager.cc",
      "menu_manager.h",
      "menu_manager_factory.cc",
-@@ -741,9 +727,6 @@ static_library("extensions") {
+@@ -746,9 +728,6 @@ static_library("extensions") {
  
      # TODO(crbug.com/1065748): Remove this circular dependency.
      "//chrome/browser/web_applications/extensions",
@@ -54,7 +69,7 @@ index b7365d5cea21..69c9181cf538 100644
    ]
  
    # Since browser and browser_extensions actually depend on each other,
-@@ -756,8 +739,6 @@ static_library("extensions") {
+@@ -761,8 +740,6 @@ static_library("extensions") {
      "//chrome/common",
      "//chrome/common/extensions/api",
      "//components/omnibox/browser",
@@ -63,15 +78,15 @@ index b7365d5cea21..69c9181cf538 100644
      "//components/signin/core/browser",
      "//components/translate/content/browser",
      "//content/public/browser",
-@@ -786,7 +767,6 @@ static_library("extensions") {
-     "//chrome/browser/media/router/discovery",
+@@ -792,7 +769,6 @@ static_library("extensions") {
+     "//chrome/browser/profiles:profile",
      "//chrome/browser/resource_coordinator:intervention_policy_database_proto",
      "//chrome/browser/resource_coordinator:mojo_bindings",
 -    "//chrome/browser/safe_browsing",
      "//chrome/browser/web_applications",
      "//chrome/browser/web_applications/components",
      "//components/site_engagement/core/mojom:mojo_bindings",
-@@ -795,7 +775,6 @@ static_library("extensions") {
+@@ -801,7 +777,6 @@ static_library("extensions") {
      # TODO(crbug.com/1065748): Remove this dependency:
      "//chrome/browser/web_applications/extensions",
      "//chrome/common/extensions/api:extensions_features",
@@ -79,15 +94,17 @@ index b7365d5cea21..69c9181cf538 100644
      "//chrome/services/removable_storage_writer/public/mojom",
      "//components/autofill/content/browser",
      "//components/bookmarks/browser",
-@@ -813,7 +792,6 @@ static_library("extensions") {
+@@ -818,9 +793,7 @@ static_library("extensions") {
+     "//components/drive",
      "//components/embedder_support",
-     "//components/enterprise",
+     "//components/embedder_support:browser_util",
+-    "//components/enterprise",
      "//components/favicon/content",
 -    "//components/feedback",
      "//components/gcm_driver",
      "//components/guest_view/browser",
      "//components/history/core/browser",
-@@ -827,7 +805,6 @@ static_library("extensions") {
+@@ -834,7 +807,6 @@ static_library("extensions") {
      "//components/net_log",
      "//components/no_state_prefetch/browser",
      "//components/onc",
@@ -95,11 +112,9 @@ index b7365d5cea21..69c9181cf538 100644
      "//components/password_manager/core/browser",
      "//components/password_manager/core/browser:affiliation",
      "//components/password_manager/core/browser/leak_detection",
-@@ -840,14 +817,7 @@ static_library("extensions") {
-     "//components/pref_registry",
+@@ -848,12 +820,6 @@ static_library("extensions") {
      "//components/privacy_sandbox:privacy_sandbox_prefs",
      "//components/proxy_config",
--    "//components/rappor",
      "//components/resources",
 -    "//components/safe_browsing:buildflags",
 -    "//components/safe_browsing/content/web_ui:web_ui",
@@ -110,7 +125,7 @@ index b7365d5cea21..69c9181cf538 100644
      "//components/search_engines",
      "//components/services/app_service/public/mojom",
      "//components/services/patch/content",
-@@ -897,7 +867,6 @@ static_library("extensions") {
+@@ -904,7 +870,6 @@ static_library("extensions") {
      "//services/audio/public/cpp",
      "//services/data_decoder/public/cpp",
      "//services/device/public/mojom",
@@ -118,7 +133,42 @@ index b7365d5cea21..69c9181cf538 100644
      "//services/network/public/mojom",
      "//services/service_manager/public/cpp",
      "//services/service_manager/public/mojom",
-@@ -1082,7 +1051,6 @@ static_library("extensions") {
+@@ -955,8 +920,6 @@ static_library("extensions") {
+ 
+   if (is_chromeos_lacros || is_chromeos_ash) {
+     sources += [
+-      "api/enterprise_device_attributes/enterprise_device_attributes_api.h",
+-      "api/enterprise_platform_keys/enterprise_platform_keys_api.h",
+       "api/platform_keys/platform_keys_api.h",
+     ]
+     deps += [
+@@ -965,10 +928,6 @@ static_library("extensions") {
+     ]
+     if (is_chromeos_lacros) {
+       sources += [
+-        "api/enterprise_device_attributes/enterprise_device_attributes_api_lacros.cc",
+-        "api/enterprise_device_attributes/enterprise_device_attributes_api_lacros.h",
+-        "api/enterprise_platform_keys/enterprise_platform_keys_api_lacros.cc",
+-        "api/enterprise_platform_keys/enterprise_platform_keys_api_lacros.h",
+         "api/platform_keys/platform_keys_api_lacros.cc",
+         "api/platform_keys/platform_keys_api_lacros.h",
+       ]
+@@ -982,14 +941,6 @@ static_library("extensions") {
+       "api/certificate_provider/certificate_provider_api.h",
+       "api/crash_report_private/crash_report_private_api.cc",
+       "api/crash_report_private/crash_report_private_api.h",
+-      "api/enterprise_device_attributes/enterprise_device_attributes_api_ash.cc",
+-      "api/enterprise_device_attributes/enterprise_device_attributes_api_ash.h",
+-      "api/enterprise_networking_attributes/enterprise_networking_attributes_api.cc",
+-      "api/enterprise_networking_attributes/enterprise_networking_attributes_api.h",
+-      "api/enterprise_platform_keys/enterprise_platform_keys_api_ash.cc",
+-      "api/enterprise_platform_keys/enterprise_platform_keys_api_ash.h",
+-      "api/enterprise_platform_keys_private/enterprise_platform_keys_private_api.cc",
+-      "api/enterprise_platform_keys_private/enterprise_platform_keys_private_api.h",
+       "api/file_handlers/non_native_file_system_delegate_chromeos.cc",
+       "api/file_handlers/non_native_file_system_delegate_chromeos.h",
+       "api/file_system/consent_provider.cc",
+@@ -1089,7 +1040,6 @@ static_library("extensions") {
        "//chromeos/ui/base",
        "//components/arc",
        "//components/constrained_window",
@@ -126,3 +176,27 @@ index b7365d5cea21..69c9181cf538 100644
        "//components/drive",
        "//components/user_manager",
        "//media/capture:capture_lib",
+@@ -1118,14 +1068,6 @@ static_library("extensions") {
+   } else {
+     assert(!is_chromeos_ash)
+     sources += [
+-      "api/enterprise_reporting_private/chrome_desktop_report_request_helper.cc",
+-      "api/enterprise_reporting_private/chrome_desktop_report_request_helper.h",
+-      "api/enterprise_reporting_private/context_info_fetcher.cc",
+-      "api/enterprise_reporting_private/context_info_fetcher.h",
+-      "api/enterprise_reporting_private/enterprise_reporting_private_api.cc",
+-      "api/enterprise_reporting_private/enterprise_reporting_private_api.h",
+-      "api/enterprise_reporting_private/keychain_data_helper_mac.h",
+-      "api/enterprise_reporting_private/keychain_data_helper_mac.mm",
+       "api/image_writer_private/operation_nonchromeos.cc",
+       "api/messaging/native_message_process_host.cc",
+       "api/messaging/native_message_process_host.h",
+@@ -1139,8 +1081,6 @@ static_library("extensions") {
+       "default_apps.h",
+     ]
+     deps += [
+-      "//components/enterprise",
+-      "//components/enterprise/common/proto:connectors_proto",
+       "//components/keep_alive_registry",
+     ]
+     if (is_linux || is_chromeos) {

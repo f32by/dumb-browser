@@ -1,8 +1,8 @@
 diff --git a/content/browser/devtools/service_worker_devtools_agent_host.h b/content/browser/devtools/service_worker_devtools_agent_host.h
-index cd66c5b59b1b..f43e3790bab4 100644
+index 2e2e7900a16b..176b0f7b320b 100644
 --- a/content/browser/devtools/service_worker_devtools_agent_host.h
 +++ b/content/browser/devtools/service_worker_devtools_agent_host.h
-@@ -38,8 +38,6 @@ class ServiceWorkerDevToolsAgentHost : public DevToolsAgentHostImpl {
+@@ -42,8 +42,6 @@ class ServiceWorkerDevToolsAgentHost : public DevToolsAgentHostImpl,
        bool is_installed_version,
        base::Optional<network::CrossOriginEmbedderPolicy>
            cross_origin_embedder_policy,
@@ -11,7 +11,7 @@ index cd66c5b59b1b..f43e3790bab4 100644
        const base::UnguessableToken& devtools_worker_token);
  
    // DevToolsAgentHost overrides.
-@@ -61,9 +59,7 @@ class ServiceWorkerDevToolsAgentHost : public DevToolsAgentHostImpl {
+@@ -65,9 +63,7 @@ class ServiceWorkerDevToolsAgentHost : public DevToolsAgentHostImpl,
        mojo::PendingRemote<blink::mojom::DevToolsAgent> agent_remote,
        mojo::PendingReceiver<blink::mojom::DevToolsAgentHost> host_receiver);
    void UpdateCrossOriginEmbedderPolicy(
@@ -22,12 +22,12 @@ index cd66c5b59b1b..f43e3790bab4 100644
    void WorkerStopped();
    void WorkerVersionInstalled();
    void WorkerVersionDoomed();
-@@ -113,8 +109,6 @@ class ServiceWorkerDevToolsAgentHost : public DevToolsAgentHostImpl {
+@@ -121,8 +117,6 @@ class ServiceWorkerDevToolsAgentHost : public DevToolsAgentHostImpl,
    base::Time version_doomed_time_;
    base::Optional<network::CrossOriginEmbedderPolicy>
        cross_origin_embedder_policy_;
 -  mojo::Remote<network::mojom::CrossOriginEmbedderPolicyReporter>
 -      coep_reporter_;
+   base::ScopedObservation<RenderProcessHost, RenderProcessHostObserver>
+       process_observation_{this};
  
-   DISALLOW_COPY_AND_ASSIGN(ServiceWorkerDevToolsAgentHost);
- };

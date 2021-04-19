@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/global_media_controls/media_session_notification_producer.h b/chrome/browser/ui/global_media_controls/media_session_notification_producer.h
+index d997c20254f2..23688413bcf2 100644
+--- a/chrome/browser/ui/global_media_controls/media_session_notification_producer.h
++++ b/chrome/browser/ui/global_media_controls/media_session_notification_producer.h
+@@ -62,9 +62,6 @@ class MediaSessionNotificationProducer
+   std::unique_ptr<media_router::CastDialogController>
+   CreateCastDialogControllerForSession(const std::string& id);
+   bool HasSessionForWebContents(content::WebContents* web_contents) const;
+-  void LogMediaSessionActionButtonPressed(
+-      const std::string& id,
+-      media_session::mojom::MediaSessionAction action);
+ 
+   // Used by a |MediaNotificationDeviceSelectorView| to query the system
+   // for connected audio output devices.

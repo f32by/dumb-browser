@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/first_run_dialog.cc b/chrome/browser/ui/views/first_run_dialog.cc
-index 22675ed4589d..984198d902e3 100644
+index 3ece75358ed2..f80485bf54a5 100644
 --- a/chrome/browser/ui/views/first_run_dialog.cc
 +++ b/chrome/browser/ui/views/first_run_dialog.cc
 @@ -9,7 +9,6 @@
@@ -10,7 +10,7 @@ index 22675ed4589d..984198d902e3 100644
  #include "chrome/browser/platform_util.h"
  #include "chrome/browser/shell_integration.h"
  #include "chrome/browser/ui/browser_dialogs.h"
-@@ -100,7 +99,6 @@ FirstRunDialog::FirstRunDialog(Profile* profile) {
+@@ -101,7 +100,6 @@ FirstRunDialog::FirstRunDialog(Profile* profile) {
    // Having this box checked means the user has to opt-out of metrics recording.
    report_crashes->SetChecked(!first_run::IsMetricsReportingOptIn());
    report_crashes_ = layout->AddView(std::move(report_crashes));
@@ -18,7 +18,7 @@ index 22675ed4589d..984198d902e3 100644
  }
  
  FirstRunDialog::~FirstRunDialog() {
-@@ -114,10 +112,6 @@ void FirstRunDialog::Done() {
+@@ -115,10 +113,6 @@ void FirstRunDialog::Done() {
  bool FirstRunDialog::Accept() {
    GetWidget()->Hide();
  

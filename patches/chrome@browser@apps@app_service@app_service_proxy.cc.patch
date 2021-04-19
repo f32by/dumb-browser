@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/apps/app_service/app_service_proxy.cc b/chrome/browser/apps/app_service/app_service_proxy.cc
-index 635d771b961e..67482e4e7789 100644
+index dc19a749c5e6..ad6f3b86ea8c 100644
 --- a/chrome/browser/apps/app_service/app_service_proxy.cc
 +++ b/chrome/browser/apps/app_service/app_service_proxy.cc
 @@ -15,7 +15,6 @@
@@ -8,23 +8,22 @@ index 635d771b961e..67482e4e7789 100644
  #include "chrome/browser/apps/app_service/app_icon_source.h"
 -#include "chrome/browser/apps/app_service/app_service_metrics.h"
  #include "chrome/browser/apps/app_service/app_service_proxy_factory.h"
+ #include "chrome/browser/apps/app_service/launch_utils.h"
  #include "chrome/browser/chromeos/guest_os/guest_os_registry_service_factory.h"
- #include "chrome/browser/profiles/profile.h"
-@@ -261,7 +260,6 @@ void AppServiceProxy::Launch(const std::string& app_id,
-       base::Optional<web_app::SystemAppType> system_app_type =
-           web_app::GetSystemWebAppTypeForAppId(profile_, update.AppId());
-       if (!system_app_type) {
--        RecordAppLaunch(update.AppId(), launch_source);
+@@ -270,8 +269,6 @@ void AppServiceProxy::Launch(const std::string& app_id,
        }
+ #endif
+ 
+-      RecordAppLaunch(update.AppId(), launch_source);
+-
        app_service_->Launch(update.AppType(), update.AppId(), event_flags,
-                            launch_source, display_id);
-@@ -324,9 +322,6 @@ void AppServiceProxy::LaunchAppWithIntent(
-       base::Optional<web_app::SystemAppType> system_app_type =
-           web_app::GetSystemWebAppTypeForAppId(profile_, update.AppId());
-       if (!system_app_type) {
--        // Don't record system apps metric here, they are handled in
--        // LaunchSystemWebApp.
--        RecordAppLaunch(update.AppId(), launch_source);
+                            launch_source, std::move(window_info));
+     });
+@@ -332,7 +329,6 @@ void AppServiceProxy::LaunchAppWithIntent(
+         return;
        }
+ #endif
+-      RecordAppLaunch(update.AppId(), launch_source);
+ 
        app_service_->LaunchAppWithIntent(update.AppType(), update.AppId(),
                                          event_flags, std::move(intent),

@@ -1,37 +1,32 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view.cc b/chrome/browser/ui/views/frame/browser_view.cc
-index c4d99326bacf..b767b476df06 100644
+index d2058fea0cc8..ca1719d10efb 100644
 --- a/chrome/browser/ui/views/frame/browser_view.cc
 +++ b/chrome/browser/ui/views/frame/browser_view.cc
-@@ -105,7 +105,6 @@
+@@ -103,7 +103,6 @@
  #include "chrome/browser/ui/views/frame/web_footer_experiment_view.h"
  #include "chrome/browser/ui/views/fullscreen_control/fullscreen_control_host.h"
  #include "chrome/browser/ui/views/global_media_controls/media_toolbar_button_view.h"
--#include "chrome/browser/ui/views/hats/hats_bubble_view.h"
+-#include "chrome/browser/ui/views/hats/hats_next_web_dialog.h"
  #include "chrome/browser/ui/views/infobars/infobar_container_view.h"
  #include "chrome/browser/ui/views/location_bar/intent_picker_view.h"
  #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
-@@ -156,7 +155,6 @@
+@@ -154,7 +153,6 @@
  #include "components/omnibox/browser/omnibox_view.h"
  #include "components/permissions/permission_request_manager.h"
  #include "components/prefs/pref_service.h"
 -#include "components/safe_browsing/core/password_protection/metrics_util.h"
  #include "components/sessions/core/tab_restore_service.h"
+ #include "components/startup_metric_utils/browser/startup_metric_utils.h"
  #include "components/translate/core/browser/language_state.h"
- #include "components/translate/core/browser/translate_manager.h"
-@@ -2922,12 +2920,6 @@ void BrowserView::AddedToWidget() {
- 
- void BrowserView::PaintChildren(const views::PaintInfo& paint_info) {
-   views::ClientView::PaintChildren(paint_info);
--  // Don't reset the instance before it had a chance to get compositor callback.
--  if (!histogram_helper_) {
--    histogram_helper_ = BrowserWindowHistogramHelper::
--        MaybeRecordValueAndCreateInstanceOnBrowserPaint(
--            GetWidget()->GetCompositor());
--  }
+@@ -2962,7 +2960,6 @@ void BrowserView::PaintChildren(const views::PaintInfo& paint_info) {
+   static bool did_first_paint = false;
+   if (!did_first_paint) {
+     did_first_paint = true;
+-    startup_metric_utils::RecordBrowserWindowFirstPaint(base::TimeTicks::Now());
+   }
  }
  
- void BrowserView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
-@@ -3357,63 +3349,6 @@ int BrowserView::GetCommandIDForAppCommandID(int app_command_id) const {
+@@ -3393,63 +3390,6 @@ int BrowserView::GetCommandIDForAppCommandID(int app_command_id) const {
  
  void BrowserView::UpdateAcceleratorMetrics(const ui::Accelerator& accelerator,
                                             int command_id) {
@@ -95,16 +90,16 @@ index c4d99326bacf..b767b476df06 100644
  }
  
  void BrowserView::ShowAvatarBubbleFromAvatarButton(
-@@ -3440,14 +3375,6 @@ void BrowserView::ShowAvatarBubbleFromAvatarButton(
+@@ -3476,14 +3416,6 @@ void BrowserView::ShowAvatarBubbleFromAvatarButton(
                                    focus_first_profile_button);
  }
  
--void BrowserView::ShowHatsBubble(const std::string& site_id,
+-void BrowserView::ShowHatsDialog(const std::string& site_id,
 -                                 base::OnceClosure success_callback,
 -                                 base::OnceClosure failure_callback) {
--  HatsBubbleView::ShowOnContentReady(browser(), site_id,
--                                     std::move(success_callback),
--                                     std::move(failure_callback));
+-  // Self deleting on close.
+-  new HatsNextWebDialog(browser(), site_id, std::move(success_callback),
+-                        std::move(failure_callback));
 -}
 -
  ExclusiveAccessContext* BrowserView::GetExclusiveAccessContext() {

@@ -1,5 +1,5 @@
 diff --git a/components/metrics/BUILD.gn b/components/metrics/BUILD.gn
-index d5c9bd8ed337..096c82ab8411 100644
+index 2e7364c47c9d..4283ba2289bb 100644
 --- a/components/metrics/BUILD.gn
 +++ b/components/metrics/BUILD.gn
 @@ -11,69 +11,29 @@ if (is_android) {
@@ -72,7 +72,7 @@ index d5c9bd8ed337..096c82ab8411 100644
      "metrics_service.cc",
      "metrics_service.h",
      "metrics_service_accessor.cc",
-@@ -84,26 +44,6 @@ static_library("metrics") {
+@@ -84,28 +44,6 @@ static_library("metrics") {
      "metrics_state_manager.h",
      "metrics_switches.cc",
      "metrics_switches.h",
@@ -84,6 +84,8 @@ index d5c9bd8ed337..096c82ab8411 100644
 -    "persistent_system_profile.h",
 -    "reporting_service.cc",
 -    "reporting_service.h",
+-    "sampling_metrics_provider.cc",
+-    "sampling_metrics_provider.h",
 -    "stability_metrics_helper.cc",
 -    "stability_metrics_helper.h",
 -    "stability_metrics_provider.cc",
@@ -99,7 +101,7 @@ index d5c9bd8ed337..096c82ab8411 100644
      "url_constants.cc",
      "url_constants.h",
      "version_utils.cc",
-@@ -165,7 +105,6 @@ static_library("metrics") {
+@@ -167,7 +105,6 @@ static_library("metrics") {
        "system_session_analyzer/system_session_analyzer_win.cc",
        "system_session_analyzer/system_session_analyzer_win.h",
      ]
@@ -107,7 +109,7 @@ index d5c9bd8ed337..096c82ab8411 100644
      libs = [ "wevtapi.lib" ]
    } else {
      sources += [ "machine_id_provider_nonwin.cc" ]
-@@ -230,9 +169,6 @@ if (!is_ios) {
+@@ -235,9 +172,6 @@ if (!is_ios) {
        "//extensions/buildflags",
        "//gpu/config",
      ]

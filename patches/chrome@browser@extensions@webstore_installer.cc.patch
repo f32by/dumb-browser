@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/webstore_installer.cc b/chrome/browser/extensions/webstore_installer.cc
-index b2fab2213690..3be03886fd86 100644
+index 5e50ec01fd82..74eba3608b15 100644
 --- a/chrome/browser/extensions/webstore_installer.cc
 +++ b/chrome/browser/extensions/webstore_installer.cc
 @@ -30,7 +30,6 @@
@@ -10,7 +10,7 @@ index b2fab2213690..3be03886fd86 100644
  #include "chrome/browser/extensions/crx_installer.h"
  #include "chrome/browser/extensions/install_tracker.h"
  #include "chrome/browser/extensions/install_tracker_factory.h"
-@@ -489,7 +488,6 @@ void WebstoreInstaller::OnDownloadUpdated(DownloadItem* download) {
+@@ -488,7 +487,6 @@ void WebstoreInstaller::OnDownloadUpdated(DownloadItem* download) {
        ReportFailure(kDownloadCanceledError, FAILURE_REASON_CANCELLED);
        break;
      case DownloadItem::INTERRUPTED:
@@ -18,7 +18,7 @@ index b2fab2213690..3be03886fd86 100644
        ReportFailure(
            GetErrorMessageForDownloadInterrupt(download->GetLastReason()),
            FAILURE_REASON_OTHER);
-@@ -750,31 +748,4 @@ void WebstoreInstaller::ReportSuccess() {
+@@ -749,31 +747,4 @@ void WebstoreInstaller::ReportSuccess() {
    Release();  // Balanced in Start().
  }
  

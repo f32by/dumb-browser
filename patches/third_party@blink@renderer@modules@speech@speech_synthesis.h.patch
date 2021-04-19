@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/modules/speech/speech_synthesis.h b/third_party/blink/renderer/modules/speech/speech_synthesis.h
+index eac7f3ca5dc6..2db83bd83dcb 100644
+--- a/third_party/blink/renderer/modules/speech/speech_synthesis.h
++++ b/third_party/blink/renderer/modules/speech/speech_synthesis.h
+@@ -118,8 +118,6 @@ class MODULES_EXPORT SpeechSynthesis final
+ 
+   bool IsAllowedToStartByAutoplay() const;
+ 
+-  void RecordVoicesForIdentifiability() const;
+-
+   void SetMojomSynthesisForTesting(
+       mojo::PendingRemote<mojom::blink::SpeechSynthesis>);
+   mojom::blink::SpeechSynthesis* TryEnsureMojomSynthesis();

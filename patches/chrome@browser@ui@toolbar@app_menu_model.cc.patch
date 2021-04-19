@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/toolbar/app_menu_model.cc b/chrome/browser/ui/toolbar/app_menu_model.cc
-index 79a697bcd860..1b16a220bbda 100644
+index cdd29338b6e5..c29d629bd71b 100644
 --- a/chrome/browser/ui/toolbar/app_menu_model.cc
 +++ b/chrome/browser/ui/toolbar/app_menu_model.cc
-@@ -46,7 +46,6 @@
+@@ -47,7 +47,6 @@
  #include "chrome/browser/ui/toolbar/toolbar_actions_bar.h"
  #include "chrome/browser/ui/ui_features.h"
  #include "chrome/browser/ui/web_applications/web_app_launch_utils.h"
@@ -10,7 +10,7 @@ index 79a697bcd860..1b16a220bbda 100644
  #include "chrome/browser/web_applications/web_app_provider.h"
  #include "chrome/common/chrome_features.h"
  #include "chrome/common/chrome_paths.h"
-@@ -116,16 +115,6 @@ constexpr size_t kMaxAppNameLength = 30;
+@@ -126,16 +125,6 @@ const base::Feature kChromeTipsInMainMenuNewBadge{
  const int kEmptyMenuItemCommand = 0;
  #endif
  
@@ -27,7 +27,7 @@ index 79a697bcd860..1b16a220bbda 100644
  
  // Returns the appropriate menu label for the IDC_INSTALL_PWA command if
  // available.
-@@ -325,8 +314,7 @@ base::string16 AppMenuModel::GetLabelForCommandId(int command_id) const {
+@@ -344,8 +333,7 @@ base::string16 AppMenuModel::GetLabelForCommandId(int command_id) const {
      case IDC_INSTALL_PWA:
        return GetInstallPWAAppMenuItemName(browser_).value();
      case IDC_UPGRADE_DIALOG:
@@ -37,7 +37,7 @@ index 79a697bcd860..1b16a220bbda 100644
      default:
        NOTREACHED();
        return base::string16();
-@@ -771,8 +759,6 @@ void AppMenuModel::Build() {
+@@ -800,8 +788,6 @@ void AppMenuModel::Build() {
    if (CreateActionToolbarOverflowMenu())
      AddSeparator(ui::UPPER_SEPARATOR);
  

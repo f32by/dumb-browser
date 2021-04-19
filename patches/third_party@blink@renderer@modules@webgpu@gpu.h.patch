@@ -1,0 +1,15 @@
+diff --git a/third_party/blink/renderer/modules/webgpu/gpu.h b/third_party/blink/renderer/modules/webgpu/gpu.h
+index abdbd28995a8..6b222e017df0 100644
+--- a/third_party/blink/renderer/modules/webgpu/gpu.h
++++ b/third_party/blink/renderer/modules/webgpu/gpu.h
+@@ -55,10 +55,6 @@ class GPU final : public ScriptWrappable,
+                                 const WGPUDeviceProperties& properties,
+                                 const char* error_message);
+ 
+-  void RecordAdapterForIdentifiability(ScriptState* script_state,
+-                                       const GPURequestAdapterOptions* options,
+-                                       GPUAdapter* adapter) const;
+-
+   scoped_refptr<DawnControlClientHolder> dawn_control_client_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(GPU);

@@ -1,8 +1,8 @@
 diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
-index c84ae68f2f27..8f0e65956911 100644
+index 3c75742d4ade..027cba4fc17f 100644
 --- a/content/public/browser/content_browser_client.cc
 +++ b/content/public/browser/content_browser_client.cc
-@@ -54,7 +54,6 @@
+@@ -57,7 +57,6 @@
  #include "third_party/blink/public/common/loader/url_loader_throttle.h"
  #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
  #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
@@ -10,9 +10,9 @@ index c84ae68f2f27..8f0e65956911 100644
  #include "ui/gfx/image/image_skia.h"
  #include "ui/shell_dialogs/select_file_policy.h"
  #include "url/gurl.h"
-@@ -1053,13 +1052,6 @@ void ContentBrowserClient::AugmentNavigationDownloadPolicy(
+@@ -1069,13 +1068,6 @@ void ContentBrowserClient::AugmentNavigationDownloadPolicy(
      bool user_gesture,
-     NavigationDownloadPolicy* download_policy) {}
+     blink::NavigationDownloadPolicy* download_policy) {}
  
 -blink::mojom::InterestCohortPtr ContentBrowserClient::GetInterestCohortForJsApi(
 -    WebContents* web_contents,
@@ -24,7 +24,7 @@ index c84ae68f2f27..8f0e65956911 100644
  bool ContentBrowserClient::IsBluetoothScanningBlocked(
      content::BrowserContext* browser_context,
      const url::Origin& requesting_origin,
-@@ -1144,10 +1136,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+@@ -1160,10 +1152,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
    return false;
  }
  
@@ -32,6 +32,6 @@ index c84ae68f2f27..8f0e65956911 100644
 -  return nullptr;
 -}
 -
- void ContentBrowserClient::OnKeepaliveRequestStarted() {}
+ void ContentBrowserClient::OnKeepaliveRequestStarted(BrowserContext*) {}
  
  void ContentBrowserClient::OnKeepaliveRequestFinished() {}
