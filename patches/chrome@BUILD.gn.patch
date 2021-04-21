@@ -1,5 +1,5 @@
 diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index 6f386508b117..9f76f9fcdf25 100644
+index 6f386508b117..d8e816927b7b 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
 @@ -124,7 +124,7 @@ if (!is_android && !is_mac) {
@@ -115,15 +115,20 @@ index 6f386508b117..9f76f9fcdf25 100644
          "//third_party/angle:libEGL",
          "//third_party/angle:libGLESv2",
          "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-@@ -1220,7 +1199,6 @@ group("browser_dependencies") {
+@@ -1218,12 +1197,8 @@ group("browser_dependencies") {
+     "//chrome/browser",
+     "//chrome/browser/policy:path_parser",
      "//chrome/common",
-     "//components/crash/core/app",
+-    "//components/crash/core/app",
      "//components/gwp_asan/buildflags",
 -    "//components/heap_profiling/in_process",
-     "//components/startup_metric_utils/browser",
+-    "//components/startup_metric_utils/browser",
      "//components/sync",
-     "//components/upload_list:upload_list",
-@@ -1289,7 +1267,6 @@ group("child_dependencies") {
+-    "//components/upload_list:upload_list",
+     "//services/tracing/public/cpp",
+   ]
+   if (enable_plugins) {
+@@ -1289,7 +1264,6 @@ group("child_dependencies") {
      "//chrome/renderer",
      "//chrome/utility",
      "//components/gwp_asan/buildflags",
@@ -131,7 +136,7 @@ index 6f386508b117..9f76f9fcdf25 100644
      "//content/public/child",
      "//pdf",
      "//pdf:pdf_ppapi",
-@@ -1318,7 +1295,7 @@ group("child_dependencies") {
+@@ -1318,7 +1292,7 @@ group("child_dependencies") {
  
  if (is_win) {
    process_version_rc_template("chrome_exe_version") {
@@ -140,7 +145,7 @@ index 6f386508b117..9f76f9fcdf25 100644
      output = "$target_gen_dir/chrome_exe_version.rc"
    }
  
-@@ -1533,12 +1510,8 @@ if (is_android) {
+@@ -1533,12 +1507,8 @@ if (is_android) {
        "//chrome/gpu",
        "//chrome/renderer",
        "//components/gwp_asan/buildflags",
@@ -153,7 +158,7 @@ index 6f386508b117..9f76f9fcdf25 100644
        "//content/public/app",
      ]
  
-@@ -1584,7 +1557,6 @@ if (is_linux || is_chromeos) {
+@@ -1584,7 +1554,6 @@ if (is_linux || is_chromeos) {
          ":angle_egl_symbols",
          ":angle_gles_symbols",
          ":chrome_symbols",
@@ -161,7 +166,7 @@ index 6f386508b117..9f76f9fcdf25 100644
          ":swiftshader_egl_symbols",
          ":swiftshader_gles_symbols",
        ]
-@@ -1601,18 +1573,6 @@ if (is_linux || is_chromeos) {
+@@ -1601,18 +1570,6 @@ if (is_linux || is_chromeos) {
  
        deps = [ ":chrome" ]
      }

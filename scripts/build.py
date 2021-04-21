@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding] = utf-8 -*-
 
-# Copyright (C) 2020 ByTanuky
+# Copyright (C) 2020 f32by
 # This program is free software] = you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -63,7 +63,6 @@ gn_args['is_chrome_branded'] = 'false'
 gn_args['use_unofficial_version_number'] = 'false'
 # enable V8 pointer compression
 gn_args['v8_enable_pointer_compression'] = 'true'
-gn_args['enable_paint_preview'] = 'false'
 
 
 def main(args):
@@ -126,10 +125,11 @@ def main(args):
         os.mkdir(out_dir)
 
     # write args.gn file
-    print('Creating args.gn...')
-    with open(os.path.join(out_dir, 'args.gn'), 'w') as f:
-        for k, v in gn_args.items():
-            f.write(f'{k} = {v}\n')
+    if not os.path.exists(os.path.join(out_dir, 'args.gn')):
+        print('Creating args.gn...')
+        with open(os.path.join(out_dir, 'args.gn'), 'w') as f:
+            for k, v in gn_args.items():
+                f.write(f'{k} = {v}\n')
 
     # run gn command
     run_command(['gn', 'gen', path_for_gn], cwd=CHROMIUM_SRC_DIR)

@@ -1,0 +1,81 @@
+{
+  // Suggested vscode default settings for simplifying initial setup. These
+  // settings are hoped to be convenient and helpful for those beginning to use
+  // vscode with Chrome. Please modify and change as necessary.
+  // All settings are optional, but some more "optional" settings at the end
+  // are disabled by default. Feel free to enable them.
+  // Default tab size of 2, for consistency with internal codebase.
+  "editor.tabSize": 2,
+  // Do not figure out tab size from opening a file.
+  "editor.detectIndentation": false,
+  // Add a line at 80 characters.
+  "editor.rulers": [
+    80
+  ],
+  // Forces LF instead of "auto" which uses CRLF on Windows.
+  "files.eol": "\n",
+  // Trim tailing whitespace on save.
+  "files.trimTrailingWhitespace": true,
+  // Insert trimmed final new line.
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.associations": {
+    "DEPS": "python",
+    "*.grd": "xml",
+    "*.gni": "gn",
+    "*.gn": "gn"
+  },
+  "files.exclude": {
+    ".clangd/**": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    // Exclude output folder but generated files.
+    "out/**": false,
+    "out/[Debug|Release]/!gen/**": true,
+  },
+  "search.exclude": {
+    // Exclude clangd index files.
+    ".clangd/**": true,
+    // Exclude all files we do not care.
+    "android_webview/**": true,
+    "chromecast/**": true,
+    "chrome/android/**": true,
+    "chrome/browser/lacros/**": true,
+    "chromeos/**": true,
+    "docs/**": true,
+    "ios/**": true,
+    "dbus/**": true,
+    "fuchsia/**": true,
+    "google_update/**": true,
+    "native_client_sdk/**": true,
+    // Exclude all test sources.
+    "chrome/test/**": true,
+    "testing/**": true,
+    "**/*_test.cc": true,
+    "**/*_unittest.cc": true,
+    "**/*_browsertest.cc": true,
+    "tools/**": true,
+    // Exclude everything in third_party but blink.
+    "third_party/**": false,
+    "third_party/!(blink)/**": true,
+    // Exclude output folder but generated files.
+    "out/**": false,
+    "out/[Debug|Release]/!gen/**": true,
+  },
+  "files.watcherExclude": {
+    // Don't watch out*/ and third_party/ for changes to fix an issue
+    // where vscode doesn't notice that files have changed.
+    // https://github.com/Microsoft/vscode/issues/3998
+    // There is currently another issue that requires a leading **/ for
+    // watcherExlude. Beware that this pattern might affect other out* folders
+    // like src/cc/output/.
+    "**/out*/**": true,
+    "**/third_party/**": true
+  },
+  "C_Cpp.clang_format_path": "${workspaceFolder}/third_party/depot_tools/clang-format",
+  "C_Cpp.clang_format_sortIncludes": true,
+  "editor.formatOnSave": false,
+}

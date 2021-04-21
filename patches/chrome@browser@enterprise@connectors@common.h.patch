@@ -1,0 +1,99 @@
+diff --git a/chrome/browser/enterprise/connectors/common.h b/chrome/browser/enterprise/connectors/common.h
+index 4f98d1e89004..bf4730cb511b 100644
+--- a/chrome/browser/enterprise/connectors/common.h
++++ b/chrome/browser/enterprise/connectors/common.h
+@@ -10,14 +10,10 @@
+ #include <vector>
+ 
+ #include "base/supports_user_data.h"
+-#include "components/enterprise/common/proto/connectors.pb.h"
+ #include "url/gurl.h"
+ 
+ namespace enterprise_connectors {
+ 
+-// Alias to reduce verbosity when using TriggeredRule::Actions.
+-using TriggeredRule = ContentAnalysisResponse::Result::TriggeredRule;
+-
+ // Keys used to read a connector's policy values.
+ constexpr char kKeyServiceProvider[] = "service_provider";
+ constexpr char kKeyEnable[] = "enable";
+@@ -51,48 +47,6 @@ enum class BlockUntilVerdict {
+   BLOCK = 1,
+ };
+ 
+-// Structs representing settings to be used for an analysis or a report. These
+-// settings should only be kept and considered valid for the specific
+-// analysis/report they were obtained for.
+-struct AnalysisSettings {
+-  AnalysisSettings();
+-  AnalysisSettings(AnalysisSettings&&);
+-  AnalysisSettings& operator=(AnalysisSettings&&);
+-  ~AnalysisSettings();
+-
+-  GURL analysis_url;
+-  std::set<std::string> tags;
+-  BlockUntilVerdict block_until_verdict = BlockUntilVerdict::NO_BLOCK;
+-  bool block_password_protected_files = false;
+-  bool block_large_files = false;
+-  bool block_unsupported_file_types = false;
+-  base::string16 custom_message_text;
+-  GURL custom_message_learn_more_url;
+-
+-  // Minimum text size for BulkDataEntry scans. 0 means no minimum.
+-  size_t minimum_data_size = 100;
+-
+-  // The DM token to be used for scanning. May be empty, for example if this
+-  // scan is initiated by APP.
+-  std::string dm_token = "";
+-};
+-
+-struct ReportingSettings {
+-  ReportingSettings();
+-  ReportingSettings(GURL url, const std::string& dm_token, bool per_profile);
+-  ReportingSettings(ReportingSettings&&);
+-  ReportingSettings& operator=(ReportingSettings&&);
+-  ~ReportingSettings();
+-
+-  GURL reporting_url;
+-  std::set<std::string> enabled_event_names;
+-  std::string dm_token;
+-
+-  // Indicates if the report should be made for the profile, or the browser if
+-  // false.
+-  bool per_profile = false;
+-};
+-
+ struct FileSystemSettings {
+   FileSystemSettings();
+   FileSystemSettings(const FileSystemSettings&);
+@@ -113,30 +67,7 @@ struct FileSystemSettings {
+ };
+ 
+ // Returns the pref path corresponding to a connector.
+-const char* ConnectorPref(AnalysisConnector connector);
+-const char* ConnectorPref(ReportingConnector connector);
+ const char* ConnectorPref(FileSystemConnector connector);
+-const char* ConnectorScopePref(AnalysisConnector connector);
+-const char* ConnectorScopePref(ReportingConnector connector);
+-
+-// Returns the highest precedence action in the given parameters.
+-TriggeredRule::Action GetHighestPrecedenceAction(
+-    const ContentAnalysisResponse& response);
+-TriggeredRule::Action GetHighestPrecedenceAction(
+-    const TriggeredRule::Action& action_1,
+-    const TriggeredRule::Action& action_2);
+-
+-// User data class to persist ContentAnalysisResponses in base::SupportsUserData
+-// objects.
+-struct ScanResult : public base::SupportsUserData::Data {
+-  explicit ScanResult(const ContentAnalysisResponse& response);
+-  ~ScanResult() override;
+-  static const char kKey[];
+-  ContentAnalysisResponse response;
+-};
+-
+-// Checks if |response| contains a negative malware verdict.
+-bool ContainsMalwareVerdict(const ContentAnalysisResponse& response);
+ 
+ }  // namespace enterprise_connectors
+ 

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/enterprise/connectors/connectors_manager.h b/chrome/browser/enterprise/connectors/connectors_manager.h
-index ef82ea35c7d1..018237f9ca17 100644
+index ef82ea35c7d1..de40e93452b8 100644
 --- a/chrome/browser/enterprise/connectors/connectors_manager.h
 +++ b/chrome/browser/enterprise/connectors/connectors_manager.h
 @@ -7,10 +7,8 @@
@@ -44,7 +44,7 @@ index ef82ea35c7d1..018237f9ca17 100644
    // Validates which settings should be applied to a file system connector
    // against cached policies. Cache the policy value the first time this is
    // called for every different connector.
-@@ -57,59 +38,27 @@ class ConnectorsManager {
+@@ -57,59 +38,28 @@ class ConnectorsManager {
        FileSystemConnector connector);
  
    // Checks if the corresponding connector is enabled.
@@ -74,7 +74,7 @@ index ef82ea35c7d1..018237f9ca17 100644
 -  base::Optional<AnalysisSettings> GetAnalysisSettingsFromConnectorPolicy(
 -      const GURL& url,
 -      AnalysisConnector connector);
--
+ 
    // Read and cache the policy corresponding to |connector|.
 -  void CacheAnalysisConnectorPolicy(AnalysisConnector connector);
 -  void CacheReportingConnectorPolicy(ReportingConnector connector);

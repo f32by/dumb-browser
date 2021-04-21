@@ -23,7 +23,7 @@ from shutil import copyfile
 
 from ordered_set import OrderedSet
 
-from constants import CHROMIUM_SRC_DIR, DUMB_SRC_DIR, PATCHES_DIR, PATCH_LIST_FILE
+from constants import CHROMIUM_SRC_DIR, PATCHES_DIR, PATCH_LIST_FILE, DUMB_OVERWRITE_CHROMIUM_SRC_DIR
 from utils import get_patch_filename, get_original_filename
 
 GIT_DIFF_PATTERN = 'diff --git '
@@ -34,6 +34,7 @@ EXCLUSION_FILES = [
 
 
 def main(args):
+    print('Loading difference from git...')
     ret = subprocess.check_output(
         ['git', 'checkout'], cwd=CHROMIUM_SRC_DIR).decode('utf-8').split('\n')
     if len(ret) < 3:
@@ -42,7 +43,7 @@ def main(args):
 
     ret = ret[:-3]
     total = len(ret)
-    print('Updating files...')
+    print('Updating patches...')
 
     new_patch_list = OrderedSet()
 
@@ -67,9 +68,9 @@ def main(args):
         if filename in EXCLUSION_FILES:
             # copy file to dumb_src
             print(f'Copying {filename} ...')
-            copyfile(os.path.join(CHROMIUM_SRC_DIR, filename), os.path.join(DUMB_SRC_DIR, filename))
+            copyfile(os.path.join(CHROMIUM_SRC_DIR, filename),
+                     os.path.join(DUMB_OVERWRITE_CHROMIUM_SRC_DIR, filename))
 
-            i += 1
             continue
 
         new_patch_list.add(filename)
@@ -98,7 +99,7 @@ def main(args):
             if orig_filename not in new_patch_list:
                 os.remove(os.path.join(PATCHES_DIR, op))
                 removed_count += 1
-        print('Removed %d unused patch(es).' % removed_count)
+        print('Removed %d old patch(es).' % removed_count)
 
     print('Writing new patch list...')
     with open(PATCH_LIST_FILE, 'w') as f:

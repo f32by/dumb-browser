@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
-index e8df99f59499..927e436fa238 100644
+index e8df99f59499..f8922ef1cbe4 100644
 --- a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
 +++ b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
 @@ -13,10 +13,8 @@
@@ -22,17 +22,20 @@ index e8df99f59499..927e436fa238 100644
  #include "content/public/browser/web_contents.h"
  #include "content/public/common/content_features.h"
  
-@@ -172,12 +168,7 @@ HostContentSettingsMap* ChromePageInfoDelegate::GetContentSettings() {
+@@ -170,16 +166,6 @@ HostContentSettingsMap* ChromePageInfoDelegate::GetContentSettings() {
+   return HostContentSettingsMapFactory::GetForProfile(GetProfile());
+ }
  
- bool ChromePageInfoDelegate::IsSubresourceFilterActivated(
-     const GURL& site_url) {
+-bool ChromePageInfoDelegate::IsSubresourceFilterActivated(
+-    const GURL& site_url) {
 -  subresource_filter::SubresourceFilterContentSettingsManager*
 -      settings_manager =
 -          SubresourceFilterProfileContextFactory::GetForProfile(GetProfile())
 -              ->settings_manager();
 -
 -  return settings_manager->GetSiteActivationFromMetadata(site_url);
-+  return false;
- }
- 
+-}
+-
  bool ChromePageInfoDelegate::IsContentDisplayedInVrHeadset() {
+   return vr::VrTabHelper::IsContentDisplayedInHeadset(web_contents_);
+ }

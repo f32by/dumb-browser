@@ -1,0 +1,29 @@
+diff --git a/components/page_info/page_info_delegate.h b/components/page_info/page_info_delegate.h
+index 77810ec82f62..edbfc64c227a 100644
+--- a/components/page_info/page_info_delegate.h
++++ b/components/page_info/page_info_delegate.h
+@@ -12,13 +12,8 @@
+ #include "components/permissions/permission_result.h"
+ #include "components/permissions/permission_uma_util.h"
+ #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/core/password_protection/metrics_util.h"
+ #include "components/security_state/core/security_state.h"
+ 
+-namespace safe_browsing {
+-class PasswordProtectionService;
+-}  // namespace safe_browsing
+-
+ namespace permissions {
+ class ChooserContextBase;
+ class PermissionDecisionAutoBlocker;
+@@ -70,10 +65,6 @@ class PageInfoDelegate {
+   // content settings (aka. site permissions).
+   virtual HostContentSettingsMap* GetContentSettings() = 0;
+ 
+-  // The subresource filter service determines whether ads should be blocked on
+-  // the site and relevant permission prompts should be shown respectively.
+-  virtual bool IsSubresourceFilterActivated(const GURL& site_url) = 0;
+-
+   virtual std::unique_ptr<
+       content_settings::PageSpecificContentSettings::Delegate>
+   GetPageSpecificContentSettingsDelegate() = 0;

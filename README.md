@@ -33,7 +33,7 @@ Other changes:
 
 # Installation
 
-Tested on macOS 11.3 Beta 8 (20E5231a). Windows is not tested and build may fail.
+Tested on macOS 11.3 GM (20E232). Other OS is not tested and build may fail.
 
 ### Prerequisites
 
@@ -44,7 +44,7 @@ macOS: [Building Dumb Browser for macOS](docs/macos.md)
 ### Build Instruction
 
 ```shell
-git clone https://github.com/f32/dumb-browser
+git clone https://github.com/f32by/dumb-browser
 cd dumb-browser
 # install dependencies
 ./scripts/prepare.py
@@ -71,3 +71,10 @@ Final binaries will be found in `src/out/{Release|Debug} .`
 # Use Google Services
 
 https://www.chromium.org/developers/how-tos/api-keys
+
+
+Note: Chrome Sync in Chromium has been
+limited by Google(see [this](https://blog.chromium.org/2021/01/limiting-private-api-availability-in.html)). You can still apply for the [Chrome Sync API](https://console.cloud.google.com/apis/library/chromesync.googleapis.com) but without the private *Firebase Per Topic
+Messaging API*,  any changes synced from other clients will not be received on the
+computer you're currently using, unless you force an update manually in
+[chrome://sync-internals/](chrome://sync-internals/).

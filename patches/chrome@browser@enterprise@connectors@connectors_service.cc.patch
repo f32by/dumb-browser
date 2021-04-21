@@ -1,8 +1,14 @@
 diff --git a/chrome/browser/enterprise/connectors/connectors_service.cc b/chrome/browser/enterprise/connectors/connectors_service.cc
-index 2a28a3e0592b..29cfde1b7475 100644
+index 2a28a3e0592b..02f432af4067 100644
 --- a/chrome/browser/enterprise/connectors/connectors_service.cc
 +++ b/chrome/browser/enterprise/connectors/connectors_service.cc
-@@ -23,7 +23,6 @@
+@@ -17,13 +17,11 @@
+ #include "chrome/browser/policy/dm_token_utils.h"
+ #include "chrome/browser/profiles/profile.h"
+ #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
+-#include "components/enterprise/common/proto/connectors.pb.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "components/policy/core/common/cloud/dm_token.h"
  #include "components/policy/core/common/cloud/machine_level_user_cloud_policy_manager.h"
  #include "components/policy/core/common/cloud/user_cloud_policy_manager.h"
  #include "components/policy/core/common/policy_types.h"
@@ -10,7 +16,7 @@ index 2a28a3e0592b..29cfde1b7475 100644
  #include "components/user_prefs/user_prefs.h"
  #include "content/public/browser/browser_context.h"
  
-@@ -140,47 +139,6 @@ ConnectorsService::ConnectorsService(content::BrowserContext* context,
+@@ -140,47 +138,6 @@ ConnectorsService::ConnectorsService(content::BrowserContext* context,
  
  ConnectorsService::~ConnectorsService() = default;
  
@@ -58,7 +64,7 @@ index 2a28a3e0592b..29cfde1b7475 100644
  base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
      const GURL& url,
      FileSystemConnector connector) {
-@@ -195,20 +153,6 @@ base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
+@@ -195,20 +152,6 @@ base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
    return settings;
  }
  
@@ -79,7 +85,7 @@ index 2a28a3e0592b..29cfde1b7475 100644
  bool ConnectorsService::IsConnectorEnabled(
      FileSystemConnector connector) const {
    if (!ConnectorsEnabled())
-@@ -217,67 +161,14 @@ bool ConnectorsService::IsConnectorEnabled(
+@@ -217,67 +160,14 @@ bool ConnectorsService::IsConnectorEnabled(
    return connectors_manager_->IsConnectorEnabled(connector);
  }
  

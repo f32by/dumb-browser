@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/enterprise/connectors/connectors_manager.cc b/chrome/browser/enterprise/connectors/connectors_manager.cc
-index 1d2d1a275b6c..eabfc87187c9 100644
+index 1d2d1a275b6c..b1d8bb9c2845 100644
 --- a/chrome/browser/enterprise/connectors/connectors_manager.cc
 +++ b/chrome/browser/enterprise/connectors/connectors_manager.cc
-@@ -6,6 +6,7 @@
- 
- #include <memory>
- 
-+#include "base/bind.h"
- #include "base/feature_list.h"
- #include "base/no_destructor.h"
- #include "base/values.h"
-@@ -13,7 +14,6 @@
+@@ -13,7 +13,6 @@
  #include "chrome/browser/enterprise/connectors/connectors_prefs.h"
  #include "components/policy/core/browser/url_util.h"
  #include "components/prefs/pref_service.h"
@@ -18,7 +10,7 @@ index 1d2d1a275b6c..eabfc87187c9 100644
  #include "components/url_matcher/url_matcher.h"
  #include "url/gurl.h"
  
-@@ -29,22 +29,6 @@ ConnectorsManager::ConnectorsManager(PrefService* pref_service,
+@@ -29,22 +28,6 @@ ConnectorsManager::ConnectorsManager(PrefService* pref_service,
  
  ConnectorsManager::~ConnectorsManager() = default;
  
@@ -41,7 +33,7 @@ index 1d2d1a275b6c..eabfc87187c9 100644
  bool ConnectorsManager::IsConnectorEnabled(
      FileSystemConnector connector) const {
    if (file_system_connector_settings_.count(connector) == 1)
-@@ -54,60 +38,6 @@ bool ConnectorsManager::IsConnectorEnabled(
+@@ -54,60 +37,6 @@ bool ConnectorsManager::IsConnectorEnabled(
    return pref && pref_change_registrar_.prefs()->HasPrefPath(pref);
  }
  
@@ -102,7 +94,7 @@ index 1d2d1a275b6c..eabfc87187c9 100644
  base::Optional<FileSystemSettings> ConnectorsManager::GetFileSystemSettings(
      const GURL& url,
      FileSystemConnector connector) {
-@@ -127,40 +57,6 @@ base::Optional<FileSystemSettings> ConnectorsManager::GetFileSystemSettings(
+@@ -127,40 +56,6 @@ base::Optional<FileSystemSettings> ConnectorsManager::GetFileSystemSettings(
    return file_system_connector_settings_[connector][0].GetSettings(url);
  }
  
@@ -143,7 +135,7 @@ index 1d2d1a275b6c..eabfc87187c9 100644
  void ConnectorsManager::CacheFileSystemConnectorPolicy(
      FileSystemConnector connector) {
    file_system_connector_settings_.erase(connector);
-@@ -178,92 +74,11 @@ void ConnectorsManager::CacheFileSystemConnectorPolicy(
+@@ -178,92 +73,11 @@ void ConnectorsManager::CacheFileSystemConnectorPolicy(
    }
  }
  
@@ -236,7 +228,7 @@ index 1d2d1a275b6c..eabfc87187c9 100644
  void ConnectorsManager::StartObservingPref(FileSystemConnector connector) {
    const char* pref = ConnectorPref(connector);
    DCHECK(pref);
-@@ -275,16 +90,6 @@ void ConnectorsManager::StartObservingPref(FileSystemConnector connector) {
+@@ -275,16 +89,6 @@ void ConnectorsManager::StartObservingPref(FileSystemConnector connector) {
    }
  }
  

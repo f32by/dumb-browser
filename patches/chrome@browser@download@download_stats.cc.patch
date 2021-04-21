@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/download/download_stats.cc b/chrome/browser/download/download_stats.cc
+index e2f5556c8ffd..f9fbf150223a 100644
+--- a/chrome/browser/download/download_stats.cc
++++ b/chrome/browser/download/download_stats.cc
+@@ -3,7 +3,6 @@
+ // found in the LICENSE file.
+ 
+ #include "chrome/browser/download/download_stats.h"
+-#include "chrome/browser/profiles/profile_metrics.h"
+ #include "components/profile_metrics/browser_profile_type.h"
+ 
+ #include "base/metrics/histogram_functions.h"
+@@ -76,8 +75,6 @@ void RecordDownloadShelfDragEvent(DownloadShelfDragEvent drag_event) {
+ }
+ 
+ void RecordDownloadStartPerProfileType(Profile* profile) {
+-  base::UmaHistogramEnumeration("Download.Start.PerProfileType",
+-                                ProfileMetrics::GetBrowserProfileType(profile));
+ }
+ 
+ #ifdef OS_ANDROID
