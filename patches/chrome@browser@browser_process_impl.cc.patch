@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
-index 067873339ce4..14619940629a 100644
+index 067873339ce4..94b2efd62dce 100644
 --- a/chrome/browser/browser_process_impl.cc
 +++ b/chrome/browser/browser_process_impl.cc
 @@ -35,7 +35,6 @@
@@ -205,7 +205,7 @@ index 067873339ce4..14619940629a 100644
  #if defined(OS_ANDROID)
    app_state_listener_ = base::android::ApplicationStatusListener::New(
        base::BindRepeating([](base::android::ApplicationState state) {
-@@ -1124,10 +1035,6 @@ void BrowserProcessImpl::PreMainMessageLoopRun() {
+@@ -1124,14 +1035,6 @@ void BrowserProcessImpl::PreMainMessageLoopRun() {
    if (local_state_->IsManagedPreference(prefs::kDefaultBrowserSettingEnabled))
      ApplyDefaultBrowserPolicy();
  
@@ -213,10 +213,14 @@ index 067873339ce4..14619940629a 100644
 -  ApplyMetricsReportingPolicy();
 -#endif
 -
- #if defined(OS_LINUX) || defined(OS_CHROMEOS)
-   ChromeJsErrorReportProcessor::Create();
- #endif
-@@ -1225,42 +1132,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
+-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+-  ChromeJsErrorReportProcessor::Create();
+-#endif
+-
+ #if BUILDFLAG(ENABLE_PLUGINS)
+   auto* plugin_service = content::PluginService::GetInstance();
+   plugin_service->SetFilter(ChromePluginServiceFilter::GetInstance());
+@@ -1225,42 +1128,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
  #endif
  }
  

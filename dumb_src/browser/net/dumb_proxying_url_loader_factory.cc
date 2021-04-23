@@ -535,6 +535,9 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::ContinueToBeforeRedirect(
     return;
   }
 
+  if (proxied_client_receiver_.is_bound())
+    proxied_client_receiver_.Resume();
+
   if (ctx_->internal_redirect) {
     ctx_->redirect_source = GURL();
   } else {
@@ -648,7 +651,6 @@ bool DumbProxyingURLLoaderFactory::MaybeProxyRequest(
     int render_process_id,
     mojo::PendingReceiver<network::mojom::URLLoaderFactory>* factory_receiver) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
-
   auto proxied_receiver = std::move(*factory_receiver);
   network::mojom::URLLoaderFactoryPtrInfo target_factory_info;
   *factory_receiver = mojo::MakeRequest(&target_factory_info);

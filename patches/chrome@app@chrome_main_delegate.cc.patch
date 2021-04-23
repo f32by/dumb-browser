@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index 826ef32f3033..6c9d134cf33b 100644
+index 826ef32f3033..014ad51a7506 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
 @@ -42,7 +42,6 @@
@@ -170,7 +170,17 @@ index 826ef32f3033..6c9d134cf33b 100644
  #if defined(OS_ANDROID)
    UmaSessionStats::OnStartup();
  #endif
-@@ -640,12 +556,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -598,7 +514,9 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+   std::string process_type =
+       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
+           switches::kProcessType);
++#if !defined(OS_LINUX)
+   bool is_browser_process = process_type.empty();
++#endif
+ 
+   // Enable Split cache by default here and not in content/ so as to not
+   // impact non-Chrome embedders like WebView, Cronet etc. This only enables
+@@ -640,12 +558,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
  #endif
  
@@ -183,7 +193,7 @@ index 826ef32f3033..6c9d134cf33b 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      chromeos::ConfigureSwap();
      chromeos::InitializeKstaled();
-@@ -654,10 +564,8 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -654,10 +566,8 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
      // that now.
      chromeos::LockMainProgramText();
  #endif
@@ -194,7 +204,7 @@ index 826ef32f3033..6c9d134cf33b 100644
    base::sequence_manager::internal::ThreadControllerPowerMonitor::
        InitializeOnMainThread();
  #endif
-@@ -712,29 +620,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -712,29 +622,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
      return true;
    }
  #endif
@@ -224,7 +234,7 @@ index 826ef32f3033..6c9d134cf33b 100644
  
  #if defined(OS_POSIX)
    if (HandleVersionSwitches(command_line)) {
-@@ -779,37 +671,6 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -779,37 +673,6 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    ContentSettingsPattern::SetNonWildcardDomainNonPortSchemes(
        kNonWildcardDomainNonPortSchemes, kNonWildcardDomainNonPortSchemesSize);
  
@@ -262,7 +272,7 @@ index 826ef32f3033..6c9d134cf33b 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
    // Initialize primary user homedir (in multi-profile session) as it may be
    // passed as a command line switch.
-@@ -874,92 +735,15 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -874,92 +737,15 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    }
  #endif
  
@@ -355,7 +365,7 @@ index 826ef32f3033..6c9d134cf33b 100644
  
  #if defined(OS_WIN)
    child_process_logging::Init();
-@@ -1083,39 +867,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
+@@ -1083,39 +869,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
          locale;
    }
  
@@ -395,7 +405,7 @@ index 826ef32f3033..6c9d134cf33b 100644
  #if BUILDFLAG(ENABLE_PDF)
    MaybeInitializeGDI();
  #endif
-@@ -1212,23 +969,6 @@ void ChromeMainDelegate::ZygoteForked() {
+@@ -1212,23 +971,6 @@ void ChromeMainDelegate::ZygoteForked() {
      base::debug::RestartProfilingAfterFork();
      SetUpProfilingShutdownHandler();
    }

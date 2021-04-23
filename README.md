@@ -33,13 +33,34 @@ Other changes:
 
 # Installation
 
-Tested on macOS 11.3 GM (20E232). Other OS is not tested and build may fail.
+Tested on following OS:
+
+1. macOS 11.3 GM (20E232) x86_64
+2. Ubuntu 20.04.2 LTS x86_64
+
+*Other OS is not tested and build may fail.*
 
 ### Prerequisites
 
 Windows: [Building Dumb Browser for Windows](docs/windows.md)
 
 macOS: [Building Dumb Browser for macOS](docs/macos.md)
+
+Linux: No build script available. You can follow [official build instructions](https://chromium.googlesource.com/chromium/src/+/master/docs/linux/build_instructions.md)
+and apply patches before calling `autoninja`:
+
+```shell
+# fetch chromium src
+./scripts/sync.py
+# install dependencies
+cd src
+./build/install-build-deps.sh
+# apply dumb's patches
+cd ..
+./scripts/apply_patches.py
+# build
+./scripts/build.py release
+```
 
 ### Build Instruction
 

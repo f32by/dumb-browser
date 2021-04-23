@@ -1,0 +1,30 @@
+diff --git a/content/browser/renderer_host/pepper/pepper_file_io_host.cc b/content/browser/renderer_host/pepper/pepper_file_io_host.cc
+index dbf0c9d7a25e..764a66f7ebbc 100644
+--- a/content/browser/renderer_host/pepper/pepper_file_io_host.cc
++++ b/content/browser/renderer_host/pepper/pepper_file_io_host.cc
+@@ -437,25 +437,7 @@ void PepperFileIOHost::OnLocalFileOpened(
+     ppapi::host::ReplyMessageContext reply_context,
+     const base::FilePath& path,
+     base::File::Error error_code) {
+-#if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS)
+-  // Quarantining a file before its contents are available is only supported on
+-  // Windows and Linux.
+-  if (!FileOpenForWrite(open_flags_) || error_code != base::File::FILE_OK) {
+-    SendFileOpenReply(reply_context, error_code);
+-    return;
+-  }
+-
+-  base::PostTaskAndReplyWithResult(
+-      task_runner_.get(), FROM_HERE,
+-      base::BindOnce(
+-          &download::QuarantineFile, path,
+-          browser_ppapi_host_->GetDocumentURLForInstance(pp_instance()), GURL(),
+-          std::string()),
+-      base::BindOnce(&PepperFileIOHost::OnLocalFileQuarantined, AsWeakPtr(),
+-                     reply_context, path));
+-#else
+   SendFileOpenReply(reply_context, error_code);
+-#endif
+ }
+ 
+ #if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS)

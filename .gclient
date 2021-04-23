@@ -5,6 +5,7 @@ solutions = [
     'managed': False,
     'custom_deps': {
       'src/third_party/WebKit/LayoutTests': None,
+      'src/third_party/chromite': None,
       'src/chrome_frame/tools/test/reference_build/chrome': None,
       'src/chrome_frame/tools/test/reference_build/chrome_win': None,
       'src/chrome/tools/test/reference_build/chrome': None,
@@ -29,6 +30,8 @@ solutions = [
       'checkout_ios_webkit': False,
       'checkout_nacl': False,
       'checkout_pgo_profiles': True,
+      'checkout_simplechrome': False,
+      'checkout_simplechrome_with_vms': False,
       'checkout_telemetry_dependencies': False,
       'cros_boards': False,
       'cros_boards_with_qemu_images': False,

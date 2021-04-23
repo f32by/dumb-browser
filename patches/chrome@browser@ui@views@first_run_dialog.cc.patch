@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/first_run_dialog.cc b/chrome/browser/ui/views/first_run_dialog.cc
-index 3ece75358ed2..f80485bf54a5 100644
+index 3ece75358ed2..9954c4f7f599 100644
 --- a/chrome/browser/ui/views/first_run_dialog.cc
 +++ b/chrome/browser/ui/views/first_run_dialog.cc
 @@ -9,7 +9,6 @@
@@ -10,7 +10,34 @@ index 3ece75358ed2..f80485bf54a5 100644
  #include "chrome/browser/platform_util.h"
  #include "chrome/browser/shell_integration.h"
  #include "chrome/browser/ui/browser_dialogs.h"
-@@ -101,7 +100,6 @@ FirstRunDialog::FirstRunDialog(Profile* profile) {
+@@ -30,26 +29,6 @@
+ #include "ui/views/widget/widget.h"
+ #include "ui/views/window/dialog_delegate.h"
+ 
+-#if defined(OS_WIN)
+-#include "components/crash/content/app/breakpad_win.h"
+-#elif defined(OS_LINUX) || defined(OS_CHROMEOS)
+-#include "components/crash/core/app/breakpad_linux.h"
+-#endif
+-
+-namespace {
+-
+-void InitCrashReporterIfEnabled(bool enabled) {
+-#if defined(OS_WIN)
+-  if (enabled)
+-    breakpad::InitCrashReporter(std::string());
+-#elif defined(OS_LINUX) || defined(OS_CHROMEOS)
+-  if (!crash_reporter::IsCrashpadEnabled() && enabled)
+-    breakpad::InitCrashReporter(std::string());
+-#endif
+-}
+-
+-}  // namespace
+-
+ namespace first_run {
+ 
+ void ShowFirstRunDialog(Profile* profile) {
+@@ -101,7 +80,6 @@ FirstRunDialog::FirstRunDialog(Profile* profile) {
    // Having this box checked means the user has to opt-out of metrics recording.
    report_crashes->SetChecked(!first_run::IsMetricsReportingOptIn());
    report_crashes_ = layout->AddView(std::move(report_crashes));
@@ -18,7 +45,7 @@ index 3ece75358ed2..f80485bf54a5 100644
  }
  
  FirstRunDialog::~FirstRunDialog() {
-@@ -115,10 +113,6 @@ void FirstRunDialog::Done() {
+@@ -115,10 +93,6 @@ void FirstRunDialog::Done() {
  bool FirstRunDialog::Accept() {
    GetWidget()->Hide();
  
