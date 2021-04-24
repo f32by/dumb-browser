@@ -1,19 +1,8 @@
 diff --git a/third_party/blink/renderer/bindings/templates/attributes.cc.tmpl b/third_party/blink/renderer/bindings/templates/attributes.cc.tmpl
-index c313e1d036e2..4e564e842348 100644
+index c313e1d036e2..d11d3222de2c 100644
 --- a/third_party/blink/renderer/bindings/templates/attributes.cc.tmpl
 +++ b/third_party/blink/renderer/bindings/templates/attributes.cc.tmpl
-@@ -69,10 +69,6 @@ const v8::FunctionCallbackInfo<v8::Value>& info
-   {% endif %}{# local_dom_window_only #}
-   {% endif %}{# not attribute.is_static #}
- 
--  {% if interface_name == "Window" and attribute.has_cross_origin_getter %}
--  impl->ReportCoopAccess("{{attribute.name}}");
--  {% endif %}
--
-   {% if attribute.cached_attribute_validation_method %}
-   // [CachedAttribute]
-   {% if not attribute.private_property_is_shared_between_getter_and_setter %}
-@@ -144,10 +140,6 @@ const v8::FunctionCallbackInfo<v8::Value>& info
+@@ -144,10 +144,6 @@ const v8::FunctionCallbackInfo<v8::Value>& info
    {{attribute.cpp_type}} {{attribute.cpp_value}}({{attribute.cpp_value_original}});
    {% endif %}
  
@@ -24,7 +13,7 @@ index c313e1d036e2..4e564e842348 100644
    {% if attribute.use_output_parameter_for_result %}
    {{attribute.cpp_type}} result;
    {{attribute.cpp_value}};
-@@ -266,9 +258,6 @@ const v8::FunctionCallbackInfo<v8::Value>& info
+@@ -266,9 +262,6 @@ const v8::FunctionCallbackInfo<v8::Value>& info
    {% if attribute.measure_as %}
    ExecutionContext* execution_context_for_measurement = CurrentExecutionContext(info.GetIsolate());
    UseCounter::Count(execution_context_for_measurement, WebFeature::k{{attribute.measure_as('AttributeGetter')}});
@@ -34,7 +23,7 @@ index c313e1d036e2..4e564e842348 100644
    {% endif %}
  
    {% if world_suffix in attribute.activity_logging_world_list_for_getter %}
-@@ -308,9 +297,6 @@ void {{v8_class_or_partial}}::{{attribute.camel_case_name}}ConstructorGetterCall
+@@ -308,9 +301,6 @@ void {{v8_class_or_partial}}::{{attribute.camel_case_name}}ConstructorGetterCall
    {% if attribute.measure_as %}
    ExecutionContext* execution_context_for_measurement = CurrentExecutionContext(info.GetIsolate());
    UseCounter::Count(execution_context_for_measurement, WebFeature::k{{attribute.measure_as('ConstructorGetter')}});

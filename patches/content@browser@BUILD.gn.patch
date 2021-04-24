@@ -1,5 +1,5 @@
 diff --git a/content/browser/BUILD.gn b/content/browser/BUILD.gn
-index 84d3efba4e18..8e730425ff25 100644
+index 84d3efba4e18..f4f3fa98cf84 100644
 --- a/content/browser/BUILD.gn
 +++ b/content/browser/BUILD.gn
 @@ -64,7 +64,6 @@ source_set("browser") {
@@ -46,3 +46,19 @@ index 84d3efba4e18..8e730425ff25 100644
      "url_loader_factory_getter.cc",
      "url_loader_factory_getter.h",
      "url_loader_factory_params_helper.cc",
+@@ -2827,7 +2818,6 @@ source_set("browser") {
+     ]
+   }
+ 
+-  if (enable_reporting) {
+     sources += [
+       "net/cross_origin_embedder_policy_reporter.cc",
+       "net/cross_origin_embedder_policy_reporter.h",
+@@ -2836,7 +2826,6 @@ source_set("browser") {
+       "net/reporting_service_proxy.cc",
+       "net/reporting_service_proxy.h",
+     ]
+-  }
+ 
+   if (use_viz_devtools) {
+     sources += [

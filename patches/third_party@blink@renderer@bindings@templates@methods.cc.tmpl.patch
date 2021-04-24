@@ -1,19 +1,8 @@
 diff --git a/third_party/blink/renderer/bindings/templates/methods.cc.tmpl b/third_party/blink/renderer/bindings/templates/methods.cc.tmpl
-index b1317339a0be..19188c8048a4 100644
+index b1317339a0be..51f85c0e1d5b 100644
 --- a/third_party/blink/renderer/bindings/templates/methods.cc.tmpl
 +++ b/third_party/blink/renderer/bindings/templates/methods.cc.tmpl
-@@ -54,10 +54,6 @@ static void {{method.camel_case_name}}{{method.overload_index}}Method{{world_suf
-   {% endif %}{# interface_name == 'Window' and not method.is_cross_origin #}
-   {% endif %}{# not method.is_static #}
- 
--  {% if interface_name == "Window" and method.is_cross_origin %}
--  impl->ReportCoopAccess("{{method.name}}");
--  {% endif %}
--
-   {# Security checks #}
-   {% if method.is_check_security_for_return_value %}
-   {{define_exception_state}}
-@@ -266,9 +262,6 @@ Document& document = *ToLocalDOMWindow(
+@@ -266,9 +266,6 @@ Document& document = *ToLocalDOMWindow(
  {{method.cpp_type}} impl = {{cpp_value}};
  {% elif method.use_local_result %}
  {{method.cpp_type}} result = {{cpp_value}};
@@ -23,7 +12,7 @@ index b1317339a0be..19188c8048a4 100644
  {% endif %}
  {# Post-call #}
  {% if method.is_raises_exception %}
-@@ -437,9 +430,6 @@ if ({{test}}) {
+@@ -437,9 +434,6 @@ if ({{test}}) {
    {% if method.measure_as and not overloads.measure_all_as %}
    ExecutionContext* execution_context_for_measurement = CurrentExecutionContext(info.GetIsolate());
    UseCounter::Count(execution_context_for_measurement, WebFeature::k{{method.measure_as('Method')}});
@@ -33,7 +22,7 @@ index b1317339a0be..19188c8048a4 100644
    {% endif %}
    {% if method.deprecate_as and not overloads.deprecate_all_as %}
    Deprecation::CountDeprecation(CurrentExecutionContext(info.GetIsolate()), WebFeature::k{{method.deprecate_as}});
-@@ -464,9 +454,6 @@ void {{v8_class_or_partial}}::{{method.camel_case_name}}MethodCallback{{world_su
+@@ -464,9 +458,6 @@ void {{v8_class_or_partial}}::{{method.camel_case_name}}MethodCallback{{world_su
    {% if method.measure_as %}
    ExecutionContext* execution_context_for_measurement = CurrentExecutionContext(info.GetIsolate());
    UseCounter::Count(execution_context_for_measurement, WebFeature::k{{method.measure_as('Method')}});

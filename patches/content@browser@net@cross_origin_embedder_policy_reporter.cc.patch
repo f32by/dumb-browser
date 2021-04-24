@@ -1,0 +1,31 @@
+diff --git a/content/browser/net/cross_origin_embedder_policy_reporter.cc b/content/browser/net/cross_origin_embedder_policy_reporter.cc
+index 307a9ca9ceb1..e0b0f9339196 100644
+--- a/content/browser/net/cross_origin_embedder_policy_reporter.cc
++++ b/content/browser/net/cross_origin_embedder_policy_reporter.cc
+@@ -77,8 +77,6 @@ void CrossOriginEmbedderPolicyReporter::Clone(
+ void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
+     std::initializer_list<std::pair<base::StringPiece, base::StringPiece>> body,
+     bool report_only) {
+-  const base::Optional<std::string>& endpoint =
+-      report_only ? report_only_endpoint_ : endpoint_;
+   const char* const disposition = report_only ? "reporting" : "enforce";
+   if (observer_) {
+     std::vector<blink::mojom::ReportBodyElementPtr> list;
+@@ -93,17 +91,6 @@ void CrossOriginEmbedderPolicyReporter::QueueAndNotify(
+     observer_->Notify(blink::mojom::Report::New(
+         kType, context_url_, blink::mojom::ReportBody::New(std::move(list))));
+   }
+-  if (endpoint) {
+-    base::DictionaryValue body_to_pass;
+-    for (const auto& pair : body) {
+-      body_to_pass.SetString(pair.first, pair.second);
+-    }
+-    body_to_pass.SetString("disposition", disposition);
+-
+-    storage_partition_->GetNetworkContext()->QueueReport(
+-        kType, *endpoint, context_url_, network_isolation_key_,
+-        /*user_agent=*/base::nullopt, std::move(body_to_pass));
+-  }
+ }
+ 
+ }  // namespace content

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/frame/navigator_ua.cc b/third_party/blink/renderer/core/frame/navigator_ua.cc
-index 3d03eb2f8df6..f272506c8be5 100644
+index 3d03eb2f8df6..2bce1cd3f96a 100644
 --- a/third_party/blink/renderer/core/frame/navigator_ua.cc
 +++ b/third_party/blink/renderer/core/frame/navigator_ua.cc
 @@ -6,11 +6,6 @@
@@ -14,7 +14,7 @@ index 3d03eb2f8df6..f272506c8be5 100644
  #include "third_party/blink/public/mojom/web_feature/web_feature.mojom-blink.h"
  #include "third_party/blink/renderer/core/execution_context/execution_context.h"
  
-@@ -29,13 +24,12 @@ NavigatorUAData* NavigatorUA::userAgentData() {
+@@ -29,39 +24,11 @@ NavigatorUAData* NavigatorUA::userAgentData() {
    ua_data->SetModel(String::FromUTF8(metadata.model));
    ua_data->SetUAFullVersion(String::FromUTF8(metadata.full_version));
  
@@ -25,15 +25,32 @@ index 3d03eb2f8df6..f272506c8be5 100644
  
  // Records identifiability study metrics if the user is in the study.
  void NavigatorUA::MaybeRecordMetrics(const NavigatorUAData& ua_data) {
-+#if 0
-   constexpr auto identifiable_surface = IdentifiableSurface::FromTypeAndToken(
-       IdentifiableSurface::Type::kWebFeature, WebFeature::kNavigatorUserAgent);
-   if (LIKELY(!IdentifiabilityStudySettings::Get()->ShouldSample(
-@@ -62,6 +56,7 @@ void NavigatorUA::MaybeRecordMetrics(const NavigatorUAData& ua_data) {
-   IdentifiabilityMetricBuilder(context->UkmSourceID())
-       .Set(identifiable_surface, token_builder.GetToken())
-       .Record(context->UkmRecorder());
-+#endif
+-  constexpr auto identifiable_surface = IdentifiableSurface::FromTypeAndToken(
+-      IdentifiableSurface::Type::kWebFeature, WebFeature::kNavigatorUserAgent);
+-  if (LIKELY(!IdentifiabilityStudySettings::Get()->ShouldSample(
+-          identifiable_surface))) {
+-    return;
+-  }
+-
+-  ExecutionContext* context = GetUAExecutionContext();
+-  if (!context)
+-    return;
+-
+-  // Only instrument low-entropy fields here. The other fields are
+-  // instrumented separately in NavigatorUAData::getHighEntropyValues().
+-  IdentifiableTokenBuilder token_builder;
+-  token_builder.AddValue(ua_data.mobile());
+-  for (const auto& brand : ua_data.brands()) {
+-    token_builder.AddValue(brand->hasBrand());
+-    if (brand->hasBrand())
+-      token_builder.AddAtomic(brand->brand().Utf8());
+-    token_builder.AddValue(brand->hasVersion());
+-    if (brand->hasVersion())
+-      token_builder.AddAtomic(brand->version().Utf8());
+-  }
+-  IdentifiabilityMetricBuilder(context->UkmSourceID())
+-      .Set(identifiable_surface, token_builder.GetToken())
+-      .Record(context->UkmRecorder());
  }
  
  }  // namespace blink

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.cc b/third_party/blink/renderer/core/workers/worker_global_scope.cc
-index ef4dce6a428e..385b1387c304 100644
+index ef4dce6a428e..c83f7219b6aa 100644
 --- a/third_party/blink/renderer/core/workers/worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/worker_global_scope.cc
 @@ -69,7 +69,6 @@
@@ -19,57 +19,7 @@ index ef4dce6a428e..385b1387c304 100644
    DCHECK(!ScriptController());
    InstanceCounters::DecrementCounter(
        InstanceCounters::kWorkerGlobalScopeCounter);
-@@ -344,8 +341,6 @@ void WorkerGlobalScope::ImportScriptsInternal(const Vector<String>& urls) {
- 
-     // Step 5.2: "Run the classic script script, with the rethrow errors
-     // argument set to true."
--    ReportingProxy().WillEvaluateImportedClassicScript(
--        source_code.length(), handler ? handler->GetCodeCacheSize() : 0);
-     v8::HandleScope scope(isolate);
-     ScriptEvaluationResult result =
-         script->RunScriptOnScriptStateAndReturnValue(
-@@ -393,9 +388,6 @@ bool WorkerGlobalScope::IsContextThread() const {
- void WorkerGlobalScope::AddConsoleMessageImpl(ConsoleMessage* console_message,
-                                               bool discard_duplicates) {
-   DCHECK(IsContextThread());
--  ReportingProxy().ReportConsoleMessage(
--      console_message->Source(), console_message->Level(),
--      console_message->Message(), console_message->Location());
-   GetThread()->GetConsoleMessageStorage()->AddConsoleMessage(
-       this, console_message, discard_duplicates);
- }
-@@ -490,21 +482,14 @@ void WorkerGlobalScope::RunWorkerScript() {
- 
-   switch (worker_script_->GetScriptType()) {
-     case mojom::blink::ScriptType::kClassic: {
--      auto sizes = worker_script_->GetClassicScriptSizes();
--      ReportingProxy().WillEvaluateClassicScript(sizes.first, sizes.second);
-       break;
-     }
-     case mojom::blink::ScriptType::kModule:
--      ReportingProxy().WillEvaluateModuleScript();
-       break;
-   }
- 
-   // Step 24. If script is a classic script, then run the classic script script.
-   // Otherwise, it is a module script; run the module script script. [spec text]
--  bool is_success =
--      std::move(worker_script_)->RunScriptOnWorkerOrWorklet(*this);
--
--  ReportingProxy().DidEvaluateTopLevelScript(is_success);
- 
-   if (debugger && stack_id_)
-     debugger->ExternalAsyncTaskFinished(*stack_id_);
-@@ -594,8 +579,6 @@ WorkerGlobalScope::WorkerGlobalScope(
- void WorkerGlobalScope::ExceptionThrown(ErrorEvent* event) {
-   int next_id = ++last_pending_error_event_id_;
-   pending_error_events_.Set(next_id, event);
--  ReportingProxy().ReportException(event->MessageForConsole(),
--                                   event->Location()->Clone(), next_id);
- }
- 
- void WorkerGlobalScope::RemoveURLFromMemoryCache(const KURL& url) {
-@@ -681,13 +664,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
+@@ -681,13 +678,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
    Supplementable<WorkerGlobalScope>::Trace(visitor);
  }
  

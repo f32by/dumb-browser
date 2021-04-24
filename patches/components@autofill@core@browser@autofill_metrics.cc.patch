@@ -1,29 +1,62 @@
 diff --git a/components/autofill/core/browser/autofill_metrics.cc b/components/autofill/core/browser/autofill_metrics.cc
-index 0aa01bd33cb7..ecdfad2a4df9 100644
+index 0aa01bd33cb7..39238728b98d 100644
 --- a/components/autofill/core/browser/autofill_metrics.cc
 +++ b/components/autofill/core/browser/autofill_metrics.cc
-@@ -787,12 +787,12 @@ void AutofillMetrics::LogSaveCardCardholderNameWasEdited(bool edited) {
+@@ -786,13 +786,6 @@ void AutofillMetrics::LogSaveCardCardholderNameWasEdited(bool edited) {
+ // static
  void AutofillMetrics::LogCardUploadDecisionMetrics(
      int upload_decision_metrics) {
-   DCHECK(upload_decision_metrics);
+-  DCHECK(upload_decision_metrics);
 -  DCHECK_LT(upload_decision_metrics, 1 << kNumCardUploadDecisionMetrics);
-+  DCHECK_LT(upload_decision_metrics, 1 << 19);
- 
+-
 -  for (int metric = 0; metric < kNumCardUploadDecisionMetrics; ++metric)
-+  for (int metric = 0; metric < 19; ++metric)
-     if (upload_decision_metrics & (1 << metric))
-       UMA_HISTOGRAM_ENUMERATION("Autofill.CardUploadDecisionMetric", metric,
+-    if (upload_decision_metrics & (1 << metric))
+-      UMA_HISTOGRAM_ENUMERATION("Autofill.CardUploadDecisionMetric", metric,
 -                                kNumCardUploadDecisionMetrics);
-+                                19);
  }
  
  // static
-@@ -2167,7 +2167,7 @@ void AutofillMetrics::LogCardUploadDecisionsUkm(ukm::UkmRecorder* ukm_recorder,
+@@ -2155,10 +2148,6 @@ const char* AutofillMetrics::SubmissionSourceToUploadEventMetric(
+ // static
+ void AutofillMetrics::LogUploadEvent(SubmissionSource submission_source,
+                                      bool was_sent) {
+-  UMA_HISTOGRAM_BOOLEAN("Autofill.UploadEvent", was_sent);
+-  base::UmaHistogramEnumeration(
+-      SubmissionSourceToUploadEventMetric(submission_source),
+-      was_sent ? UploadEventStatus::kSent : UploadEventStatus::kNotSent);
+ }
+ 
+ // static
+@@ -2166,13 +2155,6 @@ void AutofillMetrics::LogCardUploadDecisionsUkm(ukm::UkmRecorder* ukm_recorder,
+                                                 ukm::SourceId source_id,
                                                  const GURL& url,
                                                  int upload_decision_metrics) {
-   DCHECK(upload_decision_metrics);
+-  DCHECK(upload_decision_metrics);
 -  DCHECK_LT(upload_decision_metrics, 1 << kNumCardUploadDecisionMetrics);
-+  DCHECK_LT(upload_decision_metrics, 1 << 19);
-   if (!url.is_valid())
-     return;
-   ukm::builders::Autofill_CardUploadDecision(source_id)
+-  if (!url.is_valid())
+-    return;
+-  ukm::builders::Autofill_CardUploadDecision(source_id)
+-      .SetUploadDecision(upload_decision_metrics)
+-      .Record(ukm_recorder);
+ }
+ 
+ // static
+@@ -2184,18 +2166,6 @@ void AutofillMetrics::LogDeveloperEngagementUkm(
+     DenseSet<FormType> form_types,
+     int developer_engagement_metrics,
+     FormSignature form_signature) {
+-  DCHECK(developer_engagement_metrics);
+-  DCHECK_LT(developer_engagement_metrics,
+-            1 << NUM_DEVELOPER_ENGAGEMENT_METRICS);
+-  if (!url.is_valid())
+-    return;
+-
+-  ukm::builders::Autofill_DeveloperEngagement(source_id)
+-      .SetDeveloperEngagement(developer_engagement_metrics)
+-      .SetIsForCreditCard(is_for_credit_card)
+-      .SetFormTypes(FormTypesToBitVector(form_types))
+-      .SetFormSignature(HashFormSignature(form_signature))
+-      .Record(ukm_recorder);
+ }
+ 
+ AutofillMetrics::FormInteractionsUkmLogger::FormInteractionsUkmLogger(

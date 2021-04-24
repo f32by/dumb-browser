@@ -1,16 +1,8 @@
 diff --git a/content/browser/renderer_host/render_frame_host_impl.h b/content/browser/renderer_host/render_frame_host_impl.h
-index 7e278445da38..0ccc6f5dc008 100644
+index 7e278445da38..c683c6800c89 100644
 --- a/content/browser/renderer_host/render_frame_host_impl.h
 +++ b/content/browser/renderer_host/render_frame_host_impl.h
-@@ -40,7 +40,6 @@
- #include "content/browser/coop_coep_cross_origin_isolated_info.h"
- #include "content/browser/feature_observer.h"
- #include "content/browser/idle/idle_manager_impl.h"
--#include "content/browser/net/cross_origin_opener_policy_reporter.h"
- #include "content/browser/renderer_host/back_forward_cache_metrics.h"
- #include "content/browser/renderer_host/keep_alive_handle_factory.h"
- #include "content/browser/renderer_host/media/render_frame_audio_input_stream_factory.h"
-@@ -68,9 +67,7 @@
+@@ -68,9 +68,7 @@
  #include "content/public/browser/render_process_host_observer.h"
  #include "content/public/common/javascript_dialog_type.h"
  #include "media/mojo/mojom/interface_factory.mojom-forward.h"
@@ -20,14 +12,6 @@ index 7e278445da38..0ccc6f5dc008 100644
  #include "mojo/public/cpp/bindings/associated_receiver.h"
  #include "mojo/public/cpp/bindings/associated_remote.h"
  #include "mojo/public/cpp/bindings/message.h"
-@@ -79,6 +76,7 @@
- #include "mojo/public/cpp/bindings/pending_remote.h"
- #include "mojo/public/cpp/bindings/receiver.h"
- #include "mojo/public/cpp/bindings/remote.h"
-+#include "mojo/public/cpp/bindings/unique_receiver_set.h"
- #include "mojo/public/cpp/system/data_pipe.h"
- #include "net/base/isolation_info.h"
- #include "net/base/network_isolation_key.h"
 @@ -117,7 +115,6 @@
  #include "third_party/blink/public/mojom/frame/frame_owner_element_type.mojom.h"
  #include "third_party/blink/public/mojom/frame/frame_owner_properties.mojom-forward.h"
@@ -36,15 +20,7 @@ index 7e278445da38..0ccc6f5dc008 100644
  #include "third_party/blink/public/mojom/frame/tree_scope_type.mojom.h"
  #include "third_party/blink/public/mojom/frame/user_activation_update_types.mojom.h"
  #include "third_party/blink/public/mojom/idle/idle_manager.mojom.h"
-@@ -210,7 +207,6 @@ class AgentSchedulingGroupHost;
- class AppCacheNavigationHandle;
- class AuthenticatorImpl;
- class BackForwardCacheMetrics;
--class CrossOriginEmbedderPolicyReporter;
- class FrameTree;
- class FrameTreeNode;
- class GeolocationServiceImpl;
-@@ -692,9 +688,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -692,9 +689,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
      return !is_main_frame() && is_local_root();
    }
  
@@ -54,7 +30,7 @@ index 7e278445da38..0ccc6f5dc008 100644
    // The unique ID of the latest NavigationEntry that this RenderFrameHost is
    // showing. This may change even when this frame hasn't committed a page,
    // such as for a new subframe navigation in a different frame.
-@@ -1485,9 +1478,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
+@@ -1485,9 +1479,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
    void BindMediaInterfaceFactoryReceiver(
        mojo::PendingReceiver<media::mojom::InterfaceFactory> receiver);
  
@@ -64,57 +40,3 @@ index 7e278445da38..0ccc6f5dc008 100644
  #if BUILDFLAG(ENABLE_MEDIA_REMOTING)
    void BindMediaRemoterFactoryReceiver(
        mojo::PendingReceiver<media::mojom::RemoterFactory> receiver);
-@@ -1532,13 +1522,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
-       network::CrossOriginEmbedderPolicy policy) {
-     cross_origin_embedder_policy_ = policy;
-   }
--  CrossOriginEmbedderPolicyReporter* coep_reporter() {
--    return coep_reporter_.get();
--  }
--  void set_coop_reporter(
--      std::unique_ptr<CrossOriginOpenerPolicyReporter>&& reporter) {
--    coop_reporter_ = std::move(reporter);
--  }
- 
-   // Semi-formal definition of COOP:
-   // https://gist.github.com/annevk/6f2dd8c79c77123f39797f6bdac43f3e
-@@ -1549,9 +1532,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
-       const network::CrossOriginOpenerPolicy& cross_origin_opener_policy) {
-     cross_origin_opener_policy_ = cross_origin_opener_policy;
-   }
--  CrossOriginOpenerPolicyReporter* coop_reporter() {
--    return coop_reporter_.get();
--  }
-   int virtual_browsing_context_group() const {
-     return virtual_browsing_context_group_;
-   }
-@@ -2297,8 +2277,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
-       url::Origin* out_main_world_origin,
-       net::IsolationInfo* out_isolation_info,
-       network::mojom::ClientSecurityStatePtr* out_client_security_state,
--      mojo::PendingRemote<network::mojom::CrossOriginEmbedderPolicyReporter>*
--          coep_reporter_pending_remote,
-       network::mojom::TrustTokenRedemptionPolicy*
-           out_trust_token_redemption_policy);
- 
-@@ -2678,10 +2656,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
-   // RenderFrameHost LifecycleState.
-   void SetLifecycleState(LifecycleState state);
- 
--  void BindReportingObserver(
--      mojo::PendingReceiver<blink::mojom::ReportingObserver>
--          reporting_observer_receiver);
--
-   // Check the renderer provided sandbox flags matches with what the browser
-   // process computed on its own. This triggers DCHECK and DumpWithoutCrashing()
-   //
-@@ -3413,9 +3387,6 @@ class CONTENT_EXPORT RenderFrameHostImpl
-   // This time is used to record the last WebXR DOM Overlay setup request.
-   base::TimeTicks last_xr_overlay_setup_time_;
- 
--  std::unique_ptr<CrossOriginEmbedderPolicyReporter> coep_reporter_;
--  std::unique_ptr<CrossOriginOpenerPolicyReporter> coop_reporter_;
--
-   // https://github.com/camillelamy/explainers/blob/master/coop_reporting.md#virtual-browsing-context-group-id
-   //
-   // Whenever we detect that the enforcement of a report-only COOP policy would

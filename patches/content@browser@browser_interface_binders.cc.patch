@@ -1,5 +1,5 @@
 diff --git a/content/browser/browser_interface_binders.cc b/content/browser/browser_interface_binders.cc
-index 158b443d3e4a..ce672ff91204 100644
+index 158b443d3e4a..d84c64c09440 100644
 --- a/content/browser/browser_interface_binders.cc
 +++ b/content/browser/browser_interface_binders.cc
 @@ -21,7 +21,6 @@
@@ -26,18 +26,17 @@ index 158b443d3e4a..ce672ff91204 100644
  #include "services/network/public/cpp/cross_origin_embedder_policy.h"
  #include "services/network/public/mojom/restricted_cookie_manager.mojom.h"
  #include "services/shape_detection/public/mojom/barcodedetection_provider.mojom.h"
-@@ -163,10 +159,6 @@
+@@ -163,9 +159,7 @@
  #include "media/mojo/mojom/remoting.mojom-forward.h"
  #endif
  
 -#if BUILDFLAG(ENABLE_REPORTING)
--#include "content/browser/net/reporting_service_proxy.h"
+ #include "content/browser/net/reporting_service_proxy.h"
 -#endif
--
+ 
  #if defined(OS_MAC)
  #include "content/browser/renderer_host/text_input_host_impl.h"
- #include "third_party/blink/public/mojom/input/text_input_host.mojom.h"
-@@ -237,12 +229,6 @@ void BindTextInputHost(
+@@ -237,12 +231,6 @@ void BindTextInputHost(
  }
  #endif
  
@@ -50,6 +49,17 @@ index 158b443d3e4a..ce672ff91204 100644
  void BindBadgeServiceForServiceWorkerOnUI(
      int service_worker_process_id,
      const GURL& service_worker_scope,
+@@ -628,10 +616,8 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
+   map->Add<blink::mojom::QuotaManagerHost>(
+       base::BindRepeating(&BindQuotaManagerHost, base::Unretained(host)));
+ 
+-#if BUILDFLAG(ENABLE_REPORTING)
+   map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+       &CreateReportingServiceProxyForFrame, base::Unretained(host)));
+-#endif
+ 
+   map->Add<blink::mojom::SharedWorkerConnector>(
+       base::BindRepeating(&BindSharedWorkerConnector, base::Unretained(host)));
 @@ -764,10 +750,6 @@ void PopulateFrameBinders(RenderFrameHostImpl* host, mojo::BinderMap* map) {
        &RenderFrameHostImpl::BindMediaInterfaceFactoryReceiver,
        base::Unretained(host)));
@@ -79,7 +89,18 @@ index 158b443d3e4a..ce672ff91204 100644
  
    // worker host binders
    // base::Unretained(host) is safe because the map is owned by
-@@ -1063,8 +1041,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
+@@ -993,10 +971,8 @@ void PopulateDedicatedWorkerBinders(DedicatedWorkerHost* host,
+                           base::Unretained(host)));
+   map->Add<blink::mojom::CacheStorage>(base::BindRepeating(
+       &DedicatedWorkerHost::BindCacheStorage, base::Unretained(host)));
+-#if BUILDFLAG(ENABLE_REPORTING)
+   map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+       &CreateReportingServiceProxyForDedicatedWorker, base::Unretained(host)));
+-#endif
+ #if !defined(OS_ANDROID)
+   map->Add<blink::mojom::SerialService>(base::BindRepeating(
+       &DedicatedWorkerHost::BindSerialService, base::Unretained(host)));
+@@ -1063,8 +1039,6 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
        base::BindRepeating(&BindFaceDetectionProvider));
    map->Add<shape_detection::mojom::TextDetection>(
        base::BindRepeating(&BindTextDetection));
@@ -88,7 +109,18 @@ index 158b443d3e4a..ce672ff91204 100644
  
    // worker host binders
    // base::Unretained(host) is safe because the map is owned by
-@@ -1160,8 +1136,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
+@@ -1084,10 +1058,8 @@ void PopulateSharedWorkerBinders(SharedWorkerHost* host, mojo::BinderMap* map) {
+       &SharedWorkerHost::CreateQuicTransportConnector, base::Unretained(host)));
+   map->Add<blink::mojom::CacheStorage>(base::BindRepeating(
+       &SharedWorkerHost::BindCacheStorage, base::Unretained(host)));
+-#if BUILDFLAG(ENABLE_REPORTING)
+   map->Add<blink::mojom::ReportingServiceProxy>(base::BindRepeating(
+       &CreateReportingServiceProxyForSharedWorker, base::Unretained(host)));
+-#endif
+ 
+   // render process host binders
+   map->Add<media::mojom::VideoDecodePerfHistory>(BindWorkerReceiver(
+@@ -1160,8 +1132,6 @@ void PopulateServiceWorkerBinders(ServiceWorkerHost* host,
        base::BindRepeating(&BindFaceDetectionProvider));
    map->Add<shape_detection::mojom::TextDetection>(
        base::BindRepeating(&BindTextDetection));

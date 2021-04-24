@@ -1,0 +1,73 @@
+diff --git a/components/blocked_content/popup_opener_tab_helper.cc b/components/blocked_content/popup_opener_tab_helper.cc
+index 1471c40b9965..607e7439756b 100644
+--- a/components/blocked_content/popup_opener_tab_helper.cc
++++ b/components/blocked_content/popup_opener_tab_helper.cc
+@@ -8,33 +8,18 @@
+ 
+ #include "base/check.h"
+ #include "base/memory/ptr_util.h"
+-#include "base/metrics/histogram_macros.h"
+ #include "base/time/tick_clock.h"
+ #include "components/blocked_content/popup_tracker.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+ #include "components/content_settings/core/common/content_settings.h"
+-#include "components/ukm/content/source_url_recorder.h"
+ #include "content/public/browser/navigation_handle.h"
+ #include "content/public/browser/web_contents.h"
+-#include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "ui/base/scoped_visibility_tracker.h"
+ 
+ namespace blocked_content {
+ 
+ PopupOpenerTabHelper::~PopupOpenerTabHelper() {
+   DCHECK(visibility_tracker_);
+-  base::TimeDelta total_visible_time =
+-      visibility_tracker_->GetForegroundDuration();
+-  if (did_tab_under()) {
+-    UMA_HISTOGRAM_LONG_TIMES(
+-        "Tab.TabUnder.VisibleTime",
+-        total_visible_time - visible_time_before_tab_under_.value());
+-    UMA_HISTOGRAM_LONG_TIMES("Tab.TabUnder.VisibleTimeBefore",
+-                             visible_time_before_tab_under_.value());
+-  }
+-  UMA_HISTOGRAM_LONG_TIMES("Tab.VisibleTime", total_visible_time);
+ }
+ 
+ void PopupOpenerTabHelper::OnOpenedPopup(PopupTracker* popup_tracker) {
+@@ -51,8 +36,6 @@ void PopupOpenerTabHelper::OnDidTabUnder() {
+ 
+   // Tab-under requires a popup, so this better not be null.
+   DCHECK(!last_popup_open_time_.is_null());
+-  UMA_HISTOGRAM_LONG_TIMES("Tab.TabUnder.PopupToTabUnderTime",
+-                           tick_clock_->NowTicks() - last_popup_open_time_);
+ 
+   visible_time_before_tab_under_ = visibility_tracker_->GetForegroundDuration();
+ }
+@@ -90,25 +73,6 @@ void PopupOpenerTabHelper::DidStartNavigation(
+ }
+ 
+ void PopupOpenerTabHelper::MaybeLogPagePopupContentSettings() {
+-  // If the user has opened a popup, record the page popup settings ukm.
+-  const GURL& url = web_contents()->GetLastCommittedURL();
+-  if (!url.is_valid())
+-    return;
+-
+-  const ukm::SourceId source_id =
+-      ukm::GetSourceIdForWebContentsDocument(web_contents());
+-
+-  // Do not record duplicate Popup.Page events for popups opened in succession
+-  // from the same opener.
+-  if (source_id != last_opener_source_id_) {
+-    bool user_allows_popups =
+-        settings_map_->GetContentSetting(
+-            url, url, ContentSettingsType::POPUPS) == CONTENT_SETTING_ALLOW;
+-    ukm::builders::Popup_Page(source_id)
+-        .SetAllowed(user_allows_popups)
+-        .Record(ukm::UkmRecorder::Get());
+-    last_opener_source_id_ = source_id;
+-  }
+ }
+ 
+ WEB_CONTENTS_USER_DATA_KEY_IMPL(PopupOpenerTabHelper)

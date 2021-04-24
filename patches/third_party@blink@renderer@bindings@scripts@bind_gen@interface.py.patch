@@ -1,18 +1,8 @@
 diff --git a/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py b/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
-index e09a559c3899..71e685697e42 100644
+index e09a559c3899..7757531abbf4 100644
 --- a/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
 +++ b/third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
-@@ -1688,9 +1688,6 @@ def make_attribute_get_callback_def(cg_context, function_name):
-         EmptyNode(),
-         make_runtime_call_timer_scope(cg_context),
-         make_bindings_trace_event(cg_context),
--        make_report_coop_access(cg_context),
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-         EmptyNode(),
-     ])
-@@ -1707,7 +1704,6 @@ def make_attribute_get_callback_def(cg_context, function_name):
+@@ -1707,7 +1707,6 @@ def make_attribute_get_callback_def(cg_context, function_name):
          EmptyNode(),
          make_check_security_of_return_value(cg_context),
          make_v8_set_return_value(cg_context),
@@ -20,25 +10,7 @@ index e09a559c3899..71e685697e42 100644
          make_return_value_cache_update_value(cg_context),
      ])
  
-@@ -1737,8 +1733,6 @@ def make_attribute_set_callback_def(cg_context, function_name):
-         EmptyNode(),
-         make_runtime_call_timer_scope(cg_context),
-         make_bindings_trace_event(cg_context),
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-         EmptyNode(),
-     ])
-@@ -1863,8 +1857,6 @@ def make_constant_callback_def(cg_context, function_name):
-     assert isinstance(function_name, str)
- 
-     logging_nodes = SequenceNode([
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-     ])
-     if not logging_nodes:
-@@ -1882,7 +1874,6 @@ def make_constant_callback_def(cg_context, function_name):
+@@ -1882,7 +1881,6 @@ def make_constant_callback_def(cg_context, function_name):
          logging_nodes,
          EmptyNode(),
          TextNode(v8_set_return_value),
@@ -46,44 +18,7 @@ index e09a559c3899..71e685697e42 100644
      ])
  
      return func_def
-@@ -1947,8 +1938,6 @@ def make_constructor_function_def(cg_context, function_name):
-         body.append(EmptyNode())
- 
-     body.extend([
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-         EmptyNode(),
-         make_check_argument_length(cg_context),
-@@ -2023,8 +2012,6 @@ def make_exposed_construct_callback_def(cg_context, function_name):
-     body.extend([
-         make_runtime_call_timer_scope(cg_context),
-         make_bindings_trace_event(cg_context),
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-         EmptyNode(),
-         TextNode(v8_set_return_value),
-@@ -2043,8 +2030,6 @@ def make_named_constructor_property_callback_def(cg_context, function_name):
-     body.extend([
-         make_runtime_call_timer_scope(cg_context),
-         make_bindings_trace_event(cg_context),
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-         EmptyNode(),
-     ])
-@@ -2181,9 +2166,6 @@ def make_operation_function_def(cg_context, function_name):
-     body.extend([
-         make_check_receiver(cg_context),
-         EmptyNode(),
--        make_report_coop_access(cg_context),
--        make_report_deprecate_as(cg_context),
--        make_report_measure_as(cg_context),
-         make_log_activity(cg_context),
-         EmptyNode(),
-     ])
-@@ -2201,7 +2183,6 @@ def make_operation_function_def(cg_context, function_name):
+@@ -2201,7 +2199,6 @@ def make_operation_function_def(cg_context, function_name):
          EmptyNode(),
          make_check_security_of_return_value(cg_context),
          make_v8_set_return_value(cg_context),
