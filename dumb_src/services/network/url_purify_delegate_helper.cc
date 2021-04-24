@@ -13,16 +13,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dumb/browser/net/url_purify/dumb_url_purify_delegate_helper.h"
+#include "dumb/services/network/url_purify_delegate_helper.h"
 
 #include <iostream>
 
+#include "base/logging.h"
 #include "base/no_destructor.h"
 #include "base/strings/string_util.h"
 #include "base/synchronization/lock.h"
-#include "content/public/common/referrer.h"
-#include "extensions/common/url_pattern.h"
 #include "net/url_request/url_request.h"
+#include "third_party/re2/src/re2/re2.h"
 
 namespace {
 
@@ -357,6 +357,7 @@ SubQueryMatcher BuildMatcher(const std::string& url_pattern,
                              const std::vector<std::string>& query_patterns,
                              base::Optional<std::vector<std::string>>
                              url_exceptions = base::nullopt) {
+  // LOG(INFO) << "Building matchers...";
   re2::RE2::Options options;
   options.set_case_sensitive(false);
   // build url_matcher
@@ -405,6 +406,7 @@ public:
       global_matcher_(BuildMatcher(GetGlobalRules().url_pattern,
                                    GetGlobalRules().query_patterns,
                                    GetGlobalRules().url_exceptions)) {
+    LOG(INFO) << "Loading URL purify list...";
 
     // Build other matchers
     auto per_site_rules = GetPerSiteRules();
@@ -439,6 +441,8 @@ private:
   base::Optional<int> TryApplyMatcher(const SubQueryMatcher& matcher,
                                       const std::string& full_url,
                                       std::string& new_query) {
+    LOG(INFO) << "Original URL: " << full_url;
+
     int count = 0;
     const auto url_len = full_url.length() - 1;
 
@@ -446,6 +450,7 @@ private:
     if(matcher.url_exception_matcher.has_value() &&
         matcher.url_exception_matcher.value()->Match(
             full_url, 0, url_len, RE2UNANCHORED, nullptr, 0)) {
+      LOG(INFO) << "Met an exception, skipping.";
       return -1;
     }
 
@@ -454,6 +459,8 @@ private:
       count += re2::RE2::GlobalReplace(&new_query, *query_matcher.get(), "");
     }
 
+    LOG(INFO) << "Removed " << count
+        << " parameters. New spec: " << new_query;
     return count;
   }
 
@@ -467,65 +474,33 @@ QueryMatcher& GetMatcher() {
   return *instance;
 }
 
-void ApplyRules(std::shared_ptr<dumb::DumbRequestInfo>& ctx) {
-  if (ctx->redirect_source.is_valid()) {
-    if (ctx->internal_redirect) {
-      // Ignore internal redirects since we trigger them.
-      return;
-    }
-
-    if (net::registry_controlled_domains::SameDomainOrHost(
-            ctx->redirect_source, ctx->request_url,
-            net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES)) {
-      // Same-site redirects are exempted.
-      return;
-    }
-  } else if (ctx->initiator_url.is_valid() &&
-             net::registry_controlled_domains::SameDomainOrHost(
-                 ctx->initiator_url, ctx->request_url,
-                 net::registry_controlled_domains::
-                     INCLUDE_PRIVATE_REGISTRIES)) {
-    // Same-site requests are exempted.
-    return;
-  }
-
-  std::string new_query = ctx->request_url.query();
-  const std::string& full_url = ctx->request_url.spec();
-  // std::cout << "Full URL: " << full_url << std::endl;
-
-  int replacement_count = GetMatcher().FilterQuery(full_url, new_query);
-
-  if (replacement_count > 0) {
-    url::Replacements<char> replacements;
-    if (new_query.empty()) {
-      replacements.ClearQuery();
-    } else {
-      replacements.SetQuery(new_query.c_str(),
-                            url::Component(0, new_query.size()));
-    }
-    ctx->new_url_spec = ctx->request_url.ReplaceComponents(replacements).spec();
-    // std::cout << "Filtered URL: " << *new_url_spec << std::endl;
-  }
-}
-
 } // namespace
 
 namespace dumb {
 
-int OnBeforeURLRequest_URLPurifyWork(const ResponseCallback& next_callback,
-                                     std::shared_ptr<DumbRequestInfo> ctx) {
-  if (ctx->request_url.has_query()) {
-    ApplyRules(ctx);
+URLPurifyResult MaybeTruncateURLParameters(net::URLRequest* const request,
+                                           const GURL& effective_url) {
+  if (request->url().has_query()) {
+    std::string new_query = request->url().query();
+    const std::string& full_url = request->url().spec();
+    // std::cout << "Full URL: " << full_url << std::endl;
+
+    int replacement_count = GetMatcher().FilterQuery(full_url, new_query);
+
+    if (replacement_count > 0) {
+      url::Replacements<char> replacements;
+      if (new_query.empty()) {
+        replacements.ClearQuery();
+      } else {
+        replacements.SetQuery(new_query.c_str(),
+                              url::Component(0, new_query.size()));
+      }
+      auto new_url = request->url().ReplaceComponents(replacements);
+      return {new_url, replacement_count};
+    }
   }
 
-  return net::OK;
-}
-
-int OnBeforeStartTransaction_URLPurifyWork(
-    net::HttpRequestHeaders* headers,
-    const ResponseCallback& next_callback,
-    std::shared_ptr<DumbRequestInfo> ctx) {
-  return net::OK;
+  return {base::nullopt, 0};
 }
 
 }  // namespace dumb

@@ -1,0 +1,13 @@
+diff --git a/services/network/BUILD.gn b/services/network/BUILD.gn
+index b4eb1acbc706..840744c2208a 100644
+--- a/services/network/BUILD.gn
++++ b/services/network/BUILD.gn
+@@ -258,6 +258,8 @@ component("network_service") {
+     "//url",
+   ]
+ 
++  deps += [ "//dumb/services/network" ]
++
+   public_deps = [ "//services/network/public/cpp:buildflags" ]
+ 
+   if (is_ct_supported) {

@@ -26,7 +26,7 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/common/url_constants.h"
 #include "dumb/browser/net/dumb_stp_util.h"
-#include "dumb/browser/net/url_purify/dumb_url_purify_delegate_helper.h"
+// #include "dumb/browser/net/url_purify/dumb_url_purify_delegate_helper.h"
 #include "extensions/common/constants.h"
 
 static bool IsInternalScheme(std::shared_ptr<dumb::DumbRequestInfo> ctx) {
@@ -43,9 +43,9 @@ DumbRequestHandler::DumbRequestHandler() {
 DumbRequestHandler::~DumbRequestHandler() = default;
 
 void DumbRequestHandler::SetupCallbacks() {
-  dumb::OnBeforeURLRequestCallback callback =
-      base::Bind(dumb::OnBeforeURLRequest_URLPurifyWork);
-  before_url_request_callbacks_.push_back(callback);
+  // dumb::OnBeforeURLRequestCallback callback =
+  //     base::Bind(dumb::OnBeforeURLRequest_URLPurifyWork);
+  // before_url_request_callbacks_.push_back(callback);
 }
 
 void DumbRequestHandler::InitPrefChangeRegistrar() {
