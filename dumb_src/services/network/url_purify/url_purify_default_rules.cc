@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 The Dumb Browser Authors. All rights reserved.
+/* Copyright (c) 2021 The Dumb Browser Authors. All rights reserved.
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,56 +13,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dumb/services/network/url_purify_delegate_helper.h"
+#include "dumb/services/network/url_purify/url_purify_default_rules.h"
 
-#include <iostream>
-
-#include "base/logging.h"
 #include "base/no_destructor.h"
 #include "base/strings/string_util.h"
-#include "base/synchronization/lock.h"
-#include "net/url_request/url_request.h"
-#include "third_party/re2/src/re2/re2.h"
 
-namespace {
-
-struct MatcherRule {
-  std::string url_pattern;
-  std::vector<std::string> query_patterns;
-  base::Optional<std::vector<std::string>> url_exceptions;
-
-  MatcherRule(std::string url_pattern,
-              std::vector<std::string> query_patterns,
-              base::Optional<std::vector<std::string>> url_exceptions):
-      url_pattern(std::move(url_pattern)),
+MatcherRule::MatcherRule(std::string url_pattern,
+                         std::vector<std::string> query_patterns,
+                         std::vector<std::string> url_exceptions)
+    : url_pattern(std::move(url_pattern)),
       query_patterns(std::move(query_patterns)),
       url_exceptions(std::move(url_exceptions)) {}
 
-  MatcherRule(std::string url_pattern,
-              std::vector<std::string> query_patterns,
-              std::vector<std::string> url_exceptions):
-      url_pattern(std::move(url_pattern)),
+MatcherRule::MatcherRule(std::string url_pattern,
+                         std::vector<std::string> query_patterns,
+                         base::Optional<std::vector<std::string>>
+                             url_exceptions)
+    : url_pattern(std::move(url_pattern)),
       query_patterns(std::move(query_patterns)),
       url_exceptions(std::move(url_exceptions)) {}
-};
 
-struct SubQueryMatcher {
-  std::unique_ptr<re2::RE2> url_matcher;
-  base::Optional<re2::RE2*> url_exception_matcher;
-  std::vector<std::unique_ptr<re2::RE2>> query_matchers;
+MatcherRule::MatcherRule(const MatcherRule&) = default;
 
-  SubQueryMatcher(re2::RE2* url_matcher,
-                  base::Optional<re2::RE2*> url_exception_matcher,
-                  std::vector<std::unique_ptr<re2::RE2>> query_matchers):
-    url_matcher(url_matcher),
-    url_exception_matcher(std::move(url_exception_matcher)),
-    query_matchers(std::move(query_matchers)) {}
-};
+MatcherRule::MatcherRule(MatcherRule&&) = default;
 
-// TODO: create a component to dynamically update rules
+MatcherRule::~MatcherRule() = default;
 
-MatcherRule GetGlobalRules() {
-  static MatcherRule rule = MatcherRule {
+const MatcherRule& GetDefaultGlobalRules() {
+  static base::NoDestructor<MatcherRule> rule(
+    MatcherRule(
     ".*",
     {"utm(?:_[a-z_]*)?", "ga_[a-z_]+", "yclid", "_openstat",
      "fb_action_(?:types|ids)", "fb_(?:source|ref)", "fbclid",
@@ -72,13 +51,13 @@ MatcherRule GetGlobalRules() {
      "__twitter_impression", "wt_?z?mc", "wtrid", "[a-z]?mc",
      "dclid", "Echobox", "spm", "vn(?:_[a-z]*)+", "tracking_source"},
     base::nullopt
-  };
+  ));
 
-  return rule;
+  return *rule.get();
 }
 
-std::vector<MatcherRule> GetPerSiteRules() {
-  return std::vector<MatcherRule> {
+const std::vector<MatcherRule>& GetDefaultPerSiteRules() {
+  static std::vector<MatcherRule> rules {
     // Google
     {
       "(https:\\/\\/|http:\\/\\/)([a-zA-Z0-9-]*\\.)?(google)(\\.[a-zA-Z]{2,})(.*\\?.*)",
@@ -351,156 +330,6 @@ std::vector<MatcherRule> GetPerSiteRules() {
       base::nullopt
     },
   };
+
+  return rules;
 }
-
-SubQueryMatcher BuildMatcher(const std::string& url_pattern,
-                             const std::vector<std::string>& query_patterns,
-                             base::Optional<std::vector<std::string>>
-                             url_exceptions = base::nullopt) {
-  // LOG(INFO) << "Building matchers...";
-  re2::RE2::Options options;
-  options.set_case_sensitive(false);
-  // build url_matcher
-  auto* url_matcher = new re2::RE2(url_pattern, options);
-  DCHECK(url_matcher->ok());
-  // build exceptions matcher
-  base::Optional<re2::RE2*> url_exception_matcher;
-  if(url_exceptions) {
-    const std::string exception_pattern(
-      base::JoinString(url_exceptions.value(), "|"));
-    url_exception_matcher = new re2::RE2(exception_pattern, options);
-    DCHECK(url_exception_matcher.value()->ok());
-  }
-  // build query matcher
-  std::vector<std::unique_ptr<re2::RE2>> query_matchers;
-  const std::string query_pattern(base::JoinString(query_patterns, "|"));
-
-  // appended matcher
-  auto* query_appended_matcher = new re2::RE2(
-    "^(" + query_pattern + ")=[^&]+$", options);
-  DCHECK(query_appended_matcher->ok());
-  query_matchers.emplace_back(query_appended_matcher);
-
-  // first matcher
-  auto* query_first_matcher = new re2::RE2(
-    "^(" + query_pattern + ")=[^&]+&", options);
-  DCHECK(query_first_matcher->ok());
-  query_matchers.emplace_back(query_first_matcher);
-
-  // only matcher
-  auto* query_only_matcher = new re2::RE2(
-    "&(" + query_pattern + ")=[^&]+", options);
-  DCHECK(query_only_matcher->ok());
-  query_matchers.emplace_back(query_only_matcher);
-
-  return SubQueryMatcher(url_matcher,
-                         url_exception_matcher,
-                         std::move(query_matchers));
-}
-
-#define RE2UNANCHORED re2::RE2::Anchor::UNANCHORED
-
-class QueryMatcher {
-public:
-  QueryMatcher():
-      global_matcher_(BuildMatcher(GetGlobalRules().url_pattern,
-                                   GetGlobalRules().query_patterns,
-                                   GetGlobalRules().url_exceptions)) {
-    LOG(INFO) << "Loading URL purify list...";
-
-    // Build other matchers
-    auto per_site_rules = GetPerSiteRules();
-    for(const auto& rule: per_site_rules) {
-      matchers_.emplace_back(BuildMatcher(
-          rule.url_pattern, rule.query_patterns, rule.url_exceptions));
-    }
-  }
-
-  int FilterQuery(const std::string& full_url, std::string& new_query) {
-    int count = 0;
-
-    // Apply global rules.
-    count += TryApplyMatcher(global_matcher_, full_url, new_query).value();
-
-    for(const auto& matcher: matchers_) {
-      auto result = TryApplyMatcher(matcher, full_url, new_query);
-      if(result.has_value()) {
-        if(result.value() == -1) {
-          // Not match
-          break;
-        }
-        count += result.value();
-        break;
-      }
-    }
-
-    return count;
-  }
-
-private:
-  base::Optional<int> TryApplyMatcher(const SubQueryMatcher& matcher,
-                                      const std::string& full_url,
-                                      std::string& new_query) {
-    LOG(INFO) << "Original URL: " << full_url;
-
-    int count = 0;
-    const auto url_len = full_url.length() - 1;
-
-    // Skip if match any exception.
-    if(matcher.url_exception_matcher.has_value() &&
-        matcher.url_exception_matcher.value()->Match(
-            full_url, 0, url_len, RE2UNANCHORED, nullptr, 0)) {
-      LOG(INFO) << "Met an exception, skipping.";
-      return -1;
-    }
-
-    // filter
-    for(const auto& query_matcher: matcher.query_matchers) {
-      count += re2::RE2::GlobalReplace(&new_query, *query_matcher.get(), "");
-    }
-
-    LOG(INFO) << "Removed " << count
-        << " parameters. New spec: " << new_query;
-    return count;
-  }
-
-  SubQueryMatcher global_matcher_;
-  std::vector<SubQueryMatcher> matchers_;
-  base::Lock lock_;
-};
-
-QueryMatcher& GetMatcher() {
-  static base::NoDestructor<QueryMatcher> instance;
-  return *instance;
-}
-
-} // namespace
-
-namespace dumb {
-
-URLPurifyResult MaybeTruncateURLParameters(net::URLRequest* const request,
-                                           const GURL& effective_url) {
-  if (request->url().has_query()) {
-    std::string new_query = request->url().query();
-    const std::string& full_url = request->url().spec();
-    // std::cout << "Full URL: " << full_url << std::endl;
-
-    int replacement_count = GetMatcher().FilterQuery(full_url, new_query);
-
-    if (replacement_count > 0) {
-      url::Replacements<char> replacements;
-      if (new_query.empty()) {
-        replacements.ClearQuery();
-      } else {
-        replacements.SetQuery(new_query.c_str(),
-                              url::Component(0, new_query.size()));
-      }
-      auto new_url = request->url().ReplaceComponents(replacements);
-      return {new_url, replacement_count};
-    }
-  }
-
-  return {base::nullopt, 0};
-}
-
-}  // namespace dumb

@@ -1,0 +1,35 @@
+diff --git a/services/network/network_service.h b/services/network/network_service.h
+index 0f3afa60ce06..d804d89ca55f 100644
+--- a/services/network/network_service.h
++++ b/services/network/network_service.h
+@@ -47,6 +47,10 @@
+ #include "services/network/trust_tokens/trust_token_key_commitments.h"
+ #include "services/service_manager/public/cpp/binder_registry.h"
+ 
++namespace dumb {
++class URLPurifyDelegate;
++}
++
+ namespace net {
+ class FileNetLogObserver;
+ class HostResolverManager;
+@@ -303,6 +307,10 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkService
+ 
+   static NetworkService* GetNetworkServiceForTesting();
+ 
++  const dumb::URLPurifyDelegate* url_purify_delegate() const {
++    return url_purify_delegate_.get();
++  }
++
+  private:
+   class DelayedDohProbeActivator;
+ 
+@@ -438,6 +446,8 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkService
+   };
+   base::flat_map<DataPipeUser, DataPipeUsage> data_pipe_use_;
+ 
++  std::unique_ptr<dumb::URLPurifyDelegate> url_purify_delegate_;
++
+   DISALLOW_COPY_AND_ASSIGN(NetworkService);
+ };
+ 

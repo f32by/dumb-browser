@@ -1,15 +1,21 @@
 
 source_set("network") {
   sources = [
-    "url_purify_delegate_helper.cc",
-    "url_purify_delegate_helper.h",
+    "network_service_network_delegate.cc",
+    "network_service_network_delegate.h",
+    "url_purify/url_purify_default_rules.cc",
+    "url_purify/url_purify_default_rules.h",
+    "url_purify/url_purify_delegate.cc",
+    "url_purify/url_purify_delegate.h",
   ]
 
   deps = [
     "//base",
     "//dumb/base",
     "//net",
+    "//services/network/public/mojom",
     "//third_party/re2",
+    "//third_party/webrtc_overrides:webrtc_component",
     "//url",
   ]
 }

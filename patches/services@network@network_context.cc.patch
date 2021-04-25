@@ -1,0 +1,20 @@
+diff --git a/services/network/network_context.cc b/services/network/network_context.cc
+index cbef8450741b..7ec243beb904 100644
+--- a/services/network/network_context.cc
++++ b/services/network/network_context.cc
+@@ -42,6 +42,7 @@
+ #include "components/prefs/pref_service.h"
+ #include "components/prefs/pref_service_factory.h"
+ #include "crypto/sha2.h"
++#include "dumb/services/network/network_service_network_delegate.h"
+ #include "mojo/public/cpp/bindings/pending_receiver.h"
+ #include "net/base/features.h"
+ #include "net/base/load_flags.h"
+@@ -81,7 +82,6 @@
+ #include "services/network/ignore_errors_cert_verifier.h"
+ #include "services/network/net_log_exporter.h"
+ #include "services/network/network_service.h"
+-#include "services/network/network_service_network_delegate.h"
+ #include "services/network/network_service_proxy_delegate.h"
+ #include "services/network/network_usage_accumulator.h"
+ #include "services/network/p2p/socket_manager.h"

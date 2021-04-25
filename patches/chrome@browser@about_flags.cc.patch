@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 01dea31dd36b..43f03bef391b 100644
+index 66a4b6926835..5251c967e08a 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
 @@ -33,7 +33,6 @@
@@ -95,7 +95,7 @@ index 01dea31dd36b..43f03bef391b 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -2495,25 +2430,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
+@@ -2500,25 +2435,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
  };
  #endif  // defined(OS_ANDROID)
  
@@ -121,7 +121,7 @@ index 01dea31dd36b..43f03bef391b 100644
  const FeatureEntry::FeatureParam kCheckOfflineCapabilityWarnOnly[] = {
      {"check_mode", "warn_only"}};
  const FeatureEntry::FeatureParam kCheckOfflineCapabilityEnforce[] = {
-@@ -2526,27 +2442,6 @@ const FeatureEntry::FeatureVariation kCheckOfflineCapabilityVariations[] = {
+@@ -2531,27 +2447,6 @@ const FeatureEntry::FeatureVariation kCheckOfflineCapabilityVariations[] = {
       base::size(kCheckOfflineCapabilityEnforce), nullptr},
  };
  
@@ -149,7 +149,7 @@ index 01dea31dd36b..43f03bef391b 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
  const FeatureEntry::FeatureVariation
      kOmniboxRichEntitiesInLauncherVariations[] = {
-@@ -2883,6 +2778,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2888,6 +2783,9 @@ const FeatureEntry kFeatureEntries[] = {
          FEATURE_VALUE_TYPE(ash::features::kWebUITabStripTabDragIntegration),
      },
  #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP) && BUILDFLAG(IS_CHROMEOS_ASH)
@@ -159,7 +159,7 @@ index 01dea31dd36b..43f03bef391b 100644
      {"focus-mode", flag_descriptions::kFocusMode,
       flag_descriptions::kFocusModeDescription, kOsDesktop,
       FEATURE_VALUE_TYPE(features::kFocusMode)},
-@@ -3431,31 +3329,14 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -3436,31 +3334,14 @@ const FeatureEntry kFeatureEntries[] = {
      {"enable-use-zoom-for-dsf", flag_descriptions::kEnableUseZoomForDsfName,
       flag_descriptions::kEnableUseZoomForDsfDescription, kOsAll,
       MULTI_VALUE_TYPE(kEnableUseZoomForDSFChoices)},
@@ -191,7 +191,7 @@ index 01dea31dd36b..43f03bef391b 100644
      {"enable-navigation-predictor",
       flag_descriptions::kEnableNavigationPredictorName,
       flag_descriptions::kEnableNavigationPredictorDescription,
-@@ -5872,45 +5753,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -5877,45 +5758,6 @@ const FeatureEntry kFeatureEntries[] = {
                                      "MetricsSettingsAndroid")},
  #endif
  
@@ -237,7 +237,7 @@ index 01dea31dd36b..43f03bef391b 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      {"gesture-properties-dbus-service",
       flag_descriptions::kEnableGesturePropertiesDBusServiceName,
-@@ -6301,16 +6143,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6306,16 +6148,6 @@ const FeatureEntry kFeatureEntries[] = {
       MULTI_VALUE_TYPE(kEnableCrOSActionRecorderChoices)},
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  
@@ -254,7 +254,7 @@ index 01dea31dd36b..43f03bef391b 100644
  #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
      {"enable-ftp", flag_descriptions::kEnableFtpName,
       flag_descriptions::kEnableFtpDescription, kOsAll,
-@@ -6727,20 +6559,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6732,20 +6564,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  
@@ -275,7 +275,7 @@ index 01dea31dd36b..43f03bef391b 100644
      {"edit-passwords-in-settings",
       flag_descriptions::kEditPasswordsInSettingsName,
       flag_descriptions::kEditPasswordsInSettingsDescription, kOsAll,
-@@ -6970,14 +6788,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6975,14 +6793,6 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kAnimatedImageResumeDescription, kOsAll,
       FEATURE_VALUE_TYPE(features::kAnimatedImageResume)},
  
