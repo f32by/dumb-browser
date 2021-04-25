@@ -1,5 +1,5 @@
 diff --git a/services/network/network_service.cc b/services/network/network_service.cc
-index 01e7a291e2a5..687e479ebeaa 100644
+index 01e7a291e2a5..4615bf171fbd 100644
 --- a/services/network/network_service.cc
 +++ b/services/network/network_service.cc
 @@ -27,6 +27,7 @@
@@ -10,15 +10,17 @@ index 01e7a291e2a5..687e479ebeaa 100644
  #include "mojo/public/cpp/bindings/scoped_message_error_crash_key.h"
  #include "mojo/public/cpp/system/functions.h"
  #include "net/base/features.h"
-@@ -284,6 +285,7 @@ NetworkService::NetworkService(
-     : net_log_(net::NetLog::Get()), registry_(std::move(registry)) {
-   DCHECK(!g_network_service);
-   g_network_service = this;
-+  LOG(INFO) << "NetworkService::NetworkService";
+@@ -295,9 +296,6 @@ NetworkService::NetworkService(
  
-   // |registry_| is nullptr when an in-process NetworkService is
-   // created directly, like in most unit tests.
-@@ -385,6 +387,8 @@ void NetworkService::Initialize(mojom::NetworkServiceParamsPtr params,
+   if (!delay_initialization_until_set_client)
+     Initialize(mojom::NetworkServiceParams::New());
+-
+-  metrics_trigger_timer_.Start(FROM_HERE, base::TimeDelta::FromMinutes(20),
+-                               this, &NetworkService::ReportMetrics);
+ }
+ 
+ void NetworkService::Initialize(mojom::NetworkServiceParamsPtr params,
+@@ -385,6 +383,8 @@ void NetworkService::Initialize(mojom::NetworkServiceParamsPtr params,
    sct_auditing_cache_ =
        std::make_unique<SCTAuditingCache>(kMaxSCTAuditingCacheEntries);
  #endif
@@ -27,7 +29,7 @@ index 01e7a291e2a5..687e479ebeaa 100644
  }
  
  NetworkService::~NetworkService() {
-@@ -415,6 +419,7 @@ void NetworkService::set_os_crypt_is_configured() {
+@@ -415,6 +415,7 @@ void NetworkService::set_os_crypt_is_configured() {
  
  std::unique_ptr<NetworkService> NetworkService::Create(
      mojo::PendingReceiver<mojom::NetworkService> receiver) {
@@ -35,3 +37,11 @@ index 01e7a291e2a5..687e479ebeaa 100644
    return std::make_unique<NetworkService>(nullptr, std::move(receiver));
  }
  
+@@ -829,7 +830,6 @@ void NetworkService::OnDataPipeDropped(DataPipeUser user) {
+ }
+ 
+ void NetworkService::StopMetricsTimerForTesting() {
+-  metrics_trigger_timer_.Stop();
+ }
+ 
+ void NetworkService::DestroyNetworkContexts() {

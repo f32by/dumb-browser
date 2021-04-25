@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
-index 067873339ce4..94b2efd62dce 100644
+index 067873339ce4..c7d88bf23759 100644
 --- a/chrome/browser/browser_process_impl.cc
 +++ b/chrome/browser/browser_process_impl.cc
 @@ -35,7 +35,6 @@
@@ -130,7 +130,7 @@ index 067873339ce4..94b2efd62dce 100644
  ProfileManager* BrowserProcessImpl::profile_manager() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
    if (!created_profile_manager_)
-@@ -896,15 +854,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
+@@ -896,16 +854,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
    return resource_coordinator_parts_.get();
  }
  
@@ -143,10 +143,11 @@ index 067873339ce4..94b2efd62dce 100644
 -  return nullptr;
 -#endif
 -}
- 
+-
  // static
  void BrowserProcessImpl::RegisterPrefs(PrefRegistrySimple* registry) {
-@@ -968,30 +917,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
+   registry->RegisterBooleanPref(prefs::kDefaultBrowserSettingEnabled,
+@@ -968,30 +916,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
    return status_tray_.get();
  }
  
@@ -177,7 +178,7 @@ index 067873339ce4..94b2efd62dce 100644
  StartupData* BrowserProcessImpl::startup_data() {
    return startup_data_;
  }
-@@ -1052,18 +977,6 @@ void BrowserProcessImpl::CreateNetworkQualityObserver() {
+@@ -1052,18 +976,6 @@ void BrowserProcessImpl::CreateNetworkQualityObserver() {
  
  void BrowserProcessImpl::OnKeepAliveRestartStateChanged(bool can_restart) {}
  
@@ -196,7 +197,7 @@ index 067873339ce4..94b2efd62dce 100644
  void BrowserProcessImpl::CreateProfileManager() {
    DCHECK(!created_profile_manager_ && !profile_manager_);
    created_profile_manager_ = true;
-@@ -1082,8 +995,6 @@ void BrowserProcessImpl::PreCreateThreads(
+@@ -1082,8 +994,6 @@ void BrowserProcessImpl::PreCreateThreads(
        extensions::kExtensionScheme, true);
  #endif
  
@@ -205,7 +206,7 @@ index 067873339ce4..94b2efd62dce 100644
  #if defined(OS_ANDROID)
    app_state_listener_ = base::android::ApplicationStatusListener::New(
        base::BindRepeating([](base::android::ApplicationState state) {
-@@ -1124,14 +1035,6 @@ void BrowserProcessImpl::PreMainMessageLoopRun() {
+@@ -1124,14 +1034,6 @@ void BrowserProcessImpl::PreMainMessageLoopRun() {
    if (local_state_->IsManagedPreference(prefs::kDefaultBrowserSettingEnabled))
      ApplyDefaultBrowserPolicy();
  
@@ -220,7 +221,7 @@ index 067873339ce4..94b2efd62dce 100644
  #if BUILDFLAG(ENABLE_PLUGINS)
    auto* plugin_service = content::PluginService::GetInstance();
    plugin_service->SetFilter(ChromePluginServiceFilter::GetInstance());
-@@ -1225,42 +1128,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
+@@ -1225,42 +1127,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
  #endif
  }
  

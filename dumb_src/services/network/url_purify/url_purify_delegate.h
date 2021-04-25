@@ -63,12 +63,17 @@ public:
   URLPurifyResult TruncateURLParameters(net::URLRequest* const request,
                                         const GURL& effective_url) const;
 
+  void SetEnabled(bool enabled) {
+    enabled_ = enabled;
+  }
+
 private:
   base::Optional<int> TryApplyMatcher(const QueryMatcher& matcher,
                                       bool is_global,
                                       const std::string& full_url,
                                       std::string& new_query) const;
 
+  bool enabled_;
   QueryMatcher global_rules_matcher_;
   std::vector<QueryMatcher> per_site_matchers_;
 };

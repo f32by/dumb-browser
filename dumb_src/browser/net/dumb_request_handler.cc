@@ -26,7 +26,6 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/common/url_constants.h"
 #include "dumb/browser/net/dumb_stp_util.h"
-// #include "dumb/browser/net/url_purify/dumb_url_purify_delegate_helper.h"
 #include "extensions/common/constants.h"
 
 static bool IsInternalScheme(std::shared_ptr<dumb::DumbRequestInfo> ctx) {

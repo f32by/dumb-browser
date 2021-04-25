@@ -83,7 +83,8 @@ QueryMatcher::QueryMatcher(QueryMatcher&&) = default;
 QueryMatcher::~QueryMatcher() = default;
 
 URLPurifyDelegate::URLPurifyDelegate()
-    : global_rules_matcher_(GetDefaultGlobalRules()) {
+    : enabled_(true),
+      global_rules_matcher_(GetDefaultGlobalRules()) {
   for (const auto& r : GetDefaultPerSiteRules()) {
     per_site_matchers_.emplace_back(QueryMatcher(r));
   }
@@ -94,6 +95,10 @@ URLPurifyDelegate::~URLPurifyDelegate() = default;
 URLPurifyResult
 URLPurifyDelegate::TruncateURLParameters(net::URLRequest* const request,
                                         const GURL& effective_url) const {
+  if(!enabled_) {
+    return {base::nullopt, 0};
+  }
+
   if (request->url().has_query()) {
     std::string new_query = request->url().query();
     const std::string& full_url = request->url().spec();

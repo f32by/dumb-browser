@@ -13,11 +13,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dumb/common/pref_names.h"
+#include "dumb/browser/dumb_profile_prefs.h"
 
-namespace prefs {
+#include "components/pref_registry/pref_registry_syncable.h"
+#include "dumb/components/privacy_guard/dumb_privacy_guard_service.h"
 
-// Whether the URL purify is enabled.
-const char kURLPurifyEnabled[] = "net.url_purify";
+namespace dumb {
+
+void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+                          const std::string& locale) {
+  DumbPrivacyGuardService::RegisterProfilePrefs(registry);
+}
 
 }
