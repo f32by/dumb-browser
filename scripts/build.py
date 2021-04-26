@@ -60,7 +60,7 @@ gn_args['safe_browsing_mode'] = '0'
 gn_args['use_official_google_api_keys'] = 'false'
 # use Chromium branding
 gn_args['is_chrome_branded'] = 'false'
-gn_args['use_unofficial_version_number'] = 'false'
+gn_args['use_unofficial_version_number'] = 'true'
 # enable V8 pointer compression
 gn_args['v8_enable_pointer_compression'] = 'true'
 

@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `90.0.4430.72`.
+Current version: `90.0.4430.85`.
 
 # Features
 
@@ -27,7 +27,7 @@ Following components are removed/disabled:
 
 Other changes:
 1. [UI] Audio mute button on tab
-2. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, and more*)
+2. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, etc.)
 3. [History] Unlimited browsing history.
 4. [UI] Force popups to be opened in new tabs.
 
@@ -35,10 +35,11 @@ Other changes:
 
 Tested on following OS:
 
-1. macOS 11.3 GM (20E232) x86_64
+1. macOS Big Sur 11.3 RC (20E232) x86_64
+2. macOS Big Sur 11.4 Beta (20F5046g) x86_64
 2. Ubuntu 20.04.2 LTS x86_64
 
-*Other OS is not tested and build may fail.*
+*Other OS/architecture is tested and build may fail.*
 
 ### Prerequisites
 
@@ -50,12 +51,12 @@ Linux: No build script available. You can follow [official build instructions](h
 and apply patches before calling `autoninja`:
 
 ```shell
-# fetch chromium src
+# fetch Chromium sources
 ./scripts/sync.py
 # install dependencies
 cd src
 ./build/install-build-deps.sh
-# apply dumb's patches
+# apply Dumb Browser's patches
 cd ..
 ./scripts/apply_patches.py
 # build
@@ -69,7 +70,7 @@ git clone https://github.com/f32by/dumb-browser
 cd dumb-browser
 # install dependencies
 ./scripts/prepare.py
-# fetch chromium src and apply dumb browser's patches
+# fetch Chromium sources and apply Dumb Browser sources
 # depend on your network connection, this may take 30-120 minutes.
 ./scripts/sync.py
 # get a release build
@@ -91,8 +92,7 @@ Final binaries will be found in `src/out/{Release|Debug} .`
 
 # Use Google Services
 
-https://www.chromium.org/developers/how-tos/api-keys
-
+[Offical API Key Document](https://www.chromium.org/developers/how-tos/api-keys)
 
 Note: Chrome Sync in Chromium has been
 limited by Google(see [this](https://blog.chromium.org/2021/01/limiting-private-api-availability-in.html)). You can still apply for the [Chrome Sync API](https://console.cloud.google.com/apis/library/chromesync.googleapis.com) but without the private *Firebase Per Topic

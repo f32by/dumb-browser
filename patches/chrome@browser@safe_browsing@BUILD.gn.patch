@@ -1,20 +1,88 @@
 diff --git a/chrome/browser/safe_browsing/BUILD.gn b/chrome/browser/safe_browsing/BUILD.gn
-index a940b0d2a09b..5f62b9051d45 100644
+index a940b0d2a09b..dcca36c3b710 100644
 --- a/chrome/browser/safe_browsing/BUILD.gn
 +++ b/chrome/browser/safe_browsing/BUILD.gn
-@@ -6,6 +6,7 @@ import("//components/safe_browsing/buildflags.gni")
+@@ -6,83 +6,6 @@ import("//components/safe_browsing/buildflags.gni")
  import("//extensions/buildflags/buildflags.gni")
  
  static_library("safe_browsing") {
-+if (false) {
-   sources = [
-     "chrome_controller_client.cc",
-     "chrome_controller_client.h",
-@@ -82,6 +83,7 @@ static_library("safe_browsing") {
-       "//extensions/browser",
-     ]
-   }
-+}
- 
+-  sources = [
+-    "chrome_controller_client.cc",
+-    "chrome_controller_client.h",
+-    "safe_browsing_tab_observer.cc",
+-    "safe_browsing_tab_observer.h",
+-    "url_checker_delegate_impl.cc",
+-    "url_checker_delegate_impl.h",
+-  ]
+-
+-  public_deps = []
+-
+-  deps = [
+-    "//build:branding_buildflags",
+-    "//chrome/app:generated_resources",
+-    "//chrome/browser:browser_process",
+-    "//chrome/browser/profiles:profile",
+-    "//chrome/common",
+-    "//chrome/common:constants",
+-    "//components/browser_sync",
+-    "//components/enterprise/common:strings",
+-    "//components/keyed_service/content",
+-    "//components/language/core/browser",
+-    "//components/no_state_prefetch/browser",
+-    "//components/no_state_prefetch/common",
+-    "//components/page_info",
+-    "//components/password_manager/core/browser",
+-    "//components/password_manager/core/browser:hash_password_manager",
+-    "//components/pref_registry",
+-    "//components/resources:components_resources_grit",
+-    "//components/safe_browsing:buildflags",
+-    "//components/safe_browsing/content",
+-    "//components/safe_browsing/content/browser:client_side_detection",
+-    "//components/safe_browsing/content/triggers:suspicious_site_trigger",
+-    "//components/safe_browsing/content/web_ui",
+-    "//components/safe_browsing/core:features",
+-    "//components/safe_browsing/core:ping_manager",
+-    "//components/safe_browsing/core/browser",
+-    "//components/safe_browsing/core/browser:referrer_chain_provider",
+-    "//components/safe_browsing/core/common:interfaces",
+-    "//components/safe_browsing/core/db:database_manager",
+-    "//components/safe_browsing/core/db:v4_local_database_manager",
+-    "//components/search_engines",
+-    "//components/security_interstitials/content:security_interstitial_page",
+-    "//components/security_interstitials/core",
+-    "//components/sessions",
+-    "//components/signin/public/identity_manager",
+-    "//components/url_formatter",
+-    "//mojo/public/cpp/platform",
+-    "//mojo/public/cpp/system",
+-    "//services/preferences/public/cpp",
+-  ]
+-
+-  if (enable_extensions) {
+-    sources += [
+-      "settings_reset_prompt/default_settings_fetcher.cc",
+-      "settings_reset_prompt/default_settings_fetcher.h",
+-      "settings_reset_prompt/settings_reset_prompt_config.cc",
+-      "settings_reset_prompt/settings_reset_prompt_config.h",
+-      "settings_reset_prompt/settings_reset_prompt_controller.cc",
+-      "settings_reset_prompt/settings_reset_prompt_controller.h",
+-      "settings_reset_prompt/settings_reset_prompt_model.cc",
+-      "settings_reset_prompt/settings_reset_prompt_model.h",
+-      "settings_reset_prompt/settings_reset_prompt_prefs_manager.cc",
+-      "settings_reset_prompt/settings_reset_prompt_prefs_manager.h",
+-    ]
+-    if (is_win) {
+-      sources += [
+-        "settings_reset_prompt/settings_reset_prompt_util_win.cc",
+-        "settings_reset_prompt/settings_reset_prompt_util_win.h",
+-      ]
+-    }
+-    deps += [
+-      "//chrome/browser/profiles:profile",
+-      "//extensions/browser",
+-    ]
+-  }
+-
    if (safe_browsing_mode != 0) {
      # "Safe Browsing Basic" files used for safe browsing in full mode
+     # (safe_browsing=1) and mobile (=2)
