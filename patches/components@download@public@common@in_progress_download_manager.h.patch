@@ -1,0 +1,13 @@
+diff --git a/components/download/public/common/in_progress_download_manager.h b/components/download/public/common/in_progress_download_manager.h
+index f222e9abaf0d..2440da746159 100644
+--- a/components/download/public/common/in_progress_download_manager.h
++++ b/components/download/public/common/in_progress_download_manager.h
+@@ -202,6 +202,8 @@ class COMPONENTS_DOWNLOAD_EXPORT InProgressDownloadManager
+   void AddInProgressDownloadForTest(
+       std::unique_ptr<download::DownloadItemImpl> download);
+ 
++  bool ShouldRemoveAfterCompletion() override;
++
+  private:
+   void Initialize(const base::FilePath& in_progress_db_dir,
+                   leveldb_proto::ProtoDatabaseProvider* db_provider);

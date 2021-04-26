@@ -26,7 +26,7 @@ from ordered_set import OrderedSet
 from constants import CHROMIUM_SRC_DIR, PATCHES_DIR, PATCH_LIST_FILE, DUMB_OVERWRITE_CHROMIUM_SRC_DIR
 from utils import get_patch_filename, get_original_filename
 
-GIT_DIFF_PATTERN = 'diff --git '
+GIT_DIFF_PATTERN = b'diff --git '
 
 EXCLUSION_FILES = [
     'chrome/app/theme/chromium/BRANDING',
@@ -35,55 +35,55 @@ EXCLUSION_FILES = [
 
 def main(args):
     print('Loading difference from git...')
-    ret = subprocess.check_output(
-        ['git', 'checkout'], cwd=CHROMIUM_SRC_DIR).decode('utf-8').split('\n')
-    if len(ret) < 3:
-        print('No diff available.')
-        exit(0)
-
-    ret = ret[:-3]
-    total = len(ret)
-    print('Updating patches...')
-
     new_patch_list = OrderedSet()
 
-    unified_diff = subprocess.check_output(
-        ['git', 'diff', '--ignore-space-at-eol'],
-        cwd=CHROMIUM_SRC_DIR
-    ).decode('utf-8')
+    unified_diff = subprocess.check_output(['git', 'diff'], cwd=CHROMIUM_SRC_DIR)
 
-    splitted = unified_diff.split(GIT_DIFF_PATTERN)
-    regex = re.compile('(?<=a/)(.*)(?= b/)')
+    pos = 1
+    diffs = []
+    while pos <= len(unified_diff):
+        next_pos = unified_diff.find(GIT_DIFF_PATTERN, pos)
+        if next_pos == -1:
+            diffs.append(unified_diff[pos - 1:])
+            break
 
+        diffs.append(unified_diff[pos - 1:next_pos])
+        pos = next_pos + 1
+
+    total = len(diffs)
+    regex = re.compile(rb'(?<=a/)(.*)(?= b/)')
+
+    print('Updating patches...')
     i = 0
-    for entry in splitted:
-        if len(entry) == 0:
-            continue
+    for entry in diffs:
+        i += 1
 
-        filename = regex.findall(entry)[0]
+        filename = regex.findall(entry)[0].decode('utf-8')
         # skip dumb source
         if filename.startswith('dumb/'):
             continue
 
         if filename in EXCLUSION_FILES:
             # copy file to dumb_src
-            print(f'Copying {filename} ...')
+            msg = f'Copying {filename}'
             copyfile(os.path.join(CHROMIUM_SRC_DIR, filename),
                      os.path.join(DUMB_OVERWRITE_CHROMIUM_SRC_DIR, filename))
+            skip = True
+        else:
+            msg = f'Generating patch for {filename}'
+            skip = False
 
+        print('[%d/%d]' % (i, total), msg)
+
+        if skip:
             continue
 
         new_patch_list.add(filename)
         patch_filename = get_patch_filename(filename)
 
-        print('[%d/%d]' % (i, total), filename)
-
         # write to file
-        with open(os.path.join(PATCHES_DIR, patch_filename), 'w', newline='\n') as f:
-            f.write(GIT_DIFF_PATTERN)
+        with open(os.path.join(PATCHES_DIR, patch_filename), 'wb') as f:
             f.write(entry)
-
-        i += 1
 
     # remove old patches
     if os.path.exists(PATCH_LIST_FILE):

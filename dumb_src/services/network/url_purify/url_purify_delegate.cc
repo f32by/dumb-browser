@@ -143,8 +143,6 @@ base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
     bool is_global,
     const std::string& full_url,
     std::string& new_query) const {
-  LOG(INFO) << "Original URL: " << full_url;
-
   int count = 0;
   const auto url_len = full_url.length() - 1;
 
@@ -152,7 +150,6 @@ base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
   if(!is_global && matcher.url_exception_matcher.has_value() &&
       matcher.url_exception_matcher.value()->Match(
           full_url, 0, url_len, RE2UNANCHORED, nullptr, 0)) {
-    LOG(INFO) << "Met an exception, skipping.";
     return -1;
   }
 
@@ -161,8 +158,7 @@ base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
     count += re2::RE2::GlobalReplace(&new_query, *query_matcher.get(), "");
   }
 
-  LOG(INFO) << "Removed " << count
-      << " parameters. New spec: " << new_query;
+  DLOG(INFO) << "Removed " << count << " parameters. New spec: " << new_query;
 
   return count;
 }

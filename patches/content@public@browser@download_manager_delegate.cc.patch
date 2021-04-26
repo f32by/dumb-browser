@@ -1,0 +1,13 @@
+diff --git a/content/public/browser/download_manager_delegate.cc b/content/public/browser/download_manager_delegate.cc
+index 065441e66649..1243c978ef0e 100644
+--- a/content/public/browser/download_manager_delegate.cc
++++ b/content/public/browser/download_manager_delegate.cc
+@@ -112,4 +112,8 @@ DownloadManagerDelegate::GetRenameHandlerForDownload(
+   return nullptr;
+ }
+ 
++bool DownloadManagerDelegate::ShouldRemoveAfterCompletion() {
++  return false;
++}
++
+ }  // namespace content

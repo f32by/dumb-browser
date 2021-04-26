@@ -1,0 +1,13 @@
+diff --git a/content/browser/download/download_manager_impl.h b/content/browser/download/download_manager_impl.h
+index 69fcf9abbe97..d851e3c928eb 100644
+--- a/content/browser/download/download_manager_impl.h
++++ b/content/browser/download/download_manager_impl.h
+@@ -170,6 +170,8 @@ class CONTENT_EXPORT DownloadManagerImpl
+       int frame_tree_node_id,
+       bool from_download_cross_origin_redirect);
+ 
++  bool ShouldRemoveAfterCompletion() override;
++
+  private:
+   using DownloadSet = std::set<download::DownloadItem*>;
+   using DownloadGuidMap =

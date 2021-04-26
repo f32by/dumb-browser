@@ -1,0 +1,21 @@
+diff --git a/content/public/browser/download_manager_delegate.h b/content/public/browser/download_manager_delegate.h
+index 4e451a3c9918..7ed4ef5f5b28 100644
+--- a/content/public/browser/download_manager_delegate.h
++++ b/content/public/browser/download_manager_delegate.h
+@@ -214,12 +214,15 @@ class CONTENT_EXPORT DownloadManagerDelegate {
+   GetQuarantineConnectionCallback();
+ 
+   // Gets a handler to perform the rename for a download item.  If no special
+-  // rename handling is required, don’t override this, as the default
++  // rename handling is required, donï¿½t override this, as the default
+   // implementation returns null, which indicates that the default rename
+   // handling should be performed.
+   virtual std::unique_ptr<download::DownloadItemRenameHandler>
+   GetRenameHandlerForDownload(download::DownloadItem* download_item);
+ 
++  // Should remove download item from download history after completion.
++  virtual bool ShouldRemoveAfterCompletion();
++
+  protected:
+   virtual ~DownloadManagerDelegate();
+ };

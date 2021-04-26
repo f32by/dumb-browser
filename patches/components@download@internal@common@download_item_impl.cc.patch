@@ -1,5 +1,5 @@
 diff --git a/components/download/internal/common/download_item_impl.cc b/components/download/internal/common/download_item_impl.cc
-index f557ef87951a..253b34268fbb 100644
+index f557ef87951a..e49bc7a3ff40 100644
 --- a/components/download/internal/common/download_item_impl.cc
 +++ b/components/download/internal/common/download_item_impl.cc
 @@ -51,9 +51,7 @@
@@ -183,7 +183,20 @@ index f557ef87951a..253b34268fbb 100644
    SwapDownloadSchedule(std::move(download_schedule));
  
    // There were no other pending errors, and we just failed to determined the
-@@ -2047,16 +1982,7 @@ void DownloadItemImpl::Completed() {
+@@ -2028,6 +1963,12 @@ void DownloadItemImpl::OnDownloadRenamedToFinalName(
+     delegate_delayed_complete_ = true;
+     UpdateObservers();
+   }
++
++  // Remove from download list.
++  if (delegate_->ShouldRemoveAfterCompletion()) {
++    LOG(INFO) << "Removing finished download item.";
++    Remove();
++  }
+ }
+ 
+ void DownloadItemImpl::DelayedDownloadOpened(bool auto_opened) {
+@@ -2047,16 +1988,7 @@ void DownloadItemImpl::Completed() {
    TransitionTo(COMPLETE_INTERNAL);
  
    bool is_parallelizable = job_ && job_->IsParallelizable();
@@ -200,7 +213,7 @@ index f557ef87951a..253b34268fbb 100644
      int64_t content_length = -1;
      if (response_headers_->response_code() != net::HTTP_PARTIAL_CONTENT) {
        content_length = response_headers_->GetContentLength();
-@@ -2081,14 +2007,6 @@ void DownloadItemImpl::Completed() {
+@@ -2081,14 +2013,6 @@ void DownloadItemImpl::Completed() {
      auto_opened_ = true;
    }
  
@@ -215,7 +228,7 @@ index f557ef87951a..253b34268fbb 100644
    // After all of the records are done, then update the observers.
    UpdateObservers();
  }
-@@ -2207,30 +2125,17 @@ void DownloadItemImpl::InterruptWithPartialState(
+@@ -2207,30 +2131,17 @@ void DownloadItemImpl::InterruptWithPartialState(
      job_->Cancel(false);
  
    if (IsCancellation(reason)) {
@@ -246,7 +259,7 @@ index f557ef87951a..253b34268fbb 100644
    if (reason == DOWNLOAD_INTERRUPT_REASON_SERVER_CONTENT_LENGTH_MISMATCH) {
      received_bytes_at_length_mismatch_ = GetReceivedBytes();
    }
-@@ -2520,9 +2425,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
+@@ -2520,9 +2431,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
        mode == ResumeMode::USER_RESTART) {
      LOG_IF(ERROR, !GetFullPath().empty())
          << "Download full path should be empty before resumption";
@@ -256,7 +269,7 @@ index f557ef87951a..253b34268fbb 100644
      destination_info_.received_bytes = 0;
      last_modified_time_.clear();
      etag_.clear();
-@@ -2612,14 +2514,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
+@@ -2612,14 +2520,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
        network::mojom::RedirectMode::kError);
  
    TransitionTo(RESUMING_INTERNAL);

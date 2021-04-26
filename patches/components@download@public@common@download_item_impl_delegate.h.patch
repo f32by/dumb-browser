@@ -1,0 +1,14 @@
+diff --git a/components/download/public/common/download_item_impl_delegate.h b/components/download/public/common/download_item_impl_delegate.h
+index 538dfac4b83c..2d10175b79e5 100644
+--- a/components/download/public/common/download_item_impl_delegate.h
++++ b/components/download/public/common/download_item_impl_delegate.h
+@@ -133,6 +133,9 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadItemImplDelegate {
+   virtual std::unique_ptr<DownloadItemRenameHandler>
+   GetRenameHandlerForDownload(DownloadItemImpl* download_item);
+ 
++  // Automitically remove download item when finished.
++  virtual bool ShouldRemoveAfterCompletion() = 0;
++
+  private:
+   // For "Outlives attached DownloadItemImpl" invariant assertion.
+   int count_;

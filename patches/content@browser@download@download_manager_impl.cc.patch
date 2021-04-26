@@ -1,0 +1,15 @@
+diff --git a/content/browser/download/download_manager_impl.cc b/content/browser/download/download_manager_impl.cc
+index 437b1d4a3a40..b48a2d8c5c49 100644
+--- a/content/browser/download/download_manager_impl.cc
++++ b/content/browser/download/download_manager_impl.cc
+@@ -1449,4 +1449,10 @@ DownloadManagerImpl::RetrieveInProgressDownload(uint32_t id) {
+   return nullptr;
+ }
+ 
++bool DownloadManagerImpl::ShouldRemoveAfterCompletion() {
++  if (delegate_)
++    return delegate_->ShouldRemoveAfterCompletion();
++  return false;
++}
++
+ }  // namespace content
