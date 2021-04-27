@@ -1,44 +1,8 @@
 diff --git a/media/mojo/services/video_decode_perf_history.h b/media/mojo/services/video_decode_perf_history.h
-index 4c50c743dd5f..618c6ac7843b 100644
+index 4c50c743dd5f..5bace70f8211 100644
 --- a/media/mojo/services/video_decode_perf_history.h
 +++ b/media/mojo/services/video_decode_perf_history.h
-@@ -22,7 +22,6 @@
- #include "media/mojo/services/media_mojo_export.h"
- #include "mojo/public/cpp/bindings/pending_receiver.h"
- #include "mojo/public/cpp/bindings/receiver_set.h"
--#include "services/metrics/public/cpp/ukm_source_id.h"
- #include "ui/gfx/geometry/size.h"
- 
- namespace media {
-@@ -77,8 +76,7 @@ class MEDIA_MOJO_EXPORT VideoDecodePerfHistory
-   // Saving is generally fire-and-forget, but |save_done_cb| may be provided
-   // for tests to know the save is complete.
-   using SaveCallback =
--      base::RepeatingCallback<void(ukm::SourceId source_id,
--                                   learning::FeatureValue origin,
-+      base::RepeatingCallback<void(learning::FeatureValue origin,
-                                    bool is_top_frame,
-                                    mojom::PredictionFeatures features,
-                                    mojom::PredictionTargets targets,
-@@ -125,8 +123,7 @@ class MEDIA_MOJO_EXPORT VideoDecodePerfHistory
-   void OnDatabaseInit(bool success);
- 
-   // Initiate saving of the provided record. See GetSaveCallback().
--  void SavePerfRecord(ukm::SourceId source_id,
--                      learning::FeatureValue origin,
-+  void SavePerfRecord(learning::FeatureValue origin,
-                       bool is_top_frame,
-                       mojom::PredictionFeatures features,
-                       mojom::PredictionTargets targets,
-@@ -147,7 +144,6 @@ class MEDIA_MOJO_EXPORT VideoDecodePerfHistory
-   // of the GetPerfInfo() API. Comparison is recorded via UKM. Then saves the
-   // |new_*| performance stats to the database.
-   void OnGotStatsForSave(
--      ukm::SourceId source_id,
-       bool is_top_frame,
-       uint64_t player_id,
-       const VideoDecodeStatsDB::VideoDescKey& video_key,
-@@ -160,15 +156,6 @@ class MEDIA_MOJO_EXPORT VideoDecodePerfHistory
+@@ -160,15 +160,6 @@ class MEDIA_MOJO_EXPORT VideoDecodePerfHistory
    // nonempty.
    void OnSaveDone(base::OnceClosure save_done_cb, bool success);
  

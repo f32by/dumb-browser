@@ -38,18 +38,8 @@ def main(args):
     new_patch_list = OrderedSet()
 
     unified_diff = subprocess.check_output(['git', 'diff'], cwd=CHROMIUM_SRC_DIR)
-
-    pos = 1
-    diffs = []
-    while pos <= len(unified_diff):
-        next_pos = unified_diff.find(GIT_DIFF_PATTERN, pos)
-        if next_pos == -1:
-            diffs.append(unified_diff[pos - 1:])
-            break
-
-        diffs.append(unified_diff[pos - 1:next_pos])
-        pos = next_pos + 1
-
+    diffs = unified_diff.split(GIT_DIFF_PATTERN)
+    diffs.remove(b'')
     total = len(diffs)
     regex = re.compile(rb'(?<=a/)(.*)(?= b/)')
 
@@ -83,6 +73,7 @@ def main(args):
 
         # write to file
         with open(os.path.join(PATCHES_DIR, patch_filename), 'wb') as f:
+            f.write(GIT_DIFF_PATTERN)
             f.write(entry)
 
     # remove old patches

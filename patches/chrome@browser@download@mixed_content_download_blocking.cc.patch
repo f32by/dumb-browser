@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/mixed_content_download_blocking.cc b/chrome/browser/download/mixed_content_download_blocking.cc
-index 5165251df36d..00ea3b4b0b35 100644
+index 3692576b4a18..cd75431919ea 100644
 --- a/chrome/browser/download/mixed_content_download_blocking.cc
 +++ b/chrome/browser/download/mixed_content_download_blocking.cc
 @@ -17,7 +17,6 @@
@@ -18,7 +18,7 @@ index 5165251df36d..00ea3b4b0b35 100644
  using MixedContentStatus = download::DownloadItem::MixedContentStatus;
  
  namespace {
-@@ -232,20 +230,14 @@ struct MixedContentDownloadData {
+@@ -239,20 +237,14 @@ struct MixedContentDownloadData {
      // TODO(1029062): INTERNAL_API is also used for background fetch. That
      // probably isn't the correct behavior, since INTERNAL_API is otherwise used
      // for Chrome stuff. Background fetch should probably be HTTPS-only.
@@ -41,7 +41,7 @@ index 5165251df36d..00ea3b4b0b35 100644
        base::UmaHistogramEnumeration(
            kInsecureDownloadHistogramName,
            InsecureDownloadSecurityStatus::kDownloadIgnored);
-@@ -259,11 +251,6 @@ struct MixedContentDownloadData {
+@@ -266,11 +258,6 @@ struct MixedContentDownloadData {
            GetExtensionEnumFromString(extension_));
        base::UmaHistogramEnumeration(kInsecureDownloadHistogramName,
                                      security_status);
@@ -53,7 +53,7 @@ index 5165251df36d..00ea3b4b0b35 100644
  
        is_mixed_content_ =
            (initiator_.has_value() &&
-@@ -383,15 +370,7 @@ MixedContentStatus GetMixedContentStatusForDownload(
+@@ -390,15 +377,7 @@ MixedContentStatus GetMixedContentStatusForDownload(
                          kTreatSilentBlockListAsAllowlist, data.extension_)) {
      PrintConsoleMessage(data, true);
  

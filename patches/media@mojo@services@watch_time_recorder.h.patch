@@ -1,0 +1,21 @@
+diff --git a/media/mojo/services/watch_time_recorder.h b/media/mojo/services/watch_time_recorder.h
+index 3b373f3b19ae..f5981c4cd028 100644
+--- a/media/mojo/services/watch_time_recorder.h
++++ b/media/mojo/services/watch_time_recorder.h
+@@ -62,16 +62,6 @@ class MEDIA_MOJO_EXPORT WatchTimeRecorder : public mojom::WatchTimeRecorder {
+ 
+   const mojom::PlaybackPropertiesPtr properties_;
+ 
+-  const ukm::SourceId source_id_;
+-
+-  // Are UKM reports for the main frame or for a subframe?
+-  const bool is_top_frame_;
+-
+-  // The provider ID which constructed this recorder. Used to record a UKM entry
+-  // at destruction that can be correlated with the final status for the
+-  // associated WebMediaPlayerImpl instance.
+-  const uint64_t player_id_;
+-
+   // Mapping of WatchTime metric keys to MeanTimeBetweenRebuffers (MTBR), smooth
+   // rate (had zero rebuffers), and discard (<7s watch time) keys.
+   struct ExtendedMetricsKeyMap {

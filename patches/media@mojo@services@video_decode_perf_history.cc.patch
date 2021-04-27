@@ -1,5 +1,5 @@
 diff --git a/media/mojo/services/video_decode_perf_history.cc b/media/mojo/services/video_decode_perf_history.cc
-index 23517fd56d17..9053b5ae40e8 100644
+index 23517fd56d17..230d75a646fb 100644
 --- a/media/mojo/services/video_decode_perf_history.cc
 +++ b/media/mojo/services/video_decode_perf_history.cc
 @@ -17,8 +17,6 @@
@@ -11,40 +11,7 @@ index 23517fd56d17..9053b5ae40e8 100644
  
  namespace media {
  
-@@ -236,8 +234,7 @@ VideoDecodePerfHistory::SaveCallback VideoDecodePerfHistory::GetSaveCallback() {
-                              weak_ptr_factory_.GetWeakPtr());
- }
- 
--void VideoDecodePerfHistory::SavePerfRecord(ukm::SourceId source_id,
--                                            learning::FeatureValue origin,
-+void VideoDecodePerfHistory::SavePerfRecord(learning::FeatureValue origin,
-                                             bool is_top_frame,
-                                             mojom::PredictionFeatures features,
-                                             mojom::PredictionTargets targets,
-@@ -262,7 +259,7 @@ void VideoDecodePerfHistory::SavePerfRecord(ukm::SourceId source_id,
-   if (db_init_status_ != COMPLETE) {
-     init_deferred_api_calls_.push_back(base::BindOnce(
-         &VideoDecodePerfHistory::SavePerfRecord, weak_ptr_factory_.GetWeakPtr(),
--        source_id, origin, is_top_frame, std::move(features),
-+        origin, is_top_frame, std::move(features),
-         std::move(targets), player_id, std::move(save_done_cb)));
-     InitDatabase();
-     return;
-@@ -283,12 +280,11 @@ void VideoDecodePerfHistory::SavePerfRecord(ukm::SourceId source_id,
-   db_->GetDecodeStats(
-       video_key,
-       base::BindOnce(&VideoDecodePerfHistory::OnGotStatsForSave,
--                     weak_ptr_factory_.GetWeakPtr(), source_id, is_top_frame,
-+                     weak_ptr_factory_.GetWeakPtr(), is_top_frame,
-                      player_id, video_key, new_stats, std::move(save_done_cb)));
- }
- 
- void VideoDecodePerfHistory::OnGotStatsForSave(
--    ukm::SourceId source_id,
-     bool is_top_frame,
-     uint64_t player_id,
-     const VideoDecodeStatsDB::VideoDescKey& video_key,
-@@ -306,9 +302,6 @@ void VideoDecodePerfHistory::OnGotStatsForSave(
+@@ -306,9 +304,6 @@ void VideoDecodePerfHistory::OnGotStatsForSave(
      return;
    }
  
@@ -54,7 +21,7 @@ index 23517fd56d17..9053b5ae40e8 100644
    db_->AppendDecodeStats(
        video_key, new_stats,
        base::BindOnce(&VideoDecodePerfHistory::OnSaveDone,
-@@ -330,64 +323,6 @@ void VideoDecodePerfHistory::OnSaveDone(base::OnceClosure save_done_cb,
+@@ -330,64 +325,6 @@ void VideoDecodePerfHistory::OnSaveDone(base::OnceClosure save_done_cb,
      std::move(save_done_cb).Run();
  }
  

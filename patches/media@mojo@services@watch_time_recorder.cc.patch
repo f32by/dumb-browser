@@ -1,0 +1,39 @@
+diff --git a/media/mojo/services/watch_time_recorder.cc b/media/mojo/services/watch_time_recorder.cc
+index 6cb630ed5d09..ceb8cfeb0ea1 100644
+--- a/media/mojo/services/watch_time_recorder.cc
++++ b/media/mojo/services/watch_time_recorder.cc
+@@ -16,8 +16,6 @@
+ #include "media/base/video_codecs.h"
+ #include "media/base/video_decoder.h"
+ #include "media/base/watch_time_keys.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ namespace media {
+ 
+@@ -72,9 +70,6 @@ WatchTimeRecorder::WatchTimeRecorder(
+     uint64_t player_id,
+     RecordAggregateWatchTimeCallback record_playback_cb)
+     : properties_(std::move(properties)),
+-      source_id_(source_id),
+-      is_top_frame_(is_top_frame),
+-      player_id_(player_id),
+       extended_metrics_keys_(
+           {{WatchTimeKey::kAudioSrc, kMeanTimeBetweenRebuffersAudioSrc,
+             kRebuffersCountAudioSrc, kDiscardedWatchTimeAudioSrc},
+@@ -320,6 +315,7 @@ void WatchTimeRecorder::OnCurrentTimestampChanged(
+ }
+ 
+ void WatchTimeRecorder::RecordUkmPlaybackData() {
++#if 0
+   // UKM may be unavailable in content_shell or other non-chrome/ builds; it
+   // may also be unavailable if browser shutdown has started; so this may be a
+   // nullptr. If it's unavailable, UKM reporting will be skipped.
+@@ -477,6 +473,7 @@ void WatchTimeRecorder::RecordUkmPlaybackData() {
+   }
+ 
+   ukm_records_.clear();
++#endif
+ }
+ 
+ bool WatchTimeRecorder::ShouldRecordUma() const {

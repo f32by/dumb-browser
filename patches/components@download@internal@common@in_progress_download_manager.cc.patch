@@ -1,5 +1,5 @@
 diff --git a/components/download/internal/common/in_progress_download_manager.cc b/components/download/internal/common/in_progress_download_manager.cc
-index c8a3830f2148..3fa9b2b991a6 100644
+index c8a3830f2148..cc03a3591a51 100644
 --- a/components/download/internal/common/in_progress_download_manager.cc
 +++ b/components/download/internal/common/in_progress_download_manager.cc
 @@ -18,7 +18,6 @@
@@ -48,13 +48,11 @@ index c8a3830f2148..3fa9b2b991a6 100644
    OnInitialized();
    OnDownloadsInitialized();
  }
-@@ -689,4 +678,10 @@ void InProgressDownloadManager::CancelUrlDownload(
+@@ -689,4 +678,8 @@ void InProgressDownloadManager::CancelUrlDownload(
    OnUrlDownloadStopped(downloader);
  }
  
 +bool InProgressDownloadManager::ShouldRemoveAfterCompletion() {
-+  LOG(INFO) << "InProgressDownloadManager::ShouldRemoveAfterCompletion: "
-+      << false;
 +  return false;
 +}
 +
