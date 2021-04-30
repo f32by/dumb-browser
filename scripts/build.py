@@ -29,7 +29,7 @@ gn_args['is_debug'] = 'false'
 gn_args['is_official_build'] = '!is_debug'
 # no debug symbols
 gn_args['blink_symbol_level'] = '0'
-gn_args['symbol_level'] = '0'
+gn_args['symbol_level'] = '2'
 # disable click to call
 gn_args['enable_click_to_call'] = 'false'
 gn_args['enable_dsyms'] = 'false'
@@ -73,11 +73,8 @@ def main(args):
                         choices=['debug', 'release'],
                         default='release')
 
-    parser.add_argument('--full-symbol',
-                        help='Build with full debug symbols. This will increase build time.',
-                        action='store_true')
-    parser.add_argument('--component-build',
-                        help='Set is_component_build = true. This can speed up increment build.',
+    parser.add_argument('--no-symbol',
+                        help='Build without symbols. This will make build time faster.',
                         action='store_true')
     parser.add_argument('--use-ccache',
                         help='Use ccache to speed up increment build.',
@@ -99,17 +96,8 @@ def main(args):
         return run_command(['autoninja', '-C', path_for_gn, 'chrome'], cwd=CHROMIUM_SRC_DIR)
 
     # generate GN args
-    if args.build_type == 'debug':
-        gn_args['is_debug'] = 'true'
-        gn_args['symbol_level'] = '1'
-    elif args.build_type == 'release':
-        gn_args['is_debug'] = 'false'
-
-    if args.full_symbol:
-        gn_args['symbol_level'] = '2'
-
-    if args.component_build:
-        gn_args['is_component_build'] = 'true'
+    if args.no_symbol:
+        gn_args['symbol_level'] = '0'
 
     if args.use_ccache:
         gn_args['cc_wrapper'] = '"ccache"'

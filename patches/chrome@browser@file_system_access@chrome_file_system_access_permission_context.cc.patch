@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc b/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
-index 89317d47d370..b067a4b1939c 100644
+index 89317d47d370..5f332884cfa3 100644
 --- a/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
 +++ b/chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
 @@ -25,7 +25,6 @@
@@ -90,10 +90,15 @@ index 89317d47d370..b067a4b1939c 100644
  std::string GenerateLastPickedDirectoryKey(const std::string& id) {
    return id.empty() ? kDefaultLastPickedDirectoryKey
                      : base::StrCat({kCustomLastPickedDirectoryKey, "-", id});
-@@ -830,21 +756,6 @@ void ChromeFileSystemAccessPermissionContext::PerformAfterWriteChecks(
-     content::GlobalFrameRoutingId frame_id,
-     base::OnceCallback<void(AfterWriteCheckResult)> callback) {
-   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+@@ -825,28 +751,6 @@ void ChromeFileSystemAccessPermissionContext::ConfirmSensitiveDirectoryAccess(
+                      std::move(callback)));
+ }
+ 
+-void ChromeFileSystemAccessPermissionContext::PerformAfterWriteChecks(
+-    std::unique_ptr<content::FileSystemAccessWriteItem> item,
+-    content::GlobalFrameRoutingId frame_id,
+-    base::OnceCallback<void(AfterWriteCheckResult)> callback) {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 -  content::GetUIThreadTaskRunner({})->PostTask(
 -      FROM_HERE,
 -      base::BindOnce(
@@ -109,6 +114,8 @@ index 89317d47d370..b067a4b1939c 100644
 -                                   InterpretSafeBrowsingResult(result)));
 -              },
 -              base::SequencedTaskRunnerHandle::Get(), std::move(callback))));
- }
- 
+-}
+-
  void ChromeFileSystemAccessPermissionContext::
+     DidConfirmSensitiveDirectoryAccess(
+         const url::Origin& origin,

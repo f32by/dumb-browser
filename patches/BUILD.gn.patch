@@ -1,32 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 6df566bd7df4..2952c1a1bc6a 100644
+index 6df566bd7df4..c68f46398641 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -118,7 +118,6 @@ group("gn_all") {
-       "//chrome/test:interactive_ui_tests",
-       "//chrome/test:sync_integration_tests",
-       "//chrome/test/chromedriver:chromedriver_unittests",
--      "//components/subresource_filter/tools:subresource_filter_tools",
-       "//components/zucchini:zucchini",
-       "//components/zucchini:zucchini_unittests",
-       "//gpu/gles2_conform_support:gles2_conform_test",
-@@ -156,7 +155,6 @@ group("gn_all") {
-       "//third_party/vulkan-deps/spirv-tools/src/test/fuzzers",
-       "//tools/perf/clear_system_cache",
-       "//tools/polymer:polymer_tools_python_unittests",
--      "//tools/privacy_budget:privacy_budget_tools",
-       "//ui/accessibility:accessibility_perftests",
-       "//ui/accessibility:accessibility_unittests",
-       "//ui/accessibility/extensions:extension_tests",
-@@ -250,7 +248,6 @@ group("gn_all") {
-   } else if (is_ios) {
-     deps += [
-       "//ios:all",
--      "//third_party/crashpad/crashpad:crashpad_tests",
-     ]
-   } else if (is_fuchsia) {
-     deps += [
-@@ -453,14 +450,6 @@ group("gn_all") {
+@@ -453,14 +453,6 @@ group("gn_all") {
      ]
    }
  
@@ -41,7 +17,7 @@ index 6df566bd7df4..2952c1a1bc6a 100644
    if (is_linux || is_chromeos) {
      # The following are definitely linux-only.
      deps += [
-@@ -634,7 +623,6 @@ group("gn_all") {
+@@ -634,7 +626,6 @@ group("gn_all") {
    if (is_win) {
      deps += [
        "//base:pe_image_test",
@@ -49,22 +25,7 @@ index 6df566bd7df4..2952c1a1bc6a 100644
        "//chrome/chrome_elf:chrome_elf_unittests",
        "//chrome/chrome_elf:dll_hash_main",
        "//chrome/elevation_service:elevation_service_unittests",
-@@ -682,14 +670,6 @@ group("gn_all") {
-     }
-   }
- 
--  if (is_mac || is_win || is_android || is_linux || is_chromeos) {
--    deps += [
--      "//third_party/crashpad/crashpad:crashpad_tests",
--      "//third_party/crashpad/crashpad/handler:crashpad_handler",
--      "//third_party/crashpad/crashpad/tools:crashpad_database_util",
--    ]
--  }
--
-   if (enable_message_center) {
-     deps += [ "//ui/message_center:message_center_unittests" ]
-   }
-@@ -844,10 +824,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
+@@ -844,10 +835,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
        "//remoting/host:host",
        "//tools/traffic_annotation/summary:annotations_xml",
      ]
@@ -75,15 +36,7 @@ index 6df566bd7df4..2952c1a1bc6a 100644
    }
  }
  
-@@ -1259,7 +1235,6 @@ if (!is_ios) {
-       "//build/android/",
-       "//build/gn_helpers.py",
-       "//build/config/gclient_args.gni",
--      "//components/crash/content/tools/generate_breakpad_symbols.py",
-       "//third_party/blink/renderer/bindings/scripts/",
-       "//third_party/blink/renderer/build/scripts/",
-       "//third_party/blink/tools/",
-@@ -1394,7 +1369,6 @@ if (enable_js_type_check) {
+@@ -1394,7 +1381,6 @@ if (enable_js_type_check) {
        "components/neterror/resources:closure_compile",
        "components/security_interstitials/core/common/resources:closure_compile",
        "components/sync/driver/resources:closure_compile",

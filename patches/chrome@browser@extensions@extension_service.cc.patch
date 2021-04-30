@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/extension_service.cc b/chrome/browser/extensions/extension_service.cc
-index fa96b7e72010..e16807409386 100644
+index fa96b7e72010..705b5d4bd5c0 100644
 --- a/chrome/browser/extensions/extension_service.cc
 +++ b/chrome/browser/extensions/extension_service.cc
-@@ -64,11 +64,9 @@
+@@ -64,7 +64,6 @@
  #include "chrome/browser/ui/webui/extensions/extension_icon_source.h"
  #include "chrome/browser/ui/webui/favicon_source.h"
  #include "chrome/browser/ui/webui/theme_source.h"
@@ -10,11 +10,7 @@ index fa96b7e72010..e16807409386 100644
  #include "chrome/browser/web_applications/components/externally_installed_web_app_prefs.h"
  #include "chrome/common/buildflags.h"
  #include "chrome/common/chrome_switches.h"
--#include "chrome/common/crash_keys.h"
- #include "chrome/common/extensions/extension_constants.h"
- #include "chrome/common/url_constants.h"
- #include "components/content_settings/core/browser/host_content_settings_map.h"
-@@ -414,8 +412,7 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -414,8 +413,7 @@ ExtensionService::ExtensionService(Profile* profile,
        ready_(ready),
        shared_module_service_(new SharedModuleService(profile_)),
        extension_registrar_(profile_, this),
@@ -24,7 +20,7 @@ index fa96b7e72010..e16807409386 100644
    CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
    TRACE_EVENT0("browser,startup", "ExtensionService::ExtensionService::ctor");
  
-@@ -434,8 +431,6 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -434,8 +432,6 @@ ExtensionService::ExtensionService(Profile* profile,
    if (g_browser_process->profile_manager())
      profile_manager_observer_.Add(g_browser_process->profile_manager());
  
@@ -33,7 +29,7 @@ index fa96b7e72010..e16807409386 100644
    ExtensionManagementFactory::GetForBrowserContext(profile_)->AddObserver(this);
  
    // Set up the ExtensionUpdater.
-@@ -478,7 +473,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
+@@ -478,7 +474,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
  }
  
  ExtensionService::~ExtensionService() {
@@ -41,15 +37,3 @@ index fa96b7e72010..e16807409386 100644
    // No need to unload extensions here because they are profile-scoped, and the
    // profile is in the process of being deleted.
    for (const auto& provider : external_extension_providers_)
-@@ -1582,11 +1576,6 @@ void ExtensionService::UpdateActiveExtensionsInCrashReporter() {
-     if (!extension->is_theme() && extension->location() != Manifest::COMPONENT)
-       extension_ids.insert(extension->id());
-   }
--
--  // TODO(kalman): This is broken. ExtensionService is per-profile.
--  // crash_keys::SetActiveExtensions is per-process. See
--  // http://crbug.com/355029.
--  crash_keys::SetActiveExtensions(extension_ids);
- }
- 
- void ExtensionService::OnExtensionInstalled(

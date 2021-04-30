@@ -6,40 +6,40 @@ Current version: `90.0.4430.93`.
 # Features
 
 Following components are removed/disabled:
-1. [Safe Browsing](https://safebrowsing.google.com)
-2. Histogram logging (chrome://histograms)
-3. Crash Reporter & Crashpad
-4. WebRTC Log Uploader
-5. Network Time Tracker
-6. [RLZ](https://blog.chromium.org/2010/06/in-open-for-rlz.html)
-7. Chrome Enterprise
-8. (macOS only) Download Quarantine
-10. (Windows only) Chrome Cleaner
-11. Field trails fetching
-12. Promotions in New Tab Page
-13. [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
-14. Chromium Updater
-15. Subresource filter (used by Chrome's integrated ad-block feature.)
-16. [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
-17. [FLoC](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox/floc)
-19. [HaTS](https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/ui/hats/)
-20. CSP report
+- [Safe Browsing](https://safebrowsing.google.com)
+- Histogram logging (chrome://histograms)
+- WebRTC Log Uploader
+- Network Time Tracker
+- [RLZ](https://blog.chromium.org/2010/06/in-open-for-rlz.html)
+- Chrome Enterprise Reporter
+- (macOS only) Download Quarantine
+- (Windows only) Chrome Cleaner
+- Field trails fetching
+- Promotions in New Tab Page
+- [HTML \<ping\> attribute](https://www.w3schools.com/tags/att_a_ping.asp)
+- Chromium Updater
+- Subresource filter (used by Chrome's integrated ad-block feature.)
+- [UKM(Url-Keyed Metrics API)](https://chromium.googlesource.com/chromium/src/+/master/services/metrics/ukm_api.md) ( chrome://ukm )
+- [FLoC](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox/floc)
+- [HaTS](https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/ui/hats/)
+- CSP report
+- Crash reports uploader
 
 Other changes:
-1. [UI] Audio mute button on tab
-2. [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, etc.)
-3. [History] Unlimited browsing history.
-4. [UI] Force popups to be opened in new tabs.
+- [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, etc.)
+- [UI] Audio mute button on tab
+- [UI] Force popups to be opened in new tabs.
+- [History] Unlimited browsing history.
 
 # Installation
 
 Tested on following OS:
 
-1. macOS Big Sur 11.3 RC (20E232) x86_64
+1. macOS Big Sur 11.3 (20E232) x86_64
 2. macOS Big Sur 11.4 Beta (20F5046g) x86_64
 2. Ubuntu 20.04.2 LTS x86_64
 
-*Other OS/architecture is tested and build may fail.*
+*Other OS/architecture has not been tested yet and build may fail.*
 
 ### Prerequisites
 

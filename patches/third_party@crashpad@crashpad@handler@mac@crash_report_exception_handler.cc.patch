@@ -1,0 +1,27 @@
+diff --git a/third_party/crashpad/crashpad/handler/mac/crash_report_exception_handler.cc b/third_party/crashpad/crashpad/handler/mac/crash_report_exception_handler.cc
+index cccf1e94ed70..6915aba877f9 100644
+--- a/third_party/crashpad/crashpad/handler/mac/crash_report_exception_handler.cc
++++ b/third_party/crashpad/crashpad/handler/mac/crash_report_exception_handler.cc
+@@ -44,11 +44,9 @@ namespace crashpad {
+ 
+ CrashReportExceptionHandler::CrashReportExceptionHandler(
+     CrashReportDatabase* database,
+-    CrashReportUploadThread* upload_thread,
+     const std::map<std::string, std::string>* process_annotations,
+     const UserStreamDataSources* user_stream_data_sources)
+     : database_(database),
+-      upload_thread_(upload_thread),
+       process_annotations_(process_annotations),
+       user_stream_data_sources_(user_stream_data_sources) {}
+ 
+@@ -187,10 +185,6 @@ kern_return_t CrashReportExceptionHandler::CatchMachException(
+           Metrics::CaptureResult::kFinishedWritingCrashReportFailed);
+       return KERN_FAILURE;
+     }
+-
+-    if (upload_thread_) {
+-      upload_thread_->ReportPending(uuid);
+-    }
+   }
+ 
+   if (client_options.system_crash_reporter_forwarding != TriState::kDisabled &&

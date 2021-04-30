@@ -1,5 +1,5 @@
 diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index 6f386508b117..d8e816927b7b 100644
+index 6f386508b117..b50edf498aa3 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
 @@ -124,7 +124,7 @@ if (!is_android && !is_mac) {
@@ -11,115 +11,9 @@ index 6f386508b117..d8e816927b7b 100644
        data_deps += [ ":reorder_imports" ]
      }
    }
-@@ -165,8 +165,6 @@ if (!is_android && !is_mac) {
-         "app/chrome_exe_main_win.cc",
-         "app/main_dll_loader_win.cc",
-         "app/main_dll_loader_win.h",
--        "common/crash_keys.cc",
--        "common/crash_keys.h",
-       ]
- 
-       deps += [
-@@ -186,10 +184,6 @@ if (!is_android && !is_mac) {
-         "//chrome/install_static:secondary_module",
-         "//chrome/installer/util:constants",
-         "//chrome/installer/util:did_run_support",
--        "//components/browser_watcher:browser_watcher_client",
--        "//components/crash/core/app",
--        "//components/crash/core/app:run_as_crashpad_handler",
--        "//components/crash/core/common",
-         "//components/flags_ui:switches",
-         "//content:sandbox_helper_win",
-         "//content/public/common:static_switches",
-@@ -197,9 +191,6 @@ if (!is_android && !is_mac) {
-         "//gpu/command_buffer/service",
-         "//sandbox",
-         "//sandbox/policy",
--        "//third_party/breakpad:breakpad_handler",
--        "//third_party/breakpad:breakpad_sender",
--        "//third_party/crashpad/crashpad/util",
-         "//ui/gl",
-       ]
-       data_deps = [
-@@ -351,8 +342,6 @@ if (is_win) {
-       "//chrome/common/profiler",
-       "//chrome/install_static:install_static_util",
-       "//chrome/install_static:secondary_module",
--      "//components/browser_watcher:stability_client",
--      "//components/crash/core/app",
-       "//components/policy:generated",
-       "//content/app/resources",
-       "//crypto",
-@@ -727,14 +716,12 @@ if (is_win) {
-   bundle_data("chrome_framework_helpers") {
-     sources = [
-       "$root_out_dir/app_mode_loader",
--      "$root_out_dir/chrome_crashpad_handler",
-     ]
- 
-     outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
- 
-     public_deps = [
-       "//chrome/app_shim:app_mode_loader",
--      "//components/crash/core/app:chrome_crashpad_handler",
-     ]
- 
-     foreach(helper_params, content_mac_helpers) {
-@@ -962,9 +949,6 @@ if (is_win) {
-     ]
- 
-     sources = [
--      "app/chrome_crash_reporter_client.cc",
--      "app/chrome_crash_reporter_client.h",
--      "app/chrome_crash_reporter_client_mac.mm",
-       "app/chrome_dll_resource.h",
-       "app/chrome_main.cc",
-       "app/chrome_main_delegate.cc",
-@@ -981,7 +965,6 @@ if (is_win) {
-       "//chrome/app:command_ids",
-       "//chrome/common:buildflags",
-       "//chrome/common/profiler",
--      "//components/crash/core/app",
-       "//components/policy:generated",
-       "//content/public/app",
-       "//headless:headless_shell_lib",
-@@ -1111,7 +1094,6 @@ if (is_win) {
-     _chrome_symbols_sources = [
-       "$root_out_dir/$chrome_product_full_name.app/Contents/MacOS/$chrome_product_full_name",
-       "$root_out_dir/AlertNotificationService.xpc/Contents/MacOS/AlertNotificationService",
--      "$root_out_dir/chrome_crashpad_handler",
-       "$root_out_dir/libEGL.dylib",
-       "$root_out_dir/libGLESv2.dylib",
-       "$root_out_dir/libswiftshader_libEGL.dylib",
-@@ -1145,7 +1127,6 @@ if (is_win) {
-         ":chrome_app",
-         ":chrome_framework",
-         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
--        "//components/crash/core/app:chrome_crashpad_handler",
-         "//third_party/angle:libEGL",
-         "//third_party/angle:libGLESv2",
-         "//third_party/breakpad:dump_syms",
-@@ -1169,7 +1150,6 @@ if (is_win) {
-         "$root_out_dir/AlertNotificationService.dSYM",
-         "$root_out_dir/$chrome_framework_name.dSYM",
-         "$root_out_dir/$chrome_product_full_name.dSYM",
--        "$root_out_dir/chrome_crashpad_handler.dSYM",
-         "$root_out_dir/libEGL.dylib.dSYM",
-         "$root_out_dir/libGLESv2.dylib.dSYM",
-         "$root_out_dir/libswiftshader_libEGL.dylib.dSYM",
-@@ -1180,7 +1160,6 @@ if (is_win) {
-         ":chrome_app",
-         ":chrome_framework",
-         "//chrome/browser/ui/cocoa/notifications:alert_notification_xpc_service",
--        "//components/crash/core/app:chrome_crashpad_handler",
-         "//third_party/angle:libEGL",
-         "//third_party/angle:libGLESv2",
-         "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-@@ -1218,12 +1197,8 @@ group("browser_dependencies") {
-     "//chrome/browser",
-     "//chrome/browser/policy:path_parser",
+@@ -1220,10 +1220,7 @@ group("browser_dependencies") {
      "//chrome/common",
--    "//components/crash/core/app",
+     "//components/crash/core/app",
      "//components/gwp_asan/buildflags",
 -    "//components/heap_profiling/in_process",
 -    "//components/startup_metric_utils/browser",
@@ -128,7 +22,7 @@ index 6f386508b117..d8e816927b7b 100644
      "//services/tracing/public/cpp",
    ]
    if (enable_plugins) {
-@@ -1289,7 +1264,6 @@ group("child_dependencies") {
+@@ -1289,7 +1286,6 @@ group("child_dependencies") {
      "//chrome/renderer",
      "//chrome/utility",
      "//components/gwp_asan/buildflags",
@@ -136,7 +30,7 @@ index 6f386508b117..d8e816927b7b 100644
      "//content/public/child",
      "//pdf",
      "//pdf:pdf_ppapi",
-@@ -1318,7 +1292,7 @@ group("child_dependencies") {
+@@ -1318,7 +1314,7 @@ group("child_dependencies") {
  
  if (is_win) {
    process_version_rc_template("chrome_exe_version") {
@@ -145,7 +39,7 @@ index 6f386508b117..d8e816927b7b 100644
      output = "$target_gen_dir/chrome_exe_version.rc"
    }
  
-@@ -1533,12 +1507,8 @@ if (is_android) {
+@@ -1533,12 +1529,8 @@ if (is_android) {
        "//chrome/gpu",
        "//chrome/renderer",
        "//components/gwp_asan/buildflags",
@@ -157,31 +51,4 @@ index 6f386508b117..d8e816927b7b 100644
 -      "//components/services/heap_profiling",
        "//content/public/app",
      ]
- 
-@@ -1584,7 +1554,6 @@ if (is_linux || is_chromeos) {
-         ":angle_egl_symbols",
-         ":angle_gles_symbols",
-         ":chrome_symbols",
--        ":crashpad_symbols",
-         ":swiftshader_egl_symbols",
-         ":swiftshader_gles_symbols",
-       ]
-@@ -1601,18 +1570,6 @@ if (is_linux || is_chromeos) {
- 
-       deps = [ ":chrome" ]
-     }
--    extract_symbols("crashpad_symbols") {
--      binary = "$root_out_dir/crashpad_handler"
--
--      if (current_cpu == "x86") {
--        # GYP used "ia32" so keep that naming for back-compat.
--        symbol_file = "$root_out_dir/crashpad.breakpad.ia32"
--      } else {
--        symbol_file = "$root_out_dir/crashpad.breakpad.$current_cpu"
--      }
--
--      deps = [ "//third_party/crashpad/crashpad/handler:crashpad_handler" ]
--    }
-     extract_symbols("swiftshader_egl_symbols") {
-       binary = "$root_out_dir/swiftshader/libEGL.so"
  

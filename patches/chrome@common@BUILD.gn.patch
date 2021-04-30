@@ -1,17 +1,8 @@
 diff --git a/chrome/common/BUILD.gn b/chrome/common/BUILD.gn
-index a99755c47d43..018283159b02 100644
+index a99755c47d43..d34791c6ae7d 100644
 --- a/chrome/common/BUILD.gn
 +++ b/chrome/common/BUILD.gn
-@@ -109,8 +109,6 @@ static_library("common") {
-     "common_message_generator.cc",
-     "common_message_generator.h",
-     "content_restriction.h",
--    "crash_keys.cc",
--    "crash_keys.h",
-     "custom_handlers/protocol_handler.cc",
-     "custom_handlers/protocol_handler.h",
-     "google_url_loader_throttle.cc",
-@@ -163,7 +161,6 @@ static_library("common") {
+@@ -163,7 +163,6 @@ static_library("common") {
      "//chrome/app/theme:theme_resources",
      "//chrome/common:constants",
      "//chrome/common/net",
@@ -19,15 +10,7 @@ index a99755c47d43..018283159b02 100644
      "//chrome/common/profiler",
      "//chrome/common/search:mojo_bindings",
      "//chrome/installer/util:with_no_strings",
-@@ -173,7 +170,6 @@ static_library("common") {
-     "//components/cloud_devices/common",
-     "//components/component_updater",
-     "//components/content_settings/core/common",
--    "//components/crash/core/common",
-     "//components/dom_distiller/core",
-     "//components/embedder_support/origin_trials",
-     "//components/error_page/common",
-@@ -191,13 +187,11 @@ static_library("common") {
+@@ -191,13 +190,11 @@ static_library("common") {
      "//components/offline_pages/buildflags",
      "//components/offline_pages/core:switches",
      "//components/omnibox/common",
@@ -41,12 +24,7 @@ index a99755c47d43..018283159b02 100644
      "//components/services/app_service/public/cpp:app_share_target",
      "//components/services/heap_profiling/public/cpp",
      "//components/strings",
-@@ -239,12 +233,10 @@ static_library("common") {
-   deps = [
-     "//build:branding_buildflags",
-     "//build:chromeos_buildflags",
--    "//components/crash/core/app",
-     "//components/google/core/common",
+@@ -244,7 +241,6 @@ static_library("common") {
      "//components/metrics:call_stack_profile_builder",
      "//components/no_state_prefetch/common",
      "//components/no_state_prefetch/common:mojo_bindings",
@@ -54,15 +32,7 @@ index a99755c47d43..018283159b02 100644
    ]
  
    if (enable_plugins) {
-@@ -421,7 +413,6 @@ static_library("common") {
-     deps += [
-       "//chrome/chrome_elf:chrome_elf_main_include",
-       "//chrome/common/win:eventlog_messages",
--      "//components/crash/core/app:crash_export_thunk_include",
-     ]
- 
-     public_deps += [
-@@ -710,9 +701,7 @@ mojom("mojo_bindings") {
+@@ -710,9 +706,7 @@ mojom("mojo_bindings") {
      "network_easter_egg.mojom",
      "open_search_description_document_handler.mojom",
      "plugin.mojom",
@@ -72,7 +42,7 @@ index a99755c47d43..018283159b02 100644
      "sync_encryption_keys_extension.mojom",
    ]
  
-@@ -754,10 +743,6 @@ mojom("mojo_bindings") {
+@@ -754,10 +748,6 @@ mojom("mojo_bindings") {
      public_deps += [ "//components/remote_cocoa/common:mojo" ]
    }
  

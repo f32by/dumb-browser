@@ -37,7 +37,7 @@ def main(args):
     print('Loading difference from git...')
     new_patch_list = OrderedSet()
 
-    unified_diff = subprocess.check_output(['git', 'diff'], cwd=CHROMIUM_SRC_DIR)
+    unified_diff = subprocess.check_output(['git', '-c', 'core.fileMode=false', 'diff'], cwd=CHROMIUM_SRC_DIR)
     diffs = unified_diff.split(GIT_DIFF_PATTERN)
     diffs.remove(b'')
     total = len(diffs)

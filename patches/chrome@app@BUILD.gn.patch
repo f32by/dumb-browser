@@ -1,5 +1,5 @@
 diff --git a/chrome/app/BUILD.gn b/chrome/app/BUILD.gn
-index 19a8c138c42e..0fc75e94ede9 100644
+index 19a8c138c42e..20442fcf5330 100644
 --- a/chrome/app/BUILD.gn
 +++ b/chrome/app/BUILD.gn
 @@ -127,9 +127,7 @@ static_library("test_support") {
@@ -12,23 +12,3 @@ index 19a8c138c42e..0fc75e94ede9 100644
      "//content/public/app",
      "//content/public/common",
      "//pdf:pdf_ppapi",
-@@ -141,11 +139,6 @@ static_library("test_support") {
-   ]
- 
-   if (!is_fuchsia) {
--    # TODO(crbug.com/753619): Enable crash reporting on Fuchsia.
--    deps += [
--      "//components/crash/core/app",
--      "//components/crash/core/app:test_support",
--    ]
-   }
- 
-   if (is_mac) {
-@@ -158,7 +151,6 @@ static_library("test_support") {
-     deps += [
-       "//chrome/chrome_elf:test_stubs",
-       "//chrome/install_static:install_static_util",
--      "//components/browser_watcher:stability_client",
-       "//sandbox/win:sandbox",
-     ]
-   }

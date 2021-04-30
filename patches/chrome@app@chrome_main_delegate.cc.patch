@@ -1,22 +1,10 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index 826ef32f3033..014ad51a7506 100644
+index 826ef32f3033..82406b8713c5 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
-@@ -42,7 +42,6 @@
- #include "chrome/common/chrome_paths_internal.h"
- #include "chrome/common/chrome_result_codes.h"
- #include "chrome/common/chrome_switches.h"
--#include "chrome/common/crash_keys.h"
- #include "chrome/common/logging_chrome.h"
- #include "chrome/common/url_constants.h"
- #include "chrome/gpu/chrome_content_gpu_client.h"
-@@ -50,14 +49,8 @@
- #include "chrome/utility/chrome_content_utility_client.h"
- #include "components/component_updater/component_updater_paths.h"
- #include "components/content_settings/core/common/content_settings_pattern.h"
--#include "components/crash/core/app/crash_reporter_client.h"
--#include "components/crash/core/common/crash_key.h"
--#include "components/crash/core/common/crash_keys.h"
+@@ -54,10 +54,7 @@
+ #include "components/crash/core/common/crash_key.h"
+ #include "components/crash/core/common/crash_keys.h"
  #include "components/gwp_asan/buildflags/buildflags.h"
 -#include "components/heap_profiling/in_process/heap_profiler_controller.h"
  #include "components/nacl/common/buildflags.h"
@@ -25,35 +13,7 @@ index 826ef32f3033..014ad51a7506 100644
  #include "components/version_info/version_info.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_constants.h"
-@@ -83,11 +76,9 @@
- #include "base/debug/close_handle_hook_win.h"
- #include "base/files/important_file_writer_cleaner.h"
- #include "base/win/atl.h"
--#include "chrome/child/v8_crashpad_support_win.h"
- #include "chrome/chrome_elf/chrome_elf_main.h"
- #include "chrome/common/child_process_logging.h"
- #include "chrome/install_static/install_util.h"
--#include "components/browser_watcher/extended_crash_reporting.h"
- #include "sandbox/win/src/sandbox.h"
- #include "ui/base/resource/resource_bundle_win.h"
- #endif
-@@ -98,7 +89,6 @@
- #include "chrome/browser/chrome_browser_application_mac.h"
- #include "chrome/browser/mac/relauncher.h"
- #include "chrome/browser/shell_integration.h"
--#include "components/crash/core/common/objc_zombie.h"
- #include "ui/base/l10n/l10n_util_mac.h"
- #endif
- 
-@@ -106,7 +96,6 @@
- #include <locale.h>
- #include <signal.h>
- 
--#include "chrome/app/chrome_crash_reporter_client.h"
- #include "chrome/app/shutdown_signal_handlers_posix.h"
- #endif
- 
-@@ -139,13 +128,9 @@
+@@ -139,9 +136,6 @@
  #include "content/public/common/cpu_affinity.h"
  #include "net/android/network_change_notifier_factory_android.h"
  #else  // defined(OS_ANDROID)
@@ -63,49 +23,7 @@ index 826ef32f3033..014ad51a7506 100644
  #endif
  
  #if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_ANDROID)
--#include "components/crash/core/app/breakpad_linux.h"
- #include "v8/include/v8-wasm-trap-handler-posix.h"
- #include "v8/include/v8.h"
- #endif
-@@ -157,7 +142,6 @@
- #if defined(OS_MAC) || defined(OS_WIN) || defined(OS_ANDROID) || \
-     defined(OS_LINUX) || defined(OS_CHROMEOS)
- #include "chrome/browser/policy/policy_path_parser.h"
--#include "components/crash/core/app/crashpad.h"
- #endif
- 
- #if BUILDFLAG(ENABLE_NACL)
-@@ -234,29 +218,6 @@ bool IsSandboxedProcess() {
-   return is_sandboxed_process_func && is_sandboxed_process_func();
- }
- 
--void SetUpExtendedCrashReporting(bool is_browser_process) {
--  browser_watcher::ExtendedCrashReporting* extended_crash_reporting =
--      browser_watcher::ExtendedCrashReporting::SetUpIfEnabled(
--          is_browser_process
--              ? browser_watcher::ExtendedCrashReporting::kBrowserProcess
--              : browser_watcher::ExtendedCrashReporting::kOther);
--
--  if (!extended_crash_reporting)
--    return;
--
--  // Record product, version, channel and special build strings.
--  wchar_t exe_file[MAX_PATH] = {};
--  CHECK(::GetModuleFileName(nullptr, exe_file, base::size(exe_file)));
--
--  std::wstring product_name, version_number, channel_name, special_build;
--  install_static::GetExecutableVersionDetails(
--      exe_file, &product_name, &version_number, &special_build, &channel_name);
--
--  extended_crash_reporting->SetProductStrings(
--      base::WideToUTF16(product_name), base::WideToUTF16(version_number),
--      base::WideToUTF16(channel_name), base::WideToUTF16(special_build));
--}
--
- #endif  // defined(OS_WIN)
- 
- #if defined(OS_LINUX) || defined(OS_CHROMEOS)
-@@ -469,46 +430,12 @@ void InitLogging(const std::string& process_type) {
+@@ -469,46 +463,12 @@ void InitLogging(const std::string& process_type) {
  }
  #endif
  
@@ -152,7 +70,7 @@ index 826ef32f3033..014ad51a7506 100644
  }
  
  ChromeMainDelegate::~ChromeMainDelegate() {
-@@ -569,17 +496,6 @@ void ChromeMainDelegate::PostEarlyInitialization(bool is_running_tests) {
+@@ -569,17 +529,6 @@ void ChromeMainDelegate::PostEarlyInitialization(bool is_running_tests) {
        new net::NetworkChangeNotifierFactoryAndroid());
  #endif
  
@@ -170,7 +88,7 @@ index 826ef32f3033..014ad51a7506 100644
  #if defined(OS_ANDROID)
    UmaSessionStats::OnStartup();
  #endif
-@@ -598,7 +514,9 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -598,7 +547,9 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    std::string process_type =
        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
            switches::kProcessType);
@@ -180,7 +98,7 @@ index 826ef32f3033..014ad51a7506 100644
  
    // Enable Split cache by default here and not in content/ so as to not
    // impact non-Chrome embedders like WebView, Cronet etc. This only enables
-@@ -640,12 +558,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -640,12 +591,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
    }
  #endif
  
@@ -193,48 +111,15 @@ index 826ef32f3033..014ad51a7506 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      chromeos::ConfigureSwap();
      chromeos::InitializeKstaled();
-@@ -654,10 +566,8 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
+@@ -654,7 +599,6 @@ void ChromeMainDelegate::PostFieldTrialInitialization() {
      // that now.
      chromeos::LockMainProgramText();
  #endif
 -  }
  
  #if defined(OS_WIN)
--  SetUpExtendedCrashReporting(is_browser_process);
-   base::sequence_manager::internal::ThreadControllerPowerMonitor::
-       InitializeOnMainThread();
- #endif
-@@ -712,29 +622,13 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
-     return true;
-   }
- #endif
--
--#if defined(OS_MAC)
--  // Give the browser process a longer treadmill, since crashes
--  // there have more impact.
--  const bool is_browser = !command_line.HasSwitch(switches::kProcessType);
--  ObjcEvilDoers::ZombieEnable(true, is_browser ? 10000 : 1000);
--#endif
--
-   content::Profiling::ProcessStarted();
- 
-   // Setup tracing sampler profiler as early as possible at startup if needed.
-   tracing_sampler_profiler_ =
-       tracing::TracingSamplerProfiler::CreateOnMainThread();
- 
--#if defined(OS_WIN)
--  v8_crashpad_support::SetUp();
--#endif
- 
--#if defined(OS_LINUX) || defined(OS_CHROMEOS)
--  if (!crash_reporter::IsCrashpadEnabled()) {
--    breakpad::SetFirstChanceExceptionHandler(v8::TryHandleWebAssemblyTrapPosix);
--  }
--#endif
- 
- #if defined(OS_POSIX)
-   if (HandleVersionSwitches(command_line)) {
-@@ -779,37 +673,6 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+   SetUpExtendedCrashReporting(is_browser_process);
+@@ -779,37 +723,6 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    ContentSettingsPattern::SetNonWildcardDomainNonPortSchemes(
        kNonWildcardDomainNonPortSchemes, kNonWildcardDomainNonPortSchemesSize);
  
@@ -272,7 +157,7 @@ index 826ef32f3033..014ad51a7506 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
    // Initialize primary user homedir (in multi-profile session) as it may be
    // passed as a command line switch.
-@@ -874,92 +737,15 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
+@@ -874,14 +787,6 @@ bool ChromeMainDelegate::BasicStartupComplete(int* exit_code) {
    }
  #endif
  
@@ -287,30 +172,15 @@ index 826ef32f3033..014ad51a7506 100644
    return false;
  }
  
--#if defined(OS_MAC)
--void ChromeMainDelegate::InitMacCrashReporter(
--    const base::CommandLine& command_line,
--    const std::string& process_type) {
--  // TODO(mark): Right now, InitializeCrashpad() needs to be called after
--  // CommandLine::Init() and chrome::RegisterPathProvider().  Ideally, Crashpad
--  // initialization could occur sooner, preferably even before the framework
--  // dylib is even loaded, to catch potential early crashes.
--
--  const bool browser_process = process_type.empty();
--  const bool install_from_dmg_relauncher_process =
--      process_type == switches::kRelauncherProcess &&
--      command_line.HasSwitch(switches::kRelauncherProcessDMGDevice);
--
--  const bool initial_client =
--      browser_process || install_from_dmg_relauncher_process;
--
--  crash_reporter::InitializeCrashpad(initial_client, process_type);
--
--  if (!browser_process) {
+@@ -905,40 +810,17 @@ void ChromeMainDelegate::InitMacCrashReporter(
+   crash_reporter::InitializeCrashpad(initial_client, process_type);
+ 
+   if (!browser_process) {
 -    std::string metrics_client_id =
 -        command_line.GetSwitchValueASCII(switches::kMetricsClientID);
--    crash_keys::SetMetricsClientIdFromGUID(metrics_client_id);
--  }
++    std::string metrics_client_id;
+     crash_keys::SetMetricsClientIdFromGUID(metrics_client_id);
+   }
 -
 -  // Mac Chrome is packaged with a main app bundle and a helper app bundle.
 -  // The main app bundle should only be used for the browser process, so it
@@ -331,101 +201,17 @@ index 826ef32f3033..014ad51a7506 100644
 -          process_type.empty())
 -        << "Main application forbids --type, saw " << process_type;
 -  }
--}
--
--void ChromeMainDelegate::SetUpInstallerPreferences(
--    const base::CommandLine& command_line) {
--  const bool uma_setting = command_line.HasSwitch(switches::kEnableUserMetrics);
--  const bool default_browser_setting =
--      command_line.HasSwitch(switches::kMakeChromeDefault);
--
--  if (uma_setting)
--    crash_reporter::SetUploadConsent(uma_setting);
--  if (default_browser_setting)
--    shell_integration::SetAsDefaultBrowser();
--}
--#endif  // defined(OS_MAC)
--
- void ChromeMainDelegate::PreSandboxStartup() {
-   const base::CommandLine& command_line =
-       *base::CommandLine::ForCurrentProcess();
-   std::string process_type =
-       command_line.GetSwitchValueASCII(switches::kProcessType);
- 
--  crash_reporter::InitializeCrashKeys();
--
--#if defined(OS_POSIX)
--  ChromeCrashReporterClient::Create();
--#endif
--
--#if defined(OS_MAC)
--  InitMacCrashReporter(command_line, process_type);
--  SetUpInstallerPreferences(command_line);
--#endif
- 
- #if defined(OS_WIN)
-   child_process_logging::Init();
-@@ -1083,39 +869,12 @@ void ChromeMainDelegate::PreSandboxStartup() {
-         locale;
-   }
- 
--#if defined(OS_POSIX) && !defined(OS_MAC)
--  // Zygote needs to call InitCrashReporter() in RunZygote().
--  if (process_type != switches::kZygoteProcess) {
--#if defined(OS_ANDROID)
--    crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
--    if (process_type.empty()) {
--      base::android::InitJavaExceptionReporter();
--      UninstallPureJavaExceptionHandler();
--    } else {
--      base::android::InitJavaExceptionReporterForChildProcess();
--    }
--#else  // !defined(OS_ANDROID)
--    if (crash_reporter::IsCrashpadEnabled()) {
--      crash_reporter::InitializeCrashpad(process_type.empty(), process_type);
--      crash_reporter::SetFirstChanceExceptionHandler(
--          v8::TryHandleWebAssemblyTrapPosix);
--    } else {
--      breakpad::InitCrashReporter(process_type);
--    }
--#endif  // defined(OS_ANDROID)
--  }
--#endif  // defined(OS_POSIX) && !defined(OS_MAC)
--
- #if defined(OS_ANDROID)
-   CHECK_EQ(base::android::GetLibraryProcessType(),
-            process_type.empty() ? base::android::PROCESS_BROWSER
-                                 : base::android::PROCESS_CHILD);
- #endif  // defined(OS_ANDROID)
- 
--  // After all the platform Breakpads have been initialized, store the command
--  // line for crash reporting.
--  crash_keys::SetCrashKeysFromCommandLine(command_line);
--
- #if BUILDFLAG(ENABLE_PDF)
-   MaybeInitializeGDI();
- #endif
-@@ -1212,23 +971,6 @@ void ChromeMainDelegate::ZygoteForked() {
-     base::debug::RestartProfilingAfterFork();
-     SetUpProfilingShutdownHandler();
-   }
--
--  // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
--  // this up for the browser process in a different manner.
--  const base::CommandLine* command_line =
--      base::CommandLine::ForCurrentProcess();
--  std::string process_type =
--      command_line->GetSwitchValueASCII(switches::kProcessType);
--  if (crash_reporter::IsCrashpadEnabled()) {
--    crash_reporter::InitializeCrashpad(false, process_type);
--    crash_reporter::SetFirstChanceExceptionHandler(
--        v8::TryHandleWebAssemblyTrapPosix);
--  } else {
--    breakpad::InitCrashReporter(process_type);
--  }
--
--  // Reset the command line for the newly spawned process.
--  crash_keys::SetCrashKeysFromCommandLine(*command_line);
  }
  
- #endif  // defined(OS_LINUX) || defined(OS_CHROMEOS)
+ void ChromeMainDelegate::SetUpInstallerPreferences(
+     const base::CommandLine& command_line) {
+-  const bool uma_setting = command_line.HasSwitch(switches::kEnableUserMetrics);
+   const bool default_browser_setting =
+       command_line.HasSwitch(switches::kMakeChromeDefault);
+ 
+-  if (uma_setting)
+-    crash_reporter::SetUploadConsent(uma_setting);
++  crash_reporter::SetUploadConsent(false);
+   if (default_browser_setting)
+     shell_integration::SetAsDefaultBrowser();
+ }

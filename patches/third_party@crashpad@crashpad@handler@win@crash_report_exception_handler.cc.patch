@@ -1,0 +1,36 @@
+diff --git a/third_party/crashpad/crashpad/handler/win/crash_report_exception_handler.cc b/third_party/crashpad/crashpad/handler/win/crash_report_exception_handler.cc
+index d78d9e6e3099..89308cc9e71e 100644
+--- a/third_party/crashpad/crashpad/handler/win/crash_report_exception_handler.cc
++++ b/third_party/crashpad/crashpad/handler/win/crash_report_exception_handler.cc
+@@ -20,7 +20,6 @@
+ #include "base/strings/utf_string_conversions.h"
+ #include "client/crash_report_database.h"
+ #include "client/settings.h"
+-#include "handler/crash_report_upload_thread.h"
+ #include "minidump/minidump_file_writer.h"
+ #include "minidump/minidump_user_extension_stream_data_source.h"
+ #include "snapshot/win/process_snapshot_win.h"
+@@ -35,12 +34,10 @@ namespace crashpad {
+ 
+ CrashReportExceptionHandler::CrashReportExceptionHandler(
+     CrashReportDatabase* database,
+-    CrashReportUploadThread* upload_thread,
+     const std::map<std::string, std::string>* process_annotations,
+     const std::vector<base::FilePath>* attachments,
+     const UserStreamDataSources* user_stream_data_sources)
+     : database_(database),
+-      upload_thread_(upload_thread),
+       process_annotations_(process_annotations),
+       attachments_(attachments),
+       user_stream_data_sources_(user_stream_data_sources) {}
+@@ -145,10 +142,6 @@ unsigned int CrashReportExceptionHandler::ExceptionHandlerServerException(
+           Metrics::CaptureResult::kFinishedWritingCrashReportFailed);
+       return termination_code;
+     }
+-
+-    if (upload_thread_) {
+-      upload_thread_->ReportPending(uuid);
+-    }
+   }
+ 
+   Metrics::ExceptionCaptureResult(Metrics::CaptureResult::kSuccess);

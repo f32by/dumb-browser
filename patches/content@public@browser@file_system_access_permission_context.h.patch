@@ -1,0 +1,17 @@
+diff --git a/content/public/browser/file_system_access_permission_context.h b/content/public/browser/file_system_access_permission_context.h
+index 63d5e5606b68..f031862b1203 100644
+--- a/content/public/browser/file_system_access_permission_context.h
++++ b/content/public/browser/file_system_access_permission_context.h
+@@ -107,12 +107,6 @@ class FileSystemAccessPermissionContext {
+       base::OnceCallback<void(SensitiveDirectoryResult)> callback) = 0;
+ 
+   enum class AfterWriteCheckResult { kAllow, kBlock };
+-  // Runs a recently finished write operation through checks such as malware
+-  // or other security checks to determine if the write should be allowed.
+-  virtual void PerformAfterWriteChecks(
+-      std::unique_ptr<FileSystemAccessWriteItem> item,
+-      GlobalFrameRoutingId frame_id,
+-      base::OnceCallback<void(AfterWriteCheckResult)> callback) = 0;
+ 
+   // Returns whether the give |origin| already allows read permission, or it is
+   // possible to request one. This is used to block file dialogs from being

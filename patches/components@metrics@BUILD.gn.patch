@@ -1,5 +1,5 @@
 diff --git a/components/metrics/BUILD.gn b/components/metrics/BUILD.gn
-index 2e7364c47c9d..4283ba2289bb 100644
+index 2e7364c47c9d..60a289a46d36 100644
 --- a/components/metrics/BUILD.gn
 +++ b/components/metrics/BUILD.gn
 @@ -11,69 +11,29 @@ if (is_android) {
@@ -101,21 +101,3 @@ index 2e7364c47c9d..4283ba2289bb 100644
      "url_constants.cc",
      "url_constants.h",
      "version_utils.cc",
-@@ -167,7 +105,6 @@ static_library("metrics") {
-       "system_session_analyzer/system_session_analyzer_win.cc",
-       "system_session_analyzer/system_session_analyzer_win.h",
-     ]
--    deps += [ "//components/browser_watcher:stability_client" ]
-     libs = [ "wevtapi.lib" ]
-   } else {
-     sources += [ "machine_id_provider_nonwin.cc" ]
-@@ -235,9 +172,6 @@ if (!is_ios) {
-       "//extensions/buildflags",
-       "//gpu/config",
-     ]
--    if (is_android) {
--      deps += [ "//components/crash/content/browser" ]
--    }
-   }
- }
- 

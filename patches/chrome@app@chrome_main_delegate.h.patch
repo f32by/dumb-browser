@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chrome_main_delegate.h b/chrome/app/chrome_main_delegate.h
-index e597bc9e05ef..e5f5325a3a71 100644
+index e597bc9e05ef..0db5132f5896 100644
 --- a/chrome/app/chrome_main_delegate.h
 +++ b/chrome/app/chrome_main_delegate.h
 @@ -29,7 +29,6 @@ class TracingSamplerProfiler;
@@ -10,19 +10,7 @@ index e597bc9e05ef..e5f5325a3a71 100644
  
  // Chrome implementation of ContentMainDelegate.
  class ChromeMainDelegate : public content::ContentMainDelegate {
-@@ -72,22 +71,12 @@ class ChromeMainDelegate : public content::ContentMainDelegate {
-   content::ContentRendererClient* CreateContentRendererClient() override;
-   content::ContentUtilityClient* CreateContentUtilityClient() override;
- 
--#if defined(OS_MAC)
--  void InitMacCrashReporter(const base::CommandLine& command_line,
--                            const std::string& process_type);
--  void SetUpInstallerPreferences(const base::CommandLine& command_line);
--#endif  // defined(OS_MAC)
--
-   ChromeContentClient chrome_content_client_;
- 
-   std::unique_ptr<ChromeContentBrowserClient> chrome_content_browser_client_;
+@@ -84,10 +83,6 @@ class ChromeMainDelegate : public content::ContentMainDelegate {
  
    std::unique_ptr<tracing::TracingSamplerProfiler> tracing_sampler_profiler_;
  

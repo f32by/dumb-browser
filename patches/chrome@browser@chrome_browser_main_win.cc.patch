@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_main_win.cc b/chrome/browser/chrome_browser_main_win.cc
-index 16290f3f5e9a..aefa30f5b8a3 100644
+index 16290f3f5e9a..ae63f4993213 100644
 --- a/chrome/browser/chrome_browser_main_win.cc
 +++ b/chrome/browser/chrome_browser_main_win.cc
 @@ -49,9 +49,6 @@
@@ -12,49 +12,24 @@ index 16290f3f5e9a..aefa30f5b8a3 100644
  #include "chrome/browser/shell_integration_win.h"
  #include "chrome/browser/ui/accessibility_util.h"
  #include "chrome/browser/ui/simple_message_box.h"
-@@ -75,7 +72,6 @@
- #include "chrome/common/chrome_result_codes.h"
- #include "chrome/common/chrome_switches.h"
- #include "chrome/common/conflicts/module_watcher_win.h"
--#include "chrome/common/crash_keys.h"
- #include "chrome/common/env_vars.h"
- #include "chrome/common/pref_names.h"
- #include "chrome/grit/chromium_strings.h"
-@@ -86,9 +82,6 @@
- #include "chrome/installer/util/installer_util_strings.h"
- #include "chrome/installer/util/l10n_string_util.h"
- #include "chrome/installer/util/shell_util.h"
--#include "components/crash/core/app/crash_export_thunks.h"
--#include "components/crash/core/app/dump_hung_process_with_ptype.h"
--#include "components/crash/core/common/crash_key.h"
- #include "components/os_crypt/os_crypt.h"
- #include "components/prefs/pref_service.h"
- #include "components/version_info/channel.h"
-@@ -106,7 +99,6 @@
- #include "ui/display/win/dpi.h"
- #include "ui/gfx/switches.h"
- #include "ui/gfx/system_fonts_win.h"
--#include "ui/gfx/win/crash_id_helper.h"
- #include "ui/strings/grit/app_locale_settings.h"
- 
- #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -120,15 +112,10 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
+@@ -120,14 +117,14 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
      DWORD flags);
  
  void InitializeWindowProcExceptions() {
 -  base::win::WinProcExceptionFilter exception_filter =
--      base::win::SetWinProcExceptionFilter(&CrashForException_ExportThunk);
--  DCHECK(!exception_filter);
++    base::win::WinProcExceptionFilter exception_filter =
+       base::win::SetWinProcExceptionFilter(&CrashForException_ExportThunk);
+   DCHECK(!exception_filter);
  }
  
  // TODO(siggi): Remove once https://crbug.com/806661 is resolved.
  void DumpHungRendererProcessImpl(const base::Process& renderer) {
 -  // Use a distinguishing process type for these reports.
--  crash_reporter::DumpHungProcessWithPtype(renderer, "hung-renderer");
++    // Use a distinguishing process type for these reports.
+   crash_reporter::DumpHungProcessWithPtype(renderer, "hung-renderer");
  }
  
- // gfx::Font callbacks
-@@ -448,15 +435,6 @@ void ShowCloseBrowserFirstMessageBox() {
+@@ -448,15 +445,6 @@ void ShowCloseBrowserFirstMessageBox() {
        l10n_util::GetStringUTF16(IDS_UNINSTALL_CLOSE_APP));
  }
  
@@ -70,15 +45,7 @@ index 16290f3f5e9a..aefa30f5b8a3 100644
  // Updates all Progressive Web App launchers in |profile_dir| to the latest
  // version.
  void UpdatePwaLaunchersForProfile(const base::FilePath& profile_dir) {
-@@ -577,7 +555,6 @@ ChromeBrowserMainPartsWin::~ChromeBrowserMainPartsWin() = default;
- 
- void ChromeBrowserMainPartsWin::ToolkitInitialized() {
-   DCHECK_NE(base::PlatformThread::CurrentId(), base::kInvalidThreadId);
--  gfx::CrashIdHelper::RegisterMainThread(base::PlatformThread::CurrentId());
-   ChromeBrowserMainParts::ToolkitInitialized();
-   gfx::win::SetAdjustFontCallback(&AdjustUIFont);
-   gfx::win::SetGetMinimumFontSizeCallback(&GetMinimumFontSize);
-@@ -680,19 +657,8 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -680,19 +668,8 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
    // complete run of the Chrome Cleanup tool. If post-cleanup settings reset is
    // enabled, we delay checks for settings reset prompt until the scheduled
    // reset is finished.
@@ -100,7 +67,7 @@ index 16290f3f5e9a..aefa30f5b8a3 100644
    // Record UMA data about whether the fault-tolerant heap is enabled.
    // Use a delayed task to minimize the impact on startup time.
    content::GetUIThreadTaskRunner({})->PostDelayedTask(
-@@ -727,11 +693,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -727,11 +704,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
          base::BindOnce(&UpdatePwaLaunchersForProfile, profile()->GetPath()));
    }
  

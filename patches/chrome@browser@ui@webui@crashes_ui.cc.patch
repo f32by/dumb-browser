@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/crashes_ui.cc b/chrome/browser/ui/webui/crashes_ui.cc
-index 060e272a99c1..1fb75e65060a 100644
+index 060e272a99c1..6c254d8974e7 100644
 --- a/chrome/browser/ui/webui/crashes_ui.cc
 +++ b/chrome/browser/ui/webui/crashes_ui.cc
 @@ -19,7 +19,6 @@
@@ -44,8 +44,18 @@ index 060e272a99c1..1fb75e65060a 100644
    }
  }
  
-@@ -213,8 +205,6 @@ void CrashesDOMHandler::UpdateUI() {
-   bool upload_list = using_crashpad || crash_reporting_enabled;
+@@ -204,17 +196,9 @@ void CrashesDOMHandler::UpdateUI() {
+ 
+   // Manual uploads currently are supported only for Crashpad-using platforms
+   // and only if crash uploads are not disabled by policy.
+-  bool support_manual_uploads =
+-      using_crashpad &&
+-      (crash_reporting_enabled || !IsMetricsReportingPolicyManaged());
+-
+-  // Show crash reports regardless of |crash_reporting_enabled| when using
+-  // Crashpad so that users can manually upload those reports.
+-  bool upload_list = using_crashpad || crash_reporting_enabled;
++  bool support_manual_uploads = false;
  
    base::ListValue crash_list;
 -  if (upload_list)
@@ -53,10 +63,21 @@ index 060e272a99c1..1fb75e65060a 100644
  
    base::Value enabled(crash_reporting_enabled);
    base::Value dynamic_backend(system_crash_reporter);
-@@ -249,7 +239,6 @@ void CrashesDOMHandler::HandleRequestSingleCrashUpload(
-       IsMetricsReportingPolicyManaged()) {
-     return;
-   }
+@@ -238,18 +222,6 @@ void CrashesDOMHandler::UpdateUI() {
+ 
+ void CrashesDOMHandler::HandleRequestSingleCrashUpload(
+     const base::ListValue* args) {
+-  DCHECK(args);
+-
+-  std::string local_id;
+-  bool success = args->GetString(0, &local_id);
+-  DCHECK(success);
+-
+-  // Only allow manual uploads if crash uploads aren’t disabled by policy.
+-  if (!ChromeMetricsServiceAccessor::IsMetricsAndCrashReportingEnabled() &&
+-      IsMetricsReportingPolicyManaged()) {
+-    return;
+-  }
 -  upload_list_->RequestSingleUploadAsync(local_id);
  }
  

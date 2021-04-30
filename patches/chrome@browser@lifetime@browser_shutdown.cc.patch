@@ -1,17 +1,16 @@
 diff --git a/chrome/browser/lifetime/browser_shutdown.cc b/chrome/browser/lifetime/browser_shutdown.cc
-index 6a83fce8fe74..49972732bbfd 100644
+index 6a83fce8fe74..479bc729906c 100644
 --- a/chrome/browser/lifetime/browser_shutdown.cc
 +++ b/chrome/browser/lifetime/browser_shutdown.cc
-@@ -35,8 +35,6 @@
- #include "chrome/common/chrome_paths.h"
+@@ -36,7 +36,6 @@
  #include "chrome/common/chrome_switches.h"
  #include "chrome/common/pref_names.h"
--#include "components/crash/core/common/crash_key.h"
+ #include "components/crash/core/common/crash_key.h"
 -#include "components/metrics/metrics_service.h"
  #include "components/prefs/pref_registry_simple.h"
  #include "components/prefs/pref_service.h"
  #include "components/tracing/common/tracing_switches.h"
-@@ -93,31 +91,6 @@ ShutdownType g_shutdown_type = ShutdownType::kNotValid;
+@@ -93,14 +92,6 @@ ShutdownType g_shutdown_type = ShutdownType::kNotValid;
  int g_shutdown_num_processes;
  int g_shutdown_num_processes_slow;
  
@@ -23,37 +22,18 @@ index 6a83fce8fe74..49972732bbfd 100644
 -  return shutdown_ms_file.AppendASCII(kShutdownMsFile);
 -}
 -
--const char* ToShutdownTypeString(ShutdownType type) {
--  switch (type) {
--    case ShutdownType::kNotValid:
--      NOTREACHED();
--      break;
--    case ShutdownType::kWindowClose:
--      return "close";
--    case ShutdownType::kBrowserExit:
--      return "exit";
--    case ShutdownType::kEndSession:
--      return "end";
--    case ShutdownType::kSilentExit:
--      return "silent_exit";
--  }
--  return "";
--}
+ const char* ToShutdownTypeString(ShutdownType type) {
+   switch (type) {
+     case ShutdownType::kNotValid:
+@@ -117,7 +108,6 @@ const char* ToShutdownTypeString(ShutdownType type) {
+   }
+   return "";
+ }
 -
  }  // namespace
  
  void RegisterPrefs(PrefRegistrySimple* registry) {
-@@ -132,9 +105,6 @@ void OnShutdownStarting(ShutdownType type) {
-   if (g_shutdown_type != ShutdownType::kNotValid)
-     return;
- 
--  static crash_reporter::CrashKeyString<8> shutdown_type_key("shutdown-type");
--  shutdown_type_key.Set(ToShutdownTypeString(type));
--
-   g_shutdown_type = type;
-   // For now, we're only counting the number of renderer processes
-   // since we can't safely count the number of plugin processes from this
-@@ -239,10 +209,6 @@ bool ShutdownPreThreadsStop() {
+@@ -239,10 +229,6 @@ bool ShutdownPreThreadsStop() {
    // consider putting it in BrowserProcessImpl::EndSession.
    PrefService* prefs = g_browser_process->local_state();
  
@@ -64,7 +44,7 @@ index 6a83fce8fe74..49972732bbfd 100644
    bool restart_last_session = RecordShutdownInfoPrefs();
  
    prefs->CommitPendingWrite();
-@@ -258,16 +224,6 @@ bool ShutdownPreThreadsStop() {
+@@ -258,16 +244,6 @@ bool ShutdownPreThreadsStop() {
  
  bool RecordShutdownInfoPrefs() {
    PrefService* prefs = g_browser_process->local_state();
@@ -81,7 +61,7 @@ index 6a83fce8fe74..49972732bbfd 100644
    // Check local state for the restart flag so we can restart the session later.
    bool restart_last_session = false;
    if (prefs->HasPrefPath(prefs::kRestartLastSessionOnShutdown)) {
-@@ -339,102 +295,12 @@ void ShutdownPostThreadsStop(RestartMode restart_mode) {
+@@ -339,102 +315,12 @@ void ShutdownPostThreadsStop(RestartMode restart_mode) {
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
    }
  

@@ -1,0 +1,30 @@
+diff --git a/third_party/crashpad/crashpad/handler/linux/crash_report_exception_handler.cc b/third_party/crashpad/crashpad/handler/linux/crash_report_exception_handler.cc
+index 9dc313cdaf8b..c24788a4c395 100644
+--- a/third_party/crashpad/crashpad/handler/linux/crash_report_exception_handler.cc
++++ b/third_party/crashpad/crashpad/handler/linux/crash_report_exception_handler.cc
+@@ -100,14 +100,12 @@ bool WriteMinidumpLogFromFile(FileReaderInterface* file_reader) {
+ 
+ CrashReportExceptionHandler::CrashReportExceptionHandler(
+     CrashReportDatabase* database,
+-    CrashReportUploadThread* upload_thread,
+     const std::map<std::string, std::string>* process_annotations,
+     const std::vector<base::FilePath>* attachments,
+     bool write_minidump_to_database,
+     bool write_minidump_to_log,
+     const UserStreamDataSources* user_stream_data_sources)
+     : database_(database),
+-      upload_thread_(upload_thread),
+       process_annotations_(process_annotations),
+       attachments_(attachments),
+       write_minidump_to_database_(write_minidump_to_database),
+@@ -271,10 +269,6 @@ bool CrashReportExceptionHandler::WriteMinidumpToDatabase(
+     return false;
+   }
+ 
+-  if (upload_thread_) {
+-    upload_thread_->ReportPending(uuid);
+-  }
+-
+   if (local_report_id != nullptr) {
+     *local_report_id = uuid;
+   }

@@ -1,0 +1,62 @@
+diff --git a/content/browser/file_system_access/file_system_access_file_writer_impl.cc b/content/browser/file_system_access/file_system_access_file_writer_impl.cc
+index 6a28f1fbfba5..faaae4609a46 100644
+--- a/content/browser/file_system_access/file_system_access_file_writer_impl.cc
++++ b/content/browser/file_system_access/file_system_access_file_writer_impl.cc
+@@ -148,7 +148,6 @@ FileSystemAccessFileWriterImpl::FileSystemAccessFileWriterImpl(
+       swap_url_(swap_url),
+       quarantine_connection_callback_(
+           std::move(quarantine_connection_callback)),
+-      has_transient_user_activation_(has_transient_user_activation),
+       auto_close_(auto_close) {
+   DCHECK_EQ(swap_url.type(), url.type());
+   receiver_.set_disconnect_handler(base::BindOnce(
+@@ -346,9 +345,8 @@ void FileSystemAccessFileWriterImpl::CloseImpl(CloseCallback callback) {
+     return;
+   }
+ 
+-  ComputeHashForSwapFile(
+-      base::BindOnce(&FileSystemAccessFileWriterImpl::DoAfterWriteCheck,
+-                     weak_factory_.GetWeakPtr()));
++  DidAfterWriteCheck(
++      FileSystemAccessPermissionContext::AfterWriteCheckResult::kAllow);
+ }
+ 
+ void FileSystemAccessFileWriterImpl::AbortImpl(AbortCallback callback) {
+@@ -368,37 +366,6 @@ void FileSystemAccessFileWriterImpl::AbortImpl(AbortCallback callback) {
+   manager()->RemoveFileWriter(this);
+ }
+ 
+-// static
+-void FileSystemAccessFileWriterImpl::DoAfterWriteCheck(
+-    base::File::Error hash_result,
+-    const std::string& hash,
+-    int64_t size) {
+-  DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-
+-  if (hash_result != base::File::FILE_OK) {
+-    // Calculating the hash failed try deleting the swap file and invoke the
+-    // callback.
+-    manager()->operation_runner().PostTaskWithThisObject(
+-        FROM_HERE, base::BindOnce(&RemoveSwapFile, swap_url()));
+-    CallCloseCallbackAndDeleteThis(file_system_access_error::FromStatus(
+-        FileSystemAccessStatus::kOperationAborted,
+-        "Failed to perform Safe Browsing check."));
+-    return;
+-  }
+-
+-  auto item = std::make_unique<FileSystemAccessWriteItem>();
+-  item->target_file_path = url().path();
+-  item->full_path = swap_url().path();
+-  item->sha256_hash = hash;
+-  item->size = size;
+-  item->frame_url = context().url;
+-  item->has_user_gesture = has_transient_user_activation_;
+-  manager()->permission_context()->PerformAfterWriteChecks(
+-      std::move(item), context().frame_id,
+-      base::BindOnce(&FileSystemAccessFileWriterImpl::DidAfterWriteCheck,
+-                     weak_factory_.GetWeakPtr()));
+-}
+-
+ void FileSystemAccessFileWriterImpl::DidAfterWriteCheck(
+     FileSystemAccessPermissionContext::AfterWriteCheckResult result) {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);

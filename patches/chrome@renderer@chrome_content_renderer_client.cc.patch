@@ -1,27 +1,16 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index b6fe493a6ddc..71c266b5bd40 100644
+index b6fe493a6ddc..660b30ec6044 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
-@@ -11,7 +11,6 @@
- #include "base/bind.h"
- #include "base/check_op.h"
- #include "base/command_line.h"
--#include "base/debug/crash_logging.h"
- #include "base/macros.h"
- #include "base/metrics/histogram_functions.h"
- #include "base/metrics/histogram_macros.h"
-@@ -32,10 +31,8 @@
- #include "chrome/common/chrome_isolated_world_ids.h"
- #include "chrome/common/chrome_paths.h"
- #include "chrome/common/chrome_switches.h"
--#include "chrome/common/crash_keys.h"
+@@ -35,7 +35,6 @@
+ #include "chrome/common/crash_keys.h"
  #include "chrome/common/pdf_util.h"
  #include "chrome/common/pepper_permission_util.h"
 -#include "chrome/common/privacy_budget/privacy_budget_settings_provider.h"
  #include "chrome/common/profiler/thread_profiler.h"
  #include "chrome/common/secure_origin_allowlist.h"
  #include "chrome/common/url_constants.h"
-@@ -48,8 +45,6 @@
+@@ -48,8 +47,6 @@
  #include "chrome/renderer/chrome_content_settings_agent_delegate.h"
  #include "chrome/renderer/chrome_render_frame_observer.h"
  #include "chrome/renderer/chrome_render_thread_observer.h"
@@ -30,7 +19,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
  #include "chrome/renderer/loadtimes_extension_bindings.h"
  #include "chrome/renderer/media/flash_embed_rewrite.h"
  #include "chrome/renderer/media/webrtc_logging_agent_impl.h"
-@@ -59,10 +54,6 @@
+@@ -59,10 +56,6 @@
  #include "chrome/renderer/plugins/non_loadable_plugin_placeholder.h"
  #include "chrome/renderer/plugins/pdf_plugin_placeholder.h"
  #include "chrome/renderer/plugins/plugin_uma.h"
@@ -41,7 +30,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
  #include "chrome/renderer/sync_encryption_keys_extension.h"
  #include "chrome/renderer/url_loader_throttle_provider_impl.h"
  #include "chrome/renderer/v8_unwinder.h"
-@@ -92,16 +83,10 @@
+@@ -92,16 +85,10 @@
  #include "components/no_state_prefetch/renderer/no_state_prefetch_helper.h"
  #include "components/no_state_prefetch/renderer/prerender_render_frame_observer.h"
  #include "components/no_state_prefetch/renderer/prerender_utils.h"
@@ -58,7 +47,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/translate/content/renderer/per_frame_translate_agent.h"
  #include "components/translate/core/common/translate_util.h"
-@@ -134,7 +119,6 @@
+@@ -134,7 +121,6 @@
  #include "services/tracing/public/cpp/stack_sampling/tracing_sampler_profiler.h"
  #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
  #include "third_party/blink/public/common/features.h"
@@ -66,7 +55,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
  #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
  #include "third_party/blink/public/mojom/page/page_visibility_state.mojom.h"
  #include "third_party/blink/public/platform/platform.h"
-@@ -366,11 +350,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -366,11 +352,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
@@ -78,7 +67,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
  
    thread->RegisterExtension(extensions_v8::LoadTimesExtension::Get());
  
-@@ -445,10 +425,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -445,10 +427,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      mojo::PendingRemote<metrics::mojom::CallStackProfileCollector> collector;
      thread->BindHostReceiver(collector.InitWithNewPipeAndPassReceiver());
      ThreadProfiler::SetCollectorForChildProcess(std::move(collector));
@@ -89,7 +78,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
    }
  }
  
-@@ -591,38 +567,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -591,38 +569,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
        render_frame->GetRoutingID()));
  #endif
  
@@ -128,7 +117,7 @@ index b6fe493a6ddc..71c266b5bd40 100644
    if (translate::IsSubFrameTranslationEnabled()) {
      new translate::PerFrameTranslateAgent(
          render_frame, ISOLATED_WORLD_ID_TRANSLATE, associated_interfaces);
-@@ -1489,9 +1433,6 @@ void ChromeContentRendererClient::
+@@ -1489,9 +1435,6 @@ void ChromeContentRendererClient::
      defined(OS_ANDROID)
      blink::WebRuntimeFeatures::EnableWebShare(true);
  #endif
