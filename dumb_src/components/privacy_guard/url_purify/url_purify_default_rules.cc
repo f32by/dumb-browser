@@ -13,35 +13,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dumb/services/network/url_purify/url_purify_default_rules.h"
+#include "dumb/components/privacy_guard/url_purify/url_purify_default_rules.h"
 
 #include "base/no_destructor.h"
 #include "base/strings/string_util.h"
 
-MatcherRule::MatcherRule(std::string url_pattern,
-                         std::vector<std::string> query_patterns,
-                         std::vector<std::string> url_exceptions)
-    : url_pattern(std::move(url_pattern)),
-      query_patterns(std::move(query_patterns)),
-      url_exceptions(std::move(url_exceptions)) {}
-
-MatcherRule::MatcherRule(std::string url_pattern,
-                         std::vector<std::string> query_patterns,
-                         base::Optional<std::vector<std::string>>
-                             url_exceptions)
-    : url_pattern(std::move(url_pattern)),
-      query_patterns(std::move(query_patterns)),
-      url_exceptions(std::move(url_exceptions)) {}
-
-MatcherRule::MatcherRule(const MatcherRule&) = default;
-
-MatcherRule::MatcherRule(MatcherRule&&) = default;
-
-MatcherRule::~MatcherRule() = default;
-
-const MatcherRule& GetDefaultGlobalRules() {
-  static base::NoDestructor<MatcherRule> rule(
-    MatcherRule(
+const URLPurifyRule& GetDefaultGlobalRules() {
+  static base::NoDestructor<URLPurifyRule> rule(
+    URLPurifyRule(
     ".*",
     {"utm(?:_[a-z_]*)?", "ga_[a-z_]+", "yclid", "_openstat",
      "fb_action_(?:types|ids)", "fb_(?:source|ref)", "fbclid",
@@ -49,15 +28,15 @@ const MatcherRule& GetDefaultGlobalRules() {
      "hmb_(?:campaign|medium|source)", "ref_?", "referrer",
      "gclid", "otm_[a-z_]*", "cmpid", "os_ehash", "_ga",
      "__twitter_impression", "wt_?z?mc", "wtrid", "[a-z]?mc",
-     "dclid", "Echobox", "spm", "vn(?:_[a-z]*)+", "tracking_source"},
+     "dclid", "Echobox", "spm", "vn(?:_[a-z]*)+", "tracking_source", "from_spm_id"},
     base::nullopt
   ));
 
   return *rule.get();
 }
 
-const std::vector<MatcherRule>& GetDefaultPerSiteRules() {
-  static std::vector<MatcherRule> rules {
+const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
+  static std::vector<URLPurifyRule> rules {
     // Google
     {
       "(https:\\/\\/|http:\\/\\/)([a-zA-Z0-9-]*\\.)?(google)(\\.[a-zA-Z]{2,})(.*\\?.*)",

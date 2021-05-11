@@ -1,5 +1,5 @@
 diff --git a/services/network/network_service.cc b/services/network/network_service.cc
-index 01e7a291e2a5..4615bf171fbd 100644
+index 01e7a291e2a5..3fbbda46eb4d 100644
 --- a/services/network/network_service.cc
 +++ b/services/network/network_service.cc
 @@ -27,6 +27,7 @@
@@ -45,3 +45,14 @@ index 01e7a291e2a5..4615bf171fbd 100644
  }
  
  void NetworkService::DestroyNetworkContexts() {
+@@ -957,4 +957,10 @@ NetworkService* NetworkService::GetNetworkServiceForTesting() {
+   return g_network_service;
+ }
+ 
++void NetworkService::UpdateURLPurifyRules(
++    base::span<const uint8_t> purify_rules,
++    mojom::NetworkService::UpdateURLPurifyRulesCallback callback) {
++  url_purify_delegate_->OnNewRules(purify_rules, std::move(callback));
++}
++
+ }  // namespace network

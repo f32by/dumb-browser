@@ -18,17 +18,20 @@
 
 #include <memory>
 
+#include "base/bind.h"
 #include "base/component_export.h"
-#include "dumb/services/network/url_purify/url_purify_default_rules.h"
+#include "base/containers/span.h"
 #include "url/gurl.h"
 
 namespace net {
 class URLRequest;
 }
 
-namespace re2{
+namespace re2 {
 class RE2;
 }
+
+struct URLPurifyRule;
 
 namespace dumb {
 
@@ -43,7 +46,7 @@ struct URLPurifyResult {
 };
 
 struct QueryMatcher {
-  explicit QueryMatcher(const MatcherRule& rule);
+  explicit QueryMatcher(const URLPurifyRule& rule);
 
   QueryMatcher(QueryMatcher&&);
 
@@ -66,6 +69,9 @@ public:
   void SetEnabled(bool enabled) {
     enabled_ = enabled;
   }
+
+  void OnNewRules(base::span<const uint8_t> purify_rules,
+                  base::OnceClosure callback);
 
 private:
   base::Optional<int> TryApplyMatcher(const QueryMatcher& matcher,

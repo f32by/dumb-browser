@@ -1,8 +1,16 @@
 diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
-index c067ee55319f..6db65d2c6f7c 100644
+index c067ee55319f..11eddc83b3a8 100644
 --- a/third_party/blink/renderer/core/dom/document.cc
 +++ b/third_party/blink/renderer/core/dom/document.cc
-@@ -60,8 +60,6 @@
+@@ -51,7 +51,6 @@
+ #include "mojo/public/mojom/base/text_direction.mojom-blink.h"
+ #include "services/metrics/public/cpp/metrics_utils.h"
+ #include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "services/network/public/cpp/web_sandbox_flags.h"
+ #include "services/network/public/mojom/ip_address_space.mojom-blink.h"
+@@ -60,8 +59,6 @@
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/common/feature_policy/document_policy_features.h"
  #include "third_party/blink/public/common/features.h"
@@ -11,7 +19,7 @@ index c067ee55319f..6db65d2c6f7c 100644
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
-@@ -308,7 +306,6 @@
+@@ -308,7 +305,6 @@
  #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
  #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
  #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
@@ -19,7 +27,58 @@ index c067ee55319f..6db65d2c6f7c 100644
  #include "third_party/blink/renderer/platform/geometry/length_functions.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
-@@ -2980,8 +2977,6 @@ void Document::Shutdown() {
+@@ -748,9 +744,7 @@ Document::Document(const DocumentInit& initializer,
+       // to SVGImage which does not have an associated RenderFrameHost. No URLs
+       // will be associated to this source id. No DocumentCreated events will be
+       // created either.
+-      ukm_source_id_(initializer.UkmSourceId() == ukm::kInvalidSourceId
+-                         ? ukm::UkmRecorder::GetNewSourceID()
+-                         : initializer.UkmSourceId()),
++      ukm_source_id_(ukm::kInvalidSourceId),
+       viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
+       is_for_external_handler_(initializer.IsForExternalHandler()),
+       fragment_directive_(MakeGarbageCollected<FragmentDirective>()),
+@@ -2625,12 +2619,6 @@ void Document::MarkHasFindInPageRequest() {
+   if (had_find_in_page_request_)
+     return;
+ 
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  ukm::builders::Blink_FindInPage(UkmSourceID())
+-      .SetDidSearch(true)
+-      .Record(recorder);
+   had_find_in_page_request_ = true;
+ }
+ 
+@@ -2639,13 +2627,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
+   if (had_find_in_page_render_subtree_active_match_)
+     return;
+ 
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  // TODO(vmpstr): Rename UKM values if possible.
+-  ukm::builders::Blink_FindInPage(UkmSourceID())
+-      .SetDidHaveRenderSubtreeMatch(true)
+-      .Record(recorder);
+   had_find_in_page_render_subtree_active_match_ = true;
+ }
+ 
+@@ -2654,12 +2635,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
+   if (had_find_in_page_beforematch_expanded_hidden_matchable_)
+     return;
+ 
+-  auto* recorder = UkmRecorder();
+-  DCHECK(recorder);
+-  DCHECK(UkmSourceID() != ukm::kInvalidSourceId);
+-  ukm::builders::Blink_FindInPage(UkmSourceID())
+-      .SetBeforematchExpandedHiddenMatchable(true)
+-      .Record(recorder);
+   had_find_in_page_beforematch_expanded_hidden_matchable_ = true;
+ }
+ 
+@@ -2980,8 +2955,6 @@ void Document::Shutdown() {
    if (num_canvases_ > 0)
      UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
  
@@ -28,7 +87,7 @@ index c067ee55319f..6db65d2c6f7c 100644
    GetViewportData().Shutdown();
  
    View()->Dispose();
-@@ -3089,12 +3084,6 @@ void Document::Shutdown() {
+@@ -3089,12 +3062,6 @@ void Document::Shutdown() {
    lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
    DCHECK(!View()->IsAttached());
  
@@ -41,7 +100,7 @@ index c067ee55319f..6db65d2c6f7c 100644
    mime_handler_view_before_unload_event_listener_ = nullptr;
  
    resource_coordinator_.reset();
-@@ -6219,16 +6208,6 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
+@@ -6219,16 +6186,6 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
    return promise;
  }
  
@@ -58,7 +117,7 @@ index c067ee55319f..6db65d2c6f7c 100644
  ScriptPromise Document::interestCohort(ScriptState* script_state,
                                         ExceptionState& exception_state) {
    if (!GetFrame()) {
-@@ -6252,33 +6231,6 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
+@@ -6252,33 +6209,6 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
  
    ScriptPromise promise = resolver->Promise();
  
@@ -92,7 +151,35 @@ index c067ee55319f..6db65d2c6f7c 100644
    return promise;
  }
  
-@@ -7143,15 +7095,6 @@ ukm::SourceId Document::UkmSourceID() const {
+@@ -6755,6 +6685,7 @@ DOMWindow* Document::defaultView() const {
+ }
+ 
+ void Document::RecordAsyncScriptCount() {
++#if 0
+   UMA_HISTOGRAM_COUNTS_100("Blink.Script.AsyncScriptCount",
+                            async_script_count_);
+ 
+@@ -6769,6 +6700,7 @@ void Document::RecordAsyncScriptCount() {
+       .SetAsyncScriptCount(
+           ukm::GetExponentialBucketMin(async_script_count_, 1.3))
+       .Record(recorder);
++#endif
+ }
+ 
+ void Document::MaybeExecuteDelayedAsyncScripts() {
+@@ -7131,10 +7063,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
+   if (ukm_recorder_)
+     return ukm_recorder_.get();
+ 
+-  mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
+-  Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
+-      recorder.InitWithNewPipeAndPassReceiver());
+-  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
++  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>();
+ 
+   return ukm_recorder_.get();
+ }
+@@ -7143,15 +7072,6 @@ ukm::SourceId Document::UkmSourceID() const {
    return ukm_source_id_;
  }
  

@@ -1,0 +1,79 @@
+diff --git a/third_party/crashpad/crashpad/util/misc/metrics.cc b/third_party/crashpad/crashpad/util/misc/metrics.cc
+index 4b87f107df62..788ac716ba72 100644
+--- a/third_party/crashpad/crashpad/util/misc/metrics.cc
++++ b/third_party/crashpad/crashpad/util/misc/metrics.cc
+@@ -14,8 +14,6 @@
+ 
+ #include "util/misc/metrics.h"
+ 
+-#include "base/metrics/histogram_functions.h"
+-#include "base/metrics/histogram_macros.h"
+ #include "base/numerics/safe_conversions.h"
+ #include "build/build_config.h"
+ 
+@@ -47,49 +45,33 @@ enum class ExceptionProcessingState {
+ };
+ 
+ void ExceptionProcessing(ExceptionProcessingState state) {
+-  UMA_HISTOGRAM_COUNTS("Crashpad.ExceptionEncountered",
+-                       static_cast<int32_t>(state));
+ }
+ 
+ }  // namespace
+ 
+ // static
+ void Metrics::CrashReportPending(PendingReportReason reason) {
+-  UMA_HISTOGRAM_ENUMERATION(
+-      "Crashpad.CrashReportPending", reason, PendingReportReason::kMaxValue);
+ }
+ 
+ // static
+ void Metrics::CrashReportSize(FileOffset size) {
+-  UMA_HISTOGRAM_CUSTOM_COUNTS("Crashpad.CrashReportSize",
+-                              base::saturated_cast<uint32_t>(size),
+-                              0,
+-                              20 * 1024 * 1024,
+-                              50);
+ }
+ 
+ // static
+ void Metrics::CrashUploadAttempted(bool successful) {
+-  UMA_HISTOGRAM_COUNTS("Crashpad.CrashUpload.AttemptSuccessful", successful);
+ }
+ 
+ // static
+ void Metrics::CrashUploadSkipped(CrashSkippedReason reason) {
+-  UMA_HISTOGRAM_ENUMERATION(
+-      "Crashpad.CrashUpload.Skipped", reason, CrashSkippedReason::kMaxValue);
+ }
+ 
+ // static
+ void Metrics::ExceptionCaptureResult(CaptureResult result) {
+   ExceptionProcessing(ExceptionProcessingState::kFinished);
+-  UMA_HISTOGRAM_ENUMERATION(
+-      "Crashpad.ExceptionCaptureResult", result, CaptureResult::kMaxValue);
+ }
+ 
+ // static
+ void Metrics::ExceptionCode(uint32_t exception_code) {
+-  base::UmaHistogramSparse("Crashpad.ExceptionCode." METRICS_OS_NAME,
+-                           exception_code);
+ }
+ 
+ // static
+@@ -99,15 +81,10 @@ void Metrics::ExceptionEncountered() {
+ 
+ // static
+ void Metrics::HandlerLifetimeMilestone(LifetimeMilestone milestone) {
+-  UMA_HISTOGRAM_ENUMERATION("Crashpad.HandlerLifetimeMilestone",
+-                            milestone,
+-                            LifetimeMilestone::kMaxValue);
+ }
+ 
+ // static
+ void Metrics::HandlerCrashed(uint32_t exception_code) {
+-  base::UmaHistogramSparse(
+-      "Crashpad.HandlerCrash.ExceptionCode." METRICS_OS_NAME, exception_code);
+ }
+ 
+ }  // namespace crashpad

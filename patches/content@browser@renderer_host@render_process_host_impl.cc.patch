@@ -1,0 +1,27 @@
+diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
+index 81d5820e9b93..0497e124dd29 100644
+--- a/content/browser/renderer_host/render_process_host_impl.cc
++++ b/content/browser/renderer_host/render_process_host_impl.cc
+@@ -196,9 +196,6 @@
+ #include "services/device/public/mojom/power_monitor.mojom.h"
+ #include "services/device/public/mojom/screen_orientation.mojom.h"
+ #include "services/device/public/mojom/time_zone_monitor.mojom.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+-#include "services/metrics/public/mojom/ukm_interface.mojom.h"
+-#include "services/metrics/ukm_recorder_interface.h"
+ #include "services/network/public/cpp/network_switches.h"
+ #include "services/network/public/mojom/network_service.mojom.h"
+ #include "services/resource_coordinator/public/mojom/memory_instrumentation/memory_instrumentation.mojom.h"
+@@ -1438,12 +1435,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
+       return;
+     }
+ 
+-    if (auto r = receiver.As<ukm::mojom::UkmRecorderInterface>()) {
+-      metrics::UkmRecorderInterface::Create(ukm::UkmRecorder::Get(),
+-                                            std::move(r));
+-      return;
+-    }
+-
+     std::string interface_name = *receiver.interface_name();
+     mojo::ScopedMessagePipeHandle pipe = receiver.PassPipe();
+     if (binders_->TryBindInterface(interface_name, &pipe))

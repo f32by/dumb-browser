@@ -1,8 +1,16 @@
 diff --git a/third_party/crashpad/crashpad/handler/handler_main.cc b/third_party/crashpad/crashpad/handler/handler_main.cc
-index 737ee4e09f67..fd69a4ed895e 100644
+index 737ee4e09f67..2079a657a55e 100644
 --- a/third_party/crashpad/crashpad/handler/handler_main.cc
 +++ b/third_party/crashpad/crashpad/handler/handler_main.cc
-@@ -44,7 +44,6 @@
+@@ -32,7 +32,6 @@
+ #include "base/files/file_path.h"
+ #include "base/files/scoped_file.h"
+ #include "base/logging.h"
+-#include "base/metrics/persistent_histogram_allocator.h"
+ #include "base/scoped_generic.h"
+ #include "base/strings/string_number_conversions.h"
+ #include "base/strings/stringprintf.h"
+@@ -44,7 +43,6 @@
  #include "client/crashpad_info.h"
  #include "client/prune_crash_reports.h"
  #include "client/simple_string_dictionary.h"
@@ -10,7 +18,7 @@ index 737ee4e09f67..fd69a4ed895e 100644
  #include "handler/prune_crash_reports_thread.h"
  #include "tools/tool_support.h"
  #include "util/file/file_io.h"
-@@ -971,21 +970,6 @@ int HandlerMain(int argc,
+@@ -971,21 +969,6 @@ int HandlerMain(int argc,
    }
  
    ScopedStoppable upload_thread;
@@ -32,7 +40,7 @@ index 737ee4e09f67..fd69a4ed895e 100644
  
  #if defined(OS_LINUX) || defined(OS_CHROMEOS) || defined(OS_ANDROID)
    std::unique_ptr<ExceptionHandlerServer::Delegate> exception_handler;
-@@ -1022,7 +1006,6 @@ int HandlerMain(int argc,
+@@ -1022,7 +1005,6 @@ int HandlerMain(int argc,
  #else
    exception_handler = std::make_unique<CrashReportExceptionHandler>(
        database.get(),
@@ -40,3 +48,21 @@ index 737ee4e09f67..fd69a4ed895e 100644
        &options.annotations,
  #if defined(ATTACHMENTS_SUPPORTED)
        &options.attachments,
+@@ -1114,17 +1096,6 @@ int HandlerMain(int argc,
+   ExceptionHandlerServer exception_handler_server;
+ #endif  // OS_APPLE
+ 
+-  base::GlobalHistogramAllocator* histogram_allocator = nullptr;
+-  if (!options.metrics_dir.empty()) {
+-    static constexpr char kMetricsName[] = "CrashpadMetrics";
+-    constexpr size_t kMetricsFileSize = 1 << 20;
+-    if (base::GlobalHistogramAllocator::CreateWithActiveFileInDir(
+-            options.metrics_dir, kMetricsFileSize, 0, kMetricsName)) {
+-      histogram_allocator = base::GlobalHistogramAllocator::Get();
+-      histogram_allocator->CreateTrackingHistograms(kMetricsName);
+-    }
+-  }
+-
+   Metrics::HandlerLifetimeMilestone(Metrics::LifetimeMilestone::kStarted);
+ 
+ #if defined(OS_WIN)

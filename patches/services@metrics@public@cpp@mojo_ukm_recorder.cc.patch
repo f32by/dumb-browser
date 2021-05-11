@@ -1,0 +1,31 @@
+diff --git a/services/metrics/public/cpp/mojo_ukm_recorder.cc b/services/metrics/public/cpp/mojo_ukm_recorder.cc
+index c8d46f23793e..59060e8ebcb1 100644
+--- a/services/metrics/public/cpp/mojo_ukm_recorder.cc
++++ b/services/metrics/public/cpp/mojo_ukm_recorder.cc
+@@ -10,9 +10,7 @@
+ 
+ namespace ukm {
+ 
+-MojoUkmRecorder::MojoUkmRecorder(
+-    mojo::PendingRemote<mojom::UkmRecorderInterface> interface)
+-    : interface_(std::move(interface)) {}
++MojoUkmRecorder::MojoUkmRecorder() = default;
+ MojoUkmRecorder::~MojoUkmRecorder() = default;
+ 
+ base::WeakPtr<MojoUkmRecorder> MojoUkmRecorder::GetWeakPtr() {
+@@ -20,7 +18,6 @@ base::WeakPtr<MojoUkmRecorder> MojoUkmRecorder::GetWeakPtr() {
+ }
+ 
+ void MojoUkmRecorder::UpdateSourceURL(SourceId source_id, const GURL& url) {
+-  interface_->UpdateSourceURL(source_id, url.spec());
+ }
+ 
+ void MojoUkmRecorder::UpdateAppURL(SourceId source_id,
+@@ -36,7 +33,6 @@ void MojoUkmRecorder::RecordNavigation(
+ }
+ 
+ void MojoUkmRecorder::AddEntry(mojom::UkmEntryPtr entry) {
+-  interface_->AddEntry(std::move(entry));
+ }
+ 
+ void MojoUkmRecorder::MarkSourceForDeletion(ukm::SourceId source_id) {

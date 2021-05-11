@@ -21,7 +21,7 @@
 #include "base/no_destructor.h"
 #include "base/strings/string_util.h"
 #include "base/synchronization/lock.h"
-#include "dumb/services/network/url_purify/url_purify_default_rules.h"
+#include "dumb/components/privacy_guard/url_purify/url_purify_default_rules.h"
 #include "net/url_request/url_request.h"
 #include "third_party/re2/src/re2/re2.h"
 
@@ -36,7 +36,7 @@ URLPurifyResult::URLPurifyResult(const URLPurifyResult& other) = default;
 
 URLPurifyResult::~URLPurifyResult() = default;
 
-QueryMatcher::QueryMatcher(const MatcherRule& rule) {
+QueryMatcher::QueryMatcher(const URLPurifyRule& rule) {
   const auto& url_pattern = rule.url_pattern;
   const auto& url_exceptions = rule.url_exceptions;
   const auto& query_patterns = rule.query_patterns;
@@ -85,6 +85,8 @@ QueryMatcher::~QueryMatcher() = default;
 URLPurifyDelegate::URLPurifyDelegate()
     : enabled_(true),
       global_rules_matcher_(GetDefaultGlobalRules()) {
+  // Initialize with default rules.
+  // These rules may be overwritten.
   for (const auto& r : GetDefaultPerSiteRules()) {
     per_site_matchers_.emplace_back(QueryMatcher(r));
   }
@@ -138,6 +140,16 @@ URLPurifyDelegate::TruncateURLParameters(net::URLRequest* const request,
   return {base::nullopt, 0};
 }
 
+void URLPurifyDelegate::OnNewRules(base::span<const uint8_t> purify_rules,
+    base::OnceClosure callback) {
+  // Make a copy for the background task, since the underlying storage for
+  // the span will go away.
+  std::string rules_string(reinterpret_cast<const char*>(purify_rules.data()),
+                           purify_rules.size());
+
+
+}
+
 base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
     const QueryMatcher& matcher,
     bool is_global,
@@ -158,7 +170,8 @@ base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
     count += re2::RE2::GlobalReplace(&new_query, *query_matcher.get(), "");
   }
 
-  DLOG(INFO) << "Removed " << count << " parameters. New spec: " << new_query;
+  DLOG(INFO) << "Removed " << count
+      << " parameters. New spec: " << new_query;
 
   return count;
 }

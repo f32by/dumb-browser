@@ -13,8 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_SERVICES_NETWORK_URL_PURIFY_URL_PURIFY_DEFAULT_RULES_H_
-#define DUMB_SERVICES_NETWORK_URL_PURIFY_URL_PURIFY_DEFAULT_RULES_H_
+#ifndef DUMB_COMPONENTS_PRIVACY_GUARD_URL_PURIFY_URL_PURIFY_RULE_H_
+#define DUMB_COMPONENTS_PRIVACY_GUARD_URL_PURIFY_URL_PURIFY_RULE_H_
 
 #include <string>
 #include <vector>
@@ -22,27 +22,23 @@
 #include "base/macros.h"
 #include "base/optional.h"
 
-struct MatcherRule {
-  MatcherRule(std::string url_pattern,
+struct URLPurifyRule {
+  URLPurifyRule(std::string url_pattern,
               std::vector<std::string> query_patterns,
               base::Optional<std::vector<std::string>> url_exceptions);
 
-  MatcherRule(std::string url_pattern,
+  URLPurifyRule(std::string url_pattern,
               std::vector<std::string> query_patterns,
               std::vector<std::string> url_exceptions);
 
-  MatcherRule(const MatcherRule&);
-  MatcherRule(MatcherRule&&);
+  URLPurifyRule(const URLPurifyRule&);
+  URLPurifyRule(URLPurifyRule&&);
 
-  ~MatcherRule();
+  ~URLPurifyRule();
 
   std::string url_pattern;
   std::vector<std::string> query_patterns;
   base::Optional<std::vector<std::string>> url_exceptions;
 };
 
-const MatcherRule& GetDefaultGlobalRules();
-
-const std::vector<MatcherRule>& GetDefaultPerSiteRules();
-
-#endif  // DUMB_SERVICES_NETWORK_URL_PURIFY_URL_PURIFY_DEFAULT_RULES_H_
+#endif // DUMB_COMPONENTS_PRIVACY_GUARD_URL_PURIFY_URL_PURIFY_RULE_H_

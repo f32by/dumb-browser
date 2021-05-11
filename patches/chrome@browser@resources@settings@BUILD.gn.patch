@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/BUILD.gn b/chrome/browser/resources/settings/BUILD.gn
-index b752f26146d9..f69d8d8d6ceb 100644
+index b752f26146d9..39220d899920 100644
 --- a/chrome/browser/resources/settings/BUILD.gn
 +++ b/chrome/browser/resources/settings/BUILD.gn
 @@ -115,7 +115,6 @@ preprocess_if_expr("preprocess") {
@@ -18,7 +18,15 @@ index b752f26146d9..f69d8d8d6ceb 100644
      "settings.js",
      "settings_page/main_page_behavior.js",
      "settings_routes.js",
-@@ -263,12 +261,6 @@ preprocess_if_expr("preprocess_generated") {
+@@ -252,7 +250,6 @@ preprocess_if_expr("preprocess_generated") {
+     "privacy_page/secure_dns.js",
+     "privacy_page/secure_dns_input.js",
+     "privacy_page/security_page.js",
+-    "privacy_page/disable_safebrowsing_dialog.js",
+     "privacy_page/security_keys_bio_enroll_dialog.js",
+     "privacy_page/security_keys_credential_management_dialog.js",
+     "privacy_page/security_keys_pin_field.js",
+@@ -263,12 +260,6 @@ preprocess_if_expr("preprocess_generated") {
      "reset_page/reset_profile_dialog.js",
      "reset_page/reset_profile_banner.js",
      "router.m.js",
@@ -31,7 +39,7 @@ index b752f26146d9..f69d8d8d6ceb 100644
      "search_engines_page/search_engines_browser_proxy.m.js",
      "search_engines_page/omnibox_extension_entry.js",
      "search_engines_page/search_engine_dialog.js",
-@@ -321,7 +313,6 @@ preprocess_if_expr("preprocess_generated") {
+@@ -321,7 +312,6 @@ preprocess_if_expr("preprocess_generated") {
        "chrome_cleanup_page/items_to_remove_list.js",
        "incompatible_applications_page/incompatible_applications_page.js",
        "incompatible_applications_page/incompatible_application_item.js",
@@ -39,7 +47,7 @@ index b752f26146d9..f69d8d8d6ceb 100644
      ]
    }
  
-@@ -459,7 +450,6 @@ group("closure_compile_module") {
+@@ -459,7 +449,6 @@ group("closure_compile_module") {
      "prefs:closure_compile_module",
      "privacy_page:closure_compile_module",
      "reset_page:closure_compile_module",
@@ -47,7 +55,7 @@ index b752f26146d9..f69d8d8d6ceb 100644
      "search_engines_page:closure_compile_module",
      "search_page:closure_compile_module",
      "settings_main:closure_compile_module",
-@@ -494,7 +484,6 @@ js_type_check("closure_compile_local_module") {
+@@ -494,7 +483,6 @@ js_type_check("closure_compile_local_module") {
    deps = [
      ":extension_control_browser_proxy.m",
      ":global_scroll_target_behavior.m",
@@ -55,7 +63,7 @@ index b752f26146d9..f69d8d8d6ceb 100644
      ":i18n_setup",
      ":lazy_load",
      ":lifetime_browser_proxy.m",
-@@ -513,7 +502,6 @@ js_type_check("closure_compile_local_module") {
+@@ -513,7 +501,6 @@ js_type_check("closure_compile_local_module") {
  
  js_library("settings") {
    deps = [
@@ -63,7 +71,7 @@ index b752f26146d9..f69d8d8d6ceb 100644
      ":lifetime_browser_proxy.m",
      ":metrics_browser_proxy",
      ":open_window_proxy",
-@@ -523,7 +511,6 @@ js_library("settings") {
+@@ -523,7 +510,6 @@ js_library("settings") {
      "autofill_page:password_manager_proxy",
      "people_page:sync_browser_proxy.m",
      "privacy_page:privacy_page_browser_proxy.m",
@@ -71,7 +79,7 @@ index b752f26146d9..f69d8d8d6ceb 100644
      "search_engines_page:search_engines_browser_proxy.m",
      "settings_ui:settings_ui",
    ]
-@@ -662,7 +649,6 @@ group("polymer3_elements") {
+@@ -662,7 +648,6 @@ group("polymer3_elements") {
      "prefs:polymer3_elements",
      "privacy_page:polymer3_elements",
      "reset_page:web_components",

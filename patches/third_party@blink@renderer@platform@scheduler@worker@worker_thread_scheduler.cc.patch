@@ -1,0 +1,62 @@
+diff --git a/third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.cc b/third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.cc
+index d57f9a89568a..176457371f13 100644
+--- a/third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.cc
++++ b/third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.cc
+@@ -17,8 +17,6 @@
+ #include "base/trace_event/trace_event.h"
+ #include "base/trace_event/traced_value.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/renderer/platform/scheduler/common/features.h"
+@@ -85,12 +83,14 @@ base::Optional<base::TimeDelta> GetMaxThrottlingDelay() {
+   return base::TimeDelta::FromMilliseconds(max_throttling_delay_ms);
+ }
+ 
++#if 0
+ std::unique_ptr<ukm::MojoUkmRecorder> CreateMojoUkmRecorder() {
+   mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
+   Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
+       recorder.InitWithNewPipeAndPassReceiver());
+   return std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -111,7 +111,7 @@ WorkerThreadScheduler::WorkerThreadScheduler(
+       worker_metrics_helper_(thread_type, helper()->HasCPUTimingForEachTask()),
+       initial_frame_status_(proxy ? proxy->initial_frame_status()
+                                   : FrameStatus::kNone),
+-      ukm_source_id_(proxy ? proxy->ukm_source_id() : ukm::kInvalidSourceId) {
++      ukm_source_id_(ukm::kInvalidSourceId) {
+   if (proxy && proxy->parent_frame_type())
+     worker_metrics_helper_.SetParentFrameType(*proxy->parent_frame_type());
+ 
+@@ -213,8 +213,6 @@ void WorkerThreadScheduler::OnTaskCompleted(
+     task_queue_throttler_->OnTaskRunTimeReported(
+         task_queue, task_timing->start_time(), task_timing->end_time());
+   }
+-
+-  RecordTaskUkm(task_queue, task, *task_timing);
+ }
+ 
+ SchedulerHelper* WorkerThreadScheduler::GetSchedulerHelperForTesting() {
+@@ -275,6 +273,7 @@ void WorkerThreadScheduler::CreateTaskQueueThrottler() {
+   cpu_time_budget_pool_->SetMaxThrottlingDelay(now, GetMaxThrottlingDelay());
+ }
+ 
++#if 0
+ void WorkerThreadScheduler::RecordTaskUkm(
+     NonMainThreadTaskQueue* worker_task_queue,
+     const base::sequence_manager::Task& task,
+@@ -310,6 +309,7 @@ void WorkerThreadScheduler::SetUkmRecorderForTest(
+ void WorkerThreadScheduler::SetUkmTaskSamplingRateForTest(double rate) {
+   helper()->SetUkmTaskSamplingRateForTest(rate);
+ }
++#endif
+ 
+ void WorkerThreadScheduler::SetCPUTimeBudgetPoolForTesting(
+     CPUTimeBudgetPool* cpu_time_budget_pool) {

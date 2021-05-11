@@ -1,0 +1,28 @@
+diff --git a/third_party/blink/renderer/core/workers/worklet_global_scope.cc b/third_party/blink/renderer/core/workers/worklet_global_scope.cc
+index 224fe05d9e20..baaaa806ba2c 100644
+--- a/third_party/blink/renderer/core/workers/worklet_global_scope.cc
++++ b/third_party/blink/renderer/core/workers/worklet_global_scope.cc
+@@ -5,7 +5,6 @@
+ #include "third_party/blink/renderer/core/workers/worklet_global_scope.h"
+ 
+ #include <memory>
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+ #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
+@@ -278,6 +277,7 @@ KURL WorkletGlobalScope::CompleteURL(const String& url) const {
+   return KURL(BaseURL(), url);
+ }
+ 
++#if 0
+ ukm::UkmRecorder* WorkletGlobalScope::UkmRecorder() {
+   if (ukm_recorder_)
+     return ukm_recorder_.get();
+@@ -289,6 +289,7 @@ ukm::UkmRecorder* WorkletGlobalScope::UkmRecorder() {
+ 
+   return ukm_recorder_.get();
+ }
++#endif
+ 
+ void WorkletGlobalScope::Trace(Visitor* visitor) const {
+   visitor->Trace(frame_);

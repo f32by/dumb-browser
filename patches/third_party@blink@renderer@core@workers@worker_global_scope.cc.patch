@@ -1,8 +1,16 @@
 diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.cc b/third_party/blink/renderer/core/workers/worker_global_scope.cc
-index ef4dce6a428e..c83f7219b6aa 100644
+index ef4dce6a428e..e5d35fdc3296 100644
 --- a/third_party/blink/renderer/core/workers/worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/worker_global_scope.cc
-@@ -69,7 +69,6 @@
+@@ -29,7 +29,6 @@
+ 
+ #include "base/memory/scoped_refptr.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/mojom/browser_interface_broker.mojom-blink.h"
+ #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
+@@ -69,7 +68,6 @@
  #include "third_party/blink/renderer/core/workers/worker_thread.h"
  #include "third_party/blink/renderer/platform/bindings/exception_state.h"
  #include "third_party/blink/renderer/platform/bindings/microtask.h"
@@ -10,7 +18,7 @@ index ef4dce6a428e..c83f7219b6aa 100644
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/instance_counters.h"
  #include "third_party/blink/renderer/platform/loader/fetch/fetch_client_settings_object_snapshot.h"
-@@ -150,8 +149,6 @@ FontFaceSet* WorkerGlobalScope::fonts() {
+@@ -150,8 +148,6 @@ FontFaceSet* WorkerGlobalScope::fonts() {
  }
  
  WorkerGlobalScope::~WorkerGlobalScope() {
@@ -19,7 +27,23 @@ index ef4dce6a428e..c83f7219b6aa 100644
    DCHECK(!ScriptController());
    InstanceCounters::DecrementCounter(
        InstanceCounters::kWorkerGlobalScopeCounter);
-@@ -681,13 +678,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
+@@ -653,6 +649,7 @@ TrustedTypePolicyFactory* WorkerGlobalScope::GetTrustedTypes() const {
+   return trusted_types_.Get();
+ }
+ 
++#if 0
+ ukm::UkmRecorder* WorkerGlobalScope::UkmRecorder() {
+   if (ukm_recorder_)
+     return ukm_recorder_.get();
+@@ -664,6 +661,7 @@ ukm::UkmRecorder* WorkerGlobalScope::UkmRecorder() {
+ 
+   return ukm_recorder_.get();
+ }
++#endif
+ 
+ std::unique_ptr<WorkerMainScriptLoadParameters>
+ WorkerGlobalScope::TakeWorkerMainScriptLoadingParametersForModules() {
+@@ -681,13 +679,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
    Supplementable<WorkerGlobalScope>::Trace(visitor);
  }
  

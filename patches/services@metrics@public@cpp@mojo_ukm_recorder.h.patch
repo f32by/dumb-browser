@@ -1,0 +1,23 @@
+diff --git a/services/metrics/public/cpp/mojo_ukm_recorder.h b/services/metrics/public/cpp/mojo_ukm_recorder.h
+index 93980119da77..a43866e421be 100644
+--- a/services/metrics/public/cpp/mojo_ukm_recorder.h
++++ b/services/metrics/public/cpp/mojo_ukm_recorder.h
+@@ -36,8 +36,7 @@ namespace ukm {
+  */
+ class METRICS_EXPORT MojoUkmRecorder : public UkmRecorder {
+  public:
+-  explicit MojoUkmRecorder(
+-      mojo::PendingRemote<mojom::UkmRecorderInterface> recorder_interface);
++  explicit MojoUkmRecorder();
+   ~MojoUkmRecorder() override;
+ 
+   base::WeakPtr<MojoUkmRecorder> GetWeakPtr();
+@@ -54,8 +53,6 @@ class METRICS_EXPORT MojoUkmRecorder : public UkmRecorder {
+   void AddEntry(mojom::UkmEntryPtr entry) override;
+   void MarkSourceForDeletion(ukm::SourceId source_id) override;
+ 
+-  mojo::Remote<mojom::UkmRecorderInterface> interface_;
+-
+   base::WeakPtrFactory<MojoUkmRecorder> weak_factory_{this};
+ 
+   DISALLOW_COPY_AND_ASSIGN(MojoUkmRecorder);
