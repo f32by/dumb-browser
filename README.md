@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `90.0.4430.93`.
+Current version: `90.0.4430.212`.
 
 # Features
 
@@ -28,8 +28,9 @@ Following components are removed/disabled:
 Other changes:
 - [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, etc.)
 - [UI] Audio mute button on tab
-- [UI] Force popups to be opened in new tabs.
-- [History] Unlimited browsing history.
+- [UI] Force popups to be opened in new tabs
+- [UI] Darker web control elements (Edge style)
+- [History] Unlimited browsing history
 
 # Installation
 
