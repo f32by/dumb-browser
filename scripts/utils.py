@@ -24,7 +24,7 @@ from constants import CHROMIUM_VERSION_FILE, PATCH_LIST_FILE, PATCHES_DIR, CHROM
 
 def get_chromium_version():
     with open(CHROMIUM_VERSION_FILE, 'r') as f:
-        version = f.read().replace('\n', '').replace(' ', '')
+        version = f.read().replace('\n', '').strip()
     return version
 
 
