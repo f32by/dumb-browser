@@ -15,18 +15,21 @@
 
 #include "dumb/components/privacy_guard/url_purify/url_purify_rule.h"
 
-URLPurifyRule::URLPurifyRule(std::string url_pattern,
-                         std::vector<std::string> query_patterns,
-                         std::vector<std::string> url_exceptions)
-    : url_pattern(std::move(url_pattern)),
+URLPurifyRule::URLPurifyRule(std::string name,
+    std::string url_pattern,
+    std::vector<std::string> query_patterns,
+    std::vector<std::string> url_exceptions)
+    : name(std::move(name)),
+      url_pattern(std::move(url_pattern)),
       query_patterns(std::move(query_patterns)),
       url_exceptions(std::move(url_exceptions)) {}
 
-URLPurifyRule::URLPurifyRule(std::string url_pattern,
-                         std::vector<std::string> query_patterns,
-                         base::Optional<std::vector<std::string>>
-                             url_exceptions)
-    : url_pattern(std::move(url_pattern)),
+URLPurifyRule::URLPurifyRule(std::string name,
+    std::string url_pattern,
+    std::vector<std::string> query_patterns,
+    base::Optional<std::vector<std::string>> url_exceptions)
+    : name(std::move(name)),
+      url_pattern(std::move(url_pattern)),
       query_patterns(std::move(query_patterns)),
       url_exceptions(std::move(url_exceptions)) {}
 

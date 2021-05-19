@@ -21,6 +21,7 @@
 const URLPurifyRule& GetDefaultGlobalRules() {
   static base::NoDestructor<URLPurifyRule> rule(
     URLPurifyRule(
+    "Global",
     ".*",
     {"utm(?:_[a-z_]*)?", "ga_[a-z_]+", "yclid", "_openstat",
      "fb_action_(?:types|ids)", "fb_(?:source|ref)", "fbclid",
@@ -39,6 +40,7 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
   static std::vector<URLPurifyRule> rules {
     // Google
     {
+      "Google",
       "(https:\\/\\/|http:\\/\\/)([a-zA-Z0-9-]*\\.)?(google)(\\.[a-zA-Z]{2,})(.*\\?.*)",
       {"ved", "bi[a-zA-Z]", "gfe_[a-zA-Z]", "ei", "source",
        "gs_[a-zA-Z]", "site", "oq", "esrc", "uact", "cd", "cad",
@@ -64,12 +66,14 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Google Search
     {
+      "Google Search",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?google(?:\\.[a-z]{2,}){1,}\\/search\\?",
       {"client", "sclient"},
       base::nullopt
     },
     // Amazon
     {
+      "Amazon",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?amazon(?:\\.[a-z]{2,}){1,}",
       {"p[fd]_rd_[a-z]*", "qid", "srs?", "__mk_[a-z]{1,3}_[a-z]{1,3}",
        "spIA", "ms3_c", "[a-z%0-9]*ie", "refRID", "colii?d",
@@ -83,6 +87,7 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Amazon Search
     {
+      "Amazon Search",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?amazon(?:\\.[a-z]{2,}){1,}\\/s\\?",
       {"p[fd]_rd_[a-z]*", "qid", "srs?", "__mk_[a-z]{1,3}_[a-z]{1,3}",
       "spIA", "ms3_c", "[a-z%0-9]*ie", "refRID", "colii?d", "[^a-z%0-9]adId",
@@ -94,12 +99,14 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Youtube
     {
+      "Youtube",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?youtube\\.com",
       {"feature", "gclid", "kw"},
       base::nullopt
     },
     // Facebook
     {
+      "Facebook",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?facebook\\.com",
       {"hc_[a-z_%\\[\\]0-9]*", "[a-z]*ref[a-z]*", "__tn__", "eid",
        "__xts__(?:\\[|%5B)\\d(?:\\]|%5D)", "comment_tracking", "dti",
@@ -114,60 +121,70 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Instagram
     {
+      "Instagram",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?instagram\\.com",
       {"igshid"},
       base::nullopt
     },
     // Steampowered
     {
+      "Steam",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?steampowered\\.com",
       {"snr"},
       base::nullopt
     },
     // GitHub
     {
+      "GitHub",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?github\\.com",
       {"email_token", "email_source"},
       base::nullopt
     },
     // LinkedIn
     {
+      "LinkedIn",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?linkedin\\.com",
       {"refId", "trk", "li[a-z]{2}"},
       base::nullopt
     },
     // lazada.com.my
     {
+      "Lazada",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?lazada\\.com\\.my",
       {"ad_src", "did", "pa", "mp", "impsrc", "cid", "pos"},
       base::nullopt
     },
     // disq.us
     {
+      "Disq.us",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?disq\\.us",
       {"cuid"},
       base::nullopt
     },
     // Mozilla
     {
+      "Mozilla",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?mozilla\\.org",
       {"src", "platform", "redirect_source"},
       {"^https?:\\/\\/(?:[a-z0-9-]+\\.)*?mozilla.org\\/api"}
     },
     // New York Times
     {
+      "New York Times",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?nytimes\\.com",
       {"smid"},
       base::nullopt
     },
     // Twitter
     {
+      "Times",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?twitter.com",
       {"(?:ref_?)?src", "s", "cn", "ref_url"},
       base::nullopt
     },
     // Reddit
     {
+      "Reddit",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?reddit.com",
       {"%24deep_link", "\\$deep_link", "correlation_id", "ref_campaign",
        "ref_source", "%243p", "\\$3p", "%24original_url", "\\$original_url",
@@ -176,47 +193,56 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Netflix
     {
+      "Netflix",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?netflix.com",
       {"trackId", "tctx", "jb[a-z]*?"},
       base::nullopt
     },
     // TechCrunch
     {
+      "TechCrunch",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?techcrunch\\.com",
       {"ncid", "sr", "sr_share"},
       base::nullopt
     },
     // Bing
     {
+      "Bing",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?bing(?:\\.[a-z]{2,}){1,}",
       {"cvid", "form", "sk", "sp", "sc", "qs", "qp"},
       {"^https?:\\/\\/(?:[a-z0-9-]+\\.)*?bing(?:\\.[a-z]{2,}){1,}\\/WS\\/redirect\\/"}
     },
     // Twitch
     {
+      "Twitch",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?twitch\\.com",
       {"tt_medium", "tt_content"},
       base::nullopt
     },
     // IMDB
     {
+      "IMDB",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?imdb\\.com",
       {"ref_", "pf_rd_[a-z]*"},
       base::nullopt
     },
     // Wallmart
     {
+      "Wallmart",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?walmart\\.com",
       {"u1", "ath[a-z]*"},
       base::nullopt
     },
+    // Youku
     {
+      "Youku",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?youku\\.com",
       {"tpa"},
       base::nullopt
     },
     // Taobao
     {
+      "Taobao",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?taobao\\.com",
       {"price", "sourceType", "suid", "ut_sk", "un", "share_crt_v", "sp_tk",
        "cpp", "shareurl", "short_name", "app", "scm[_a-z-]*", "pvid",
@@ -229,6 +255,7 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Tmall
     {
+      "Tmall",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?tmall\\.com",
       {"price", "sourceType", "suid", "ut_sk", "un", "share_crt_v", "sp_tk",
        "cpp", "shareurl", "short_name", "app", "scm[_a-z-]*", "pvid",
@@ -241,12 +268,14 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // tb.cn
     {
+      "tb.cn",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?tb\\.cn",
       {"sm"},
       base::nullopt
     },
     // Aliexpress
     {
+      "Aliexpress",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?aliexpress(?:\\.[a-z]{2,}){1,}",
       {"ws_ab_test", "btsid", "algo_expid", "algo_pvid", "gps-id",
        "scm[_a-z-]*", "cv", "af", "mall_affr", "sk", "dp", "terminal_id",
@@ -255,24 +284,28 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Bilibili
     {
+      "Bilibili",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?bilibili\\.com",
       {"callback", "spm_id_from", "from_source", "from", "seid"},
       {"^https?:\\/\\/api\\.bilibili\\.com"}
     },
     // GOG
     {
+      "GoodOldGames",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?gog\\.com",
       {"track_click", "link_id"},
       base::nullopt
     },
     // Bestbuy
     {
+      "BestBuy",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?bestbuy\\.com",
       {"irclickid", "irgwc", "loc", "acampID", "mpid", "intl"},
       base::nullopt
     },
     // TikTok
     {
+      "TikTok",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?tiktok\\.com",
       {"u_code", "preview_pb", "_d", "timestamp", "user_id",
       "share_app_name", "share_iid", "source"},
@@ -280,30 +313,35 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
     },
     // Humble Bundle
     {
+      "Humble Bundle",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?humblebundle\\.com",
       {"partner"},
       base::nullopt
     },
     // Epic Games
     {
+      "Epic Games",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?epicgames\\.com",
       {"epic_affiliate", "epic_gameId"},
       base::nullopt
     },
     // Medium
     {
+      "Medium",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?medium\\.com",
       {"source"},
       base::nullopt
     },
     // Sina Weibo
     {
+      "Sina Weibo",
       "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?weibo\\.(com|cn)",
       {"sourceType", "from", "wm"},
       base::nullopt
     },
     // Weixin
     {
+      "WeChat",
       "^https?:\\/\\/mp.weixin.qq\\.com",
       {"mpshare", "chksm"},
       base::nullopt

@@ -23,19 +23,22 @@
 #include "base/optional.h"
 
 struct URLPurifyRule {
-  URLPurifyRule(std::string url_pattern,
-              std::vector<std::string> query_patterns,
-              base::Optional<std::vector<std::string>> url_exceptions);
+  URLPurifyRule(std::string name,
+      std::string url_pattern,
+      std::vector<std::string> query_patterns,
+      base::Optional<std::vector<std::string>> url_exceptions);
 
-  URLPurifyRule(std::string url_pattern,
-              std::vector<std::string> query_patterns,
-              std::vector<std::string> url_exceptions);
+  URLPurifyRule(std::string name,
+      std::string url_pattern,
+      std::vector<std::string> query_patterns,
+      std::vector<std::string> url_exceptions);
 
   URLPurifyRule(const URLPurifyRule&);
   URLPurifyRule(URLPurifyRule&&);
 
   ~URLPurifyRule();
 
+  std::string name;
   std::string url_pattern;
   std::vector<std::string> query_patterns;
   base::Optional<std::vector<std::string>> url_exceptions;

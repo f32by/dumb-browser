@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef DUMB_SERVICES_NETWORK_NETWORK_SERVICE_NETWORK_DELEGATE_H_
-#define DUMB_SERVICES_NETWORK_NETWORK_SERVICE_NETWORK_DELEGATE_H_
+#ifndef SERVICES_NETWORK_NETWORK_SERVICE_NETWORK_DELEGATE_H_
+#define SERVICES_NETWORK_NETWORK_SERVICE_NETWORK_DELEGATE_H_
 
 #include "base/component_export.h"
 #include "base/macros.h"
@@ -102,12 +102,12 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkServiceNetworkDelegate
   mojo::Remote<mojom::ProxyErrorClient> proxy_error_client_;
   NetworkContext* network_context_;
 
-  mutable base::WeakPtrFactory<NetworkServiceNetworkDelegate>
-      weak_ptr_factory_{this};
+  mutable base::WeakPtrFactory<NetworkServiceNetworkDelegate> weak_ptr_factory_{
+      this};
 
   DISALLOW_COPY_AND_ASSIGN(NetworkServiceNetworkDelegate);
 };
 
 }  // namespace network
 
-#endif  // DUMB_SERVICES_NETWORK_NETWORK_SERVICE_NETWORK_DELEGATE_H_
+#endif  // SERVICES_NETWORK_NETWORK_SERVICE_NETWORK_DELEGATE_H_

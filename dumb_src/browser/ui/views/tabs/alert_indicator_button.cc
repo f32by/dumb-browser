@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "chrome/browser/ui/views/tabs/alert_indicator_button.h"
+#include "dumb/browser/ui/views/tabs/alert_indicator_button.h"
 
 #include <utility>
 
@@ -94,31 +94,6 @@ TabRecordingIndicatorAnimation::Create() {
   return animation;
 }
 
-// Returns a non-continuous Animation that performs a fade-in or fade-out
-// appropriate for the given |next_alert_state|.  This is used by the tab alert
-// indicator to alert the user that recording, tab capture, or audio playback
-// has started/stopped.
-std::unique_ptr<gfx::Animation> CreateTabAlertIndicatorFadeAnimation(
-    base::Optional<TabAlertState> alert_state) {
-  if (alert_state == TabAlertState::MEDIA_RECORDING ||
-      alert_state == TabAlertState::TAB_CAPTURING ||
-      alert_state == TabAlertState::DESKTOP_CAPTURING) {
-    return TabRecordingIndicatorAnimation::Create();
-  }
-
-  // Note: While it seems silly to use a one-part MultiAnimation, it's the only
-  // gfx::Animation implementation that lets us control the frame interval.
-  gfx::MultiAnimation::Parts parts;
-  const bool is_for_fade_in = (alert_state.has_value());
-  parts.push_back(gfx::MultiAnimation::Part(
-      is_for_fade_in ? kIndicatorFadeInDuration : kIndicatorFadeOutDuration,
-      gfx::Tween::EASE_IN));
-  auto animation =
-      std::make_unique<gfx::MultiAnimation>(parts, kIndicatorFrameInterval);
-  animation->set_continuous(false);
-  return std::move(animation);
-}
-
 // Returns a cached image, to be shown by the alert indicator for the given
 // |alert_state|.  Uses the global ui::ResourceBundle shared instance.
 gfx::Image GetTabAlertIndicatorImage(TabAlertState alert_state,
@@ -170,6 +145,31 @@ gfx::Image GetTabAlertIndicatorImage(TabAlertState alert_state,
   }
   DCHECK(icon);
   return gfx::Image(gfx::CreateVectorIcon(*icon, image_width, button_color));
+}
+
+// Returns a non-continuous Animation that performs a fade-in or fade-out
+// appropriate for the given |next_alert_state|.  This is used by the tab alert
+// indicator to alert the user that recording, tab capture, or audio playback
+// has started/stopped.
+std::unique_ptr<gfx::Animation> CreateTabAlertIndicatorFadeAnimation(
+    base::Optional<TabAlertState> alert_state) {
+  if (alert_state == TabAlertState::MEDIA_RECORDING ||
+      alert_state == TabAlertState::TAB_CAPTURING ||
+      alert_state == TabAlertState::DESKTOP_CAPTURING) {
+    return TabRecordingIndicatorAnimation::Create();
+  }
+
+  // Note: While it seems silly to use a one-part MultiAnimation, it's the only
+  // gfx::Animation implementation that lets us control the frame interval.
+  gfx::MultiAnimation::Parts parts;
+  const bool is_for_fade_in = (alert_state.has_value());
+  parts.push_back(gfx::MultiAnimation::Part(
+      is_for_fade_in ? kIndicatorFadeInDuration : kIndicatorFadeOutDuration,
+      gfx::Tween::EASE_IN));
+  auto animation =
+      std::make_unique<gfx::MultiAnimation>(parts, kIndicatorFrameInterval);
+  animation->set_continuous(false);
+  return std::move(animation);
 }
 
 gfx::Image GetTabAlertIndicatorAffordanceImage(TabAlertState alert_state,

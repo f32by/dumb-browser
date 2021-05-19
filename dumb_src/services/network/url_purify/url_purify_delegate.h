@@ -45,16 +45,33 @@ struct URLPurifyResult {
   int count;
 };
 
-struct QueryMatcher {
+class QueryMatcher {
+public:
   explicit QueryMatcher(const URLPurifyRule& rule);
-
   QueryMatcher(QueryMatcher&&);
-
   ~QueryMatcher();
 
-  std::unique_ptr<re2::RE2> url_matcher;
-  base::Optional<re2::RE2*> url_exception_matcher;
-  std::vector<std::unique_ptr<re2::RE2>> query_matchers;
+  const std::string& name() const {
+    return name_;
+  }
+
+  const re2::RE2* url_matcher() const {
+    return url_matcher_.get();
+  }
+
+  const base::Optional<re2::RE2*>& url_exception_matcher() const {
+    return url_exception_matcher_;
+  }
+
+  const std::vector<std::unique_ptr<re2::RE2>>& query_matchers() const {
+    return query_matchers_;
+  }
+
+private:
+  std::string name_;
+  std::unique_ptr<re2::RE2> url_matcher_;
+  base::Optional<re2::RE2*> url_exception_matcher_;
+  std::vector<std::unique_ptr<re2::RE2>> query_matchers_;
 };
 
 class COMPONENT_EXPORT(NETWORK_SERVICE) URLPurifyDelegate {
@@ -74,10 +91,10 @@ public:
                   base::OnceClosure callback);
 
 private:
-  base::Optional<int> TryApplyMatcher(const QueryMatcher& matcher,
-                                      bool is_global,
-                                      const std::string& full_url,
-                                      std::string& new_query) const;
+  int TryApplyMatcher(const QueryMatcher& matcher,
+                      bool is_global,
+                      const std::string& full_url,
+                      std::string& new_query) const;
 
   bool enabled_;
   QueryMatcher global_rules_matcher_;

@@ -13,11 +13,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dumb/browser/common/pref_names.h"
+#include "dumb/components/privacy_guard/pref_names.h"
 
 namespace prefs {
 
 // Whether the URL purify is enabled.
-const char kURLPurifyEnabled[] = "net.url_purify.enabled";
+const char kURLPurifyEnabled[] = "privacy_guard.url_purify.enabled";
 
 }

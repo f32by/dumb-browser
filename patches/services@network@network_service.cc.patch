@@ -1,5 +1,5 @@
 diff --git a/services/network/network_service.cc b/services/network/network_service.cc
-index 01e7a291e2a5..3fbbda46eb4d 100644
+index 01e7a291e2a5..3e51f0f1815b 100644
 --- a/services/network/network_service.cc
 +++ b/services/network/network_service.cc
 @@ -27,6 +27,7 @@
@@ -33,7 +33,7 @@ index 01e7a291e2a5..3fbbda46eb4d 100644
  
  std::unique_ptr<NetworkService> NetworkService::Create(
      mojo::PendingReceiver<mojom::NetworkService> receiver) {
-+  LOG(INFO) << "NetworkService::Create";
++  VLOG(1) << "NetworkService::Create";
    return std::make_unique<NetworkService>(nullptr, std::move(receiver));
  }
  

@@ -15,6 +15,8 @@
 
 #include "dumb/services/network/url_purify/url_purify_delegate.h"
 
+#include <memory>
+
 // #include <iostream>
 
 #include "base/logging.h"
@@ -36,7 +38,9 @@ URLPurifyResult::URLPurifyResult(const URLPurifyResult& other) = default;
 
 URLPurifyResult::~URLPurifyResult() = default;
 
-QueryMatcher::QueryMatcher(const URLPurifyRule& rule) {
+QueryMatcher::QueryMatcher(const URLPurifyRule& rule)
+    : name_(rule.name) {
+
   const auto& url_pattern = rule.url_pattern;
   const auto& url_exceptions = rule.url_exceptions;
   const auto& query_patterns = rule.query_patterns;
@@ -44,38 +48,39 @@ QueryMatcher::QueryMatcher(const URLPurifyRule& rule) {
   // LOG(INFO) << "Building matchers...";
   re2::RE2::Options options;
   options.set_case_sensitive(false);
+
   // build url_matcher
-  auto* url_matcher = new re2::RE2(url_pattern, options);
-  DCHECK(url_matcher->ok());
+  url_matcher_ = std::make_unique<re2::RE2>(url_pattern, options);
+  DCHECK(url_matcher_->ok());
+
   // build exceptions matcher
-  base::Optional<re2::RE2*> url_exception_matcher;
   if(url_exceptions) {
     const std::string exception_pattern(
       base::JoinString(url_exceptions.value(), "|"));
-    url_exception_matcher = new re2::RE2(exception_pattern, options);
-    DCHECK(url_exception_matcher.value()->ok());
+    url_exception_matcher_ = new re2::RE2(exception_pattern, options);
+    DCHECK(url_exception_matcher_.value()->ok());
   }
-  // build query matcher
-  std::vector<std::unique_ptr<re2::RE2>> query_matchers;
+
+  // build query matchers
   const std::string query_pattern(base::JoinString(query_patterns, "|"));
 
   // appended matcher
   auto* query_appended_matcher = new re2::RE2(
     "^(" + query_pattern + ")=[^&]+$", options);
   DCHECK(query_appended_matcher->ok());
-  query_matchers.emplace_back(query_appended_matcher);
+  query_matchers_.emplace_back(query_appended_matcher);
 
   // first matcher
   auto* query_first_matcher = new re2::RE2(
     "^(" + query_pattern + ")=[^&]+&", options);
   DCHECK(query_first_matcher->ok());
-  query_matchers.emplace_back(query_first_matcher);
+  query_matchers_.emplace_back(query_first_matcher);
 
   // only matcher
   auto* query_only_matcher = new re2::RE2(
     "&(" + query_pattern + ")=[^&]+", options);
   DCHECK(query_only_matcher->ok());
-  query_matchers.emplace_back(query_only_matcher);
+  query_matchers_.emplace_back(query_only_matcher);
 }
 
 QueryMatcher::QueryMatcher(QueryMatcher&&) = default;
@@ -85,11 +90,13 @@ QueryMatcher::~QueryMatcher() = default;
 URLPurifyDelegate::URLPurifyDelegate()
     : enabled_(true),
       global_rules_matcher_(GetDefaultGlobalRules()) {
+  VLOG(1) << "Loading default purify rules...";
   // Initialize with default rules.
   // These rules may be overwritten.
   for (const auto& r : GetDefaultPerSiteRules()) {
     per_site_matchers_.emplace_back(QueryMatcher(r));
   }
+  VLOG(1) << "Total per-site rule count: " << per_site_matchers_.size();
 }
 
 URLPurifyDelegate::~URLPurifyDelegate() = default;
@@ -107,19 +114,18 @@ URLPurifyDelegate::TruncateURLParameters(net::URLRequest* const request,
     int count = 0;
 
     // Apply global rules.
-    count +=
-        TryApplyMatcher(global_rules_matcher_,
-            true, full_url, new_query).value();
+    count += TryApplyMatcher(global_rules_matcher_,
+                             true, full_url, new_query);
 
     // Apply per-site rules.
     for(const auto& matcher: per_site_matchers_) {
-      auto result = TryApplyMatcher(matcher, false, full_url, new_query);
-      if(result.has_value()) {
-        if(result.value() == -1) {
-          // Not match
-          break;
-        }
-        count += result.value();
+      auto ret = TryApplyMatcher(matcher, false, full_url, new_query);
+      if(ret == -1) {
+        // Meet an exception.
+        break;
+      }
+      else if(ret >= 0) {
+        count += ret;
         break;
       }
     }
@@ -132,7 +138,7 @@ URLPurifyDelegate::TruncateURLParameters(net::URLRequest* const request,
         replacements.SetQuery(new_query.c_str(),
                               url::Component(0, new_query.size()));
       }
-      auto new_url = request->url().ReplaceComponents(replacements);
+      GURL new_url = request->url().ReplaceComponents(replacements);
       return {new_url, count};
     }
   }
@@ -150,7 +156,7 @@ void URLPurifyDelegate::OnNewRules(base::span<const uint8_t> purify_rules,
 
 }
 
-base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
+int URLPurifyDelegate::TryApplyMatcher(
     const QueryMatcher& matcher,
     bool is_global,
     const std::string& full_url,
@@ -158,20 +164,31 @@ base::Optional<int> URLPurifyDelegate::TryApplyMatcher(
   int count = 0;
   const auto url_len = full_url.length() - 1;
 
+  if (!is_global && matcher.url_matcher()->Match(
+      full_url, 0, url_len, RE2UNANCHORED, nullptr, 0)) {
+    return -2;
+  }
+
   // Skip if match any exception.
-  if(!is_global && matcher.url_exception_matcher.has_value() &&
-      matcher.url_exception_matcher.value()->Match(
+  if (!is_global && matcher.url_exception_matcher().has_value() &&
+      matcher.url_exception_matcher().value()->Match(
           full_url, 0, url_len, RE2UNANCHORED, nullptr, 0)) {
+    VLOG(1) << "Meet an exception. No filter will be applied.";
     return -1;
   }
 
   // filter
-  for(const auto& query_matcher: matcher.query_matchers) {
+  for (const auto& query_matcher: matcher.query_matchers()) {
     count += re2::RE2::GlobalReplace(&new_query, *query_matcher.get(), "");
   }
 
-  DLOG(INFO) << "Removed " << count
-      << " parameters. New spec: " << new_query;
+  if (count > 0) {
+    VLOG(1) << "Removed " << count
+            << " parameters. New spec: " << new_query;
+  }
+  else {
+    VLOG(1) << "No query parameter was removed from " << full_url;
+  }
 
   return count;
 }

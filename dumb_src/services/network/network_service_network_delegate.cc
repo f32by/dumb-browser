@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "dumb/services/network/network_service_network_delegate.h"
+#include "services/network/network_service_network_delegate.h"
 
 #include <string>
 
@@ -90,15 +90,16 @@ int NetworkServiceNetworkDelegate::OnBeforeURLRequest(
   MaybeTruncateReferrer(request, *effective_url);
 
   NetworkService* network_service = network_context_->network_service();
-  if (network_service)
+  if (network_service) {
     network_service->OnBeforeURLRequest();
 
-  auto* url_purify_delegate = network_service->url_purify_delegate();
-  auto purify_result =
-      url_purify_delegate->TruncateURLParameters(request, *effective_url);
-  if (purify_result.count != 0) {
-    *new_url = purify_result.new_url.value();
-    effective_url = new_url;
+    auto* url_purify_delegate = network_service->url_purify_delegate();
+    auto purify_result =
+        url_purify_delegate->TruncateURLParameters(request, *effective_url);
+    if (purify_result.count != 0) {
+      *new_url = purify_result.new_url.value();
+      effective_url = new_url;
+    }
   }
 
   if (!loader)

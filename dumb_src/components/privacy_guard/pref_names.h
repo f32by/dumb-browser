@@ -13,11 +13,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_COMPONENTS_PRIVACY_GUARD_PREF_NAMES_H_
-#define DUMB_COMPONENTS_PRIVACY_GUARD_PREF_NAMES_H_
+#ifndef DUMB_COMMON_PREF_NAMES_H_
+#define DUMB_COMMON_PREF_NAMES_H_
 
 #include "build/build_config.h"
-#include "chrome/common/buildflags.h"
 
 namespace prefs {
 
@@ -25,4 +24,4 @@ extern const char kURLPurifyEnabled[];
 
 }
 
-#endif // DUMB_COMPONENTS_PRIVACY_GUARD_PREF_NAMES_H_
+#endif
