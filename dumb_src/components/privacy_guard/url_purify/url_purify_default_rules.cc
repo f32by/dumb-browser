@@ -48,7 +48,7 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
        "ie", "sei", "sa", "dpr", "hl", "btn[a-zA-Z]", "sa",
        "usg", "cd", "cad", "uact"},
       {
-        // Exclude Google video server
+       // Exclude Google video server
        ".*(.googlevideo.com).*",
        ".*(mail\\.google\\.).*(\\/mail\\/u\\/0).*",
        ".*(google\\.).*(\\/upload)?(\\/drive)\\/.*",
@@ -65,12 +65,12 @@ const std::vector<URLPurifyRule>& GetDefaultPerSiteRules() {
        ".*(google\\.).*\\/recaptcha\\/.*"}
     },
     // Google Search
-    {
-      "Google Search",
-      "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?google(?:\\.[a-z]{2,}){1,}\\/search\\?",
-      {"client", "sclient"},
-      base::nullopt
-    },
+    // {
+    //   "Google Search",
+    //   "^https?:\\/\\/(?:[a-z0-9-]+\\.)*?google(?:\\.[a-z]{2,}){1,}\\/search\\?",
+    //   {"client", "sclient"},
+    //   base::nullopt
+    // },
     // Amazon
     {
       "Amazon",
