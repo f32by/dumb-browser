@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/metrics/jumplist_metrics_win.cc b/chrome/browser/metrics/jumplist_metrics_win.cc
+index 809621c8394a..0e223c7a8ecf 100644
+--- a/chrome/browser/metrics/jumplist_metrics_win.cc
++++ b/chrome/browser/metrics/jumplist_metrics_win.cc
+@@ -4,23 +4,12 @@
+ 
+ #include "chrome/browser/metrics/jumplist_metrics_win.h"
+ 
+-#include "base/metrics/histogram_macros.h"
+-
+ namespace jumplist {
+ 
+ const char kMostVisitedCategory[] = "most-visited";
+ const char kRecentlyClosedCategory[] = "recently-closed";
+ 
+ void LogJumplistActionFromSwitchValue(const std::string& value) {
+-  JumplistCategory metric = CATEGORY_UNKNOWN;
+-  if (value == kMostVisitedCategory)
+-    metric = MOST_VISITED_URL;
+-  else if (value == kRecentlyClosedCategory)
+-    metric = RECENTLY_CLOSED_URL;
+-  DCHECK_NE(metric, CATEGORY_UNKNOWN);
+-
+-  UMA_HISTOGRAM_ENUMERATION(
+-      "WinJumplist.Action", metric, NUM_JUMPLIST_CATEGORY_METRICS);
+ }
+ 
+ }  // namespace jumplist

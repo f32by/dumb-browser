@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc b/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc
+index 6c636104b395..f0648547d0ff 100644
+--- a/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc
++++ b/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc
+@@ -6,8 +6,6 @@
+ 
+ #include "base/files/file_path.h"
+ #include "base/macros.h"
+-#include "chrome/browser/media_galleries/fileapi/supported_audio_video_checker.h"
+-#include "chrome/browser/media_galleries/fileapi/supported_image_type_validator.h"
+ #include "storage/browser/file_system/copy_or_move_file_validator.h"
+ #include "storage/browser/file_system/file_system_url.h"
+ 
+@@ -44,11 +42,5 @@ storage::CopyOrMoveFileValidator*
+ MediaFileValidatorFactory::CreateCopyOrMoveFileValidator(
+     const storage::FileSystemURL& src,
+     const base::FilePath& platform_path) {
+-  base::FilePath src_path = src.virtual_path();
+-  if (SupportedImageTypeValidator::SupportsFileType(src_path))
+-    return new SupportedImageTypeValidator(platform_path);
+-  if (SupportedAudioVideoChecker::SupportsFileType(src_path))
+-    return new SupportedAudioVideoChecker(platform_path);
+-
+   return new InvalidFileValidator();
+ }
