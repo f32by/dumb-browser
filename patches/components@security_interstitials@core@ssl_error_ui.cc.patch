@@ -1,0 +1,20 @@
+diff --git a/components/security_interstitials/core/ssl_error_ui.cc b/components/security_interstitials/core/ssl_error_ui.cc
+index afa80c4ff4d8..4bbbc8baf749 100644
+--- a/components/security_interstitials/core/ssl_error_ui.cc
++++ b/components/security_interstitials/core/ssl_error_ui.cc
+@@ -89,10 +89,11 @@ void SSLErrorUI::PopulateStringsForHTML(base::DictionaryValue* load_time_data) {
+   load_time_data->SetBoolean("show_recurrent_error_paragraph",
+                              controller_->HasSeenRecurrentError());
+ 
+-  if (soft_override_enabled_)
+-    PopulateOverridableStrings(load_time_data);
+-  else
+-    PopulateNonOverridableStrings(load_time_data);
++  // if (soft_override_enabled_)
++  //   PopulateOverridableStrings(load_time_data);
++  // else
++  //   PopulateNonOverridableStrings(load_time_data);
++  PopulateOverridableStrings(load_time_data);
+ }
+ 
+ const net::SSLInfo& SSLErrorUI::ssl_info() const {

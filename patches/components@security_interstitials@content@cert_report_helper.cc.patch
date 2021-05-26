@@ -1,5 +1,5 @@
 diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
-index 01364e93b529..54dde79d9783 100644
+index 01364e93b529..c743df71ade0 100644
 --- a/components/security_interstitials/content/cert_report_helper.cc
 +++ b/components/security_interstitials/content/cert_report_helper.cc
 @@ -15,7 +15,6 @@
@@ -34,29 +34,42 @@ index 01364e93b529..54dde79d9783 100644
  
  CertReportHelper::~CertReportHelper() = default;
  
-@@ -84,8 +75,7 @@ void CertReportHelper::PopulateExtendedReportingOption(
+@@ -84,32 +75,13 @@ void CertReportHelper::PopulateExtendedReportingOption(
      return;
  
    load_time_data->SetBoolean(
 -      security_interstitials::kBoxChecked,
 -      safe_browsing::IsExtendedReportingEnabled(*GetPrefs(web_contents_)));
+-
+-  load_time_data->SetString(
+-      security_interstitials::kOptInLink,
+-      l10n_util::GetStringUTF16(IDS_SAFE_BROWSING_SCOUT_REPORTING_AGREE));
 +      security_interstitials::kBoxChecked, false);
+ }
  
-   load_time_data->SetString(
-       security_interstitials::kOptInLink,
-@@ -102,11 +92,6 @@ void CertReportHelper::PopulateEnhancedProtectionMessage(
-   if (!show)
-     return;
- 
+ void CertReportHelper::PopulateEnhancedProtectionMessage(
+     base::DictionaryValue* load_time_data) {
+-  const bool show = ShouldShowEnhancedProtectionMessage();
+-
+   load_time_data->SetBoolean(
+-      security_interstitials::kDisplayEnhancedProtectionMessage, show);
+-
+-  if (!show)
+-    return;
+-
 -  if (metrics_helper_) {
 -    metrics_helper_->RecordUserInteraction(
 -        security_interstitials::MetricsHelper::SHOW_ENHANCED_PROTECTION);
 -  }
 -
-   load_time_data->SetString(
-       security_interstitials::kEnhancedProtectionMessage,
-       l10n_util::GetStringUTF16(IDS_SAFE_BROWSING_ENHANCED_PROTECTION_MESSAGE));
-@@ -122,14 +107,8 @@ void CertReportHelper::HandleReportingCommands(
+-  load_time_data->SetString(
+-      security_interstitials::kEnhancedProtectionMessage,
+-      l10n_util::GetStringUTF16(IDS_SAFE_BROWSING_ENHANCED_PROTECTION_MESSAGE));
++      security_interstitials::kDisplayEnhancedProtectionMessage, false);
+ }
+ 
+ void CertReportHelper::SetSSLCertReporterForTesting(
+@@ -122,14 +94,8 @@ void CertReportHelper::HandleReportingCommands(
      PrefService* pref_service) {
    switch (command) {
      case security_interstitials::CMD_DO_REPORT:
@@ -71,7 +84,7 @@ index 01364e93b529..54dde79d9783 100644
        break;
      case security_interstitials::CMD_PROCEED:
        user_action_ = CertificateErrorReport::USER_PROCEEDED;
-@@ -143,57 +122,10 @@ void CertReportHelper::HandleReportingCommands(
+@@ -143,57 +109,10 @@ void CertReportHelper::HandleReportingCommands(
    }
  }
  
@@ -131,7 +144,7 @@ index 01364e93b529..54dde79d9783 100644
  }
  
  bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
-@@ -203,26 +135,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
+@@ -203,26 +122,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
    // mode.
    const bool in_incognito =
        web_contents_->GetBrowserContext()->IsOffTheRecord();

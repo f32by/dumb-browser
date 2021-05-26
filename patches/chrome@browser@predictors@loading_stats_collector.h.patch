@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/predictors/loading_stats_collector.h b/chrome/browser/predictors/loading_stats_collector.h
+index a6db3d1b9cf0..a1bd9ca0eb4b 100644
+--- a/chrome/browser/predictors/loading_stats_collector.h
++++ b/chrome/browser/predictors/loading_stats_collector.h
+@@ -68,9 +68,6 @@ class LoadingStatsCollector {
+   void CleanupAbandonedStats();
+ 
+  private:
+-  ResourcePrefetchPredictor* predictor_;
+-  base::TimeDelta max_stats_age_;
+-  std::map<GURL, std::unique_ptr<PreconnectStats>> preconnect_stats_;
+ 
+   DISALLOW_COPY_AND_ASSIGN(LoadingStatsCollector);
+ };

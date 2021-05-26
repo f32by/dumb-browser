@@ -30,6 +30,7 @@ Other changes:
 - [UI] Audio mute button on tab
 - [UI] Force popups to be opened in new tabs
 - [UI] Darker web control elements (Edge style)
+- [UI] No need to type `thisisunsafe` to continue when browsing some websites with certificate issues.
 - [History] Unlimited browsing history
 
 # Installation
