@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/tabs/tab.cc b/chrome/browser/ui/views/tabs/tab.cc
-index 66916d78bdfc..6c23a40effe1 100644
+index 010f5a6a44312..14009e9c56cce 100644
 --- a/chrome/browser/ui/views/tabs/tab.cc
 +++ b/chrome/browser/ui/views/tabs/tab.cc
 @@ -34,7 +34,7 @@
@@ -11,7 +11,7 @@ index 66916d78bdfc..6c23a40effe1 100644
  #include "chrome/browser/ui/views/tabs/browser_tab_strip_controller.h"
  #include "chrome/browser/ui/views/tabs/tab_close_button.h"
  #include "chrome/browser/ui/views/tabs/tab_controller.h"
-@@ -177,6 +177,18 @@ class Tab::TabCloseButtonObserver : public views::ViewObserver {
+@@ -180,6 +180,18 @@ class Tab::TabCloseButtonObserver : public views::ViewObserver {
  
  // Tab -------------------------------------------------------------------------
  
@@ -30,7 +30,7 @@ index 66916d78bdfc..6c23a40effe1 100644
  // static
  void Tab::SetShowHoverCardOnMouseHoverForTesting(bool value) {
    g_show_hover_card_on_mouse_hover = value;
-@@ -220,8 +232,8 @@ Tab::Tab(TabController* controller)
+@@ -223,8 +235,8 @@ Tab::Tab(TabController* controller)
    icon_ = new TabIcon;
    AddChildView(icon_);
  
@@ -41,7 +41,7 @@ index 66916d78bdfc..6c23a40effe1 100644
  
    // Unretained is safe here because this class outlives its close button, and
    // the controller outlives this Tab.
-@@ -349,7 +361,7 @@ void Tab::Layout() {
+@@ -353,7 +365,7 @@ void Tab::Layout() {
        if (extra_alert_indicator_padding_)
          right -= ui::TouchUiController::Get()->touch_ui() ? 8 : 6;
      }
@@ -50,7 +50,7 @@ index 66916d78bdfc..6c23a40effe1 100644
      gfx::Rect bounds(
          std::max(contents_rect.x(), right - image_size.width()),
          contents_rect.y() + Center(contents_rect.height(), image_size.height()),
-@@ -361,9 +373,9 @@ void Tab::Layout() {
+@@ -365,9 +377,9 @@ void Tab::Layout() {
      } else {
        MaybeAdjustLeftForPinnedTab(&bounds, bounds.width());
      }
@@ -62,7 +62,7 @@ index 66916d78bdfc..6c23a40effe1 100644
  
    // Size the title to fill the remaining width and use all available height.
    bool show_title = ShouldRenderAsNormalTab();
-@@ -381,7 +393,7 @@ void Tab::Layout() {
+@@ -385,7 +397,7 @@ void Tab::Layout() {
      }
      int title_right = contents_rect.right();
      if (showing_alert_indicator_) {
@@ -71,7 +71,7 @@ index 66916d78bdfc..6c23a40effe1 100644
      } else if (showing_close_button_) {
        // Allow the title to overlay the close button's empty border padding.
        title_right = close_x - after_title_padding;
-@@ -492,11 +504,9 @@ bool Tab::OnMousePressed(const ui::MouseEvent& event) {
+@@ -497,11 +509,9 @@ bool Tab::OnMousePressed(const ui::MouseEvent& event) {
          }
        } else if (!IsSelected()) {
          controller_->SelectTab(this, event);
@@ -83,7 +83,7 @@ index 66916d78bdfc..6c23a40effe1 100644
      }
      ui::MouseEvent cloned_event(event_in_parent, parent(),
                                  static_cast<View*>(this));
-@@ -777,7 +787,7 @@ bool Tab::IsActive() const {
+@@ -781,7 +791,7 @@ bool Tab::IsActive() const {
  void Tab::ActiveStateChanged() {
    UpdateTabIconNeedsAttentionBlocked();
    UpdateForegroundColors();
@@ -92,7 +92,7 @@ index 66916d78bdfc..6c23a40effe1 100644
    title_->SetFontList(tab_style_->GetFontList());
    Layout();
  }
-@@ -826,7 +836,7 @@ void Tab::SetData(TabRendererData data) {
+@@ -831,7 +841,7 @@ void Tab::SetData(TabRendererData data) {
    const auto new_alert_state = GetAlertStateToShow(data_.alert_state);
    const auto old_alert_state = GetAlertStateToShow(old.alert_state);
    if (new_alert_state != old_alert_state)
@@ -100,8 +100,8 @@ index 66916d78bdfc..6c23a40effe1 100644
 +    alert_indicator_button_->TransitionToAlertState(new_alert_state);
    if (old.pinned != data_.pinned)
      showing_alert_indicator_ = false;
- 
-@@ -926,7 +936,7 @@ void Tab::UpdateIconVisibility() {
+   if (!data_.pinned && old.pinned) {
+@@ -938,7 +948,7 @@ void Tab::UpdateIconVisibility() {
  
    const bool has_favicon = data().show_icon;
    const bool has_alert_icon =
@@ -110,7 +110,7 @@ index 66916d78bdfc..6c23a40effe1 100644
                          : GetAlertStateToShow(data().alert_state))
            .has_value();
  
-@@ -943,7 +953,7 @@ void Tab::UpdateIconVisibility() {
+@@ -963,7 +973,7 @@ void Tab::UpdateIconVisibility() {
  
    const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
    const int favicon_width = gfx::kFaviconSize;
@@ -119,7 +119,7 @@ index 66916d78bdfc..6c23a40effe1 100644
    // In case of touch optimized UI, the close button has an extra padding on the
    // left that needs to be considered.
    const int close_button_width =
-@@ -1036,21 +1046,13 @@ void Tab::UpdateForegroundColors() {
+@@ -1056,21 +1066,13 @@ void Tab::UpdateForegroundColors() {
  
    if (foreground_color_ != colors.foreground_color) {
      foreground_color_ = colors.foreground_color;

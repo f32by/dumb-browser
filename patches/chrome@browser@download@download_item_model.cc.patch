@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/download/download_item_model.cc b/chrome/browser/download/download_item_model.cc
-index d5c18e3dd700..0836e464cd62 100644
+index c83a001251351..1a5b1c52e95d4 100644
 --- a/chrome/browser/download/download_item_model.cc
 +++ b/chrome/browser/download/download_item_model.cc
-@@ -22,21 +22,14 @@
+@@ -23,21 +23,14 @@
  #include "chrome/browser/download/download_crx_util.h"
  #include "chrome/browser/download/download_history.h"
  #include "chrome/browser/download/download_prefs.h"
@@ -24,7 +24,7 @@ index d5c18e3dd700..0836e464cd62 100644
  #include "content/public/browser/download_item_utils.h"
  #include "ui/base/l10n/l10n_util.h"
  #include "ui/base/l10n/time_format.h"
-@@ -49,7 +42,6 @@
+@@ -50,7 +43,6 @@
  using base::TimeDelta;
  using download::DownloadItem;
  using MixedContentStatus = download::DownloadItem::MixedContentStatus;
@@ -32,7 +32,7 @@ index d5c18e3dd700..0836e464cd62 100644
  
  namespace {
  
-@@ -79,10 +71,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
+@@ -80,10 +72,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
    // for the file type.
    bool should_prefer_opening_in_browser_;
  
@@ -43,7 +43,7 @@ index d5c18e3dd700..0836e464cd62 100644
    // Whether the download is currently being revived.
    bool is_being_revived_;
  
-@@ -118,7 +106,6 @@ DownloadItemModelData::DownloadItemModelData()
+@@ -119,7 +107,6 @@ DownloadItemModelData::DownloadItemModelData()
      : should_show_in_shelf_(true),
        was_ui_notified_(false),
        should_prefer_opening_in_browser_(false),

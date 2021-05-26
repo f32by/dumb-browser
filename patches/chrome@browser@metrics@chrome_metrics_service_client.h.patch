@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.h b/chrome/browser/metrics/chrome_metrics_service_client.h
-index b7fafa16f377..4e09dde59041 100644
+index 650ea5ecdff2e..bafcc5393205d 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.h
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.h
 @@ -17,21 +17,13 @@
@@ -35,7 +35,7 @@ index b7fafa16f377..4e09dde59041 100644
   public:
    ~ChromeMetricsServiceClient() override;
  
-@@ -59,48 +49,16 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -59,7 +49,6 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
  
    // metrics::MetricsServiceClient:
    metrics::MetricsService* GetMetricsService() override;
@@ -43,48 +43,38 @@ index b7fafa16f377..4e09dde59041 100644
    void SetMetricsClientId(const std::string& client_id) override;
    int32_t GetProduct() override;
    std::string GetApplicationLocale() override;
-   bool GetBrand(std::string* brand_code) override;
+@@ -67,6 +56,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    metrics::SystemProfileProto::Channel GetChannel() override;
+   bool IsExtendedStableChannel() override;
    std::string GetVersionString() override;
--  void OnEnvironmentUpdate(std::string* serialized_environment) override;
--  void CollectFinalMetricsForLog(base::OnceClosure done_callback) override;
--  std::unique_ptr<metrics::MetricsLogUploader> CreateUploader(
--      const GURL& server_url,
--      const GURL& insecure_server_url,
--      base::StringPiece mime_type,
--      metrics::MetricsLogUploader::MetricServiceType service_type,
--      const metrics::MetricsLogUploader::UploadCallback& on_upload_complete)
--      override;
--  base::TimeDelta GetStandardUploadInterval() override;
--  void OnPluginLoadingError(const base::FilePath& plugin_path) override;
--  bool IsReportingPolicyManaged() override;
--  metrics::EnableMetricsDefault GetMetricsReportingDefaultState() override;
--  bool IsUMACellularUploadLogicEnabled() override;
--  bool IsUkmAllowedForAllProfiles() override;
--  bool IsUkmAllowedWithExtensionsForAllProfiles() override;
--  bool AreNotificationListenersEnabledOnAllProfiles() override;
++#if 0
+   void OnEnvironmentUpdate(std::string* serialized_environment) override;
+   void CollectFinalMetricsForLog(base::OnceClosure done_callback) override;
+   std::unique_ptr<metrics::MetricsLogUploader> CreateUploader(
+@@ -84,12 +74,13 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+   bool IsUkmAllowedForAllProfiles() override;
+   bool IsUkmAllowedWithExtensionsForAllProfiles() override;
+   bool AreNotificationListenersEnabledOnAllProfiles() override;
++#endif
    std::string GetAppPackageName() override;
 -  std::string GetUploadSigningKey() override;
    static void SetNotificationListenerSetupFailedForTesting(
        bool simulate_failure);
    bool ShouldResetClientIdsOnClonedInstall() override;
--
--  // ukm::HistoryDeleteObserver:
--  void OnHistoryDeleted() override;
--
--  // ukm::UkmConsentStateObserver:
--  void OnUkmAllowedStateChanged(bool must_purge) override;
--
--  // Determine what to do with a file based on filename. Visible for testing.
--  using IsProcessRunningFunction = bool (*)(base::ProcessId);
--  static metrics::FileMetricsProvider::FilterAction FilterBrowserMetricsFiles(
--      const base::FilePath& path);
--  static void SetIsProcessRunningForTesting(IsProcessRunningFunction func);
--
+ 
++#if 0
+   // ukm::HistoryDeleteObserver:
+   void OnHistoryDeleted() override;
+ 
+@@ -101,6 +92,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+   static metrics::FileMetricsProvider::FilterAction FilterBrowserMetricsFiles(
+       const base::FilePath& path);
+   static void SetIsProcessRunningForTesting(IsProcessRunningFunction func);
++#endif
+ 
   private:
    FRIEND_TEST_ALL_PREFIXES(ChromeMetricsServiceClientTest, IsWebstoreExtension);
- 
-@@ -110,101 +68,21 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -111,101 +103,21 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    // Completes the two-phase initialization of ChromeMetricsServiceClient.
    void Initialize();
  

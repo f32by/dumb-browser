@@ -1,17 +1,24 @@
 diff --git a/chrome/browser/profiles/off_the_record_profile_impl.cc b/chrome/browser/profiles/off_the_record_profile_impl.cc
-index 921fedb0cc6b..fcaeb7362fb5 100644
+index 4e361cfd4ec86..a235a941d4d56 100644
 --- a/chrome/browser/profiles/off_the_record_profile_impl.cc
 +++ b/chrome/browser/profiles/off_the_record_profile_impl.cc
-@@ -37,8 +37,6 @@
+@@ -37,7 +37,6 @@
  #include "chrome/browser/download/download_core_service_factory.h"
  #include "chrome/browser/file_system_access/chrome_file_system_access_permission_context.h"
  #include "chrome/browser/file_system_access/file_system_access_permission_context_factory.h"
--#include "chrome/browser/heavy_ad_intervention/heavy_ad_service.h"
 -#include "chrome/browser/heavy_ad_intervention/heavy_ad_service_factory.h"
  #include "chrome/browser/permissions/permission_manager_factory.h"
  #include "chrome/browser/prefs/browser_prefs.h"
  #include "chrome/browser/prefs/incognito_mode_prefs.h"
-@@ -188,8 +186,6 @@ void OffTheRecordProfileImpl::Init() {
+@@ -54,7 +53,6 @@
+ #include "chrome/common/chrome_switches.h"
+ #include "components/background_sync/background_sync_controller_impl.h"
+ #include "components/content_settings/core/browser/host_content_settings_map.h"
+-#include "components/heavy_ad_intervention/heavy_ad_service.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "components/keyed_service/core/simple_dependency_manager.h"
+ #include "components/keyed_service/core/simple_key_map.h"
+@@ -216,8 +214,6 @@ void OffTheRecordProfileImpl::Init() {
    // AccessibilityLabelsService has a default prefs behavior in incognito.
    AccessibilityLabelsService::InitOffTheRecordPrefs(this);
  

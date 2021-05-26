@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/crashes_ui.cc b/chrome/browser/ui/webui/crashes_ui.cc
-index 060e272a99c1..6c254d8974e7 100644
+index 7b13ef38eddcc..4b9b51d94f4f1 100644
 --- a/chrome/browser/ui/webui/crashes_ui.cc
 +++ b/chrome/browser/ui/webui/crashes_ui.cc
 @@ -19,7 +19,6 @@
@@ -10,7 +10,7 @@ index 060e272a99c1..6c254d8974e7 100644
  #include "chrome/browser/metrics/chrome_metrics_service_accessor.h"
  #include "chrome/browser/metrics/metrics_reporting_state.h"
  #include "chrome/browser/profiles/profile.h"
-@@ -103,7 +102,6 @@ class CrashesDOMHandler : public WebUIMessageHandler {
+@@ -107,7 +106,6 @@ class CrashesDOMHandler : public WebUIMessageHandler {
    // Asynchronously requests a user triggered upload. Called from JS.
    void HandleRequestSingleCrashUpload(const base::ListValue* args);
  
@@ -18,7 +18,7 @@ index 060e272a99c1..6c254d8974e7 100644
    bool list_available_;
    bool first_load_;
  
-@@ -112,16 +110,12 @@ class CrashesDOMHandler : public WebUIMessageHandler {
+@@ -116,16 +114,12 @@ class CrashesDOMHandler : public WebUIMessageHandler {
  
  CrashesDOMHandler::CrashesDOMHandler()
      : list_available_(false), first_load_(true) {
@@ -35,7 +35,7 @@ index 060e272a99c1..6c254d8974e7 100644
    web_ui()->RegisterMessageCallback(
        crash_reporter::kCrashesUIRequestCrashList,
        base::BindRepeating(&CrashesDOMHandler::HandleRequestCrashes,
-@@ -147,8 +141,6 @@ void CrashesDOMHandler::HandleRequestCrashes(const base::ListValue* args) {
+@@ -152,8 +146,6 @@ void CrashesDOMHandler::HandleRequestCrashes(const base::ListValue* args) {
        UpdateUI();
    } else {
      list_available_ = false;
@@ -44,7 +44,7 @@ index 060e272a99c1..6c254d8974e7 100644
    }
  }
  
-@@ -204,17 +196,9 @@ void CrashesDOMHandler::UpdateUI() {
+@@ -209,17 +201,9 @@ void CrashesDOMHandler::UpdateUI() {
  
    // Manual uploads currently are supported only for Crashpad-using platforms
    // and only if crash uploads are not disabled by policy.
@@ -61,9 +61,9 @@ index 060e272a99c1..6c254d8974e7 100644
 -  if (upload_list)
 -    crash_reporter::UploadListToValue(upload_list_.get(), &crash_list);
  
-   base::Value enabled(crash_reporting_enabled);
-   base::Value dynamic_backend(system_crash_reporter);
-@@ -238,18 +222,6 @@ void CrashesDOMHandler::UpdateUI() {
+   base::Value result(base::Value::Type::DICTIONARY);
+   result.SetBoolPath("enabled", crash_reporting_enabled);
+@@ -235,18 +219,6 @@ void CrashesDOMHandler::UpdateUI() {
  
  void CrashesDOMHandler::HandleRequestSingleCrashUpload(
      const base::ListValue* args) {

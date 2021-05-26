@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/fonts/font_platform_data.h b/third_party/blink/renderer/platform/fonts/font_platform_data.h
-index b10ff2e8be62..3f95f91460f0 100644
+index af3ec2076b022..9ecd0c88e4760 100644
 --- a/third_party/blink/renderer/platform/fonts/font_platform_data.h
 +++ b/third_party/blink/renderer/platform/fonts/font_platform_data.h
 @@ -33,7 +33,6 @@
@@ -12,7 +12,7 @@ index b10ff2e8be62..3f95f91460f0 100644
  #include "third_party/blink/renderer/platform/fonts/font_orientation.h"
 @@ -135,16 +134,6 @@ class PLATFORM_EXPORT FontPlatformData {
                     float device_scale_factor = 1,
-                    const Font* = nullptr) const;
+                    const FontDescription* = nullptr) const;
  
 -  // Computes a digest from the typeface. The digest only depends on the
 -  // underlying font itself, and does not vary by the style (size, weight,

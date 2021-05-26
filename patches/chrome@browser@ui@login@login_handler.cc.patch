@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/login/login_handler.cc b/chrome/browser/ui/login/login_handler.cc
-index 4e52654f965b..1bd5bbfc4e4c 100644
+index 57a6eb08eabd8..fd738f3d3a071 100644
 --- a/chrome/browser/ui/login/login_handler.cc
 +++ b/chrome/browser/ui/login/login_handler.cc
 @@ -20,7 +20,6 @@
@@ -10,8 +10,8 @@ index 4e52654f965b..1bd5bbfc4e4c 100644
  #include "components/no_state_prefetch/browser/no_state_prefetch_contents.h"
  #include "components/password_manager/core/browser/browser_save_password_progress_logger.h"
  #include "components/password_manager/core/browser/http_auth_manager.h"
-@@ -148,23 +147,7 @@ void LoginHandler::SetAuth(const base::string16& username,
-                            const base::string16& password) {
+@@ -149,23 +148,7 @@ void LoginHandler::SetAuth(const std::u16string& username,
+                            const std::u16string& password) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
 -  std::unique_ptr<password_manager::BrowserSavePasswordProgressLogger> logger;
@@ -34,7 +34,7 @@ index 4e52654f965b..1bd5bbfc4e4c 100644
    if (already_handled)
      return;
  
-@@ -176,11 +159,6 @@ void LoginHandler::SetAuth(const base::string16& username,
+@@ -177,11 +160,6 @@ void LoginHandler::SetAuth(const std::u16string& username,
      password_form_.username_value = username;
      password_form_.password_value = password;
      httpauth_manager->OnPasswordFormSubmitted(password_form_);
@@ -46,7 +46,7 @@ index 4e52654f965b..1bd5bbfc4e4c 100644
    }
  
    LoginAuthRequiredCallback callback = std::move(auth_required_callback_);
-@@ -552,15 +530,6 @@ void LoginHandler::ShowLoginPrompt(const GURL& request_url) {
+@@ -553,15 +531,6 @@ void LoginHandler::ShowLoginPrompt(const GURL& request_url) {
      return;
    }
  

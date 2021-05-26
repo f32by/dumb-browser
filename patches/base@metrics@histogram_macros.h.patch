@@ -1,5 +1,5 @@
 diff --git a/base/metrics/histogram_macros.h b/base/metrics/histogram_macros.h
-index aacbacc135d8..0abe148216a8 100644
+index e9c5d462cae30..8a9b9ba4f8d41 100644
 --- a/base/metrics/histogram_macros.h
 +++ b/base/metrics/histogram_macros.h
 @@ -10,7 +10,7 @@
@@ -46,17 +46,18 @@ index aacbacc135d8..0abe148216a8 100644
  
  //------------------------------------------------------------------------------
  // Linear histograms.
-@@ -119,8 +111,7 @@
- // Sample usage:
- //   UMA_HISTOGRAM_EXACT_LINEAR("Histogram.Linear", count, 10);
- #define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, value_max) \
--  INTERNAL_HISTOGRAM_EXACT_LINEAR_WITH_FLAG(                \
--      name, sample, value_max, base::HistogramBase::kUmaTargetedHistogramFlag)
-+    DUMB_UNUSED(name, sample, value_max)
+@@ -124,9 +116,7 @@
+ // In this case, buckets are 1, 2, .., kMax, kMax+1, where the kMax+1 bucket
+ // captures everything kMax+1 and above.
+ #define UMA_HISTOGRAM_EXACT_LINEAR(name, sample, exclusive_max) \
+-  INTERNAL_HISTOGRAM_EXACT_LINEAR_WITH_FLAG(                    \
+-      name, sample, exclusive_max,                              \
+-      base::HistogramBase::kUmaTargetedHistogramFlag)
++  DUMB_UNUSED(name, sample, exclusive_max)
  
  // Used for capturing basic percentages. This will be 100 buckets of size 1.
  
-@@ -148,10 +139,8 @@
+@@ -154,10 +144,8 @@
  //    UMA_HISTOGRAM_SCALED_EXACT_LINER("FooKiB", bucket_no, byte_count,
  //                                     kBucketsMax+1, 1024)
  #define UMA_HISTOGRAM_SCALED_EXACT_LINEAR(name, sample, count, sample_max, \
@@ -69,7 +70,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  //------------------------------------------------------------------------------
  // Count histograms. These are used for collecting numeric data. Note that we
-@@ -200,10 +189,8 @@
+@@ -206,10 +194,8 @@
  
  // Sample usage:
  //   UMA_HISTOGRAM_CUSTOM_COUNTS("My.Histogram", sample, 1, 100000000, 50);
@@ -82,7 +83,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  //------------------------------------------------------------------------------
  // Timing histograms. These are used for collecting timing data (generally
-@@ -219,9 +206,8 @@
+@@ -225,9 +211,8 @@
  
  // Short timings - up to 10 seconds. For high-resolution (microseconds) timings,
  // see UMA_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES.
@@ -94,7 +95,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  // Medium timings - up to 3 minutes. Note this starts at 10ms (no good reason,
  // but not worth changing).
-@@ -247,11 +233,7 @@
+@@ -253,11 +238,7 @@
  //   UMA_HISTOGRAM_CUSTOM_TIMES("Very.Long.Timing.Histogram", time_delta,
  //       base::TimeDelta::FromSeconds(1), base::TimeDelta::FromDays(1), 100);
  #define UMA_HISTOGRAM_CUSTOM_TIMES(name, sample, min, max, bucket_count) \
@@ -107,7 +108,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  // Same as UMA_HISTOGRAM_CUSTOM_TIMES but reports |sample| in microseconds,
  // dropping the report if this client doesn't have a high-resolution clock.
-@@ -266,12 +248,8 @@
+@@ -272,12 +253,8 @@
  //      base::TimeDelta::FromMicroseconds(1),
  //      base::TimeDelta::FromMilliseconds(10), 100);
  #define UMA_HISTOGRAM_CUSTOM_MICROSECONDS_TIMES(name, sample, min, max, \
@@ -122,7 +123,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  // Scoped class which logs its time on this earth in milliseconds as a UMA
  // statistic. This is recommended for when you want a histogram which measures
-@@ -338,10 +316,7 @@ enum class ScopedHistogramTiming {
+@@ -344,10 +321,7 @@ enum class ScopedHistogramTiming {
  // For details on usage, see the documentation on the non-stability equivalents.
  
  #define UMA_STABILITY_HISTOGRAM_BOOLEAN(name, sample) \
@@ -134,7 +135,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  #define UMA_STABILITY_HISTOGRAM_COUNTS_100(name, sample)                       \
      UMA_STABILITY_HISTOGRAM_CUSTOM_COUNTS(name, sample, 1, 100, 50)
-@@ -352,24 +327,14 @@ enum class ScopedHistogramTiming {
+@@ -358,24 +332,14 @@ enum class ScopedHistogramTiming {
          name, sample, min, max, bucket_count,                                  \
          base::HistogramBase::kUmaStabilityHistogramFlag)
  
@@ -163,7 +164,7 @@ index aacbacc135d8..0abe148216a8 100644
  
  //------------------------------------------------------------------------------
  // Histogram instantiation helpers.
-@@ -422,9 +387,7 @@ enum class ScopedHistogramTiming {
+@@ -428,9 +392,7 @@ enum class ScopedHistogramTiming {
  // requirement of |custom_ranges|. You can use the helper function
  // CustomHistogram::ArrayToCustomEnumRanges to transform a C-style array of
  // valid sample values to a std::vector<int>.

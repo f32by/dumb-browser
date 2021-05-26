@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
-index 865b53850a5f..fd3ab57fae2d 100644
+index cd02ccc12a9d0..df3a3b765f75d 100644
 --- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
 +++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
 @@ -17,18 +17,18 @@
@@ -41,7 +41,7 @@ index 865b53850a5f..fd3ab57fae2d 100644
    void OnDismissModule(const std::string& module_id) override;
    void OnRestoreModule(const std::string& module_id) override;
    void SetModulesVisible(bool visible) override;
-@@ -107,8 +105,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -108,8 +106,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
        std::vector<new_tab_page::mojom::MostVisitedTilePtr> tiles,
        double time) override;
    void OnOneGoogleBarRendered(double time) override;
@@ -50,7 +50,7 @@ index 865b53850a5f..fd3ab57fae2d 100644
    void OnMostVisitedTileNavigation(new_tab_page::mojom::MostVisitedTilePtr tile,
                                     uint32_t index,
                                     uint8_t mouse_button,
-@@ -127,7 +123,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -128,7 +124,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
    void OnDoodleShared(new_tab_page::mojom::DoodleShareChannel channel,
                        const std::string& doodle_id,
                        const base::Optional<std::string>& share_id) override;
@@ -58,7 +58,7 @@ index 865b53850a5f..fd3ab57fae2d 100644
    void OnVoiceSearchAction(
        new_tab_page::mojom::VoiceSearchAction action) override;
    void OnVoiceSearchError(new_tab_page::mojom::VoiceSearchError error) override;
-@@ -153,10 +148,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -148,10 +143,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
    void OnOneGoogleBarDataUpdated() override;
    void OnOneGoogleBarServiceShuttingDown() override;
  
@@ -69,7 +69,7 @@ index 865b53850a5f..fd3ab57fae2d 100644
    // SelectFileDialog::Listener:
    void FileSelected(const base::FilePath& path,
                      int index,
-@@ -204,11 +195,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -199,11 +190,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
    std::unordered_map<const network::SimpleURLLoader*,
                       std::unique_ptr<network::SimpleURLLoader>>
        loader_map_;

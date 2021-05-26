@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #ifndef DUMB_NET_DUMB_PROXYING_URL_LOADER_FACTORY_H_
 #define DUMB_NET_DUMB_PROXYING_URL_LOADER_FACTORY_H_
 
@@ -68,7 +70,6 @@ class DumbProxyingURLLoaderFactory
         int32_t network_service_request_id,
         int render_process_id,
         int frame_tree_node_id,
-        int32_t routing_id,
         uint32_t options,
         const network::ResourceRequest& request,
         content::BrowserContext* browser_context,
@@ -91,6 +92,8 @@ class DumbProxyingURLLoaderFactory
     void ResumeReadingBodyFromNet() override;
 
     // network::mojom::URLLoaderClient:
+    void OnReceiveEarlyHints(
+        network::mojom::EarlyHintsPtr early_hints) override;
     void OnReceiveResponse(
         network::mojom::URLResponseHeadPtr response_head) override;
     void OnReceiveRedirect(
@@ -132,7 +135,6 @@ class DumbProxyingURLLoaderFactory
 
     const int render_process_id_;
     const int frame_tree_node_id_;
-    const int32_t routing_id_;
     const uint32_t options_;
 
     content::BrowserContext* browser_context_;
@@ -206,7 +208,6 @@ class DumbProxyingURLLoaderFactory
   // network::mojom::URLLoaderFactory:
   void CreateLoaderAndStart(
       mojo::PendingReceiver<network::mojom::URLLoader> loader_receiver,
-      int32_t routing_id,
       int32_t request_id,
       uint32_t options,
       const network::ResourceRequest& request,

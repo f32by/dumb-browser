@@ -1,54 +1,8 @@
 diff --git a/chrome/browser/badging/badge_manager.cc b/chrome/browser/badging/badge_manager.cc
-index 7b3c3ce34ec3..fd6abdc63751 100644
+index efde619011b38..9ca428a8a3ef7 100644
 --- a/chrome/browser/badging/badge_manager.cc
 +++ b/chrome/browser/badging/badge_manager.cc
-@@ -18,13 +18,10 @@
- #include "chrome/browser/ui/web_applications/app_browser_controller.h"
- #include "chrome/browser/web_applications/components/app_registrar.h"
- #include "chrome/browser/web_applications/components/web_app_provider_base.h"
--#include "components/ukm/app_source_url_recorder.h"
- #include "content/public/browser/browser_task_traits.h"
- #include "content/public/browser/browser_thread.h"
- #include "content/public/browser/render_frame_host.h"
- #include "content/public/browser/render_process_host.h"
--#include "services/metrics/public/cpp/delegating_ukm_recorder.h"
--#include "services/metrics/public/cpp/ukm_builders.h"
- #include "ui/base/l10n/l10n_util.h"
- #include "ui/strings/grit/ui_strings.h"
- 
-@@ -101,31 +98,6 @@ base::Optional<BadgeManager::BadgeValue> BadgeManager::GetBadgeValue(
-   return it->second;
- }
- 
--void BadgeManager::SetBadgeForTesting(const web_app::AppId& app_id,
--                                      BadgeValue value,
--                                      ukm::UkmRecorder* test_recorder) {
--  ukm::SourceId source_id = ukm::UkmRecorder::GetNewSourceID();
--  if (value == base::nullopt) {
--    ukm::builders::Badging(source_id)
--        .SetUpdateAppBadge(kSetFlagBadge)
--        .Record(test_recorder);
--  } else {
--    ukm::builders::Badging(source_id)
--        .SetUpdateAppBadge(kSetNumericBadge)
--        .Record(test_recorder);
--  }
--  UpdateBadge(app_id, value);
--}
--
--void BadgeManager::ClearBadgeForTesting(const web_app::AppId& app_id,
--                                        ukm::UkmRecorder* test_recorder) {
--  ukm::SourceId source_id = ukm::UkmRecorder::GetNewSourceID();
--  ukm::builders::Badging(source_id)
--      .SetUpdateAppBadge(kClearBadge)
--      .Record(test_recorder);
--  UpdateBadge(app_id, base::nullopt);
--}
--
- void BadgeManager::UpdateBadge(const web_app::AppId& app_id,
-                                base::Optional<BadgeValue> value) {
-   if (!value)
-@@ -155,22 +127,8 @@ void BadgeManager::SetBadge(blink::mojom::BadgeValuePtr mojo_value) {
+@@ -199,22 +199,8 @@ void BadgeManager::SetBadge(blink::mojom::BadgeValuePtr mojo_value) {
                           ? base::nullopt
                           : base::make_optional(mojo_value->get_number());
  
@@ -71,22 +25,19 @@ index 7b3c3ce34ec3..fd6abdc63751 100644
  
      UpdateBadge(/*app_id=*/std::get<0>(app), base::make_optional(value));
    }
-@@ -179,18 +137,6 @@ void BadgeManager::SetBadge(blink::mojom::BadgeValuePtr mojo_value) {
- void BadgeManager::ClearBadge() {
-   const std::vector<std::tuple<web_app::AppId, GURL>> app_ids =
+@@ -224,15 +210,9 @@ void BadgeManager::ClearBadge() {
+   const std::vector<std::tuple<web_app::AppId, GURL>> app_ids_and_urls =
        receivers_.current_context()->GetAppIdsAndUrlsForBadging();
--
+ 
 -  ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
--  for (const auto& app : app_ids) {
--    // The app's start_url is used to identify the app
--    // for recording badging usage per app.
+   for (const auto& app : app_ids_and_urls) {
+     // The app's start_url is used to identify the app
+     // for recording badging usage per app.
 -    GURL url = std::get<1>(app);
 -    ukm::SourceId source_id = ukm::AppSourceUrlRecorder::GetSourceIdForPWA(url);
 -    ukm::builders::Badging(source_id)
 -        .SetUpdateAppBadge(kClearBadge)
 -        .Record(recorder);
--    UpdateBadge(/*app_id=*/std::get<0>(app), base::nullopt);
--  }
+     UpdateBadge(/*app_id=*/std::get<0>(app), base::nullopt);
+   }
  }
- 
- std::vector<std::tuple<web_app::AppId, GURL>>

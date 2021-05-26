@@ -1,8 +1,16 @@
 diff --git a/chrome/common/extensions/api/api_sources.gni b/chrome/common/extensions/api/api_sources.gni
-index 8abfbeb827ff..f6c99a166b2d 100644
+index 5b0625bd56447..034226804e751 100644
 --- a/chrome/common/extensions/api/api_sources.gni
 +++ b/chrome/common/extensions/api/api_sources.gni
-@@ -47,7 +47,6 @@ schema_sources_ = [
+@@ -31,7 +31,6 @@ schema_sources_ = [
+   "downloads.idl",
+   "downloads_internal.idl",
+   "enterprise_hardware_platform.idl",
+-  "enterprise_reporting_private.idl",
+   "font_settings.json",
+   "gcm.json",
+   "history.json",
+@@ -47,7 +46,6 @@ schema_sources_ = [
    "passwords_private.idl",
    "permissions.json",
    "resources_private.idl",
@@ -10,14 +18,3 @@ index 8abfbeb827ff..f6c99a166b2d 100644
    "scripting.idl",
    "search.idl",
    "sessions.json",
-@@ -125,10 +124,6 @@ if (is_chromeos_ash) {
-   schema_sources_ += [ "input_ime.json" ]
- }
- 
--if (!is_chromeos_ash) {
--  schema_sources_ += [ "enterprise_reporting_private.idl" ]
--}
--
- if (enable_service_discovery) {
-   schema_sources_ += [ "mdns.idl" ]
- }

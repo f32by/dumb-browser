@@ -1,17 +1,19 @@
 diff --git a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
-index 1982ae4822cd..dcb4d114ea73 100644
+index ef6d0d7ccec01..65caa2c0ff9a5 100644
 --- a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
 +++ b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
-@@ -29,8 +29,6 @@
+@@ -33,10 +33,6 @@
  #include "chrome/browser/extensions/install_tracker.h"
  #include "chrome/browser/extensions/scoped_active_install.h"
  #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_metrics_collector.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_metrics_collector_factory.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_navigation_observer_manager.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/ui/app_list/app_list_util.h"
  #include "chrome/browser/ui/browser_dialogs.h"
-@@ -64,8 +62,6 @@
+@@ -70,8 +66,6 @@
  #include "chrome/browser/supervised_user/supervised_user_service_factory.h"
  #endif  // BUILDFLAG(ENABLE_SUPERVISED_USERS)
  
@@ -20,7 +22,7 @@ index 1982ae4822cd..dcb4d114ea73 100644
  namespace extensions {
  
  namespace BeginInstallWithManifest3 =
-@@ -204,6 +200,7 @@ void ShowBlockedByParentDialog(const Extension* extension,
+@@ -215,6 +209,7 @@ void ShowBlockedByParentDialog(const Extension* extension,
  #endif  // BUILDFLAG(ENABLE_SUPERVISED_USERS)
  
  // The number of user gestures to trace back for the referrer chain.
@@ -28,52 +30,35 @@ index 1982ae4822cd..dcb4d114ea73 100644
  const int kExtensionReferrerUserGestureLimit = 2;
  
  WebstoreInstaller::Delegate* test_webstore_installer_delegate = nullptr;
-@@ -1041,51 +1038,9 @@ WebstorePrivateGetReferrerChainFunction::
+@@ -675,6 +670,7 @@ void WebstorePrivateBeginInstallWithManifest3Function::OnFrictionPromptDone(
+ 
+ void WebstorePrivateBeginInstallWithManifest3Function::
+     ReportFrictionAcceptedEvent() {
++#if 0
+   if (!profile_) {
+     return;
+   }
+@@ -687,6 +683,7 @@ void WebstorePrivateBeginInstallWithManifest3Function::
+         safe_browsing::SafeBrowsingMetricsCollector::EventType::
+             EXTENSION_ALLOWLIST_INSTALL_BYPASS);
+   }
++#endif
+ }
+ 
+ void WebstorePrivateBeginInstallWithManifest3Function::OnInstallPromptDone(
+@@ -1180,6 +1177,7 @@ WebstorePrivateGetReferrerChainFunction::
  
  ExtensionFunction::ResponseAction
  WebstorePrivateGetReferrerChainFunction::Run() {
--  Profile* profile = chrome_details_.GetProfile();
--  if (!SafeBrowsingNavigationObserverManager::IsEnabledAndReady(profile))
--    return RespondNow(ArgumentList(
--        api::webstore_private::GetReferrerChain::Results::Create("")));
--
--  content::WebContents* web_contents = GetSenderWebContents();
--  if (!web_contents) {
--    return RespondNow(ErrorWithArguments(
--        api::webstore_private::GetReferrerChain::Results::Create(""),
--        kWebstoreUserCancelledError));
--  }
--
--  scoped_refptr<SafeBrowsingNavigationObserverManager>
--      navigation_observer_manager = g_browser_process->safe_browsing_service()
--                                        ->navigation_observer_manager();
--
--  safe_browsing::ReferrerChain referrer_chain;
--  SafeBrowsingNavigationObserverManager::AttributionResult result =
--      navigation_observer_manager->IdentifyReferrerChainByWebContents(
--          web_contents, kExtensionReferrerUserGestureLimit, &referrer_chain);
--
--  // If the referrer chain is incomplete we'll append the most recent
--  // navigations to referrer chain for diagnostic purposes. This only happens if
--  // the user is not in incognito mode and has opted into extended reporting or
--  // Scout reporting. Otherwise, |CountOfRecentNavigationsToAppend| returns 0.
--  int recent_navigations_to_collect =
--      SafeBrowsingNavigationObserverManager::CountOfRecentNavigationsToAppend(
--          *profile, result);
--  if (recent_navigations_to_collect > 0) {
--    navigation_observer_manager->AppendRecentNavigations(
--        recent_navigations_to_collect, &referrer_chain);
--  }
--
--  safe_browsing::ExtensionWebStoreInstallRequest request;
--  request.mutable_referrer_chain()->Swap(&referrer_chain);
--  request.mutable_referrer_chain_options()->set_recent_navigations_to_collect(
--      recent_navigations_to_collect);
--
--  std::string serialized_referrer_proto = request.SerializeAsString();
--  // Base64 encode the proto to avoid issues with base::Value rejecting strings
--  // which are not valid UTF8.
--  base::Base64Encode(serialized_referrer_proto, &serialized_referrer_proto);
++#if 0
+   Profile* profile = Profile::FromBrowserContext(browser_context());
+   if (!SafeBrowsingNavigationObserverManager::IsEnabledAndReady(profile))
+     return RespondNow(ArgumentList(
+@@ -1222,9 +1220,10 @@ WebstorePrivateGetReferrerChainFunction::Run() {
+   // Base64 encode the proto to avoid issues with base::Value rejecting strings
+   // which are not valid UTF8.
+   base::Base64Encode(serialized_referrer_proto, &serialized_referrer_proto);
++#endif
    return RespondNow(
        ArgumentList(api::webstore_private::GetReferrerChain::Results::Create(
 -          serialized_referrer_proto)));

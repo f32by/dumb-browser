@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/version/version_ui.cc b/chrome/browser/ui/webui/version/version_ui.cc
-index a2d5348fa262..b6d2a369da46 100644
+index e817fa64dfdbd..cf65f72c596a0 100644
 --- a/chrome/browser/ui/webui/version/version_ui.cc
 +++ b/chrome/browser/ui/webui/version/version_ui.cc
-@@ -30,6 +30,7 @@
+@@ -31,6 +31,7 @@
  #include "content/public/browser/web_ui.h"
  #include "content/public/browser/web_ui_data_source.h"
  #include "content/public/common/user_agent.h"
@@ -10,12 +10,12 @@ index a2d5348fa262..b6d2a369da46 100644
  #include "ui/base/l10n/l10n_util.h"
  #include "ui/base/webui/web_ui_util.h"
  #include "v8/include/v8-version-string.h"
-@@ -161,7 +162,7 @@ void VersionUI::AddVersionDetailStrings(content::WebUIDataSource* html_source) {
+@@ -169,7 +170,7 @@ void VersionUI::AddVersionDetailStrings(content::WebUIDataSource* html_source) {
  
    // Data strings.
    html_source->AddString(version_ui::kVersion,
 -                         version_info::GetVersionNumber());
 +                         version_info::GetDumbVersionString());
-   html_source->AddString(version_ui::kVersionModifier,
-                          chrome::GetChannelName());
-   html_source->AddString(version_ui::kJSEngine, "V8");
+   html_source->AddString(
+       version_ui::kVersionModifier,
+       chrome::GetChannelName(chrome::WithExtendedStable(true)));

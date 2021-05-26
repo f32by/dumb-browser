@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/views/toolbar/chrome_labs_item_view.cc b/chrome/browser/ui/views/toolbar/chrome_labs_item_view.cc
+index a8514f485ad98..9c82258fb87c3 100644
+--- a/chrome/browser/ui/views/toolbar/chrome_labs_item_view.cc
++++ b/chrome/browser/ui/views/toolbar/chrome_labs_item_view.cc
+@@ -26,6 +26,7 @@ namespace {
+ void ShowFeedbackPage(Browser* browser,
+                       std::string feedback_category_name,
+                       std::u16string visible_name) {
++#if 0
+   chrome::ShowFeedbackPage(
+       browser, chrome::FeedbackSource::kFeedbackSourceChromeLabs,
+       /*description_template=*/std::string(),
+@@ -35,6 +36,7 @@ void ShowFeedbackPage(Browser* browser,
+           std::move(visible_name)),
+       /*category_tag=*/std::move(feedback_category_name),
+       /* extra_diagnostics=*/std::string());
++#endif
+ }
+ 
+ }  // namespace

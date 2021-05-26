@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/css/media_query_evaluator.cc b/third_party/blink/renderer/core/css/media_query_evaluator.cc
-index f02ca7988266..55c497560b39 100644
+index e8eabbb24d4e1..9ff9d9c7056d4 100644
 --- a/third_party/blink/renderer/core/css/media_query_evaluator.cc
 +++ b/third_party/blink/renderer/core/css/media_query_evaluator.cc
 @@ -33,10 +33,6 @@
@@ -43,7 +43,7 @@ index f02ca7988266..55c497560b39 100644
  }  // namespace
  
  enum MediaFeaturePrefix { kMinPrefix, kMaxPrefix, kNoPrefix };
-@@ -1037,12 +1017,6 @@ bool MediaQueryEvaluator::Eval(const MediaQueryExp& expr) const {
+@@ -1046,12 +1026,6 @@ bool MediaQueryEvaluator::Eval(const MediaQueryExp& expr) const {
    EvalFunc func = g_function_map->at(expr.MediaFeature().Impl());
    if (func) {
      bool result = func(expr.ExpValue(), kNoPrefix, *media_values_);

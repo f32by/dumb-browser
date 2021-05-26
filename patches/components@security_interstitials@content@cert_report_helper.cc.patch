@@ -1,5 +1,5 @@
 diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
-index 01364e93b529..c743df71ade0 100644
+index 448759d7a69ea..cfad8c63398ec 100644
 --- a/components/security_interstitials/content/cert_report_helper.cc
 +++ b/components/security_interstitials/content/cert_report_helper.cc
 @@ -15,7 +15,6 @@
@@ -21,20 +21,21 @@ index 01364e93b529..c743df71ade0 100644
  }  // namespace
  
  // Constants for the HTTPSErrorReporter Finch experiment
-@@ -58,11 +53,7 @@ CertReportHelper::CertReportHelper(
-     : ssl_cert_reporter_(std::move(ssl_cert_reporter)),
+@@ -60,12 +55,8 @@ CertReportHelper::CertReportHelper(
        web_contents_(web_contents),
        request_url_(request_url),
--      ssl_info_(ssl_info),
+       ssl_info_(ssl_info),
 -      interstitial_reason_(interstitial_reason),
 -      overridable_(overridable),
 -      interstitial_time_(interstitial_time),
+       can_show_enhanced_protection_message_(
+-          can_show_enhanced_protection_message),
 -      metrics_helper_(metrics_helper) {}
-+      ssl_info_(ssl_info) {}
++          can_show_enhanced_protection_message) {}
  
  CertReportHelper::~CertReportHelper() = default;
  
-@@ -84,32 +75,13 @@ void CertReportHelper::PopulateExtendedReportingOption(
+@@ -87,32 +78,13 @@ void CertReportHelper::PopulateExtendedReportingOption(
      return;
  
    load_time_data->SetBoolean(
@@ -69,7 +70,7 @@ index 01364e93b529..c743df71ade0 100644
  }
  
  void CertReportHelper::SetSSLCertReporterForTesting(
-@@ -122,14 +94,8 @@ void CertReportHelper::HandleReportingCommands(
+@@ -125,14 +97,8 @@ void CertReportHelper::HandleReportingCommands(
      PrefService* pref_service) {
    switch (command) {
      case security_interstitials::CMD_DO_REPORT:
@@ -84,7 +85,7 @@ index 01364e93b529..c743df71ade0 100644
        break;
      case security_interstitials::CMD_PROCEED:
        user_action_ = CertificateErrorReport::USER_PROCEEDED;
-@@ -143,57 +109,10 @@ void CertReportHelper::HandleReportingCommands(
+@@ -146,57 +112,10 @@ void CertReportHelper::HandleReportingCommands(
    }
  }
  
@@ -144,8 +145,8 @@ index 01364e93b529..c743df71ade0 100644
  }
  
  bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
-@@ -203,26 +122,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
-   // mode.
+@@ -211,21 +130,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
+ 
    const bool in_incognito =
        web_contents_->GetBrowserContext()->IsOffTheRecord();
 -  const PrefService* pref_service = GetPrefs(web_contents_);
@@ -153,8 +154,6 @@ index 01364e93b529..c743df71ade0 100644
 -      safe_browsing::IsEnhancedProtectionEnabled(*pref_service);
 -  bool is_safe_browsing_managed =
 -      safe_browsing::IsSafeBrowsingPolicyManaged(*pref_service);
--  bool is_enhanced_protection_message_enabled =
--      safe_browsing::IsEnhancedProtectionMessageInInterstitialsEnabled();
  
    if (in_incognito) {
      return false;
@@ -163,9 +162,6 @@ index 01364e93b529..c743df71ade0 100644
 -    return false;
 -  }
 -  if (is_safe_browsing_managed) {
--    return false;
--  }
--  if (!is_enhanced_protection_message_enabled) {
 -    return false;
 -  }
    return true;

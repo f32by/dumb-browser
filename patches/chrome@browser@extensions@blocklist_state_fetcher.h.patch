@@ -1,12 +1,17 @@
 diff --git a/chrome/browser/extensions/blocklist_state_fetcher.h b/chrome/browser/extensions/blocklist_state_fetcher.h
-index 7ae22345f160..998f987eeb68 100644
+index 7ae22345f1603..7e055f152721e 100644
 --- a/chrome/browser/extensions/blocklist_state_fetcher.h
 +++ b/chrome/browser/extensions/blocklist_state_fetcher.h
-@@ -11,11 +11,13 @@
- #include <string>
+@@ -6,6 +6,7 @@
+ #define CHROME_BROWSER_EXTENSIONS_BLOCKLIST_STATE_FETCHER_H_
  
+ #include <algorithm>
++#include <map>
+ #include <memory>
+ #include <set>
+ #include <string>
+@@ -13,9 +14,10 @@
  #include "base/callback.h"
-+#include "base/containers/flat_map.h"
  #include "base/macros.h"
  #include "base/memory/weak_ptr.h"
 -#include "components/safe_browsing/core/db/util.h"

@@ -38,6 +38,7 @@
 #include "net/url_request/redirect_util.h"
 #include "net/url_request/url_request.h"
 #include "services/network/public/cpp/features.h"
+#include "services/network/public/cpp/parsed_headers.h"
 #include "url/origin.h"
 
 namespace {
@@ -98,7 +99,6 @@ DumbProxyingURLLoaderFactory::InProgressRequest::InProgressRequest(
     DumbProxyingURLLoaderFactory* factory,
     uint64_t request_id,
     int32_t network_service_request_id,
-    int32_t routing_id,
     int render_process_id,
     int frame_tree_node_id,
     uint32_t options,
@@ -113,7 +113,6 @@ DumbProxyingURLLoaderFactory::InProgressRequest::InProgressRequest(
       network_service_request_id_(network_service_request_id),
       render_process_id_(render_process_id),
       frame_tree_node_id_(frame_tree_node_id),
-      routing_id_(routing_id),
       options_(options),
       browser_context_(browser_context),
       traffic_annotation_(traffic_annotation),
@@ -146,7 +145,7 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::UpdateRequestInfo() {
 
 void DumbProxyingURLLoaderFactory::InProgressRequest::RestartInternal() {
   request_completed_ = false;
-  // start_time_ = base::TimeTicks::Now();
+  start_time_ = base::TimeTicks::Now();
 
   base::RepeatingCallback<void(int)> continuation =
       base::BindRepeating(&InProgressRequest::ContinueToBeforeSendHeaders,
@@ -227,9 +226,13 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::
     target_loader_->ResumeReadingBodyFromNet();
 }
 
+void DumbProxyingURLLoaderFactory::InProgressRequest::OnReceiveEarlyHints(
+    network::mojom::EarlyHintsPtr early_hints) {}
+
 void DumbProxyingURLLoaderFactory::InProgressRequest::OnReceiveResponse(
     network::mojom::URLResponseHeadPtr head) {
   current_response_ = std::move(head);
+  ctx_->internal_redirect = false;
   HandleResponseOrRedirectHeaders(
       base::BindRepeating(&InProgressRequest::ContinueToResponseStarted,
                           weak_factory_.GetWeakPtr()));
@@ -239,6 +242,8 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::OnReceiveRedirect(
     const net::RedirectInfo& redirect_info,
     network::mojom::URLResponseHeadPtr head) {
   current_response_ = std::move(head);
+    DCHECK(ctx_);
+  ctx_->internal_redirect = false;
   HandleResponseOrRedirectHeaders(
       base::BindRepeating(&InProgressRequest::ContinueToBeforeRedirect,
                           weak_factory_.GetWeakPtr(), redirect_info));
@@ -357,6 +362,7 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::
           network::URLLoaderCompletionStatus(net::ERR_BLOCKED_BY_CLIENT));
       return;
     }
+
     auto response = network::mojom::URLResponseHead::New();
     std::string response_data;
 
@@ -437,7 +443,7 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::ContinueToStartRequest(
     // initiate the real network request.
     uint32_t options = options_;
     factory_->target_factory_->CreateLoaderAndStart(
-        target_loader_.BindNewPipeAndPassReceiver(), routing_id_,
+        target_loader_.BindNewPipeAndPassReceiver(),
         network_service_request_id_, options, request_,
         proxied_client_receiver_.BindNewPipeAndPassRemote(),
         traffic_annotation_);
@@ -494,8 +500,14 @@ void DumbProxyingURLLoaderFactory::InProgressRequest::
     return;
   }
 
-  if (override_headers_)
+  if (override_headers_) {
     current_response_->headers = override_headers_;
+    // Since we overrode headers we should reparse them:
+    // NavigationRequest::ComputePoliciesToCommit uses parsed headers to set
+    // CSP, so if we don't reparse our CSP header changes won't work.
+    current_response_->parsed_headers = network::PopulateParsedHeaders(
+        current_response_->headers.get(), request_.url);
+  }
 
   std::string redirect_location;
   if (override_headers_ && override_headers_->IsRedirect(&redirect_location)) {
@@ -664,7 +676,6 @@ bool DumbProxyingURLLoaderFactory::MaybeProxyRequest(
 
 void DumbProxyingURLLoaderFactory::CreateLoaderAndStart(
     mojo::PendingReceiver<network::mojom::URLLoader> loader_receiver,
-    int32_t routing_id,
     int32_t request_id,
     uint32_t options,
     const network::ResourceRequest& request,
@@ -679,7 +690,7 @@ void DumbProxyingURLLoaderFactory::CreateLoaderAndStart(
   const uint64_t brave_request_id = request_id_generator_->Generate();
 
   auto result = requests_.emplace(std::make_unique<InProgressRequest>(
-      this, brave_request_id, request_id, routing_id, render_process_id_,
+      this, brave_request_id, request_id, render_process_id_,
       frame_tree_node_id_, options, request, browser_context_,
       traffic_annotation, std::move(loader_receiver), std::move(client)));
   (*result.first)->Restart();

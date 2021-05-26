@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/web_applications/web_app_install_task.cc b/chrome/browser/web_applications/web_app_install_task.cc
-index 188838f7004c..d44e7dd92100 100644
+index 138ddbf53c190..f6fbfd3d919b5 100644
 --- a/chrome/browser/web_applications/web_app_install_task.cc
 +++ b/chrome/browser/web_applications/web_app_install_task.cc
-@@ -238,8 +238,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
+@@ -239,8 +239,6 @@ void WebAppInstallTask::InstallWebAppFromInfo(
    install_source_ = install_source;
    background_installation_ = true;
  
@@ -11,7 +11,7 @@ index 188838f7004c..d44e7dd92100 100644
    InstallFinalizer::FinalizeOptions options;
    options.install_source = install_source;
    options.locally_installed = true;
-@@ -351,14 +349,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
+@@ -354,14 +352,6 @@ void WebAppInstallTask::CheckInstallPreconditions() {
    initiated_ = true;
  }
  
@@ -26,7 +26,7 @@ index 188838f7004c..d44e7dd92100 100644
  void WebAppInstallTask::CallInstallCallback(const AppId& app_id,
                                              InstallResultCode code) {
    Observe(nullptr);
-@@ -768,9 +758,6 @@ void WebAppInstallTask::OnDialogCompleted(
+@@ -784,9 +774,6 @@ void WebAppInstallTask::OnDialogCompleted(
  
    WebApplicationInfo web_app_info_copy = *web_app_info;
  
@@ -36,7 +36,7 @@ index 188838f7004c..d44e7dd92100 100644
    InstallFinalizer::FinalizeOptions finalize_options;
    finalize_options.install_source = install_source_;
    finalize_options.locally_installed = true;
-@@ -815,9 +802,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+@@ -831,9 +818,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
      return;
    }
  
@@ -46,7 +46,7 @@ index 188838f7004c..d44e7dd92100 100644
    if (install_params_ && !install_params_->locally_installed) {
      DCHECK(background_installation_);
      DCHECK(!(install_params_->add_to_applications_menu ||
-@@ -829,9 +813,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
+@@ -845,9 +829,6 @@ void WebAppInstallTask::OnInstallFinalizedCreateShortcuts(
      return;
    }
  

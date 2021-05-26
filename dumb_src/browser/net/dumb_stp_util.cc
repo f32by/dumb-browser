@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #include "dumb/browser/net/dumb_stp_util.h"
 
 #include "base/no_destructor.h"

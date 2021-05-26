@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
-index c067ee55319f..11eddc83b3a8 100644
+index 93d9e9dc53a6f..f5886aa5cd266 100644
 --- a/third_party/blink/renderer/core/dom/document.cc
 +++ b/third_party/blink/renderer/core/dom/document.cc
 @@ -51,7 +51,6 @@
@@ -12,14 +12,14 @@ index c067ee55319f..11eddc83b3a8 100644
  #include "services/network/public/mojom/ip_address_space.mojom-blink.h"
 @@ -60,8 +59,6 @@
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
- #include "third_party/blink/public/common/feature_policy/document_policy_features.h"
  #include "third_party/blink/public/common/features.h"
+ #include "third_party/blink/public/common/permissions_policy/document_policy_features.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_sample_collector.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
-@@ -308,7 +305,6 @@
+@@ -311,7 +308,6 @@
  #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
  #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
  #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
@@ -27,7 +27,7 @@ index c067ee55319f..11eddc83b3a8 100644
  #include "third_party/blink/renderer/platform/geometry/length_functions.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
-@@ -748,9 +744,7 @@ Document::Document(const DocumentInit& initializer,
+@@ -751,9 +747,7 @@ Document::Document(const DocumentInit& initializer,
        // to SVGImage which does not have an associated RenderFrameHost. No URLs
        // will be associated to this source id. No DocumentCreated events will be
        // created either.
@@ -38,7 +38,7 @@ index c067ee55319f..11eddc83b3a8 100644
        viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
        is_for_external_handler_(initializer.IsForExternalHandler()),
        fragment_directive_(MakeGarbageCollected<FragmentDirective>()),
-@@ -2625,12 +2619,6 @@ void Document::MarkHasFindInPageRequest() {
+@@ -2637,12 +2631,6 @@ void Document::MarkHasFindInPageRequest() {
    if (had_find_in_page_request_)
      return;
  
@@ -51,7 +51,7 @@ index c067ee55319f..11eddc83b3a8 100644
    had_find_in_page_request_ = true;
  }
  
-@@ -2639,13 +2627,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
+@@ -2651,13 +2639,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
    if (had_find_in_page_render_subtree_active_match_)
      return;
  
@@ -65,7 +65,7 @@ index c067ee55319f..11eddc83b3a8 100644
    had_find_in_page_render_subtree_active_match_ = true;
  }
  
-@@ -2654,12 +2635,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
+@@ -2666,12 +2647,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
    if (had_find_in_page_beforematch_expanded_hidden_matchable_)
      return;
  
@@ -78,7 +78,7 @@ index c067ee55319f..11eddc83b3a8 100644
    had_find_in_page_beforematch_expanded_hidden_matchable_ = true;
  }
  
-@@ -2980,8 +2955,6 @@ void Document::Shutdown() {
+@@ -2992,8 +2967,6 @@ void Document::Shutdown() {
    if (num_canvases_ > 0)
      UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
  
@@ -87,7 +87,7 @@ index c067ee55319f..11eddc83b3a8 100644
    GetViewportData().Shutdown();
  
    View()->Dispose();
-@@ -3089,12 +3062,6 @@ void Document::Shutdown() {
+@@ -3101,12 +3074,6 @@ void Document::Shutdown() {
    lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
    DCHECK(!View()->IsAttached());
  
@@ -100,7 +100,7 @@ index c067ee55319f..11eddc83b3a8 100644
    mime_handler_view_before_unload_event_listener_ = nullptr;
  
    resource_coordinator_.reset();
-@@ -6219,16 +6186,6 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
+@@ -6231,16 +6198,7 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
    return promise;
  }
  
@@ -114,44 +114,19 @@ index c067ee55319f..11eddc83b3a8 100644
 -  return data_->floc_service_.get();
 -}
 -
++#if 0
  ScriptPromise Document::interestCohort(ScriptState* script_state,
                                         ExceptionState& exception_state) {
    if (!GetFrame()) {
-@@ -6252,33 +6209,6 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
+@@ -6292,6 +6250,7 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
  
-   ScriptPromise promise = resolver->Promise();
- 
--  GetFlocService(ExecutionContext::From(script_state))
--      ->GetInterestCohort(WTF::Bind(
--          [](ScriptPromiseResolver* resolver, Document* document,
--             mojom::blink::InterestCohortPtr interest_cohort) {
--            DCHECK(resolver);
--            DCHECK(document);
--
--            if (interest_cohort->version.IsEmpty()) {
--              ScriptState* state = resolver->GetScriptState();
--              ScriptState::Scope scope(state);
--
--              // TODO(yaoxia): Distinguish between the different causes.
--              resolver->Reject(V8ThrowDOMException::CreateOrEmpty(
--                  state->GetIsolate(), DOMExceptionCode::kDataError,
--                  "Failed to get the interest cohort: either it is "
--                  "unavailable, or the preferences or content settings has "
--                  "denined the access."));
--            } else {
--              InterestCohort* result = InterestCohort::Create();
--              result->setId(interest_cohort->id);
--              result->setVersion(interest_cohort->version);
--
--              resolver->Resolve(result);
--            }
--          },
--          WrapPersistent(resolver), WrapPersistent(this)));
--
    return promise;
  }
++#endif
  
-@@ -6755,6 +6685,7 @@ DOMWindow* Document::defaultView() const {
+ void Document::HasTrustTokensAnswererConnectionError() {
+   data_->has_trust_tokens_answerer_.reset();
+@@ -6766,6 +6725,7 @@ DOMWindow* Document::defaultView() const {
  }
  
  void Document::RecordAsyncScriptCount() {
@@ -159,7 +134,7 @@ index c067ee55319f..11eddc83b3a8 100644
    UMA_HISTOGRAM_COUNTS_100("Blink.Script.AsyncScriptCount",
                             async_script_count_);
  
-@@ -6769,6 +6700,7 @@ void Document::RecordAsyncScriptCount() {
+@@ -6780,6 +6740,7 @@ void Document::RecordAsyncScriptCount() {
        .SetAsyncScriptCount(
            ukm::GetExponentialBucketMin(async_script_count_, 1.3))
        .Record(recorder);
@@ -167,7 +142,7 @@ index c067ee55319f..11eddc83b3a8 100644
  }
  
  void Document::MaybeExecuteDelayedAsyncScripts() {
-@@ -7131,10 +7063,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
+@@ -7148,10 +7109,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
    if (ukm_recorder_)
      return ukm_recorder_.get();
  
@@ -179,7 +154,7 @@ index c067ee55319f..11eddc83b3a8 100644
  
    return ukm_recorder_.get();
  }
-@@ -7143,15 +7072,6 @@ ukm::SourceId Document::UkmSourceID() const {
+@@ -7160,15 +7118,6 @@ ukm::SourceId Document::UkmSourceID() const {
    return ukm_source_id_;
  }
  

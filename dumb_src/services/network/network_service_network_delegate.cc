@@ -89,10 +89,13 @@ int NetworkServiceNetworkDelegate::OnBeforeURLRequest(
 
   MaybeTruncateReferrer(request, *effective_url);
 
+  if (!loader)
+    return net::OK;
+
+  loader->OnBeforeURLRequest();
+
   NetworkService* network_service = network_context_->network_service();
   if (network_service) {
-    network_service->OnBeforeURLRequest();
-
     auto* url_purify_delegate = network_service->url_purify_delegate();
     auto purify_result =
         url_purify_delegate->TruncateURLParameters(request, *effective_url);
@@ -100,12 +103,6 @@ int NetworkServiceNetworkDelegate::OnBeforeURLRequest(
       *new_url = purify_result.new_url.value();
       effective_url = new_url;
     }
-  }
-
-  if (!loader)
-    return net::OK;
-
-  if (network_service) {
     loader->SetAllowReportingRawHeaders(network_service->HasRawHeadersAccess(
         loader->GetProcessId(), *effective_url));
   }
@@ -188,7 +185,7 @@ void NetworkServiceNetworkDelegate::OnCompleted(net::URLRequest* request,
 
 void NetworkServiceNetworkDelegate::OnPACScriptError(
     int line_number,
-    const base::string16& error) {
+    const std::u16string& error) {
   if (!proxy_error_client_)
     return;
 
@@ -331,11 +328,16 @@ int NetworkServiceNetworkDelegate::HandleClearSiteDataHeader(
     net::CompletionOnceCallback callback,
     const net::HttpResponseHeaders* original_response_headers) {
   DCHECK(request);
-  if (!original_response_headers || !network_context_->client())
+  if (!original_response_headers)
     return net::OK;
 
   URLLoader* url_loader = URLLoader::ForRequest(*request);
   if (!url_loader)
+    return net::OK;
+
+  auto* url_loader_network_observer =
+      url_loader->GetURLLoaderNetworkServiceObserver();
+  if (!url_loader_network_observer)
     return net::OK;
 
   std::string header_value;
@@ -344,8 +346,7 @@ int NetworkServiceNetworkDelegate::HandleClearSiteDataHeader(
     return net::OK;
   }
 
-  network_context_->client()->OnClearSiteData(
-      url_loader->GetProcessId(), url_loader->GetRenderFrameId(),
+  url_loader_network_observer->OnClearSiteData(
       request->url(), header_value, request->load_flags(),
       base::BindOnce(&NetworkServiceNetworkDelegate::FinishedClearSiteData,
                      weak_ptr_factory_.GetWeakPtr(), request->GetWeakPtr(),

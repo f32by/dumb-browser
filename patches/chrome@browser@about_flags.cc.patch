@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index 1281ce53672f..d1597e51249c 100644
+index f9aea40901ea3..df4143fee5402 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
 @@ -33,7 +33,6 @@
@@ -10,7 +10,7 @@ index 1281ce53672f..d1597e51249c 100644
  #include "chrome/browser/login_detection/login_detection_util.h"
  #include "chrome/browser/navigation_predictor/navigation_predictor_features.h"
  #include "chrome/browser/navigation_predictor/search_engine_preconnector.h"
-@@ -57,7 +56,6 @@
+@@ -58,7 +57,6 @@
  #include "chrome/browser/ui/ui_features.h"
  #include "chrome/browser/unexpire_flags.h"
  #include "chrome/browser/unexpire_flags_gen.h"
@@ -19,14 +19,14 @@ index 1281ce53672f..d1597e51249c 100644
  #include "chrome/common/channel_info.h"
  #include "chrome/common/chrome_content_client.h"
 @@ -115,7 +113,6 @@
- #include "components/previews/core/previews_switches.h"
+ #include "components/policy/core/common/features.h"
  #include "components/query_tiles/switches.h"
  #include "components/reading_list/features/reading_list_switches.h"
 -#include "components/safe_browsing/core/features.h"
  #include "components/search/ntp_features.h"
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/security_interstitials/core/features.h"
-@@ -324,68 +321,6 @@ const FeatureEntry::Choice kPassiveListenersChoices[] = {
+@@ -326,68 +323,6 @@ const FeatureEntry::Choice kPassiveListenersChoices[] = {
       blink::switches::kPassiveListenersDefault, "forcealltrue"},
  };
  
@@ -95,7 +95,7 @@ index 1281ce53672f..d1597e51249c 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -2500,25 +2435,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
+@@ -2472,25 +2407,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
  };
  #endif  // defined(OS_ANDROID)
  
@@ -121,7 +121,7 @@ index 1281ce53672f..d1597e51249c 100644
  const FeatureEntry::FeatureParam kCheckOfflineCapabilityWarnOnly[] = {
      {"check_mode", "warn_only"}};
  const FeatureEntry::FeatureParam kCheckOfflineCapabilityEnforce[] = {
-@@ -2531,27 +2447,6 @@ const FeatureEntry::FeatureVariation kCheckOfflineCapabilityVariations[] = {
+@@ -2503,27 +2419,6 @@ const FeatureEntry::FeatureVariation kCheckOfflineCapabilityVariations[] = {
       base::size(kCheckOfflineCapabilityEnforce), nullptr},
  };
  
@@ -149,7 +149,7 @@ index 1281ce53672f..d1597e51249c 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
  const FeatureEntry::FeatureVariation
      kOmniboxRichEntitiesInLauncherVariations[] = {
-@@ -2888,6 +2783,9 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2875,6 +2770,9 @@ const FeatureEntry kFeatureEntries[] = {
          FEATURE_VALUE_TYPE(ash::features::kWebUITabStripTabDragIntegration),
      },
  #endif  // BUILDFLAG(ENABLE_WEBUI_TAB_STRIP) && BUILDFLAG(IS_CHROMEOS_ASH)
@@ -159,17 +159,10 @@ index 1281ce53672f..d1597e51249c 100644
      {"focus-mode", flag_descriptions::kFocusMode,
       flag_descriptions::kFocusModeDescription, kOsDesktop,
       FEATURE_VALUE_TYPE(features::kFocusMode)},
-@@ -3436,31 +3334,14 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -3426,24 +3324,10 @@ const FeatureEntry kFeatureEntries[] = {
      {"enable-use-zoom-for-dsf", flag_descriptions::kEnableUseZoomForDsfName,
       flag_descriptions::kEnableUseZoomForDsfDescription, kOsAll,
       MULTI_VALUE_TYPE(kEnableUseZoomForDSFChoices)},
--    {"allow-previews", flag_descriptions::kPreviewsAllowedName,
--     flag_descriptions::kPreviewsAllowedDescription, kOsAll,
--     FEATURE_VALUE_TYPE(previews::features::kPreviews)},
-     {"ignore-previews-blocklist",
-      flag_descriptions::kIgnorePreviewsBlocklistName,
-      flag_descriptions::kIgnorePreviewsBlocklistDescription, kOsAll,
-      SINGLE_VALUE_TYPE(previews::switches::kIgnorePreviewsBlocklist)},
 -    {"enable-data-reduction-proxy-server-experiment",
 -     flag_descriptions::kEnableDataReductionProxyServerExperimentName,
 -     flag_descriptions::kEnableDataReductionProxyServerExperimentDescription,
@@ -191,42 +184,10 @@ index 1281ce53672f..d1597e51249c 100644
      {"enable-navigation-predictor",
       flag_descriptions::kEnableNavigationPredictorName,
       flag_descriptions::kEnableNavigationPredictorDescription,
-@@ -5881,45 +5762,6 @@ const FeatureEntry kFeatureEntries[] = {
-                                     "MetricsSettingsAndroid")},
+@@ -5848,13 +5732,6 @@ const FeatureEntry kFeatureEntries[] = {
+      FEATURE_VALUE_TYPE(chrome::android::kEnhancedProtectionPromoCard)},
  #endif
  
--#if defined(OS_ANDROID)
--    {"safe-browsing-client-side-detection-android",
--     flag_descriptions::kSafeBrowsingClientSideDetectionAndroidName,
--     flag_descriptions::kSafeBrowsingClientSideDetectionAndroidDescription,
--     kOsAndroid,
--     FEATURE_VALUE_TYPE(safe_browsing::kClientSideDetectionForAndroid)},
--
--    {"safe-browsing-enhanced-protection-android",
--     flag_descriptions::kSafeBrowsingEnhancedProtectionAndroidName,
--     flag_descriptions::kSafeBrowsingEnhancedProtectionAndroidDescription,
--     kOsAndroid, FEATURE_VALUE_TYPE(safe_browsing::kEnhancedProtection)},
--
--    {"safe-browsing-enhanced-protection-promo-android",
--     flag_descriptions::kEnhancedProtectionPromoAndroidName,
--     flag_descriptions::kEnhancedProtectionPromoAndroidDescription, kOsAndroid,
--     FEATURE_VALUE_TYPE(chrome::android::kEnhancedProtectionPromoCard)},
--
--    {"safe-browsing-security-section-ui-android",
--     flag_descriptions::kSafeBrowsingSectionUiAndroidName,
--     flag_descriptions::kSafeBrowsingSectionUiAndroidDescription, kOsAndroid,
--     FEATURE_VALUE_TYPE(safe_browsing::kSafeBrowsingSectionUIAndroid)},
--#endif
--
--    {"safe-browsing-enhanced-protection-message-in-interstitials",
--     flag_descriptions::
--         kSafeBrowsingEnhancedProtectionMessageInInterstitialsName,
--     flag_descriptions::
--         kSafeBrowsingEnhancedProtectionMessageInInterstitialsDescription,
--     kOsAll,
--     FEATURE_VALUE_TYPE(
--         safe_browsing::kEnhancedProtectionMessageInInterstitials)},
--
 -    {"safe-browsing-real-time-url-lookup-enterprise-ga-endpoint",
 -     flag_descriptions::kSafeBrowsingRealTimeUrlLookupEnterpriseGaEndpointName,
 -     flag_descriptions::
@@ -237,24 +198,25 @@ index 1281ce53672f..d1597e51249c 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      {"gesture-properties-dbus-service",
       flag_descriptions::kEnableGesturePropertiesDBusServiceName,
-@@ -6310,16 +6152,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6238,17 +6115,6 @@ const FeatureEntry kFeatureEntries[] = {
       MULTI_VALUE_TYPE(kEnableCrOSActionRecorderChoices)},
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  
 -    {"enable-heavy-ad-intervention",
 -     flag_descriptions::kHeavyAdInterventionName,
 -     flag_descriptions::kHeavyAdInterventionDescription, kOsAll,
--     FEATURE_VALUE_TYPE(features::kHeavyAdIntervention)},
+-     FEATURE_VALUE_TYPE(heavy_ad_intervention::features::kHeavyAdIntervention)},
 -
 -    {"heavy-ad-privacy-mitigations",
 -     flag_descriptions::kHeavyAdPrivacyMitigationsName,
 -     flag_descriptions::kHeavyAdPrivacyMitigationsDescription, kOsAll,
--     FEATURE_VALUE_TYPE(features::kHeavyAdPrivacyMitigations)},
+-     FEATURE_VALUE_TYPE(
+-         heavy_ad_intervention::features::kHeavyAdPrivacyMitigations)},
 -
  #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
      {"enable-ftp", flag_descriptions::kEnableFtpName,
       flag_descriptions::kEnableFtpDescription, kOsAll,
-@@ -6736,20 +6568,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6681,20 +6547,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  
@@ -275,7 +237,7 @@ index 1281ce53672f..d1597e51249c 100644
      {"edit-passwords-in-settings",
       flag_descriptions::kEditPasswordsInSettingsName,
       flag_descriptions::kEditPasswordsInSettingsDescription, kOsAll,
-@@ -6979,14 +6797,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6927,14 +6779,6 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kAnimatedImageResumeDescription, kOsAll,
       FEATURE_VALUE_TYPE(features::kAnimatedImageResume)},
  
@@ -287,6 +249,6 @@ index 1281ce53672f..d1597e51249c 100644
 -                                    "SCTAuditingVariations")},
 -#endif  // !defined(OS_ANDROID)
 -
-     {"kaleidoscope-ntp-module", flag_descriptions::kKaleidoscopeModuleName,
-      flag_descriptions::kKaleidoscopeModuleDescription, kOsDesktop,
-      FEATURE_VALUE_TYPE(media::kKaleidoscopeModule)},
+     {"insert-key-toggle-mode", flag_descriptions::kInsertKeyToggleModeName,
+      flag_descriptions::kInsertKeyToggleModeDescription,
+      kOsWin | kOsLinux | kOsCrOS,

@@ -1,16 +1,16 @@
 diff --git a/content/browser/field_trial_synchronizer.cc b/content/browser/field_trial_synchronizer.cc
-index 6cc715b92834..aee62fabaed2 100644
+index 98643ff59892c..2dff1c08bcc9a 100644
 --- a/content/browser/field_trial_synchronizer.cc
 +++ b/content/browser/field_trial_synchronizer.cc
-@@ -8,7 +8,6 @@
+@@ -7,7 +7,6 @@
+ #include "base/bind.h"
  #include "base/check_op.h"
- #include "base/task/post_task.h"
  #include "base/threading/thread.h"
 -#include "components/metrics/persistent_system_profile.h"
  #include "components/variations/variations_client.h"
  #include "content/common/renderer_variations_configuration.mojom.h"
  #include "content/public/browser/browser_context.h"
-@@ -19,18 +18,6 @@
+@@ -18,18 +17,6 @@
  
  namespace content {
  
@@ -29,7 +29,7 @@ index 6cc715b92834..aee62fabaed2 100644
  FieldTrialSynchronizer::FieldTrialSynchronizer() {
    bool success = base::FieldTrialList::AddObserver(this);
    // Ensure the observer was actually registered.
-@@ -47,8 +34,6 @@ void FieldTrialSynchronizer::NotifyAllRenderersOfFieldTrial(
+@@ -46,8 +33,6 @@ void FieldTrialSynchronizer::NotifyAllRenderersOfFieldTrial(
    // need to be on the UI thread.
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
@@ -38,7 +38,7 @@ index 6cc715b92834..aee62fabaed2 100644
    for (RenderProcessHost::iterator it(RenderProcessHost::AllHostsIterator());
         !it.IsAtEnd(); it.Advance()) {
      auto* host = it.GetCurrentValue();
-@@ -73,7 +58,6 @@ void FieldTrialSynchronizer::OnFieldTrialGroupFinalized(
+@@ -72,7 +57,6 @@ void FieldTrialSynchronizer::OnFieldTrialGroupFinalized(
    // persistent system profile, thus the histogram data recorded in the reduced
    // mode will be tagged to its corresponding field trial experiment.
    if (!BrowserThread::IsThreadInitialized(BrowserThread::UI)) {

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/startup_data.cc b/chrome/browser/startup_data.cc
-index dd46f01b5510..b467c76f228c 100644
+index f55db4474db52..678fb3b092b00 100644
 --- a/chrome/browser/startup_data.cc
 +++ b/chrome/browser/startup_data.cc
 @@ -9,13 +9,6 @@
@@ -24,43 +24,23 @@ index dd46f01b5510..b467c76f228c 100644
  
  namespace {
  
-@@ -68,35 +60,6 @@ StartupData::StartupData()
+@@ -68,6 +60,7 @@ StartupData::StartupData()
  
  StartupData::~StartupData() = default;
  
--void StartupData::RecordCoreSystemProfile() {
--  metrics::SystemProfileProto system_profile;
--  metrics::MetricsLog::RecordCoreSystemProfile(
--      metrics::GetVersionString(),
--      metrics::AsProtobufChannel(chrome::GetChannel()),
--      chrome_feature_list_creator_->actual_locale(),
--      metrics::GetAppPackageName(), &system_profile);
--
--  metrics::DelegatingProvider delegating_provider;
--
--  // TODO(hanxi): Create SyntheticTrialRegistry and pass it to
--  // |field_trial_provider|.
--  delegating_provider.RegisterMetricsProvider(
--      std::make_unique<variations::FieldTrialsProvider>(nullptr,
--                                                        base::StringPiece()));
--
--  // Persists low entropy source values.
--  delegating_provider.RegisterMetricsProvider(
--      std::make_unique<metrics::EntropyStateProvider>(
--          chrome_feature_list_creator_->local_state()));
--
--  delegating_provider.ProvideSystemProfileMetricsWithLogCreationTime(
--      base::TimeTicks(), &system_profile);
--
--  // TODO(crbug.com/965482): Records information from other providers.
--  metrics::GlobalPersistentSystemProfile::GetInstance()->SetSystemProfile(
--      system_profile, /* complete */ false);
--}
--
++#if 0
+ void StartupData::RecordCoreSystemProfile() {
+   metrics::SystemProfileProto system_profile;
+   metrics::MetricsLog::RecordCoreSystemProfile(
+@@ -97,6 +90,7 @@ void StartupData::RecordCoreSystemProfile() {
+   metrics::GlobalPersistentSystemProfile::GetInstance()->SetSystemProfile(
+       system_profile, /* complete */ false);
+ }
++#endif
+ 
  #if defined(OS_ANDROID)
  void StartupData::CreateProfilePrefService() {
-   key_ = std::make_unique<ProfileKey>(GetProfilePath());
-@@ -201,15 +164,13 @@ void StartupData::CreateServicesInternal() {
+@@ -202,15 +196,13 @@ void StartupData::CreateServicesInternal() {
                         chrome_feature_list_creator_->actual_locale(),
                         pref_registry_.get());
  

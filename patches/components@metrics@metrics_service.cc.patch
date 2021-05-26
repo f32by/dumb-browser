@@ -1,8 +1,8 @@
 diff --git a/components/metrics/metrics_service.cc b/components/metrics/metrics_service.cc
-index 6fbc1c9cfc87..655149b88b9c 100644
+index ec20bfdeaa118..29e5dbd3da183 100644
 --- a/components/metrics/metrics_service.cc
 +++ b/components/metrics/metrics_service.cc
-@@ -129,28 +129,14 @@
+@@ -130,28 +130,14 @@
  #include "base/bind.h"
  #include "base/callback.h"
  #include "base/location.h"
@@ -31,7 +31,7 @@ index 6fbc1c9cfc87..655149b88b9c 100644
  #include "components/metrics/url_constants.h"
  #include "components/prefs/pref_registry_simple.h"
  #include "components/prefs/pref_service.h"
-@@ -158,45 +144,13 @@
+@@ -159,45 +145,13 @@
  
  namespace metrics {
  
@@ -77,105 +77,88 @@ index 6fbc1c9cfc87..655149b88b9c 100644
  
    registry->RegisterIntegerPref(prefs::kMetricsSessionID, -1);
  }
-@@ -204,102 +158,30 @@ void MetricsService::RegisterPrefs(PrefRegistrySimple* registry) {
+@@ -205,33 +159,33 @@ void MetricsService::RegisterPrefs(PrefRegistrySimple* registry) {
  MetricsService::MetricsService(MetricsStateManager* state_manager,
                                 MetricsServiceClient* client,
                                 PrefService* local_state)
--    : reporting_service_(client, local_state),
--      histogram_snapshot_manager_(this),
++#if 0
+     : reporting_service_(client, local_state),
+       histogram_snapshot_manager_(this),
 -      state_manager_(state_manager),
-+    : state_manager_(state_manager),
++#endif
++      : state_manager_(state_manager),
        client_(client),
        local_state_(local_state),
 -      recording_state_(UNSET),
        test_mode_active_(false),
        state_(CONSTRUCTED),
        idle_since_last_transmission_(false),
-       session_id_(-1),
+-      session_id_(-1),
 -      synthetic_trial_registry_(
 -          client->IsExternalExperimentAllowlistEnabled()) {
-+      synthetic_trial_registry_(false) {
++      session_id_(-1) {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 -  DCHECK(state_manager_);
    DCHECK(client_);
    DCHECK(local_state_);
--
--  RegisterMetricsProvider(
--      std::make_unique<StabilityMetricsProvider>(local_state_));
--
--  RegisterMetricsProvider(state_manager_->GetProvider());
+ 
++#if 0
+   RegisterMetricsProvider(
+       std::make_unique<StabilityMetricsProvider>(local_state_));
+ 
+   RegisterMetricsProvider(state_manager_->GetProvider());
++#endif
  }
  
  MetricsService::~MetricsService() {
 -  DisableRecording();
--}
--
--void MetricsService::InitializeMetricsRecordingState() {
--  // TODO(crbug.com/1176977): Downgrade to a DCHECK once bug is fixed.
--  CHECK_EQ(CONSTRUCTED, state_);
--
--  // The FieldTrialsProvider should be registered last. This ensures that
--  // studies whose features are checked when providers add their information to
--  // the log appear in the active field trials.
--  RegisterMetricsProvider(std::make_unique<variations::FieldTrialsProvider>(
--      &synthetic_trial_registry_, base::StringPiece()));
--
--  reporting_service_.Initialize();
--  InitializeMetricsState();
--
--  base::RepeatingClosure upload_callback = base::BindRepeating(
--      &MetricsService::StartScheduledUpload, self_ptr_factory_.GetWeakPtr());
--
--  rotation_scheduler_.reset(new MetricsRotationScheduler(
--      upload_callback,
--      // MetricsServiceClient outlives MetricsService, and
--      // MetricsRotationScheduler is tied to the lifetime of |this|.
--      base::BindRepeating(&MetricsServiceClient::GetUploadInterval,
--                          base::Unretained(client_)),
--      client_->ShouldStartUpFastForTesting()));
--
--  // Init() has to be called after LogCrash() in order for LogCrash() to work.
--  delegating_provider_.Init();
--
--  state_ = INITIALIZED;
  }
+ 
++#if 0
+ void MetricsService::InitializeMetricsRecordingState() {
+   // TODO(crbug.com/1176977): Downgrade to a DCHECK once bug is fixed.
+   CHECK_EQ(CONSTRUCTED, state_);
+@@ -261,13 +215,17 @@ void MetricsService::InitializeMetricsRecordingState() {
+ 
+   state_ = INITIALIZED;
+ }
++#endif
  
  void MetricsService::Start() {
--  HandleIdleSinceLastTransmission(false);
--  EnableRecording();
--  EnableReporting();
--}
--
--void MetricsService::StartRecordingForTests() {
--  test_mode_active_ = true;
--  EnableRecording();
--  DisableReporting();
--}
--
--void MetricsService::StartUpdatingLastLiveTimestamp() {
--  base::SequencedTaskRunnerHandle::Get()->PostDelayedTask(
--      FROM_HERE,
--      base::BindOnce(&MetricsService::UpdateLastLiveTimestampTask,
--                     self_ptr_factory_.GetWeakPtr()),
--      base::TimeDelta::FromSeconds(kUpdateAliveTimestampSeconds));
++#if 0
+   HandleIdleSinceLastTransmission(false);
+   EnableRecording();
+   EnableReporting();
++#endif
  }
  
- void MetricsService::Stop() {
--  HandleIdleSinceLastTransmission(false);
--  DisableReporting();
--  DisableRecording();
--}
--
--void MetricsService::EnableReporting() {
--  if (reporting_service_.reporting_active())
--    return;
--  reporting_service_.EnableReporting();
--  StartSchedulerIfNecessary();
--}
--
--void MetricsService::DisableReporting() {
--  reporting_service_.DisableReporting();
++#if 0
+ void MetricsService::StartRecordingForTests() {
+   test_mode_active_ = true;
+   EnableRecording();
+@@ -281,13 +239,17 @@ void MetricsService::StartUpdatingLastLiveTimestamp() {
+                      self_ptr_factory_.GetWeakPtr()),
+       base::TimeDelta::FromSeconds(kUpdateAliveTimestampSeconds));
  }
++#endif
+ 
+ void MetricsService::Stop() {
++#if 0
+   HandleIdleSinceLastTransmission(false);
+   DisableReporting();
+   DisableRecording();
++#endif
+ }
+ 
++#if 0
+ void MetricsService::EnableReporting() {
+   if (reporting_service_.reporting_active())
+     return;
+@@ -298,9 +260,10 @@ void MetricsService::EnableReporting() {
+ void MetricsService::DisableReporting() {
+   reporting_service_.DisableReporting();
+ }
++#endif
  
  std::string MetricsService::GetClientId() const {
 -  return state_manager_->client_id();
@@ -183,7 +166,7 @@ index 6fbc1c9cfc87..655149b88b9c 100644
  }
  
  int64_t MetricsService::GetInstallDate() {
-@@ -307,669 +189,11 @@ int64_t MetricsService::GetInstallDate() {
+@@ -308,669 +271,11 @@ int64_t MetricsService::GetInstallDate() {
  }
  
  bool MetricsService::WasLastShutdownClean() const {
@@ -336,9 +319,9 @@ index 6fbc1c9cfc87..655149b88b9c 100644
 -    return false;
 -
 -  OpenNewLog();
-   return true;
- }
- 
+-  return true;
+-}
+-
 -//------------------------------------------------------------------------------
 -// private methods
 -//------------------------------------------------------------------------------
@@ -643,9 +626,9 @@ index 6fbc1c9cfc87..655149b88b9c 100644
 -  // that they're not lost in case of a crash before upload time.
 -  log_store()->TrimAndPersistUnsentLogs();
 -
--  return true;
--}
--
+   return true;
+ }
+ 
 -void MetricsService::PrepareInitialMetricsLog() {
 -  DCHECK_EQ(INIT_TASK_DONE, state_);
 -

@@ -1,0 +1,71 @@
+diff --git a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
+index 0232b42922efb..09baa8682ceb6 100644
+--- a/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
++++ b/chrome/browser/lookalikes/lookalike_url_navigation_throttle.cc
+@@ -23,18 +23,17 @@
+ #include "chrome/browser/lookalikes/lookalike_url_tab_storage.h"
+ #include "chrome/browser/prefetch/no_state_prefetch/chrome_no_state_prefetch_contents_delegate.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/reputation/reputation_service.h"
+ #include "components/lookalikes/core/features.h"
+ #include "components/lookalikes/core/lookalike_url_ui_util.h"
+ #include "components/lookalikes/core/lookalike_url_util.h"
+ #include "components/no_state_prefetch/browser/no_state_prefetch_contents.h"
+-#include "components/reputation/core/safety_tips_config.h"
+ #include "components/security_interstitials/content/security_interstitial_tab_helper.h"
+ #include "components/site_engagement/content/site_engagement_service.h"
+ #include "components/ukm/content/source_url_recorder.h"
+ #include "components/url_formatter/spoof_checks/top_domains/top500_domains.h"
+ #include "components/url_formatter/spoof_checks/top_domains/top_domain_util.h"
+ #include "content/public/browser/navigation_handle.h"
++#include "net/base/url_util.h"
+ #include "third_party/blink/public/mojom/loader/referrer.mojom.h"
+ 
+ namespace {
+@@ -229,12 +228,14 @@ void LookalikeUrlNavigationThrottle::OnManifestValidationResult(
+     bool triggered_by_initial_url,
+     bool validation_succeeded) {
+   if (validation_succeeded) {
++#if 0
+     // Add the lookalike URL to the allowlist.
+     // TODO(meacer): Use a proper key for caching here. At the very least, we
+     // should allowlist (lookalike, target) pairs. We should also cache some of
+     // the failure cases, e.g. when the lookalike site serves a manifest but it
+     // doesn't have an entry for the target site.
+     ReputationService::Get(profile_)->SetUserIgnore(lookalike_domain);
++#endif
+ 
+     Resume();
+     return;
+@@ -370,6 +371,7 @@ bool LookalikeUrlNavigationThrottle::IsLookalikeUrl(
+     return false;
+   }
+ 
++#if 0
+   // Fetch the component allowlist.
+   const auto* proto = reputation::GetSafetyTipsRemoteConfigProto();
+ 
+@@ -393,6 +395,7 @@ bool LookalikeUrlNavigationThrottle::IsLookalikeUrl(
+           proto, url.GetWithEmptyPath())) {
+     return false;
+   }
++#endif
+ 
+   // GetDomainInfo() is expensive, so do possible early-abort checks first.
+   const DomainInfo navigated_domain = GetDomainInfo(url);
+@@ -416,6 +419,7 @@ bool LookalikeUrlNavigationThrottle::IsLookalikeUrl(
+     return false;
+   }
+ 
++#if 0
+   const LookalikeTargetAllowlistChecker in_target_allowlist =
+       base::BindRepeating(
+           &reputation::IsTargetHostAllowlistedBySafetyTipsComponent, proto);
+@@ -449,6 +453,7 @@ bool LookalikeUrlNavigationThrottle::IsLookalikeUrl(
+     *suggested_url = url.ReplaceComponents(replace_host).GetWithEmptyPath();
+     return true;
+   }
++#endif
+ 
+   if (ShouldBlockBySpoofCheckResult(navigated_domain)) {
+     *match_type = LookalikeUrlMatchType::kFailedSpoofChecks;

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/css/css_font_selector.cc b/third_party/blink/renderer/core/css/css_font_selector.cc
-index 7cbff5a8da9d..63ebd3692643 100644
+index 2c0b865d5f337..4f1e5b3650f70 100644
 --- a/third_party/blink/renderer/core/css/css_font_selector.cc
 +++ b/third_party/blink/renderer/core/css/css_font_selector.cc
 @@ -98,15 +98,11 @@ void CSSFontSelector::FontCacheInvalidated() {
@@ -36,7 +36,13 @@ index 7cbff5a8da9d..63ebd3692643 100644
    return font_data;
  }
  
-@@ -169,33 +158,24 @@ void CSSFontSelector::ReportNotDefGlyph() const {
+@@ -170,39 +159,28 @@ void CSSFontSelector::ReportNotDefGlyph() const {
+ void CSSFontSelector::ReportEmojiSegmentGlyphCoverage(
+     unsigned num_clusters,
+     unsigned num_broken_clusters) {
+-  GetDocument().GetFontMatchingMetrics()->ReportEmojiSegmentGlyphCoverage(
+-      num_clusters, num_broken_clusters);
+ }
  
  void CSSFontSelector::ReportSuccessfulFontFamilyMatch(
      const AtomicString& font_family_name) {
@@ -70,7 +76,7 @@ index 7cbff5a8da9d..63ebd3692643 100644
  }
  
  void CSSFontSelector::ReportFontLookupByUniqueNameOnly(
-@@ -203,8 +183,6 @@ void CSSFontSelector::ReportFontLookupByUniqueNameOnly(
+@@ -210,8 +188,6 @@ void CSSFontSelector::ReportFontLookupByUniqueNameOnly(
      const FontDescription& font_description,
      SimpleFontData* resulting_font_data,
      bool is_loading_fallback) {
@@ -79,7 +85,7 @@ index 7cbff5a8da9d..63ebd3692643 100644
  }
  
  void CSSFontSelector::ReportFontLookupByFallbackCharacter(
-@@ -212,16 +190,11 @@ void CSSFontSelector::ReportFontLookupByFallbackCharacter(
+@@ -219,16 +195,11 @@ void CSSFontSelector::ReportFontLookupByFallbackCharacter(
      FontFallbackPriority fallback_priority,
      const FontDescription& font_description,
      SimpleFontData* resulting_font_data) {

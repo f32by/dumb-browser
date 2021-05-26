@@ -19,12 +19,15 @@ import os
 import sys
 from distutils.dir_util import copy_tree
 
-from constants import PROJECT_DIR, DUMB_SRC_DIR, CHROMIUM_SRC_DIR
+from constants import PROJECT_DIR, CHROMIUM_SRC_DIR, DUMB_DST_DIR, DUMB_SRC_DIR
 from utils import run_command, get_chromium_version, check_patch_consistency, apply_patches
 
 
 def main(args):
     chromium_version = get_chromium_version()
+
+    if not os.path.exists(CHROMIUM_SRC_DIR):
+        os.mkdir(CHROMIUM_SRC_DIR)
 
     # run gclient
     ret = run_command(['gclient', 'sync',
@@ -34,7 +37,7 @@ def main(args):
                        '--with_tags',
                        '--with_branch_heads',
                        '--upstream'],
-                      cwd=PROJECT_DIR)
+                      cwd=CHROMIUM_SRC_DIR)
 
     if ret != 0:
         print('Failed to run gclient.')
@@ -42,14 +45,14 @@ def main(args):
 
     # apply patches
     if not check_patch_consistency(treat_as_fatal=True):
-        print('Please solve these problems before apply any patch.')
+        print('Please solve these problems before applying more patches.')
         return 1
 
     apply_patches()
 
     # copy dumb-specific sources to src
     print('Copying Dumb Browser source files to Chromium source root...')
-    copy_tree(DUMB_SRC_DIR, CHROMIUM_SRC_DIR)
+    copy_tree(DUMB_SRC_DIR, DUMB_DST_DIR)
 
     print("Project synchronization finished. Now you can run 'build/build.py' to build Dumb Browser.")
 

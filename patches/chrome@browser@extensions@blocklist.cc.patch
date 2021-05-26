@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/blocklist.cc b/chrome/browser/extensions/blocklist.cc
-index 4ab3bb5d05e5..f9da21b1d6c1 100644
+index f2789a9406b15..34d2cb82f2b4b 100644
 --- a/chrome/browser/extensions/blocklist.cc
 +++ b/chrome/browser/extensions/blocklist.cc
-@@ -18,119 +18,18 @@
+@@ -19,119 +19,18 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/extensions/blocklist_factory.h"
  #include "chrome/browser/extensions/blocklist_state_fetcher.h"
@@ -122,7 +122,7 @@ index 4ab3bb5d05e5..f9da21b1d6c1 100644
  void CheckOneExtensionState(Blocklist::IsBlocklistedCallback callback,
                              const Blocklist::BlocklistStateMap& state_map) {
    std::move(callback).Run(state_map.empty() ? NOT_BLOCKLISTED
-@@ -163,24 +62,7 @@ Blocklist::Observer::~Observer() {
+@@ -164,24 +63,7 @@ Blocklist::Observer::~Observer() {
    blocklist_->RemoveObserver(this);
  }
  
@@ -147,7 +147,7 @@ index 4ab3bb5d05e5..f9da21b1d6c1 100644
    ObserveNewDatabase();
  }
  
-@@ -195,19 +77,11 @@ void Blocklist::GetBlocklistedIDs(const std::set<std::string>& ids,
+@@ -196,19 +78,11 @@ void Blocklist::GetBlocklistedIDs(const std::set<std::string>& ids,
                                    GetBlocklistedIDsCallback callback) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
@@ -168,7 +168,7 @@ index 4ab3bb5d05e5..f9da21b1d6c1 100644
  }
  
  void Blocklist::GetMalwareIDs(const std::set<std::string>& ids,
-@@ -339,29 +213,8 @@ void Blocklist::RemoveObserver(Observer* observer) {
+@@ -344,29 +218,8 @@ void Blocklist::RemoveObserver(Observer* observer) {
    observers_.RemoveObserver(observer);
  }
  

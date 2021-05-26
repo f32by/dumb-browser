@@ -1,22 +1,16 @@
 diff --git a/extensions/renderer/script_injection.cc b/extensions/renderer/script_injection.cc
-index faeec8854abc..8c4d813fa638 100644
+index d9a28ff759836..08c6c0763cac7 100644
 --- a/extensions/renderer/script_injection.cc
 +++ b/extensions/renderer/script_injection.cc
-@@ -19,13 +19,11 @@
+@@ -18,7 +18,6 @@
+ #include "content/public/renderer/v8_value_converter.h"
  #include "extensions/common/extension_features.h"
  #include "extensions/common/extension_messages.h"
- #include "extensions/common/host_id.h"
 -#include "extensions/common/identifiability_metrics.h"
+ #include "extensions/common/mojom/host_id.mojom.h"
+ #include "extensions/common/mojom/injection_type.mojom-shared.h"
  #include "extensions/renderer/dom_activity_logger.h"
- #include "extensions/renderer/extension_frame_helper.h"
- #include "extensions/renderer/extensions_renderer_client.h"
- #include "extensions/renderer/script_injection_callback.h"
- #include "extensions/renderer/scripts_run_info.h"
--#include "services/metrics/public/cpp/ukm_source_id.h"
- #include "third_party/blink/public/platform/web_isolated_world_info.h"
- #include "third_party/blink/public/platform/web_security_origin.h"
- #include "third_party/blink/public/platform/web_string.h"
-@@ -166,8 +164,6 @@ ScriptInjection::ScriptInjection(
+@@ -167,8 +166,6 @@ ScriptInjection::ScriptInjection(
        injection_host_(std::move(injection_host)),
        run_location_(run_location),
        request_id_(kInvalidRequestId),
@@ -25,21 +19,21 @@ index faeec8854abc..8c4d813fa638 100644
        complete_(false),
        did_inject_js_(false),
        log_activity_(log_activity),
-@@ -276,8 +272,6 @@ ScriptInjection::InjectionResult ScriptInjection::Inject(
+@@ -290,8 +287,6 @@ ScriptInjection::InjectionResult ScriptInjection::Inject(
    complete_ = did_inject_js_ || !should_inject_js;
  
    if (complete_) {
--    if (host_id().type() == HostID::EXTENSIONS)
--      RecordContentScriptInjection(ukm_source_id_, host_id().id());
-     injector_->OnInjectionComplete(std::move(execution_result_), run_location_,
-                                    render_frame_);
+-    if (host_id().type == mojom::HostID::HostType::kExtensions)
+-      RecordContentScriptInjection(ukm_source_id_, host_id().id);
+     injector_->OnInjectionComplete(std::move(execution_result_), run_location_);
    } else {
-@@ -366,8 +360,6 @@ void ScriptInjection::OnJsInjectionCompleted(
+     ++scripts_run_info->num_blocking_js;
+@@ -382,8 +377,6 @@ void ScriptInjection::OnJsInjectionCompleted(
        execution_result_ = std::make_unique<base::Value>();
    }
    did_inject_js_ = true;
--  if (host_id().type() == HostID::EXTENSIONS)
--    RecordContentScriptInjection(ukm_source_id_, host_id().id());
+-  if (host_id().type == mojom::HostID::HostType::kExtensions)
+-    RecordContentScriptInjection(ukm_source_id_, host_id().id);
  
    // If |async_completion_callback_| is set, it means the script finished
    // asynchronously, and we should run it.

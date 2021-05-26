@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/settings/settings_ui.cc b/chrome/browser/ui/webui/settings/settings_ui.cc
-index ae1a6e96af2c..21f863535732 100644
+index 9d31f5f1ec03f..d28cefcbed6a1 100644
 --- a/chrome/browser/ui/webui/settings/settings_ui.cc
 +++ b/chrome/browser/ui/webui/settings/settings_ui.cc
-@@ -22,8 +22,6 @@
+@@ -23,8 +23,6 @@
  #include "chrome/browser/privacy_sandbox/privacy_sandbox_settings_factory.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
@@ -11,7 +11,7 @@ index ae1a6e96af2c..21f863535732 100644
  #include "chrome/browser/ui/passwords/manage_passwords_view_utils.h"
  #include "chrome/browser/ui/ui_features.h"
  #include "chrome/browser/ui/webui/favicon_source.h"
-@@ -37,7 +35,6 @@
+@@ -38,7 +36,6 @@
  #include "chrome/browser/ui/webui/settings/downloads_handler.h"
  #include "chrome/browser/ui/webui/settings/extension_control_handler.h"
  #include "chrome/browser/ui/webui/settings/font_handler.h"
@@ -19,7 +19,15 @@ index ae1a6e96af2c..21f863535732 100644
  #include "chrome/browser/ui/webui/settings/import_data_handler.h"
  #include "chrome/browser/ui/webui/settings/metrics_reporting_handler.h"
  #include "chrome/browser/ui/webui/settings/on_startup_handler.h"
-@@ -71,7 +68,6 @@
+@@ -46,7 +43,6 @@
+ #include "chrome/browser/ui/webui/settings/profile_info_handler.h"
+ #include "chrome/browser/ui/webui/settings/protocol_handlers_handler.h"
+ #include "chrome/browser/ui/webui/settings/reset_settings_handler.h"
+-#include "chrome/browser/ui/webui/settings/safety_check_handler.h"
+ #include "chrome/browser/ui/webui/settings/search_engines_handler.h"
+ #include "chrome/browser/ui/webui/settings/settings_clear_browsing_data_handler.h"
+ #include "chrome/browser/ui/webui/settings/settings_cookies_view_handler.h"
+@@ -73,7 +69,6 @@
  #include "components/password_manager/core/common/password_manager_features.h"
  #include "components/pref_registry/pref_registry_syncable.h"
  #include "components/prefs/pref_service.h"
@@ -27,7 +35,7 @@ index ae1a6e96af2c..21f863535732 100644
  #include "components/signin/public/base/signin_pref_names.h"
  #include "content/public/browser/url_data_source.h"
  #include "content/public/browser/web_contents.h"
-@@ -81,9 +77,6 @@
+@@ -83,9 +78,6 @@
  #include "ui/resources/grit/webui_resources.h"
  
  #if defined(OS_WIN)
@@ -37,7 +45,7 @@ index ae1a6e96af2c..21f863535732 100644
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
  #include "chrome/browser/ui/webui/settings/incompatible_applications_handler_win.h"
  #include "chrome/browser/win/conflicts/incompatible_applications_updater.h"
-@@ -188,13 +181,11 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -194,13 +186,11 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
    AddSettingsPageUIHandler(std::make_unique<BrowserLifetimeHandler>());
    AddSettingsPageUIHandler(
        std::make_unique<ClearBrowsingDataHandler>(web_ui, profile));
@@ -51,7 +59,7 @@ index ae1a6e96af2c..21f863535732 100644
  
  #if defined(OS_WIN)
    AddSettingsPageUIHandler(std::make_unique<LanguagesHandler>());
-@@ -233,10 +224,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -239,10 +229,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
    AddSettingsPageUIHandler(std::make_unique<SystemHandler>());
  #endif
  
@@ -62,18 +70,7 @@ index ae1a6e96af2c..21f863535732 100644
  #if defined(OS_WIN) && BUILDFLAG(GOOGLE_CHROME_BRANDING)
    bool has_incompatible_applications =
        IncompatibleApplicationsUpdater::HasCachedApplications();
-@@ -253,10 +240,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
-                                                profile->GetPrefs()->GetBoolean(
-                                                    prefs::kSigninAllowed));
- 
--  html_source->AddBoolean(
--      "safeBrowsingEnhancedEnabled",
--      base::FeatureList::IsEnabled(safe_browsing::kEnhancedProtection));
--
-   html_source->AddBoolean(
-       "editPasswordsInSettings",
-       base::FeatureList::IsEnabled(
-@@ -280,17 +263,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -277,17 +263,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
        "enableContentSettingsRedesign",
        base::FeatureList::IsEnabled(features::kContentSettingsRedesign));
  
@@ -88,10 +85,33 @@ index ae1a6e96af2c..21f863535732 100644
 -          features::kChromeCleanupScanCompletedNotification));
 -#endif
 -
- #if BUILDFLAG(IS_CHROMEOS_ASH)
-   html_source->AddBoolean("splitSettingsSyncEnabled",
-                           chromeos::features::IsSplitSettingsSyncEnabled());
-@@ -361,8 +333,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+ #if !BUILDFLAG(IS_CHROMEOS_ASH) && !BUILDFLAG(IS_CHROMEOS_LACROS)
+   html_source->AddBoolean("enableDesktopRestructuredLanguageSettings",
+                           base::FeatureList::IsEnabled(
+@@ -311,10 +286,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   html_source->AddBoolean("isOSSettings", false);
+ #endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
+ 
+-  html_source->AddBoolean(
+-      "safetyCheckWeakPasswordsEnabled",
+-      base::FeatureList::IsEnabled(features::kSafetyCheckWeakPasswords));
+-
+   AddSettingsPageUIHandler(std::make_unique<AboutHandler>(profile));
+   AddSettingsPageUIHandler(std::make_unique<ResetSettingsHandler>(profile));
+ 
+@@ -335,11 +306,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   plural_string_handler->AddLocalizedString(
+       "movePasswordsToAccount",
+       IDS_SETTINGS_PASSWORD_MOVE_PASSWORDS_TO_ACCOUNT_COUNT);
+-  plural_string_handler->AddLocalizedString(
+-      "safetyCheckPasswordsCompromised",
+-      IDS_SETTINGS_COMPROMISED_PASSWORDS_COUNT_SHORT);
+-  plural_string_handler->AddLocalizedString(
+-      "safetyCheckPasswordsWeak", IDS_SETTINGS_WEAK_PASSWORDS_COUNT_SHORT);
+   web_ui->AddMessageHandler(std::move(plural_string_handler));
+ 
+   // Add the metrics handler to write uma stats.
+@@ -368,8 +334,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
      html_source->AddResourcePath(
          "privacySandbox", IDR_SETTINGS_PRIVACY_SANDBOX_PRIVACY_SANDBOX_HTML);
    }
@@ -100,7 +120,7 @@ index ae1a6e96af2c..21f863535732 100644
  }
  
  SettingsUI::~SettingsUI() = default;
-@@ -426,16 +396,6 @@ void SettingsUI::AddSettingsPageUIHandler(
+@@ -437,16 +401,6 @@ void SettingsUI::AddSettingsPageUIHandler(
    web_ui()->AddMessageHandler(std::move(handler));
  }
  

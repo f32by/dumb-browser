@@ -1,13 +1,14 @@
 diff --git a/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h b/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h
-index f211486b34cc..e2d9f908926f 100644
+index 3645b616790dc..c326d6bc23a5d 100644
 --- a/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h
 +++ b/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.h
-@@ -7,14 +7,8 @@
+@@ -7,15 +7,10 @@
  
  #include "components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h"
  
 -#include "chrome/browser/enterprise/reporting/reporting_delegate_factory_desktop.h"
--
+ #include "chrome/browser/policy/cbcm_invalidations_initializer.h"
+ 
  class DeviceIdentityProvider;
  
 -namespace enterprise_reporting {
@@ -17,7 +18,7 @@ index f211486b34cc..e2d9f908926f 100644
  namespace instance_id {
  class InstanceIDDriver;
  }
-@@ -62,8 +56,6 @@ class ChromeBrowserCloudManagementControllerDesktop
+@@ -63,8 +58,6 @@ class ChromeBrowserCloudManagementControllerDesktop
    DeviceManagementService* GetDeviceManagementService() override;
    scoped_refptr<network::SharedURLLoaderFactory> GetSharedURLLoaderFactory()
        override;
@@ -26,13 +27,15 @@ index f211486b34cc..e2d9f908926f 100644
  
    scoped_refptr<base::SingleThreadTaskRunner> GetBestEffortTaskRunner()
        override;
-@@ -80,9 +72,6 @@ class ChromeBrowserCloudManagementControllerDesktop
-   // ready.
-   void AccountInitCallback(const std::string& account_email, bool success);
+@@ -80,9 +73,10 @@ class ChromeBrowserCloudManagementControllerDesktop
+   bool IsInvalidationsServiceStarted() const override;
  
--  enterprise_reporting::ReportingDelegateFactoryDesktop
--      reporting_delegate_factory_;
+  private:
++#if 0
+   enterprise_reporting::ReportingDelegateFactoryDesktop
+       reporting_delegate_factory_;
 -
++#endif
    std::unique_ptr<ChromeBrowserCloudManagementRegisterWatcher>
        cloud_management_register_watcher_;
  

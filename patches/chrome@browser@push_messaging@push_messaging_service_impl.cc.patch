@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/push_messaging/push_messaging_service_impl.cc b/chrome/browser/push_messaging/push_messaging_service_impl.cc
-index 1e2f75ede304..524b8a57ecb1 100644
+index 36c4c47a538c5..3b605c5861790 100644
 --- a/chrome/browser/push_messaging/push_messaging_service_impl.cc
 +++ b/chrome/browser/push_messaging/push_messaging_service_impl.cc
-@@ -381,70 +381,10 @@ void PushMessagingServiceImpl::OnMessage(const std::string& app_id,
+@@ -382,70 +382,10 @@ void PushMessagingServiceImpl::OnMessage(const std::string& app_id,
        message.decrypted ? message.raw_data : std::string());
  
    if (IsPermissionSet(app_identifier.origin())) {
@@ -76,7 +76,7 @@ index 1e2f75ede304..524b8a57ecb1 100644
      // The payload of a push message can be valid with content, valid with empty
      // content, or null.
      base::Optional<std::string> payload;
-@@ -459,25 +399,13 @@ void PushMessagingServiceImpl::OnCheckedOriginForAbuse(
+@@ -460,25 +400,13 @@ void PushMessagingServiceImpl::OnCheckedOriginForAbuse(
                         weak_factory_.GetWeakPtr(), app_id, origin,
                         service_worker_registration_id, message,
                         message_handled_callback()));

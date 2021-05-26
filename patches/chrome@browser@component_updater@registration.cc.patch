@@ -1,14 +1,15 @@
 diff --git a/chrome/browser/component_updater/registration.cc b/chrome/browser/component_updater/registration.cc
-index 0bb63aad2213..38f92ed6bcf5 100644
+index 71e027c8f5fa4..ab7490a7f7bd6 100644
 --- a/chrome/browser/component_updater/registration.cc
 +++ b/chrome/browser/component_updater/registration.cc
-@@ -13,20 +13,14 @@
+@@ -13,21 +13,15 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/buildflags.h"
  #include "chrome/browser/component_updater/autofill_regex_component_installer.h"
 -#include "chrome/browser/component_updater/chrome_origin_trials_component_installer.h"
  #include "chrome/browser/component_updater/crl_set_component_installer.h"
 -#include "chrome/browser/component_updater/crowd_deny_component_installer.h"
+ #include "chrome/browser/component_updater/desktop_sharing_hub_component_installer.h"
 -#include "chrome/browser/component_updater/file_type_policies_component_installer.h"
  #include "chrome/browser/component_updater/first_party_sets_component_installer.h"
 -#include "chrome/browser/component_updater/floc_component_installer.h"
@@ -23,7 +24,7 @@ index 0bb63aad2213..38f92ed6bcf5 100644
  #include "chrome/common/buildflags.h"
  #include "chrome/common/chrome_paths.h"
  #include "chrome/common/pref_names.h"
-@@ -35,7 +29,6 @@
+@@ -36,7 +30,6 @@
  #include "components/component_updater/installer_policies/autofill_states_component_installer.h"
  #include "components/component_updater/installer_policies/on_device_head_suggest_component_installer.h"
  #include "components/component_updater/installer_policies/optimization_hints_component_installer.h"
@@ -31,7 +32,7 @@ index 0bb63aad2213..38f92ed6bcf5 100644
  #include "components/nacl/common/buildflags.h"
  #include "device/vr/buildflags/buildflags.h"
  #include "third_party/widevine/cdm/buildflags.h"
-@@ -113,9 +106,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -114,9 +107,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  #endif  // BUILDFLAG(ENABLE_NACL) && !defined(OS_ANDROID)
  
@@ -41,15 +42,15 @@ index 0bb63aad2213..38f92ed6bcf5 100644
    RegisterOnDeviceHeadSuggestComponent(
        cus, g_browser_process->GetApplicationLocale());
    RegisterOptimizationHintsComponent(cus);
-@@ -137,7 +127,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -138,7 +128,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
  #endif
    }
    RegisterSSLErrorAssistantComponent(cus);
 -  RegisterFileTypePoliciesComponent(cus);
+   RegisterDesktopSharingHubComponent(cus);
+ 
  #if !BUILDFLAG(IS_CHROMEOS_ASH)
-   // CRLSetFetcher attempts to load a CRL set from either the local disk or
-   // network.
-@@ -145,7 +134,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -148,7 +137,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    component_updater::RegisterCRLSetComponent(cus);
  #endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
  
@@ -57,7 +58,7 @@ index 0bb63aad2213..38f92ed6bcf5 100644
    RegisterMediaEngagementPreloadComponent(cus, base::OnceClosure());
  
  #if defined(OS_WIN)
-@@ -153,7 +141,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -156,7 +144,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    // on chromium build bots, it is always registered here and
    // RegisterSwReporterComponent() has support for running only in official
    // builds or tests.
@@ -65,7 +66,7 @@ index 0bb63aad2213..38f92ed6bcf5 100644
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
    RegisterThirdPartyModuleListComponent(cus);
  #endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -165,9 +152,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -168,9 +155,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    }
  #endif
  
@@ -75,7 +76,7 @@ index 0bb63aad2213..38f92ed6bcf5 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
    RegisterSmartDimComponent(cus);
  #endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -176,8 +160,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
+@@ -179,8 +163,6 @@ void RegisterComponentsForUpdate(bool is_off_the_record_profile,
    RegisterHyphenationComponent(cus);
  #endif
  

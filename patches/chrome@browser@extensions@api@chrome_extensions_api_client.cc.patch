@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/api/chrome_extensions_api_client.cc b/chrome/browser/extensions/api/chrome_extensions_api_client.cc
-index 8380ebe47680..a6fda56b83f5 100644
+index b9a1166bd573a..0304e1aa4122f 100644
 --- a/chrome/browser/extensions/api/chrome_extensions_api_client.cc
 +++ b/chrome/browser/extensions/api/chrome_extensions_api_client.cc
 @@ -19,13 +19,11 @@
@@ -16,7 +16,7 @@ index 8380ebe47680..a6fda56b83f5 100644
  #include "chrome/browser/extensions/api/storage/sync_value_store_cache.h"
  #include "chrome/browser/extensions/chrome_extension_web_contents_observer.h"
  #include "chrome/browser/extensions/extension_action_runner.h"
-@@ -100,10 +98,6 @@ void ChromeExtensionsAPIClient::AddAdditionalValueStoreCaches(
+@@ -103,10 +101,6 @@ void ChromeExtensionsAPIClient::AddAdditionalValueStoreCaches(
    // Add support for chrome.storage.sync.
    (*caches)[settings_namespace::SYNC] =
        new SyncValueStoreCache(factory, observers, context->GetPath());
@@ -27,7 +27,7 @@ index 8380ebe47680..a6fda56b83f5 100644
  }
  
  void ChromeExtensionsAPIClient::AttachWebContentsHelpers(
-@@ -397,15 +391,6 @@ MessagingDelegate* ChromeExtensionsAPIClient::GetMessagingDelegate() {
+@@ -401,15 +395,6 @@ MessagingDelegate* ChromeExtensionsAPIClient::GetMessagingDelegate() {
    return messaging_delegate_.get();
  }
  

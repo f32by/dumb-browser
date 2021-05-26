@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc b/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
-index 84ab267a56a0..e42a3cdc1cd7 100644
+index a0b3b0db747f1..06a98e1d35ecf 100644
 --- a/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
 +++ b/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
 @@ -6,8 +6,6 @@
@@ -11,39 +11,36 @@ index 84ab267a56a0..e42a3cdc1cd7 100644
  #include "chrome/browser/ui/browser.h"
  #include "chrome/browser/ui/browser_finder.h"
  #include "chrome/browser/ui/browser_window.h"
-@@ -36,19 +34,7 @@ namespace {
+@@ -36,6 +34,7 @@ namespace {
  
  int GetSafetyTipBannerId(security_state::SafetyTipStatus safety_tip_status,
                           bool is_dark) {
--  switch (safety_tip_status) {
--    case security_state::SafetyTipStatus::kBadReputation:
--    case security_state::SafetyTipStatus::kLookalike:
--      return is_dark ? IDR_SAFETY_TIP_ILLUSTRATION_DARK
--                     : IDR_SAFETY_TIP_ILLUSTRATION_LIGHT;
--    case security_state::SafetyTipStatus::kBadReputationIgnored:
--    case security_state::SafetyTipStatus::kLookalikeIgnored:
--    case security_state::SafetyTipStatus::kBadKeyword:
--    case security_state::SafetyTipStatus::kUnknown:
--    case security_state::SafetyTipStatus::kNone:
--      NOTREACHED();
--      return 0;
--  }
++#if 0
+   switch (safety_tip_status) {
+     case security_state::SafetyTipStatus::kBadReputation:
+     case security_state::SafetyTipStatus::kLookalike:
+@@ -50,6 +49,8 @@ int GetSafetyTipBannerId(security_state::SafetyTipStatus safety_tip_status,
+       NOTREACHED();
+       return 0;
+   }
++#endif
 +  return 0;
  }
  
  }  // namespace
-@@ -73,10 +59,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
+@@ -74,9 +75,11 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
    // created over it, etc).
    set_close_on_deactivate(false);
  
--  const base::string16 title_text =
--      GetSafetyTipTitle(safety_tip_status, suggested_url);
--  SetTitle(title_text);
--
++#if 0
+   const std::u16string title_text =
+       GetSafetyTipTitle(safety_tip_status, suggested_url);
+   SetTitle(title_text);
++#endif
+ 
    views::BubbleDialogDelegateView::CreateBubble(this);
  
-   // Replace the original title view with our formatted title.
-@@ -92,11 +74,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
+@@ -93,11 +96,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
        kSizeDeltaInPixels, gfx::Font::FontStyle::NORMAL,
        gfx::Font::Weight::NORMAL);
  
@@ -55,7 +52,7 @@ index 84ab267a56a0..e42a3cdc1cd7 100644
    ChromeLayoutProvider* layout_provider = ChromeLayoutProvider::Get();
  
    gfx::Insets insets =
-@@ -141,15 +118,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
+@@ -142,15 +140,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
        layout_provider->GetDistanceMetric(DISTANCE_CONTROL_LIST_VERTICAL);
    bottom_layout->StartRowWithPadding(views::GridLayout::kFixedSize, kColumnId,
                                       views::GridLayout::kFixedSize, spacing);
@@ -71,7 +68,7 @@ index 84ab267a56a0..e42a3cdc1cd7 100644
  
    MaybeAddButtons(safety_tip_status, bottom_layout, spacing, kColumnId, insets);
  
-@@ -194,16 +162,10 @@ void SafetyTipPageInfoBubbleView::OnWidgetDestroying(views::Widget* widget) {
+@@ -195,16 +184,10 @@ void SafetyTipPageInfoBubbleView::OnWidgetDestroying(views::Widget* widget) {
  
  void SafetyTipPageInfoBubbleView::ExecuteLeaveCommand() {
    action_taken_ = SafetyTipInteraction::kLeaveSite;
@@ -88,7 +85,7 @@ index 84ab267a56a0..e42a3cdc1cd7 100644
  }
  
  void SafetyTipPageInfoBubbleView::RenderFrameDeleted(
-@@ -302,8 +264,7 @@ void SafetyTipPageInfoBubbleView::MaybeAddButtons(
+@@ -303,8 +286,7 @@ void SafetyTipPageInfoBubbleView::MaybeAddButtons(
            [](SafetyTipPageInfoBubbleView* view) {
              view->ExecuteLeaveCommand();
            },

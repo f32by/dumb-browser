@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
-index 81d5820e9b93..0497e124dd29 100644
+index b19ef9e10b9ff..6b35ac6c79795 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
-@@ -196,9 +196,6 @@
+@@ -192,9 +192,6 @@
  #include "services/device/public/mojom/power_monitor.mojom.h"
  #include "services/device/public/mojom/screen_orientation.mojom.h"
  #include "services/device/public/mojom/time_zone_monitor.mojom.h"
@@ -12,8 +12,8 @@ index 81d5820e9b93..0497e124dd29 100644
  #include "services/network/public/cpp/network_switches.h"
  #include "services/network/public/mojom/network_service.mojom.h"
  #include "services/resource_coordinator/public/mojom/memory_instrumentation/memory_instrumentation.mojom.h"
-@@ -1438,12 +1435,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
-       return;
+@@ -1361,12 +1358,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
+       }
      }
  
 -    if (auto r = receiver.As<ukm::mojom::UkmRecorderInterface>()) {

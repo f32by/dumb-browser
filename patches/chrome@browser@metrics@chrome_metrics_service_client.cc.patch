@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.cc b/chrome/browser/metrics/chrome_metrics_service_client.cc
-index 8b1753d4955b..98f90dfed456 100644
+index 52c6a8e9b1a73..eebfcbc5f6e77 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
 @@ -41,21 +41,10 @@
@@ -380,7 +380,7 @@ index 8b1753d4955b..98f90dfed456 100644
  void ChromeMetricsServiceClient::SetMetricsClientId(
      const std::string& client_id) {
    crash_keys::SetMetricsClientIdFromGUID(client_id);
-@@ -518,508 +206,11 @@ std::string ChromeMetricsServiceClient::GetVersionString() {
+@@ -522,508 +210,11 @@ std::string ChromeMetricsServiceClient::GetVersionString() {
    return metrics::GetVersionString();
  }
  
@@ -889,7 +889,7 @@ index 8b1753d4955b..98f90dfed456 100644
  }
  
  void ChromeMetricsServiceClient::Observe(
-@@ -1033,18 +224,9 @@ void ChromeMetricsServiceClient::Observe(
+@@ -1037,18 +228,9 @@ void ChromeMetricsServiceClient::Observe(
      case content::NOTIFICATION_LOAD_START:
      case content::NOTIFICATION_RENDERER_PROCESS_CLOSED:
      case content::NOTIFICATION_RENDER_WIDGET_HOST_HANG:
@@ -908,7 +908,7 @@ index 8b1753d4955b..98f90dfed456 100644
        break;
      }
  
-@@ -1053,119 +235,16 @@ void ChromeMetricsServiceClient::Observe(
+@@ -1057,119 +239,16 @@ void ChromeMetricsServiceClient::Observe(
    }
  }
  

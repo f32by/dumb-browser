@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/signin/inline_login_handler_impl.cc b/chrome/browser/ui/webui/signin/inline_login_handler_impl.cc
-index 673f0fc94597..d500709bd447 100644
+index 6697d28e1c742..c9357649acf3d 100644
 --- a/chrome/browser/ui/webui/signin/inline_login_handler_impl.cc
 +++ b/chrome/browser/ui/webui/signin/inline_login_handler_impl.cc
-@@ -278,9 +278,7 @@ void OnSyncSetupComplete(Profile* profile,
+@@ -262,9 +262,7 @@ void OnSyncSetupComplete(Profile* profile,
                                              ServiceAccessType::EXPLICIT_ACCESS);
      password_store->SaveGaiaPasswordHash(
          username, base::UTF8ToUTF16(password),
@@ -10,10 +10,10 @@ index 673f0fc94597..d500709bd447 100644
 -        password_manager::metrics_util::GaiaPasswordHashChange::
 -            SAVED_ON_CHROME_SIGNIN);
 +        /*is_primary_account_=*/true);
+   }
  
-     if (profiles::IsLockAvailable(profile))
-       LocalAuth::SetLocalAuthCredentials(profile, password);
-@@ -420,9 +418,7 @@ void InlineSigninHelper::OnClientOAuthSuccessAndBrowserOpened(
+   if (has_primary_account && is_force_sign_in_with_usermanager &&
+@@ -399,9 +397,7 @@ void InlineSigninHelper::OnClientOAuthSuccessAndBrowserOpened(
                                              ServiceAccessType::EXPLICIT_ACCESS);
      if (password_store) {
        password_store->SaveGaiaPasswordHash(

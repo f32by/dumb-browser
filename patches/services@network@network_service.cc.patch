@@ -1,5 +1,5 @@
 diff --git a/services/network/network_service.cc b/services/network/network_service.cc
-index 01e7a291e2a5..3e51f0f1815b 100644
+index 92d25979693ae..b7a3ed7b3ac33 100644
 --- a/services/network/network_service.cc
 +++ b/services/network/network_service.cc
 @@ -27,6 +27,7 @@
@@ -10,17 +10,7 @@ index 01e7a291e2a5..3e51f0f1815b 100644
  #include "mojo/public/cpp/bindings/scoped_message_error_crash_key.h"
  #include "mojo/public/cpp/system/functions.h"
  #include "net/base/features.h"
-@@ -295,9 +296,6 @@ NetworkService::NetworkService(
- 
-   if (!delay_initialization_until_set_client)
-     Initialize(mojom::NetworkServiceParams::New());
--
--  metrics_trigger_timer_.Start(FROM_HERE, base::TimeDelta::FromMinutes(20),
--                               this, &NetworkService::ReportMetrics);
- }
- 
- void NetworkService::Initialize(mojom::NetworkServiceParamsPtr params,
-@@ -385,6 +383,8 @@ void NetworkService::Initialize(mojom::NetworkServiceParamsPtr params,
+@@ -346,6 +347,8 @@ void NetworkService::Initialize(mojom::NetworkServiceParamsPtr params,
    sct_auditing_cache_ =
        std::make_unique<SCTAuditingCache>(kMaxSCTAuditingCacheEntries);
  #endif
@@ -29,7 +19,7 @@ index 01e7a291e2a5..3e51f0f1815b 100644
  }
  
  NetworkService::~NetworkService() {
-@@ -415,6 +415,7 @@ void NetworkService::set_os_crypt_is_configured() {
+@@ -376,6 +379,7 @@ void NetworkService::set_os_crypt_is_configured() {
  
  std::unique_ptr<NetworkService> NetworkService::Create(
      mojo::PendingReceiver<mojom::NetworkService> receiver) {
@@ -37,15 +27,7 @@ index 01e7a291e2a5..3e51f0f1815b 100644
    return std::make_unique<NetworkService>(nullptr, std::move(receiver));
  }
  
-@@ -829,7 +830,6 @@ void NetworkService::OnDataPipeDropped(DataPipeUser user) {
- }
- 
- void NetworkService::StopMetricsTimerForTesting() {
--  metrics_trigger_timer_.Stop();
- }
- 
- void NetworkService::DestroyNetworkContexts() {
-@@ -957,4 +957,10 @@ NetworkService* NetworkService::GetNetworkServiceForTesting() {
+@@ -798,4 +802,10 @@ NetworkService* NetworkService::GetNetworkServiceForTesting() {
    return g_network_service;
  }
  

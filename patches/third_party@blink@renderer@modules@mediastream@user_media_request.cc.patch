@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/mediastream/user_media_request.cc b/third_party/blink/renderer/modules/mediastream/user_media_request.cc
-index 501299f8274d..c5bc6770b7e1 100644
+index c0da974bc988a..b8b41ee2985d6 100644
 --- a/third_party/blink/renderer/modules/mediastream/user_media_request.cc
 +++ b/third_party/blink/renderer/modules/mediastream/user_media_request.cc
 @@ -35,7 +35,6 @@
@@ -7,7 +7,7 @@ index 501299f8274d..c5bc6770b7e1 100644
  #include "base/macros.h"
  #include "base/strings/stringprintf.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
- #include "third_party/blink/public/mojom/feature_policy/feature_policy.mojom-blink.h"
+ #include "third_party/blink/public/mojom/permissions_policy/permissions_policy.mojom-blink.h"
  #include "third_party/blink/public/platform/modules/webrtc/webrtc_logging.h"
  #include "third_party/blink/renderer/bindings/core/v8/dictionary.h"
 @@ -45,7 +44,6 @@
@@ -89,7 +89,7 @@ index 501299f8274d..c5bc6770b7e1 100644
    if (should_disable_hardware_noise_suppression_) {
      UseCounter::Count(context,
                        WebFeature::kUserMediaDisableHardwareNoiseSuppression);
-@@ -556,8 +549,6 @@ void UserMediaRequest::OnMediaStreamInitialized(MediaStream* stream) {
+@@ -557,8 +550,6 @@ void UserMediaRequest::OnMediaStreamInitialized(MediaStream* stream) {
    for (const auto& video_track : video_tracks)
      video_track->SetConstraints(video_);
  
@@ -98,7 +98,7 @@ index 501299f8274d..c5bc6770b7e1 100644
    // After this call, the execution context may be invalid.
    callbacks_->OnSuccess(nullptr, stream);
    is_resolved_ = true;
-@@ -569,8 +560,6 @@ void UserMediaRequest::FailConstraint(const String& constraint_name,
+@@ -570,8 +561,6 @@ void UserMediaRequest::FailConstraint(const String& constraint_name,
    DCHECK(!is_resolved_);
    if (!GetExecutionContext())
      return;
@@ -107,7 +107,7 @@ index 501299f8274d..c5bc6770b7e1 100644
    // After this call, the execution context may be invalid.
    callbacks_->OnError(
        nullptr, DOMExceptionOrOverconstrainedError::FromOverconstrainedError(
-@@ -613,8 +602,6 @@ void UserMediaRequest::Fail(Error name, const String& message) {
+@@ -614,8 +603,6 @@ void UserMediaRequest::Fail(Error name, const String& message) {
      default:
        NOTREACHED();
    }

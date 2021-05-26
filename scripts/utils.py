@@ -76,6 +76,7 @@ def apply_patches(stop_when_failed=False):
         patch_filename = os.path.join(PATCHES_DIR, get_patch_filename(p))
 
         ret = run_command(['patch', '-p1',
+                           '-s',
                            '-i', patch_filename,
                            '-d', CHROMIUM_SRC_DIR,
                            '--no-backup-if-mismatch',

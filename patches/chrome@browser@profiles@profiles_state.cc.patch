@@ -1,14 +1,18 @@
 diff --git a/chrome/browser/profiles/profiles_state.cc b/chrome/browser/profiles/profiles_state.cc
-index d1ebe94bd947..964856f167ee 100644
+index 1a12b9250e511..ac1cf2abf93c5 100644
 --- a/chrome/browser/profiles/profiles_state.cc
 +++ b/chrome/browser/profiles/profiles_state.cc
-@@ -249,9 +249,6 @@ void RemoveBrowsingDataForProfile(const base::FilePath& profile_path) {
+@@ -316,11 +316,13 @@ bool SetActiveProfileToGuestIfLocked() {
+ #endif  // !BUILDFLAG(IS_CHROMEOS_ASH)
+ 
+ void RemoveBrowsingDataForProfile(const base::FilePath& profile_path) {
++#if 0
    // The BrowsingDataRemover relies on many objects that aren't created in unit
    // tests. Previously this code would depend on content::ResourceDispatcherHost
    // but that's gone, so do a similar hack for now.
--  if (!g_browser_process->safe_browsing_service())
--    return;
--
-   Profile* profile = g_browser_process->profile_manager()->GetProfileByPath(
-       profile_path);
-   if (!profile)
+   if (!g_browser_process->safe_browsing_service())
+     return;
++#endif
+ 
+   Profile* profile =
+       g_browser_process->profile_manager()->GetProfileByPath(profile_path);

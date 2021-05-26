@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-index 98b485c09115..3136b8a04c2a 100644
+index 8f024bcdf7440..106e673f1786c 100644
 --- a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
 +++ b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-@@ -202,20 +202,6 @@ static inline void ConvertCanvasStyleToUnionType(
+@@ -203,20 +203,6 @@ static inline void ConvertCanvasStyleToUnionType(
    return_value.SetString(style->GetColor());
  }
  
@@ -23,7 +23,7 @@ index 98b485c09115..3136b8a04c2a 100644
  RespectImageOrientationEnum
  BaseRenderingContext2D::RespectImageOrientationInternal(
      CanvasImageSource* image_source) {
-@@ -233,8 +219,6 @@ void BaseRenderingContext2D::strokeStyle(
+@@ -234,8 +220,6 @@ void BaseRenderingContext2D::strokeStyle(
  void BaseRenderingContext2D::setStrokeStyle(
      const StringOrCanvasGradientOrCanvasPattern& style) {
    DCHECK(!style.IsNull());
@@ -32,7 +32,7 @@ index 98b485c09115..3136b8a04c2a 100644
  
    String color_string;
    CanvasStyle* canvas_style = nullptr;
-@@ -278,8 +262,6 @@ void BaseRenderingContext2D::setFillStyle(
+@@ -279,8 +263,6 @@ void BaseRenderingContext2D::setFillStyle(
      const StringOrCanvasGradientOrCanvasPattern& style) {
    DCHECK(!style.IsNull());
    ValidateStateStack();
@@ -41,7 +41,7 @@ index 98b485c09115..3136b8a04c2a 100644
  
    String color_string;
    CanvasStyle* canvas_style = nullptr;
-@@ -2312,8 +2294,6 @@ String BaseRenderingContext2D::textAlign() const {
+@@ -2339,8 +2321,6 @@ String BaseRenderingContext2D::textAlign() const {
  }
  
  void BaseRenderingContext2D::setTextAlign(const String& s) {
@@ -50,7 +50,7 @@ index 98b485c09115..3136b8a04c2a 100644
    TextAlign align;
    if (!ParseTextAlign(s, align))
      return;
-@@ -2327,8 +2307,6 @@ String BaseRenderingContext2D::textBaseline() const {
+@@ -2354,8 +2334,6 @@ String BaseRenderingContext2D::textBaseline() const {
  }
  
  void BaseRenderingContext2D::setTextBaseline(const String& s) {

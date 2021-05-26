@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc b/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
-index 5cf198700d27..773ee1de295c 100644
+index 38d2919b36abd..27ce0c72f77d5 100644
 --- a/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
 +++ b/third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
-@@ -116,6 +116,7 @@ bool IsThrottlableRequestContext(mojom::blink::RequestContextType context) {
+@@ -117,6 +117,7 @@ bool IsThrottlableRequestContext(mojom::blink::RequestContextType context) {
           context != mojom::blink::RequestContextType::AUDIO;
  }
  
@@ -10,7 +10,7 @@ index 5cf198700d27..773ee1de295c 100644
  void LogMixedAutoupgradeMetrics(blink::MixedContentAutoupgradeStatus status,
                                  base::Optional<int> response_or_error_code,
                                  ukm::SourceId source_id,
-@@ -148,6 +149,7 @@ void LogMixedAutoupgradeMetrics(blink::MixedContentAutoupgradeStatus status,
+@@ -149,6 +150,7 @@ void LogMixedAutoupgradeMetrics(blink::MixedContentAutoupgradeStatus status,
    }
    builder.Record(recorder);
  }
@@ -18,7 +18,7 @@ index 5cf198700d27..773ee1de295c 100644
  
  bool CanHandleDataURLRequestLocally(const ResourceRequestHead& request) {
    if (!request.Url().ProtocolIsData())
-@@ -520,6 +522,7 @@ void ResourceLoader::Start() {
+@@ -521,6 +523,7 @@ void ResourceLoader::Start() {
    }
  
    if (request.IsAutomaticUpgrade()) {
@@ -26,7 +26,7 @@ index 5cf198700d27..773ee1de295c 100644
      mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> pending_recorder;
      Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
          pending_recorder.InitWithNewPipeAndPassReceiver());
-@@ -528,6 +531,7 @@ void ResourceLoader::Start() {
+@@ -529,6 +532,7 @@ void ResourceLoader::Start() {
      LogMixedAutoupgradeMetrics(MixedContentAutoupgradeStatus::kStarted,
                                 base::nullopt, request.GetUkmSourceId(),
                                 recorder.get(), resource_);
@@ -34,15 +34,15 @@ index 5cf198700d27..773ee1de295c 100644
    }
    if (resource_->GetResourceRequest().IsDownloadToNetworkCacheOnly()) {
      // The download-to-cache requests are throttled in net/, they are fire-and
-@@ -922,6 +926,7 @@ void ResourceLoader::DidReceiveResponseInternal(
-   const ResourceRequestHead& request = resource_->GetResourceRequest();
+@@ -933,6 +937,7 @@ void ResourceLoader::DidReceiveResponseInternal(
+   }
  
    if (request.IsAutomaticUpgrade()) {
 +#if 0
      mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> pending_recorder;
      Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
          pending_recorder.InitWithNewPipeAndPassReceiver());
-@@ -931,6 +936,7 @@ void ResourceLoader::DidReceiveResponseInternal(
+@@ -942,6 +947,7 @@ void ResourceLoader::DidReceiveResponseInternal(
                                 response.HttpStatusCode(),
                                 request.GetUkmSourceId(), recorder.get(),
                                 resource_);
@@ -50,7 +50,7 @@ index 5cf198700d27..773ee1de295c 100644
    }
  
    if (fetcher_->GetProperties().IsDetached()) {
-@@ -1206,6 +1212,7 @@ void ResourceLoader::DidFail(const WebURLError& error,
+@@ -1217,6 +1223,7 @@ void ResourceLoader::DidFail(const WebURLError& error,
    response_end_time_for_error_cases_ = response_end_time;
  
    if (request.IsAutomaticUpgrade()) {
@@ -58,7 +58,7 @@ index 5cf198700d27..773ee1de295c 100644
      mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> pending_recorder;
      Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
          pending_recorder.InitWithNewPipeAndPassReceiver());
-@@ -1214,6 +1221,7 @@ void ResourceLoader::DidFail(const WebURLError& error,
+@@ -1225,6 +1232,7 @@ void ResourceLoader::DidFail(const WebURLError& error,
      LogMixedAutoupgradeMetrics(MixedContentAutoupgradeStatus::kFailed,
                                 error.reason(), request.GetUkmSourceId(),
                                 recorder.get(), resource_);

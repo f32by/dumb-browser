@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/browser.cc b/chrome/browser/ui/browser.cc
-index 2f2862c42612..3e56bbc8b5b0 100644
+index 29d0321fae4ca..8a73eaa8a6b1e 100644
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
-@@ -76,7 +76,6 @@
+@@ -77,7 +77,6 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
  #include "chrome/browser/profiles/profile_keep_alive_types.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -10,7 +10,7 @@ index 2f2862c42612..3e56bbc8b5b0 100644
  #include "chrome/browser/profiles/profiles_state.h"
  #include "chrome/browser/repost_form_warning_controller.h"
  #include "chrome/browser/resource_coordinator/tab_load_tracker.h"
-@@ -170,19 +169,15 @@
+@@ -172,19 +171,15 @@
  #include "components/keep_alive_registry/keep_alive_types.h"
  #include "components/keep_alive_registry/scoped_keep_alive.h"
  #include "components/omnibox/browser/location_bar_model_impl.h"
@@ -30,7 +30,7 @@ index 2f2862c42612..3e56bbc8b5b0 100644
  #include "components/translate/core/browser/language_state.h"
  #include "components/user_manager/user_manager.h"
  #include "components/viz/common/surfaces/surface_id.h"
-@@ -503,8 +498,6 @@ Browser::Browser(const CreateParams& params)
+@@ -509,8 +504,6 @@ Browser::Browser(const CreateParams& params)
  
    UpdateBookmarkBarState(BOOKMARK_BAR_STATE_CHANGE_INIT);
  
@@ -39,7 +39,7 @@ index 2f2862c42612..3e56bbc8b5b0 100644
    if (params.skip_window_init_for_testing)
      return;
  
-@@ -1406,18 +1399,10 @@ void Browser::OnDidBlockNavigation(
+@@ -1443,18 +1436,10 @@ void Browser::OnDidBlockNavigation(
      if (auto* framebust_helper =
              FramebustBlockTabHelper::FromWebContents(web_contents)) {
        auto on_click = [](const GURL& url, size_t index, size_t total_elements) {
@@ -58,7 +58,7 @@ index 2f2862c42612..3e56bbc8b5b0 100644
  }
  
  content::PictureInPictureResult Browser::EnterPictureInPicture(
-@@ -1510,7 +1495,6 @@ void Browser::OnWindowDidShow() {
+@@ -1547,7 +1532,6 @@ void Browser::OnWindowDidShow() {
      return;
    window_has_shown_ = true;
  
@@ -66,7 +66,7 @@ index 2f2862c42612..3e56bbc8b5b0 100644
  
    // Nothing to do for non-tabbed windows.
    if (!is_type_normal())
-@@ -1663,18 +1647,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
+@@ -1705,18 +1689,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
    if (is_type_normal())
      return;
  
@@ -85,7 +85,7 @@ index 2f2862c42612..3e56bbc8b5b0 100644
    window_->SetBounds(bounds);
  }
  
-@@ -2289,12 +2261,6 @@ void Browser::OnTabClosing(WebContents* contents) {
+@@ -2328,12 +2300,6 @@ void Browser::OnTabClosing(WebContents* contents) {
    // associated with their tab is still valid.
    WebContentsModalDialogManager::FromWebContents(contents)->CloseAllDialogs();
  
@@ -96,5 +96,5 @@ index 2f2862c42612..3e56bbc8b5b0 100644
 -  metrics_observer->WebContentsWillSoonBeDestroyed();
 -
    exclusive_access_manager_->OnTabClosing(contents);
-   SessionService* session_service =
-       SessionServiceFactory::GetForProfile(profile_);
+   SessionServiceBase* service = GetAppropriateSessionServiceForProfile(this);
+ 

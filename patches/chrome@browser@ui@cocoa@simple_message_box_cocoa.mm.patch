@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm b/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
-index 76db36aa55cd..59e9bf80efdf 100644
+index beab39919fcdf..a3bcfb179bd19 100644
 --- a/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
 +++ b/chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
 @@ -13,7 +13,6 @@
@@ -11,9 +11,9 @@ index 76db36aa55cd..59e9bf80efdf 100644
  #include "ui/base/l10n/l10n_util_mac.h"
  
 @@ -22,7 +21,6 @@
- MessageBoxResult ShowMessageBoxCocoa(const base::string16& message,
+ MessageBoxResult ShowMessageBoxCocoa(const std::u16string& message,
                                       MessageBoxType type,
-                                      const base::string16& checkbox_text) {
+                                      const std::u16string& checkbox_text) {
 -  startup_metric_utils::SetNonBrowserUIDisplayed();
    if (internal::g_should_skip_message_box_for_test)
      return MESSAGE_BOX_RESULT_YES;

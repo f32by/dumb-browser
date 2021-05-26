@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
-index 853eff92d210..4351d70ecaa4 100644
+index 2d72455654132..9799dc56f7c56 100644
 --- a/chrome/browser/prefs/browser_prefs.cc
 +++ b/chrome/browser/prefs/browser_prefs.cc
 @@ -21,7 +21,6 @@
@@ -10,15 +10,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "chrome/browser/devtools/devtools_window.h"
  #include "chrome/browser/download/download_prefs.h"
  #include "chrome/browser/engagement/important_sites_util.h"
-@@ -57,7 +56,6 @@
- #include "chrome/browser/prefs/incognito_mode_prefs.h"
- #include "chrome/browser/prefs/origin_trial_prefs.h"
- #include "chrome/browser/prefs/session_startup_pref.h"
--#include "chrome/browser/previews/previews_https_notification_infobar_decider.h"
- #include "chrome/browser/printing/print_preview_sticky_settings.h"
- #include "chrome/browser/profiles/chrome_version_service.h"
- #include "chrome/browser/profiles/profile.h"
-@@ -71,11 +69,9 @@
+@@ -69,11 +68,9 @@
  #include "chrome/browser/sharing/sharing_sync_preference.h"
  #include "chrome/browser/ssl/ssl_config_service_manager.h"
  #include "chrome/browser/storage/appcache_feature_prefs.h"
@@ -30,7 +22,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "chrome/browser/ui/network_profile_bubble.h"
  #include "chrome/browser/ui/prefs/prefs_tab_helper.h"
  #include "chrome/browser/ui/search_engines/keyword_editor_controller.h"
-@@ -94,15 +90,12 @@
+@@ -92,16 +89,13 @@
  #include "chrome/common/pref_names.h"
  #include "chrome/common/secure_origin_allowlist.h"
  #include "components/autofill/core/common/autofill_prefs.h"
@@ -42,11 +34,12 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "components/dom_distiller/core/distilled_page_prefs.h"
  #include "components/dom_distiller/core/dom_distiller_features.h"
  #include "components/dom_distiller/core/pref_names.h"
+ #include "components/embedder_support/origin_trials/origin_trial_prefs.h"
 -#include "components/federated_learning/floc_id.h"
  #include "components/flags_ui/pref_service_flags_storage.h"
  #include "components/image_fetcher/core/cache/image_cache.h"
  #include "components/invalidation/impl/fcm_invalidation_service.h"
-@@ -112,7 +105,6 @@
+@@ -111,7 +105,6 @@
  #include "components/language/content/browser/ulp_language_code_locator/ulp_language_code_locator.h"
  #include "components/language/core/browser/language_prefs.h"
  #include "components/lookalikes/core/lookalike_url_util.h"
@@ -54,7 +47,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "components/metrics/metrics_pref_names.h"
  #include "components/network_time/network_time_tracker.h"
  #include "components/ntp_tiles/most_visited_sites.h"
-@@ -134,14 +126,12 @@
+@@ -133,14 +126,12 @@
  #include "components/prefs/pref_service.h"
  #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
  #include "components/proxy_config/pref_proxy_config_tracker_impl.h"
@@ -69,7 +62,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "components/sync/base/sync_prefs.h"
  #include "components/sync_device_info/device_info_prefs.h"
  #include "components/sync_preferences/pref_service_syncable.h"
-@@ -150,6 +140,7 @@
+@@ -149,6 +140,7 @@
  #include "components/update_client/update_client.h"
  #include "components/variations/service/variations_service.h"
  #include "content/public/browser/render_process_host.h"
@@ -77,7 +70,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "extensions/buildflags/buildflags.h"
  #include "net/http/http_server_properties_manager.h"
  #include "ppapi/buildflags/buildflags.h"
-@@ -226,14 +217,11 @@
+@@ -226,14 +218,11 @@
  #else  // defined(OS_ANDROID)
  #include "chrome/browser/accessibility/caption_controller.h"
  #include "chrome/browser/cart/cart_service.h"
@@ -91,8 +84,8 @@ index 853eff92d210..4351d70ecaa4 100644
 -#include "chrome/browser/search/promos/promo_service.h"
  #include "chrome/browser/search/search_suggest/search_suggest_service.h"
  #include "chrome/browser/search/task_module/task_module_service.h"
- #include "chrome/browser/signin/signin_promo.h"
-@@ -241,7 +229,6 @@
+ #include "chrome/browser/serial/serial_policy_allowed_ports.h"
+@@ -242,7 +231,6 @@
  #include "chrome/browser/ui/webui/history/foreign_session_handler.h"
  #include "chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h"
  #include "chrome/browser/ui/webui/settings/settings_ui.h"
@@ -100,7 +93,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #include "components/ntp_tiles/custom_links_manager_impl.h"
  #endif  // defined(OS_ANDROID)
  
-@@ -367,15 +354,11 @@
+@@ -370,15 +358,11 @@
  #endif
  
  #if defined(OS_WIN)
@@ -116,7 +109,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #endif
  
  #if defined(OS_WIN) || defined(OS_MAC)
-@@ -683,8 +666,6 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
+@@ -681,8 +665,6 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
    // prefs en masse. See RegisterProfilePrefs for per-profile prefs. Please
    // keep this list alphabetized.
    browser_shutdown::RegisterPrefs(registry);
@@ -125,7 +118,7 @@ index 853eff92d210..4351d70ecaa4 100644
    BrowserProcessImpl::RegisterPrefs(registry);
    ChromeContentBrowserClient::RegisterLocalStatePrefs(registry);
    ChromeMetricsServiceClient::RegisterPrefs(registry);
-@@ -711,11 +692,9 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
+@@ -709,11 +691,9 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
    ProfileNetworkContextService::RegisterLocalStatePrefs(registry);
    profiles::RegisterPrefs(registry);
    RegisterScreenshotPrefs(registry);
@@ -137,9 +130,9 @@ index 853eff92d210..4351d70ecaa4 100644
    SystemNetworkContextManager::RegisterPrefs(registry);
    update_client::RegisterPrefs(registry);
    variations::VariationsService::RegisterPrefs(registry);
-@@ -751,15 +730,12 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
- 
+@@ -750,15 +730,12 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
    registry->RegisterIntegerPref(first_run::kTosDialogBehavior, 0);
+   registry->RegisterBooleanPref(lens::kLensCameraAssistedSearchEnabled, true);
  #else  // defined(OS_ANDROID)
 -  enterprise_reporting::RegisterLocalStatePrefs(registry);
    gcm::RegisterPrefs(registry);
@@ -153,7 +146,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #endif  // defined(OS_ANDROID)
  
  #if BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -855,8 +831,6 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
+@@ -861,8 +838,6 @@ void RegisterLocalState(PrefRegistrySimple* registry) {
    registry->RegisterBooleanPref(prefs::kRendererCodeIntegrityEnabled, true);
    registry->RegisterBooleanPref(
        policy::policy_prefs::kNativeWindowOcclusionEnabled, true);
@@ -162,7 +155,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
    IncompatibleApplicationsUpdater::RegisterLocalStatePrefs(registry);
    ModuleDatabase::RegisterLocalStatePrefs(registry);
-@@ -908,9 +882,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+@@ -914,9 +889,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
    dom_distiller::DistilledPagePrefs::RegisterProfilePrefs(registry);
    dom_distiller::RegisterProfilePrefs(registry);
    DownloadPrefs::RegisterProfilePrefs(registry);
@@ -172,7 +165,7 @@ index 853eff92d210..4351d70ecaa4 100644
    image_fetcher::ImageCache::RegisterProfilePrefs(registry);
    site_engagement::ImportantSitesUtil::RegisterProfilePrefs(registry);
    IncognitoModePrefs::RegisterProfilePrefs(registry);
-@@ -923,7 +895,6 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+@@ -929,7 +902,6 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
    MediaDeviceIDSalt::RegisterProfilePrefs(registry);
    MediaEngagementService::RegisterProfilePrefs(registry);
    MediaStorageIdSalt::RegisterProfilePrefs(registry);
@@ -180,15 +173,7 @@ index 853eff92d210..4351d70ecaa4 100644
    NotificationDisplayServiceImpl::RegisterProfilePrefs(registry);
    NotifierStateTracker::RegisterProfilePrefs(registry);
    ntp_tiles::MostVisitedSites::RegisterProfilePrefs(registry);
-@@ -938,7 +909,6 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
-   PrefProxyConfigTrackerImpl::RegisterProfilePrefs(registry);
-   PrefetchProxyOriginDecider::RegisterPrefs(registry);
-   PrefsTabHelper::RegisterProfilePrefs(registry, locale);
--  PreviewsHTTPSNotificationInfoBarDecider::RegisterProfilePrefs(registry);
-   privacy_sandbox::RegisterProfilePrefs(registry);
-   Profile::RegisterProfilePrefs(registry);
-   ProfileImpl::RegisterProfilePrefs(registry);
-@@ -947,10 +917,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+@@ -952,10 +924,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
    PushMessagingAppIdentifier::RegisterProfilePrefs(registry);
    QuietNotificationPermissionUiState::RegisterProfilePrefs(registry);
    RegisterBrowserUserPrefs(registry);
@@ -198,8 +183,8 @@ index 853eff92d210..4351d70ecaa4 100644
 -      registry);
    security_interstitials::InsecureFormBlockingPage::RegisterProfilePrefs(
        registry);
-   SessionStartupPref::RegisterProfilePrefs(registry);
-@@ -1031,20 +998,17 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+ #if !defined(OS_ANDROID)
+@@ -1041,20 +1010,17 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
    ChromeAuthenticatorRequestDelegate::RegisterProfilePrefs(registry);
    DevToolsWindow::RegisterProfilePrefs(registry);
    enterprise_connectors::RegisterProfilePrefs(registry);
@@ -220,7 +205,7 @@ index 853eff92d210..4351d70ecaa4 100644
    SearchSuggestService::RegisterProfilePrefs(registry);
    settings::SettingsUI::RegisterProfilePrefs(registry);
    send_tab_to_self::SendTabToSelfBubbleController::RegisterProfilePrefs(
-@@ -1130,11 +1094,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+@@ -1143,11 +1109,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
  #endif
  
  #if defined(OS_WIN)
@@ -232,7 +217,7 @@ index 853eff92d210..4351d70ecaa4 100644
  #endif
  
  // TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
-@@ -1158,6 +1118,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
+@@ -1167,6 +1129,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry,
  #endif
  
    RegisterProfilePrefsForMigration(registry);

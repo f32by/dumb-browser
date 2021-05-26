@@ -1,5 +1,5 @@
 diff --git a/components/page_info/page_info.cc b/components/page_info/page_info.cc
-index ecb23f38f28c..a71df0053665 100644
+index 1323a87b0df15..50bf4f77e4259 100644
 --- a/components/page_info/page_info.cc
 +++ b/components/page_info/page_info.cc
 @@ -45,15 +45,11 @@
@@ -36,7 +36,7 @@ index ecb23f38f28c..a71df0053665 100644
  
  namespace {
  
-@@ -128,17 +120,11 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
+@@ -129,17 +121,11 @@ bool ShouldShowPermission(const PageInfo::PermissionInfo& info,
                            const GURL& site_url,
                            HostContentSettingsMap* content_settings,
                            content::WebContents* web_contents,
@@ -56,7 +56,7 @@ index ecb23f38f28c..a71df0053665 100644
    }
  
    if (info.type == ContentSettingsType::SOUND) {
-@@ -301,7 +287,6 @@ PageInfo::PageInfo(std::unique_ptr<PageInfoDelegate> delegate,
+@@ -303,7 +289,6 @@ PageInfo::PageInfo(std::unique_ptr<PageInfoDelegate> delegate,
        show_info_bar_(false),
        site_url_(url),
        site_identity_status_(SITE_IDENTITY_STATUS_UNKNOWN),
@@ -64,7 +64,7 @@ index ecb23f38f28c..a71df0053665 100644
        safety_tip_info_({security_state::SafetyTipStatus::kUnknown, GURL()}),
        site_connection_status_(SITE_CONNECTION_STATUS_UNKNOWN),
        show_ssl_decision_revoke_button_(false),
-@@ -442,13 +427,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
+@@ -428,13 +413,6 @@ void PageInfo::RecordPageInfoAction(PageInfoAction action) {
  
    UMA_HISTOGRAM_ENUMERATION("WebsiteSettings.Action", action, PAGE_INFO_COUNT);
  
@@ -78,7 +78,7 @@ index ecb23f38f28c..a71df0053665 100644
    base::UmaHistogramEnumeration(
        security_state::GetSafetyTipHistogramName(
            "Security.SafetyTips.PageInfo.Action", safety_tip_info_.status),
-@@ -540,11 +518,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
+@@ -521,11 +499,6 @@ void PageInfo::OnSitePermissionChanged(ContentSettingsType type,
      }
    }
  
@@ -90,7 +90,7 @@ index ecb23f38f28c..a71df0053665 100644
    // The permission may have been blocked due to being under embargo, so if it
    // was changed away from BLOCK, clear embargo status if it exists.
    if (setting != CONTENT_SETTING_BLOCK) {
-@@ -962,8 +935,7 @@ void PageInfo::PresentSitePermissions() {
+@@ -982,8 +955,7 @@ void PageInfo::PresentSitePermissions() {
  
      if (ShouldShowPermission(
              permission_info, site_url_, content_settings, web_contents(),

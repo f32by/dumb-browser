@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `90.0.4430.212`.
+Current version: `91.0.4472.77`.
 
 # Features
 
@@ -30,16 +30,16 @@ Other changes:
 - [UI] Audio mute button on tab
 - [UI] Force popups to be opened in new tabs
 - [UI] Darker web control elements (Edge style)
-- [UI] No need to type `thisisunsafe` to continue when browsing some websites with certificate issues.
+- [UI] No need to type `thisisunsafe` to continue when browsing some websites with certificate issues. You can just use the old-style `continue` button.
 - [History] Unlimited browsing history
 
 # Installation
 
 Tested on following OS:
 
-1. macOS Big Sur 11.3 (20E232) x86_64
-2. macOS Big Sur 11.4 Beta (20F5046g) x86_64
+1. macOS Big Sur 11.4 (20F71) x86_64
 2. Ubuntu 20.04.2 LTS x86_64
+3. Windows 10 20H2 (19042.985) x86_64
 
 *Other OS/architecture has not been tested yet and build may fail.*
 
@@ -49,17 +49,13 @@ Windows: [Building Dumb Browser for Windows](docs/windows.md)
 
 macOS: [Building Dumb Browser for macOS](docs/macos.md)
 
-Linux: No build script available. You can follow [official build instructions](https://chromium.googlesource.com/chromium/src/+/master/docs/linux/build_instructions.md)
-and apply patches before calling `autoninja`:
-
+Linux: No build script available. You can follow [official build instructions](https://chromium.googlesource.com/chromium/src/+/master/docs/linux/build_instructions.md) until the `Run the hooks` section
+and do following things to make Dumb Browser compile:
 ```shell
 # fetch Chromium sources
 ./scripts/sync.py
-# install dependencies
-cd src
-./build/install-build-deps.sh
+# After code sync, follow Chromium's build instructions until the `Run the hooks` section
 # apply Dumb Browser's patches
-cd ..
 ./scripts/apply_patches.py
 # build
 ./scripts/build.py release

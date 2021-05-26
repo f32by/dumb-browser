@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_browser_field_trials.cc b/chrome/browser/chrome_browser_field_trials.cc
-index da3d82c9a941..167cd4edf003 100644
+index a15b9e7fd97fb..82728cecd3317 100644
 --- a/chrome/browser/chrome_browser_field_trials.cc
 +++ b/chrome/browser/chrome_browser_field_trials.cc
 @@ -22,8 +22,6 @@
@@ -25,7 +25,7 @@ index da3d82c9a941..167cd4edf003 100644
  }  // namespace
  
  ChromeBrowserFieldTrials::ChromeBrowserFieldTrials(PrefService* local_state)
-@@ -91,7 +82,6 @@ void ChromeBrowserFieldTrials::SetupFeatureControllingFieldTrials(
+@@ -89,7 +80,6 @@ void ChromeBrowserFieldTrials::SetupFeatureControllingFieldTrials(
    // is needed.
    if (!has_seed) {
      CreateFallbackSamplingTrialIfNeeded(feature_list);
@@ -33,7 +33,7 @@ index da3d82c9a941..167cd4edf003 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
      chromeos::multidevice_setup::CreateFirstRunFieldTrial(feature_list);
  #endif
-@@ -150,9 +140,4 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
+@@ -180,9 +170,4 @@ void ChromeBrowserFieldTrials::RegisterSyntheticTrials() {
  }
  
  void ChromeBrowserFieldTrials::InstantiateDynamicTrials() {

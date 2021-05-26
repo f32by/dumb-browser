@@ -1,0 +1,67 @@
+diff --git a/components/page_load_metrics/browser/BUILD.gn b/components/page_load_metrics/browser/BUILD.gn
+index b988a8c6fca24..aca862cbcc02e 100644
+--- a/components/page_load_metrics/browser/BUILD.gn
++++ b/components/page_load_metrics/browser/BUILD.gn
+@@ -6,62 +6,17 @@ import("//testing/test.gni")
+ 
+ source_set("browser") {
+   sources = [
+-    "layout_shift_normalization.cc",
+-    "layout_shift_normalization.h",
+-    "metrics_navigation_throttle.cc",
+-    "metrics_navigation_throttle.h",
+-    "metrics_web_contents_observer.cc",
+-    "metrics_web_contents_observer.h",
+-    "observers/back_forward_cache_page_load_metrics_observer.cc",
+-    "observers/back_forward_cache_page_load_metrics_observer.h",
+-    "observers/click_input_tracker.cc",
+-    "observers/click_input_tracker.h",
+-    "observers/core/largest_contentful_paint_handler.cc",
+-    "observers/core/largest_contentful_paint_handler.h",
+-    "observers/core/uma_page_load_metrics_observer.cc",
+-    "observers/core/uma_page_load_metrics_observer.h",
+-    "observers/early_hints_page_load_metrics_observer.cc",
+-    "observers/early_hints_page_load_metrics_observer.h",
+-    "observers/layout_page_load_metrics_observer.cc",
+-    "observers/layout_page_load_metrics_observer.h",
+-    "observers/prerender_page_load_metrics_observer.cc",
+-    "observers/prerender_page_load_metrics_observer.h",
+-    "observers/use_counter/ukm_features.cc",
+-    "observers/use_counter_page_load_metrics_observer.cc",
+-    "observers/use_counter_page_load_metrics_observer.h",
+-    "page_load_metrics_embedder_base.cc",
+-    "page_load_metrics_embedder_base.h",
+-    "page_load_metrics_embedder_interface.h",
+-    "page_load_metrics_event.h",
+-    "page_load_metrics_memory_tracker.cc",
+-    "page_load_metrics_memory_tracker.h",
+-    "page_load_metrics_observer.cc",
+-    "page_load_metrics_observer.h",
+-    "page_load_metrics_observer_delegate.cc",
+-    "page_load_metrics_observer_delegate.h",
+-    "page_load_metrics_update_dispatcher.cc",
+-    "page_load_metrics_update_dispatcher.h",
+     "page_load_metrics_util.cc",
+     "page_load_metrics_util.h",
+-    "page_load_tracker.cc",
+-    "page_load_tracker.h",
+-    "protocol_util.cc",
+-    "protocol_util.h",
+-    "resource_tracker.cc",
+-    "resource_tracker.h",
+   ]
+   deps = [
+     "//build:chromeos_buildflags",
+-    "//components/data_reduction_proxy/core/browser",
+     "//components/keyed_service/content:content",
+     "//components/keyed_service/core:core",
+-    "//components/page_load_metrics/common",
+-    "//components/page_load_metrics/common:page_load_metrics_mojom",
+     "//components/performance_manager:performance_manager",
+     "//content/public/browser",
+     "//content/public/common",
+     "//net",
+-    "//services/metrics/public/cpp:ukm_builders",
+     "//ui/base",
+   ]
+ }

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.cc b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-index 54ba2047729f..1db13240faf5 100644
+index 5f6e182d017d9..5419a563399ab 100644
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.cc
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.cc
 @@ -61,7 +61,6 @@
@@ -10,7 +10,7 @@ index 54ba2047729f..1db13240faf5 100644
  #include "chrome/common/chrome_features.h"
  #include "chrome/common/pref_names.h"
  #include "chrome/grit/chromium_strings.h"
-@@ -105,7 +104,6 @@
+@@ -107,7 +106,6 @@
  #else
  #include "chrome/browser/signin/signin_global_error_factory.h"
  #include "chrome/browser/ui/bookmarks/bookmark_bubble_sign_in_delegate.h"
@@ -18,7 +18,7 @@ index 54ba2047729f..1db13240faf5 100644
  #endif
  
  #if BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
-@@ -158,7 +156,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
+@@ -164,7 +162,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
        display_mode_(GetDisplayMode(browser)) {
    SetID(VIEW_ID_TOOLBAR);
  
@@ -26,7 +26,7 @@ index 54ba2047729f..1db13240faf5 100644
  
    if (display_mode_ == DisplayMode::NORMAL) {
      SetBackground(std::make_unique<TopContainerBackground>(browser_view));
-@@ -169,7 +166,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
+@@ -175,7 +172,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
  }
  
  ToolbarView::~ToolbarView() {
@@ -34,7 +34,7 @@ index 54ba2047729f..1db13240faf5 100644
  
    if (display_mode_ != DisplayMode::NORMAL)
      return;
-@@ -529,19 +525,6 @@ void ToolbarView::EnabledStateChangedForCommand(int id, bool enabled) {
+@@ -520,19 +516,6 @@ void ToolbarView::EnabledStateChangedForCommand(int id, bool enabled) {
    button->SetEnabled(enabled);
  }
  
@@ -54,7 +54,7 @@ index 54ba2047729f..1db13240faf5 100644
  
  ////////////////////////////////////////////////////////////////////////////////
  // ToolbarView, ui::AcceleratorProvider implementation:
-@@ -922,10 +905,6 @@ void ToolbarView::ShowCriticalNotification() {
+@@ -896,10 +879,6 @@ void ToolbarView::ShowCriticalNotification() {
  }
  
  void ToolbarView::ShowOutdatedInstallNotification(bool auto_update_enabled) {

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/net/profile_network_context_service.cc b/chrome/browser/net/profile_network_context_service.cc
-index 33681db05353..06cbc103b63c 100644
+index b41fe282dea38..3afc85536783b 100644
 --- a/chrome/browser/net/profile_network_context_service.cc
 +++ b/chrome/browser/net/profile_network_context_service.cc
-@@ -23,7 +23,6 @@
+@@ -24,7 +24,6 @@
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/content_settings/cookie_settings_factory.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -10,8 +10,8 @@ index 33681db05353..06cbc103b63c 100644
  #include "chrome/browser/net/system_network_context_manager.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/common/chrome_constants.h"
-@@ -37,11 +36,9 @@
- #include "components/embedder_support/pref_names.h"
+@@ -38,11 +37,9 @@
+ #include "components/embedder_support/switches.h"
  #include "components/language/core/browser/language_prefs.h"
  #include "components/language/core/browser/pref_names.h"
 -#include "components/metrics/metrics_pref_names.h"
@@ -22,7 +22,7 @@ index 33681db05353..06cbc103b63c 100644
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/network_service_instance.h"
-@@ -757,10 +754,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+@@ -758,10 +755,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
  
    // Initialize the network context to do SCT auditing only if the current
    // profile is opted in to Safe Browsing Extended Reporting.
@@ -34,7 +34,7 @@ index 33681db05353..06cbc103b63c 100644
  
    network_context_params->ct_policy = GetCTPolicy();
  
-@@ -801,19 +795,6 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+@@ -803,19 +797,6 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
    }
  #endif
  

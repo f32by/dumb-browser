@@ -1,20 +1,31 @@
 diff --git a/components/download/internal/common/BUILD.gn b/components/download/internal/common/BUILD.gn
-index 44d41af8674b..03bee7676e6e 100644
+index e9d3b6f66d96c..b449524c426e1 100644
 --- a/components/download/internal/common/BUILD.gn
 +++ b/components/download/internal/common/BUILD.gn
-@@ -72,7 +72,6 @@ source_set("internal") {
-     "//base",
-     "//components/download/database",
-     "//components/download/public/common:interfaces",
--    "//components/download/quarantine",
+@@ -63,7 +63,6 @@ source_set("internal") {
+   ]
+ 
+   public_deps = [
+-    "//components/services/quarantine/public/mojom",
+     "//mojo/public/cpp/bindings",
+     "//services/network/public/mojom",
+   ]
+@@ -75,7 +74,6 @@ source_set("internal") {
      "//components/filename_generation",
      "//components/leveldb_proto",
      "//components/safe_browsing:buildflags",
-@@ -177,7 +176,6 @@ source_set("unit_tests") {
-     "//components/download/public/common:test_support",
-     "//components/leveldb_proto",
-     "//components/leveldb_proto:test_support",
--    "//components/ukm:test_support",
-     "//crypto",
+-    "//components/services/quarantine",
+     "//mojo/public/c/system",
      "//net",
-     "//services/metrics/public/cpp:ukm_builders",
+     "//services/device/public/mojom:mojom",
+@@ -89,10 +87,6 @@ source_set("internal") {
+     deps += [ "//components/safe_browsing/core:file_type_policies" ]
+   }
+ 
+-  if (is_win) {
+-    deps += [ "//components/services/quarantine/public/cpp:features" ]
+-  }
+-
+   if (is_android) {
+     sources += [
+       "android/download_collection_bridge.cc",

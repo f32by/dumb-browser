@@ -1,5 +1,5 @@
 diff --git a/components/javascript_dialogs/tab_modal_dialog_manager.cc b/components/javascript_dialogs/tab_modal_dialog_manager.cc
-index e4f89656166a..56bd492b7cfa 100644
+index 6890e2a7f65a2..6578218572095 100644
 --- a/components/javascript_dialogs/tab_modal_dialog_manager.cc
 +++ b/components/javascript_dialogs/tab_modal_dialog_manager.cc
 @@ -14,13 +14,9 @@
@@ -100,7 +100,7 @@ index e4f89656166a..56bd492b7cfa 100644
 -  }
  
    // Close any dialog already showing.
-   CloseDialog(DismissalCause::kSubsequentDialogShown, false, base::string16());
+   CloseDialog(DismissalCause::kSubsequentDialogShown, false, std::u16string());
 @@ -296,16 +221,6 @@ void TabModalDialogManager::RunBeforeUnloadDialog(
    DCHECK_EQ(web_contents,
              content::WebContents::FromRenderFrameHost(render_frame_host));

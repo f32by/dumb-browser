@@ -1,11 +1,11 @@
 diff --git a/chrome/browser/ui/webui/settings/about_handler.cc b/chrome/browser/ui/webui/settings/about_handler.cc
-index 09b820223366..fd01d781d53b 100644
+index 8f73464b90f12..501967083d9e5 100644
 --- a/chrome/browser/ui/webui/settings/about_handler.cc
 +++ b/chrome/browser/ui/webui/settings/about_handler.cc
 @@ -34,7 +34,6 @@
- #include "chrome/browser/ui/browser_commands.h"
  #include "chrome/browser/ui/browser_finder.h"
  #include "chrome/browser/ui/chrome_pages.h"
+ #include "chrome/browser/ui/webui/theme_source.h"
 -#include "chrome/browser/upgrade_detector/upgrade_detector.h"
  #include "chrome/common/pref_names.h"
  #include "chrome/common/url_constants.h"
@@ -33,7 +33,7 @@ index 09b820223366..fd01d781d53b 100644
    web_ui()->RegisterMessageCallback(
        "openHelpPage", base::BindRepeating(&AboutHandler::HandleOpenHelpPage,
                                            base::Unretained(this)));
-@@ -409,11 +402,6 @@ void AboutHandler::PromoteUpdater(const base::ListValue* args) {
+@@ -411,11 +404,6 @@ void AboutHandler::PromoteUpdater(const base::ListValue* args) {
  #endif
  
  void AboutHandler::HandleOpenFeedbackDialog(const base::ListValue* args) {

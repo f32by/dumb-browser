@@ -1,0 +1,16 @@
+diff --git a/components/ukm/content/source_url_recorder.cc b/components/ukm/content/source_url_recorder.cc
+index 92720e93c921b..94742141457c9 100644
+--- a/components/ukm/content/source_url_recorder.cc
++++ b/components/ukm/content/source_url_recorder.cc
+@@ -349,10 +349,7 @@ void InitializeSourceUrlRecorderForWebContents(
+ 
+ SourceId GetSourceIdForWebContentsDocument(
+     const content::WebContents* web_contents) {
+-  const internal::SourceUrlRecorderWebContentsObserver* obs =
+-      internal::SourceUrlRecorderWebContentsObserver::FromWebContents(
+-          web_contents);
+-  return obs ? obs->GetLastCommittedSourceId() : kInvalidSourceId;
++  return kInvalidSourceId;
+ }
+ 
+ }  // namespace ukm

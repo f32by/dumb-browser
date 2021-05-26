@@ -1,8 +1,32 @@
 diff --git a/components/download/public/common/download_file_impl.h b/components/download/public/common/download_file_impl.h
-index 6d2a0fe7cb6d..fcf457932973 100644
+index 6d2a0fe7cb6de..29fdb1d132e96 100644
 --- a/components/download/public/common/download_file_impl.h
 +++ b/components/download/public/common/download_file_impl.h
-@@ -363,7 +363,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadFileImpl : public DownloadFile {
+@@ -29,7 +29,6 @@
+ #include "components/download/public/common/download_item.h"
+ #include "components/download/public/common/download_save_info.h"
+ #include "components/download/public/common/rate_estimator.h"
+-#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
+ #include "mojo/public/cpp/system/simple_watcher.h"
+ 
+ namespace download {
+@@ -68,7 +67,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadFileImpl : public DownloadFile {
+       const std::string& client_guid,
+       const GURL& source_url,
+       const GURL& referrer_url,
+-      mojo::PendingRemote<quarantine::mojom::Quarantine> remote_quarantine,
+       RenameCompletionCallback callback) override;
+   void Detach() override;
+   void Cancel() override;
+@@ -239,7 +237,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadFileImpl : public DownloadFile {
+     std::string client_guid;  // See BaseFile::AnnotateWithSourceInformation()
+     GURL source_url;          // See BaseFile::AnnotateWithSourceInformation()
+     GURL referrer_url;        // See BaseFile::AnnotateWithSourceInformation()
+-    mojo::PendingRemote<quarantine::mojom::Quarantine> remote_quarantine;
+     int retries_left;         // RenameWithRetryInternal() will
+                               // automatically retry until this
+                               // count reaches 0. Each attempt
+@@ -363,7 +360,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadFileImpl : public DownloadFile {
    base::TimeTicks download_start_;
    RateEstimator rate_estimator_;
    int num_active_streams_;

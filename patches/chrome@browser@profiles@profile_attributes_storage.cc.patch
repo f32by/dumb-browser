@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_attributes_storage.cc b/chrome/browser/profiles/profile_attributes_storage.cc
-index fe8190e553d5..9f6a020fc1b4 100644
+index 28d698146951a..5788eebdf5291 100644
 --- a/chrome/browser/profiles/profile_attributes_storage.cc
 +++ b/chrome/browser/profiles/profile_attributes_storage.cc
-@@ -22,7 +22,6 @@
+@@ -23,7 +23,6 @@
  #include "build/chromeos_buildflags.h"
  #include "chrome/browser/profiles/profile_avatar_downloader.h"
  #include "chrome/browser/profiles/profile_avatar_icon_util.h"
@@ -10,7 +10,7 @@ index fe8190e553d5..9f6a020fc1b4 100644
  #include "chrome/grit/generated_resources.h"
  #include "components/policy/core/browser/browser_policy_connector.h"
  #include "components/profile_metrics/state.h"
-@@ -156,83 +155,6 @@ class ProfileAttributesSortComparator {
+@@ -157,83 +156,6 @@ class ProfileAttributesSortComparator {
    bool use_local_name_;
  };
  
@@ -94,7 +94,7 @@ index fe8190e553d5..9f6a020fc1b4 100644
  }  // namespace
  
  ProfileAttributesStorage::ProfileAttributesStorage(PrefService* prefs)
-@@ -415,7 +337,6 @@ void ProfileAttributesStorage::RemoveObserver(Observer* obs) {
+@@ -414,7 +336,6 @@ void ProfileAttributesStorage::RemoveObserver(Observer* obs) {
  void ProfileAttributesStorage::RecordDeletedProfileState(
      ProfileAttributesEntry* entry) {
    DCHECK(entry);
@@ -102,7 +102,7 @@ index fe8190e553d5..9f6a020fc1b4 100644
    bool is_last_profile = GetNumberOfProfiles() <= 1u;
    // If the profile has windows opened, they are still open at this moment.
    // Thus, this really means that only the profile manager is open.
-@@ -426,38 +347,6 @@ void ProfileAttributesStorage::RecordDeletedProfileState(
+@@ -425,38 +346,6 @@ void ProfileAttributesStorage::RecordDeletedProfileState(
  #endif
  
  void ProfileAttributesStorage::RecordProfilesState() {

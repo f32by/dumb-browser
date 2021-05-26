@@ -1,16 +1,16 @@
 diff --git a/components/metrics/metrics_state_manager.h b/components/metrics/metrics_state_manager.h
-index d44bac0a21c1..9135a689ed06 100644
+index 0ae78a31c0604..ed73ea815fb2c 100644
 --- a/components/metrics/metrics_state_manager.h
 +++ b/components/metrics/metrics_state_manager.h
-@@ -13,7 +13,6 @@
+@@ -12,7 +12,6 @@
+ #include "base/gtest_prod_util.h"
  #include "base/macros.h"
  #include "base/metrics/field_trial.h"
- #include "base/strings/string16.h"
 -#include "components/metrics/clean_exit_beacon.h"
  #include "components/metrics/client_info.h"
  #include "components/metrics/cloned_install_detector.h"
  #include "components/metrics/entropy_state.h"
-@@ -60,13 +59,6 @@ class MetricsStateManager final {
+@@ -59,13 +58,6 @@ class MetricsStateManager final {
    // Returns the low entropy source for this client.
    int GetLowEntropySource();
  
@@ -24,7 +24,7 @@ index d44bac0a21c1..9135a689ed06 100644
    // Forces the client ID to be generated. This is useful in case it's needed
    // before recording.
    void ForceClientIdCreation();
-@@ -197,10 +189,6 @@ class MetricsStateManager final {
+@@ -196,10 +188,6 @@ class MetricsStateManager final {
    // its typical location and wants to attempt loading it from this backup.
    const LoadClientInfoCallback load_client_info_;
  

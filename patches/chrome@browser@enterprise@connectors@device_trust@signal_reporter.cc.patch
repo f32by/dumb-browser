@@ -1,0 +1,63 @@
+diff --git a/chrome/browser/enterprise/connectors/device_trust/signal_reporter.cc b/chrome/browser/enterprise/connectors/device_trust/signal_reporter.cc
+index dddfe5b59536d..0b290853a989d 100644
+--- a/chrome/browser/enterprise/connectors/device_trust/signal_reporter.cc
++++ b/chrome/browser/enterprise/connectors/device_trust/signal_reporter.cc
+@@ -14,6 +14,7 @@ DeviceTrustSignalReporter::~DeviceTrustSignalReporter() = default;
+ void DeviceTrustSignalReporter::Init(
+     base::RepeatingCallback<bool(void)> policy_check,
+     base::OnceCallback<void(bool)> done_cb) {
++#if 0
+   switch (create_queue_status_) {
+     case CreateQueueStatus::NOT_STARTED: {
+       create_queue_status_ = CreateQueueStatus::IN_PROGRESS;
+@@ -73,11 +74,13 @@ void DeviceTrustSignalReporter::Init(
+   // Asynchronously create ReportQueue.
+   PostCreateReportQueueTask(std::move(create_queue_cb),
+                             std::move(config_result.ValueOrDie()));
++#endif
+ }
+ 
+ void DeviceTrustSignalReporter::SendReport(
+     base::Value value,
+     base::OnceCallback<void(bool)> sent_cb) {
++#if 0
+   CHECK_EQ(create_queue_status_, CreateQueueStatus::DONE);
+   DCHECK(report_queue_);
+ 
+@@ -88,12 +91,14 @@ void DeviceTrustSignalReporter::SendReport(
+       std::move(sent_cb));
+   report_queue_->Enqueue(std::move(value), reporting::Priority::FAST_BATCH,
+                          std::move(cb));
++#endif
+ }
+ 
+ void DeviceTrustSignalReporter::OnCreateReportQueueResponse(
+     base::OnceCallback<void(bool)> create_queue_cb,
+     reporting::ReportQueueProvider::CreateReportQueueResponse
+         report_queue_result) {
++#if 0
+   bool success = report_queue_result.ok();
+   if (success) {
+     report_queue_ = std::move(report_queue_result.ValueOrDie());
+@@ -105,20 +110,11 @@ void DeviceTrustSignalReporter::OnCreateReportQueueResponse(
+   // Set to DONE even upon failure to prevent repeated queue creation.
+ 
+   std::move(create_queue_cb).Run(success);
++#endif
+ }
+ 
+ policy::DMToken DeviceTrustSignalReporter::GetDmToken() const {
+   return policy::BrowserDMTokenStorage::Get()->RetrieveDMToken();
+ }
+ 
+-void DeviceTrustSignalReporter::PostCreateReportQueueTask(
+-    reporting::ReportQueueProvider::CreateReportQueueCallback create_queue_cb,
+-    std::unique_ptr<reporting::ReportQueueConfiguration> config) {
+-  auto create_queue_task =
+-      base::BindOnce(&reporting::ReportQueueProvider::CreateQueue,
+-                     std::move(config), std::move(create_queue_cb));
+-  base::SequencedTaskRunnerHandle::Get()->PostTask(
+-      FROM_HERE, std::move(create_queue_task));
+-}
+-
+ }  // namespace enterprise_connectors

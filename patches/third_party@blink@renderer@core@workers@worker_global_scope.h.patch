@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.h b/third_party/blink/renderer/core/workers/worker_global_scope.h
-index d716adec520b..6e7592e7fdc2 100644
+index 581a714ab352b..e6194d01dd898 100644
 --- a/third_party/blink/renderer/core/workers/worker_global_scope.h
 +++ b/third_party/blink/renderer/core/workers/worker_global_scope.h
 @@ -54,7 +54,6 @@ struct BlinkTransferableMessage;
@@ -26,10 +26,10 @@ index d716adec520b..6e7592e7fdc2 100644
 -  // successful and not successful) by the worker.
 -  FontMatchingMetrics* GetFontMatchingMetrics();
 -
-   scoped_refptr<base::SingleThreadTaskRunner>
-   GetAgentGroupSchedulerCompositorTaskRunner() {
-     return agent_group_scheduler_compositor_task_runner_;
-@@ -301,10 +295,6 @@ class CORE_EXPORT WorkerGlobalScope
+   bool IsUrlValid() { return url_.IsValid(); }
+ 
+  protected:
+@@ -291,10 +285,6 @@ class CORE_EXPORT WorkerGlobalScope
  
    Member<OffscreenFontSelector> font_selector_;
  
@@ -40,7 +40,7 @@ index d716adec520b..6e7592e7fdc2 100644
    blink::BrowserInterfaceBrokerProxy browser_interface_broker_proxy_;
  
    // State transition about worker top-level script evaluation.
-@@ -326,8 +316,6 @@ class CORE_EXPORT WorkerGlobalScope
+@@ -316,8 +306,6 @@ class CORE_EXPORT WorkerGlobalScope
  
    HttpsState https_state_;
  

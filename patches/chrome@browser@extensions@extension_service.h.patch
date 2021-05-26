@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/extension_service.h b/chrome/browser/extensions/extension_service.h
-index f86268b678f6..0024d42f1ffe 100644
+index dee8ffd694ae7..eedab19313454 100644
 --- a/chrome/browser/extensions/extension_service.h
 +++ b/chrome/browser/extensions/extension_service.h
-@@ -24,7 +24,6 @@
+@@ -23,7 +23,6 @@
  #include "chrome/browser/extensions/blocklist.h"
  #include "chrome/browser/extensions/extension_allowlist.h"
  #include "chrome/browser/extensions/extension_management.h"
@@ -10,13 +10,38 @@ index f86268b678f6..0024d42f1ffe 100644
  #include "chrome/browser/extensions/forced_extensions/force_installed_tracker.h"
  #include "chrome/browser/extensions/install_gate.h"
  #include "chrome/browser/extensions/pending_extension_manager.h"
-@@ -721,9 +720,6 @@ class ExtensionService : public ExtensionServiceInterface,
+@@ -629,8 +628,6 @@ class ExtensionService : public ExtensionServiceInterface,
+ 
+   ExtensionAllowlist allowlist_;
+ 
+-  SafeBrowsingVerdictHandler safe_browsing_verdict_handler_;
+-
+   // Sets of enabled/disabled/terminated/blocklisted extensions. Not owned.
+   ExtensionRegistry* registry_ = nullptr;
+ 
+@@ -716,8 +713,10 @@ class ExtensionService : public ExtensionServiceInterface,
    // Tracker of enterprise policy forced installation.
    ForceInstalledTracker force_installed_tracker_;
  
--  // Reports force-installed extension metrics to UMA.
--  ForceInstalledMetrics force_installed_metrics_;
--
-   ScopedObserver<ProfileManager, ProfileManagerObserver>
-       profile_manager_observer_{this};
++#if 0
+   // Reports force-installed extension metrics to UMA.
+   ForceInstalledMetrics force_installed_metrics_;
++#endif
  
+   base::ScopedObservation<ProfileManager, ProfileManagerObserver>
+       profile_manager_observation_{this};
+@@ -751,14 +750,6 @@ class ExtensionService : public ExtensionServiceInterface,
+                            ExtensionsNotAllowlistedThenBlocklisted);
+   FRIEND_TEST_ALL_PREFIXES(ExtensionAllowlistUnitTest,
+                            ExtensionsBlocklistedThenNotAllowlisted);
+-  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
+-                           GreylistedExtensionDisabled);
+-  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
+-                           GreylistDontEnableManuallyDisabled);
+-  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
+-                           GreylistUnknownDontChange);
+-  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
+-                           UnblocklistedExtensionStillGreylisted);
+   friend class ::BlocklistedExtensionSyncServiceTest;
+ 
+   DISALLOW_COPY_AND_ASSIGN(ExtensionService);

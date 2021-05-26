@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/enterprise/connectors/common.h b/chrome/browser/enterprise/connectors/common.h
-index 4f98d1e89004..bf4730cb511b 100644
+index e53edb184bcd6..9bbbf4b296d3b 100644
 --- a/chrome/browser/enterprise/connectors/common.h
 +++ b/chrome/browser/enterprise/connectors/common.h
-@@ -10,14 +10,10 @@
+@@ -11,14 +11,10 @@
  #include <vector>
  
  #include "base/supports_user_data.h"
@@ -17,56 +17,23 @@ index 4f98d1e89004..bf4730cb511b 100644
  // Keys used to read a connector's policy values.
  constexpr char kKeyServiceProvider[] = "service_provider";
  constexpr char kKeyEnable[] = "enable";
-@@ -51,48 +47,6 @@ enum class BlockUntilVerdict {
+@@ -56,6 +52,7 @@ enum class BlockUntilVerdict {
    BLOCK = 1,
  };
  
--// Structs representing settings to be used for an analysis or a report. These
--// settings should only be kept and considered valid for the specific
--// analysis/report they were obtained for.
--struct AnalysisSettings {
--  AnalysisSettings();
--  AnalysisSettings(AnalysisSettings&&);
--  AnalysisSettings& operator=(AnalysisSettings&&);
--  ~AnalysisSettings();
--
--  GURL analysis_url;
--  std::set<std::string> tags;
--  BlockUntilVerdict block_until_verdict = BlockUntilVerdict::NO_BLOCK;
--  bool block_password_protected_files = false;
--  bool block_large_files = false;
--  bool block_unsupported_file_types = false;
--  base::string16 custom_message_text;
--  GURL custom_message_learn_more_url;
--
--  // Minimum text size for BulkDataEntry scans. 0 means no minimum.
--  size_t minimum_data_size = 100;
--
--  // The DM token to be used for scanning. May be empty, for example if this
--  // scan is initiated by APP.
--  std::string dm_token = "";
--};
--
--struct ReportingSettings {
--  ReportingSettings();
--  ReportingSettings(GURL url, const std::string& dm_token, bool per_profile);
--  ReportingSettings(ReportingSettings&&);
--  ReportingSettings& operator=(ReportingSettings&&);
--  ~ReportingSettings();
--
--  GURL reporting_url;
--  std::set<std::string> enabled_event_names;
--  std::string dm_token;
--
--  // Indicates if the report should be made for the profile, or the browser if
--  // false.
--  bool per_profile = false;
--};
--
++#if 0
+ // Structs representing settings to be used for an analysis or a report. These
+ // settings should only be kept and considered valid for the specific
+ // analysis/report they were obtained for.
+@@ -105,6 +102,7 @@ struct ReportingSettings {
+   // false.
+   bool per_profile = false;
+ };
++#endif
+ 
  struct FileSystemSettings {
    FileSystemSettings();
-   FileSystemSettings(const FileSystemSettings&);
-@@ -113,30 +67,7 @@ struct FileSystemSettings {
+@@ -128,30 +126,7 @@ struct FileSystemSettings {
  };
  
  // Returns the pref path corresponding to a connector.

@@ -1,8 +1,21 @@
 diff --git a/content/public/browser/download_manager_delegate.cc b/content/public/browser/download_manager_delegate.cc
-index 065441e66649..1243c978ef0e 100644
+index b9b00c4fa9f9f..c0cb597f2e8a2 100644
 --- a/content/public/browser/download_manager_delegate.cc
 +++ b/content/public/browser/download_manager_delegate.cc
-@@ -112,4 +112,8 @@ DownloadManagerDelegate::GetRenameHandlerForDownload(
+@@ -99,10 +99,12 @@ void DownloadManagerDelegate::CheckDownloadAllowed(
+           std::move(check_download_allowed_cb)));
+ }
+ 
++#if 0
+ download::QuarantineConnectionCallback
+ DownloadManagerDelegate::GetQuarantineConnectionCallback() {
+   return base::NullCallback();
+ }
++#endif
+ 
+ DownloadManagerDelegate::~DownloadManagerDelegate() {}
+ 
+@@ -117,4 +119,8 @@ download::DownloadItem* DownloadManagerDelegate::GetDownloadByGuid(
    return nullptr;
  }
  

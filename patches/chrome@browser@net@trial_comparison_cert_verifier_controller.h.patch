@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/net/trial_comparison_cert_verifier_controller.h b/chrome/browser/net/trial_comparison_cert_verifier_controller.h
-index e6e1b1b3b25d..e86afa6f1886 100644
+index f22d29f1935ef..e8b862b77c8e8 100644
 --- a/chrome/browser/net/trial_comparison_cert_verifier_controller.h
 +++ b/chrome/browser/net/trial_comparison_cert_verifier_controller.h
 @@ -14,7 +14,6 @@
@@ -10,11 +10,11 @@ index e6e1b1b3b25d..e86afa6f1886 100644
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "mojo/public/cpp/bindings/receiver_set.h"
-@@ -70,7 +69,6 @@ class TrialComparisonCertVerifierController
+@@ -71,7 +70,6 @@ class TrialComparisonCertVerifierController
    void RefreshState();
  
    Profile* profile_;
 -  PrefChangeRegistrar pref_change_registrar_;
  
-   mojo::ReceiverSet<network::mojom::TrialComparisonCertVerifierReportClient>
-       receiver_set_;
+   mojo::ReceiverSet<
+       cert_verifier::mojom::TrialComparisonCertVerifierReportClient>

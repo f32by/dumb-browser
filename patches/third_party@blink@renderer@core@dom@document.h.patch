@@ -1,24 +1,24 @@
 diff --git a/third_party/blink/renderer/core/dom/document.h b/third_party/blink/renderer/core/dom/document.h
-index 4269e8813f0d..6c737eae9eff 100644
+index 83fb7a47c2a1a..26a2aeab87158 100644
 --- a/third_party/blink/renderer/core/dom/document.h
 +++ b/third_party/blink/renderer/core/dom/document.h
-@@ -41,7 +41,6 @@
+@@ -40,7 +40,6 @@
+ #include "services/network/public/mojom/referrer_policy.mojom-blink-forward.h"
  #include "services/network/public/mojom/web_sandbox_flags.mojom-blink-forward.h"
  #include "third_party/blink/public/common/metrics/document_update_reason.h"
- #include "third_party/blink/public/mojom/feature_policy/document_policy_feature.mojom-blink-forward.h"
 -#include "third_party/blink/public/mojom/federated_learning/floc.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/frame/color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/permissions/permission.mojom-blink-forward.h"
-@@ -138,7 +137,6 @@ template <typename EventType>
- class EventWithHitTestResults;
+@@ -138,7 +137,6 @@ class EventWithHitTestResults;
+ class ExceptionState;
  class FloatQuad;
  class FloatRect;
 -class FontMatchingMetrics;
  class FormController;
  class FrameCallback;
  class HTMLAllCollection;
-@@ -1075,11 +1073,6 @@ class CORE_EXPORT Document : public ContainerNode,
+@@ -1078,16 +1076,13 @@ class CORE_EXPORT Document : public ContainerNode,
                                const String& issuer,
                                ExceptionState&);
  
@@ -27,10 +27,17 @@ index 4269e8813f0d..6c737eae9eff 100644
 -  mojom::blink::FlocService* GetFlocService(
 -      ExecutionContext* execution_context);
 -
++#if 0
    // Sends a query via Mojo to ask for the interest cohort. This can reject on
-   // permissions errors (e.g. preferences, content settings, feature policy,
+   // permissions errors (e.g. preferences, content settings, permissions policy,
    // etc.) or when the interest cohort is unavailable.
-@@ -1494,10 +1487,6 @@ class CORE_EXPORT Document : public ContainerNode,
+   // https://github.com/jkarlin/floc
+   ScriptPromise interestCohort(ScriptState* script_state, ExceptionState&);
++#endif
+ 
+   // The following implements the rule from HTML 4 for what valid names are.
+   // To get this right for all the XML cases, we probably have to improve this
+@@ -1497,10 +1492,6 @@ class CORE_EXPORT Document : public ContainerNode,
    ukm::UkmRecorder* UkmRecorder();
    ukm::SourceId UkmSourceID() const;
  
@@ -41,7 +48,7 @@ index 4269e8813f0d..6c737eae9eff 100644
    scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner(TaskType);
  
    bool CurrentFrameHadRAF() const;
-@@ -2113,10 +2102,6 @@ class CORE_EXPORT Document : public ContainerNode,
+@@ -2120,10 +2111,6 @@ class CORE_EXPORT Document : public ContainerNode,
    std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
    const int64_t ukm_source_id_;
  

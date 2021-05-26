@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/workers/worker_global_scope.cc b/third_party/blink/renderer/core/workers/worker_global_scope.cc
-index ef4dce6a428e..e5d35fdc3296 100644
+index 9e7cdf8ae47be..6ea3422f24ed6 100644
 --- a/third_party/blink/renderer/core/workers/worker_global_scope.cc
 +++ b/third_party/blink/renderer/core/workers/worker_global_scope.cc
 @@ -29,7 +29,6 @@
@@ -27,7 +27,7 @@ index ef4dce6a428e..e5d35fdc3296 100644
    DCHECK(!ScriptController());
    InstanceCounters::DecrementCounter(
        InstanceCounters::kWorkerGlobalScopeCounter);
-@@ -653,6 +649,7 @@ TrustedTypePolicyFactory* WorkerGlobalScope::GetTrustedTypes() const {
+@@ -652,6 +648,7 @@ TrustedTypePolicyFactory* WorkerGlobalScope::GetTrustedTypes() const {
    return trusted_types_.Get();
  }
  
@@ -35,7 +35,7 @@ index ef4dce6a428e..e5d35fdc3296 100644
  ukm::UkmRecorder* WorkerGlobalScope::UkmRecorder() {
    if (ukm_recorder_)
      return ukm_recorder_.get();
-@@ -664,6 +661,7 @@ ukm::UkmRecorder* WorkerGlobalScope::UkmRecorder() {
+@@ -663,6 +660,7 @@ ukm::UkmRecorder* WorkerGlobalScope::UkmRecorder() {
  
    return ukm_recorder_.get();
  }
@@ -43,7 +43,7 @@ index ef4dce6a428e..e5d35fdc3296 100644
  
  std::unique_ptr<WorkerMainScriptLoadParameters>
  WorkerGlobalScope::TakeWorkerMainScriptLoadingParametersForModules() {
-@@ -681,13 +679,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
+@@ -680,13 +678,4 @@ void WorkerGlobalScope::Trace(Visitor* visitor) const {
    Supplementable<WorkerGlobalScope>::Trace(visitor);
  }
  

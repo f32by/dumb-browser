@@ -1,5 +1,5 @@
 diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
-index 8255cdfc3392..d944c0d1dc5f 100644
+index e7f4572d2992f..67666af6e1ca7 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
 @@ -20,6 +20,7 @@
@@ -18,7 +18,7 @@ index 8255cdfc3392..d944c0d1dc5f 100644
  RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
    switch (request_type) {
      case RequestType::kAccessibilityEvents:
-@@ -108,8 +110,6 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
+@@ -110,8 +112,6 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
    }
  }
  
@@ -27,7 +27,7 @@ index 8255cdfc3392..d944c0d1dc5f 100644
  std::string GetPermissionRequestString(RequestTypeForUma type) {
    switch (type) {
      case RequestTypeForUma::MULTIPLE:
-@@ -178,6 +178,7 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
+@@ -182,6 +182,7 @@ void RecordEngagementMetric(const std::vector<PermissionRequest*>& requests,
    base::UmaHistogramPercentageObsoleteDoNotUse(name, engagement_score);
  }
  
@@ -35,7 +35,7 @@ index 8255cdfc3392..d944c0d1dc5f 100644
  void RecordPermissionActionUkm(
      PermissionAction action,
      PermissionRequestGestureType gesture_type,
-@@ -241,6 +242,7 @@ void RecordPermissionActionUkm(
+@@ -245,6 +246,7 @@ void RecordPermissionActionUkm(
  
    builder.Record(ukm::UkmRecorder::Get());
  }
@@ -43,7 +43,7 @@ index 8255cdfc3392..d944c0d1dc5f 100644
  
  std::string GetPromptDispositionString(
      PermissionPromptDisposition ui_disposition) {
-@@ -649,6 +651,7 @@ void PermissionUmaUtil::RecordPermissionAction(
+@@ -646,6 +648,7 @@ void PermissionUmaUtil::RecordPermissionAction(
      const content::WebContents* web_contents,
      content::BrowserContext* browser_context,
      base::Optional<PredictionGrantLikelihood> predicted_grant_likelihood) {
@@ -51,7 +51,7 @@ index 8255cdfc3392..d944c0d1dc5f 100644
    DCHECK(PermissionUtil::IsPermission(permission));
    PermissionDecisionAutoBlocker* autoblocker =
        PermissionsClient::Get()->GetPermissionDecisionAutoBlocker(
-@@ -657,21 +660,6 @@ void PermissionUmaUtil::RecordPermissionAction(
+@@ -654,21 +657,6 @@ void PermissionUmaUtil::RecordPermissionAction(
        autoblocker->GetDismissCount(requesting_origin, permission);
    int ignore_count = autoblocker->GetIgnoreCount(requesting_origin, permission);
  
@@ -73,7 +73,7 @@ index 8255cdfc3392..d944c0d1dc5f 100644
    switch (permission) {
      case ContentSettingsType::GEOLOCATION:
        base::UmaHistogramEnumeration("Permissions.Action.Geolocation", action,
-@@ -744,6 +732,7 @@ void PermissionUmaUtil::RecordPermissionAction(
+@@ -745,6 +733,7 @@ void PermissionUmaUtil::RecordPermissionAction(
                     << PermissionUtil::GetPermissionString(permission)
                     << " not accounted for";
    }

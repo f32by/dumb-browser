@@ -1,27 +1,22 @@
 diff --git a/chrome/browser/extensions/api/autofill_private/autofill_private_api.cc b/chrome/browser/extensions/api/autofill_private/autofill_private_api.cc
-index c9998d76b551..be9275eb2d50 100644
+index c3ba3fa17bc3e..3de38697200c5 100644
 --- a/chrome/browser/extensions/api/autofill_private/autofill_private_api.cc
 +++ b/chrome/browser/extensions/api/autofill_private/autofill_private_api.cc
-@@ -491,22 +491,6 @@ AutofillPrivateMigrateCreditCardsFunction::Run() {
+@@ -494,7 +494,7 @@ AutofillPrivateMigrateCreditCardsFunction::Run() {
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ // AutofillPrivateLogServerCardLinkClickedFunction
+-
++#if 0
+ ExtensionFunction::ResponseAction
+ AutofillPrivateLogServerCardLinkClickedFunction::Run() {
+   autofill::PersonalDataManager* personal_data =
+@@ -507,7 +507,7 @@ AutofillPrivateLogServerCardLinkClickedFunction::Run() {
+   personal_data->LogServerCardLinkClicked();
    return RespondNow(NoArguments());
  }
- 
--////////////////////////////////////////////////////////////////////////////////
--// AutofillPrivateLogServerCardLinkClickedFunction
 -
--ExtensionFunction::ResponseAction
--AutofillPrivateLogServerCardLinkClickedFunction::Run() {
--  autofill::PersonalDataManager* personal_data =
--      autofill::PersonalDataManagerFactory::GetForProfile(
--          chrome_details_.GetProfile());
--
--  if (!personal_data || !personal_data->IsDataLoaded())
--    return RespondNow(Error(kErrorDataUnavailable));
--
--  personal_data->LogServerCardLinkClicked();
--  return RespondNow(NoArguments());
--}
--
++#endif
  ////////////////////////////////////////////////////////////////////////////////
  // AutofillPrivateSetCreditCardFIDOAuthEnabledStateFunction
  

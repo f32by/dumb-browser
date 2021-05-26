@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/ui/app_list/search/search_result_ranker/app_launch_event_logger.cc b/chrome/browser/ui/app_list/search/search_result_ranker/app_launch_event_logger.cc
+index 16790690fca95..f191f1eff34a0 100644
+--- a/chrome/browser/ui/app_list/search/search_result_ranker/app_launch_event_logger.cc
++++ b/chrome/browser/ui/app_list/search/search_result_ranker/app_launch_event_logger.cc
+@@ -319,6 +319,7 @@ ukm::SourceId AppLaunchEventLogger::GetSourceId(
+     const std::string& app_id,
+     const std::string& arc_package_name,
+     const std::string& pwa_url) {
++#if 0
+   if (app_type == AppLaunchEvent_AppType_CHROME) {
+     return ukm::AppSourceUrlRecorder::GetSourceIdForChromeExtension(app_id);
+   } else if (app_type == AppLaunchEvent_AppType_PWA) {
+@@ -328,8 +329,11 @@ ukm::SourceId AppLaunchEventLogger::GetSourceId(
+   } else {
+     // Either app is Crostini; or Chrome but not in app store; or Arc but not
+     // syncable.
++#endif
+     return ukm::kInvalidSourceId;
++#if 0
+   }
++#endif
+ }
+ 
+ std::vector<std::string> AppLaunchEventLogger::ChooseAppsToLog(

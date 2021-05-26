@@ -1,7 +1,27 @@
 diff --git a/components/download/public/common/download_item_impl_delegate.h b/components/download/public/common/download_item_impl_delegate.h
-index 538dfac4b83c..2d10175b79e5 100644
+index 538dfac4b83c7..657a582ffe09f 100644
 --- a/components/download/public/common/download_item_impl_delegate.h
 +++ b/components/download/public/common/download_item_impl_delegate.h
+@@ -18,8 +18,6 @@
+ #include "components/download/public/common/download_item_rename_handler.h"
+ #include "components/download/public/common/download_schedule.h"
+ #include "components/download/public/common/download_url_parameters.h"
+-#include "components/download/public/common/quarantine_connection.h"
+-#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
+ #include "mojo/public/cpp/bindings/pending_receiver.h"
+ #include "services/device/public/mojom/wake_lock_provider.mojom.h"
+ 
+@@ -124,8 +122,10 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadItemImplDelegate {
+   virtual void BindWakeLockProvider(
+       mojo::PendingReceiver<device::mojom::WakeLockProvider> receiver);
+ 
++#if 0
+   // Gets a callback that can connect to the Quarantine Service if available.
+   virtual QuarantineConnectionCallback GetQuarantineConnectionCallback();
++#endif
+ 
+   // Gets a handler to perform the rename for a download item.  If no special
+   // rename handling is required, this function returns null and the default
 @@ -133,6 +133,9 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadItemImplDelegate {
    virtual std::unique_ptr<DownloadItemRenameHandler>
    GetRenameHandlerForDownload(DownloadItemImpl* download_item);

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/content_index/content_index_provider_impl.cc b/chrome/browser/content_index/content_index_provider_impl.cc
-index cdd2b233005c..3fd15102a007 100644
+index 497d694d55470..d3f8acf83e4cf 100644
 --- a/chrome/browser/content_index/content_index_provider_impl.cc
 +++ b/chrome/browser/content_index/content_index_provider_impl.cc
 @@ -12,7 +12,6 @@
@@ -10,7 +10,7 @@ index cdd2b233005c..3fd15102a007 100644
  #include "chrome/browser/offline_items_collection/offline_content_aggregator_factory.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_key.h"
-@@ -102,7 +101,6 @@ OfflineItemFilter CategoryToFilter(blink::mojom::ContentCategory category) {
+@@ -103,7 +102,6 @@ const char ContentIndexProviderImpl::kProviderNamespace[] = "content_index";
  
  ContentIndexProviderImpl::ContentIndexProviderImpl(Profile* profile)
      : profile_(profile),
@@ -18,7 +18,7 @@ index cdd2b233005c..3fd15102a007 100644
        aggregator_(
            OfflineContentAggregatorFactory::GetForKey(profile->GetProfileKey())),
        site_engagement_service_(
-@@ -147,9 +145,6 @@ void ContentIndexProviderImpl::OnContentAdded(
+@@ -148,9 +146,6 @@ void ContentIndexProviderImpl::OnContentAdded(
    NotifyItemRemoved(items[0].id);
  
    NotifyItemsAdded(items);
@@ -28,7 +28,7 @@ index cdd2b233005c..3fd15102a007 100644
  }
  
  void ContentIndexProviderImpl::OnContentDeleted(
-@@ -205,7 +200,6 @@ void ContentIndexProviderImpl::DidGetEntryToOpen(
+@@ -206,7 +201,6 @@ void ContentIndexProviderImpl::DidGetEntryToOpen(
  
  void ContentIndexProviderImpl::DidOpenTab(content::ContentIndexEntry entry,
                                            content::WebContents* web_contents) {
@@ -36,7 +36,7 @@ index cdd2b233005c..3fd15102a007 100644
  }
  
  void ContentIndexProviderImpl::RemoveItem(const ContentId& id) {
-@@ -217,8 +211,6 @@ void ContentIndexProviderImpl::RemoveItem(const ContentId& id) {
+@@ -218,8 +212,6 @@ void ContentIndexProviderImpl::RemoveItem(const ContentId& id) {
    if (!storage_partition || !storage_partition->GetContentIndexContext())
      return;
  
@@ -45,7 +45,7 @@ index cdd2b233005c..3fd15102a007 100644
    storage_partition->GetContentIndexContext()->OnUserDeletedItem(
        components.service_worker_registration_id, components.origin,
        components.description_id);
-@@ -306,7 +298,6 @@ void ContentIndexProviderImpl::GetAllItems(MultipleItemCallback callback) {
+@@ -307,7 +299,6 @@ void ContentIndexProviderImpl::GetAllItems(MultipleItemCallback callback) {
  void ContentIndexProviderImpl::DidGetAllEntriesAcrossStorageParitions(
      std::unique_ptr<OfflineItemList> item_list,
      MultipleItemCallback callback) {

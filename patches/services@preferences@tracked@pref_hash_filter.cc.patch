@@ -1,8 +1,8 @@
 diff --git a/services/preferences/tracked/pref_hash_filter.cc b/services/preferences/tracked/pref_hash_filter.cc
-index 3f023c5f34a6..93a2bdbc00b5 100644
+index 950af2dafa3c2..7af57cc8ab24d 100644
 --- a/services/preferences/tracked/pref_hash_filter.cc
 +++ b/services/preferences/tracked/pref_hash_filter.cc
-@@ -55,7 +55,6 @@ PrefHashFilter::PrefHashFilter(
+@@ -57,7 +57,6 @@ PrefHashFilter::PrefHashFilter(
          tracked_preferences,
      mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
          reset_on_load_observer,
@@ -10,18 +10,18 @@ index 3f023c5f34a6..93a2bdbc00b5 100644
      size_t reporting_ids_count)
      : pref_hash_store_(std::move(pref_hash_store)),
        external_validation_hash_store_pair_(
-@@ -81,12 +80,12 @@ PrefHashFilter::PrefHashFilter(
+@@ -83,12 +82,12 @@ PrefHashFilter::PrefHashFilter(
        case PrefTrackingStrategy::ATOMIC:
-         tracked_preference.reset(new TrackedAtomicPreference(
+         tracked_preference = std::make_unique<TrackedAtomicPreference>(
              metadata.name, metadata.reporting_id, reporting_ids_count,
--            metadata.enforcement_level, metadata.value_type, delegate));
-+            metadata.enforcement_level, metadata.value_type));
+-            metadata.enforcement_level, metadata.value_type, delegate);
++            metadata.enforcement_level, metadata.value_type);
          break;
        case PrefTrackingStrategy::SPLIT:
-         tracked_preference.reset(new TrackedSplitPreference(
+         tracked_preference = std::make_unique<TrackedSplitPreference>(
              metadata.name, metadata.reporting_id, reporting_ids_count,
--            metadata.enforcement_level, metadata.value_type, delegate));
-+            metadata.enforcement_level, metadata.value_type));
+-            metadata.enforcement_level, metadata.value_type, delegate);
++            metadata.enforcement_level, metadata.value_type);
          break;
      }
      DCHECK(tracked_preference);

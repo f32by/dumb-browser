@@ -1,5 +1,5 @@
 diff --git a/content/browser/net/reporting_service_proxy.cc b/content/browser/net/reporting_service_proxy.cc
-index 993be528efe9..9a089fd99ec0 100644
+index 7394fc1a0c152..a50d2762c7aa7 100644
 --- a/content/browser/net/reporting_service_proxy.cc
 +++ b/content/browser/net/reporting_service_proxy.cc
 @@ -51,16 +51,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
@@ -64,7 +64,7 @@ index 993be528efe9..9a089fd99ec0 100644
 -    QueueReport(url, group, "csp-violation", std::move(body));
    }
  
-   void QueueFeaturePolicyViolationReport(
+   void QueuePermissionsPolicyViolationReport(
 @@ -127,19 +85,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
        const base::Optional<std::string>& source_file,
        int line_number,

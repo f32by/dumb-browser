@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chromium_strings.grd b/chrome/app/chromium_strings.grd
-index ca12cd3d627d..2abf601f3cf4 100644
+index 24e4e0bd57bde..1d39270c92d58 100644
 --- a/chrome/app/chromium_strings.grd
 +++ b/chrome/app/chromium_strings.grd
 @@ -191,10 +191,10 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
@@ -20,7 +20,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_PRODUCT_DESCRIPTION" desc="Browser description">
 -          Chromium is a web browser that runs webpages and applications with lightning speed. It's fast, stable, and easy to use. Browse the web more safely with malware and phishing protection built into Chromium.
-+          Dumb Browser is a web browser that runs webpages and applications with lightning speed. It's fast, stable, and easy to use. Browse the web more safely with malware and phishing protection built into Chromium.
++          Dumb Browser is a web browser that runs webpages and applications with lightning speed. It's fast, stable, and easy to use. Browse the web more safely with malware and phishing protection built into Dumb Browser.
          </message>
          <message name="IDS_WELCOME_TO_CHROME" desc="Welcoming text announced via screen readers the first time Chrome is launched at the conclusion of installation.">
 -          Welcome to Chromium; new browser window opened
@@ -98,27 +98,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
        </message>
        <if expr="chromeos">
          <message name="IDS_ABOUT_CROS_VERSION_LICENSE" desc="Additional text displayed beneath the Chromium open source URLs for Chrome OS.">
-@@ -296,58 +296,58 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
-           Chromium OS is made possible by additional <ph name="BEGIN_LINK_CROS_OSS">&lt;a target="_blank" href="$1"&gt;</ph>open source software<ph name="END_LINK_CROS_OSS">&lt;/a&gt;</ph>, as is <ph name="BEGIN_LINK_LINUX_OSS">&lt;a target="_blank" href="$2"&gt;</ph>Linux development environment (Beta)<ph name="END_LINK_LINUX_OSS">&lt;/a&gt;</ph>.
-         </message>
-         <message name="IDS_ABOUT_SAFETY_INFORMATION" desc="The safety label in the About box." translateable="false">
--          Not used in Chromium. Placeholder to keep resource maps in sync.
-+          Not used in Dumb Browser. Placeholder to keep resource maps in sync.
-         </message>
-       </if>
-       <message name="IDS_ABOUT_TERMS_OF_SERVICE" desc="The terms of service label in the About box." translateable="false">
--        Not used in Chromium. Placeholder to keep resource maps in sync.
-+        Not used in Dumb Browser. Placeholder to keep resource maps in sync.
-       </message>
-       <message name="IDS_CPU_X86_SSE2_OBSOLETE_SOON" desc="A message displayed on an at-launch infobar and About (Help) page warning the user that the computer they are using will soon be or is already unsupported.">
--        This computer will soon stop receiving Chromium updates because its hardware is no longer supported.
-+        This computer will soon stop receiving Dumb Browser updates because its hardware is no longer supported.
-       </message>
-       <if expr="is_macosx">
-         <message name="IDS_MAC_10_10_OBSOLETE_SOON" desc="A message displayed on an at-launch infobar and About (Help) page warning the user that the OS version they are using will soon be or is already unsupported.">
--          To get future Chromium updates, you'll need OS X 10.11 or later. This computer is using OS X 10.10.
-+          To get future Dumb Browser updates, you'll need OS X 10.11 or later. This computer is using OS X 10.10.
-         </message>
+@@ -309,42 +309,42 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
        </if>
        <if expr="is_win">
          <message name="IDS_WIN_XP_VISTA_OBSOLETE" desc="A message displayed on an at-launch infobar and about:help warning the user that the computer they are using is no longer supported.">
@@ -171,7 +151,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
        </message>
        <if expr="chromeos">
          <message name="IDS_EXTERNAL_PROTOCOL_NO_HANDLER_TITLE" desc="External Protocol Dialog Title">
-@@ -356,16 +356,16 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+@@ -353,16 +353,16 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
        </if>
        <if expr="use_titlecase">
          <message name="IDS_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND" desc="In Title Case: The checkbox in the status tray context menu that controls whether chrome keeps running in the background after the last window is closed">
@@ -191,7 +171,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
  
  <ph name="USER_DATA_DIRECTORY">$1<ex>C:\Documents and Settings\devint\Local Settings\Application Data\Google\Chrome</ex></ph>
        </message>
-@@ -375,9 +375,9 @@ Chromium cannot read and write to its data directory:
+@@ -372,9 +372,9 @@ Chromium cannot read and write to its data directory:
          </message>
        </if>
        <message name="IDS_PROFILE_TOO_NEW_ERROR" desc="Error displayed on startup when the profile is from a newer version of the product and can not be read">
@@ -203,7 +183,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
        </message>
        <message name="IDS_PREFERENCES_UNREADABLE_ERROR" desc="Error displayed on startup when user preferences file can not be read">
  Your preferences can not be read.
-@@ -387,90 +387,90 @@ Some features may be unavailable and changes to preferences won't be saved.
+@@ -384,90 +384,90 @@ Some features may be unavailable and changes to preferences won't be saved.
        <message name="IDS_PREFERENCES_CORRUPT_ERROR" desc="Error displayed on startup when user preferences file can not be read">
  Your preferences file is corrupt or invalid.
  
@@ -318,7 +298,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
        <!-- Options Dialog -->
-@@ -489,168 +489,168 @@ Chromium is unable to recover your settings.
+@@ -486,152 +486,152 @@ Chromium is unable to recover your settings.
          </message>
        </if>
        <message name="IDS_DEFAULT_BROWSER_INFOBAR_TEXT" desc="Text to show in an infobar when Chromium is not the current default browser.">
@@ -417,7 +397,6 @@ index ca12cd3d627d..2abf601f3cf4 100644
 +        Google API keys are missing. Some functionality of Dumb Browser will be disabled.
        </message>
  
-       <!-- Extension/App install prompt -->
        <if expr="enable_extensions">
          <!-- Extension installed bubble -->
          <message name="IDS_EXTENSION_INSTALLED_HEADING" desc="Title of the extension-installed bubble. Instructs that the extension was installed.">
@@ -430,20 +409,6 @@ index ca12cd3d627d..2abf601f3cf4 100644
 -          Also clear data from Chromium (<ph name="URL">$1<ex>www.google.com</ex></ph>)
 +          Also clear data from Dumb Browser (<ph name="URL">$1<ex>www.google.com</ex></ph>)
          </message>
- 
-         <!-- Extension context menu -->
-         <if expr="not use_titlecase">
-           <message name="IDS_EXTENSIONS_HIDE_BUTTON_IN_MENU" desc="The extension context menu item to hide the button in the application menu (sentence case).">
--            Hide in Chromium menu
-+            Hide in Dumb Browser menu
-           </message>
-         </if>
-         <if expr="use_titlecase">
-           <message name="IDS_EXTENSIONS_HIDE_BUTTON_IN_MENU" desc="The extension context menu item to hide the button in the application menu (title case).">
--            Hide in Chromium Menu
-+            Hide in Dumb Browser Menu
-           </message>
-         </if>
        </if>
  
        <!-- chrome://settings/extensions page -->
@@ -458,10 +423,6 @@ index ca12cd3d627d..2abf601f3cf4 100644
        <message name="IDS_EXTENSIONS_SHORTCUT_SCOPE_IN_CHROME" desc="The label to indicate that a shortcut will be triggerable only from within the Chrome application.">
 -        In Chromium
 +        In Dumb Browser
-       </message>
-       <message name="IDS_EXTENSIONS_BLOCKLISTED_NOT_ALLOWLISTED" desc="The text explaining the reason for disabling extension or app. The extension in question is not included in the Safe Browsing allowlist.">
--        Chromium recommends disabling this extension because it does not currently meet Enhanced Safe Browsing standards.
-+        Dumb Browser recommends disabling this extension because it does not currently meet Enhanced Safe Browsing standards.
        </message>
  
        <if expr="enable_extensions">
@@ -523,7 +484,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_UPDATE_NOW" desc="The text label of the Update Chrome OS Now menu item">
            Update &amp;Chromium OS
-@@ -659,53 +659,53 @@ Chromium is unable to recover your settings.
+@@ -640,53 +640,53 @@ Chromium is unable to recover your settings.
  
        <if expr="is_macosx">
          <message name="IDS_APP_MENU_PRODUCT_NAME" desc="The application's short name, used for the Mac's application menu, activity monitor, etc. This should be less than 16 characters. Example: Chrome, not Google Chrome.">
@@ -588,7 +549,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_ENTERPRISE_SIGNIN_WORK_PROFILE_TITLE" desc="The title of the dialog to confirm adding a new work profile with the signed-in enterprise account">
            Add Work Profile to this browser
-@@ -717,52 +717,52 @@ Chromium is unable to recover your settings.
+@@ -698,62 +698,62 @@ Chromium is unable to recover your settings.
            This work profile is completely separate from your personal profile.
          </message>
          <message name="IDS_ENTERPRISE_SIGNIN_WORK_PROFILE_EXPLANATION" desc="The warning message displayed to an enterprise user about to link their profile to their Google account. This message is followed by a 'Learn more' link.">
@@ -609,6 +570,12 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
  
+       <!-- NTP strings -->
+       <message name="IDS_NTP_CUSTOMIZE_BUTTON_LABEL" desc="Label for button on the New Tab Page that opens dialog to customize Chromium browser.">
+-        Customize Chromium
++        Customize Dumb Browser
+       </message>
+ 
        <!-- Signin Email Confirmation tab modal dialog -->
        <if expr="not chromeos">
          <message name="IDS_SIGNIN_EMAIL_CONFIRMATION_TITLE" desc="Title of the signin email confirmation tab modal dialog.">
@@ -617,8 +584,8 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
  
-       <!-- Dice Web Signin Interception Bubble-->
        <if expr="not chromeos and not is_android">
+         <!-- Dice Web Signin Interception Bubble-->
          <message name="IDS_SIGNIN_DICE_WEB_INTERCEPT_CREATE_BUBBLE_TITLE_V1" desc="Title of the web signin interception bubble">
 -          Continue in a new Chromium profile?
 +          Continue in a new Dumb Browser profile?
@@ -651,9 +618,15 @@ index ca12cd3d627d..2abf601f3cf4 100644
 -          This will create a new Chromium profile for <ph name="USER_EMAIL_ADDRESS">$1<ex>foo@gmail.com</ex></ph>
 +          This will create a new Dumb Browser profile for <ph name="USER_EMAIL_ADDRESS">$1<ex>foo@gmail.com</ex></ph>
          </message>
+ 
+         <!-- Profile Customization Bubble-->
+         <message name="IDS_PROFILE_CUSTOMIZATION_TEXT" desc="Text of the profile customization bubble">
+-          Customize your new Chromium profile
++          Customize your new Dumb Browser profile
+         </message>
        </if>
  
-@@ -771,20 +771,20 @@ Chromium is unable to recover your settings.
+@@ -762,20 +762,20 @@ Chromium is unable to recover your settings.
                   omitting them brings up a hash collision error. -->
        <if expr="is_win">
          <message name="IDS_CHROME_CLEANUP_PROMPT_EXPLANATION" desc="Description in the Chrome Cleanup dialog that Chromium browser shows when unwanted software, like ad injectors or software that changes the user's settings without their knowledge, is found on the user's computer. Appears under the title asking 'Remove harmful software?' Actor is Chromium; we are asking, Do you want Chromium to remove harmful software? 'it' is harmful software. User has the option of clicking 'Remove' to proceed with a cleanup, or 'Details' to see more details. The description is also shown on the Chrome Cleanup section of the Settings page, under 'Remove harmful software' title. Preferrably, the translation for this string should parallel IDS_SETTINGS_RESET_CLEANUP_EXPLANATION_CURRENTLY_REMOVING.">
@@ -678,7 +651,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
        <if expr="chromeos">
-@@ -814,16 +814,16 @@ Chromium is unable to recover your settings.
+@@ -796,16 +796,16 @@ Chromium is unable to recover your settings.
        <!-- App list -->
        <if expr="chromeos">
          <message name="IDS_APP_LIST_EXTENSIONS_UNINSTALL" desc="Title text for the context menu item of a non-platform-app app list item that removes the app.">
@@ -698,7 +671,14 @@ index ca12cd3d627d..2abf601f3cf4 100644
        </message>
        <if expr="is_win">
          <message name="IDS_APP_SHORTCUTS_SUBDIR_NAME_BETA" desc="Unused in Chromium builds" translateable="false">
-@@ -841,26 +841,26 @@ Chromium is unable to recover your settings.
+@@ -817,32 +817,32 @@ Chromium is unable to recover your settings.
+       <!-- Chrome OS OOBE Terms of Service screen-->
+       <if expr="chromeos">
+         <message name="IDS_TERMS_OF_SERVICE_SCREEN_SUBHEADING" desc="Subheading at the top of the Terms of Service screen. MANAGER can be a domain or an email address.">
+-          <ph name="MANAGER">$1<ex>example.com</ex></ph> requires that you read and accept the following Terms of Service before using this device. These terms do not expand, modify or limit the Chromium OS Terms.
++          <ph name="MANAGER">$1<ex>example.com</ex></ph> requires that you read and accept the following Terms of Service before using this device. These terms do not expand, modify or limit the Dumb Browser OS Terms.
+         </message>
+       </if>
  
        <!-- MediaStream capture status tray icon -->
        <message name="IDS_MEDIA_STREAM_STATUS_TRAY_TEXT_AUDIO_AND_VIDEO" desc="Tool tip for the capture status tray icon when microphone and camera are being used">
@@ -730,7 +710,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
  
-@@ -868,62 +868,62 @@ Chromium is unable to recover your settings.
+@@ -850,62 +850,62 @@ Chromium is unable to recover your settings.
        <if expr="not is_android and not chromeos">
          <!-- User pod remove sync warning text -->
          <message name="IDS_LOGIN_POD_USER_REMOVE_WARNING_SYNC" desc="Main text shown as a warning when attempting to remove an user.">
@@ -809,7 +789,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_INBOUND_MDNS_RULE_NAME_BETA" desc="Unused in Chromium builds" translateable="false">
          </message>
-@@ -932,7 +932,7 @@ Chromium is unable to recover your settings.
+@@ -914,7 +914,7 @@ Chromium is unable to recover your settings.
          <message name="IDS_INBOUND_MDNS_RULE_NAME_DEV" desc="Unused in Chromium builds" translateable="false">
          </message>
          <message name="IDS_INBOUND_MDNS_RULE_DESCRIPTION" desc="The description of the firewall rule allowing inbound mDNS traffic.">
@@ -818,7 +798,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_INBOUND_MDNS_RULE_DESCRIPTION_BETA" desc="Unused in Chromium builds" translateable="false">
          </message>
-@@ -944,28 +944,28 @@ Chromium is unable to recover your settings.
+@@ -926,28 +926,28 @@ Chromium is unable to recover your settings.
  
        <if expr="not is_android">
          <message name="IDS_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_BUBBLE_TEXT" desc="The text of a bubble that confirms users allows integrating the accessibility labels service of Google to Chromium.">
@@ -853,7 +833,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
            </message>
          </if>
        </if>
-@@ -973,13 +973,13 @@ Chromium is unable to recover your settings.
+@@ -955,13 +955,13 @@ Chromium is unable to recover your settings.
        <!-- Update Recommended dialog -->
        <if expr="not chromeos">
          <message name="IDS_UPDATE_RECOMMENDED_DIALOG_TITLE" desc="The window title for the Update Recommended dialog.">
@@ -871,7 +851,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_RELAUNCH_AND_UPDATE" desc="The button in the Update Recommended dialog which updates and relaunches Chrome.">
            Relaunch
-@@ -999,52 +999,52 @@ Chromium is unable to recover your settings.
+@@ -981,52 +981,52 @@ Chromium is unable to recover your settings.
  
        <!-- Update bubble -->
        <message name="IDS_REINSTALL_APP" desc="Text for the button the user clicks to reinstall the app.">
@@ -936,7 +916,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
        <message name="IDS_RECOVERY_BUBBLE_TEXT" desc="Text for the chrome recovery bubble view full description.">
-@@ -1054,53 +1054,53 @@ Chromium is unable to recover your settings.
+@@ -1036,53 +1036,53 @@ Chromium is unable to recover your settings.
        <!-- Critical Notification bubble -->
        <message name="IDS_CRITICAL_NOTIFICATION_TITLE" desc="The title for a bubble that appears when there is a critical update and Chromium must restart to install it. It counts down from # seconds and then Chromium automatically restarts.">
          {SECONDS, plural,
@@ -1003,7 +983,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
          <message name="IDS_EULA_SCREEN_ACCESSIBLE_TITLE" desc="Title to be spoken on opening the OOBE EULA screen">
            Chromium OS terms
-@@ -1110,14 +1110,14 @@ Chromium is unable to recover your settings.
+@@ -1092,14 +1092,14 @@ Chromium is unable to recover your settings.
        <!-- Welcome page (chrome://welcome) strings -->
        <if expr="not chromeos and not is_android">
          <message name="IDS_WELCOME_HEADER" desc="A message which will appear as the header on the Welcome UI if the user has never run Chromium before.">
@@ -1020,7 +1000,7 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
        </if>
        <!-- Relaunch notification bubble and dialog. -->
-@@ -1125,73 +1125,73 @@ Chromium is unable to recover your settings.
+@@ -1107,73 +1107,73 @@ Chromium is unable to recover your settings.
          <if expr="not chromeos">
            <message name="IDS_RELAUNCH_RECOMMENDED_TITLE" desc="The title of a dialog that tells users that a browser relaunch is recommended for an update available for some number of days.">
              {0, plural,
@@ -1119,9 +1099,9 @@ index ca12cd3d627d..2abf601f3cf4 100644
          </message>
  
        </if>
-@@ -1199,37 +1199,37 @@ Chromium is unable to recover your settings.
-       <!-- Profile Picker -->
+@@ -1181,45 +1181,45 @@ Chromium is unable to recover your settings.
        <if expr="not chromeos and not is_android">
+         <!-- Profile Picker -->
          <message name="IDS_PROFILE_PICKER_MAIN_VIEW_TITLE" desc="Profile picker main view title">
 -          Welcome to Chromium profiles
 +          Welcome to Dumb Browser profiles
@@ -1166,28 +1146,19 @@ index ca12cd3d627d..2abf601f3cf4 100644
 -          A Chromium profile with this account already exists on this device
 +          A Dumb Browser profile with this account already exists on this device
          </message>
-       </if>
  
-@@ -1237,15 +1237,15 @@ Chromium is unable to recover your settings.
-       <if expr="is_macosx">
-         <message name="IDS_ROSETTA_INSTALL_TITLE"
-                    desc="Title of the 'do you want to install Rosetta' dialog. Used when there is a page title.">
--          To enable Chromium to play protected media, you need to install Rosetta. Do you want to install it now?
-+          To enable Dumb Browser to play protected media, you need to install Rosetta. Do you want to install it now?
+         <!-- Profile switch IPH -->
+         <message name="IDS_PROFILE_SWITCH_PROMO" desc="Text of the In-Product-Help bubble for profile switching.">
+-          You can switch between Chromium profiles here
++          You can switch between Dumb Browser profiles here
          </message>
-         <message name="IDS_ROSETTA_INSTALL_BODY"
-                    desc="Body text of the 'do you want to install Rosetta' dialog.">
--          Rosetta enables Chromium to play the protected media on this page.
-+          Rosetta enables Dumb Browser to play the protected media on this page.
-         </message>
-         <message name="IDS_ROSETTA_INSTALL_RESTART_DIALOG"
-                    desc="Title text of the dialog once Rosetta is installed.">
--          To use Rosetta to play protected media, you must restart Chromium.
-+          To use Rosetta to play protected media, you must restart Dumb Browser.
+         <message name="IDS_PROFILE_SWITCH_PROMO_SCREENREADER" desc="Text announced by screenreaders to explain how to switch between profiles.">
+-          <ph name="SHORTCUT">$1<ex>CTRL+SHIFT+M</ex></ph> can switch between Chromium profiles
++          <ph name="SHORTCUT">$1<ex>CTRL+SHIFT+M</ex></ph> can switch between Dumb Browser profiles
          </message>
        </if>
  
-@@ -1264,12 +1264,12 @@ Chromium is unable to recover your settings.
+@@ -1238,12 +1238,12 @@ Chromium is unable to recover your settings.
  
        <!-- ChromeLabs bubble -->
        <message name="IDS_CHROMELABS_RELAUNCH_FOOTER_MESSAGE" desc="Text that shows in the footer of the Chrome Labs bubble when relaunch is needed for changes to take effect.">

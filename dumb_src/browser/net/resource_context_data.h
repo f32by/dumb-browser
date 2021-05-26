@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #ifndef DUMB_NET_RESOURCE_CONTEXT_DATA_H_
 #define DUMB_NET_RESOURCE_CONTEXT_DATA_H_
 
@@ -69,8 +71,8 @@ class ResourceContextData : public base::SupportsUserData::Data {
       content::BrowserContext* browser_context,
       int render_process_id,
       int frame_tree_node_id,
-      mojo::PendingReceiver<network::mojom::URLLoaderFactory> receiver,
-      mojo::PendingRemote<network::mojom::URLLoaderFactory> target_factory);
+      network::mojom::URLLoaderFactoryRequest request,
+      network::mojom::URLLoaderFactoryPtrInfo target_factory);
 
   static DumbProxyingWebSocket* StartProxyingWebSocket(
       content::ContentBrowserClient::WebSocketFactory factory,

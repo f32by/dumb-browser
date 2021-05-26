@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
-index a1c923bcf04c..462132161efa 100644
+index c8982ec659af1..24b11cf91a191 100644
 --- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
 +++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
 @@ -26,7 +26,6 @@
@@ -10,7 +10,7 @@ index a1c923bcf04c..462132161efa 100644
  #include "chrome/browser/search_engines/template_url_service_factory.h"
  #include "chrome/browser/search_provider_logos/logo_service_factory.h"
  #include "chrome/browser/ui/chrome_select_file_policy.h"
-@@ -247,76 +246,6 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
+@@ -241,76 +240,6 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
    return doodle;
  }
  
@@ -87,7 +87,7 @@ index a1c923bcf04c..462132161efa 100644
  }  // namespace
  
  // static
-@@ -343,19 +272,16 @@ NewTabPageHandler::NewTabPageHandler(
+@@ -337,19 +266,16 @@ NewTabPageHandler::NewTabPageHandler(
        web_contents_(web_contents),
        ntp_navigation_start_time_(ntp_navigation_start_time),
        logger_(profile, GURL(chrome::kChromeUINewTabPageURL)),
@@ -105,9 +105,9 @@ index a1c923bcf04c..462132161efa 100644
    instant_service_->UpdateNtpTheme();
 -  promo_service_observation_.Observe(promo_service_);
    one_google_bar_service_observation_.Observe(one_google_bar_service_);
-   logger_.SetModulesVisible(
-       profile_->GetPrefs()->GetBoolean(prefs::kNtpModulesVisible));
-@@ -582,41 +508,6 @@ void NewTabPageHandler::GetOneGoogleBarParts(
+ }
+ 
+@@ -574,41 +500,6 @@ void NewTabPageHandler::GetOneGoogleBarParts(
    one_google_bar_service_->Refresh();
  }
  
@@ -149,10 +149,18 @@ index a1c923bcf04c..462132161efa 100644
  void NewTabPageHandler::OnDismissModule(const std::string& module_id) {
    const std::string histogram_prefix(kModuleDismissedHistogram);
    base::UmaHistogramExactLinear(histogram_prefix, 1, 1);
-@@ -661,44 +552,6 @@ void NewTabPageHandler::UpdateDisabledModules() {
-       std::move(module_ids));
+@@ -654,49 +545,13 @@ void NewTabPageHandler::UpdateDisabledModules() {
  }
  
+ void NewTabPageHandler::OnModulesLoadedWithData() {
++#if 0
+   HatsService* hats_service =
+       HatsServiceFactory::GetForProfile(profile_, /*create_if_necessary=*/true);
+   CHECK(hats_service);
+   hats_service->LaunchDelayedSurveyForWebContents(kHatsSurveyTriggerNtpModules,
+                                                   web_contents_, 0);
+-}
+-
 -void NewTabPageHandler::OnPromoDataUpdated() {
 -  if (promo_load_start_time_.has_value()) {
 -    base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
@@ -189,12 +197,11 @@ index a1c923bcf04c..462132161efa 100644
 -void NewTabPageHandler::OnPromoServiceShuttingDown() {
 -  promo_service_observation_.Reset();
 -  promo_service_ = nullptr;
--}
--
++#endif
+ }
+ 
  void NewTabPageHandler::OnAppRendered(double time) {
-   logger_.LogEvent(NTP_APP_RENDERED,
-                    base::Time::FromJsTime(time) - ntp_navigation_start_time_);
-@@ -721,15 +574,6 @@ void NewTabPageHandler::OnOneGoogleBarRendered(double time) {
+@@ -721,15 +576,6 @@ void NewTabPageHandler::OnOneGoogleBarRendered(double time) {
                     base::Time::FromJsTime(time) - ntp_navigation_start_time_);
  }
  
@@ -210,7 +217,7 @@ index a1c923bcf04c..462132161efa 100644
  void NewTabPageHandler::OnMostVisitedTileNavigation(
      new_tab_page::mojom::MostVisitedTilePtr tile,
      uint32_t index,
-@@ -895,10 +739,6 @@ void NewTabPageHandler::OnDoodleShared(
+@@ -895,10 +741,6 @@ void NewTabPageHandler::OnDoodleShared(
    Fetch(url, base::BindOnce([](bool s, std::unique_ptr<std::string>) {}));
  }
  

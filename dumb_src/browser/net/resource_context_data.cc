@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #include "dumb/browser/net/resource_context_data.h"
 
 #include <memory>
@@ -41,8 +43,8 @@ void ResourceContextData::StartProxying(
     content::BrowserContext* browser_context,
     int render_process_id,
     int frame_tree_node_id,
-    mojo::PendingReceiver<network::mojom::URLLoaderFactory> receiver,
-    mojo::PendingRemote<network::mojom::URLLoaderFactory> target_factory) {
+    network::mojom::URLLoaderFactoryRequest request,
+    network::mojom::URLLoaderFactoryPtrInfo target_factory) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   auto* self = static_cast<ResourceContextData*>(
@@ -59,18 +61,12 @@ void ResourceContextData::StartProxying(
 
   auto proxy = std::make_unique<DumbProxyingURLLoaderFactory>(
       self->request_handler_.get(), browser_context, render_process_id,
-      frame_tree_node_id, std::move(receiver), std::move(target_factory),
+      frame_tree_node_id, std::move(request), std::move(target_factory),
       self->request_id_generator_,
       base::BindOnce(&ResourceContextData::RemoveProxy,
                      self->weak_factory_.GetWeakPtr()));
 
   self->proxies_.emplace(std::move(proxy));
-}
-
-void ResourceContextData::RemoveProxy(DumbProxyingURLLoaderFactory* proxy) {
-  auto it = proxies_.find(proxy);
-  DCHECK(it != proxies_.end());
-  proxies_.erase(it);
 }
 
 // static
@@ -109,7 +105,6 @@ DumbProxyingWebSocket* ResourceContextData::StartProxyingWebSocket(
     request.headers.SetHeader(net::HttpRequestHeaders::kUserAgent, *user_agent);
   }
   request.request_initiator = origin;
-  request.render_frame_id = frame_id;
 
   auto proxy = std::make_unique<DumbProxyingWebSocket>(
       std::move(factory), request, std::move(handshake_client),
@@ -121,6 +116,12 @@ DumbProxyingWebSocket* ResourceContextData::StartProxyingWebSocket(
   auto* raw_proxy = proxy.get();
   self->websocket_proxies_.emplace(std::move(proxy));
   return raw_proxy;
+}
+
+void ResourceContextData::RemoveProxy(DumbProxyingURLLoaderFactory* proxy) {
+  auto it = proxies_.find(proxy);
+  DCHECK(it != proxies_.end());
+  proxies_.erase(it);
 }
 
 void ResourceContextData::RemoveProxyWebSocket(DumbProxyingWebSocket* proxy) {

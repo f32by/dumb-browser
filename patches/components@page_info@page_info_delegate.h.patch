@@ -1,22 +1,27 @@
 diff --git a/components/page_info/page_info_delegate.h b/components/page_info/page_info_delegate.h
-index 77810ec82f62..edbfc64c227a 100644
+index 30cfa6c3b1d70..3b8f30927c9d5 100644
 --- a/components/page_info/page_info_delegate.h
 +++ b/components/page_info/page_info_delegate.h
-@@ -12,13 +12,8 @@
+@@ -13,7 +13,6 @@
  #include "components/permissions/permission_result.h"
  #include "components/permissions/permission_uma_util.h"
  #include "components/safe_browsing/buildflags.h"
 -#include "components/safe_browsing/core/password_protection/metrics_util.h"
  #include "components/security_state/core/security_state.h"
  
+ namespace permissions {
+@@ -21,10 +20,6 @@ class ChooserContextBase;
+ class PermissionDecisionAutoBlocker;
+ }  // namespace permissions
+ 
 -namespace safe_browsing {
 -class PasswordProtectionService;
 -}  // namespace safe_browsing
 -
- namespace permissions {
- class ChooserContextBase;
- class PermissionDecisionAutoBlocker;
-@@ -70,10 +65,6 @@ class PageInfoDelegate {
+ namespace ui {
+ class Event;
+ }  // namespace ui
+@@ -78,10 +73,6 @@ class PageInfoDelegate {
    // content settings (aka. site permissions).
    virtual HostContentSettingsMap* GetContentSettings() = 0;
  

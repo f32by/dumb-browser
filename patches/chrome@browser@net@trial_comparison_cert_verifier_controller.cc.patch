@@ -1,20 +1,19 @@
 diff --git a/chrome/browser/net/trial_comparison_cert_verifier_controller.cc b/chrome/browser/net/trial_comparison_cert_verifier_controller.cc
-index a6a9196252e9..d2f0f1018fe4 100644
+index d339a1e877e55..8408289c3720c 100644
 --- a/chrome/browser/net/trial_comparison_cert_verifier_controller.cc
 +++ b/chrome/browser/net/trial_comparison_cert_verifier_controller.cc
-@@ -16,11 +16,8 @@
+@@ -16,10 +16,7 @@
  #include "build/build_config.h"
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_service.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_service_factory.h"
  #include "chrome/common/channel_info.h"
- #include "chrome/common/chrome_features.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
  #include "components/security_interstitials/content/certificate_error_report.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -43,12 +40,6 @@ TrialComparisonCertVerifierController::TrialComparisonCertVerifierController(
+@@ -42,12 +39,6 @@ TrialComparisonCertVerifierController::TrialComparisonCertVerifierController(
      // enabled.
      return;
    }

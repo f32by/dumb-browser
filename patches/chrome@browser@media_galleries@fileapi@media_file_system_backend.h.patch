@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/media_galleries/fileapi/media_file_system_backend.h b/chrome/browser/media_galleries/fileapi/media_file_system_backend.h
+index 57a5ff430fe38..49dcdcdf24e2e 100644
+--- a/chrome/browser/media_galleries/fileapi/media_file_system_backend.h
++++ b/chrome/browser/media_galleries/fileapi/media_file_system_backend.h
+@@ -17,7 +17,6 @@
+ #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
+ #include "chrome/browser/media_galleries/media_galleries_preferences.h"
+-#include "components/download/public/common/quarantine_connection.h"
+ #include "storage/browser/file_system/file_system_backend.h"
+ #include "storage/browser/file_system/task_runner_bound_observer_list.h"
+ 
+@@ -39,8 +38,7 @@ class MediaPathFilter;
+ class MediaFileSystemBackend : public storage::FileSystemBackend {
+  public:
+   MediaFileSystemBackend(
+-      const base::FilePath& profile_path,
+-      download::QuarantineConnectionCallback quarantine_connection_callback);
++      const base::FilePath& profile_path);
+   ~MediaFileSystemBackend() override;
+ 
+   // Asserts that the current task is sequenced with any other task that calls

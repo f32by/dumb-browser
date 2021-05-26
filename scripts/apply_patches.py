@@ -24,11 +24,12 @@ from utils import check_patch_consistency, apply_patches
 
 
 def main(args):
-    # apply patches
+    # create src dir
     if not check_patch_consistency(treat_as_fatal=True):
-        print('Please solve these problems before apply more patches.')
+        print('Please solve these problems before applying more patches.')
         return 1
 
+    # apply patches
     apply_patches()
 
     # copy dumb-specific sources to src

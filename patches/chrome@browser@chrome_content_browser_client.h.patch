@@ -1,28 +1,11 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index 792e69483a89..7107211f3956 100644
+index c3ae215e9ed55..5f4c38adaa072 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
-@@ -32,7 +32,6 @@
- #include "ppapi/buildflags/buildflags.h"
- #include "services/metrics/public/cpp/ukm_source_id.h"
- #include "services/network/public/mojom/network_context.mojom-forward.h"
--#include "third_party/blink/public/common/loader/previews_state.h"
- 
- class ChromeContentBrowserClientParts;
- class PrefRegistrySimple;
-@@ -59,21 +58,6 @@ class FontAccessDelegate;
- class QuotaPermissionContext;
+@@ -59,12 +59,6 @@ class QuotaPermissionContext;
+ enum class SmsFetchFailureType;
  }  // namespace content
  
--namespace data_reduction_proxy {
--class DataReductionProxyData;
--}  // namespace data_reduction_proxy
--
--namespace previews {
--class PreviewsDecider;
--class PreviewsUserData;
--}  // namespace previews
--
 -namespace safe_browsing {
 -class RealTimeUrlLookupServiceBase;
 -class SafeBrowsingService;
@@ -32,23 +15,16 @@ index 792e69483a89..7107211f3956 100644
  namespace sandbox {
  class SeatbeltExecClient;
  }  // namespace sandbox
-@@ -602,15 +586,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
-                                      int64_t sent_bytes) override;
-   base::FilePath GetSandboxedStorageServiceDataDirectory() override;
-   bool ShouldSandboxAudioService() override;
--  blink::PreviewsState DetermineAllowedPreviews(
--      blink::PreviewsState initial_state,
--      content::NavigationHandle* navigation_handle,
--      const GURL& current_navigation_url) override;
--
--  blink::PreviewsState DetermineCommittedPreviews(
--      blink::PreviewsState initial_state,
--      content::NavigationHandle* navigation_handle,
--      const net::HttpResponseHeaders* response_headers) override;
- 
-   void LogWebFeatureForCurrentPage(content::RenderFrameHost* render_frame_host,
-                                    blink::mojom::WebFeature feature) override;
-@@ -644,11 +619,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -220,8 +214,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+   void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
+                                       int child_process_id) override;
+   std::string GetApplicationClientGUIDForQuarantineCheck() override;
+-  download::QuarantineConnectionCallback GetQuarantineConnectionCallback()
+-      override;
+   std::string GetApplicationLocale() override;
+   std::string GetAcceptLangs(content::BrowserContext* context) override;
+   gfx::ImageSkia GetDefaultFavicon() override;
+@@ -638,11 +630,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool user_gesture,
        blink::NavigationDownloadPolicy* download_policy) override;
  
@@ -60,33 +36,7 @@ index 792e69483a89..7107211f3956 100644
    bool IsBluetoothScanningBlocked(content::BrowserContext* browser_context,
                                    const url::Origin& requesting_origin,
                                    const url::Origin& embedding_origin) override;
-@@ -665,25 +635,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
-       const GURL& site_for_cookies,
-       const base::Optional<url::Origin>& top_frame_origin) override;
- 
--  blink::PreviewsState DetermineAllowedPreviewsWithoutHoldback(
--      blink::PreviewsState initial_state,
--      content::NavigationHandle* navigation_handle,
--      const GURL& current_navigation_url);
--
--  blink::PreviewsState DetermineCommittedPreviewsWithoutHoldback(
--      blink::PreviewsState initial_state,
--      content::NavigationHandle* navigation_handle,
--      const net::HttpResponseHeaders* response_headers);
--
--  // Determines the committed previews state for the passed in params.
--  static blink::PreviewsState DetermineCommittedPreviewsForURL(
--      const GURL& url,
--      data_reduction_proxy::DataReductionProxyData* drp_data,
--      previews::PreviewsUserData* previews_user_data,
--      const previews::PreviewsDecider* previews_decider,
--      blink::PreviewsState initial_state,
--      content::NavigationHandle* navigation_handle);
--
- #if !defined(OS_ANDROID)
-   void FetchRemoteSms(
-       content::BrowserContext* browser_context,
-@@ -719,7 +670,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -697,7 +684,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    bool ShouldAllowInsecurePrivateNetworkRequests(
        content::BrowserContext* browser_context,
        const url::Origin& origin) override;
@@ -94,44 +44,31 @@ index 792e69483a89..7107211f3956 100644
  
    void OnKeepaliveRequestStarted(
        content::BrowserContext* browser_context) override;
-@@ -786,29 +736,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -764,6 +750,7 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  
--  // Returns the existing UrlCheckerDelegate object if it is already created.
--  // Otherwise, creates a new one and returns it. Updates the
--  // |allowlist_domains| in the UrlCheckerDelegate object before returning. It
--  // returns nullptr if |safe_browsing_enabled_for_profile| is false, because it
--  // should bypass safe browsing check when safe browsing is disabled. Set
--  // |should_check_on_sb_disabled| to true if you still want to perform safe
--  // browsing check when safe browsing is disabled(e.g. for enterprise real time
--  // URL check).
--  scoped_refptr<safe_browsing::UrlCheckerDelegate>
--  GetSafeBrowsingUrlCheckerDelegate(
--      bool safe_browsing_enabled_for_profile,
--      bool should_check_on_sb_disabled,
--      const std::vector<std::string>& allowlist_domains);
--
--  // Returns a RealTimeUrlLookupServiceBase object used for real time URL check.
--  // Returns an enterprise version if |is_enterprise_lookup_enabled| is true.
--  // Returns a consumer version if |is_enterprise_lookup_enabled| is false and
--  // |is_consumer_lookup_enabled| is true. Returns nullptr if both are false.
--  safe_browsing::RealTimeUrlLookupServiceBase* GetUrlLookupService(
--      content::BrowserContext* browser_context,
--      bool is_enterprise_lookup_enabled,
--      bool is_consumer_lookup_enabled);
--
++#if 0
+   // Returns the existing UrlCheckerDelegate object if it is already created.
+   // Otherwise, creates a new one and returns it. Updates the
+   // |allowlist_domains| in the UrlCheckerDelegate object before returning. It
+@@ -786,6 +773,7 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+       content::BrowserContext* browser_context,
+       bool is_enterprise_lookup_enabled,
+       bool is_consumer_lookup_enabled);
++#endif
+ 
  #if !defined(OS_ANDROID)
    void OnKeepaliveTimerFired(
-       std::unique_ptr<ScopedKeepAlive> keep_alive_handle);
-@@ -818,10 +745,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -796,9 +784,11 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    // Parts are deleted in the reverse order they are added.
    std::vector<ChromeContentBrowserClientParts*> extra_parts_;
  
--  scoped_refptr<safe_browsing::SafeBrowsingService> safe_browsing_service_;
--  scoped_refptr<safe_browsing::UrlCheckerDelegate>
--      safe_browsing_url_checker_delegate_;
--
++#if 0
+   scoped_refptr<safe_browsing::SafeBrowsingService> safe_browsing_service_;
+   scoped_refptr<safe_browsing::UrlCheckerDelegate>
+       safe_browsing_url_checker_delegate_;
++#endif
+ 
    StartupData startup_data_;
  
- #if !defined(OS_ANDROID)

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
-index e8df99f59499..f8922ef1cbe4 100644
+index 41f5af52a4fc9..15cd3b0d1defb 100644
 --- a/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
 +++ b/chrome/browser/ui/page_info/chrome_page_info_delegate.cc
 @@ -13,10 +13,8 @@
@@ -22,7 +22,15 @@ index e8df99f59499..f8922ef1cbe4 100644
  #include "content/public/browser/web_contents.h"
  #include "content/public/common/content_features.h"
  
-@@ -170,16 +166,6 @@ HostContentSettingsMap* ChromePageInfoDelegate::GetContentSettings() {
+@@ -181,7 +177,6 @@ void ChromePageInfoDelegate::OpenConnectionHelpCenterPage(
+ }
+ 
+ void ChromePageInfoDelegate::OpenSafetyTipHelpCenterPage() {
+-  OpenHelpCenterFromSafetyTip(web_contents_);
+ }
+ #endif
+ 
+@@ -199,16 +194,6 @@ HostContentSettingsMap* ChromePageInfoDelegate::GetContentSettings() {
    return HostContentSettingsMapFactory::GetForProfile(GetProfile());
  }
  

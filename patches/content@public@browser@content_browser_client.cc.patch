@@ -1,8 +1,8 @@
 diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
-index 3c75742d4ade..027cba4fc17f 100644
+index 97c47faadb922..ddce5fe9a9efd 100644
 --- a/content/public/browser/content_browser_client.cc
 +++ b/content/public/browser/content_browser_client.cc
-@@ -57,7 +57,6 @@
+@@ -60,7 +60,6 @@
  #include "third_party/blink/public/common/loader/url_loader_throttle.h"
  #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
  #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
@@ -10,7 +10,20 @@ index 3c75742d4ade..027cba4fc17f 100644
  #include "ui/gfx/image/image_skia.h"
  #include "ui/shell_dialogs/select_file_policy.h"
  #include "url/gurl.h"
-@@ -1069,13 +1068,6 @@ void ContentBrowserClient::AugmentNavigationDownloadPolicy(
+@@ -318,10 +317,12 @@ std::string ContentBrowserClient::GetApplicationClientGUIDForQuarantineCheck() {
+   return std::string();
+ }
+ 
++#if 0
+ download::QuarantineConnectionCallback
+ ContentBrowserClient::GetQuarantineConnectionCallback() {
+   return base::NullCallback();
+ }
++#endif
+ 
+ std::string ContentBrowserClient::GetApplicationLocale() {
+   return "en-US";
+@@ -1094,13 +1095,6 @@ void ContentBrowserClient::AugmentNavigationDownloadPolicy(
      bool user_gesture,
      blink::NavigationDownloadPolicy* download_policy) {}
  
@@ -24,7 +37,7 @@ index 3c75742d4ade..027cba4fc17f 100644
  bool ContentBrowserClient::IsBluetoothScanningBlocked(
      content::BrowserContext* browser_context,
      const url::Origin& requesting_origin,
-@@ -1160,10 +1152,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+@@ -1190,10 +1184,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
    return false;
  }
  

@@ -1,32 +1,16 @@
 diff --git a/chrome/browser/resources/settings/privacy_page/security_page.js b/chrome/browser/resources/settings/privacy_page/security_page.js
-index aa875cafbe90..2328e530c09f 100644
+index 82948926d2b58..f8ff2fa4b993c 100644
 --- a/chrome/browser/resources/settings/privacy_page/security_page.js
 +++ b/chrome/browser/resources/settings/privacy_page/security_page.js
 @@ -7,7 +7,6 @@ import 'chrome://resources/cr_elements/cr_radio_group/cr_radio_group.m.js';
- import 'chrome://resources/cr_elements/cr_link_row/cr_link_row.m.js';
+ import 'chrome://resources/cr_elements/cr_link_row/cr_link_row.js';
  import 'chrome://resources/cr_elements/shared_style_css.m.js';
  import './collapse_radio_button.js';
 -import './disable_safebrowsing_dialog.js';
  import './secure_dns.js';
- import '../controls/settings_toggle_button.m.js';
- import '../icons.m.js';
-@@ -80,15 +79,6 @@ Polymer({
-       value: SafeBrowsingSetting,
-     },
- 
--    /** @private */
--    safeBrowsingEnhancedEnabled_: {
--      type: Boolean,
--      readOnly: true,
--      value: function() {
--        return loadTimeData.getBoolean('safeBrowsingEnhancedEnabled');
--      },
--    },
--
-     /** @private */
-     enableSecurityKeysSubpage_: {
-       type: Boolean,
-@@ -138,14 +128,6 @@ Polymer({
+ import '../controls/settings_toggle_button.js';
+ import '../icons.js';
+@@ -129,14 +128,6 @@ Polymer({
  
    /** @override */
    ready() {
@@ -41,7 +25,7 @@ index aa875cafbe90..2328e530c09f 100644
      this.browserProxy_ = PrivacyPageBrowserProxyImpl.getInstance();
  
      this.metricsBrowserProxy_ = MetricsBrowserProxyImpl.getInstance();
-@@ -207,8 +189,7 @@ Polymer({
+@@ -198,8 +189,7 @@ Polymer({
     * @private
     */
    getDisabledExtendedSafeBrowsing_() {

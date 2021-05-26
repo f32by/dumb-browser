@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #ifndef DUMB_NET_DUMB_STP_UTIL_H_
 #define DUMB_NET_DUMB_STP_UTIL_H_
 

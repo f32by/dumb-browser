@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
-index da665e60d6a1..82cfdfc9e5ae 100644
+index e918a8142dfbb..992d67ec2ca48 100644
 --- a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
 +++ b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
 @@ -29,7 +29,6 @@
@@ -12,7 +12,7 @@ index da665e60d6a1..82cfdfc9e5ae 100644
  #include "components/autofill/core/common/autofill_constants.h"
 @@ -272,11 +271,6 @@ void SaveCardBubbleControllerImpl::OnSaveButton(
  
-       base::string16 name_provided_by_user;
+       std::u16string name_provided_by_user;
        if (!user_provided_card_details.cardholder_name.empty()) {
 -        // Log whether the name was changed by the user or simply accepted
 -        // without edits.

@@ -1,11 +1,11 @@
 diff --git a/services/network/public/mojom/network_service.mojom b/services/network/public/mojom/network_service.mojom
-index 2c1eddc5fc41..cf3ae445952a 100644
+index 864ca071874e5..a55b0b19bdcca 100644
 --- a/services/network/public/mojom/network_service.mojom
 +++ b/services/network/public/mojom/network_service.mojom
-@@ -444,4 +444,7 @@ interface NetworkService {
-   // known First-Party Sets), but does nothing if given non-JSON input or JSON
-   // which is not a dictionary.
-   SetPreloadedFirstPartySets(string raw_sets);
+@@ -348,4 +348,7 @@ interface NetworkService {
+   // Sets the list of ports which will be permitted even if they normally would
+   // be restricted.
+   SetExplicitlyAllowedPorts(array<uint16> ports);
 +
 +  // Update URL purify rules.
 +  UpdateURLPurifyRules(mojo_base.mojom.ReadOnlyBuffer purify_rules) => ();

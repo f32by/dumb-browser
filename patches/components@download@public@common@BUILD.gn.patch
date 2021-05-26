@@ -1,5 +1,5 @@
 diff --git a/components/download/public/common/BUILD.gn b/components/download/public/common/BUILD.gn
-index 3c8df71fb8b1..84a75c321853 100644
+index 3c8df71fb8b19..175c7a76a7d07 100644
 --- a/components/download/public/common/BUILD.gn
 +++ b/components/download/public/common/BUILD.gn
 @@ -48,9 +48,7 @@ component("public") {
@@ -12,8 +12,27 @@ index 3c8df71fb8b1..84a75c321853 100644
      "download_url_parameters.cc",
      "download_url_parameters.h",
      "download_utils.h",
-@@ -87,7 +85,6 @@ component("public") {
-     "//components/services/quarantine:quarantine",
+@@ -58,7 +56,6 @@ component("public") {
+     "input_stream.cc",
+     "input_stream.h",
+     "parallel_download_configs.h",
+-    "quarantine_connection.h",
+     "rate_estimator.h",
+     "resume_mode.h",
+     "simple_download_manager.h",
+@@ -76,7 +73,6 @@ component("public") {
+     "//base",
+     "//components/download/network",
+     "//components/download/public/background_service:public",
+-    "//components/services/quarantine/public/mojom",
+     "//mojo/public/cpp/bindings",
+     "//services/network/public/cpp",
+   ]
+@@ -84,10 +80,8 @@ component("public") {
+   deps = [
+     "//components/download/database",
+     "//components/download/internal/common:internal",
+-    "//components/services/quarantine:quarantine",
      "//crypto",
      "//net",
 -    "//services/metrics/public/cpp:metrics_cpp",

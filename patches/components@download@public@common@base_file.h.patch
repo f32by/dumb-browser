@@ -1,0 +1,46 @@
+diff --git a/components/download/public/common/base_file.h b/components/download/public/common/base_file.h
+index 058d640e941a2..36eb45e6b321c 100644
+--- a/components/download/public/common/base_file.h
++++ b/components/download/public/common/base_file.h
+@@ -25,7 +25,6 @@
+ #include "build/build_config.h"
+ #include "components/download/public/common/download_export.h"
+ #include "components/download/public/common/download_interrupt_reasons.h"
+-#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
+ #include "crypto/secure_hash.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+@@ -167,7 +166,6 @@ class COMPONENTS_DOWNLOAD_EXPORT BaseFile {
+       const std::string& client_guid,
+       const GURL& source_url,
+       const GURL& referrer_url,
+-      mojo::PendingRemote<quarantine::mojom::Quarantine> remote_quarantine,
+       OnAnnotationDoneCallback on_annotation_done_callback);
+ 
+ #if defined(OS_ANDROID)
+@@ -257,6 +255,7 @@ class COMPONENTS_DOWNLOAD_EXPORT BaseFile {
+                                              int os_error,
+                                              DownloadInterruptReason reason);
+ 
++#if 0
+   // Callback invoked when quarantine service has an error.
+   void OnQuarantineServiceError(const GURL& source_url,
+                                 const GURL& referrer_url);
+@@ -265,6 +264,7 @@ class COMPONENTS_DOWNLOAD_EXPORT BaseFile {
+   // OnQuarantineServiceError after manually applying mark-of-the-web.
+   void OnFileQuarantined(bool connection_error,
+                          quarantine::mojom::QuarantineFileResult result);
++#endif
+ 
+   // Full path to the file including the file name.
+   base::FilePath full_path_;
+@@ -293,9 +293,6 @@ class COMPONENTS_DOWNLOAD_EXPORT BaseFile {
+   // ID of the download, used for trace events.
+   uint32_t download_id_;
+ 
+-  // Mojo remote for quarantine service.
+-  mojo::Remote<quarantine::mojom::Quarantine> quarantine_service_;
+-
+   // Callback invoked after quarantine service finishes.
+   OnAnnotationDoneCallback on_annotation_done_callback_;
+ 

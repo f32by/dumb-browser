@@ -1,42 +1,13 @@
 diff --git a/components/enterprise/BUILD.gn b/components/enterprise/BUILD.gn
-index 9acb9dc48b3d..a4128e15c545 100644
+index 35a6655b58cea..6d4616ffb7c0d 100644
 --- a/components/enterprise/BUILD.gn
 +++ b/components/enterprise/BUILD.gn
-@@ -24,37 +24,6 @@ static_library("enterprise") {
+@@ -24,7 +24,7 @@ static_library("enterprise") {
      "//services/network/public/cpp",
    ]
  
 -  if (!is_android) {
--    sources += [
--      "browser/reporting/browser_report_generator.cc",
--      "browser/reporting/browser_report_generator.h",
--      "browser/reporting/policy_info.cc",
--      "browser/reporting/policy_info.h",
--      "browser/reporting/profile_report_generator.cc",
--      "browser/reporting/profile_report_generator.h",
--      "browser/reporting/report_generator.cc",
--      "browser/reporting/report_generator.h",
--      "browser/reporting/report_request_definition.h",
--      "browser/reporting/report_request_queue_generator.cc",
--      "browser/reporting/report_request_queue_generator.h",
--      "browser/reporting/report_scheduler.cc",
--      "browser/reporting/report_scheduler.h",
--      "browser/reporting/report_type.h",
--      "browser/reporting/report_uploader.cc",
--      "browser/reporting/report_uploader.h",
--      "browser/reporting/reporting_delegate_factory.h",
--    ]
--
--    deps += [
--      "//base/util/timer",
--      "//components/policy/core/browser",
--      "//components/policy/proto",
--      "//components/strings",
--      "//components/version_info",
--      "//net",
--    ]
--  }
--
-   if (!is_android && !is_chromeos_ash) {
++  if (false) {
      sources += [
-       "browser/controller/chrome_browser_cloud_management_controller.cc",
+       "browser/reporting/browser_report_generator.cc",
+       "browser/reporting/browser_report_generator.h",

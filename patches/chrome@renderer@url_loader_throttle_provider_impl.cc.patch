@@ -1,12 +1,13 @@
 diff --git a/chrome/renderer/url_loader_throttle_provider_impl.cc b/chrome/renderer/url_loader_throttle_provider_impl.cc
-index b02a2964679f..9f3cd2aac7ae 100644
+index 72df9aedf1ab6..0d555ed0d80af 100644
 --- a/chrome/renderer/url_loader_throttle_provider_impl.cc
 +++ b/chrome/renderer/url_loader_throttle_provider_impl.cc
-@@ -17,12 +17,7 @@
+@@ -17,13 +17,7 @@
  #include "chrome/renderer/chrome_content_renderer_client.h"
  #include "chrome/renderer/chrome_render_frame_observer.h"
  #include "chrome/renderer/chrome_render_thread_observer.h"
 -#include "chrome/renderer/lite_video/lite_video_url_loader_throttle.h"
+-#include "chrome/renderer/subresource_redirect/src_video_redirect_url_loader_throttle.h"
 -#include "chrome/renderer/subresource_redirect/subresource_redirect_params.h"
 -#include "chrome/renderer/subresource_redirect/subresource_redirect_url_loader_throttle.h"
  #include "components/no_state_prefetch/renderer/no_state_prefetch_helper.h"
@@ -15,7 +16,7 @@ index b02a2964679f..9f3cd2aac7ae 100644
  #include "content/public/common/content_features.h"
  #include "content/public/renderer/render_frame.h"
  #include "content/public/renderer/render_thread.h"
-@@ -95,7 +90,6 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
+@@ -96,7 +90,6 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
      : type_(type),
        chrome_content_renderer_client_(chrome_content_renderer_client) {
    DETACH_FROM_THREAD(thread_checker_);
@@ -23,7 +24,7 @@ index b02a2964679f..9f3cd2aac7ae 100644
  }
  
  URLLoaderThrottleProviderImpl::~URLLoaderThrottleProviderImpl() {
-@@ -107,18 +101,12 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
+@@ -108,18 +101,12 @@ URLLoaderThrottleProviderImpl::URLLoaderThrottleProviderImpl(
      : type_(other.type_),
        chrome_content_renderer_client_(other.chrome_content_renderer_client_) {
    DETACH_FROM_THREAD(thread_checker_);
@@ -34,7 +35,7 @@ index b02a2964679f..9f3cd2aac7ae 100644
    // An ad_delay_factory_ is created, rather than cloning the existing one.
  }
  
- std::unique_ptr<content::URLLoaderThrottleProvider>
+ std::unique_ptr<blink::URLLoaderThrottleProvider>
  URLLoaderThrottleProviderImpl::Clone() {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 -  if (safe_browsing_remote_)
@@ -42,37 +43,35 @@ index b02a2964679f..9f3cd2aac7ae 100644
    return base::WrapUnique(new URLLoaderThrottleProviderImpl(*this));
  }
  
-@@ -141,14 +129,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+@@ -142,6 +129,7 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
    DCHECK(!is_frame_resource ||
-          type_ == content::URLLoaderThrottleProviderType::kFrame);
+          type_ == blink::URLLoaderThrottleProviderType::kFrame);
  
--  if (!is_frame_resource) {
--    if (safe_browsing_remote_)
--      safe_browsing_.Bind(std::move(safe_browsing_remote_));
--    throttles.push_back(
--        std::make_unique<safe_browsing::RendererURLLoaderThrottle>(
--            safe_browsing_.get(), render_frame_id));
--  }
--
-   if (type_ == content::URLLoaderThrottleProviderType::kFrame &&
++#if 0
+   if (!is_frame_resource) {
+     if (safe_browsing_remote_)
+       safe_browsing_.Bind(std::move(safe_browsing_remote_));
+@@ -149,6 +137,7 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+         std::make_unique<safe_browsing::RendererURLLoaderThrottle>(
+             safe_browsing_.get(), render_frame_id));
+   }
++#endif
+ 
+   if (type_ == blink::URLLoaderThrottleProviderType::kFrame &&
        !is_frame_resource) {
-     auto throttle =
-@@ -196,18 +176,6 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+@@ -197,6 +186,7 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
            ->chromeos_listener()));
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  
--  auto throttle = subresource_redirect::SubresourceRedirectURLLoaderThrottle::
--      MaybeCreateThrottle(request, render_frame_id);
--  if (throttle)
--    throttles.push_back(std::move(throttle));
--
--  if (render_frame_id != MSG_ROUTING_NONE) {
--    auto throttle = lite_video::LiteVideoURLLoaderThrottle::MaybeCreateThrottle(
--        request, render_frame_id);
--    if (throttle)
--      throttles.push_back(std::move(throttle));
--  }
--
++#if 0
+   auto throttle = subresource_redirect::SubresourceRedirectURLLoaderThrottle::
+       MaybeCreateThrottle(request, render_frame_id);
+   if (throttle)
+@@ -213,6 +203,7 @@ URLLoaderThrottleProviderImpl::CreateThrottles(
+     if (throttle)
+       throttles.emplace_back(std::move(throttle));
+   }
++#endif
+ 
    return throttles;
  }
- 

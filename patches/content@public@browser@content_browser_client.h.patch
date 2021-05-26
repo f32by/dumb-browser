@@ -1,8 +1,16 @@
 diff --git a/content/public/browser/content_browser_client.h b/content/public/browser/content_browser_client.h
-index 944f98d0f979..640a9dfa7dee 100644
+index aac67f9733e5a..ab3142ed6bbe5 100644
 --- a/content/public/browser/content_browser_client.h
 +++ b/content/public/browser/content_browser_client.h
-@@ -53,7 +53,6 @@
+@@ -25,7 +25,6 @@
+ #include "base/types/strong_alias.h"
+ #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
+-#include "components/download/public/common/quarantine_connection.h"
+ #include "content/common/content_export.h"
+ #include "content/public/browser/allow_service_worker_result.h"
+ #include "content/public/browser/certificate_request_result_type.h"
+@@ -54,7 +53,6 @@
  #include "storage/browser/file_system/file_system_context.h"
  #include "third_party/blink/public/common/loader/previews_state.h"
  #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
@@ -10,7 +18,20 @@ index 944f98d0f979..640a9dfa7dee 100644
  #include "ui/accessibility/ax_mode.h"
  #include "ui/base/page_transition_types.h"
  #include "ui/base/window_open_disposition.h"
-@@ -1859,13 +1858,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -618,10 +616,12 @@ class CONTENT_EXPORT ContentBrowserClient {
+   // Returns a client GUID used for virus scanning.
+   virtual std::string GetApplicationClientGUIDForQuarantineCheck();
+ 
++#if 0
+   // Gets a callback which can connect to a Quarantine Service instance if
+   // available.
+   virtual download::QuarantineConnectionCallback
+   GetQuarantineConnectionCallback();
++#endif
+ 
+   // Returns the locale used by the application.
+   // This is called on the UI and IO threads.
+@@ -1889,13 +1889,6 @@ class CONTENT_EXPORT ContentBrowserClient {
        bool user_gesture,
        blink::NavigationDownloadPolicy* download_policy);
  
@@ -24,7 +45,7 @@ index 944f98d0f979..640a9dfa7dee 100644
    // Returns whether a site is blocked to use Bluetooth scanning API.
    virtual bool IsBluetoothScanningBlocked(
        content::BrowserContext* browser_context,
-@@ -1980,9 +1972,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -2017,9 +2010,6 @@ class CONTENT_EXPORT ContentBrowserClient {
        BrowserContext* browser_context,
        const url::Origin& origin);
  

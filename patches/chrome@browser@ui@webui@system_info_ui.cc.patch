@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/system_info_ui.cc b/chrome/browser/ui/webui/system_info_ui.cc
-index a9d39ab11053..1a4e3a8ae4b9 100644
+index 2aaa185db2dc9..d2118c0d2cce5 100644
 --- a/chrome/browser/ui/webui/system_info_ui.cc
 +++ b/chrome/browser/ui/webui/system_info_ui.cc
 @@ -20,14 +20,12 @@
@@ -25,39 +25,38 @@ index a9d39ab11053..1a4e3a8ae4b9 100644
  
  namespace {
  
-@@ -85,8 +82,6 @@ class SystemInfoHandler : public WebUIMessageHandler {
+@@ -86,8 +83,6 @@ class SystemInfoHandler : public WebUIMessageHandler {
    // system info and eventually returns it to the front end.
-   void HandleRequestSystemInfo(const base::ListValue*);
+   void HandleRequestSystemInfo(const base::ListValue* args);
  
 -  void OnSystemInfo(std::unique_ptr<SystemLogsResponse> sys_info);
 -
   private:
+   std::string callback_id_;
    base::WeakPtrFactory<SystemInfoHandler> weak_ptr_factory_{this};
-   DISALLOW_COPY_AND_ASSIGN(SystemInfoHandler);
-@@ -110,26 +105,6 @@ void SystemInfoHandler::RegisterMessages() {
+@@ -117,14 +112,17 @@ void SystemInfoHandler::RegisterMessages() {
  
- void SystemInfoHandler::HandleRequestSystemInfo(const base::ListValue*) {
+ void SystemInfoHandler::HandleRequestSystemInfo(const base::ListValue* args) {
    AllowJavascript();
--  system_logs::SystemLogsFetcher* fetcher =
--      system_logs::BuildAboutSystemLogsFetcher();
--  fetcher->Fetch(base::BindOnce(&SystemInfoHandler::OnSystemInfo,
--                                weak_ptr_factory_.GetWeakPtr()));
--}
--
--void SystemInfoHandler::OnSystemInfo(
--    std::unique_ptr<SystemLogsResponse> sys_info) {
--  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
--  if (!sys_info)
--    return;
--  base::ListValue data;
--  for (SystemLogsResponse::const_iterator it = sys_info->begin();
--       it != sys_info->end(); ++it) {
--    auto val = std::make_unique<base::DictionaryValue>();
--    val->SetString("statName", it->first);
--    val->SetString("statValue", it->second);
--    data.Append(std::move(val));
--  }
--  CallJavascriptFunction("returnSystemInfo", data);
++#if 0
+   callback_id_ = args->GetList()[0].GetString();
+ 
+   system_logs::SystemLogsFetcher* fetcher =
+       system_logs::BuildAboutSystemLogsFetcher();
+   fetcher->Fetch(base::BindOnce(&SystemInfoHandler::OnSystemInfo,
+                                 weak_ptr_factory_.GetWeakPtr()));
++#endif
  }
  
++#if 0
+ void SystemInfoHandler::OnSystemInfo(
+     std::unique_ptr<SystemLogsResponse> sys_info) {
+   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+@@ -141,6 +139,7 @@ void SystemInfoHandler::OnSystemInfo(
+   ResolveJavascriptCallback(base::Value(callback_id_), data);
+   callback_id_.clear();
+ }
++#endif
+ 
  ////////////////////////////////////////////////////////////////////////////////
+ //

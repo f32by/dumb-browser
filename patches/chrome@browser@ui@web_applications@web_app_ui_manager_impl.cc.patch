@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/web_applications/web_app_ui_manager_impl.cc b/chrome/browser/ui/web_applications/web_app_ui_manager_impl.cc
-index e7d179fd5873..0e63ed415a9c 100644
+index df9327924038a..ad47331b4c3fa 100644
 --- a/chrome/browser/ui/web_applications/web_app_ui_manager_impl.cc
 +++ b/chrome/browser/ui/web_applications/web_app_ui_manager_impl.cc
-@@ -19,7 +19,6 @@
+@@ -20,7 +20,6 @@
  #include "chrome/browser/ui/web_applications/app_browser_controller.h"
  #include "chrome/browser/ui/web_applications/web_app_dialog_manager.h"
  #include "chrome/browser/ui/web_applications/web_app_launch_utils.h"
 -#include "chrome/browser/ui/web_applications/web_app_metrics.h"
  #include "chrome/browser/web_applications/components/app_registry_controller.h"
- #include "chrome/browser/web_applications/system_web_app_manager.h"
- #include "chrome/browser/web_applications/web_app_provider.h"
-@@ -250,12 +249,6 @@ void WebAppUiManagerImpl::NotifyOnAssociatedAppChanged(
+ #include "chrome/browser/web_applications/extensions/web_app_extension_shortcut.h"
+ #include "chrome/browser/web_applications/system_web_apps/system_web_app_manager.h"
+@@ -309,12 +308,6 @@ void WebAppUiManagerImpl::NotifyOnAssociatedAppChanged(
      content::WebContents* web_contents,
      const AppId& previous_app_id,
      const AppId& new_app_id) const {

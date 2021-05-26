@@ -1,9 +1,17 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 6df566bd7df4..c68f46398641 100644
+index 106e853ef8179..d6e0b4ac22e20 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -453,14 +453,6 @@ group("gn_all") {
-     ]
+@@ -160,7 +160,6 @@ group("gn_all") {
+       "//third_party/vulkan-deps/spirv-tools/src/test/fuzzers",
+       "//tools/perf/clear_system_cache",
+       "//tools/polymer:polymer_tools_python_unittests",
+-      "//tools/privacy_budget:privacy_budget_tools",
+       "//ui/accessibility:accessibility_perftests",
+       "//ui/accessibility:accessibility_unittests",
+       "//ui/accessibility/extensions:extension_tests",
+@@ -459,14 +458,6 @@ group("gn_all") {
+     deps += [ "//chromeos:chromeos_unittests" ]
    }
  
 -  if (is_chromeos_ash || is_mac || is_win) {
@@ -17,7 +25,7 @@ index 6df566bd7df4..c68f46398641 100644
    if (is_linux || is_chromeos) {
      # The following are definitely linux-only.
      deps += [
-@@ -634,7 +626,6 @@ group("gn_all") {
+@@ -640,7 +631,6 @@ group("gn_all") {
    if (is_win) {
      deps += [
        "//base:pe_image_test",
@@ -25,7 +33,7 @@ index 6df566bd7df4..c68f46398641 100644
        "//chrome/chrome_elf:chrome_elf_unittests",
        "//chrome/chrome_elf:dll_hash_main",
        "//chrome/elevation_service:elevation_service_unittests",
-@@ -844,10 +835,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
+@@ -856,10 +846,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
        "//remoting/host:host",
        "//tools/traffic_annotation/summary:annotations_xml",
      ]
@@ -36,11 +44,3 @@ index 6df566bd7df4..c68f46398641 100644
    }
  }
  
-@@ -1394,7 +1381,6 @@ if (enable_js_type_check) {
-       "components/neterror/resources:closure_compile",
-       "components/security_interstitials/core/common/resources:closure_compile",
-       "components/sync/driver/resources:closure_compile",
--      "components/ukm/debug:closure_compile",
-       "content/browser/resources:closure_compile",
-       "mojo/public/tools/bindings/generators/js_templates/lite/test:closure_compile",
-       "ui/webui/resources:closure_compile",

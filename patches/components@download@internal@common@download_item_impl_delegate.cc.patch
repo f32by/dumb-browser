@@ -1,0 +1,17 @@
+diff --git a/components/download/internal/common/download_item_impl_delegate.cc b/components/download/internal/common/download_item_impl_delegate.cc
+index b432a41ee8837..52b89dddbc4ac 100644
+--- a/components/download/internal/common/download_item_impl_delegate.cc
++++ b/components/download/internal/common/download_item_impl_delegate.cc
+@@ -106,10 +106,12 @@ void DownloadItemImplDelegate::ReportBytesWasted(DownloadItemImpl* download) {}
+ void DownloadItemImplDelegate::BindWakeLockProvider(
+     mojo::PendingReceiver<device::mojom::WakeLockProvider> receiver) {}
+ 
++#if 0
+ QuarantineConnectionCallback
+ DownloadItemImplDelegate::GetQuarantineConnectionCallback() {
+   return base::NullCallback();
+ }
++#endif
+ 
+ std::unique_ptr<DownloadItemRenameHandler>
+ DownloadItemImplDelegate::GetRenameHandlerForDownload(

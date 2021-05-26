@@ -1,70 +1,55 @@
 diff --git a/chrome/browser/enterprise/connectors/connectors_service.cc b/chrome/browser/enterprise/connectors/connectors_service.cc
-index 2a28a3e0592b..02f432af4067 100644
+index a682d6a5cde8f..9c227b28d5dee 100644
 --- a/chrome/browser/enterprise/connectors/connectors_service.cc
 +++ b/chrome/browser/enterprise/connectors/connectors_service.cc
-@@ -17,13 +17,11 @@
- #include "chrome/browser/policy/dm_token_utils.h"
- #include "chrome/browser/profiles/profile.h"
+@@ -24,14 +24,12 @@
+ #include "chrome/browser/signin/identity_manager_factory.h"
+ #include "components/embedder_support/user_agent_utils.h"
  #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
 -#include "components/enterprise/common/proto/connectors.pb.h"
  #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ #include "components/policy/core/common/cloud/cloud_policy_util.h"
  #include "components/policy/core/common/cloud/dm_token.h"
  #include "components/policy/core/common/cloud/machine_level_user_cloud_policy_manager.h"
  #include "components/policy/core/common/cloud/user_cloud_policy_manager.h"
  #include "components/policy/core/common/policy_types.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+ #include "components/signin/public/identity_manager/consent_level.h"
+ #include "components/signin/public/identity_manager/identity_manager.h"
  #include "components/user_prefs/user_prefs.h"
- #include "content/public/browser/browser_context.h"
+@@ -45,6 +43,7 @@
  
-@@ -140,47 +138,6 @@ ConnectorsService::ConnectorsService(content::BrowserContext* context,
+ namespace enterprise_connectors {
+ 
++#if 0
+ namespace {
+ 
+ const enterprise_management::PolicyData* GetProfilePolicyData(
+@@ -122,6 +121,7 @@ void PopulateProfileMetadata(const ReportingSettings& reporting_settings,
+ }
+ 
+ }  // namespace
++#endif
+ 
+ const base::Feature kEnterpriseConnectorsEnabled{
+     "EnterpriseConnectorsEnabled", base::FEATURE_ENABLED_BY_DEFAULT};
+@@ -234,6 +234,7 @@ ConnectorsService::ConnectorsService(content::BrowserContext* context,
  
  ConnectorsService::~ConnectorsService() = default;
  
--base::Optional<ReportingSettings> ConnectorsService::GetReportingSettings(
--    ReportingConnector connector) {
--  if (!ConnectorsEnabled())
--    return base::nullopt;
--
--  base::Optional<ReportingSettings> settings =
--      connectors_manager_->GetReportingSettings(connector);
--  if (!settings.has_value())
--    return base::nullopt;
--
--  base::Optional<DmToken> dm_token = GetDmToken(ConnectorScopePref(connector));
--  if (!dm_token.has_value())
--    return base::nullopt;
--
--  settings.value().dm_token = dm_token.value().value;
--  settings.value().per_profile =
--      dm_token.value().scope == policy::POLICY_SCOPE_USER;
--
--  return settings;
--}
--
--base::Optional<AnalysisSettings> ConnectorsService::GetAnalysisSettings(
--    const GURL& url,
--    AnalysisConnector connector) {
--  if (!ConnectorsEnabled())
--    return base::nullopt;
--
--  base::Optional<AnalysisSettings> settings =
--      connectors_manager_->GetAnalysisSettings(url, connector);
--  if (!settings.has_value())
--    return base::nullopt;
--
--  base::Optional<DmToken> dm_token = GetDmToken(ConnectorScopePref(connector));
--  if (!dm_token.has_value())
--    return base::nullopt;
--
--  settings.value().dm_token = dm_token.value().value;
--
--  return settings;
--}
--
++#if 0
+ base::Optional<ReportingSettings> ConnectorsService::GetReportingSettings(
+     ReportingConnector connector) {
+   if (!ConnectorsEnabled())
+@@ -277,6 +278,7 @@ base::Optional<AnalysisSettings> ConnectorsService::GetAnalysisSettings(
+ 
+   return settings;
+ }
++#endif
+ 
  base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
      const GURL& url,
-     FileSystemConnector connector) {
-@@ -195,20 +152,6 @@ base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
+@@ -292,20 +294,6 @@ base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
    return settings;
  }
  
@@ -85,7 +70,7 @@ index 2a28a3e0592b..02f432af4067 100644
  bool ConnectorsService::IsConnectorEnabled(
      FileSystemConnector connector) const {
    if (!ConnectorsEnabled())
-@@ -217,67 +160,14 @@ bool ConnectorsService::IsConnectorEnabled(
+@@ -314,67 +302,14 @@ bool ConnectorsService::IsConnectorEnabled(
    return connectors_manager_->IsConnectorEnabled(connector);
  }
  
@@ -153,3 +138,19 @@ index 2a28a3e0592b..02f432af4067 100644
  ConnectorsManager* ConnectorsService::ConnectorsManagerForTesting() {
    return connectors_manager_.get();
  }
+@@ -454,6 +389,7 @@ bool ConnectorsService::ConnectorsEnabled() const {
+   return !Profile::FromBrowserContext(context_)->IsOffTheRecord();
+ }
+ 
++#if 0
+ std::unique_ptr<ClientMetadata> ConnectorsService::BuildClientMetadata() {
+   // Check the reporting policy value to check if the analysis should include
+   // browser/device/profile information.
+@@ -476,6 +412,7 @@ std::unique_ptr<ClientMetadata> ConnectorsService::BuildClientMetadata() {
+ 
+   return metadata;
+ }
++#endif
+ 
+ // ---------------------------------------
+ // ConnectorsServiceFactory implementation

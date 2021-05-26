@@ -1,5 +1,5 @@
 diff --git a/components/payments/content/payment_request.h b/components/payments/content/payment_request.h
-index cb2230b114f1..a6c299681bcf 100644
+index 06c849a03704b..d455deed0d85a 100644
 --- a/components/payments/content/payment_request.h
 +++ b/components/payments/content/payment_request.h
 @@ -17,7 +17,6 @@
@@ -22,7 +22,18 @@ index cb2230b114f1..a6c299681bcf 100644
    // The callback for PaymentRequestState::CanMakePayment.
    void CanMakePaymentCallback(bool can_make_payment);
  
-@@ -243,8 +237,6 @@ class PaymentRequest : public mojom::PaymentRequest,
+@@ -207,8 +201,10 @@ class PaymentRequest : public mojom::PaymentRequest,
+   // Show an error message in the UI (if available) and abort payment.
+   void ShowErrorMessageAndAbortPayment();
+ 
++#if 0
+   // Get the payment method category from the selected app.
+   JourneyLogger::PaymentMethodCategory GetSelectedMethodCategory() const;
++#endif
+ 
+   const content::GlobalFrameRoutingId initiator_frame_routing_id_;
+   DeveloperConsoleLogger log_;
+@@ -246,8 +242,6 @@ class PaymentRequest : public mojom::PaymentRequest,
    // May be null, must outlive this object.
    ObserverForTest* observer_for_testing_;
  

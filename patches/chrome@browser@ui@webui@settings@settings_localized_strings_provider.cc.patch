@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
-index f384bc355db0..0197b801944d 100644
+index 5483a4d9f8928..537d0bfab3d38 100644
 --- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 +++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 @@ -67,11 +67,9 @@
@@ -30,7 +30,7 @@ index f384bc355db0..0197b801944d 100644
  #include "device/fido/win/webauthn_api.h"
  
  #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -283,7 +281,7 @@ void AddAboutStrings(content::WebUIDataSource* html_source, Profile* profile) {
+@@ -276,7 +274,7 @@ void AddAboutStrings(content::WebUIDataSource* html_source, Profile* profile) {
        "aboutBrowserVersion",
        l10n_util::GetStringFUTF16(
            IDS_SETTINGS_ABOUT_PAGE_BROWSER_VERSION,
@@ -39,7 +39,7 @@ index f384bc355db0..0197b801944d 100644
            l10n_util::GetStringUTF16(version_info::IsOfficialBuild()
                                          ? IDS_VERSION_UI_OFFICIAL
                                          : IDS_VERSION_UI_UNOFFICIAL),
-@@ -626,10 +624,6 @@ void AddResetStrings(content::WebUIDataSource* html_source, Profile* profile) {
+@@ -622,10 +620,6 @@ void AddResetStrings(content::WebUIDataSource* html_source, Profile* profile) {
        "showResetProfileBanner",
        ResetSettingsHandler::ShouldShowResetProfileBanner(profile));
    bool is_reset_shortcuts_feature_enabled = false;
@@ -50,7 +50,7 @@ index f384bc355db0..0197b801944d 100644
    html_source->AddBoolean("showExplanationWithBulletPoints",
                            is_reset_shortcuts_feature_enabled);
  
-@@ -1314,47 +1308,6 @@ void AddPrivacyStrings(content::WebUIDataSource* html_source,
+@@ -1325,47 +1319,6 @@ void AddPrivacyStrings(content::WebUIDataSource* html_source,
        {"clearBrowsingData", IDS_SETTINGS_CLEAR_BROWSING_DATA},
        {"clearBrowsingDataDescription", IDS_SETTINGS_CLEAR_DATA_DESCRIPTION},
        {"titleAndCount", IDS_SETTINGS_TITLE_AND_COUNT},
@@ -98,7 +98,7 @@ index f384bc355db0..0197b801944d 100644
        {"syncAndGoogleServicesPrivacyDescription",
         IDS_SETTINGS_SYNC_AND_GOOGLE_SERVICES_PRIVACY_DESC_UNIFIED_CONSENT},
        {"urlKeyedAnonymizedDataCollection",
-@@ -1515,12 +1468,6 @@ void AddSafetyCheckStrings(content::WebUIDataSource* html_source) {
+@@ -1526,12 +1479,6 @@ void AddSafetyCheckStrings(content::WebUIDataSource* html_source) {
      {"safetyCheckUpdatesButtonAriaLabel", IDS_UPDATE_RECOMMENDED_DIALOG_TITLE},
      {"safetyCheckPasswordsButtonAriaLabel",
       IDS_SETTINGS_SAFETY_CHECK_PASSWORDS_BUTTON_ARIA_LABEL},
@@ -111,7 +111,7 @@ index f384bc355db0..0197b801944d 100644
      {"safetyCheckExtensionsButtonAriaLabel",
       IDS_SETTINGS_SAFETY_CHECK_EXTENSIONS_BUTTON_ARIA_LABEL},
  #if defined(OS_WIN) && BUILDFLAG(GOOGLE_CHROME_BRANDING)
-@@ -2320,11 +2267,6 @@ void AddSiteSettingsStrings(content::WebUIDataSource* html_source,
+@@ -2394,11 +2341,6 @@ void AddSiteSettingsStrings(content::WebUIDataSource* html_source,
    };
    html_source->AddLocalizedStrings(kSensorsLocalizedStrings);
  

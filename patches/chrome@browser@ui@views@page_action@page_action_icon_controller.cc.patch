@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/page_action/page_action_icon_controller.cc b/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
-index 037d7c220a55..d4e6a2abae73 100644
+index 135bb8fba3abf..747481b5f418e 100644
 --- a/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
 +++ b/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
-@@ -63,6 +63,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
+@@ -64,6 +64,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
          page_action_icons_.push_back(bookmark_star_icon_);
          break;
        case PageActionIconType::kClickToCall:
@@ -10,7 +10,7 @@ index 037d7c220a55..d4e6a2abae73 100644
          click_to_call_icon_ = new SharingIconView(
              params.icon_label_bubble_delegate, params.page_action_icon_delegate,
              base::BindRepeating([](content::WebContents* contents) {
-@@ -72,6 +73,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
+@@ -73,6 +74,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
              }),
              base::BindRepeating(SharingDialogView::GetAsBubbleForClickToCall));
          page_action_icons_.push_back(click_to_call_icon_);

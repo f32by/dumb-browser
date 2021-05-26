@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
-index 1e3ed7bc5c69..775031f54547 100644
+index 95402a4dbae0e..9530070926272 100644
 --- a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 +++ b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 @@ -41,10 +41,6 @@
@@ -21,7 +21,7 @@ index 1e3ed7bc5c69..775031f54547 100644
  #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
  #include "ui/base/resource/scale_factor.h"
  #include "v8/include/v8.h"
-@@ -261,26 +256,6 @@ void HTMLCanvasElement::RegisterRenderingContextFactory(
+@@ -260,26 +255,6 @@ void HTMLCanvasElement::RegisterRenderingContextFactory(
    RenderingContextFactories()[type] = std::move(rendering_context_factory);
  }
  
@@ -48,7 +48,7 @@ index 1e3ed7bc5c69..775031f54547 100644
  CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
      const String& type,
      const CanvasContextCreationAttributesCore& attributes) {
-@@ -288,15 +263,6 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
+@@ -287,15 +262,6 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
    auto* result = GetCanvasRenderingContextInternal(type, attributes);
  
    Document& doc = GetDocument();
@@ -64,7 +64,7 @@ index 1e3ed7bc5c69..775031f54547 100644
    if (attributes.color_space != kSRGBCanvasColorSpaceName ||
        attributes.pixel_format != kUint8CanvasPixelFormatName) {
      UseCounter::Count(doc, WebFeature::kCanvasUseColorSpace);
-@@ -993,7 +959,6 @@ String HTMLCanvasElement::ToDataURLInternal(
+@@ -967,7 +933,6 @@ String HTMLCanvasElement::ToDataURLInternal(
        // Currently we only support three encoding types.
        NOTREACHED();
      }
@@ -72,7 +72,7 @@ index 1e3ed7bc5c69..775031f54547 100644
      return data_url;
    }
  
-@@ -1059,11 +1024,7 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
+@@ -1033,11 +998,7 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
      async_creator = MakeGarbageCollected<CanvasAsyncBlobCreator>(
          image_bitmap, options,
          CanvasAsyncBlobCreator::kHTMLCanvasToBlobCallback, callback, start_time,

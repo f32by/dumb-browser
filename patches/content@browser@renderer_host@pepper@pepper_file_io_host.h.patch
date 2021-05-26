@@ -1,0 +1,26 @@
+diff --git a/content/browser/renderer_host/pepper/pepper_file_io_host.h b/content/browser/renderer_host/pepper/pepper_file_io_host.h
+index 3b284c0b56a98..ede60bdc564cd 100644
+--- a/content/browser/renderer_host/pepper/pepper_file_io_host.h
++++ b/content/browser/renderer_host/pepper/pepper_file_io_host.h
+@@ -15,7 +15,6 @@
+ #include "base/macros.h"
+ #include "base/memory/ref_counted.h"
+ #include "base/memory/weak_ptr.h"
+-#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
+ #include "content/browser/renderer_host/pepper/browser_ppapi_host_impl.h"
+ #include "ipc/ipc_listener.h"
+ #include "ipc/ipc_platform_file.h"
+@@ -91,11 +90,13 @@ class PepperFileIOHost : public ppapi::host::ResourceHost,
+                          const base::FilePath& path,
+                          base::File::Error error_code);
+ 
++#if 0
+   void OnLocalFileQuarantined(
+       ppapi::host::ReplyMessageContext reply_context,
+       const base::FilePath& path,
+       mojo::Remote<quarantine::mojom::Quarantine> quarantine_remote,
+       quarantine::mojom::QuarantineFileResult quarantine_result);
++#endif
+ 
+   void SendFileOpenReply(ppapi::host::ReplyMessageContext reply_context,
+                          base::File::Error error_code);

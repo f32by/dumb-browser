@@ -1,0 +1,31 @@
+diff --git a/content/browser/file_system_access/file_system_access_manager_impl.cc b/content/browser/file_system_access/file_system_access_manager_impl.cc
+index e58be73ae495d..b0f704639235d 100644
+--- a/content/browser/file_system_access/file_system_access_manager_impl.cc
++++ b/content/browser/file_system_access/file_system_access_manager_impl.cc
+@@ -886,8 +886,7 @@ FileSystemAccessManagerImpl::CreateFileWriter(
+   CreateFileWriter(
+       binding_context, url, swap_url, handle_state,
+       result.InitWithNewPipeAndPassReceiver(), has_transient_user_activation,
+-      auto_close,
+-      GetContentClient()->browser()->GetQuarantineConnectionCallback());
++      auto_close);
+   return result;
+ }
+ 
+@@ -899,14 +898,12 @@ FileSystemAccessManagerImpl::CreateFileWriter(
+     const SharedHandleState& handle_state,
+     mojo::PendingReceiver<blink::mojom::FileSystemAccessFileWriter> receiver,
+     bool has_transient_user_activation,
+-    bool auto_close,
+-    download::QuarantineConnectionCallback quarantine_connection_callback) {
++    bool auto_close) {
+   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+ 
+   auto writer = std::make_unique<FileSystemAccessFileWriterImpl>(
+       this, PassKey(), binding_context, url, swap_url, handle_state,
+-      std::move(receiver), has_transient_user_activation, auto_close,
+-      quarantine_connection_callback);
++      std::move(receiver), has_transient_user_activation, auto_close);
+ 
+   base::WeakPtr<FileSystemAccessFileWriterImpl> writer_weak =
+       writer->weak_ptr();

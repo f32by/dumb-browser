@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view.cc b/chrome/browser/ui/views/frame/browser_view.cc
-index d2058fea0cc8..ca1719d10efb 100644
+index c33c4327974e7..6ff1b5654d284 100644
 --- a/chrome/browser/ui/views/frame/browser_view.cc
 +++ b/chrome/browser/ui/views/frame/browser_view.cc
-@@ -103,7 +103,6 @@
+@@ -104,7 +104,6 @@
  #include "chrome/browser/ui/views/frame/web_footer_experiment_view.h"
  #include "chrome/browser/ui/views/fullscreen_control/fullscreen_control_host.h"
  #include "chrome/browser/ui/views/global_media_controls/media_toolbar_button_view.h"
@@ -10,7 +10,7 @@ index d2058fea0cc8..ca1719d10efb 100644
  #include "chrome/browser/ui/views/infobars/infobar_container_view.h"
  #include "chrome/browser/ui/views/location_bar/intent_picker_view.h"
  #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
-@@ -154,7 +153,6 @@
+@@ -155,7 +154,6 @@
  #include "components/omnibox/browser/omnibox_view.h"
  #include "components/permissions/permission_request_manager.h"
  #include "components/prefs/pref_service.h"
@@ -18,7 +18,7 @@ index d2058fea0cc8..ca1719d10efb 100644
  #include "components/sessions/core/tab_restore_service.h"
  #include "components/startup_metric_utils/browser/startup_metric_utils.h"
  #include "components/translate/core/browser/language_state.h"
-@@ -2962,7 +2960,6 @@ void BrowserView::PaintChildren(const views::PaintInfo& paint_info) {
+@@ -3011,7 +3009,6 @@ void BrowserView::PaintChildren(const views::PaintInfo& paint_info) {
    static bool did_first_paint = false;
    if (!did_first_paint) {
      did_first_paint = true;
@@ -26,7 +26,7 @@ index d2058fea0cc8..ca1719d10efb 100644
    }
  }
  
-@@ -3393,63 +3390,6 @@ int BrowserView::GetCommandIDForAppCommandID(int app_command_id) const {
+@@ -3449,63 +3446,6 @@ int BrowserView::GetCommandIDForAppCommandID(int app_command_id) const {
  
  void BrowserView::UpdateAcceleratorMetrics(const ui::Accelerator& accelerator,
                                             int command_id) {
@@ -90,18 +90,19 @@ index d2058fea0cc8..ca1719d10efb 100644
  }
  
  void BrowserView::ShowAvatarBubbleFromAvatarButton(
-@@ -3476,14 +3416,6 @@ void BrowserView::ShowAvatarBubbleFromAvatarButton(
-                                   focus_first_profile_button);
+@@ -3543,6 +3483,7 @@ void BrowserView::MaybeShowProfileSwitchIPH() {
+     avatar_button->MaybeShowProfileSwitchIPH();
  }
  
--void BrowserView::ShowHatsDialog(const std::string& site_id,
--                                 base::OnceClosure success_callback,
--                                 base::OnceClosure failure_callback) {
--  // Self deleting on close.
--  new HatsNextWebDialog(browser(), site_id, std::move(success_callback),
--                        std::move(failure_callback));
--}
--
++#if 0
+ void BrowserView::ShowHatsDialog(
+     const std::string& site_id,
+     base::OnceClosure success_callback,
+@@ -3554,6 +3495,7 @@ void BrowserView::ShowHatsDialog(
+ 
+   );
+ }
++#endif
+ 
  ExclusiveAccessContext* BrowserView::GetExclusiveAccessContext() {
    return this;
- }

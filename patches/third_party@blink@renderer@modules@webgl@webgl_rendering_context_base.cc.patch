@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
-index 9dd34d18b005..ec8fa354a455 100644
+index 31a22fa48c001..446c6549f73e1 100644
 --- a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
 +++ b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
 @@ -39,8 +39,6 @@
@@ -47,7 +47,7 @@ index 9dd34d18b005..ec8fa354a455 100644
  }  // namespace
  
  class ScopedTexture2DRestorer {
-@@ -788,17 +771,6 @@ void WebGLRenderingContextBase::CompleteXrCompatiblePromiseIfPending(
+@@ -792,17 +775,6 @@ void WebGLRenderingContextBase::CompleteXrCompatiblePromiseIfPending(
      }
  
      make_xr_compatible_resolver_ = nullptr;
@@ -65,15 +65,15 @@ index 9dd34d18b005..ec8fa354a455 100644
    }
  }
  
-@@ -2701,7 +2673,6 @@ void WebGLRenderingContextBase::drawArraysImpl(GLenum mode,
+@@ -2721,7 +2693,6 @@ void WebGLRenderingContextBase::drawArrays(GLenum mode,
                                                     drawing_buffer_.get());
    OnBeforeDrawCall();
    ContextGL()->DrawArrays(mode, first, count);
 -  RecordUKMCanvasDrawnToAtFirstDrawCall();
  }
  
- void WebGLRenderingContextBase::drawElementsImpl(GLenum mode,
-@@ -2723,7 +2694,6 @@ void WebGLRenderingContextBase::drawElementsImpl(GLenum mode,
+ void WebGLRenderingContextBase::drawElements(GLenum mode,
+@@ -2743,7 +2714,6 @@ void WebGLRenderingContextBase::drawElements(GLenum mode,
    ContextGL()->DrawElements(
        mode, count, type,
        reinterpret_cast<void*>(static_cast<intptr_t>(offset)));
@@ -81,7 +81,7 @@ index 9dd34d18b005..ec8fa354a455 100644
  }
  
  void WebGLRenderingContextBase::DrawArraysInstancedANGLE(GLenum mode,
-@@ -2743,7 +2713,6 @@ void WebGLRenderingContextBase::DrawArraysInstancedANGLE(GLenum mode,
+@@ -2763,7 +2733,6 @@ void WebGLRenderingContextBase::DrawArraysInstancedANGLE(GLenum mode,
                                                     drawing_buffer_.get());
    OnBeforeDrawCall();
    ContextGL()->DrawArraysInstancedANGLE(mode, first, count, primcount);
@@ -89,7 +89,7 @@ index 9dd34d18b005..ec8fa354a455 100644
  }
  
  void WebGLRenderingContextBase::DrawElementsInstancedANGLE(GLenum mode,
-@@ -2766,7 +2735,6 @@ void WebGLRenderingContextBase::DrawElementsInstancedANGLE(GLenum mode,
+@@ -2786,7 +2755,6 @@ void WebGLRenderingContextBase::DrawElementsInstancedANGLE(GLenum mode,
    ContextGL()->DrawElementsInstancedANGLE(
        mode, count, type, reinterpret_cast<void*>(static_cast<intptr_t>(offset)),
        primcount);
@@ -97,7 +97,7 @@ index 9dd34d18b005..ec8fa354a455 100644
  }
  
  void WebGLRenderingContextBase::enable(GLenum cap) {
-@@ -3108,7 +3076,6 @@ ScriptValue WebGLRenderingContextBase::getExtension(ScriptState* script_state,
+@@ -3128,7 +3096,6 @@ ScriptValue WebGLRenderingContextBase::getExtension(ScriptState* script_state,
    if (name == WebGLDebugRendererInfo::ExtensionName()) {
      ExecutionContext* context = ExecutionContext::From(script_state);
      UseCounter::Count(context, WebFeature::kWebGLDebugRendererInfo);
@@ -105,7 +105,7 @@ index 9dd34d18b005..ec8fa354a455 100644
    }
  
    if (!isContextLost()) {
-@@ -3221,103 +3188,6 @@ ScriptValue WebGLRenderingContextBase::getFramebufferAttachmentParameter(
+@@ -3241,103 +3208,6 @@ ScriptValue WebGLRenderingContextBase::getFramebufferAttachmentParameter(
    }
  }
  
@@ -209,7 +209,7 @@ index 9dd34d18b005..ec8fa354a455 100644
  ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
                                                      GLenum pname) {
    if (isContextLost())
-@@ -3457,12 +3327,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -3477,12 +3347,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
      case GL_SCISSOR_TEST:
        return GetBooleanParameter(script_state, pname);
      case GL_SHADING_LANGUAGE_VERSION:
@@ -222,7 +222,7 @@ index 9dd34d18b005..ec8fa354a455 100644
        return WebGLAny(
            script_state,
            "WebGL GLSL ES 1.0 (" +
-@@ -3525,12 +3389,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -3545,12 +3409,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
      case GL_VENDOR:
        return WebGLAny(script_state, String("WebKit"));
      case GL_VERSION:
@@ -235,7 +235,7 @@ index 9dd34d18b005..ec8fa354a455 100644
        return WebGLAny(
            script_state,
            "WebGL 1.0 (" + String(ContextGL()->GetString(GL_VERSION)) + ")");
-@@ -3546,12 +3404,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -3566,12 +3424,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
        return ScriptValue::CreateNull(script_state->GetIsolate());
      case WebGLDebugRendererInfo::kUnmaskedRendererWebgl:
        if (ExtensionEnabled(kWebGLDebugRendererInfoName)) {
@@ -248,7 +248,7 @@ index 9dd34d18b005..ec8fa354a455 100644
          return WebGLAny(script_state,
                          String(ContextGL()->GetString(GL_RENDERER)));
        }
-@@ -3561,12 +3413,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -3581,12 +3433,6 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
        return ScriptValue::CreateNull(script_state->GetIsolate());
      case WebGLDebugRendererInfo::kUnmaskedVendorWebgl:
        if (ExtensionEnabled(kWebGLDebugRendererInfoName)) {
@@ -261,7 +261,7 @@ index 9dd34d18b005..ec8fa354a455 100644
          return WebGLAny(script_state,
                          String(ContextGL()->GetString(GL_VENDOR)));
        }
-@@ -3746,10 +3592,6 @@ ScriptValue WebGLRenderingContextBase::getRenderbufferParameter(
+@@ -3766,10 +3612,6 @@ ScriptValue WebGLRenderingContextBase::getRenderbufferParameter(
      case GL_RENDERBUFFER_DEPTH_SIZE:
      case GL_RENDERBUFFER_STENCIL_SIZE:
        ContextGL()->GetRenderbufferParameteriv(target, pname, &value);
@@ -272,7 +272,7 @@ index 9dd34d18b005..ec8fa354a455 100644
        return WebGLAny(script_state, value);
      case GL_RENDERBUFFER_INTERNAL_FORMAT:
        return WebGLAny(script_state, renderbuffer_binding_->InternalFormat());
-@@ -3831,10 +3673,6 @@ WebGLShaderPrecisionFormat* WebGLRenderingContextBase::getShaderPrecisionFormat(
+@@ -3851,10 +3693,6 @@ WebGLShaderPrecisionFormat* WebGLRenderingContextBase::getShaderPrecisionFormat(
                                          &precision);
    auto* result = MakeGarbageCollected<WebGLShaderPrecisionFormat>(
        range[0], range[1], precision);
@@ -283,7 +283,7 @@ index 9dd34d18b005..ec8fa354a455 100644
    return result;
  }
  
-@@ -7338,10 +7176,6 @@ ScriptValue WebGLRenderingContextBase::GetFloatParameter(
+@@ -7362,10 +7200,6 @@ ScriptValue WebGLRenderingContextBase::GetFloatParameter(
    GLfloat value = 0;
    if (!isContextLost())
      ContextGL()->GetFloatv(pname, &value);
@@ -294,7 +294,7 @@ index 9dd34d18b005..ec8fa354a455 100644
    return WebGLAny(script_state, value);
  }
  
-@@ -7364,10 +7198,6 @@ ScriptValue WebGLRenderingContextBase::GetIntParameter(
+@@ -7388,10 +7222,6 @@ ScriptValue WebGLRenderingContextBase::GetIntParameter(
          break;
      }
    }
@@ -305,7 +305,7 @@ index 9dd34d18b005..ec8fa354a455 100644
    return WebGLAny(script_state, value);
  }
  
-@@ -7409,13 +7239,6 @@ ScriptValue WebGLRenderingContextBase::GetWebGLFloatArrayParameter(
+@@ -7433,13 +7263,6 @@ ScriptValue WebGLRenderingContextBase::GetWebGLFloatArrayParameter(
      default:
        NOTIMPLEMENTED();
    }
@@ -319,7 +319,7 @@ index 9dd34d18b005..ec8fa354a455 100644
    return WebGLAny(script_state, DOMFloat32Array::Create(value, length));
  }
  
-@@ -7437,13 +7260,6 @@ ScriptValue WebGLRenderingContextBase::GetWebGLIntArrayParameter(
+@@ -7461,13 +7284,6 @@ ScriptValue WebGLRenderingContextBase::GetWebGLIntArrayParameter(
      default:
        NOTIMPLEMENTED();
    }

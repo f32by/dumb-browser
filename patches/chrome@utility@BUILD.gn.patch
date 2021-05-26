@@ -1,0 +1,18 @@
+diff --git a/chrome/utility/BUILD.gn b/chrome/utility/BUILD.gn
+index 23f473b4a74b6..cce5e2104d7e1 100644
+--- a/chrome/utility/BUILD.gn
++++ b/chrome/utility/BUILD.gn
+@@ -65,13 +65,6 @@ static_library("utility") {
+     "//ui/base:buildflags",
+   ]
+ 
+-  if (is_win) {
+-    deps += [
+-      "//components/services/quarantine",
+-      "//components/services/quarantine/public/mojom",
+-    ]
+-  }
+-
+   if (is_mac) {
+     deps += [ "//chrome/services/mac_notifications" ]
+   }

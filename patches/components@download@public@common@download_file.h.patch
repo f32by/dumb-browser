@@ -1,0 +1,20 @@
+diff --git a/components/download/public/common/download_file.h b/components/download/public/common/download_file.h
+index 1b8da7b64f8d8..838b47f24bea4 100644
+--- a/components/download/public/common/download_file.h
++++ b/components/download/public/common/download_file.h
+@@ -18,7 +18,6 @@
+ #include "components/download/public/common/download_interrupt_reasons.h"
+ #include "components/download/public/common/download_item.h"
+ #include "components/download/public/common/input_stream.h"
+-#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+ #include "mojo/public/cpp/system/data_pipe.h"
+ 
+@@ -91,7 +90,6 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadFile {
+       const std::string& client_guid,
+       const GURL& source_url,
+       const GURL& referrer_url,
+-      mojo::PendingRemote<quarantine::mojom::Quarantine> remote_quarantine,
+       RenameCompletionCallback callback) = 0;
+ 
+   // Detach the file so it is not deleted on destruction.

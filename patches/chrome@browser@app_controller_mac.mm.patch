@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/app_controller_mac.mm b/chrome/browser/app_controller_mac.mm
-index 596eabd15f44..73ab954b3a2a 100644
+index 8fd9ba22110e5..39f92bfc6cc39 100644
 --- a/chrome/browser/app_controller_mac.mm
 +++ b/chrome/browser/app_controller_mac.mm
-@@ -46,7 +46,6 @@
- #include "chrome/browser/first_run/first_run.h"
+@@ -48,7 +48,6 @@
  #include "chrome/browser/lifetime/application_lifetime.h"
  #include "chrome/browser/lifetime/browser_shutdown.h"
+ #include "chrome/browser/mac/auth_session_request.h"
 -#include "chrome/browser/mac/mac_startup_profiler.h"
  #include "chrome/browser/policy/chrome_browser_policy_connector.h"
  #include "chrome/browser/prefs/incognito_mode_prefs.h"
  #include "chrome/browser/profiles/profile_attributes_entry.h"
-@@ -402,8 +401,6 @@ - (void)dealloc {
+@@ -404,8 +403,6 @@ - (void)dealloc {
  // the profile is loaded or any preferences have been registered). Defer any
  // user-data initialization until -applicationDidFinishLaunching:.
  - (void)mainMenuCreated {
@@ -19,7 +19,7 @@ index 596eabd15f44..73ab954b3a2a 100644
    // We need to register the handlers early to catch events fired on launch.
    NSAppleEventManager* em = [NSAppleEventManager sharedAppleEventManager];
    [em setEventHandler:self
-@@ -472,9 +469,6 @@ - (void)unregisterEventHandlers {
+@@ -474,9 +471,6 @@ - (void)unregisterEventHandlers {
  // (NSApplicationDelegate protocol) This is the Apple-approved place to override
  // the default handlers.
  - (void)applicationWillFinishLaunching:(NSNotification*)notification {
@@ -29,7 +29,7 @@ index 596eabd15f44..73ab954b3a2a 100644
    if (@available(macOS 10.12, *)) {
      NSWindow.allowsAutomaticWindowTabbing = NO;
    }
-@@ -811,10 +805,6 @@ - (void)applicationDidFinishLaunching:(NSNotification*)notify {
+@@ -797,10 +791,6 @@ - (void)applicationDidFinishLaunching:(NSNotification*)notify {
      return;
    }
  
@@ -39,4 +39,4 @@ index 596eabd15f44..73ab954b3a2a 100644
 -
    // Notify BrowserList to keep the application running so it doesn't go away
    // when all the browser windows get closed.
-   _keep_alive.reset(new ScopedKeepAlive(KeepAliveOrigin::APP_CONTROLLER,
+   _keep_alive = std::make_unique<ScopedKeepAlive>(

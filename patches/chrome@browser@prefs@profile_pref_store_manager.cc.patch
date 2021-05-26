@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/prefs/profile_pref_store_manager.cc b/chrome/browser/prefs/profile_pref_store_manager.cc
-index 7bfb2ac868db..90b4b447149d 100644
+index fc1793082574c..1d79a7a91d22f 100644
 --- a/chrome/browser/prefs/profile_pref_store_manager.cc
 +++ b/chrome/browser/prefs/profile_pref_store_manager.cc
 @@ -87,9 +87,7 @@ PersistentPrefStore* ProfilePrefStoreManager::CreateProfilePrefStore(
@@ -45,7 +45,7 @@ index 7bfb2ac868db..90b4b447149d 100644
        profile_path_.Append(chrome::kSecurePreferencesFilename),
 @@ -155,5 +150,5 @@ ProfilePrefStoreManager::CreateTrackedPrefStoreConfiguration(
  #else
-       base::string16(),
+       std::u16string(),
  #endif
 -      std::move(validation_delegate), std::move(reset_on_load_observer));
 +      std::move(reset_on_load_observer));

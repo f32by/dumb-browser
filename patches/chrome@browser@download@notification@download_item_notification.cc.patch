@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/download/notification/download_item_notification.cc b/chrome/browser/download/notification/download_item_notification.cc
-index b847cd34b833..c4078280e3ea 100644
+index d5f82e86a929c..3f6ad66fa659b 100644
 --- a/chrome/browser/download/notification/download_item_notification.cc
 +++ b/chrome/browser/download/notification/download_item_notification.cc
-@@ -23,12 +23,9 @@
+@@ -24,12 +24,9 @@
  #include "chrome/browser/download/download_crx_util.h"
  #include "chrome/browser/download/download_item_model.h"
  #include "chrome/browser/download/notification/download_notification_manager.h"
@@ -15,15 +15,25 @@ index b847cd34b833..c4078280e3ea 100644
  #include "chrome/browser/ui/chrome_pages.h"
  #include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
  #include "chrome/common/url_constants.h"
-@@ -38,7 +35,6 @@
+@@ -39,8 +36,6 @@
  #include "components/download/public/common/download_interrupt_reasons.h"
  #include "components/download/public/common/download_item.h"
  #include "components/prefs/pref_service.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
+-#include "components/safe_browsing/core/features.h"
  #include "components/strings/grit/components_strings.h"
  #include "components/url_formatter/elide_url.h"
  #include "content/public/browser/browser_context.h"
-@@ -316,12 +312,6 @@ void DownloadItemNotification::Click(
+@@ -89,7 +84,7 @@ std::string ReadNotificationImage(const base::FilePath& file_path) {
+ }
+ 
+ bool IsPromptEsbForDeepScanningEnabled() {
+-  return base::FeatureList::IsEnabled(safe_browsing::kPromptEsbForDeepScanning);
++  return false;
+ }
+ 
+ SkBitmap CropImage(const SkBitmap& original_bitmap) {
+@@ -317,12 +312,6 @@ void DownloadItemNotification::Click(
      DownloadCommands::Command command = button_actions_->at(*button_index);
      RecordButtonClickAction(command);
  
@@ -36,7 +46,7 @@ index b847cd34b833..c4078280e3ea 100644
      DownloadCommands(item_.get()).ExecuteCommand(command);
  
      // ExecuteCommand() might cause |item_| to be destroyed.
-@@ -840,15 +830,8 @@ base::string16 DownloadItemNotification::GetWarningStatusString() const {
+@@ -859,15 +848,8 @@ std::u16string DownloadItemNotification::GetWarningStatusString() const {
                                          elided_filename);
      }
      case download::DOWNLOAD_DANGER_TYPE_UNCOMMON_CONTENT: {
@@ -54,7 +64,7 @@ index b847cd34b833..c4078280e3ea 100644
      }
      case download::DOWNLOAD_DANGER_TYPE_POTENTIALLY_UNWANTED: {
        return l10n_util::GetStringFUTF16(IDS_PROMPT_DOWNLOAD_CHANGES_SETTINGS,
-@@ -1036,12 +1019,7 @@ bool DownloadItemNotification::IsScanning() const {
+@@ -1060,12 +1042,7 @@ bool DownloadItemNotification::IsScanning() const {
  }
  
  bool DownloadItemNotification::AllowedToOpenWhileScanning() const {

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/chrome_download_manager_delegate.h b/chrome/browser/download/chrome_download_manager_delegate.h
-index 35357140269f..a15c1c4ad5d0 100644
+index 6df16aff88ad2..8055b09661576 100644
 --- a/chrome/browser/download/chrome_download_manager_delegate.h
 +++ b/chrome/browser/download/chrome_download_manager_delegate.h
 @@ -22,11 +22,10 @@
@@ -15,7 +15,16 @@ index 35357140269f..a15c1c4ad5d0 100644
  #include "content/public/browser/download_manager_delegate.h"
  #include "content/public/browser/notification_observer.h"
  #include "content/public/browser/notification_registrar.h"
-@@ -157,18 +156,16 @@ class ChromeDownloadManagerDelegate
+@@ -128,8 +127,6 @@ class ChromeDownloadManagerDelegate
+       bool from_download_cross_origin_redirect,
+       bool content_initiated,
+       content::CheckDownloadAllowedCallback check_download_allowed_cb) override;
+-  download::QuarantineConnectionCallback GetQuarantineConnectionCallback()
+-      override;
+   std::unique_ptr<download::DownloadItemRenameHandler>
+   GetRenameHandlerForDownload(download::DownloadItem* download_item) override;
+ 
+@@ -157,18 +154,18 @@ class ChromeDownloadManagerDelegate
  #endif  // FULL_SAFE_BROWSING
  
    // Callback function after the DownloadProtectionService completes.
@@ -25,8 +34,10 @@ index 35357140269f..a15c1c4ad5d0 100644
  
    base::WeakPtr<ChromeDownloadManagerDelegate> GetWeakPtr();
  
++#if 0
    static void ConnectToQuarantineService(
        mojo::PendingReceiver<quarantine::mojom::Quarantine> receiver);
++#endif
  
 - protected:
 -  virtual safe_browsing::DownloadProtectionService*
@@ -37,7 +48,7 @@ index 35357140269f..a15c1c4ad5d0 100644
    // Show file picker for |download|.
    virtual void ShowFilePickerForDownload(
        download::DownloadItem* download,
-@@ -322,6 +319,8 @@ class ChromeDownloadManagerDelegate
+@@ -325,6 +322,8 @@ class ChromeDownloadManagerDelegate
  
    content::NotificationRegistrar registrar_;
  

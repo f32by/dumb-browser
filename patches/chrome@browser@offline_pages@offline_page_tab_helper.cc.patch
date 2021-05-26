@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/offline_pages/offline_page_tab_helper.cc b/chrome/browser/offline_pages/offline_page_tab_helper.cc
-index 03564986f756..3d1765985fd5 100644
+index 6bce767626ee4..20efb5d614556 100644
 --- a/chrome/browser/offline_pages/offline_page_tab_helper.cc
 +++ b/chrome/browser/offline_pages/offline_page_tab_helper.cc
-@@ -28,7 +28,6 @@
+@@ -29,7 +29,6 @@
  #include "components/offline_pages/core/offline_page_model.h"
  #include "components/offline_pages/core/offline_store_utils.h"
  #include "components/offline_pages/core/page_criteria.h"
@@ -10,7 +10,7 @@ index 03564986f756..3d1765985fd5 100644
  #include "components/offline_pages/core/prefetch/prefetch_service.h"
  #include "components/offline_pages/core/request_header/offline_page_header.h"
  #include "content/public/browser/back_forward_cache.h"
-@@ -165,12 +164,6 @@ void OfflinePageTabHelper::DidStartNavigation(
+@@ -166,12 +165,6 @@ void OfflinePageTabHelper::DidStartNavigation(
  
    // The provisional offline info can be cleared no matter how.
    provisional_offline_info_.Clear();
@@ -23,7 +23,7 @@ index 03564986f756..3d1765985fd5 100644
  }
  
  void OfflinePageTabHelper::DidFinishNavigation(
-@@ -261,26 +254,6 @@ void OfflinePageTabHelper::ReportPrefetchMetrics(
+@@ -264,26 +257,6 @@ void OfflinePageTabHelper::ReportPrefetchMetrics(
  
    if (!prefetch_service_)
      return;

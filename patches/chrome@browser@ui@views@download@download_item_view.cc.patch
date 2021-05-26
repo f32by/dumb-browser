@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/download/download_item_view.cc b/chrome/browser/ui/views/download/download_item_view.cc
-index a22827324447..891f0afff8a0 100644
+index cad5306843950..119f0d7c8bcf3 100644
 --- a/chrome/browser/ui/views/download/download_item_view.cc
 +++ b/chrome/browser/ui/views/download/download_item_view.cc
 @@ -30,27 +30,18 @@
@@ -39,7 +39,7 @@ index a22827324447..891f0afff8a0 100644
  }
  
  int GetFilenameStyle(const views::Label& label) {
-@@ -396,7 +387,6 @@ bool DownloadItemView::OnMouseDragged(const ui::MouseEvent& event) {
+@@ -397,7 +388,6 @@ bool DownloadItemView::OnMouseDragged(const ui::MouseEvent& event) {
      // TODO(shaktisahu): Make DragDownloadItem work with a model.
      DragDownloadItem(model_->download(), file_icon,
                       widget ? widget->GetNativeView() : nullptr);
@@ -47,28 +47,50 @@ index a22827324447..891f0afff8a0 100644
    }
    return true;
  }
-@@ -697,7 +687,6 @@ void DownloadItemView::SetMode(Mode mode) {
+@@ -697,9 +687,12 @@ void DownloadItemView::SetMode(Mode mode) {
+   if (mode_ == Mode::kNormal) {
      UpdateAccessibleAlertAndAnimationsForNormalMode();
    } else if (is_download_warning(mode_)) {
++#if 0
      const auto danger_type = model_->GetDangerType();
--    RecordDangerousDownloadWarningShown(danger_type);
+     RecordDangerousDownloadWarningShown(danger_type);
++#endif
      announce_accessible_alert_soon_ = true;
++#if 0
      if (danger_type == download::DOWNLOAD_DANGER_TYPE_PROMPT_FOR_SCANNING) {
        UpdateAccessibleAlert(l10n_util::GetStringFUTF16(
-@@ -774,11 +763,7 @@ void DownloadItemView::UpdateLabels() {
+           base::FeatureList::IsEnabled(safe_browsing::kPromptEsbForDeepScanning)
+@@ -707,10 +700,13 @@ void DownloadItemView::SetMode(Mode mode) {
+               : IDS_PROMPT_APP_DEEP_SCANNING_ACCESSIBLE_ALERT,
+           unelided_filename));
+     } else {
++#endif
+       size_t ignore;
+       UpdateAccessibleAlert(model_->GetWarningText(unelided_filename, &ignore));
+       accessible_alert_timer_.Stop();
++#if 0
+     }
++#endif
+   } else if (is_mixed_content(mode_)) {
+     announce_accessible_alert_soon_ = true;
+     UpdateAccessibleAlert(l10n_util::GetStringFUTF16(
+@@ -776,6 +772,7 @@ void DownloadItemView::UpdateLabels() {
+     warning_label_->SizeToFit(GetLabelWidth(*warning_label_));
+   }
  
++#if 0
    deep_scanning_label_->SetVisible(mode_ == Mode::kDeepScanning);
    if (deep_scanning_label_->GetVisible()) {
--    const int id = (model_->download() &&
--                    safe_browsing::DeepScanningRequest::ShouldUploadBinary(
--                        model_->download()))
--                       ? IDS_PROMPT_DEEP_SCANNING_DOWNLOAD
--                       : IDS_PROMPT_DEEP_SCANNING_APP_DOWNLOAD;
-+    const int id = IDS_PROMPT_DEEP_SCANNING_APP_DOWNLOAD;
-     const base::string16 filename = ElidedFilename(*deep_scanning_label_);
-     size_t filename_offset;
-     deep_scanning_label_->SetText(
-@@ -799,12 +784,7 @@ void DownloadItemView::UpdateButtons() {
+     const int id = (model_->download() &&
+@@ -790,6 +787,7 @@ void DownloadItemView::UpdateLabels() {
+     StyleFilename(*deep_scanning_label_, filename_offset, filename.length());
+     deep_scanning_label_->SizeToFit(GetLabelWidth(*deep_scanning_label_));
+   }
++#endif
+ }
+ 
+ void DownloadItemView::UpdateButtons() {
+@@ -803,12 +801,7 @@ void DownloadItemView::UpdateButtons() {
          !ChromeDownloadManagerDelegate::IsDangerTypeBlocked(danger_type);
    }
  
@@ -82,7 +104,7 @@ index a22827324447..891f0afff8a0 100644
    open_button_->SetEnabled((mode_ == Mode::kNormal) || prompt_to_scan ||
                             allow_open_during_deep_scan);
  
-@@ -998,11 +978,6 @@ ui::ImageModel DownloadItemView::GetIcon() const {
+@@ -1002,11 +995,6 @@ ui::ImageModel DownloadItemView::GetIcon() const {
    const auto danger_type = model_->GetDangerType();
    switch (danger_type) {
      case download::DOWNLOAD_DANGER_TYPE_UNCOMMON_CONTENT:
@@ -94,7 +116,7 @@ index a22827324447..891f0afff8a0 100644
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_URL:
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_CONTENT:
      case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_HOST:
-@@ -1188,23 +1163,6 @@ void DownloadItemView::DropdownButtonPressed(const ui::Event& event) {
+@@ -1192,23 +1180,6 @@ void DownloadItemView::DropdownButtonPressed(const ui::Event& event) {
  }
  
  void DownloadItemView::ShowOpenDialog(content::WebContents* web_contents) {
@@ -118,7 +140,7 @@ index a22827324447..891f0afff8a0 100644
  }
  
  void DownloadItemView::ShowContextMenuImpl(const gfx::Rect& rect,
-@@ -1233,7 +1191,6 @@ void DownloadItemView::ShowContextMenuImpl(const gfx::Rect& rect,
+@@ -1237,7 +1208,6 @@ void DownloadItemView::ShowContextMenuImpl(const gfx::Rect& rect,
  }
  
  void DownloadItemView::OpenDownloadDuringAsyncScanning() {

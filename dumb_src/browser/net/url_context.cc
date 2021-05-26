@@ -78,7 +78,6 @@ std::shared_ptr<dumb::DumbRequestInfo> DumbRequestInfo::MakeCTX(
 
   ctx->is_webtorrent_disabled = true;
 
-  ctx->render_frame_id = request.render_frame_id;
   ctx->render_process_id = render_process_id;
   ctx->frame_tree_node_id = frame_tree_node_id;
 

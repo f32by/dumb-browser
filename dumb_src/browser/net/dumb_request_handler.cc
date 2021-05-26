@@ -13,6 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Note: this file was stolen from Brave.
+
 #include "dumb/browser/net/dumb_request_handler.h"
 
 #include <algorithm>

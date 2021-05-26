@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/devtools/devtools_ui_bindings.cc b/chrome/browser/devtools/devtools_ui_bindings.cc
-index a4d42edfc228..b00ed67da19e 100644
+index 0f447f838c4c9..5bcbed866ea3f 100644
 --- a/chrome/browser/devtools/devtools_ui_bindings.cc
 +++ b/chrome/browser/devtools/devtools_ui_bindings.cc
 @@ -40,8 +40,6 @@
@@ -11,46 +11,19 @@ index a4d42edfc228..b00ed67da19e 100644
  #include "chrome/browser/ui/tabs/tab_strip_model.h"
  #include "chrome/common/chrome_switches.h"
  #include "chrome/common/extensions/chrome_manifest_url_handlers.h"
-@@ -1541,42 +1539,6 @@ void DevToolsUIBindings::RegisterExtensionsAPI(const std::string& origin,
+@@ -1552,6 +1550,7 @@ void DevToolsUIBindings::RegisterExtensionsAPI(const std::string& origin,
    extensions_api_[origin + "/"] = script;
  }
  
--namespace {
--
--void ShowSurveyCallback(DevToolsUIBindings::DispatchCallback callback,
--                        bool survey_shown) {
--  base::DictionaryValue response;
--  response.SetBoolean("surveyShown", survey_shown);
--  std::move(callback).Run(&response);
--}
--
--}  // namespace
--
--void DevToolsUIBindings::ShowSurvey(DispatchCallback callback,
--                                    const std::string& trigger) {
--  HatsService* hats_service =
--      HatsServiceFactory::GetForProfile(profile_->GetOriginalProfile(), true);
--  if (!hats_service) {
--    ShowSurveyCallback(std::move(callback), false);
--    return;
--  }
--  base::RepeatingCallback<void(const base::Value*)> on_survey =
--      base::AdaptCallbackForRepeating(std::move(callback));
--  hats_service->LaunchSurvey(
--      trigger, base::BindOnce(ShowSurveyCallback, on_survey, true),
--      base::BindOnce(ShowSurveyCallback, on_survey, false));
--}
--
--void DevToolsUIBindings::CanShowSurvey(DispatchCallback callback,
--                                       const std::string& trigger) {
--  HatsService* hats_service =
--      HatsServiceFactory::GetForProfile(profile_->GetOriginalProfile(), true);
--  bool can_show = hats_service ? hats_service->CanShowSurvey(trigger) : false;
--  base::DictionaryValue response;
--  response.SetBoolean("canShowSurvey", can_show);
--  std::move(callback).Run(&response);
--}
--
++#if 0
+ namespace {
+ 
+ void ShowSurveyCallback(DevToolsUIBindings::DispatchCallback callback,
+@@ -1588,6 +1587,7 @@ void DevToolsUIBindings::CanShowSurvey(DispatchCallback callback,
+   response.SetBoolean("canShowSurvey", can_show);
+   std::move(callback).Run(&response);
+ }
++#endif
+ 
  void DevToolsUIBindings::SetDelegate(Delegate* delegate) {
    delegate_.reset(delegate);
- }

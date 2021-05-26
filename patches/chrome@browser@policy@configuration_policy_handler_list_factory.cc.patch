@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/policy/configuration_policy_handler_list_factory.cc b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
-index 509bbcc71625..dc2940116b3f 100644
+index 1d31b3a449778..a574854f0318e 100644
 --- a/chrome/browser/policy/configuration_policy_handler_list_factory.cc
 +++ b/chrome/browser/policy/configuration_policy_handler_list_factory.cc
-@@ -30,8 +30,6 @@
+@@ -32,8 +32,6 @@
  #include "chrome/browser/policy/network_prediction_policy_handler.h"
  #include "chrome/browser/policy/printing_restrictions_policy_handler.h"
  #include "chrome/browser/policy/webusb_allow_devices_for_urls_policy_handler.h"
@@ -11,7 +11,7 @@ index 509bbcc71625..dc2940116b3f 100644
  #include "chrome/browser/profiles/guest_mode_policy_handler.h"
  #include "chrome/browser/profiles/incognito_mode_policy_handler.h"
  #include "chrome/browser/search/ntp_custom_background_enabled_policy_handler.h"
-@@ -59,7 +57,6 @@
+@@ -62,7 +60,6 @@
  #include "components/content_settings/core/common/pref_names.h"
  #include "components/data_reduction_proxy/core/common/data_reduction_proxy_pref_names.h"
  #include "components/embedder_support/pref_names.h"
@@ -19,7 +19,7 @@ index 509bbcc71625..dc2940116b3f 100644
  #include "components/feed/core/shared_prefs/pref_names.h"
  #include "components/history/core/common/pref_names.h"
  #include "components/language/core/browser/pref_names.h"
-@@ -78,8 +75,6 @@
+@@ -81,8 +78,6 @@
  #include "components/policy/core/common/policy_pref_names.h"
  #include "components/policy/core/common/schema.h"
  #include "components/policy/policy_constants.h"
@@ -28,7 +28,7 @@ index 509bbcc71625..dc2940116b3f 100644
  #include "components/search_engines/default_search_policy_handler.h"
  #include "components/search_engines/search_engines_pref_names.h"
  #include "components/security_interstitials/core/pref_names.h"
-@@ -185,12 +180,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -192,12 +187,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kQuicAllowed,
      prefs::kQuicAllowed,
      base::Value::Type::BOOLEAN },
@@ -41,7 +41,7 @@ index 509bbcc71625..dc2940116b3f 100644
    { key::kUrlKeyedAnonymizedDataCollectionEnabled,
      unified_consent::prefs::kUrlKeyedAnonymizedDataCollectionEnabled,
      base::Value::Type::BOOLEAN },
-@@ -320,15 +309,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -327,15 +316,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kGloballyScopeHTTPAuthCacheEnabled,
      prefs::kGloballyScopeHTTPAuthCacheEnabled,
      base::Value::Type::BOOLEAN },
@@ -57,17 +57,17 @@ index 509bbcc71625..dc2940116b3f 100644
    { key::kSafeSitesFilterBehavior,
      policy_prefs::kSafeSitesFilterBehavior,
      base::Value::Type::INTEGER },
-@@ -452,9 +432,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -456,9 +436,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kDefaultMediaStreamSetting,
      prefs::kManagedDefaultMediaStreamSetting,
      base::Value::Type::INTEGER },
 -  { key::kDisableSafeBrowsingProceedAnyway,
 -    prefs::kSafeBrowsingProceedAnywayDisabled,
 -    base::Value::Type::BOOLEAN },
-   { key::kSSLErrorOverrideAllowed,
-     prefs::kSSLErrorOverrideAllowed,
+   { key::kCECPQ2Enabled,
+     prefs::kCECPQ2Enabled,
      base::Value::Type::BOOLEAN },
-@@ -611,9 +588,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -637,9 +614,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kIntranetRedirectBehavior,
      omnibox::kIntranetRedirectBehavior,
      base::Value::Type::INTEGER },
@@ -77,7 +77,7 @@ index 509bbcc71625..dc2940116b3f 100644
    { key::kAccessibilityImageLabelsEnabled,
      prefs::kAccessibilityImageLabelsEnabled,
      base::Value::Type::BOOLEAN },
-@@ -656,9 +630,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
+@@ -694,9 +668,6 @@ const PolicyToPreferenceMapEntry kSimplePolicyMap[] = {
    { key::kWebRtcEventLogCollectionAllowed,
      prefs::kWebRtcEventLogCollectionAllowed,
      base::Value::Type::BOOLEAN },
@@ -87,7 +87,7 @@ index 509bbcc71625..dc2940116b3f 100644
    { key::kSuppressUnsupportedOSWarning,
      prefs::kSuppressUnsupportedOSWarning,
      base::Value::Type::BOOLEAN },
-@@ -1409,8 +1380,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1456,8 +1427,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
        std::make_unique<
            content_settings::InsecurePrivateNetworkPolicyHandler>());
    handlers->AddHandler(std::make_unique<DefaultSearchPolicyHandler>());
@@ -96,7 +96,7 @@ index 509bbcc71625..dc2940116b3f 100644
    handlers->AddHandler(std::make_unique<IncognitoModePolicyHandler>());
    handlers->AddHandler(std::make_unique<GuestModePolicyHandler>());
    handlers->AddHandler(
-@@ -1455,8 +1424,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1510,8 +1479,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
    handlers->AddHandler(std::make_unique<JavascriptPolicyHandler>());
    handlers->AddHandler(std::make_unique<NetworkPredictionPolicyHandler>());
    handlers->AddHandler(std::make_unique<RestoreOnStartupPolicyHandler>());
@@ -105,7 +105,7 @@ index 509bbcc71625..dc2940116b3f 100644
    handlers->AddHandler(std::make_unique<SimpleDeprecatingPolicyHandler>(
        std::make_unique<SimplePolicyHandler>(key::kAuthServerWhitelist,
                                              prefs::kAuthServerAllowlist,
-@@ -1480,9 +1447,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1535,9 +1502,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            key::kWindowOcclusionEnabled,
            policy::policy_prefs::kNativeWindowOcclusionEnabled,
            base::Value::Type::BOOLEAN)));
@@ -115,20 +115,22 @@ index 509bbcc71625..dc2940116b3f 100644
    handlers->AddHandler(std::make_unique<syncer::SyncPolicyHandler>());
    handlers->AddHandler(std::make_unique<BrowsingHistoryPolicyHandler>());
  
-@@ -1491,12 +1455,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1546,12 +1510,14 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
    handlers->AddHandler(std::make_unique<SimplePolicyHandler>(
        key::kURLAllowlist, policy_prefs::kUrlAllowlist,
        base::Value::Type::LIST));
--  handlers->AddHandler(std::make_unique<SimpleSchemaValidatingPolicyHandler>(
--      key::kSafeBrowsingExtendedReportingEnabled,
--      prefs::kSafeBrowsingScoutReportingEnabled, chrome_schema,
--      SCHEMA_ALLOW_UNKNOWN,
--      SimpleSchemaValidatingPolicyHandler::RECOMMENDED_ALLOWED,
--      SimpleSchemaValidatingPolicyHandler::MANDATORY_ALLOWED));
- 
- #if defined(OS_ANDROID)
++#if 0
+   handlers->AddHandler(std::make_unique<SimpleSchemaValidatingPolicyHandler>(
+       key::kSafeBrowsingExtendedReportingEnabled,
+       prefs::kSafeBrowsingScoutReportingEnabled, chrome_schema,
+       SCHEMA_ALLOW_UNKNOWN,
+       SimpleSchemaValidatingPolicyHandler::RECOMMENDED_ALLOWED,
+       SimpleSchemaValidatingPolicyHandler::MANDATORY_ALLOWED));
++#endif
    handlers->AddHandler(
-@@ -1538,8 +1496,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+       std::make_unique<ExplicitlyAllowedNetworkPortsPolicyHandler>());
+ 
+@@ -1596,8 +1562,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            chrome_schema.GetValidationSchema(),
            SimpleSchemaValidatingPolicyHandler::RECOMMENDED_ALLOWED,
            SimpleSchemaValidatingPolicyHandler::MANDATORY_ALLOWED));
@@ -137,7 +139,7 @@ index 509bbcc71625..dc2940116b3f 100644
  
    // Handlers for Chrome Enterprise Connectors policies.
    handlers->AddHandler(
-@@ -1571,12 +1527,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
+@@ -1629,12 +1593,6 @@ std::unique_ptr<ConfigurationPolicyHandlerList> BuildHandlerList(
            key::kOnSecurityEventEnterpriseConnector,
            enterprise_connectors::kOnSecurityEventPref,
            enterprise_connectors::kOnSecurityEventScopePref, chrome_schema));

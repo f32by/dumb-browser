@@ -1,8 +1,8 @@
 diff --git a/content/gpu/gpu_child_thread.cc b/content/gpu/gpu_child_thread.cc
-index 7e4d0ce76e0a..639e096c346e 100644
+index c342022d4fdb4..4af39509d567f 100644
 --- a/content/gpu/gpu_child_thread.cc
 +++ b/content/gpu/gpu_child_thread.cc
-@@ -36,8 +36,6 @@
+@@ -39,8 +39,6 @@
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "mojo/public/cpp/bindings/scoped_message_error_crash_key.h"
  #include "mojo/public/cpp/system/functions.h"
@@ -11,7 +11,7 @@ index 7e4d0ce76e0a..639e096c346e 100644
  #include "services/service_manager/public/cpp/binder_registry.h"
  #include "services/viz/privileged/mojom/gl/gpu_service.mojom.h"
  #include "third_party/skia/include/core/SkGraphics.h"
-@@ -83,11 +81,6 @@ viz::VizMainImpl::ExternalDependencies CreateVizMainDependencies() {
+@@ -86,11 +84,6 @@ viz::VizMainImpl::ExternalDependencies CreateVizMainDependencies() {
    deps.shutdown_event = process->GetShutDownEvent();
    deps.io_thread_task_runner = process->io_task_runner();
  

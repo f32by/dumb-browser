@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/css/offscreen_font_selector.cc b/third_party/blink/renderer/core/css/offscreen_font_selector.cc
-index 20391b979d30..b92c3988afbe 100644
+index 443943370d21f..433c4795ff5d6 100644
 --- a/third_party/blink/renderer/core/css/offscreen_font_selector.cc
 +++ b/third_party/blink/renderer/core/css/offscreen_font_selector.cc
 @@ -44,12 +44,9 @@ scoped_refptr<FontData> OffscreenFontSelector::GetFontData(
@@ -32,7 +32,14 @@ index 20391b979d30..b92c3988afbe 100644
    return font_data;
  }
  
-@@ -104,27 +94,21 @@ void OffscreenFontSelector::ReportNotDefGlyph() const {}
+@@ -105,34 +95,26 @@ void OffscreenFontSelector::ReportEmojiSegmentGlyphCoverage(
+     unsigned num_clusters,
+     unsigned num_broken_clusters) {
+   DCHECK(worker_);
+-  worker_->GetFontMatchingMetrics()->ReportEmojiSegmentGlyphCoverage(
+-      num_clusters, num_broken_clusters);
+ }
+ 
  void OffscreenFontSelector::ReportSuccessfulFontFamilyMatch(
      const AtomicString& font_family_name) {
    DCHECK(worker_);
@@ -60,7 +67,7 @@ index 20391b979d30..b92c3988afbe 100644
  }
  
  void OffscreenFontSelector::ReportFontLookupByUniqueOrFamilyName(
-@@ -132,8 +116,6 @@ void OffscreenFontSelector::ReportFontLookupByUniqueOrFamilyName(
+@@ -140,8 +122,6 @@ void OffscreenFontSelector::ReportFontLookupByUniqueOrFamilyName(
      const FontDescription& font_description,
      SimpleFontData* resulting_font_data) {
    DCHECK(worker_);
@@ -69,7 +76,7 @@ index 20391b979d30..b92c3988afbe 100644
  }
  
  void OffscreenFontSelector::ReportFontLookupByUniqueNameOnly(
-@@ -142,8 +124,6 @@ void OffscreenFontSelector::ReportFontLookupByUniqueNameOnly(
+@@ -150,8 +130,6 @@ void OffscreenFontSelector::ReportFontLookupByUniqueNameOnly(
      SimpleFontData* resulting_font_data,
      bool is_loading_fallback) {
    DCHECK(worker_);
@@ -78,7 +85,7 @@ index 20391b979d30..b92c3988afbe 100644
  }
  
  void OffscreenFontSelector::ReportFontLookupByFallbackCharacter(
-@@ -152,17 +132,12 @@ void OffscreenFontSelector::ReportFontLookupByFallbackCharacter(
+@@ -160,17 +138,12 @@ void OffscreenFontSelector::ReportFontLookupByFallbackCharacter(
      const FontDescription& font_description,
      SimpleFontData* resulting_font_data) {
    DCHECK(worker_);

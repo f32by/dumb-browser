@@ -1,0 +1,19 @@
+diff --git a/chrome/browser/background_fetch/background_fetch_delegate_impl.cc b/chrome/browser/background_fetch/background_fetch_delegate_impl.cc
+index e595a326f71bd..bbccb47ca2119 100644
+--- a/chrome/browser/background_fetch/background_fetch_delegate_impl.cc
++++ b/chrome/browser/background_fetch/background_fetch_delegate_impl.cc
+@@ -362,12 +362,14 @@ void BackgroundFetchDelegateImpl::
+     RecordBackgroundFetchDeletingRegistrationUkmEvent(
+         const url::Origin& origin,
+         bool user_initiated_abort) {
++#if 0
+   auto* ukm_background_service =
+       ukm::UkmBackgroundRecorderFactory::GetForProfile(profile_);
+   ukm_background_service->GetBackgroundSourceIdIfAllowed(
+       origin,
+       base::BindOnce(&BackgroundFetchDelegateImpl::DidGetBackgroundSourceId,
+                      weak_ptr_factory_.GetWeakPtr(), user_initiated_abort));
++#endif
+ }
+ 
+ void BackgroundFetchDelegateImpl::DidGetBackgroundSourceId(

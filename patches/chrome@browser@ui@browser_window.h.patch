@@ -1,18 +1,20 @@
 diff --git a/chrome/browser/ui/browser_window.h b/chrome/browser/ui/browser_window.h
-index 2063c3dc22ae..2ffb7d6274a5 100644
+index fcc8665f3faaa..17e8dabf90fbf 100644
 --- a/chrome/browser/ui/browser_window.h
 +++ b/chrome/browser/ui/browser_window.h
-@@ -465,13 +465,6 @@ class BrowserWindow : public ui::BaseWindow {
-       signin_metrics::AccessPoint access_point,
-       bool is_source_keyboard) = 0;
+@@ -477,6 +477,7 @@ class BrowserWindow : public ui::BaseWindow {
+   // customization bubble is shown, the IPH should be shown after.
+   virtual void MaybeShowProfileSwitchIPH() = 0;
  
--  // Shows User Happiness Tracking Survey's dialog after the survey associated
--  // with |site_id| has been successfully loaded. Failure to load the survey
--  // will result in the dialog not being shown.
--  virtual void ShowHatsDialog(const std::string& site_id,
--                              base::OnceClosure success_callback,
--                              base::OnceClosure failure_callback) = 0;
--
++#if 0
+   // Shows User Happiness Tracking Survey's dialog after the survey associated
+   // with |site_id| has been successfully loaded. Failure to load the survey
+   // will result in the dialog not being shown. |product_specific_data| should
+@@ -488,6 +489,7 @@ class BrowserWindow : public ui::BaseWindow {
+       base::OnceClosure success_callback,
+       base::OnceClosure failure_callback,
+       const std::map<std::string, bool>& product_specific_data) = 0;
++#endif
+ 
    // Returns object implementing ExclusiveAccessContext interface.
    virtual ExclusiveAccessContext* GetExclusiveAccessContext() = 0;
- 

@@ -1,11 +1,11 @@
 diff --git a/chrome/browser/ui/global_media_controls/media_session_notification_producer.h b/chrome/browser/ui/global_media_controls/media_session_notification_producer.h
-index d997c20254f2..23688413bcf2 100644
+index fd6ad473540dd..45b88e792c61c 100644
 --- a/chrome/browser/ui/global_media_controls/media_session_notification_producer.h
 +++ b/chrome/browser/ui/global_media_controls/media_session_notification_producer.h
-@@ -62,9 +62,6 @@ class MediaSessionNotificationProducer
-   std::unique_ptr<media_router::CastDialogController>
-   CreateCastDialogControllerForSession(const std::string& id);
-   bool HasSessionForWebContents(content::WebContents* web_contents) const;
+@@ -81,9 +81,6 @@ class MediaSessionNotificationProducer
+   // There is at most one session per WebContents.
+   std::string GetActiveControllableSessionForWebContents(
+       content::WebContents* web_contents) const;
 -  void LogMediaSessionActionButtonPressed(
 -      const std::string& id,
 -      media_session::mojom::MediaSessionAction action);

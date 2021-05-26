@@ -1,25 +1,40 @@
 diff --git a/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc b/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc
-index 6c636104b395..f0648547d0ff 100644
+index f47e88d9d2343..369a11c87234d 100644
 --- a/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc
 +++ b/chrome/browser/media_galleries/fileapi/media_file_validator_factory.cc
-@@ -6,8 +6,6 @@
+@@ -6,9 +6,6 @@
  
  #include "base/files/file_path.h"
  #include "base/macros.h"
 -#include "chrome/browser/media_galleries/fileapi/supported_audio_video_checker.h"
 -#include "chrome/browser/media_galleries/fileapi/supported_image_type_validator.h"
+-#include "components/download/public/common/quarantine_connection.h"
  #include "storage/browser/file_system/copy_or_move_file_validator.h"
  #include "storage/browser/file_system/file_system_url.h"
  
-@@ -44,11 +42,5 @@ storage::CopyOrMoveFileValidator*
+@@ -38,15 +35,14 @@ class InvalidFileValidator : public storage::CopyOrMoveFileValidator {
+ 
+ }  // namespace
+ 
+-MediaFileValidatorFactory::MediaFileValidatorFactory(
+-    download::QuarantineConnectionCallback quarantine_connection_callback)
+-    : quarantine_connection_callback_(quarantine_connection_callback) {}
++MediaFileValidatorFactory::MediaFileValidatorFactory() {}
+ MediaFileValidatorFactory::~MediaFileValidatorFactory() = default;
+ 
+ storage::CopyOrMoveFileValidator*
  MediaFileValidatorFactory::CreateCopyOrMoveFileValidator(
      const storage::FileSystemURL& src,
      const base::FilePath& platform_path) {
--  base::FilePath src_path = src.virtual_path();
--  if (SupportedImageTypeValidator::SupportsFileType(src_path))
--    return new SupportedImageTypeValidator(platform_path);
--  if (SupportedAudioVideoChecker::SupportsFileType(src_path))
--    return new SupportedAudioVideoChecker(platform_path);
++#if 0
+   base::FilePath src_path = src.virtual_path();
+   if (SupportedImageTypeValidator::SupportsFileType(src_path))
+     return new SupportedImageTypeValidator(platform_path,
+@@ -54,6 +50,6 @@ MediaFileValidatorFactory::CreateCopyOrMoveFileValidator(
+   if (SupportedAudioVideoChecker::SupportsFileType(src_path))
+     return new SupportedAudioVideoChecker(platform_path,
+                                           quarantine_connection_callback_);
 -
++#endif
    return new InvalidFileValidator();
  }

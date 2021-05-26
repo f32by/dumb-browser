@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/plugins/plugin_observer.cc b/chrome/browser/plugins/plugin_observer.cc
-index dbb98a982e1c..eeaef168de5d 100644
+index 2e12cbed6a374..a7b069fb16ccf 100644
 --- a/chrome/browser/plugins/plugin_observer.cc
 +++ b/chrome/browser/plugins/plugin_observer.cc
 @@ -28,7 +28,6 @@
@@ -16,6 +16,6 @@ index dbb98a982e1c..eeaef168de5d 100644
  void PluginObserver::CouldNotLoadPlugin(const base::FilePath& plugin_path) {
 -  g_browser_process->GetMetricsServicesManager()->OnPluginLoadingError(
 -      plugin_path);
-   base::string16 plugin_name =
+   std::u16string plugin_name =
        PluginService::GetInstance()->GetPluginDisplayNameByPath(plugin_path);
    CreatePluginObserverInfoBar(InfoBarService::FromWebContents(web_contents()),

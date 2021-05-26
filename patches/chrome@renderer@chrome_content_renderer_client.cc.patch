@@ -1,5 +1,5 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index b6fe493a6ddc..660b30ec6044 100644
+index ceb29f83a9dc1..1cf6bf3da996b 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
 @@ -35,7 +35,6 @@
@@ -47,7 +47,7 @@ index b6fe493a6ddc..660b30ec6044 100644
  #include "components/sync/engine/sync_engine_switches.h"
  #include "components/translate/content/renderer/per_frame_translate_agent.h"
  #include "components/translate/core/common/translate_util.h"
-@@ -134,7 +121,6 @@
+@@ -135,7 +122,6 @@
  #include "services/tracing/public/cpp/stack_sampling/tracing_sampler_profiler.h"
  #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
  #include "third_party/blink/public/common/features.h"
@@ -55,19 +55,19 @@ index b6fe493a6ddc..660b30ec6044 100644
  #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
  #include "third_party/blink/public/mojom/page/page_visibility_state.mojom.h"
  #include "third_party/blink/public/platform/platform.h"
-@@ -366,11 +352,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -371,11 +357,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
--  subresource_filter_ruleset_dealer_.reset(
--      new subresource_filter::UnverifiedRulesetDealer());
+-  subresource_filter_ruleset_dealer_ =
+-      std::make_unique<subresource_filter::UnverifiedRulesetDealer>();
 -
    thread->AddObserver(chrome_observer_.get());
 -  thread->AddObserver(subresource_filter_ruleset_dealer_.get());
  
    thread->RegisterExtension(extensions_v8::LoadTimesExtension::Get());
  
-@@ -445,10 +427,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -450,10 +432,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      mojo::PendingRemote<metrics::mojom::CallStackProfileCollector> collector;
      thread->BindHostReceiver(collector.InitWithNewPipeAndPassReceiver());
      ThreadProfiler::SetCollectorForChildProcess(std::move(collector));
@@ -78,46 +78,24 @@ index b6fe493a6ddc..660b30ec6044 100644
    }
  }
  
-@@ -591,38 +569,6 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -596,6 +574,7 @@ void ChromeContentRendererClient::RenderFrameCreated(
        render_frame->GetRoutingID()));
  #endif
  
--  // Owned by |render_frame|.
--  page_load_metrics::MetricsRenderFrameObserver* metrics_render_frame_observer =
--      new page_load_metrics::MetricsRenderFrameObserver(render_frame);
--  // There is no render thread, thus no UnverifiedRulesetDealer in
--  // ChromeRenderViewTests.
--  if (subresource_filter_ruleset_dealer_) {
--    // Create AdResourceTracker to tracker ad resource loads at the chrome
--    // layer.
--    auto ad_resource_tracker =
--        std::make_unique<subresource_filter::AdResourceTracker>();
--    metrics_render_frame_observer->SetAdResourceTracker(
--        ad_resource_tracker.get());
--    auto* subresource_filter_agent =
--        new subresource_filter::SubresourceFilterAgent(
--            render_frame, subresource_filter_ruleset_dealer_.get(),
--            std::move(ad_resource_tracker));
--    subresource_filter_agent->Initialize();
--  }
--
--  if (lite_video::IsLiteVideoEnabled())
--    new lite_video::LiteVideoHintAgent(render_frame);
--
--  new previews::ResourceLoadingHintsAgent(associated_interfaces, render_frame);
--
--  if (subresource_redirect::ShouldEnablePublicImageHintsBasedCompression()) {
--    new subresource_redirect::PublicImageHintsDeciderAgent(
--        associated_interfaces, render_frame);
--  } else if (subresource_redirect::
--                 ShouldEnableLoginRobotsCheckedCompression()) {
--    new subresource_redirect::LoginRobotsDeciderAgent(associated_interfaces,
--                                                      render_frame);
--  }
++#if 0
+   // Owned by |render_frame|.
+   page_load_metrics::MetricsRenderFrameObserver* metrics_render_frame_observer =
+       new page_load_metrics::MetricsRenderFrameObserver(render_frame);
+@@ -627,6 +606,8 @@ void ChromeContentRendererClient::RenderFrameCreated(
+     new subresource_redirect::LoginRobotsDeciderAgent(associated_interfaces,
+                                                       render_frame);
+   }
++#endif
++
    if (translate::IsSubFrameTranslationEnabled()) {
      new translate::PerFrameTranslateAgent(
          render_frame, ISOLATED_WORLD_ID_TRANSLATE, associated_interfaces);
-@@ -1489,9 +1435,6 @@ void ChromeContentRendererClient::
+@@ -1503,9 +1484,6 @@ void ChromeContentRendererClient::
      defined(OS_ANDROID)
      blink::WebRuntimeFeatures::EnableWebShare(true);
  #endif

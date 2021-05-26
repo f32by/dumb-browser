@@ -1,9 +1,25 @@
 diff --git a/content/public/browser/download_manager_delegate.h b/content/public/browser/download_manager_delegate.h
-index 4e451a3c9918..7ed4ef5f5b28 100644
+index 1c43cb6a53242..e6466f481b463 100644
 --- a/content/public/browser/download_manager_delegate.h
 +++ b/content/public/browser/download_manager_delegate.h
-@@ -214,12 +214,15 @@ class CONTENT_EXPORT DownloadManagerDelegate {
+@@ -16,7 +16,6 @@
+ #include "components/download/public/common/download_item_rename_handler.h"
+ #include "components/download/public/common/download_schedule.h"
+ #include "components/download/public/common/download_url_parameters.h"
+-#include "components/download/public/common/quarantine_connection.h"
+ #include "content/common/content_export.h"
+ #include "content/public/browser/save_page_type.h"
+ #include "content/public/browser/web_contents.h"
+@@ -208,13 +207,15 @@ class CONTENT_EXPORT DownloadManagerDelegate {
+       bool content_initiated,
+       CheckDownloadAllowedCallback check_download_allowed_cb);
+ 
++#if 0
+   // Gets a callback which can connect the download manager to a Quarantine
+   // Service instance if available.
+   virtual download::QuarantineConnectionCallback
    GetQuarantineConnectionCallback();
++#endif
  
    // Gets a handler to perform the rename for a download item.  If no special
 -  // rename handling is required, don’t override this, as the default
@@ -11,11 +27,12 @@ index 4e451a3c9918..7ed4ef5f5b28 100644
    // implementation returns null, which indicates that the default rename
    // handling should be performed.
    virtual std::unique_ptr<download::DownloadItemRenameHandler>
-   GetRenameHandlerForDownload(download::DownloadItem* download_item);
+@@ -223,6 +224,8 @@ class CONTENT_EXPORT DownloadManagerDelegate {
+   // Gets a |DownloadItem| from the GUID, or null if no such GUID is available.
+   virtual download::DownloadItem* GetDownloadByGuid(const std::string& guid);
  
 +  // Should remove download item from download history after completion.
 +  virtual bool ShouldRemoveAfterCompletion();
-+
   protected:
    virtual ~DownloadManagerDelegate();
  };

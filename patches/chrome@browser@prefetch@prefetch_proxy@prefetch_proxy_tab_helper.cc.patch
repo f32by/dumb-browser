@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-index 38ded707e6ef..e04c09fad544 100644
+index 41117398f2b75..c29a765eab7b7 100644
 --- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
 +++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-@@ -35,8 +35,6 @@
+@@ -36,8 +36,6 @@
  #include "components/google/core/common/google_util.h"
  #include "components/language/core/browser/pref_names.h"
  #include "components/no_state_prefetch/browser/no_state_prefetch_manager.h"
@@ -11,7 +11,7 @@ index 38ded707e6ef..e04c09fad544 100644
  #include "components/prefs/pref_service.h"
  #include "components/search_engines/template_url_service.h"
  #include "components/version_info/version_info.h"
-@@ -97,17 +95,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
+@@ -98,17 +96,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
    return end - start;
  }
  
@@ -29,7 +29,21 @@ index 38ded707e6ef..e04c09fad544 100644
  void OnGotCookieList(
      const GURL& url,
      PrefetchProxyTabHelper::OnEligibilityResultCallback result_callback,
-@@ -396,11 +383,6 @@ void PrefetchProxyTabHelper::NotifyPrefetchProbeLatency(
+@@ -322,11 +309,13 @@ bool PrefetchProxyTabHelper::IsProfileEligible(Profile* profile) {
+     return false;
+   }
+ 
++#if 0
+   if (PrefetchProxyOnlyForLiteMode()) {
+     return data_reduction_proxy::DataReductionProxySettings::
+         IsDataSaverEnabledByUser(profile->IsOffTheRecord(),
+                                  profile->GetPrefs());
+   }
++#endif
+   return true;
+ }
+ 
+@@ -397,11 +386,6 @@ void PrefetchProxyTabHelper::NotifyPrefetchProbeLatency(
  void PrefetchProxyTabHelper::ReportProbeResult(
      const GURL& url,
      PrefetchProxyProbeResult result) {
@@ -41,7 +55,7 @@ index 38ded707e6ef..e04c09fad544 100644
  }
  
  void PrefetchProxyTabHelper::OnPrefetchStatusUpdate(
-@@ -608,8 +590,6 @@ void PrefetchProxyTabHelper::DidFinishNavigation(
+@@ -609,8 +593,6 @@ void PrefetchProxyTabHelper::DidFinishNavigation(
        std::make_unique<CurrentPageLoad>(navigation_handle);
  
    if (page_->srp_metrics_->predicted_urls_count_ > 0) {
@@ -50,7 +64,7 @@ index 38ded707e6ef..e04c09fad544 100644
      // If the previous page load was a Google SRP, the AfterSRPMetrics class
      // needs to be created now from the SRP's |page_| and then set on the new
      // one when we set it at the end of this method.
-@@ -871,10 +851,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
+@@ -875,10 +857,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
  
    if (page_->decoy_urls_.find(url) != page_->decoy_urls_.end()) {
      if (loader->CompletionStatus()) {
@@ -61,7 +75,7 @@ index 38ded707e6ef..e04c09fad544 100644
      }
  
      for (auto& observer : observer_list_) {
-@@ -888,13 +864,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
+@@ -892,13 +870,6 @@ void PrefetchProxyTabHelper::OnPrefetchComplete(
    base::UmaHistogramSparse("PrefetchProxy.Prefetch.Mainframe.NetError",
                             std::abs(loader->NetError()));
  
@@ -75,7 +89,7 @@ index 38ded707e6ef..e04c09fad544 100644
    if (loader->NetError() != net::OK) {
      OnPrefetchStatusUpdate(
          url, PrefetchProxyPrefetchStatus::kPrefetchFailedNetError);
-@@ -1056,8 +1025,6 @@ void PrefetchProxyTabHelper::DoNoStatePrefetch() {
+@@ -1064,8 +1035,6 @@ void PrefetchProxyTabHelper::DoNoStatePrefetch() {
        service->OnAboutToNoStatePrefetch(url, CopyPrefetchResponseForNSP(url));
    DCHECK_EQ(manager, service->GetSubresourceManagerForURL(url));
  
@@ -84,25 +98,23 @@ index 38ded707e6ef..e04c09fad544 100644
    manager->SetCreateIsolatedLoaderFactoryCallback(
        base::BindRepeating(&PrefetchProxyTabHelper::CreateNewURLLoaderFactory,
                            weak_factory_.GetWeakPtr()));
-@@ -1185,17 +1152,6 @@ void PrefetchProxyTabHelper::OnPredictionUpdated(
+@@ -1227,6 +1196,7 @@ void PrefetchProxyTabHelper::PrefetchUrls(
      return;
    }
  
--  if (!page_->prefetch_metrics_collector_) {
--    page_->prefetch_metrics_collector_ =
--        base::MakeRefCounted<PrefetchProxyPrefetchMetricsCollector>(
--            page_->navigation_start_,
--            web_contents()->GetMainFrame()->GetPageUkmSourceId());
--  }
--
--  // It's very likely we'll prefetch something at this point, so inform PLM to
--  // start tracking metrics.
--  InformPLMOfLikelyPrefetching(web_contents());
--
-   page_->srp_metrics_->predicted_urls_count_ +=
-       prediction.value().sorted_predicted_urls().size();
++#if 0
+   if (!page_->prefetch_metrics_collector_) {
+     page_->prefetch_metrics_collector_ =
+         base::MakeRefCounted<PrefetchProxyPrefetchMetricsCollector>(
+@@ -1237,6 +1207,7 @@ void PrefetchProxyTabHelper::PrefetchUrls(
+   // It's very likely we'll prefetch something at this point, so inform PLM to
+   // start tracking metrics.
+   InformPLMOfLikelyPrefetching(web_contents());
++#endif
  
-@@ -1350,11 +1306,6 @@ void PrefetchProxyTabHelper::OnGotEligibilityResult(
+   page_->srp_metrics_->predicted_urls_count_ += prefetch_targets.size();
+ 
+@@ -1395,11 +1366,6 @@ void PrefetchProxyTabHelper::OnGotEligibilityResult(
    if (!eligible) {
      if (status) {
        OnPrefetchStatusUpdate(url, *status);

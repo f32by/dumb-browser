@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/chrome_browser_main_win.cc b/chrome/browser/chrome_browser_main_win.cc
-index 16290f3f5e9a..2184339fcce6 100644
+index 2a3efac2606de..8425eda545625 100644
 --- a/chrome/browser/chrome_browser_main_win.cc
 +++ b/chrome/browser/chrome_browser_main_win.cc
-@@ -49,9 +49,6 @@
+@@ -48,9 +48,6 @@
  #include "chrome/browser/first_run/first_run.h"
  #include "chrome/browser/profiles/profile_manager.h"
  #include "chrome/browser/profiles/profile_shortcut_manager.h"
@@ -12,7 +12,7 @@ index 16290f3f5e9a..2184339fcce6 100644
  #include "chrome/browser/shell_integration_win.h"
  #include "chrome/browser/ui/accessibility_util.h"
  #include "chrome/browser/ui/simple_message_box.h"
-@@ -120,14 +117,14 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
+@@ -119,14 +116,14 @@ typedef HRESULT (STDAPICALLTYPE* RegisterApplicationRestartProc)(
      DWORD flags);
  
  void InitializeWindowProcExceptions() {
@@ -29,7 +29,7 @@ index 16290f3f5e9a..2184339fcce6 100644
    crash_reporter::DumpHungProcessWithPtype(renderer, "hung-renderer");
  }
  
-@@ -448,15 +445,6 @@ void ShowCloseBrowserFirstMessageBox() {
+@@ -447,15 +444,6 @@ void ShowCloseBrowserFirstMessageBox() {
        l10n_util::GetStringUTF16(IDS_UNINSTALL_CLOSE_APP));
  }
  
@@ -45,7 +45,7 @@ index 16290f3f5e9a..2184339fcce6 100644
  // Updates all Progressive Web App launchers in |profile_dir| to the latest
  // version.
  void UpdatePwaLaunchersForProfile(const base::FilePath& profile_dir) {
-@@ -676,23 +664,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -675,23 +663,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
  
    InitializeChromeElf();
  
@@ -69,7 +69,7 @@ index 16290f3f5e9a..2184339fcce6 100644
    // Record UMA data about whether the fault-tolerant heap is enabled.
    // Use a delayed task to minimize the impact on startup time.
    content::GetUIThreadTaskRunner({})->PostDelayedTask(
-@@ -727,11 +698,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
+@@ -728,11 +699,6 @@ void ChromeBrowserMainPartsWin::PostBrowserStart() {
          base::BindOnce(&UpdatePwaLaunchersForProfile, profile()->GetPath()));
    }
  

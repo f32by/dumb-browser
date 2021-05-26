@@ -1,16 +1,18 @@
 diff --git a/chrome/browser/extensions/extension_allowlist.cc b/chrome/browser/extensions/extension_allowlist.cc
-index fdb9b5b66384..0ea60f9a3530 100644
+index 9d6cdc3763bef..9939d315ded8f 100644
 --- a/chrome/browser/extensions/extension_allowlist.cc
 +++ b/chrome/browser/extensions/extension_allowlist.cc
-@@ -6,7 +6,6 @@
- 
+@@ -7,9 +7,6 @@
+ #include "base/metrics/histogram_functions.h"
  #include "chrome/browser/extensions/extension_service.h"
  #include "chrome/browser/profiles/profile.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_metrics_collector.h"
+-#include "chrome/browser/safe_browsing/safe_browsing_metrics_collector_factory.h"
 -#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
  #include "extensions/browser/allowlist_state.h"
  #include "extensions/browser/extension_registry.h"
  #include "extensions/browser/extension_system.h"
-@@ -28,10 +27,6 @@ void ExtensionAllowlist::Init() {
+@@ -68,10 +65,6 @@ ExtensionAllowlist::ExtensionAllowlist(Profile* profile,
    // Register to Enhanced Safe Browsing setting changes for allowlist
    // enforcements.
    pref_change_registrar_.Init(profile_->GetPrefs());
@@ -18,18 +20,42 @@ index fdb9b5b66384..0ea60f9a3530 100644
 -      prefs::kSafeBrowsingEnhanced,
 -      base::BindRepeating(&ExtensionAllowlist::OnSafeBrowsingEnhancedChanged,
 -                          base::Unretained(this)));
- 
-   if (is_allowlist_enforced_) {
-     ActivateAllowlistEnforcement();
-@@ -93,10 +88,7 @@ bool ExtensionAllowlist::ShouldDisplayWarning(
  }
  
- void ExtensionAllowlist::SetAllowlistEnforcedField() {
--  is_allowlist_enforced_ =
--      base::FeatureList::IsEnabled(
--          extensions_features::kEnforceSafeBrowsingExtensionAllowlist) &&
--      safe_browsing::IsEnhancedProtectionEnabled(*profile_->GetPrefs());
-+  is_allowlist_enforced_ = false;
+ ExtensionAllowlist::~ExtensionAllowlist() = default;
+@@ -240,15 +233,19 @@ void ExtensionAllowlist::OnExtensionInstalled(const std::string& extension_id,
  }
  
- void ExtensionAllowlist::ActivateAllowlistEnforcement() {
+ void ExtensionAllowlist::SetAllowlistEnforcementFields() {
++#if 0
+   if (safe_browsing::IsEnhancedProtectionEnabled(*profile_->GetPrefs())) {
+     warnings_enabled_ = base::FeatureList::IsEnabled(
+         extensions_features::kSafeBrowsingCrxAllowlistShowWarnings);
+     should_auto_disable_extensions_ = base::FeatureList::IsEnabled(
+         extensions_features::kSafeBrowsingCrxAllowlistAutoDisable);
+   } else {
++#endif
+     warnings_enabled_ = false;
+     should_auto_disable_extensions_ = false;
++#if 0
+   }
++#endif
+ }
+ 
+ // `ApplyEnforcement` can be called when an extension becomes not allowlisted or
+@@ -398,6 +395,7 @@ void ExtensionAllowlist::NotifyExtensionAllowlistWarningStateChanged(
+ }
+ 
+ void ExtensionAllowlist::ReportExtensionReEnabledEvent() {
++#if 0
+   auto* metrics_collector =
+       safe_browsing::SafeBrowsingMetricsCollectorFactory::GetForProfile(
+           profile_);
+@@ -407,6 +405,7 @@ void ExtensionAllowlist::ReportExtensionReEnabledEvent() {
+         safe_browsing::SafeBrowsingMetricsCollector::EventType::
+             NON_ALLOWLISTED_EXTENSION_RE_ENABLED);
+   }
++#endif
+ }
+ 
+ }  // namespace extensions

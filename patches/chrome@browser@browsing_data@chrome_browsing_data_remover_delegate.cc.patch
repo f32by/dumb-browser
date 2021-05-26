@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-index 59a8da3a96f3..7fc9fec08932 100644
+index 94ac0980d305e..680ebeb292b44 100644
 --- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 +++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-@@ -32,23 +32,15 @@
+@@ -32,21 +32,14 @@
  #include "chrome/browser/browsing_data/navigation_entry_remover.h"
  #include "chrome/browser/chrome_notification_types.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -11,12 +11,10 @@ index 59a8da3a96f3..7fc9fec08932 100644
  #include "chrome/browser/custom_handlers/protocol_handler_registry_factory.h"
 -#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
 -#include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
- #include "chrome/browser/domain_reliability/service_factory.h"
+-#include "chrome/browser/domain_reliability/service_factory.h"
  #include "chrome/browser/downgrade/user_data_downgrade.h"
  #include "chrome/browser/download/download_prefs.h"
  #include "chrome/browser/external_protocol/external_protocol_handler.h"
--#include "chrome/browser/heavy_ad_intervention/heavy_ad_blocklist.h"
--#include "chrome/browser/heavy_ad_intervention/heavy_ad_service.h"
 -#include "chrome/browser/heavy_ad_intervention/heavy_ad_service_factory.h"
  #include "chrome/browser/history/history_service_factory.h"
  #include "chrome/browser/history/web_history_service_factory.h"
@@ -26,28 +24,15 @@ index 59a8da3a96f3..7fc9fec08932 100644
  #include "chrome/browser/login_detection/login_detection_prefs.h"
  #include "chrome/browser/media/history/media_history_keyed_service.h"
  #include "chrome/browser/media/history/media_history_keyed_service_factory.h"
-@@ -67,12 +59,9 @@
- #include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.h"
- #include "chrome/browser/prefetch/search_prefetch/search_prefetch_service.h"
- #include "chrome/browser/prefetch/search_prefetch/search_prefetch_service_factory.h"
--#include "chrome/browser/previews/previews_service.h"
--#include "chrome/browser/previews/previews_service_factory.h"
- #include "chrome/browser/privacy_sandbox/privacy_sandbox_settings.h"
- #include "chrome/browser/privacy_sandbox/privacy_sandbox_settings_factory.h"
+@@ -70,7 +63,6 @@
  #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/profiles/profile_keep_alive_types.h"
+ #include "chrome/browser/profiles/scoped_profile_keep_alive.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
  #include "chrome/browser/spellchecker/spellcheck_factory.h"
  #include "chrome/browser/spellchecker/spellcheck_service.h"
-@@ -113,7 +102,6 @@
- #include "components/password_manager/core/common/password_manager_features.h"
- #include "components/permissions/permission_decision_auto_blocker.h"
- #include "components/prefs/pref_service.h"
--#include "components/previews/content/previews_ui_service.h"
- #include "components/search_engines/template_url_service.h"
- #include "components/web_cache/browser/web_cache_manager.h"
- #include "components/webrtc_logging/browser/log_cleanup.h"
-@@ -548,34 +536,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -549,28 +541,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      customtabs::OriginVerifier::ClearBrowsingData();
  #endif
  
@@ -66,13 +51,7 @@ index 59a8da3a96f3..7fc9fec08932 100644
 -      }
 -    }
 -
--    // |previews_service| is null if |profile_| is off the record.
--    PreviewsService* previews_service =
--        PreviewsServiceFactory::GetForProfile(profile_);
--    if (previews_service)
--      previews_service->ClearBlockList(delete_begin_, delete_end_);
--
--    HeavyAdService* heavy_ad_service =
+-    heavy_ad_intervention::HeavyAdService* heavy_ad_service =
 -        HeavyAdServiceFactory::GetForBrowserContext(profile_);
 -    if (heavy_ad_service && heavy_ad_service->heavy_ad_blocklist()) {
 -      heavy_ad_service->heavy_ad_blocklist()->ClearBlockList(delete_begin_,
@@ -82,7 +61,7 @@ index 59a8da3a96f3..7fc9fec08932 100644
      OptimizationGuideKeyedService* optimization_guide_keyed_service =
          OptimizationGuideKeyedServiceFactory::GetForProfile(profile_);
      if (optimization_guide_keyed_service)
-@@ -583,11 +543,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -578,11 +548,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
  
      AvailabilityProber::ClearData(prefs);
  
@@ -94,16 +73,16 @@ index 59a8da3a96f3..7fc9fec08932 100644
      PrefetchProxyService* prefetch_proxy_service =
          PrefetchProxyServiceFactory::GetForProfile(profile_);
      if (prefetch_proxy_service) {
-@@ -640,8 +595,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -635,8 +600,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      }
  #endif
  
 -    CreateCrashUploadList()->Clear(delete_begin_, delete_end_);
 -
      FindBarStateFactory::GetForBrowserContext(profile_)->SetLastSearchText(
-         base::string16());
+         std::u16string());
    }
-@@ -667,19 +620,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -662,19 +625,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
         content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB)) {
      base::RecordAction(UserMetricsAction("ClearBrowsingData_Cookies"));
  

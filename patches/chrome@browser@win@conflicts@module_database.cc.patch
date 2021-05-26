@@ -1,18 +1,18 @@
 diff --git a/chrome/browser/win/conflicts/module_database.cc b/chrome/browser/win/conflicts/module_database.cc
-index 60a15f7d1a5d..0d42ed9b192e 100644
+index 83024dbd02e67..1a5684b8398f4 100644
 --- a/chrome/browser/win/conflicts/module_database.cc
 +++ b/chrome/browser/win/conflicts/module_database.cc
-@@ -90,7 +90,6 @@ ModuleDatabase::ModuleDatabase(bool third_party_blocking_policy_enabled)
+@@ -91,7 +91,6 @@ ModuleDatabase::ModuleDatabase(bool third_party_blocking_policy_enabled)
        module_inspector_(base::BindRepeating(&ModuleDatabase::OnModuleInspected,
                                              base::Unretained(this))) {
    AddObserver(&module_inspector_);
 -  AddObserver(&third_party_metrics_);
  
- #if defined(GOOGLE_CHROME_BUILD)
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
    MaybeInitializeThirdPartyConflictsManager(
-@@ -412,8 +411,6 @@ void ModuleDatabase::NotifyLoadedModules(ModuleDatabaseObserver* observer) {
+@@ -413,8 +412,6 @@ void ModuleDatabase::NotifyLoadedModules(ModuleDatabaseObserver* observer) {
  
- #if defined(GOOGLE_CHROME_BUILD)
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
  void ModuleDatabase::OnThirdPartyBlockingDisabled() {
 -  third_party_metrics_.SetHookDisabled();
 -

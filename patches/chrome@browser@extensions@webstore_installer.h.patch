@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/webstore_installer.h b/chrome/browser/extensions/webstore_installer.h
-index ea5709b47409..249a4e3b1c3d 100644
+index cf9e87234d42a..e84a8a4dd6cdd 100644
 --- a/chrome/browser/extensions/webstore_installer.h
 +++ b/chrome/browser/extensions/webstore_installer.h
-@@ -258,9 +258,6 @@ class WebstoreInstaller : public content::NotificationObserver,
+@@ -263,9 +263,6 @@ class WebstoreInstaller : public content::NotificationObserver,
    // PendingInstall.
    void ReportSuccess();
  
@@ -10,5 +10,5 @@ index ea5709b47409..249a4e3b1c3d 100644
 -  void RecordInterrupt(const download::DownloadItem* download) const;
 -
    content::NotificationRegistrar registrar_;
-   ScopedObserver<ExtensionRegistry, ExtensionRegistryObserver>
-       extension_registry_observer_{this};
+   base::ScopedObservation<ExtensionRegistry, ExtensionRegistryObserver>
+       extension_registry_observation_{this};

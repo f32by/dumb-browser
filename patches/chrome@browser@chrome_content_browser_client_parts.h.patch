@@ -1,0 +1,25 @@
+diff --git a/chrome/browser/chrome_content_browser_client_parts.h b/chrome/browser/chrome_content_browser_client_parts.h
+index 3099d0c0f8903..b14839261cbb9 100644
+--- a/chrome/browser/chrome_content_browser_client_parts.h
++++ b/chrome/browser/chrome_content_browser_client_parts.h
+@@ -8,7 +8,6 @@
+ #include <string>
+ #include <vector>
+ 
+-#include "components/download/public/common/quarantine_connection.h"
+ #include "services/service_manager/public/cpp/binder_registry.h"
+ #include "storage/browser/file_system/file_system_context.h"
+ 
+@@ -59,7 +58,6 @@ class ChromeContentBrowserClientParts {
+   virtual void GetAdditionalFileSystemBackends(
+       content::BrowserContext* browser_context,
+       const base::FilePath& storage_partition_path,
+-      download::QuarantineConnectionCallback quarantine_connection_callback,
+       std::vector<std::unique_ptr<storage::FileSystemBackend>>*
+           additional_backends) {}
+ 
+@@ -81,4 +79,3 @@ class ChromeContentBrowserClientParts {
+ };
+ 
+ #endif  // CHROME_BROWSER_CHROME_CONTENT_BROWSER_CLIENT_PARTS_H_
+-

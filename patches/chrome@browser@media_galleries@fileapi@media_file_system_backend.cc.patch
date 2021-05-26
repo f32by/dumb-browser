@@ -1,0 +1,27 @@
+diff --git a/chrome/browser/media_galleries/fileapi/media_file_system_backend.cc b/chrome/browser/media_galleries/fileapi/media_file_system_backend.cc
+index d6d1c092dae7e..2bcd68e3592f5 100644
+--- a/chrome/browser/media_galleries/fileapi/media_file_system_backend.cc
++++ b/chrome/browser/media_galleries/fileapi/media_file_system_backend.cc
+@@ -28,7 +28,6 @@
+ #include "chrome/browser/media_galleries/media_file_system_registry.h"
+ #include "chrome/browser/media_galleries/media_galleries_histograms.h"
+ #include "chrome/browser/profiles/profile.h"
+-#include "components/download/public/common/quarantine_connection.h"
+ #include "components/prefs/pref_service.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+@@ -134,12 +133,10 @@ content::WebContents* GetWebContentsFromFrameTreeNodeID(
+ }  // namespace
+ 
+ MediaFileSystemBackend::MediaFileSystemBackend(
+-    const base::FilePath& profile_path,
+-    download::QuarantineConnectionCallback quarantine_connection_callback)
++    const base::FilePath& profile_path)
+     : profile_path_(profile_path),
+       media_copy_or_move_file_validator_factory_(
+-          std::make_unique<MediaFileValidatorFactory>(
+-              std::move(quarantine_connection_callback))),
++          std::make_unique<MediaFileValidatorFactory>()),
+       native_media_file_util_(
+           std::make_unique<NativeMediaFileUtil>(g_media_task_runner.Get()))
+ #if defined(OS_WIN) || defined(OS_MAC) || BUILDFLAG(IS_CHROMEOS_ASH)
