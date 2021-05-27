@@ -1,8 +1,16 @@
 diff --git a/content/child/runtime_features.cc b/content/child/runtime_features.cc
-index 39cef2472289b..1e9d60dd7b34b 100644
+index 39cef2472289b..385c2bbba9e3c 100644
 --- a/content/child/runtime_features.cc
 +++ b/content/child/runtime_features.cc
-@@ -366,8 +366,6 @@ void SetRuntimeFeaturesFromChromiumFeatures() {
+@@ -21,6 +21,7 @@
+ #include "content/public/common/content_switches.h"
+ #include "device/fido/features.h"
+ #include "device/gamepad/public/cpp/gamepad_features.h"
++#include "dumb/components/dumb/switches.h"
+ #include "gpu/config/gpu_switches.h"
+ #include "media/base/media_switches.h"
+ #include "net/base/features.h"
+@@ -366,8 +367,6 @@ void SetRuntimeFeaturesFromChromiumFeatures() {
             blink::features::kForceSynchronousHTMLParsing},
            {"IgnoreCrossOriginWindowWhenNamedAccessOnWindow",
             blink::features::kIgnoreCrossOriginWindowWhenNamedAccessOnWindow},
@@ -11,3 +19,18 @@ index 39cef2472289b..1e9d60dd7b34b 100644
            {"LangClientHintHeader", features::kLangClientHintHeader},
            {"LayoutNG", blink::features::kLayoutNG},
            {"LayoutNGTable", blink::features::kLayoutNGTable},
+@@ -418,6 +417,14 @@ void SetRuntimeFeaturesFromCommandLine(const base::CommandLine& command_line) {
+   // https://chromium.googlesource.com/chromium/src/+/refs/heads/master/docs/configuration.md#switches
+   using wrf = WebRuntimeFeatures;
+   const SwitchToFeatureMap switchToFeatureMapping[] = {
++      // Dumb Browser
++      {wrf::EnableFingerprintingClientRectsNoise,
++       switches::kFingerprintingClientRectsNoise, true},
++      {wrf::EnableFingerprintingCanvasMeasureTextNoise,
++       switches::kFingerprintingCanvasMeasureTextNoise, true},
++      {wrf::EnableFingerprintingCanvasImageDataNoise,
++       switches::kFingerprintingCanvasImageDataNoise, true},
++      // Chromium
+       // Stable Features
+       {wrf::EnablePermissionsAPI, switches::kDisablePermissionsAPI, false},
+       {wrf::EnablePresentationAPI, switches::kDisablePresentationAPI, false},

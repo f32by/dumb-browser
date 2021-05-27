@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
-index 94ac0980d305e..680ebeb292b44 100644
+index 94ac0980d305e..495ea126d3567 100644
 --- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 +++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
 @@ -32,21 +32,14 @@
@@ -32,7 +32,23 @@ index 94ac0980d305e..680ebeb292b44 100644
  #include "chrome/browser/search_engines/template_url_service_factory.h"
  #include "chrome/browser/spellchecker/spellcheck_factory.h"
  #include "chrome/browser/spellchecker/spellcheck_service.h"
-@@ -549,28 +541,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -277,6 +269,7 @@ ChromeBrowsingDataRemoverDelegate::ChromeBrowsingDataRemoverDelegate(
+       webapp_registry_(new WebappRegistry())
+ #endif
+ {
++#if 0
+   domain_reliability_clearer_ = base::BindRepeating(
+       [](BrowserContext* browser_context,
+          content::BrowsingDataFilterBuilder* filter_builder,
+@@ -291,6 +284,7 @@ ChromeBrowsingDataRemoverDelegate::ChromeBrowsingDataRemoverDelegate(
+             std::move(callback));
+       },
+       browser_context);
++#endif
+ }
+ 
+ ChromeBrowsingDataRemoverDelegate::~ChromeBrowsingDataRemoverDelegate() =
+@@ -549,28 +543,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      customtabs::OriginVerifier::ClearBrowsingData();
  #endif
  
@@ -61,7 +77,7 @@ index 94ac0980d305e..680ebeb292b44 100644
      OptimizationGuideKeyedService* optimization_guide_keyed_service =
          OptimizationGuideKeyedServiceFactory::GetForProfile(profile_);
      if (optimization_guide_keyed_service)
-@@ -578,11 +548,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -578,11 +550,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
  
      AvailabilityProber::ClearData(prefs);
  
@@ -73,7 +89,7 @@ index 94ac0980d305e..680ebeb292b44 100644
      PrefetchProxyService* prefetch_proxy_service =
          PrefetchProxyServiceFactory::GetForProfile(profile_);
      if (prefetch_proxy_service) {
-@@ -635,8 +600,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -635,8 +602,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
      }
  #endif
  
@@ -82,7 +98,7 @@ index 94ac0980d305e..680ebeb292b44 100644
      FindBarStateFactory::GetForBrowserContext(profile_)->SetLastSearchText(
          std::u16string());
    }
-@@ -662,19 +625,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+@@ -662,19 +627,6 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
         content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB)) {
      base::RecordAction(UserMetricsAction("ClearBrowsingData_Cookies"));
  
@@ -102,3 +118,33 @@ index 94ac0980d305e..680ebeb292b44 100644
      if (filter_builder->GetMode() ==
          BrowsingDataFilterBuilder::Mode::kPreserve) {
        PrivacySandboxSettings* privacy_sandbox_settings =
+@@ -1131,6 +1083,7 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+       template_url_service->ClearSessionToken();
+   }
+ 
++#if 0
+   //////////////////////////////////////////////////////////////////////////////
+   // Domain reliability.
+   if (remove_mask & (content::BrowsingDataRemover::DATA_TYPE_COOKIES |
+@@ -1146,6 +1099,7 @@ void ChromeBrowsingDataRemoverDelegate::RemoveEmbedderData(
+                                     CreateTaskCompletionClosureForMojo(
+                                         TracingDataType::kDomainReliability));
+   }
++#endif
+ 
+   //////////////////////////////////////////////////////////////////////////////
+   // Persisted isolated origins.
+@@ -1327,11 +1281,13 @@ void ChromeBrowsingDataRemoverDelegate::OverrideWebappRegistryForTesting(
+ }
+ #endif
+ 
++#if 0
+ void ChromeBrowsingDataRemoverDelegate::
+     OverrideDomainReliabilityClearerForTesting(
+         DomainReliabilityClearer clearer) {
+   domain_reliability_clearer_ = std::move(clearer);
+ }
++#endif
+ 
+ bool ChromeBrowsingDataRemoverDelegate::IsForAllTime() const {
+   return delete_begin_ == base::Time() && delete_end_ == base::Time::Max();

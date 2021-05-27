@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/webui/signin/login_ui_service_factory.cc b/chrome/browser/ui/webui/signin/login_ui_service_factory.cc
+index e9ed0773ed0c3..1b7a7494d446e 100644
+--- a/chrome/browser/ui/webui/signin/login_ui_service_factory.cc
++++ b/chrome/browser/ui/webui/signin/login_ui_service_factory.cc
+@@ -7,7 +7,6 @@
+ #include "chrome/browser/profiles/profile.h"
+ #include "chrome/browser/signin/identity_manager_factory.h"
+ #include "chrome/browser/ui/webui/signin/login_ui_service.h"
+-#include "chrome/browser/unified_consent/unified_consent_service_factory.h"
+ #include "components/keyed_service/content/browser_context_dependency_manager.h"
+ 
+ LoginUIServiceFactory::LoginUIServiceFactory()
+@@ -15,7 +14,6 @@ LoginUIServiceFactory::LoginUIServiceFactory()
+         "LoginUIServiceFactory",
+         BrowserContextDependencyManager::GetInstance()) {
+   DependsOn(IdentityManagerFactory::GetInstance());
+-  DependsOn(UnifiedConsentServiceFactory::GetInstance());
+ }
+ 
+ LoginUIServiceFactory::~LoginUIServiceFactory() {}

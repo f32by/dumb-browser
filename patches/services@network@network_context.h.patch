@@ -1,0 +1,71 @@
+diff --git a/services/network/network_context.h b/services/network/network_context.h
+index 72885bc1d20a4..7f553a2d79a0a 100644
+--- a/services/network/network_context.h
++++ b/services/network/network_context.h
+@@ -84,10 +84,6 @@ namespace certificate_transparency {
+ class ChromeRequireCTDelegate;
+ }  // namespace certificate_transparency
+ 
+-namespace domain_reliability {
+-class DomainReliabilityMonitor;
+-}  // namespace domain_reliability
+-
+ namespace network {
+ class CertVerifierWithTrustAnchors;
+ class CookieManager;
+@@ -242,11 +238,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkContext
+   void ClearNetworkErrorLogging(
+       mojom::ClearDataFilterPtr filter,
+       ClearNetworkErrorLoggingCallback callback) override;
+-  void ClearDomainReliability(mojom::ClearDataFilterPtr filter,
+-                              DomainReliabilityClearMode mode,
+-                              ClearDomainReliabilityCallback callback) override;
+-  void GetDomainReliabilityJSON(
+-      GetDomainReliabilityJSONCallback callback) override;
+   void CloseAllConnections(CloseAllConnectionsCallback callback) override;
+   void CloseIdleConnections(CloseIdleConnectionsCallback callback) override;
+   void SetNetworkConditions(const base::UnguessableToken& throttling_profile_id,
+@@ -398,12 +389,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkContext
+   void QueueSignedExchangeReport(
+       mojom::SignedExchangeReportPtr report,
+       const net::NetworkIsolationKey& network_isolation_key) override;
+-  void AddDomainReliabilityContextForTesting(
+-      const GURL& origin,
+-      const GURL& upload_url,
+-      AddDomainReliabilityContextForTestingCallback callback) override;
+-  void ForceDomainReliabilityUploadsForTesting(
+-      ForceDomainReliabilityUploadsForTestingCallback callback) override;
+   void SetSplitAuthCacheByNetworkIsolationKey(
+       bool split_auth_cache_by_network_isolation_key) override;
+   void SaveHttpAuthCacheProxyEntries(
+@@ -489,10 +474,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkContext
+     return origin_policy_manager_.get();
+   }
+ 
+-  domain_reliability::DomainReliabilityMonitor* domain_reliability_monitor() {
+-    return domain_reliability_monitor_.get();
+-  }
+-
+   // The http_auth_dynamic_params_ would be used to populate
+   // the |http_auth_merged_preferences| of the given NetworkContext.
+   void OnHttpAuthDynamicParamsChanged(
+@@ -567,9 +548,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkContext
+ 
+   void DestroySocketManager(P2PSocketManager* socket_manager);
+ 
+-  void CanUploadDomainReliability(const GURL& origin,
+-                                  base::OnceCallback<void(bool)> callback);
+-
+   void OnVerifyCertForSignedExchangeComplete(int cert_verify_id, int result);
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+@@ -745,9 +723,6 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkContext
+   std::unique_ptr<NetworkQualitiesPrefDelegate>
+       network_qualities_pref_delegate_;
+ 
+-  std::unique_ptr<domain_reliability::DomainReliabilityMonitor>
+-      domain_reliability_monitor_;
+-
+   std::unique_ptr<OriginPolicyManager> origin_policy_manager_;
+ 
+   // Each network context holds its own HttpAuthPreferences.

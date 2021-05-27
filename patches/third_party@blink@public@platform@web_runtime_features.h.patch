@@ -1,0 +1,19 @@
+diff --git a/third_party/blink/public/platform/web_runtime_features.h b/third_party/blink/public/platform/web_runtime_features.h
+index d9aced7041e46..0ac601f091fdd 100644
+--- a/third_party/blink/public/platform/web_runtime_features.h
++++ b/third_party/blink/public/platform/web_runtime_features.h
+@@ -41,6 +41,14 @@ namespace blink {
+ // Stable features are enabled by default.
+ class WebRuntimeFeatures {
+  public:
++  // Dumb Browser
++  BLINK_PLATFORM_EXPORT static void EnableFingerprintingClientRectsNoise(
++      bool enable);
++  BLINK_PLATFORM_EXPORT static void EnableFingerprintingCanvasMeasureTextNoise(
++      bool enable);
++  BLINK_PLATFORM_EXPORT static void EnableFingerprintingCanvasImageDataNoise(
++      bool enable);
++  // Chromium
+   // Enable or disable features with status=experimental listed in
+   // Source/platform/runtime_enabled_features.json5.
+   BLINK_PLATFORM_EXPORT static void EnableExperimentalFeatures(bool);

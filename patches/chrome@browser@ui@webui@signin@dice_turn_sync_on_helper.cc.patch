@@ -1,0 +1,51 @@
+diff --git a/chrome/browser/ui/webui/signin/dice_turn_sync_on_helper.cc b/chrome/browser/ui/webui/signin/dice_turn_sync_on_helper.cc
+index 9f58c55b67453..32b481c10be54 100644
+--- a/chrome/browser/ui/webui/signin/dice_turn_sync_on_helper.cc
++++ b/chrome/browser/ui/webui/signin/dice_turn_sync_on_helper.cc
+@@ -36,7 +36,6 @@
+ #include "chrome/browser/ui/webui/signin/login_ui_service_factory.h"
+ #include "chrome/browser/ui/webui/signin/signin_ui_error.h"
+ #include "chrome/browser/ui/webui/signin/signin_utils_desktop.h"
+-#include "chrome/browser/unified_consent/unified_consent_service_factory.h"
+ #include "components/keyed_service/content/browser_context_keyed_service_shutdown_notifier_factory.h"
+ #include "components/policy/core/browser/browser_policy_connector.h"
+ #include "components/policy/core/browser/policy_conversions.h"
+@@ -50,7 +49,6 @@
+ #include "components/signin/public/identity_manager/primary_account_mutator.h"
+ #include "components/sync/driver/sync_service.h"
+ #include "components/sync/driver/sync_user_settings.h"
+-#include "components/unified_consent/unified_consent_service.h"
+ #include "content/public/browser/storage_partition.h"
+ 
+ namespace {
+@@ -76,7 +74,6 @@ class DiceTurnSyncOnHelperShutdownNotifierFactory
+             "DiceTurnSyncOnHelperShutdownNotifier") {
+     DependsOn(IdentityManagerFactory::GetInstance());
+     DependsOn(ProfileSyncServiceFactory::GetInstance());
+-    DependsOn(UnifiedConsentServiceFactory::GetInstance());
+     DependsOn(policy::UserPolicySigninServiceFactory::GetInstance());
+   }
+   ~DiceTurnSyncOnHelperShutdownNotifierFactory() override {}
+@@ -567,13 +564,9 @@ void DiceTurnSyncOnHelper::ShowSyncConfirmationUI() {
+ 
+ void DiceTurnSyncOnHelper::FinishSyncSetupAndDelete(
+     LoginUIService::SyncConfirmationUIClosedResult result) {
+-  unified_consent::UnifiedConsentService* consent_service =
+-      UnifiedConsentServiceFactory::GetForProfile(profile_);
+ 
+   switch (result) {
+     case LoginUIService::CONFIGURE_SYNC_FIRST:
+-      if (consent_service)
+-        consent_service->SetUrlKeyedAnonymizedDataCollectionEnabled(true);
+       delegate_->ShowSyncSettings();
+       break;
+     case LoginUIService::SYNC_WITH_DEFAULT_SETTINGS: {
+@@ -581,8 +574,6 @@ void DiceTurnSyncOnHelper::FinishSyncSetupAndDelete(
+       if (sync_service)
+         sync_service->GetUserSettings()->SetFirstSetupComplete(
+             syncer::SyncFirstSetupCompleteSource::BASIC_FLOW);
+-      if (consent_service)
+-        consent_service->SetUrlKeyedAnonymizedDataCollectionEnabled(true);
+       break;
+     }
+     case LoginUIService::ABORT_SYNC: {

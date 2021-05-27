@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-index 41117398f2b75..c29a765eab7b7 100644
+index 41117398f2b75..e8ed1994548c7 100644
 --- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
 +++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
 @@ -36,8 +36,6 @@
@@ -126,3 +126,11 @@ index 41117398f2b75..c29a765eab7b7 100644
  
        // Consider whether to send a decoy request to mask any user state (i.e.:
        // cookies), and if so randomly decide whether to send a decoy request.
+@@ -1596,7 +1562,6 @@ void PrefetchProxyTabHelper::CreateIsolatedURLLoaderFactory() {
+   // leak.
+   context_params->enable_certificate_reporting = false;
+   context_params->enable_expect_ct_reporting = false;
+-  context_params->enable_domain_reliability = false;
+ 
+   content::GetNetworkService()->CreateNetworkContext(
+       page_->isolated_network_context_.BindNewPipeAndPassReceiver(),

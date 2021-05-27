@@ -1,0 +1,20 @@
+diff --git a/content/browser/storage_partition_impl.cc b/content/browser/storage_partition_impl.cc
+index 7ffcbd0ac2216..59499e7792676 100644
+--- a/content/browser/storage_partition_impl.cc
++++ b/content/browser/storage_partition_impl.cc
+@@ -1852,6 +1852,7 @@ void StoragePartitionImpl::OnCanSendReportingReports(
+   std::move(callback).Run(origins_out);
+ }
+ 
++#if 0
+ void StoragePartitionImpl::OnCanSendDomainReliabilityUpload(
+     const GURL& origin,
+     OnCanSendDomainReliabilityUploadCallback callback) {
+@@ -1863,6 +1864,7 @@ void StoragePartitionImpl::OnCanSendDomainReliabilityUpload(
+           content::PermissionType::BACKGROUND_SYNC, origin, origin) ==
+       blink::mojom::PermissionStatus::GRANTED);
+ }
++#endif
+ 
+ void StoragePartitionImpl::OnClearSiteData(const GURL& url,
+                                            const std::string& header_value,

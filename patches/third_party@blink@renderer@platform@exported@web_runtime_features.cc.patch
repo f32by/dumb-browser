@@ -1,0 +1,23 @@
+diff --git a/third_party/blink/renderer/platform/exported/web_runtime_features.cc b/third_party/blink/renderer/platform/exported/web_runtime_features.cc
+index f9de7e55ab3a2..005994c55101c 100644
+--- a/third_party/blink/renderer/platform/exported/web_runtime_features.cc
++++ b/third_party/blink/renderer/platform/exported/web_runtime_features.cc
+@@ -671,4 +671,18 @@ void WebRuntimeFeatures::EnableDocumentTransition(bool enable) {
+   RuntimeEnabledFeatures::SetDocumentTransitionEnabled(enable);
+ }
+ 
++void WebRuntimeFeatures::EnableFingerprintingClientRectsNoise(bool enable) {
++  RuntimeEnabledFeatures::SetFingerprintingClientRectsNoiseEnabled(enable);
++}
++
++void WebRuntimeFeatures::EnableFingerprintingCanvasMeasureTextNoise(
++    bool enable) {
++  RuntimeEnabledFeatures::SetFingerprintingCanvasMeasureTextNoiseEnabled(
++      enable);
++}
++
++void WebRuntimeFeatures::EnableFingerprintingCanvasImageDataNoise(bool enable) {
++  RuntimeEnabledFeatures::SetFingerprintingCanvasImageDataNoiseEnabled(enable);
++}
++
+ }  // namespace blink

@@ -1,0 +1,56 @@
+diff --git a/third_party/blink/renderer/core/frame/reporting_context.cc b/third_party/blink/renderer/core/frame/reporting_context.cc
+index c27fcf95bff06..ee7ec8cb1133d 100644
+--- a/third_party/blink/renderer/core/frame/reporting_context.cc
++++ b/third_party/blink/renderer/core/frame/reporting_context.cc
+@@ -54,7 +54,9 @@ const char ReportingContext::kSupplementName[] = "ReportingContext";
+ ReportingContext::ReportingContext(ExecutionContext& context)
+     : Supplement<ExecutionContext>(context),
+       execution_context_(context),
++#if BUILDFLAG(ENABLE_REPORTING)
+       reporting_service_(&context),
++#endif
+       receiver_(this, &context) {}
+ 
+ // static
+@@ -118,7 +120,9 @@ void ReportingContext::Trace(Visitor* visitor) const {
+   visitor->Trace(observers_);
+   visitor->Trace(report_buffer_);
+   visitor->Trace(execution_context_);
++#if BUILDFLAG(ENABLE_REPORTING)
+   visitor->Trace(reporting_service_);
++#endif
+   visitor->Trace(receiver_);
+   Supplement<ExecutionContext>::Trace(visitor);
+ }
+@@ -140,6 +144,7 @@ void ReportingContext::CountReport(Report* report) {
+   UseCounter::Count(execution_context_, feature);
+ }
+ 
++#if BUILDFLAG(ENABLE_REPORTING)
+ const HeapMojoRemote<mojom::blink::ReportingServiceProxy>&
+ ReportingContext::GetReportingService() const {
+   if (!reporting_service_.is_bound()) {
+@@ -149,6 +154,7 @@ ReportingContext::GetReportingService() const {
+   }
+   return reporting_service_;
+ }
++#endif
+ 
+ void ReportingContext::NotifyInternal(Report* report) {
+   // Buffer the report.
+@@ -171,6 +177,7 @@ void ReportingContext::NotifyInternal(Report* report) {
+ 
+ void ReportingContext::SendToReportingAPI(Report* report,
+                                           const String& endpoint) const {
++#if BUILDFLAG(ENABLE_REPORTING)
+   const String& type = report->type();
+   if (!(type == ReportType::kCSPViolation || type == ReportType::kDeprecation ||
+         type == ReportType::kPermissionsPolicyViolation ||
+@@ -226,6 +233,7 @@ void ReportingContext::SendToReportingAPI(Report* report,
+         url, endpoint, body->featureId(), body->disposition(), body->message(),
+         body->sourceFile(), line_number, column_number);
+   }
++#endif
+ }
+ 
+ }  // namespace blink

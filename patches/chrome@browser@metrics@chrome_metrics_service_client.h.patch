@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.h b/chrome/browser/metrics/chrome_metrics_service_client.h
-index 650ea5ecdff2e..bafcc5393205d 100644
+index 650ea5ecdff2e..63c931da4fedb 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.h
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.h
 @@ -17,21 +17,13 @@
@@ -74,60 +74,35 @@ index 650ea5ecdff2e..bafcc5393205d 100644
  
   private:
    FRIEND_TEST_ALL_PREFIXES(ChromeMetricsServiceClientTest, IsWebstoreExtension);
-@@ -111,101 +103,21 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -111,6 +103,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    // Completes the two-phase initialization of ChromeMetricsServiceClient.
    void Initialize();
  
--  // Registers providers to the MetricsService. These provide data from
--  // alternate sources.
--  void RegisterMetricsServiceProviders();
--
--  // Registers providers to the UkmService. These provide data from alternate
--  // sources.
--  void RegisterUKMProviders();
--
--  // Returns true iff profiler data should be included in the next metrics log.
--  // NOTE: This method is probabilistic and also updates internal state as a
--  // side-effect when called, so it should only be called once per log.
--  bool ShouldIncludeProfilerDataInLog();
--
--  // Callbacks for various stages of final log info collection. Do not call
--  // these directly.
--  void CollectFinalHistograms();
--  void OnMemoryDetailCollectionDone();
--  void OnHistogramSynchronizationDone();
--
--  // Records metrics about the switches present on the command line.
--  void RecordCommandLineMetrics();
--
--  // Registers |this| as an observer for notifications which indicate that a
--  // user is performing work. This is useful to allow some features to sleep,
--  // until the machine becomes active, such as precluding UMA uploads unless
--  // there was recent activity.
--  // Returns true if registration was successful for all profiles.
--  bool RegisterForNotifications();
--
--  // Call to listen for events on the selected profile's services.
--  // Returns true if we registered for all notifications we wanted successfully.
--  bool RegisterForProfileEvents(Profile* profile);
--
++#if 0
+   // Registers providers to the MetricsService. These provide data from
+   // alternate sources.
+   void RegisterMetricsServiceProviders();
+@@ -143,12 +136,14 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+   // Call to listen for events on the selected profile's services.
+   // Returns true if we registered for all notifications we wanted successfully.
+   bool RegisterForProfileEvents(Profile* profile);
++#endif
+ 
    // content::NotificationObserver:
    void Observe(int type,
                 const content::NotificationSource& source,
                 const content::NotificationDetails& details) override;
  
--  // Called when a URL is opened from the Omnibox.
--  void OnURLOpenedFromOmnibox(OmniboxLog* log);
--
--#if defined(OS_WIN)
--  // Counts (and removes) the browser crash dump attempt signals left behind by
--  // any previous browser processes which generated a crash dump.
--  void CountBrowserCrashDumpAttempts();
--#endif  // OS_WIN
--
--  // Check if an extension is installed via the Web Store.
--  static bool IsWebstoreExtension(base::StringPiece id);
--
++#if 0
+   // Called when a URL is opened from the Omnibox.
+   void OnURLOpenedFromOmnibox(OmniboxLog* log);
+ 
+@@ -160,23 +155,19 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+ 
+   // Check if an extension is installed via the Web Store.
+   static bool IsWebstoreExtension(base::StringPiece id);
++#endif
+ 
    SEQUENCE_CHECKER(sequence_checker_);
  
 -  // Chrome's privacy budget identifiability study state.
@@ -144,35 +119,15 @@ index 650ea5ecdff2e..bafcc5393205d 100644
 -
    content::NotificationRegistrar registrar_;
  
--  // Listener for changes in incognito activity.
--  std::unique_ptr<IncognitoObserver> incognito_observer_;
--
--  // Whether we registered all notification listeners successfully.
--  bool notification_listeners_active_ = false;
--
--  // Saved callback received from CollectFinalMetricsForLog().
--  base::OnceClosure collect_final_metrics_done_callback_;
--
--  // Indicates that collect final metrics step is running.
--  bool waiting_for_collect_final_metrics_step_ = false;
--
--  // Number of async histogram fetch requests in progress.
--  int num_async_histogram_fetches_in_progress_ = 0;
--
--#if BUILDFLAG(ENABLE_PLUGINS)
--  // The PluginMetricsProvider instance that was registered with
--  // MetricsService. Has the same lifetime as |metrics_service_|.
--  PluginMetricsProvider* plugin_metrics_provider_ = nullptr;
--#endif
--
--  // Subscription for receiving callbacks that a URL was opened from the
--  // omnibox.
--  base::CallbackListSubscription omnibox_url_opened_subscription_;
--
--#if !defined(OS_ANDROID)
--  std::unique_ptr<BrowserActivityWatcher> browser_activity_watcher_;
--#endif
--
-   base::WeakPtrFactory<ChromeMetricsServiceClient> weak_ptr_factory_{this};
++#if 0
+   // Listener for changes in incognito activity.
+   std::unique_ptr<IncognitoObserver> incognito_observer_;
  
-   DISALLOW_COPY_AND_ASSIGN(ChromeMetricsServiceClient);
+@@ -204,6 +195,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+ 
+ #if !defined(OS_ANDROID)
+   std::unique_ptr<BrowserActivityWatcher> browser_activity_watcher_;
++#endif
+ #endif
+ 
+   base::WeakPtrFactory<ChromeMetricsServiceClient> weak_ptr_factory_{this};

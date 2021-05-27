@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/core/html/canvas/text_metrics.h b/third_party/blink/renderer/core/html/canvas/text_metrics.h
+index 74625069b3646..9671d650ed488 100644
+--- a/third_party/blink/renderer/core/html/canvas/text_metrics.h
++++ b/third_party/blink/renderer/core/html/canvas/text_metrics.h
+@@ -64,6 +64,8 @@ class CORE_EXPORT TextMetrics final : public ScriptWrappable {
+ 
+   void Trace(Visitor*) const override;
+ 
++  void Shuffle(const double factor);
++
+  private:
+   void Update(const Font&,
+               const TextDirection&,

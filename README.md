@@ -27,11 +27,14 @@ Following components are removed/disabled:
 
 Other changes:
 - [Privacy] Automatically remove track query parameters from URL (*referrer, utm_\*, spm, etc.)
+- [Privacy] Canvas fingerprinting deception (from ungoogled-chromium)
 - [UI] Audio mute button on tab
 - [UI] Force popups to be opened in new tabs
 - [UI] Darker web control elements (Edge style)
 - [UI] No need to type `thisisunsafe` to continue when browsing some websites with certificate issues. You can just use the old-style `continue` button.
+- [UI] Disable `Tab Search button` in chrome://flags
 - [History] Unlimited browsing history
+- [Misc] Automatically remove download item after completion.
 
 # Installation
 

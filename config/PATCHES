@@ -23,7 +23,9 @@ chrome/browser/about_flags.cc
 chrome/browser/accessibility/accessibility_ui.cc
 chrome/browser/android/vr/BUILD.gn
 chrome/browser/app_controller_mac.mm
+chrome/browser/ash/login/screens/sync_consent_screen.cc
 chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
+chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
 chrome/browser/background/background_mode_manager.cc
 chrome/browser/background_fetch/background_fetch_delegate_factory.cc
 chrome/browser/background_fetch/background_fetch_delegate_impl.cc
@@ -36,6 +38,7 @@ chrome/browser/browser_process_impl.cc
 chrome/browser/browser_process_impl.h
 chrome/browser/browser_switcher/bho/browser_switcher_core.cc
 chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.cc
+chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.h
 chrome/browser/browsing_data/chrome_browsing_data_remover_delegate_factory.cc
 chrome/browser/chrome_browser_field_trials.cc
 chrome/browser/chrome_browser_interface_binders.cc
@@ -131,7 +134,6 @@ chrome/browser/external_protocol/external_protocol_handler.cc
 chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc
 chrome/browser/file_system_access/chrome_file_system_access_permission_context.h
 chrome/browser/first_run/first_run_internal_posix.cc
-chrome/browser/flag_descriptions.cc
 chrome/browser/flag_descriptions.h
 chrome/browser/lifetime/application_lifetime.cc
 chrome/browser/lifetime/browser_shutdown.cc
@@ -211,6 +213,8 @@ chrome/browser/predictors/loading_stats_collector.h
 chrome/browser/predictors/navigation_id.cc
 chrome/browser/predictors/navigation_id.h
 chrome/browser/preferences/BUILD.gn
+chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.cc
+chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.h
 chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_service_factory.cc
 chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.cc
 chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_subresource_manager.h
@@ -234,6 +238,7 @@ chrome/browser/profiles/avatar_menu_actions_desktop.h
 chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 chrome/browser/profiles/gaia_info_update_service.cc
 chrome/browser/profiles/off_the_record_profile_impl.cc
+chrome/browser/profiles/off_the_record_profile_impl.h
 chrome/browser/profiles/pref_service_builder_utils.cc
 chrome/browser/profiles/pref_service_builder_utils.h
 chrome/browser/profiles/profile.cc
@@ -273,6 +278,7 @@ chrome/browser/resource_coordinator/tab_ranker/tab_features.cc
 chrome/browser/resource_coordinator/tab_ranker/tab_features.h
 chrome/browser/resource_coordinator/usage_clock.cc
 chrome/browser/resource_coordinator/usage_clock.h
+chrome/browser/resources/BUILD.gn
 chrome/browser/resources/new_tab_page/BUILD.gn
 chrome/browser/resources/new_tab_page/app.html
 chrome/browser/resources/new_tab_page/app.js
@@ -286,6 +292,7 @@ chrome/browser/resources/settings/hats_browser_proxy.js
 chrome/browser/resources/settings/lazy_load.js
 chrome/browser/resources/settings/privacy_page/BUILD.gn
 chrome/browser/resources/settings/privacy_page/disable_safebrowsing_dialog.html
+chrome/browser/resources/settings/privacy_page/personalization_options.html
 chrome/browser/resources/settings/privacy_page/privacy_page.html
 chrome/browser/resources/settings/privacy_page/privacy_page.js
 chrome/browser/resources/settings/privacy_page/security_page.html
@@ -379,6 +386,7 @@ chrome/browser/ui/tabs/tab_utils.h
 chrome/browser/ui/toolbar/app_menu_icon_controller.cc
 chrome/browser/ui/toolbar/app_menu_icon_controller.h
 chrome/browser/ui/toolbar/app_menu_model.cc
+chrome/browser/ui/ui_features.h
 chrome/browser/ui/uma_browsing_activity_observer.cc
 chrome/browser/ui/views/autofill/payments/save_card_bubble_views.cc
 chrome/browser/ui/views/autofill/payments/save_card_offer_bubble_views.cc
@@ -394,6 +402,7 @@ chrome/browser/ui/views/frame/browser_view.cc
 chrome/browser/ui/views/frame/browser_view.h
 chrome/browser/ui/views/frame/browser_window_factory.cc
 chrome/browser/ui/views/frame/dbus_appmenu.cc
+chrome/browser/ui/views/frame/tab_strip_region_view.cc
 chrome/browser/ui/views/frame/web_footer_experiment_view.cc
 chrome/browser/ui/views/intent_picker_bubble_view.cc
 chrome/browser/ui/views/location_bar/location_bar_view.cc
@@ -452,7 +461,9 @@ chrome/browser/ui/webui/settings/settings_ui.cc
 chrome/browser/ui/webui/settings/settings_ui.h
 chrome/browser/ui/webui/settings/site_settings_handler.cc
 chrome/browser/ui/webui/settings/site_settings_helper.cc
+chrome/browser/ui/webui/signin/dice_turn_sync_on_helper.cc
 chrome/browser/ui/webui/signin/inline_login_handler_impl.cc
+chrome/browser/ui/webui/signin/login_ui_service_factory.cc
 chrome/browser/ui/webui/signin/profile_picker_handler.cc
 chrome/browser/ui/webui/system_info_ui.cc
 chrome/browser/ui/webui/version/version_ui.cc
@@ -476,7 +487,6 @@ chrome/common/BUILD.gn
 chrome/common/chrome_constants.cc
 chrome/common/chrome_features.cc
 chrome/common/chrome_paths_mac.mm
-chrome/common/chrome_switches.cc
 chrome/common/chrome_switches.h
 chrome/common/extensions/api/api_sources.gni
 chrome/common/extensions/api/autofill_private.idl
@@ -724,11 +734,15 @@ content/browser/file_system_access/file_system_access_manager_impl.h
 content/browser/net/cross_origin_embedder_policy_reporter.cc
 content/browser/net/cross_origin_opener_policy_reporter.cc
 content/browser/net/reporting_service_proxy.cc
+content/browser/network_context_client_base_impl.cc
 content/browser/renderer_host/pepper/pepper_file_io_host.cc
 content/browser/renderer_host/pepper/pepper_file_io_host.h
 content/browser/renderer_host/render_process_host_impl.cc
 content/browser/service_worker/service_worker_context_wrapper.cc
+content/browser/storage_partition_impl.cc
+content/browser/storage_partition_impl.h
 content/browser/webui/content_web_ui_controller_factory.cc
+content/child/BUILD.gn
 content/child/runtime_features.cc
 content/gpu/gpu_child_thread.cc
 content/public/browser/content_browser_client.cc
@@ -736,6 +750,7 @@ content/public/browser/content_browser_client.h
 content/public/browser/download_manager_delegate.cc
 content/public/browser/download_manager_delegate.h
 content/public/browser/file_system_access_permission_context.h
+content/public/browser/network_context_client_base.h
 content/public/browser/tracing_delegate.h
 content/renderer/accessibility/render_accessibility_impl.cc
 content/renderer/render_thread_impl.cc
@@ -765,8 +780,10 @@ services/metrics/public/cpp/mojo_ukm_recorder.cc
 services/metrics/public/cpp/mojo_ukm_recorder.h
 services/network/BUILD.gn
 services/network/network_context.cc
+services/network/network_context.h
 services/network/network_service.cc
 services/network/network_service.h
+services/network/public/mojom/network_context.mojom
 services/network/public/mojom/network_service.mojom
 services/preferences/public/mojom/preferences.mojom
 services/preferences/tracked/pref_hash_filter.cc
@@ -782,6 +799,7 @@ third_party/blink/common/BUILD.gn
 third_party/blink/public/BUILD.gn
 third_party/blink/public/common/BUILD.gn
 third_party/blink/public/mojom/BUILD.gn
+third_party/blink/public/platform/web_runtime_features.h
 third_party/blink/renderer/bindings/generated_in_core.gni
 third_party/blink/renderer/bindings/idl_in_core.gni
 third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
@@ -798,10 +816,15 @@ third_party/blink/renderer/core/dom/document.h
 third_party/blink/renderer/core/dom/document.idl
 third_party/blink/renderer/core/dom/document_data.h
 third_party/blink/renderer/core/dom/element.cc
+third_party/blink/renderer/core/dom/range.cc
 third_party/blink/renderer/core/frame/build.gni
+third_party/blink/renderer/core/frame/local_frame.cc
+third_party/blink/renderer/core/frame/local_frame.h
 third_party/blink/renderer/core/frame/navigator_device_memory.cc
 third_party/blink/renderer/core/frame/navigator_ua.cc
 third_party/blink/renderer/core/frame/navigator_ua_data.cc
+third_party/blink/renderer/core/frame/reporting_context.cc
+third_party/blink/renderer/core/frame/reporting_context.h
 third_party/blink/renderer/core/frame/screen.cc
 third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc
 third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
@@ -810,6 +833,8 @@ third_party/blink/renderer/core/html/canvas/canvas_rendering_context_host.cc
 third_party/blink/renderer/core/html/canvas/canvas_rendering_context_host.h
 third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 third_party/blink/renderer/core/html/canvas/html_canvas_element.h
+third_party/blink/renderer/core/html/canvas/text_metrics.cc
+third_party/blink/renderer/core/html/canvas/text_metrics.h
 third_party/blink/renderer/core/html/media/html_media_element.cc
 third_party/blink/renderer/core/loader/document_loader.cc
 third_party/blink/renderer/core/loader/document_loader.h
@@ -866,13 +891,18 @@ third_party/blink/renderer/modules/webgpu/gpu.cc
 third_party/blink/renderer/modules/webgpu/gpu.h
 third_party/blink/renderer/modules/webmidi/midi_access.cc
 third_party/blink/renderer/platform/BUILD.gn
+third_party/blink/renderer/platform/exported/web_runtime_features.cc
 third_party/blink/renderer/platform/fonts/font_global_context.cc
 third_party/blink/renderer/platform/fonts/font_global_context.h
 third_party/blink/renderer/platform/fonts/font_platform_data.cc
 third_party/blink/renderer/platform/fonts/font_platform_data.h
 third_party/blink/renderer/platform/graphics/canvas_resource_provider.cc
 third_party/blink/renderer/platform/graphics/canvas_resource_provider.h
+third_party/blink/renderer/platform/graphics/image_data_buffer.cc
+third_party/blink/renderer/platform/graphics/static_bitmap_image.cc
+third_party/blink/renderer/platform/graphics/static_bitmap_image.h
 third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
+third_party/blink/renderer/platform/runtime_enabled_features.json5
 third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.cc
 third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.h
 third_party/crashpad/crashpad/handler/BUILD.gn

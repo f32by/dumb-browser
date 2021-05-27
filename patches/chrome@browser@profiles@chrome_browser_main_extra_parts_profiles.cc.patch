@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
-index d6951f0dd2875..a1bf11592b191 100644
+index d6951f0dd2875..32b851e530873 100644
 --- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 +++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
 @@ -27,15 +27,12 @@
@@ -48,7 +48,15 @@ index d6951f0dd2875..a1bf11592b191 100644
  #include "chrome/browser/sync/model_type_store_service_factory.h"
  #include "chrome/browser/sync/profile_sync_service_factory.h"
  #include "chrome/browser/sync/user_event_service_factory.h"
-@@ -128,8 +120,6 @@
+@@ -98,7 +90,6 @@
+ #include "chrome/browser/ui/webui/ntp/ntp_resource_cache_factory.h"
+ #include "chrome/browser/ui/webui/signin/login_ui_service_factory.h"
+ #include "chrome/browser/undo/bookmark_undo_service_factory.h"
+-#include "chrome/browser/unified_consent/unified_consent_service_factory.h"
+ #include "chrome/browser/web_data_service_factory.h"
+ #include "chrome/common/buildflags.h"
+ #include "chrome/common/chrome_features.h"
+@@ -128,8 +119,6 @@
  #include "chrome/browser/browsing_data/chrome_browsing_data_lifetime_manager_factory.h"
  #include "chrome/browser/cart/cart_db_content.pb.h"
  #include "chrome/browser/cart/cart_service_factory.h"
@@ -57,7 +65,7 @@ index d6951f0dd2875..a1bf11592b191 100644
  #include "chrome/browser/performance_manager/persistence/site_data/site_data_cache_facade_factory.h"
  #include "chrome/browser/profiles/profile_theme_update_service_factory.h"
  #include "chrome/browser/search/instant_service_factory.h"
-@@ -163,7 +153,6 @@
+@@ -163,7 +152,6 @@
  #include "chrome/browser/apps/platform_apps/api/browser_context_keyed_service_factories.h"
  #include "chrome/browser/apps/platform_apps/browser_context_keyed_service_factories.h"
  #include "chrome/browser/extensions/browser_context_keyed_service_factories.h"
@@ -65,7 +73,7 @@ index d6951f0dd2875..a1bf11592b191 100644
  #include "chrome/browser/web_applications/web_app_provider_factory.h"
  #include "extensions/browser/browser_context_keyed_service_factories.h"
  #endif
-@@ -277,7 +266,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -277,7 +265,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(IS_CHROMEOS_LACROS)
    CertDbInitializerFactory::GetInstance();
  #endif
@@ -73,7 +81,7 @@ index d6951f0dd2875..a1bf11592b191 100644
  #if !defined(OS_ANDROID)
    ChromeBrowsingDataLifetimeManagerFactory::GetInstance();
  #endif
-@@ -295,7 +283,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -295,7 +282,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(ENABLE_DICE_SUPPORT)
    DiceWebSigninInterceptorFactory::GetInstance();
  #endif
@@ -81,7 +89,7 @@ index d6951f0dd2875..a1bf11592b191 100644
    dom_distiller::DomDistillerServiceFactory::GetInstance();
    DownloadCoreServiceFactory::GetInstance();
    DownloadServiceFactory::GetInstance();
-@@ -304,19 +291,14 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -304,19 +290,14 @@ void ChromeBrowserMainExtraPartsProfiles::
  #endif
    FaviconServiceFactory::GetInstance();
    feature_engagement::TrackerFactory::GetInstance();
@@ -101,7 +109,7 @@ index d6951f0dd2875..a1bf11592b191 100644
    IdentityManagerFactory::EnsureFactoryAndDependeeFactoriesBuilt();
    InMemoryURLIndexFactory::GetInstance();
  #if !defined(OS_ANDROID)
-@@ -345,12 +327,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -345,12 +326,6 @@ void ChromeBrowserMainExtraPartsProfiles::
    media_router::ChromeMediaRouterFactory::GetInstance();
  #if !defined(OS_ANDROID)
    media_router::MediaRouterUIServiceFactory::GetInstance();
@@ -114,7 +122,7 @@ index d6951f0dd2875..a1bf11592b191 100644
  #endif
    ModelTypeStoreServiceFactory::GetInstance();
  #if BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -360,7 +336,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -360,7 +335,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if !defined(OS_ANDROID)
    NTPResourceCacheFactory::GetInstance();
  #endif
@@ -122,7 +130,7 @@ index d6951f0dd2875..a1bf11592b191 100644
    PasswordStoreFactory::GetInstance();
    PermissionAuditingServiceFactory::GetInstance();
    ProfileProtoDBFactory<
-@@ -371,7 +346,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -371,7 +345,6 @@ void ChromeBrowserMainExtraPartsProfiles::
  #if BUILDFLAG(ENABLE_PLUGINS)
    PluginPrefsFactory::GetInstance();
  #endif
@@ -130,7 +138,7 @@ index d6951f0dd2875..a1bf11592b191 100644
    PrefsTabHelper::GetServiceInstance();
  #if !defined(OS_ANDROID)
    ProfileProtoDBFactory<cart_db::ChromeCartContentProto>::GetInstance();
-@@ -420,7 +394,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -420,7 +393,6 @@ void ChromeBrowserMainExtraPartsProfiles::
    if (screentime::IsScreenTimeEnabled())
      screentime::HistoryBridgeFactory::GetInstance();
  #endif
@@ -138,7 +146,13 @@ index d6951f0dd2875..a1bf11592b191 100644
  #if defined(OS_ANDROID)
    SearchPermissionsService::Factory::GetInstance();
  #endif
-@@ -469,7 +442,6 @@ void ChromeBrowserMainExtraPartsProfiles::
+@@ -463,13 +435,11 @@ void ChromeBrowserMainExtraPartsProfiles::
+ #if defined(OS_WIN)
+   TriggeredProfileResetterFactory::GetInstance();
+ #endif
+-  UnifiedConsentServiceFactory::GetInstance();
+   UrlLanguageHistogramFactory::GetInstance();
+ #if !defined(OS_ANDROID)
    UsbChooserContextFactory::GetInstance();
  #endif
  #if BUILDFLAG(ENABLE_EXTENSIONS)

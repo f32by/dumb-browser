@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/people_handler.cc b/chrome/browser/ui/webui/settings/people_handler.cc
-index 312b78877ace9..9217e78642526 100644
+index 312b78877ace9..43395f0a1b9d2 100644
 --- a/chrome/browser/ui/webui/settings/people_handler.cc
 +++ b/chrome/browser/ui/webui/settings/people_handler.cc
 @@ -20,7 +20,6 @@
@@ -10,7 +10,15 @@ index 312b78877ace9..9217e78642526 100644
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_error_controller_factory.h"
  #include "chrome/browser/signin/signin_promo.h"
-@@ -447,10 +446,6 @@ void PeopleHandler::HandleSetDatatypes(const base::ListValue* args) {
+@@ -51,7 +50,6 @@
+ #include "components/sync/base/passphrase_enums.h"
+ #include "components/sync/base/user_selectable_type.h"
+ #include "components/sync/driver/sync_user_settings.h"
+-#include "components/unified_consent/unified_consent_metrics.h"
+ #include "content/public/browser/render_view_host.h"
+ #include "content/public/browser/web_contents.h"
+ #include "content/public/browser/web_contents_delegate.h"
+@@ -447,10 +445,6 @@ void PeopleHandler::HandleSetDatatypes(const base::ListValue* args) {
  
    // Choosing data types to sync never fails.
    ResolveJavascriptCallback(*callback_id, base::Value(kConfigurePageStatus));
@@ -21,7 +29,7 @@ index 312b78877ace9..9217e78642526 100644
  }
  
  void PeopleHandler::HandleGetStoredAccounts(const base::ListValue* args) {
-@@ -558,8 +553,6 @@ void PeopleHandler::HandleSetEncryptionPassphrase(const base::ListValue* args) {
+@@ -558,8 +552,6 @@ void PeopleHandler::HandleSetEncryptionPassphrase(const base::ListValue* args) {
    } else {
      sync_user_settings->SetEncryptionPassphrase(passphrase);
      successfully_set = true;
@@ -30,7 +38,7 @@ index 312b78877ace9..9217e78642526 100644
    }
    ResolveJavascriptCallback(callback_id, base::Value(successfully_set));
  }
-@@ -584,10 +577,6 @@ void PeopleHandler::HandleSetDecryptionPassphrase(const base::ListValue* args) {
+@@ -584,10 +576,6 @@ void PeopleHandler::HandleSetDecryptionPassphrase(const base::ListValue* args) {
    bool successfully_set = false;
    if (!passphrase.empty() && sync_user_settings->IsPassphraseRequired()) {
      successfully_set = sync_user_settings->SetDecryptionPassphrase(passphrase);
@@ -41,7 +49,7 @@ index 312b78877ace9..9217e78642526 100644
    }
    ResolveJavascriptCallback(callback_id, base::Value(successfully_set));
  }
-@@ -700,8 +689,7 @@ void PeopleHandler::HandleSignout(const base::ListValue* args) {
+@@ -700,8 +688,7 @@ void PeopleHandler::HandleSignout(const base::ListValue* args) {
    // CAUTION: |this| may be deleted at this point.
  
    if (delete_profile) {
@@ -51,3 +59,13 @@ index 312b78877ace9..9217e78642526 100644
    }
  }
  
+@@ -1035,9 +1022,6 @@ void PeopleHandler::MarkFirstSetupComplete() {
+   if (service->GetUserSettings()->IsFirstSetupComplete())
+     return;
+ 
+-  unified_consent::metrics::RecordSyncSetupDataTypesHistrogam(
+-      service->GetUserSettings(), profile_->GetPrefs());
+-
+   // We're done configuring, so notify SyncService that it is OK to start
+   // syncing.
+   service->GetUserSettings()->SetFirstSetupComplete(

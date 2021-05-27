@@ -1,8 +1,15 @@
 diff --git a/components/optimization_guide/core/optimization_guide_permissions_util.cc b/components/optimization_guide/core/optimization_guide_permissions_util.cc
-index d7a71e2785ea7..3dca3de730569 100644
+index d7a71e2785ea7..556b6e50f2f0a 100644
 --- a/components/optimization_guide/core/optimization_guide_permissions_util.cc
 +++ b/components/optimization_guide/core/optimization_guide_permissions_util.cc
-@@ -17,9 +17,7 @@ namespace {
+@@ -10,20 +10,18 @@
+ #include "components/data_reduction_proxy/core/browser/data_reduction_proxy_settings.h"
+ #include "components/optimization_guide/core/optimization_guide_features.h"
+ #include "components/optimization_guide/core/optimization_guide_switches.h"
+-#include "components/unified_consent/url_keyed_data_collection_consent_helper.h"
+ 
+ namespace {
+ 
  bool IsUserDataSaverEnabledAndAllowedToFetchFromRemoteService(
      bool is_off_the_record,
      PrefService* pref_service) {
@@ -13,3 +20,17 @@ index d7a71e2785ea7..3dca3de730569 100644
  }
  
  bool IsUserConsentedToAnonymousDataCollectionAndAllowedToFetchFromRemoteService(
+     PrefService* pref_service) {
++#if 0
+   if (!optimization_guide::features::
+           IsRemoteFetchingForAnonymousDataConsentEnabled()) {
+     return false;
+@@ -33,6 +31,8 @@ bool IsUserConsentedToAnonymousDataCollectionAndAllowedToFetchFromRemoteService(
+       unified_consent::UrlKeyedDataCollectionConsentHelper::
+           NewAnonymizedDataCollectionConsentHelper(pref_service);
+   return helper->IsEnabled();
++#endif
++  return false;
+ }
+ 
+ }  // namespace

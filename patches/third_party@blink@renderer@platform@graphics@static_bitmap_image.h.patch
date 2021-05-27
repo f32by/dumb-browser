@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/platform/graphics/static_bitmap_image.h b/third_party/blink/renderer/platform/graphics/static_bitmap_image.h
+index fc7e1207a187a..6ff97fa6b9942 100644
+--- a/third_party/blink/renderer/platform/graphics/static_bitmap_image.h
++++ b/third_party/blink/renderer/platform/graphics/static_bitmap_image.h
+@@ -100,6 +100,9 @@ class PLATFORM_EXPORT StaticBitmapImage : public Image {
+     orientation_ = orientation;
+   }
+ 
++  static void ShuffleSubchannelColorData(
++      const void *addr, const SkImageInfo& info, int srcX, int srcY);
++
+  protected:
+   // Helper for sub-classes
+   void DrawHelper(cc::PaintCanvas*,

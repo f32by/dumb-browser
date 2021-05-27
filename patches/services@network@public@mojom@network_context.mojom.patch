@@ -1,0 +1,63 @@
+diff --git a/services/network/public/mojom/network_context.mojom b/services/network/public/mojom/network_context.mojom
+index ee27133a56df4..68b7b2b714bda 100644
+--- a/services/network/public/mojom/network_context.mojom
++++ b/services/network/public/mojom/network_context.mojom
+@@ -397,15 +397,6 @@ struct NetworkContextParams {
+   [EnableIf=is_android]
+   pending_receiver<CookieManager>? cookie_manager;
+ 
+-  // Whether to enable Domain Reliability.
+-  bool enable_domain_reliability = false;
+-
+-  // The uploader reporter name to use for Domain Reliability uploads.
+-  string domain_reliability_upload_reporter;
+-
+-  // Whether to discard Domain Reliability uploads.
+-  bool discard_domain_reliablity_uploads = false;
+-
+   // When reporting is enabled, this sets the delay between sending reports.
+   // When omitted a default value is used.
+   mojo_base.mojom.TimeDelta? reporting_delivery_interval;
+@@ -698,9 +689,6 @@ interface NetworkContextClient {
+   OnCanSendReportingReports(array<url.mojom.Origin> origins) =>
+       (array<url.mojom.Origin> origins);
+ 
+-  // Checks if a Domain Reliability report can be uploaded for the given origin.
+-  OnCanSendDomainReliabilityUpload(url.mojom.Url origin) => (bool allowed);
+-
+   // Called to generate an auth token for SPNEGO authentication on Android.
+   [EnableIf=is_android]
+   OnGenerateHttpNegotiateAuthToken(string server_auth_token, bool can_delegate,
+@@ -885,15 +873,6 @@ interface NetworkContext {
+   // filter.
+   ClearNetworkErrorLogging(ClearDataFilter? filter) => ();
+ 
+-  // Mirror of domain_reliability::DomainReliabilityClearMode.
+-  enum DomainReliabilityClearMode {CLEAR_CONTEXTS, CLEAR_BEACONS};
+-  // Clears Domain Reliability entries, specified by |mode|.
+-  ClearDomainReliability(ClearDataFilter? filter,
+-                         DomainReliabilityClearMode mode) => ();
+-
+-  // Returns a JSON value containing data for displaying on a debugging page.
+-  GetDomainReliabilityJSON() => (mojo_base.mojom.Value data);
+-
+   // Queues a report via the Reporting API. |type| describes the type of report
+   // (as well as what data will contained in |body|). |group| specifies the
+   // endpoint group that the report will be delivered to. |url| indicates the
+@@ -1304,16 +1283,6 @@ interface NetworkContext {
+                               string ocsp_response,
+                               string sct_list) => (int32 error_code);
+ 
+-  [Sync]
+-  // Adds a Domain Reliability Context.
+-  AddDomainReliabilityContextForTesting(
+-    url.mojom.Url origin, url.mojom.Url upload_url) => ();
+-
+-  [Sync]
+-  // Forces all pending Domain Reliability uploads to run now, even if their
+-  // minimum delay has not yet passed.
+-  ForceDomainReliabilityUploadsForTesting() => ();
+-
+   // Gets the OriginPolicyManager associated with this network context.
+   GetOriginPolicyManager(
+       pending_receiver<OriginPolicyManager> origin_policy_manager);

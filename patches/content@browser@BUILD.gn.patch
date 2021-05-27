@@ -1,8 +1,16 @@
 diff --git a/content/browser/BUILD.gn b/content/browser/BUILD.gn
-index b63cf589be716..b274fbdf29ffb 100644
+index b63cf589be716..517aa799284f1 100644
 --- a/content/browser/BUILD.gn
 +++ b/content/browser/BUILD.gn
-@@ -78,7 +78,6 @@ source_set("browser") {
+@@ -14,6 +14,7 @@ import("//components/ui_devtools/devtools.gni")
+ import("//content/common/features.gni")
+ import("//content/public/common/zygote/features.gni")
+ import("//device/vr/buildflags/buildflags.gni")
++import("//dumb/content/browser/sources.gni")
+ import("//gpu/vulkan/features.gni")
+ import("//media/media_options.gni")
+ import("//net/features.gni")
+@@ -78,7 +79,6 @@ source_set("browser") {
      "//components/payments/mojom",
      "//components/power_scheduler",
      "//components/services/filesystem:lib",
@@ -10,7 +18,7 @@ index b63cf589be716..b274fbdf29ffb 100644
      "//components/services/storage",
      "//components/services/storage:filesystem_proxy_factory",
      "//components/services/storage/dom_storage:local_storage_proto",
-@@ -87,8 +86,6 @@ source_set("browser") {
+@@ -87,8 +87,6 @@ source_set("browser") {
      "//components/system_media_controls",
      "//components/tracing:startup_tracing",
      "//components/ui_devtools",
@@ -19,7 +27,16 @@ index b63cf589be716..b274fbdf29ffb 100644
      "//components/url_formatter",
      "//components/variations",
      "//components/variations/net",
-@@ -833,8 +830,6 @@ source_set("browser") {
+@@ -256,6 +254,8 @@ source_set("browser") {
+     "//v8:v8_version",
+   ]
+ 
++  deps += dumb_content_browser_deps
++
+   if (is_chromeos_ash) {
+     deps += [
+       "//chromeos/services/machine_learning/public/cpp",
+@@ -833,8 +833,6 @@ source_set("browser") {
      "eye_dropper_chooser_impl.h",
      "feature_observer.cc",
      "feature_observer.h",
@@ -28,7 +45,7 @@ index b63cf589be716..b274fbdf29ffb 100644
      "field_trial_recorder.cc",
      "field_trial_recorder.h",
      "field_trial_synchronizer.cc",
-@@ -1654,8 +1649,6 @@ source_set("browser") {
+@@ -1654,8 +1652,6 @@ source_set("browser") {
      "service_worker/service_worker_fetch_dispatcher.h",
      "service_worker/service_worker_host.cc",
      "service_worker/service_worker_host.h",
@@ -37,7 +54,7 @@ index b63cf589be716..b274fbdf29ffb 100644
      "service_worker/service_worker_info.cc",
      "service_worker/service_worker_info.h",
      "service_worker/service_worker_installed_script_loader.cc",
-@@ -1793,8 +1786,6 @@ source_set("browser") {
+@@ -1793,8 +1789,6 @@ source_set("browser") {
      "tracing/tracing_controller_impl_data_endpoint.cc",
      "tracing/tracing_service_controller.cc",
      "tracing/tracing_service_controller.h",
@@ -46,7 +63,7 @@ index b63cf589be716..b274fbdf29ffb 100644
      "url_loader_factory_getter.cc",
      "url_loader_factory_getter.h",
      "url_loader_factory_params_helper.cc",
-@@ -2201,7 +2192,6 @@ source_set("browser") {
+@@ -2201,7 +2195,6 @@ source_set("browser") {
      public_deps += [ "//components/services/font/public/mojom" ]
  
      deps += [
@@ -54,7 +71,7 @@ index b63cf589be716..b274fbdf29ffb 100644
        "//components/services/font:lib",
        "//third_party/blink/public/mojom:memory_usage_monitor_linux_mojo_bindings",
      ]
-@@ -2876,7 +2866,6 @@ source_set("browser") {
+@@ -2876,7 +2869,6 @@ source_set("browser") {
      ]
    }
  
@@ -62,7 +79,7 @@ index b63cf589be716..b274fbdf29ffb 100644
      sources += [
        "net/cross_origin_embedder_policy_reporter.cc",
        "net/cross_origin_embedder_policy_reporter.h",
-@@ -2885,7 +2874,6 @@ source_set("browser") {
+@@ -2885,7 +2877,6 @@ source_set("browser") {
        "net/reporting_service_proxy.cc",
        "net/reporting_service_proxy.h",
      ]

@@ -1,8 +1,16 @@
 diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
-index b19ef9e10b9ff..6b35ac6c79795 100644
+index b19ef9e10b9ff..73d3156834e62 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
-@@ -192,9 +192,6 @@
+@@ -166,6 +166,7 @@
+ #include "content/public/common/sandboxed_process_launcher_delegate.h"
+ #include "content/public/common/url_constants.h"
+ #include "content/public/common/zygote/zygote_buildflags.h"
++#include "dumb/components/dumb/switches.h"
+ #include "google_apis/gaia/gaia_switches.h"
+ #include "gpu/GLES2/gl2extchromium.h"
+ #include "gpu/command_buffer/client/gpu_switches.h"
+@@ -192,9 +193,6 @@
  #include "services/device/public/mojom/power_monitor.mojom.h"
  #include "services/device/public/mojom/screen_orientation.mojom.h"
  #include "services/device/public/mojom/time_zone_monitor.mojom.h"
@@ -12,7 +20,7 @@ index b19ef9e10b9ff..6b35ac6c79795 100644
  #include "services/network/public/cpp/network_switches.h"
  #include "services/network/public/mojom/network_service.mojom.h"
  #include "services/resource_coordinator/public/mojom/memory_instrumentation/memory_instrumentation.mojom.h"
-@@ -1361,12 +1358,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
+@@ -1361,12 +1359,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
        }
      }
  
@@ -25,3 +33,15 @@ index b19ef9e10b9ff..6b35ac6c79795 100644
      std::string interface_name = *receiver.interface_name();
      mojo::ScopedMessagePipeHandle pipe = receiver.PassPipe();
      if (binders_->TryBindInterface(interface_name, &pipe))
+@@ -3173,6 +3165,11 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+   // Propagate the following switches to the renderer command line (along
+   // with any associated values) if present in the browser command line.
+   static const char* const kSwitchNames[] = {
++    // Dumb Browser
++    switches::kFingerprintingClientRectsNoise,
++    switches::kFingerprintingCanvasMeasureTextNoise,
++    switches::kFingerprintingCanvasImageDataNoise,
++    // Chromium
+     switches::kDisableInProcessStackTraces,
+     sandbox::policy::switches::kDisableSeccompFilterSandbox,
+     sandbox::policy::switches::kNoSandbox,

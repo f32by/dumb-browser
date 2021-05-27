@@ -1,8 +1,16 @@
 diff --git a/third_party/blink/renderer/platform/BUILD.gn b/third_party/blink/renderer/platform/BUILD.gn
-index 5ede4c3bd799e..ee85ba5523d2b 100644
+index 5ede4c3bd799e..8833c3ae0a878 100644
 --- a/third_party/blink/renderer/platform/BUILD.gn
 +++ b/third_party/blink/renderer/platform/BUILD.gn
-@@ -611,8 +611,6 @@ component("platform") {
+@@ -8,6 +8,7 @@ import("//build/compiled_action.gni")
+ import("//build/config/compiler/compiler.gni")
+ import("//build/config/features.gni")
+ import("//build/config/ui.gni")
++import("//dumb/third_party/blink/renderer/platform/sources.gni")
+ import("//media/media_options.gni")
+ import("//skia/features.gni")
+ import("//testing/libfuzzer/fuzzer_test.gni")
+@@ -611,8 +612,6 @@ component("platform") {
      "fonts/font_height.cc",
      "fonts/font_height.h",
      "fonts/font_invalidation_reason.h",
@@ -11,7 +19,7 @@ index 5ede4c3bd799e..ee85ba5523d2b 100644
      "fonts/font_metrics.cc",
      "fonts/font_metrics.h",
      "fonts/font_metrics_override.h",
-@@ -990,8 +988,6 @@ component("platform") {
+@@ -990,8 +989,6 @@ component("platform") {
      "graphics/graphics_types.cc",
      "graphics/graphics_types.h",
      "graphics/graphics_types_3d.h",
@@ -20,7 +28,7 @@ index 5ede4c3bd799e..ee85ba5523d2b 100644
      "graphics/image.cc",
      "graphics/image.h",
      "graphics/image_data_buffer.cc",
-@@ -1355,8 +1351,6 @@ component("platform") {
+@@ -1355,8 +1352,6 @@ component("platform") {
      "peerconnection/webrtc_util.h",
      "peerconnection/webrtc_video_track_source.cc",
      "peerconnection/webrtc_video_track_source.h",
@@ -29,3 +37,21 @@ index 5ede4c3bd799e..ee85ba5523d2b 100644
      "resolution_units.h",
      "search_engine_utils.cc",
      "search_engine_utils.h",
+@@ -1621,6 +1616,8 @@ component("platform") {
+ 
+   include_dirs = []
+ 
++  include_dirs += blink_renderer_platform_include_dirs
++
+   allow_circular_includes_from = [
+     "//third_party/blink/renderer/platform/blob",
+     "//third_party/blink/renderer/platform/heap:heap",
+@@ -1701,6 +1698,8 @@ component("platform") {
+     "//ui/native_theme",
+   ]
+ 
++  deps += blink_renderer_platform_deps
++
+   if (is_mac) {
+     sources -= [
+       "fonts/skia/font_cache_skia.cc",

@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
+index d174cd16246d1..aee280e54a4f0 100644
+--- a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
++++ b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
+@@ -26,10 +26,6 @@ class StoragePartition;
+ class WebContents;
+ }
+ 
+-namespace unified_consent {
+-class UrlKeyedDataCollectionConsentHelper;
+-}
+-
+ class ChromeAutocompleteProviderClient : public AutocompleteProviderClient {
+  public:
+   explicit ChromeAutocompleteProviderClient(Profile* profile);
+@@ -120,8 +116,6 @@ class ChromeAutocompleteProviderClient : public AutocompleteProviderClient {
+   Profile* profile_;
+   ChromeAutocompleteSchemeClassifier scheme_classifier_;
+   std::unique_ptr<OmniboxPedalProvider> pedal_provider_;
+-  std::unique_ptr<unified_consent::UrlKeyedDataCollectionConsentHelper>
+-      url_consent_helper_;
+ 
+   // Injectable storage partitiion, used for testing.
+   content::StoragePartition* storage_partition_;

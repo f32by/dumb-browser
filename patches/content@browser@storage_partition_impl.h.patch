@@ -1,0 +1,16 @@
+diff --git a/content/browser/storage_partition_impl.h b/content/browser/storage_partition_impl.h
+index 8cad46c51b681..3720f8d5ae973 100644
+--- a/content/browser/storage_partition_impl.h
++++ b/content/browser/storage_partition_impl.h
+@@ -251,9 +251,11 @@ class CONTENT_EXPORT StoragePartitionImpl
+   void OnCanSendReportingReports(
+       const std::vector<url::Origin>& origins,
+       OnCanSendReportingReportsCallback callback) override;
++#if 0
+   void OnCanSendDomainReliabilityUpload(
+       const GURL& origin,
+       OnCanSendDomainReliabilityUploadCallback callback) override;
++#endif
+ #if defined(OS_ANDROID)
+   void OnGenerateHttpNegotiateAuthToken(
+       const std::string& server_auth_token,

@@ -1,0 +1,16 @@
+diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.h b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.h
+index aa344a3563b6e..f2085e36ed8d6 100644
+--- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.h
++++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.h
+@@ -27,9 +27,11 @@ class PrefetchProxyNetworkContextClient
+   void OnCanSendReportingReports(
+       const std::vector<url::Origin>& origins,
+       OnCanSendReportingReportsCallback callback) override;
++#if 0
+   void OnCanSendDomainReliabilityUpload(
+       const GURL& origin,
+       OnCanSendDomainReliabilityUploadCallback callback) override;
++#endif
+ #if defined(OS_ANDROID)
+   void OnGenerateHttpNegotiateAuthToken(
+       const std::string& server_auth_token,

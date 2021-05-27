@@ -1,8 +1,19 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_accessor.h b/chrome/browser/metrics/chrome_metrics_service_accessor.h
-index 727651fb2b7d4..21b4710468f03 100644
+index 727651fb2b7d4..bd3832fa41a9d 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_accessor.h
 +++ b/chrome/browser/metrics/chrome_metrics_service_accessor.h
-@@ -59,18 +59,6 @@ namespace welcome {
+@@ -33,10 +33,6 @@ class FlashDOMHandler;
+ class ChromeCameraAppUIDelegate;
+ #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+ 
+-namespace domain_reliability {
+-class DomainReliabilityServiceFactory;
+-}
+-
+ namespace extensions {
+ class ChromeGuestViewManagerDelegate;
+ class ChromeMetricsPrivateDelegate;
+@@ -59,18 +55,6 @@ namespace welcome {
  void JoinOnboardingGroup(Profile* profile);
  }
  
@@ -21,7 +32,15 @@ index 727651fb2b7d4..21b4710468f03 100644
  namespace settings {
  class MetricsReportingHandler;
  }
-@@ -117,12 +105,6 @@ class ChromeMetricsServiceAccessor : public metrics::MetricsServiceAccessor {
+@@ -106,7 +90,6 @@ class ChromeMetricsServiceAccessor : public metrics::MetricsServiceAccessor {
+   friend class ChromeContentBrowserClient;
+   friend class ChromeMetricsServicesManagerClient;
+   friend class DataReductionProxyChromeSettings;
+-  friend class domain_reliability::DomainReliabilityServiceFactory;
+   friend class extensions::ChromeGuestViewManagerDelegate;
+   friend class extensions::ChromeMetricsPrivateDelegate;
+   friend class extensions::FileManagerPrivateIsUMAEnabledFunction;
+@@ -117,12 +100,6 @@ class ChromeMetricsServiceAccessor : public metrics::MetricsServiceAccessor {
    friend class heap_profiling::BackgroundProfilingTriggers;
    friend class settings::MetricsReportingHandler;
    friend class UmaSessionStats;

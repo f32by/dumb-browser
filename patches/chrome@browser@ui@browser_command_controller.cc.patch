@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser_command_controller.cc b/chrome/browser/ui/browser_command_controller.cc
-index b0bde494f7b6f..bc31988d7e28b 100644
+index b0bde494f7b6f..cb9c4d45f6726 100644
 --- a/chrome/browser/ui/browser_command_controller.cc
 +++ b/chrome/browser/ui/browser_command_controller.cc
 @@ -756,7 +756,6 @@ bool BrowserCommandController::ExecuteCommandWithDisposition(
@@ -10,3 +10,14 @@ index b0bde494f7b6f..bc31988d7e28b 100644
        break;
      case IDC_HELP_PAGE_VIA_KEYBOARD:
        ShowHelp(browser_, HELP_SOURCE_KEYBOARD);
+@@ -1135,7 +1134,9 @@ void BrowserCommandController::InitCommandState() {
+   command_updater_.UpdateCommandEnabled(IDC_WINDOW_CLOSE_OTHER_TABS,
+                                         normal_window);
+ 
+-  const bool enable_tab_search_commands = browser_->is_type_normal();
++  const bool enable_tab_search_commands =
++      base::FeatureList::IsEnabled(features::kTabSearch) &&
++      browser_->is_type_normal();
+   command_updater_.UpdateCommandEnabled(IDC_TAB_SEARCH,
+                                         enable_tab_search_commands);
+   command_updater_.UpdateCommandEnabled(IDC_TAB_SEARCH_CLOSE,

@@ -1,5 +1,5 @@
 diff --git a/content/browser/direct_sockets/direct_sockets_service_impl.cc b/content/browser/direct_sockets/direct_sockets_service_impl.cc
-index c6970c5bd54d4..166a546b25b02 100644
+index c6970c5bd54d4..0dc336e6dbb88 100644
 --- a/content/browser/direct_sockets/direct_sockets_service_impl.cc
 +++ b/content/browser/direct_sockets/direct_sockets_service_impl.cc
 @@ -17,6 +17,7 @@
@@ -10,11 +10,16 @@ index c6970c5bd54d4..166a546b25b02 100644
  #include "mojo/public/cpp/bindings/self_owned_receiver.h"
  #include "mojo/public/cpp/system/data_pipe.h"
  #include "net/base/address_list.h"
-@@ -68,6 +69,7 @@ base::Optional<net::IPEndPoint> GetLocalAddr(
+@@ -68,10 +69,12 @@ base::Optional<net::IPEndPoint> GetLocalAddr(
    return local_addr;
  }
  
-+DUMB_ALLOW_UNUSED_TYPE
++#if 0
  bool ResemblesMulticastDNSName(const std::string& hostname) {
    return base::EndsWith(hostname, ".local") ||
           base::EndsWith(hostname, ".local.");
+ }
++#endif
+ 
+ bool ContainNonPubliclyRoutableAddress(const net::AddressList& addresses) {
+   DCHECK(!addresses.empty());

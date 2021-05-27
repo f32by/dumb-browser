@@ -1,0 +1,30 @@
+diff --git a/third_party/blink/renderer/core/frame/local_frame.cc b/third_party/blink/renderer/core/frame/local_frame.cc
+index a70c5d861a9ae..bb265b0e8607a 100644
+--- a/third_party/blink/renderer/core/frame/local_frame.cc
++++ b/third_party/blink/renderer/core/frame/local_frame.cc
+@@ -553,7 +553,9 @@ void LocalFrame::Trace(Visitor* visitor) const {
+   visitor->Trace(raw_system_clipboard_);
+   visitor->Trace(virtual_keyboard_overlay_changed_observers_);
+   visitor->Trace(pause_handle_receivers_);
++#if BUILDFLAG(ENABLE_REPORTING)
+   visitor->Trace(reporting_service_);
++#endif
+ #if defined(OS_MAC)
+   visitor->Trace(text_input_host_);
+ #endif
+@@ -2364,6 +2366,7 @@ const base::UnguessableToken& LocalFrame::GetAgentClusterId() const {
+   return base::UnguessableToken::Null();
+ }
+ 
++#if BUILDFLAG(ENABLE_REPORTING)
+ mojom::blink::ReportingServiceProxy* LocalFrame::GetReportingService() {
+   if (!reporting_service_.is_bound()) {
+     GetBrowserInterfaceBroker().GetInterface(
+@@ -2372,6 +2375,7 @@ mojom::blink::ReportingServiceProxy* LocalFrame::GetReportingService() {
+   }
+   return reporting_service_.get();
+ }
++#endif
+ 
+ // static
+ void LocalFrame::NotifyUserActivation(

@@ -1,0 +1,36 @@
+diff --git a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.h b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.h
+index 1d02e801f97bf..1b7d0f87ab537 100644
+--- a/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.h
++++ b/chrome/browser/browsing_data/chrome_browsing_data_remover_delegate.h
+@@ -75,12 +75,14 @@ class ChromeBrowsingDataRemoverDelegate
+       std::unique_ptr<WebappRegistry> webapp_registry);
+ #endif
+ 
++#if 0
+   using DomainReliabilityClearer = base::RepeatingCallback<void(
+       content::BrowsingDataFilterBuilder* filter_builder,
+       network::mojom::NetworkContext_DomainReliabilityClearMode,
+       network::mojom::NetworkContext::ClearDomainReliabilityCallback)>;
+   void OverrideDomainReliabilityClearerForTesting(
+       DomainReliabilityClearer clearer);
++#endif
+ 
+  private:
+   using WebRtcEventLogManager = webrtc_event_logging::WebRtcEventLogManager;
+@@ -98,7 +100,6 @@ class ChromeBrowsingDataRemoverDelegate
+     kAutofillOrigins = 7,
+     kPluginData = 8,
+     kFlashLsoHelper = 9,  // deprecated
+-    kDomainReliability = 10,
+     kNetworkPredictor = 11,
+     kWebrtcLogs = 12,
+     kVideoDecodeHistory = 13,
+@@ -200,8 +201,6 @@ class ChromeBrowsingDataRemoverDelegate
+   // are finished.
+   base::CancelableOnceClosure slow_pending_tasks_closure_;
+ 
+-  DomainReliabilityClearer domain_reliability_clearer_;
+-
+   // Used if we need to clear history.
+   base::CancelableTaskTracker history_task_tracker_;
+ 

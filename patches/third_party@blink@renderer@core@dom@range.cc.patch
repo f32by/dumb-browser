@@ -1,0 +1,29 @@
+diff --git a/third_party/blink/renderer/core/dom/range.cc b/third_party/blink/renderer/core/dom/range.cc
+index 52460dfe922c7..e75e8796a9f10 100644
+--- a/third_party/blink/renderer/core/dom/range.cc
++++ b/third_party/blink/renderer/core/dom/range.cc
+@@ -1615,11 +1615,23 @@ DOMRectList* Range::getClientRects() const {
+   Vector<FloatQuad> quads;
+   GetBorderAndTextQuads(quads);
+ 
++  if (RuntimeEnabledFeatures::FingerprintingClientRectsNoiseEnabled()) {
++    for (FloatQuad& quad : quads) {
++      quad.Scale(owner_document_->GetNoiseFactorX(),
++                 owner_document_->GetNoiseFactorY());
++    }
++  }
++
+   return MakeGarbageCollected<DOMRectList>(quads);
+ }
+ 
+ DOMRect* Range::getBoundingClientRect() const {
+-  return DOMRect::FromFloatRect(BoundingRect());
++  auto rect = BoundingRect();
++  if (RuntimeEnabledFeatures::FingerprintingClientRectsNoiseEnabled()) {
++    rect.Scale(owner_document_->GetNoiseFactorX(),
++               owner_document_->GetNoiseFactorY());
++  }
++  return DOMRect::FromFloatRect(rect);
+ }
+ 
+ // TODO(editing-dev): We should make

@@ -1,0 +1,18 @@
+diff --git a/content/browser/network_context_client_base_impl.cc b/content/browser/network_context_client_base_impl.cc
+index f33b81244679f..503bcdef5e133 100644
+--- a/content/browser/network_context_client_base_impl.cc
++++ b/content/browser/network_context_client_base_impl.cc
+@@ -97,11 +97,13 @@ void NetworkContextClientBase::OnCanSendReportingReports(
+   std::move(callback).Run(std::vector<url::Origin>());
+ }
+ 
++#if 0
+ void NetworkContextClientBase::OnCanSendDomainReliabilityUpload(
+     const GURL& origin,
+     OnCanSendDomainReliabilityUploadCallback callback) {
+   std::move(callback).Run(false);
+ }
++#endif
+ 
+ #if defined(OS_ANDROID)
+ void NetworkContextClientBase::OnGenerateHttpNegotiateAuthToken(

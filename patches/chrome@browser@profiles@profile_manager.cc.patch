@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/profiles/profile_manager.cc b/chrome/browser/profiles/profile_manager.cc
-index d2a29e4e928c7..a57e47084f3c4 100644
+index d2a29e4e928c7..c0277724ea39a 100644
 --- a/chrome/browser/profiles/profile_manager.cc
 +++ b/chrome/browser/profiles/profile_manager.cc
 @@ -44,13 +44,9 @@
@@ -24,7 +24,15 @@ index d2a29e4e928c7..a57e47084f3c4 100644
  #include "chrome/browser/profiles/profiles_state.h"
  #include "chrome/browser/signin/account_reconcilor_factory.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
-@@ -278,7 +273,6 @@ void CancelProfileDeletion(const base::FilePath& path) {
+@@ -72,7 +67,6 @@
+ #include "chrome/browser/sync/profile_sync_service_factory.h"
+ #include "chrome/browser/ui/startup/startup_browser_creator.h"
+ #include "chrome/browser/ui/sync/sync_promo_ui.h"
+-#include "chrome/browser/unified_consent/unified_consent_service_factory.h"
+ #include "chrome/common/buildflags.h"
+ #include "chrome/common/chrome_constants.h"
+ #include "chrome/common/chrome_paths_internal.h"
+@@ -278,7 +272,6 @@ void CancelProfileDeletion(const base::FilePath& path) {
    DCHECK(!base::Contains(ProfilesToDelete(), path) ||
           ProfilesToDelete()[path] == ProfileDeletionStage::SCHEDULING);
    ProfilesToDelete().erase(path);
@@ -32,7 +40,7 @@ index d2a29e4e928c7..a57e47084f3c4 100644
  }
  #endif
  
-@@ -990,8 +984,7 @@ ProfileShortcutManager* ProfileManager::profile_shortcut_manager() {
+@@ -990,8 +983,7 @@ ProfileShortcutManager* ProfileManager::profile_shortcut_manager() {
  #if !defined(OS_ANDROID)
  void ProfileManager::MaybeScheduleProfileForDeletion(
      const base::FilePath& profile_dir,
@@ -42,7 +50,7 @@ index d2a29e4e928c7..a57e47084f3c4 100644
    if (!ScheduleProfileDirectoryForDeletion(profile_dir))
      return;
  
-@@ -1001,7 +994,6 @@ void ProfileManager::MaybeScheduleProfileForDeletion(
+@@ -1001,7 +993,6 @@ void ProfileManager::MaybeScheduleProfileForDeletion(
    if (entry) {
      storage.RecordDeletedProfileState(entry);
    }
@@ -50,7 +58,7 @@ index d2a29e4e928c7..a57e47084f3c4 100644
  
    ScheduleProfileForDeletion(profile_dir, std::move(callback));
  }
-@@ -1525,11 +1517,6 @@ void ProfileManager::DoFinalInitForServices(Profile* profile,
+@@ -1525,21 +1516,12 @@ void ProfileManager::DoFinalInitForServices(Profile* profile,
    SupervisedUserServiceFactory::GetForProfile(profile)->Init();
  #endif
  
@@ -62,7 +70,17 @@ index d2a29e4e928c7..a57e47084f3c4 100644
    // Ensure NavigationPredictorKeyedService is started.
    NavigationPredictorKeyedServiceFactory::GetForProfile(profile);
  
-@@ -1556,12 +1543,14 @@ void ProfileManager::DoFinalInitForServices(Profile* profile,
+   IdentityManagerFactory::GetForProfile(profile)->OnNetworkInitialized();
+   AccountReconcilorFactory::GetForProfile(profile);
+ 
+-  // Initialization needs to happen after the browser context is available
+-  // because ProfileSyncService needs the URL context getter.
+-  UnifiedConsentServiceFactory::GetForProfile(profile);
+-
+ #if defined(OS_ANDROID)
+   AndroidProfileSessionDurationsServiceFactory::GetForProfile(profile);
+ #else
+@@ -1556,12 +1538,14 @@ void ProfileManager::DoFinalInitForServices(Profile* profile,
    ash::AccountManagerPolicyControllerFactory::GetForBrowserContext(profile);
  #endif
  
@@ -77,7 +95,7 @@ index d2a29e4e928c7..a57e47084f3c4 100644
  
    // TODO(crbug.com/1031477): Remove once getting this created with the browser
    // context does not change dependency initialization order to cause crashes.
-@@ -1770,9 +1759,6 @@ void ProfileManager::EnsureActiveProfileExistsBeforeDeletion(
+@@ -1770,9 +1754,6 @@ void ProfileManager::EnsureActiveProfileExistsBeforeDeletion(
    // Load existing profile otherwise.
    if (fallback_profile_path.empty()) {
      fallback_profile_path = GenerateNextProfileDirectoryPath();
@@ -87,7 +105,7 @@ index d2a29e4e928c7..a57e47084f3c4 100644
    }
  
    // Create and/or load fallback profile.
-@@ -1808,7 +1794,6 @@ void ProfileManager::OnLoadProfileForProfileDeletion(
+@@ -1808,7 +1789,6 @@ void ProfileManager::OnLoadProfileForProfileDeletion(
      ProfileAttributesEntry* entry =
          storage.GetProfileAttributesWithPath(profile_dir);
      DCHECK(entry);

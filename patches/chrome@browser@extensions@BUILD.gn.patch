@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/BUILD.gn b/chrome/browser/extensions/BUILD.gn
-index 08a1b17e85757..de39d11e97419 100644
+index 08a1b17e85757..813ca21f7b59d 100644
 --- a/chrome/browser/extensions/BUILD.gn
 +++ b/chrome/browser/extensions/BUILD.gn
 @@ -150,14 +150,10 @@ static_library("extensions") {
@@ -124,7 +124,15 @@ index 08a1b17e85757..de39d11e97419 100644
      "//components/search_engines",
      "//components/services/app_service/public/mojom",
      "//components/services/patch/content",
-@@ -913,7 +879,6 @@ static_library("extensions") {
+@@ -880,7 +846,6 @@ static_library("extensions") {
+     "//components/translate/core/browser",
+     "//components/translate/core/common",
+     "//components/undo",
+-    "//components/unified_consent",
+     "//components/update_client",
+     "//components/update_client:common_impl",
+     "//components/url_formatter",
+@@ -913,7 +878,6 @@ static_library("extensions") {
      "//services/audio/public/cpp",
      "//services/data_decoder/public/cpp",
      "//services/device/public/mojom",
@@ -132,7 +140,7 @@ index 08a1b17e85757..de39d11e97419 100644
      "//services/network/public/mojom",
      "//services/service_manager/public/cpp",
      "//services/service_manager/public/mojom",
-@@ -1116,7 +1081,6 @@ static_library("extensions") {
+@@ -1116,7 +1080,6 @@ static_library("extensions") {
        "//chromeos/ui/base",
        "//components/arc",
        "//components/constrained_window",
@@ -140,7 +148,7 @@ index 08a1b17e85757..de39d11e97419 100644
        "//components/drive",
        "//components/user_manager",
        "//media/capture:capture_lib",
-@@ -1142,10 +1106,6 @@ static_library("extensions") {
+@@ -1142,10 +1105,6 @@ static_library("extensions") {
    } else {
      assert(!is_chromeos_ash)
      sources += [
@@ -151,7 +159,7 @@ index 08a1b17e85757..de39d11e97419 100644
        "api/image_writer_private/operation_nonchromeos.cc",
        "api/tabs/tabs_util.cc",
        "chrome_kiosk_delegate.cc",
-@@ -1154,7 +1114,6 @@ static_library("extensions") {
+@@ -1154,7 +1113,6 @@ static_library("extensions") {
      ]
      deps += [
        "//components/enterprise",

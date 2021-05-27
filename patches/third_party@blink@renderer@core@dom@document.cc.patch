@@ -1,8 +1,16 @@
 diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
-index 93d9e9dc53a6f..f5886aa5cd266 100644
+index 93d9e9dc53a6f..563678079dc7b 100644
 --- a/third_party/blink/renderer/core/dom/document.cc
 +++ b/third_party/blink/renderer/core/dom/document.cc
-@@ -51,7 +51,6 @@
+@@ -43,6 +43,7 @@
+ #include "base/macros.h"
+ #include "base/metrics/histogram_functions.h"
+ #include "base/optional.h"
++#include "base/rand_util.h"
+ #include "base/time/time.h"
+ #include "cc/input/overscroll_behavior.h"
+ #include "cc/input/scroll_snap_data.h"
+@@ -51,7 +52,6 @@
  #include "mojo/public/mojom/base/text_direction.mojom-blink.h"
  #include "services/metrics/public/cpp/metrics_utils.h"
  #include "services/metrics/public/cpp/mojo_ukm_recorder.h"
@@ -10,7 +18,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  #include "services/metrics/public/cpp/ukm_source_id.h"
  #include "services/network/public/cpp/web_sandbox_flags.h"
  #include "services/network/public/mojom/ip_address_space.mojom-blink.h"
-@@ -60,8 +59,6 @@
+@@ -60,8 +60,6 @@
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/common/features.h"
  #include "third_party/blink/public/common/permissions_policy/document_policy_features.h"
@@ -19,7 +27,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
-@@ -311,7 +308,6 @@
+@@ -311,7 +309,6 @@
  #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
  #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
  #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
@@ -27,7 +35,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  #include "third_party/blink/renderer/platform/geometry/length_functions.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
-@@ -751,9 +747,7 @@ Document::Document(const DocumentInit& initializer,
+@@ -751,9 +748,7 @@ Document::Document(const DocumentInit& initializer,
        // to SVGImage which does not have an associated RenderFrameHost. No URLs
        // will be associated to this source id. No DocumentCreated events will be
        // created either.
@@ -38,7 +46,24 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
        viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
        is_for_external_handler_(initializer.IsForExternalHandler()),
        fragment_directive_(MakeGarbageCollected<FragmentDirective>()),
-@@ -2637,12 +2631,6 @@ void Document::MarkHasFindInPageRequest() {
+@@ -2398,6 +2393,16 @@ void Document::UpdateStyleAndLayoutTreeForThisDocument() {
+ #if DCHECK_IS_ON()
+   AssertLayoutTreeUpdated(*this);
+ #endif
++
++  if (RuntimeEnabledFeatures::FingerprintingClientRectsNoiseEnabled()) {
++    // Precompute -0.0003% to 0.0003% noise factor for get*ClientRect*()
++    // fingerprinting.
++    noise_factor_x_ = 1 + (base::RandDouble() - 0.5) * 0.000003;
++    noise_factor_y_ = 1 + (base::RandDouble() - 0.5) * 0.000003;
++  } else {
++    noise_factor_x_ = 1;
++    noise_factor_y_ = 1;
++  }
+ }
+ 
+ void Document::InvalidateStyleAndLayoutForFontUpdates() {
+@@ -2637,12 +2642,6 @@ void Document::MarkHasFindInPageRequest() {
    if (had_find_in_page_request_)
      return;
  
@@ -51,7 +76,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
    had_find_in_page_request_ = true;
  }
  
-@@ -2651,13 +2639,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
+@@ -2651,13 +2650,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
    if (had_find_in_page_render_subtree_active_match_)
      return;
  
@@ -65,7 +90,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
    had_find_in_page_render_subtree_active_match_ = true;
  }
  
-@@ -2666,12 +2647,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
+@@ -2666,12 +2658,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
    if (had_find_in_page_beforematch_expanded_hidden_matchable_)
      return;
  
@@ -78,7 +103,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
    had_find_in_page_beforematch_expanded_hidden_matchable_ = true;
  }
  
-@@ -2992,8 +2967,6 @@ void Document::Shutdown() {
+@@ -2992,8 +2978,6 @@ void Document::Shutdown() {
    if (num_canvases_ > 0)
      UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
  
@@ -87,7 +112,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
    GetViewportData().Shutdown();
  
    View()->Dispose();
-@@ -3101,12 +3074,6 @@ void Document::Shutdown() {
+@@ -3101,12 +3085,6 @@ void Document::Shutdown() {
    lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
    DCHECK(!View()->IsAttached());
  
@@ -100,7 +125,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
    mime_handler_view_before_unload_event_listener_ = nullptr;
  
    resource_coordinator_.reset();
-@@ -6231,16 +6198,7 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
+@@ -6231,16 +6209,7 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
    return promise;
  }
  
@@ -118,7 +143,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  ScriptPromise Document::interestCohort(ScriptState* script_state,
                                         ExceptionState& exception_state) {
    if (!GetFrame()) {
-@@ -6292,6 +6250,7 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
+@@ -6292,6 +6261,7 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
  
    return promise;
  }
@@ -126,7 +151,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  
  void Document::HasTrustTokensAnswererConnectionError() {
    data_->has_trust_tokens_answerer_.reset();
-@@ -6766,6 +6725,7 @@ DOMWindow* Document::defaultView() const {
+@@ -6766,6 +6736,7 @@ DOMWindow* Document::defaultView() const {
  }
  
  void Document::RecordAsyncScriptCount() {
@@ -134,7 +159,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
    UMA_HISTOGRAM_COUNTS_100("Blink.Script.AsyncScriptCount",
                             async_script_count_);
  
-@@ -6780,6 +6740,7 @@ void Document::RecordAsyncScriptCount() {
+@@ -6780,6 +6751,7 @@ void Document::RecordAsyncScriptCount() {
        .SetAsyncScriptCount(
            ukm::GetExponentialBucketMin(async_script_count_, 1.3))
        .Record(recorder);
@@ -142,7 +167,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  }
  
  void Document::MaybeExecuteDelayedAsyncScripts() {
-@@ -7148,10 +7109,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
+@@ -7148,10 +7120,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
    if (ukm_recorder_)
      return ukm_recorder_.get();
  
@@ -154,7 +179,7 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  
    return ukm_recorder_.get();
  }
-@@ -7160,15 +7118,6 @@ ukm::SourceId Document::UkmSourceID() const {
+@@ -7160,15 +7129,6 @@ ukm::SourceId Document::UkmSourceID() const {
    return ukm_source_id_;
  }
  
@@ -170,3 +195,18 @@ index 93d9e9dc53a6f..f5886aa5cd266 100644
  bool Document::AllowInlineEventHandler(Node* node,
                                         EventListener* listener,
                                         const String& context_url,
+@@ -8487,6 +8447,14 @@ Document::PendingJavascriptUrl::~PendingJavascriptUrl() = default;
+ 
+ template class CORE_TEMPLATE_EXPORT Supplement<Document>;
+ 
++double Document::GetNoiseFactorX() {
++  return noise_factor_x_;
++}
++
++double Document::GetNoiseFactorY() {
++  return noise_factor_y_;
++}
++
+ }  // namespace blink
+ #ifndef NDEBUG
+ static WeakDocumentSet& liveDocumentSet() {

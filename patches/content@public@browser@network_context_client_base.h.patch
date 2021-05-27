@@ -1,0 +1,16 @@
+diff --git a/content/public/browser/network_context_client_base.h b/content/public/browser/network_context_client_base.h
+index 5d4909ba0b3cb..094d7c2d9c225 100644
+--- a/content/public/browser/network_context_client_base.h
++++ b/content/public/browser/network_context_client_base.h
+@@ -30,9 +30,11 @@ class CONTENT_EXPORT NetworkContextClientBase
+   void OnCanSendReportingReports(
+       const std::vector<url::Origin>& origins,
+       OnCanSendReportingReportsCallback callback) override;
++#if 0
+   void OnCanSendDomainReliabilityUpload(
+       const GURL& origin,
+       OnCanSendDomainReliabilityUploadCallback callback) override;
++#endif
+ #if defined(OS_ANDROID)
+   void OnGenerateHttpNegotiateAuthToken(
+       const std::string& server_auth_token,

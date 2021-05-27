@@ -1,5 +1,5 @@
 diff --git a/components/unified_consent/unified_consent_service.cc b/components/unified_consent/unified_consent_service.cc
-index 1d54d1139040b..03dcbd6ff774c 100644
+index 1d54d1139040b..a5f4be67833c9 100644
 --- a/components/unified_consent/unified_consent_service.cc
 +++ b/components/unified_consent/unified_consent_service.cc
 @@ -57,7 +57,7 @@ void UnifiedConsentService::SetUrlKeyedAnonymizedDataCollectionEnabled(
@@ -11,3 +11,16 @@ index 1d54d1139040b..03dcbd6ff774c 100644
  }
  
  void UnifiedConsentService::Shutdown() {
+@@ -171,11 +171,7 @@ void UnifiedConsentService::UpdateSettingsForMigration() {
+ 
+   // Set URL-keyed anonymized metrics to the state it had before unified
+   // consent.
+-  bool url_keyed_metrics_enabled =
+-      sync_service_->IsSyncFeatureEnabled() &&
+-      sync_service_->GetUserSettings()->GetSelectedTypes().Has(
+-          syncer::UserSelectableType::kHistory) &&
+-      !sync_service_->GetUserSettings()->IsUsingSecondaryPassphrase();
++  bool url_keyed_metrics_enabled = false;
+   SetUrlKeyedAnonymizedDataCollectionEnabled(url_keyed_metrics_enabled);
+ }
+ 

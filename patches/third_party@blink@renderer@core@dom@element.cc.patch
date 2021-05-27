@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/dom/element.cc b/third_party/blink/renderer/core/dom/element.cc
-index df80e3760478d..b596c150bb867 100644
+index df80e3760478d..42493e9b64341 100644
 --- a/third_party/blink/renderer/core/dom/element.cc
 +++ b/third_party/blink/renderer/core/dom/element.cc
 @@ -33,8 +33,6 @@
@@ -76,3 +76,31 @@ index df80e3760478d..b596c150bb867 100644
  }
  
  int Element::clientWidth() {
+@@ -2092,6 +2032,14 @@ DOMRectList* Element::getClientRects() {
+   DCHECK(element_layout_object);
+   GetDocument().AdjustFloatQuadsForScrollAndAbsoluteZoom(
+       quads, *element_layout_object);
++
++  if (RuntimeEnabledFeatures::FingerprintingClientRectsNoiseEnabled()) {
++    for (FloatQuad& quad : quads) {
++      quad.Scale(
++          GetDocument().GetNoiseFactorX(), GetDocument().GetNoiseFactorY());
++    }
++  }
++
+   return MakeGarbageCollected<DOMRectList>(quads);
+ }
+ 
+@@ -2109,6 +2057,12 @@ FloatRect Element::GetBoundingClientRectNoLifecycleUpdate() const {
+   DCHECK(element_layout_object);
+   GetDocument().AdjustFloatRectForScrollAndAbsoluteZoom(result,
+                                                         *element_layout_object);
++
++  if (RuntimeEnabledFeatures::FingerprintingClientRectsNoiseEnabled()) {
++    result.Scale(
++        GetDocument().GetNoiseFactorX(), GetDocument().GetNoiseFactorY());
++  }
++
+   return result;
+ }
+ 

@@ -1,8 +1,17 @@
 diff --git a/services/network/network_context.cc b/services/network/network_context.cc
-index 1532b031db2cc..a86035cc7fbcd 100644
+index 1532b031db2cc..ef5b4af5f7588 100644
 --- a/services/network/network_context.cc
 +++ b/services/network/network_context.cc
-@@ -42,6 +42,7 @@
+@@ -33,8 +33,6 @@
+ #include "build/chromecast_buildflags.h"
+ #include "build/chromeos_buildflags.h"
+ #include "components/cookie_config/cookie_store_util.h"
+-#include "components/domain_reliability/features.h"
+-#include "components/domain_reliability/monitor.h"
+ #include "components/network_session_configurator/browser/network_session_configurator.h"
+ #include "components/network_session_configurator/common/network_switches.h"
+ #include "components/prefs/json_pref_store.h"
+@@ -42,6 +40,7 @@
  #include "components/prefs/pref_service.h"
  #include "components/prefs/pref_service_factory.h"
  #include "crypto/sha2.h"
@@ -10,7 +19,7 @@ index 1532b031db2cc..a86035cc7fbcd 100644
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "net/base/features.h"
  #include "net/base/load_flags.h"
-@@ -82,7 +83,6 @@
+@@ -82,7 +81,6 @@
  #include "services/network/ignore_errors_cert_verifier.h"
  #include "services/network/net_log_exporter.h"
  #include "services/network/network_service.h"
@@ -18,3 +27,150 @@ index 1532b031db2cc..a86035cc7fbcd 100644
  #include "services/network/network_service_proxy_delegate.h"
  #include "services/network/p2p/socket_manager.h"
  #include "services/network/proxy_config_service_mojo.h"
+@@ -244,6 +242,7 @@ base::RepeatingCallback<bool(const std::string& host_name)> MakeDomainFilter(
+                              std::move(filter_domains));
+ }
+ 
++#if 0
+ // Predicate function to determine if the given |url| matches the |filter_type|,
+ // |filter_domains| and |filter_origins| from a |mojom::ClearDataFilter|.
+ bool MatchesUrlFilter(mojom::ClearDataFilter_Type filter_type,
+@@ -283,6 +282,7 @@ base::RepeatingCallback<bool(const GURL&)> BuildUrlFilter(
+                              std::move(filter_domains),
+                              std::move(filter_origins));
+ }
++#endif
+ 
+ #if defined(OS_ANDROID)
+ class NetworkContextApplicationStatusListener
+@@ -496,17 +496,6 @@ NetworkContext::~NetworkContext() {
+   if (cert_net_fetcher_)
+     cert_net_fetcher_->Shutdown();
+ 
+-  if (domain_reliability_monitor_)
+-    domain_reliability_monitor_->Shutdown();
+-  // Because of the order of declaration in the class,
+-  // domain_reliability_monitor_ will be destroyed before
+-  // |url_loader_factories_| which could own URLLoader's whose destructor call
+-  // back into this class and might use domain_reliability_monitor_. So we reset
+-  // |domain_reliability_monitor_| here explicitly, instead of changing the
+-  // order, because any work calling into |domain_reliability_monitor_| at
+-  // shutdown would be unnecessary as the reports would be thrown out.
+-  domain_reliability_monitor_.reset();
+-
+   if (url_request_context_ &&
+       url_request_context_->transport_security_state()) {
+     if (certificate_report_sender_) {
+@@ -986,38 +975,6 @@ void NetworkContext::QueueSignedExchangeReport(
+ }
+ #endif  // BUILDFLAG(ENABLE_REPORTING)
+ 
+-void NetworkContext::ClearDomainReliability(
+-    mojom::ClearDataFilterPtr filter,
+-    DomainReliabilityClearMode mode,
+-    ClearDomainReliabilityCallback callback) {
+-  if (domain_reliability_monitor_) {
+-    domain_reliability::DomainReliabilityClearMode dr_mode;
+-    if (mode ==
+-        mojom::NetworkContext::DomainReliabilityClearMode::CLEAR_CONTEXTS) {
+-      dr_mode = domain_reliability::CLEAR_CONTEXTS;
+-    } else {
+-      dr_mode = domain_reliability::CLEAR_BEACONS;
+-    }
+-
+-    domain_reliability_monitor_->ClearBrowsingData(
+-        dr_mode, BuildUrlFilter(std::move(filter)));
+-  }
+-  std::move(callback).Run();
+-}
+-
+-void NetworkContext::GetDomainReliabilityJSON(
+-    GetDomainReliabilityJSONCallback callback) {
+-  if (!domain_reliability_monitor_) {
+-    base::DictionaryValue data;
+-    data.SetString("error", "no_service");
+-    std::move(callback).Run(std::move(data));
+-    return;
+-  }
+-
+-  std::move(callback).Run(
+-      std::move(*domain_reliability_monitor_->GetWebUIData()));
+-}
+-
+ void NetworkContext::CloseAllConnections(CloseAllConnectionsCallback callback) {
+   net::HttpNetworkSession* http_session =
+       url_request_context_->http_transaction_factory()->GetSession();
+@@ -1693,26 +1650,6 @@ void NetworkContext::CreateMdnsResponder(
+ #endif  // BUILDFLAG(ENABLE_MDNS)
+ }
+ 
+-void NetworkContext::AddDomainReliabilityContextForTesting(
+-    const GURL& origin,
+-    const GURL& upload_url,
+-    AddDomainReliabilityContextForTestingCallback callback) {
+-  auto config = std::make_unique<domain_reliability::DomainReliabilityConfig>();
+-  config->origin = origin;
+-  config->include_subdomains = false;
+-  config->collectors.push_back(std::make_unique<GURL>(upload_url));
+-  config->success_sample_rate = 1.0;
+-  config->failure_sample_rate = 1.0;
+-  domain_reliability_monitor_->AddContextForTesting(std::move(config));
+-  std::move(callback).Run();
+-}
+-
+-void NetworkContext::ForceDomainReliabilityUploadsForTesting(
+-    ForceDomainReliabilityUploadsForTestingCallback callback) {
+-  domain_reliability_monitor_->ForceUploadsForTesting();
+-  std::move(callback).Run();
+-}
+-
+ void NetworkContext::SetSplitAuthCacheByNetworkIsolationKey(
+     bool split_auth_cache_by_network_isolation_key) {
+   url_request_context_->http_transaction_factory()
+@@ -2220,10 +2157,7 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
+       base::FeatureList::IsEnabled(
+           net::features::kPartitionNelAndReportingByNetworkIsolationKey) &&
+       base::FeatureList::IsEnabled(
+-          net::features::kPartitionSSLSessionsByNetworkIsolationKey) &&
+-      base::FeatureList::IsEnabled(
+-          domain_reliability::features::
+-              kPartitionDomainReliabilityByNetworkIsolationKey)) {
++          net::features::kPartitionSSLSessionsByNetworkIsolationKey)) {
+     result.url_request_context->set_require_network_isolation_key(true);
+   }
+ 
+@@ -2292,18 +2226,6 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
+   }
+ #endif  // BUILDFLAG(IS_CT_SUPPORTED)
+ 
+-  if (params_->enable_domain_reliability) {
+-    domain_reliability_monitor_ =
+-        std::make_unique<domain_reliability::DomainReliabilityMonitor>(
+-            result.url_request_context.get(),
+-            params_->domain_reliability_upload_reporter,
+-            base::BindRepeating(&NetworkContext::CanUploadDomainReliability,
+-                                base::Unretained(this)));
+-    domain_reliability_monitor_->AddBakedInConfigs();
+-    domain_reliability_monitor_->SetDiscardUploads(
+-        params_->discard_domain_reliablity_uploads);
+-  }
+-
+   if (proxy_delegate_) {
+     proxy_delegate_->SetProxyResolutionService(
+         result.url_request_context->proxy_resolution_service());
+@@ -2406,6 +2328,7 @@ void NetworkContext::DestroySocketManager(P2PSocketManager* socket_manager) {
+   socket_managers_.erase(iter);
+ }
+ 
++#if 0
+ void NetworkContext::CanUploadDomainReliability(
+     const GURL& origin,
+     base::OnceCallback<void(bool)> callback) {
+@@ -2415,6 +2338,7 @@ void NetworkContext::CanUploadDomainReliability(
+                         bool allowed) { std::move(callback).Run(allowed); },
+                      std::move(callback)));
+ }
++#endif
+ 
+ void NetworkContext::OnVerifyCertForSignedExchangeComplete(int cert_verify_id,
+                                                            int result) {
