@@ -13,29 +13,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_BROWSER_DUMB_BROWSER_MAIN_EXTRA_PARTS_H_
-#define DUMB_BROWSER_DUMB_BROWSER_MAIN_EXTRA_PARTS_H_
+#ifndef DUMB_BROWSER_BROWSER_ABOUT_FLAGS_H_
+#define DUMB_BROWSER_BROWSER_ABOUT_FLAGS_H_
 
-#include "base/macros.h"
-#include "chrome/browser/chrome_browser_main_extra_parts.h"
+#include <stddef.h>
+#include <stdint.h>
 
-class ChromeBrowserMainParts;
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
-namespace dumb {
+#include "components/flags_ui/feature_entry.h"
+#include "components/flags_ui/flags_state.h"
 
-void AddProfilesExtraParts(ChromeBrowserMainParts* main_parts);
+namespace about_flags {
+
+const base::span<const flags_ui::FeatureEntry> GetDumbFeatureEntries();
 
 }
 
-class DumbBrowserMainExtraPartsProfiles: public ChromeBrowserMainExtraParts {
-public:
-  DumbBrowserMainExtraPartsProfiles();
-  ~DumbBrowserMainExtraPartsProfiles() override;
-
-  // Overridden from ChromeBrowserMainExtraParts:
-  void PreProfileInit() override;
-
-  DISALLOW_COPY_AND_ASSIGN(DumbBrowserMainExtraPartsProfiles);
-};
-
-#endif // DUMB_BROWSER_DUMB_BROWSER_MAIN_EXTRA_PARTS_H_
+#endif // DUMB_BROWSER_BROWSER_ABOUT_FLAGS_H_

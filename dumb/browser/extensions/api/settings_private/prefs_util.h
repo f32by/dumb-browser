@@ -13,29 +13,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_BROWSER_DUMB_BROWSER_MAIN_EXTRA_PARTS_H_
-#define DUMB_BROWSER_DUMB_BROWSER_MAIN_EXTRA_PARTS_H_
+#ifndef DUMB_BROWSER_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_PREFS_UTIL_H_
+#define DUMB_BROWSER_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_PREFS_UTIL_H_
 
-#include "base/macros.h"
-#include "chrome/browser/chrome_browser_main_extra_parts.h"
+#include <map>
+#include <string>
 
-class ChromeBrowserMainParts;
+#include "chrome/common/extensions/api/settings_private.h"
 
 namespace dumb {
 
-void AddProfilesExtraParts(ChromeBrowserMainParts* main_parts);
+using TypedPrefMap = std::map<std::string,
+                              extensions::api::settings_private::PrefType>;
+
+void AddAllowlistedKeys(TypedPrefMap& s_allowlist);
 
 }
 
-class DumbBrowserMainExtraPartsProfiles: public ChromeBrowserMainExtraParts {
-public:
-  DumbBrowserMainExtraPartsProfiles();
-  ~DumbBrowserMainExtraPartsProfiles() override;
-
-  // Overridden from ChromeBrowserMainExtraParts:
-  void PreProfileInit() override;
-
-  DISALLOW_COPY_AND_ASSIGN(DumbBrowserMainExtraPartsProfiles);
-};
-
-#endif // DUMB_BROWSER_DUMB_BROWSER_MAIN_EXTRA_PARTS_H_
+#endif // DUMB_BROWSER_BROWSER_EXTENSIONS_API_SETTINGS_PRIVATE_PREFS_UTIL_H_

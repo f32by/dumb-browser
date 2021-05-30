@@ -1,0 +1,132 @@
+diff --git a/components/flags_ui/flags_state.cc b/components/flags_ui/flags_state.cc
+index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
+--- a/components/flags_ui/flags_state.cc
++++ b/components/flags_ui/flags_state.cc
+@@ -295,8 +295,10 @@ FlagsState::Delegate::Delegate() = default;
+ FlagsState::Delegate::~Delegate() = default;
+ 
+ FlagsState::FlagsState(base::span<const FeatureEntry> feature_entries,
++                       base::span<const FeatureEntry> dumb_feature_entries,
+                        FlagsState::Delegate* delegate)
+     : feature_entries_(feature_entries),
++      dumb_feature_entries_(dumb_feature_entries),
+       needs_restart_(false),
+       delegate_(delegate) {}
+ 
+@@ -500,8 +502,11 @@ std::vector<std::string> FlagsState::RegisterAllFeatureVariationParameters(
+   std::map<std::string, std::map<std::string, std::string>>
+       params_by_trial_name;
+ 
+-  // First collect all the data for each trial.
+-  for (const FeatureEntry& entry : feature_entries_) {
++  const auto CollectData =
++      [&enabled_entries,
++       &enabled_features_by_trial_name,
++       &params_by_trial_name,
++       &variation_ids](const FeatureEntry& entry) {
+     if (entry.type == FeatureEntry::FEATURE_WITH_PARAMS_VALUE) {
+       for (int j = 0; j < entry.NumOptions(); ++j) {
+         if (entry.StateForOption(j) == FeatureEntry::FeatureState::ENABLED &&
+@@ -532,6 +537,16 @@ std::vector<std::string> FlagsState::RegisterAllFeatureVariationParameters(
+         }
+       }
+     }
++  };
++
++  // First collect all the data for each trial.
++  for (const FeatureEntry& entry : feature_entries_) {
++    CollectData(entry);
++  }
++
++  // Collect Dumb Browser's flags.
++  for (const FeatureEntry& entry : dumb_feature_entries_) {
++    CollectData(entry);
+   }
+ 
+   // Now create the trials and associate the features to them.
+@@ -567,9 +582,15 @@ void FlagsState::GetFlagFeatureEntries(
+ 
+   int current_platform = GetCurrentPlatform();
+ 
+-  for (const FeatureEntry& entry : feature_entries_) {
++  const auto CollectEntry =
++      [&skip_feature_entry,
++       &enabled_entries,
++       &flags_storage,
++       current_platform,
++       &supported_entries,
++       &unsupported_entries](const FeatureEntry& entry) {
+     if (skip_feature_entry.Run(entry))
+-      continue;
++      return;
+ 
+     std::unique_ptr<base::DictionaryValue> data(new base::DictionaryValue());
+     data->SetString("internal_name", entry.internal_name);
+@@ -620,6 +641,14 @@ void FlagsState::GetFlagFeatureEntries(
+       supported_entries->Append(std::move(data));
+     else
+       unsupported_entries->Append(std::move(data));
++  };
++
++  for (const FeatureEntry& entry : feature_entries_) {
++    CollectEntry(entry);
++  }
++
++  for (const FeatureEntry& entry : dumb_feature_entries_) {
++    CollectEntry(entry);
+   }
+ }
+ 
+@@ -791,7 +820,8 @@ void FlagsState::GenerateFlagsToSwitchesMapping(
+     std::map<std::string, SwitchEntry>* name_to_switch_map) const {
+   GetSanitizedEnabledFlagsForCurrentPlatform(flags_storage, enabled_entries);
+ 
+-  for (const FeatureEntry& entry : feature_entries_) {
++  const auto CollectEntry =
++      [this, &name_to_switch_map, flags_storage](const FeatureEntry& entry) {
+     switch (entry.type) {
+       case FeatureEntry::SINGLE_VALUE:
+       case FeatureEntry::SINGLE_DISABLE_VALUE:
+@@ -867,6 +897,14 @@ void FlagsState::GenerateFlagsToSwitchesMapping(
+         }
+         break;
+     }
++  };
++
++  for (const FeatureEntry& entry : feature_entries_) {
++    CollectEntry(entry);
++  }
++
++  for (const FeatureEntry& entry : dumb_feature_entries_) {
++    CollectEntry(entry);
+   }
+ }
+ 
+@@ -876,6 +914,10 @@ const FeatureEntry* FlagsState::FindFeatureEntryByName(
+     if (entry.internal_name == internal_name)
+       return &entry;
+   }
++  for (const FeatureEntry& entry : dumb_feature_entries_) {
++    if (entry.internal_name == internal_name)
++      return &entry;
++  }
+   return nullptr;
+ }
+ 
+@@ -892,6 +934,16 @@ bool FlagsState::IsSupportedFeature(const FlagsStorage* storage,
+       continue;
+     return true;
+   }
++  for (const auto& entry : dumb_feature_entries_) {
++    DCHECK(IsValidFeatureEntry(entry));
++    if (!(entry.supported_platforms & platform_mask))
++      continue;
++    if (!entry.InternalNameMatches(name))
++      continue;
++    if (delegate_ && delegate_->ShouldExcludeFlag(storage, entry))
++      continue;
++    return true;
++  }
+   return false;
+ }
+ 

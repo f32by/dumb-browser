@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "base/command_line.h"
+#include "base/feature_list.h"
 #include "chrome/app/vector_icons/vector_icons.h"
 #include "chrome/browser/ui/layout_constants.h"
 #include "chrome/browser/ui/tabs/tab_utils.h"
@@ -14,6 +15,7 @@
 #include "chrome/browser/ui/views/tabs/tab_controller.h"
 #include "chrome/common/chrome_switches.h"
 #include "components/vector_icons/vector_icons.h"
+#include "dumb/browser/ui/ui_features.h"
 #include "ui/base/pointer/touch_ui_controller.h"
 #include "ui/gfx/animation/multi_animation.h"
 #include "ui/gfx/canvas.h"
@@ -198,8 +200,8 @@ gfx::Image GetTabAlertIndicatorAffordanceImage(TabAlertState alert_state,
 }
 
 bool AreExperimentalMuteControlsEnabled() {
-  return base::CommandLine::ForCurrentProcess()->HasSwitch(
-      switches::kEnableTabAudioMuting);
+  return true;
+  // return base::IsFeatureEnabled(features::kTabAudioMuting);
 }
 
 }  // namespace

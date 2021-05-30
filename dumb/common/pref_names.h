@@ -13,13 +13,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_COMMON_DUMB_SWITCHES_H_
-#define DUMB_COMMON_DUMB_SWITCHES_H_
+#ifndef DUMB_BROWSER_COMMON_PREF_NAMES_H_
+#define DUMB_BROWSER_COMMON_PREF_NAMES_H_
 
-namespace switches {
+namespace prefs {
 
-extern const char kEnableTabAudioMuting[];
+extern const char kRemoveAfterCompletion[];
 
 }
 
-#endif  // DUMB_COMMON_DUMB_SWITCHES_H_
+#endif // DUMB_BROWSER_COMMON_PREF_NAMES_H_

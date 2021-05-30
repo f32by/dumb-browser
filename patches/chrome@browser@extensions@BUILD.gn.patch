@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/extensions/BUILD.gn b/chrome/browser/extensions/BUILD.gn
-index 08a1b17e85757..813ca21f7b59d 100644
+index 08a1b17e85757..52070ed5a793b 100644
 --- a/chrome/browser/extensions/BUILD.gn
 +++ b/chrome/browser/extensions/BUILD.gn
-@@ -150,14 +150,10 @@ static_library("extensions") {
+@@ -10,6 +10,7 @@ import("//chrome/browser/resources/pdf/ink/ink.gni")
+ import("//chrome/common/features.gni")
+ import("//chromeos/components/chromebox_for_meetings/buildflags/buildflags.gni")
+ import("//components/nacl/features.gni")
++import("//dumb/browser/extensions/sources.gni")
+ import("//extensions/buildflags/buildflags.gni")
+ import("//mojo/public/tools/bindings/mojom.gni")
+ import("//pdf/features.gni")
+@@ -150,14 +151,10 @@ static_library("extensions") {
      "api/downloads_internal/downloads_internal_api.h",
      "api/enterprise_hardware_platform/enterprise_hardware_platform_api.cc",
      "api/enterprise_hardware_platform/enterprise_hardware_platform_api.h",
@@ -17,7 +25,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "api/file_system/chrome_file_system_delegate.cc",
      "api/file_system/chrome_file_system_delegate.h",
      "api/file_system/file_entry_picker.cc",
-@@ -307,14 +303,6 @@ static_library("extensions") {
+@@ -307,14 +304,6 @@ static_library("extensions") {
      "api/resources_private/resources_private_api.h",
      "api/runtime/chrome_runtime_api_delegate.cc",
      "api/runtime/chrome_runtime_api_delegate.h",
@@ -32,7 +40,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "api/scripting/scripting_api.cc",
      "api/scripting/scripting_api.h",
      "api/search/search_api.cc",
-@@ -615,8 +603,6 @@ static_library("extensions") {
+@@ -615,8 +604,6 @@ static_library("extensions") {
      "external_pref_loader.h",
      "external_provider_impl.cc",
      "external_provider_impl.h",
@@ -41,7 +49,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "forced_extensions/force_installed_tracker.cc",
      "forced_extensions/force_installed_tracker.h",
      "forced_extensions/install_stage_tracker.cc",
-@@ -646,8 +632,6 @@ static_library("extensions") {
+@@ -646,8 +633,6 @@ static_library("extensions") {
      "launch_util.h",
      "load_error_reporter.cc",
      "load_error_reporter.h",
@@ -50,7 +58,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "menu_manager.cc",
      "menu_manager.h",
      "menu_manager_factory.cc",
-@@ -670,8 +654,6 @@ static_library("extensions") {
+@@ -670,8 +655,6 @@ static_library("extensions") {
      "policy_handlers.h",
      "proxy_overridden_bubble_delegate.cc",
      "proxy_overridden_bubble_delegate.h",
@@ -59,7 +67,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "scoped_active_install.cc",
      "scoped_active_install.h",
      "scripting_permissions_modifier.cc",
-@@ -751,9 +733,6 @@ static_library("extensions") {
+@@ -751,9 +734,6 @@ static_library("extensions") {
  
      # TODO(crbug.com/1065748): Remove this circular dependency.
      "//chrome/browser/web_applications/extensions",
@@ -69,7 +77,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
    ]
  
    # Since browser and browser_extensions actually depend on each other,
-@@ -766,8 +745,6 @@ static_library("extensions") {
+@@ -766,8 +746,6 @@ static_library("extensions") {
      "//chrome/common",
      "//chrome/common/extensions/api",
      "//components/omnibox/browser",
@@ -78,7 +86,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//components/signin/core/browser",
      "//components/translate/content/browser",
      "//content/public/browser",
-@@ -799,8 +776,6 @@ static_library("extensions") {
+@@ -799,8 +777,6 @@ static_library("extensions") {
      "//chrome/browser/profiles:profile",
      "//chrome/browser/resource_coordinator:intervention_policy_database_proto",
      "//chrome/browser/resource_coordinator:mojo_bindings",
@@ -87,7 +95,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//chrome/browser/web_applications",
      "//chrome/browser/web_applications/components",
      "//components/site_engagement/core/mojom:mojo_bindings",
-@@ -809,7 +784,6 @@ static_library("extensions") {
+@@ -809,7 +785,6 @@ static_library("extensions") {
      # TODO(crbug.com/1065748): Remove this dependency:
      "//chrome/browser/web_applications/extensions",
      "//chrome/common/extensions/api:extensions_features",
@@ -95,7 +103,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//chrome/services/removable_storage_writer/public/mojom",
      "//components/autofill/content/browser",
      "//components/bookmarks/browser",
-@@ -828,7 +802,6 @@ static_library("extensions") {
+@@ -828,7 +803,6 @@ static_library("extensions") {
      "//components/embedder_support:browser_util",
      "//components/enterprise",
      "//components/favicon/content",
@@ -103,7 +111,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//components/gcm_driver",
      "//components/guest_view/browser",
      "//components/history/core/browser",
-@@ -842,7 +815,6 @@ static_library("extensions") {
+@@ -842,7 +816,6 @@ static_library("extensions") {
      "//components/net_log",
      "//components/no_state_prefetch/browser",
      "//components/onc",
@@ -111,7 +119,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//components/password_manager/core/browser",
      "//components/password_manager/core/browser:affiliation",
      "//components/password_manager/core/browser/leak_detection",
-@@ -856,12 +828,6 @@ static_library("extensions") {
+@@ -856,12 +829,6 @@ static_library("extensions") {
      "//components/privacy_sandbox:privacy_sandbox_prefs",
      "//components/proxy_config",
      "//components/resources",
@@ -124,7 +132,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//components/search_engines",
      "//components/services/app_service/public/mojom",
      "//components/services/patch/content",
-@@ -880,7 +846,6 @@ static_library("extensions") {
+@@ -880,7 +847,6 @@ static_library("extensions") {
      "//components/translate/core/browser",
      "//components/translate/core/common",
      "//components/undo",
@@ -132,7 +140,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//components/update_client",
      "//components/update_client:common_impl",
      "//components/url_formatter",
-@@ -913,7 +878,6 @@ static_library("extensions") {
+@@ -913,7 +879,6 @@ static_library("extensions") {
      "//services/audio/public/cpp",
      "//services/data_decoder/public/cpp",
      "//services/device/public/mojom",
@@ -140,7 +148,16 @@ index 08a1b17e85757..813ca21f7b59d 100644
      "//services/network/public/mojom",
      "//services/service_manager/public/cpp",
      "//services/service_manager/public/mojom",
-@@ -1116,7 +1080,6 @@ static_library("extensions") {
+@@ -948,6 +913,8 @@ static_library("extensions") {
+     "//url",
+   ]
+ 
++  deps += dumb_browser_extensions_deps
++
+   if (is_chromeos_ash) {
+     deps += [ "//chromeos/resources:media_app_bundle_resources_grit" ]
+   }
+@@ -1116,7 +1083,6 @@ static_library("extensions") {
        "//chromeos/ui/base",
        "//components/arc",
        "//components/constrained_window",
@@ -148,7 +165,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
        "//components/drive",
        "//components/user_manager",
        "//media/capture:capture_lib",
-@@ -1142,10 +1105,6 @@ static_library("extensions") {
+@@ -1142,10 +1108,6 @@ static_library("extensions") {
    } else {
      assert(!is_chromeos_ash)
      sources += [
@@ -159,7 +176,7 @@ index 08a1b17e85757..813ca21f7b59d 100644
        "api/image_writer_private/operation_nonchromeos.cc",
        "api/tabs/tabs_util.cc",
        "chrome_kiosk_delegate.cc",
-@@ -1154,7 +1113,6 @@ static_library("extensions") {
+@@ -1154,7 +1116,6 @@ static_library("extensions") {
      ]
      deps += [
        "//components/enterprise",

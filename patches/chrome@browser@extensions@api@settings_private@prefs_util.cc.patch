@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-index 37097579608d2..3ec9481ccff36 100644
+index 37097579608d2..aaac6022048f0 100644
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -41,7 +41,6 @@
+@@ -41,13 +41,13 @@
  #include "components/prefs/pref_service.h"
  #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
  #include "components/proxy_config/proxy_config_pref_names.h"
@@ -10,7 +10,23 @@ index 37097579608d2..3ec9481ccff36 100644
  #include "components/search_engines/default_search_manager.h"
  #include "components/spellcheck/browser/pref_names.h"
  #include "components/translate/core/browser/translate_pref_names.h"
-@@ -282,24 +281,9 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+ #include "components/translate/core/browser/translate_prefs.h"
+ #include "components/unified_consent/pref_names.h"
+ #include "components/url_formatter/url_fixer.h"
++#include "dumb/browser/extensions/api/settings_private/prefs_util.h"
+ #include "extensions/browser/extension_pref_value_map.h"
+ #include "extensions/browser/extension_pref_value_map_factory.h"
+ #include "extensions/browser/extension_registry.h"
+@@ -162,6 +162,8 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+     return *s_allowlist;
+   s_allowlist = new PrefsUtil::TypedPrefMap();
+ 
++  dumb::AddAllowlistedKeys(*s_allowlist);
++
+   // Miscellaneous
+   (*s_allowlist)[::embedder_support::kAlternateErrorPagesEnabled] =
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+@@ -282,24 +284,9 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
          settings_api::PrefType::PREF_TYPE_BOOLEAN;
    }
  

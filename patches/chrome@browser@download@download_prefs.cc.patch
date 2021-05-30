@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/download_prefs.cc b/chrome/browser/download/download_prefs.cc
-index a95103026c8c3..1431f1b11ff45 100644
+index a95103026c8c3..e05526b55e220 100644
 --- a/chrome/browser/download/download_prefs.cc
 +++ b/chrome/browser/download/download_prefs.cc
 @@ -29,7 +29,6 @@
@@ -10,7 +10,7 @@ index a95103026c8c3..1431f1b11ff45 100644
  #include "chrome/browser/download/download_target_determiner.h"
  #include "chrome/browser/download/trusted_sources_manager.h"
  #include "chrome/browser/profiles/profile.h"
-@@ -42,7 +41,6 @@
+@@ -42,10 +41,10 @@
  #include "components/policy/core/browser/url_blocklist_manager.h"
  #include "components/pref_registry/pref_registry_syncable.h"
  #include "components/prefs/pref_service.h"
@@ -18,7 +18,11 @@ index a95103026c8c3..1431f1b11ff45 100644
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/download_manager.h"
  #include "content/public/browser/save_page_type.h"
-@@ -61,7 +59,6 @@
++#include "dumb/common/pref_names.h"
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+ #include "chrome/browser/ash/drive/drive_integration_service.h"
+@@ -61,7 +60,6 @@
  using content::BrowserContext;
  using content::BrowserThread;
  using content::DownloadManager;
@@ -26,8 +30,11 @@ index a95103026c8c3..1431f1b11ff45 100644
  
  namespace {
  
-@@ -200,12 +197,8 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+@@ -198,14 +196,11 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+   }
+ 
    prompt_for_download_.Init(prefs::kPromptForDownload, prefs);
++  remove_after_completion_.Init(prefs::kRemoveAfterCompletion, prefs);
  #if defined(OS_ANDROID)
    prompt_for_download_android_.Init(prefs::kPromptForDownloadAndroid, prefs);
 -  RecordDownloadPromptStatus(
@@ -39,7 +46,7 @@ index a95103026c8c3..1431f1b11ff45 100644
    }
  
    // If |kDownloadsLocationChange| is not enabled, always uses the default
-@@ -221,8 +214,6 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+@@ -221,8 +216,6 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
    download_path_.Init(prefs::kDownloadDefaultDirectory, prefs);
    save_file_path_.Init(prefs::kSaveFileDefaultDirectory, prefs);
    save_file_type_.Init(prefs::kSaveFileType, prefs);
@@ -48,7 +55,7 @@ index a95103026c8c3..1431f1b11ff45 100644
    download_restriction_.Init(prefs::kDownloadRestrictions, prefs);
  
    pref_change_registrar_.Add(
-@@ -266,14 +257,7 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
+@@ -266,14 +259,7 @@ DownloadPrefs::DownloadPrefs(Profile* profile) : profile_(profile) {
          base::FilePath::StringType(1, base::FilePath::kExtensionSeparator) +
          extension);
  
@@ -64,7 +71,18 @@ index a95103026c8c3..1431f1b11ff45 100644
    }
  }
  
-@@ -293,8 +277,6 @@ void DownloadPrefs::RegisterProfilePrefs(
+@@ -286,6 +272,10 @@ void DownloadPrefs::RegisterProfilePrefs(
+       prefs::kPromptForDownload,
+       false,
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
++  registry->RegisterBooleanPref(
++      prefs::kRemoveAfterCompletion,
++      false,
++      user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+   registry->RegisterStringPref(prefs::kDownloadExtensionsToOpen, std::string());
+   registry->RegisterListPref(prefs::kDownloadExtensionsToOpenByPolicy, {});
+   registry->RegisterListPref(prefs::kDownloadAllowedURLsForOpenByPolicy, {});
+@@ -293,8 +283,6 @@ void DownloadPrefs::RegisterProfilePrefs(
    registry->RegisterIntegerPref(prefs::kSaveFileType,
                                  content::SAVE_PAGE_TYPE_AS_COMPLETE_HTML);
    registry->RegisterIntegerPref(prefs::kDownloadRestrictions, 0);
@@ -73,7 +91,7 @@ index a95103026c8c3..1431f1b11ff45 100644
  
    const base::FilePath& default_download_path = GetDefaultDownloadDirectory();
    registry->RegisterFilePathPref(prefs::kDownloadDefaultDirectory,
-@@ -473,10 +455,6 @@ bool DownloadPrefs::IsAutoOpenByPolicy(const GURL& url,
+@@ -473,10 +461,6 @@ bool DownloadPrefs::IsAutoOpenByPolicy(const GURL& url,
  bool DownloadPrefs::EnableAutoOpenByUserBasedOnExtension(
      const base::FilePath& file_name) {
    base::FilePath::StringType extension = file_name.Extension();
@@ -84,3 +102,11 @@ index a95103026c8c3..1431f1b11ff45 100644
  
    DCHECK(extension[0] == base::FilePath::kExtensionSeparator);
    extension.erase(0, 1);
+@@ -675,3 +659,7 @@ bool DownloadPrefs::AutoOpenCompareFunctor::operator()(
+     const base::FilePath::StringType& b) const {
+   return base::FilePath::CompareLessIgnoreCase(a, b);
+ }
++
++bool DownloadPrefs::RemoveAfterCompletion() const {
++  return *remove_after_completion_;
++}

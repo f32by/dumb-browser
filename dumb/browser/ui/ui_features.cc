@@ -17,6 +17,12 @@
 
 namespace features {
 
+const base::Feature kExtensionsToolbarMenu{"ExtensionsToolbarMenu",
+                                           base::FEATURE_ENABLED_BY_DEFAULT};
+
 const base::Feature kTabSearch{"TabSearch", base::FEATURE_DISABLED_BY_DEFAULT};
+
+const base::Feature kTabAudioMuting{"TabMuting",
+                                    base::FEATURE_ENABLED_BY_DEFAULT};
 
 }

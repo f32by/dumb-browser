@@ -1,0 +1,20 @@
+diff --git a/components/flags_ui/flags_state.h b/components/flags_ui/flags_state.h
+index 6943e778ded0f..0c315cd2d94b7 100644
+--- a/components/flags_ui/flags_state.h
++++ b/components/flags_ui/flags_state.h
+@@ -84,6 +84,7 @@ class FlagsState {
+ 
+   // The delegate may be nullptr.
+   FlagsState(base::span<const FeatureEntry> feature_entries,
++             base::span<const FeatureEntry> dumb_feature_entries,
+              Delegate* delegate);
+   ~FlagsState();
+ 
+@@ -237,6 +238,7 @@ class FlagsState {
+                           int platform_mask) const;
+ 
+   const base::span<const FeatureEntry> feature_entries_;
++  const base::span<const FeatureEntry> dumb_feature_entries_;
+ 
+   bool needs_restart_;
+   std::map<std::string, std::string> flags_switches_;

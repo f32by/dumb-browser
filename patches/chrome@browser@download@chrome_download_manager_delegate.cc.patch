@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/chrome_download_manager_delegate.cc b/chrome/browser/download/chrome_download_manager_delegate.cc
-index 48e40037fa945..883009f17ee3e 100644
+index 48e40037fa945..01cc2e4b16730 100644
 --- a/chrome/browser/download/chrome_download_manager_delegate.cc
 +++ b/chrome/browser/download/chrome_download_manager_delegate.cc
 @@ -43,13 +43,8 @@
@@ -35,17 +35,7 @@ index 48e40037fa945..883009f17ee3e 100644
  using ConnectionType = net::NetworkChangeNotifier::ConnectionType;
  
  namespace {
-@@ -379,7 +369,8 @@ ChromeDownloadManagerDelegate::ChromeDownloadManagerDelegate(Profile* profile)
-       next_download_id_(download::DownloadItem::kInvalidId),
-       next_id_retrieved_(false),
-       download_prefs_(new DownloadPrefs(profile)),
--      is_file_picker_showing_(false) {
-+      is_file_picker_showing_(false),
-+      should_remove_after_completion_(true) {
- #if defined(OS_ANDROID)
-   download_dialog_bridge_.reset(new DownloadDialogBridge);
- #endif
-@@ -392,13 +383,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
+@@ -392,13 +382,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
  
  void ChromeDownloadManagerDelegate::SetDownloadManager(DownloadManager* dm) {
    download_manager_ = dm;
@@ -59,7 +49,7 @@ index 48e40037fa945..883009f17ee3e 100644
  }
  
  #if defined(OS_ANDROID)
-@@ -746,6 +730,7 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
+@@ -746,6 +729,7 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
  
  void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
      base::FilePath* filename) {
@@ -67,7 +57,7 @@ index 48e40037fa945..883009f17ee3e 100644
    safe_browsing::FileTypePolicies* file_type_policies =
        safe_browsing::FileTypePolicies::GetInstance();
  
-@@ -756,6 +741,7 @@ void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
+@@ -756,6 +740,7 @@ void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
    base::FilePath default_filename = base::FilePath::FromUTF8Unsafe(
        l10n_util::GetStringUTF8(IDS_DEFAULT_DOWNLOAD_FILENAME));
    *filename = filename->AddExtension(default_filename.BaseName().value());
@@ -75,7 +65,7 @@ index 48e40037fa945..883009f17ee3e 100644
  }
  
  void ChromeDownloadManagerDelegate::SanitizeDownloadParameters(
-@@ -883,19 +869,6 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
+@@ -883,19 +868,6 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
    return std::string(chrome::kApplicationClientIDStringForAVScanning);
  }
  
@@ -95,7 +85,7 @@ index 48e40037fa945..883009f17ee3e 100644
  void ChromeDownloadManagerDelegate::GetMixedContentStatus(
      download::DownloadItem* download,
      const base::FilePath& virtual_path,
-@@ -1441,7 +1414,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
+@@ -1441,7 +1413,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
        DownloadItemModel(item).SetShouldPreferOpeningInBrowser(true);
  #endif
  
@@ -103,7 +93,7 @@ index 48e40037fa945..883009f17ee3e 100644
    }
    if (ShouldBlockFile(target_info->danger_type, item)) {
      MaybeReportDangerousDownloadBlocked(
-@@ -1619,22 +1591,18 @@ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
+@@ -1619,22 +1590,18 @@ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
  #endif
  }
  
@@ -128,7 +118,7 @@ index 48e40037fa945..883009f17ee3e 100644
  }
  
  void ChromeDownloadManagerDelegate::OnCheckDownloadAllowedComplete(
-@@ -1666,6 +1634,7 @@ ChromeDownloadManagerDelegate::GetWeakPtr() {
+@@ -1666,6 +1633,7 @@ ChromeDownloadManagerDelegate::GetWeakPtr() {
    return weak_ptr_factory_.GetWeakPtr();
  }
  
@@ -136,7 +126,7 @@ index 48e40037fa945..883009f17ee3e 100644
  // static
  void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
      mojo::PendingReceiver<quarantine::mojom::Quarantine> receiver) {
-@@ -1682,3 +1651,9 @@ void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
+@@ -1682,3 +1650,9 @@ void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
    mojo::MakeSelfOwnedReceiver(std::make_unique<quarantine::QuarantineImpl>(),
                                std::move(receiver));
  }
@@ -144,5 +134,5 @@ index 48e40037fa945..883009f17ee3e 100644
 +
 +// TODO
 +bool ChromeDownloadManagerDelegate::ShouldRemoveAfterCompletion() {
-+  return should_remove_after_completion_;
++  return download_prefs_->RemoveAfterCompletion();
 +}

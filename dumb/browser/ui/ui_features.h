@@ -25,7 +25,11 @@
 
 namespace features {
 
+extern const base::Feature kExtensionsToolbarMenu;
+
 extern const base::Feature kTabSearch;
+
+extern const base::Feature kTabAudioMuting;
 
 }
 

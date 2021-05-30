@@ -13,11 +13,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dumb/common/dumb_switches.h"
+#include "dumb/common/pref_names.h"
 
-namespace switches {
+namespace prefs {
 
-// Enables user control over muting tab audio from the tab strip.
-const char kEnableTabAudioMuting[] = "enable-tab-audio-muting";
+// Boolean which specifies whether the download item is automitically
+// removed after completion.
+const char kRemoveAfterCompletion[] = "download.remove_after_completion";
 
 }

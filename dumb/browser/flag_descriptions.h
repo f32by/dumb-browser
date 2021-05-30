@@ -18,6 +18,10 @@
 
 namespace flag_descriptions {
 
+extern const char kExtensionsToolbarMenuId[];
+extern const char kExtensionsToolbarMenuName[];
+extern const char kExtensionsToolbarMenuDescription[];
+
 extern const char kEnableTabSearchFlagId[];
 extern const char kEnableTabSearchName[];
 extern const char kEnableTabSearchDescription[];

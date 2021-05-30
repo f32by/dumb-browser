@@ -1,0 +1,37 @@
+diff --git a/chrome/browser/extensions/extension_context_menu_model.cc b/chrome/browser/extensions/extension_context_menu_model.cc
+index 00c1021e6ad6f..b8471030a0ab9 100644
+--- a/chrome/browser/extensions/extension_context_menu_model.cc
++++ b/chrome/browser/extensions/extension_context_menu_model.cc
+@@ -39,6 +39,7 @@
+ #include "components/vector_icons/vector_icons.h"
+ #include "content/public/browser/context_menu_params.h"
+ #include "content/public/browser/web_contents.h"
++#include "dumb/browser/ui/ui_features.h"
+ #include "extensions/browser/extension_action.h"
+ #include "extensions/browser/extension_action_manager.h"
+ #include "extensions/browser/extension_registry.h"
+@@ -98,6 +99,11 @@ int GetVisibilityStringId(
+     Profile* profile,
+     const Extension* extension,
+     ExtensionContextMenuModel::ButtonVisibility button_visibility) {
++  if (base::FeatureList::IsEnabled(features::kExtensionsToolbarMenu)) {
++    return button_visibility == ExtensionContextMenuModel::UNPINNED
++               ? IDS_EXTENSIONS_UNPIN_FROM_TOOLBAR
++               : IDS_EXTENSIONS_PIN_TO_TOOLBAR;
++  }
+   if (IsExtensionForcePinned(*extension, profile))
+     return IDS_EXTENSIONS_PINNED_BY_ADMIN;
+   if (button_visibility == ExtensionContextMenuModel::PINNED)
+@@ -287,8 +293,10 @@ bool ExtensionContextMenuModel::IsCommandIdEnabled(int command_id) const {
+     // Extension pinning/unpinning is not available for Incognito as this leaves
+     // a trace of user activity.
+     case TOGGLE_VISIBILITY:
+-      return !browser_->profile()->IsOffTheRecord() &&
+-             !IsExtensionForcePinned(*extension, profile_);
++      if (base::FeatureList::IsEnabled(features::kExtensionsToolbarMenu))
++        return !browser_->profile()->IsOffTheRecord() &&
++               !IsExtensionForcePinned(*extension, profile_);
++      break;
+     // Manage extensions is always enabled.
+     case MANAGE_EXTENSIONS:
+       return true;

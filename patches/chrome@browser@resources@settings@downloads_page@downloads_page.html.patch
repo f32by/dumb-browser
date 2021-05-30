@@ -1,0 +1,16 @@
+diff --git a/chrome/browser/resources/settings/downloads_page/downloads_page.html b/chrome/browser/resources/settings/downloads_page/downloads_page.html
+index 275057f6a2df9..3fe7b56cecafb 100644
+--- a/chrome/browser/resources/settings/downloads_page/downloads_page.html
++++ b/chrome/browser/resources/settings/downloads_page/downloads_page.html
+@@ -29,6 +29,11 @@
+         pref="{{prefs.download.prompt_for_download}}"
+         label="$i18n{promptForDownload}">
+     </settings-toggle-button>
++    <settings-toggle-button
++        class="hr"
++        pref="{{prefs.download.remove_after_completion}}"
++        label="$i18n{removeAfterCompletion}">
++    </settings-toggle-button>
+     <template is="dom-if" if="[[autoOpenDownloads_]]" restamp>
+       <div class="cr-row">
+         <div class="flex">$i18n{openFileTypesAutomatically}</div>

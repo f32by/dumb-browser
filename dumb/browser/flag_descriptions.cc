@@ -17,6 +17,11 @@
 
 namespace flag_descriptions {
 
+const char kExtensionsToolbarMenuId[] = "extensions-toolbar-menu";
+const char kExtensionsToolbarMenuName[] = "Extensions Toolbar Menu";
+const char kExtensionsToolbarMenuDescription[] =
+    "Enable a separate toolbar button and menu for extensions";
+
 const char kEnableTabSearchFlagId[] = "enable-tab-search";
 const char kEnableTabSearchName[] = "Enable Tab Search";
 const char kEnableTabSearchDescription[] =

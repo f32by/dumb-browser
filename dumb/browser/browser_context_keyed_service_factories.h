@@ -17,7 +17,9 @@
 #define DUMB_BROWSER_BROWSER_CONTEXT_KEYED_SERVICE_FACTORIES_H_
 
 namespace dumb {
+
 void EnsureBrowserContextKeyedServiceFactoriesBuilt();
+
 }
 
 #endif // DUMB_BROWSER_BROWSER_CONTEXT_KEYED_SERVICE_FACTORIES_H_
