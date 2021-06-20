@@ -1,0 +1,31 @@
+diff --git a/chrome/browser/memory/chrome_browser_main_extra_parts_memory.h b/chrome/browser/memory/chrome_browser_main_extra_parts_memory.h
+index 1c8b902f3d506..63b83e60bc771 100644
+--- a/chrome/browser/memory/chrome_browser_main_extra_parts_memory.h
++++ b/chrome/browser/memory/chrome_browser_main_extra_parts_memory.h
+@@ -19,10 +19,6 @@ class SystemMemoryPressureEvaluator;
+ }  // namespace chromeos
+ #endif
+ 
+-namespace memory {
+-class EnterpriseMemoryLimitPrefObserver;
+-}  // namespace memory
+-
+ // Wrapper that owns and initialize the browser memory-related extra parts.
+ class ChromeBrowserMainExtraPartsMemory : public ChromeBrowserMainExtraParts {
+  public:
+@@ -34,6 +30,7 @@ class ChromeBrowserMainExtraPartsMemory : public ChromeBrowserMainExtraParts {
+   void PostBrowserStart() override;
+   void PostMainMessageLoopRun() override;
+ 
++#if 0
+   // Tracks changes to the MemoryLimitMbEnabled enterprise policy, and
+   // starts/stops the EnterpriseMemoryLimitEvaluator accordingly.
+   //
+@@ -42,6 +39,7 @@ class ChromeBrowserMainExtraPartsMemory : public ChromeBrowserMainExtraParts {
+   // supported platforms.
+   std::unique_ptr<memory::EnterpriseMemoryLimitPrefObserver>
+       memory_limit_pref_observer_;
++#endif
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+   std::unique_ptr<chromeos::memory::SystemMemoryPressureEvaluator>

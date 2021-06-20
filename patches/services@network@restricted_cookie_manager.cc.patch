@@ -1,0 +1,81 @@
+diff --git a/services/network/restricted_cookie_manager.cc b/services/network/restricted_cookie_manager.cc
+index eb72668601ad3..30c47f10c2bc1 100644
+--- a/services/network/restricted_cookie_manager.cc
++++ b/services/network/restricted_cookie_manager.cc
+@@ -265,6 +265,7 @@ RestrictedCookieManager::~RestrictedCookieManager() {
+ }
+ 
+ void RestrictedCookieManager::GetAllForUrl(
++    const std::string& context_id,
+     const GURL& url,
+     const net::SiteForCookies& site_for_cookies,
+     const url::Origin& top_frame_origin,
+@@ -372,6 +373,7 @@ void RestrictedCookieManager::CookieListToGetAllForUrlCallback(
+ }
+ 
+ void RestrictedCookieManager::SetCanonicalCookie(
++    const std::string& context_id,
+     const net::CanonicalCookie& cookie,
+     const GURL& url,
+     const net::SiteForCookies& site_for_cookies,
+@@ -428,8 +430,9 @@ void RestrictedCookieManager::SetCanonicalCookie(
+   auto sanitized_cookie = net::CanonicalCookie::FromStorage(
+       cookie.Name(), cookie.Value(), cookie.Domain(), cookie.Path(), now,
+       cookie.ExpiryDate(), now, cookie.IsSecure(), cookie.IsHttpOnly(),
+-      cookie.SameSite(), cookie.Priority(), cookie.IsSameParty(), source_scheme,
+-      origin_.port());
++      cookie.SameSite(), cookie.Priority(), cookie.IsSameParty(),
++      context_id,
++      source_scheme, origin_.port());
+   DCHECK(sanitized_cookie);
+   net::CanonicalCookie cookie_copy = *sanitized_cookie;
+ 
+@@ -470,6 +473,7 @@ void RestrictedCookieManager::SetCanonicalCookieResult(
+ }
+ 
+ void RestrictedCookieManager::AddChangeListener(
++    const std::string& context_id,
+     const GURL& url,
+     const net::SiteForCookies& site_for_cookies,
+     const url::Origin& top_frame_origin,
+@@ -502,6 +506,7 @@ void RestrictedCookieManager::AddChangeListener(
+ }
+ 
+ void RestrictedCookieManager::SetCookieFromString(
++    const std::string& context_id,
+     const GURL& url,
+     const net::SiteForCookies& site_for_cookies,
+     const url::Origin& top_frame_origin,
+@@ -532,6 +537,7 @@ void RestrictedCookieManager::SetCookieFromString(
+   // Further checks (origin_, settings), as well as logging done by
+   // SetCanonicalCookie()
+   SetCanonicalCookie(
++      context_id,
+       *parsed_cookie, url, site_for_cookies, top_frame_origin,
+       base::BindOnce([](SetCookieFromStringCallback user_callback,
+                         bool success) { std::move(user_callback).Run(); },
+@@ -539,6 +545,7 @@ void RestrictedCookieManager::SetCookieFromString(
+ }
+ 
+ void RestrictedCookieManager::GetCookiesString(
++    const std::string& context_id,
+     const GURL& url,
+     const net::SiteForCookies& site_for_cookies,
+     const url::Origin& top_frame_origin,
+@@ -550,7 +557,7 @@ void RestrictedCookieManager::GetCookiesString(
+   auto match_options = mojom::CookieManagerGetOptions::New();
+   match_options->name = "";
+   match_options->match_type = mojom::CookieMatchType::STARTS_WITH;
+-  GetAllForUrl(url, site_for_cookies, top_frame_origin,
++  GetAllForUrl(context_id, url, site_for_cookies, top_frame_origin,
+                std::move(match_options),
+                base::BindOnce(
+                    [](GetCookiesStringCallback user_callback,
+@@ -562,6 +569,7 @@ void RestrictedCookieManager::GetCookiesString(
+ }
+ 
+ void RestrictedCookieManager::CookiesEnabledFor(
++    const std::string& context_id,
+     const GURL& url,
+     const net::SiteForCookies& site_for_cookies,
+     const url::Origin& top_frame_origin,

@@ -1,0 +1,20 @@
+diff --git a/net/extras/sqlite/sqlite_persistent_cookie_store.cc b/net/extras/sqlite/sqlite_persistent_cookie_store.cc
+index f1c981e7740cc..0612e23e287fb 100644
+--- a/net/extras/sqlite/sqlite_persistent_cookie_store.cc
++++ b/net/extras/sqlite/sqlite_persistent_cookie_store.cc
+@@ -30,6 +30,7 @@
+ #include "base/time/time.h"
+ #include "base/values.h"
+ #include "build/build_config.h"
++#include "dumb/components/contextual_identity/context_id.h"
+ #include "net/cookies/canonical_cookie.h"
+ #include "net/cookies/cookie_constants.h"
+ #include "net/cookies/cookie_util.h"
+@@ -950,6 +951,7 @@ bool SQLitePersistentCookieStore::Backend::MakeCookiesFromSQLStatement(
+         DBCookiePriorityToCookiePriority(
+             static_cast<DBCookiePriority>(smt.ColumnInt(11))),  // priority
+         smt.ColumnBool(16),                                     // is_same_party
++        contextual_identity::kDefaultContextId,                 // TODO:
+         DBToCookieSourceScheme(smt.ColumnInt(14)),              // source_scheme
+         smt.ColumnInt(15));                                     // source_port
+     if (cc) {

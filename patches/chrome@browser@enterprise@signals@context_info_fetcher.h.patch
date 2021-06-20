@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/enterprise/signals/context_info_fetcher.h b/chrome/browser/enterprise/signals/context_info_fetcher.h
-index 098c4283520df..da43eed13ec39 100644
+index 098c4283520df..32728746b9a2a 100644
 --- a/chrome/browser/enterprise/signals/context_info_fetcher.h
 +++ b/chrome/browser/enterprise/signals/context_info_fetcher.h
-@@ -9,14 +9,12 @@
+@@ -9,7 +9,6 @@
  #include <vector>
  
  #include "base/callback_forward.h"
@@ -10,37 +10,20 @@ index 098c4283520df..da43eed13ec39 100644
  
  namespace content {
  class BrowserContext;
- }  // namespace content
- 
- namespace enterprise_connectors {
--enum AnalysisConnector : int;
- class ConnectorsService;
- }  // namespace enterprise_connectors
- 
-@@ -31,11 +29,7 @@ struct ContextInfo {
- 
-   std::vector<std::string> browser_affiliation_ids;
-   std::vector<std::string> profile_affiliation_ids;
--  std::vector<std::string> on_file_attached_providers;
--  std::vector<std::string> on_file_downloaded_providers;
--  std::vector<std::string> on_bulk_data_entry_providers;
+@@ -35,7 +34,6 @@ struct ContextInfo {
+   std::vector<std::string> on_file_downloaded_providers;
+   std::vector<std::string> on_bulk_data_entry_providers;
    std::vector<std::string> on_security_event_providers;
 -  safe_browsing::EnterpriseRealTimeUrlCheckMode realtime_url_check_mode;
    std::string browser_version;
  };
  
-@@ -73,12 +67,14 @@ class ContextInfoFetcher {
- 
-   std::vector<std::string> GetProfileAffiliationIDs();
- 
-+#if 0
+@@ -76,8 +74,6 @@ class ContextInfoFetcher {
    std::vector<std::string> GetAnalysisConnectorProviders(
        enterprise_connectors::AnalysisConnector connector);
  
-   safe_browsing::EnterpriseRealTimeUrlCheckMode GetRealtimeUrlCheckMode();
- 
+-  safe_browsing::EnterpriseRealTimeUrlCheckMode GetRealtimeUrlCheckMode();
+-
    std::vector<std::string> GetOnSecurityEventProviders();
-+#endif
  
    content::BrowserContext* browser_context_;
- 

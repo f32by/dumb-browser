@@ -1,0 +1,21 @@
+diff --git a/third_party/blink/renderer/core/BUILD.gn b/third_party/blink/renderer/core/BUILD.gn
+index d889c81d335ed..03f5304a27395 100644
+--- a/third_party/blink/renderer/core/BUILD.gn
++++ b/third_party/blink/renderer/core/BUILD.gn
+@@ -7,6 +7,7 @@ import("//build/config/compiler/compiler.gni")
+ import("//build/config/dcheck_always_on.gni")
+ import("//build/config/ui.gni")
+ import("//build/toolchain/toolchain.gni")
++import("//dumb/third_party/blink/renderer/platform/sources.gni")
+ import("//printing/buildflags/buildflags.gni")
+ import("//testing/libfuzzer/fuzzer_test.gni")
+ import("//third_party/blink/renderer/bindings/bindings.gni")
+@@ -308,6 +309,8 @@ component("core") {
+     "//ui/gfx/geometry",
+   ]
+ 
++  deps += blink_renderer_core_deps
++
+   if (is_mac) {
+     deps += [ "//ui/base/mojom" ]
+   }

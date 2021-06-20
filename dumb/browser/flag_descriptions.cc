@@ -17,6 +17,12 @@
 
 namespace flag_descriptions {
 
+const char kTabHoverCardsId[] = "tab-hover-cards";
+const char kTabHoverCardsName[] = "Tab Hover Cards";
+const char kTabHoverCardsDescription[] =
+    "Enables a popup containing tab information to be visible when hovering "
+    "over a tab. This will replace tooltips for tabs.";
+
 const char kExtensionsToolbarMenuId[] = "extensions-toolbar-menu";
 const char kExtensionsToolbarMenuName[] = "Extensions Toolbar Menu";
 const char kExtensionsToolbarMenuDescription[] =

@@ -13,8 +13,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_COMPONENTS_PRIVACY_DUMB_PRIVACY_GUARD_SERVICE_FACTORY_H_
-#define DUMB_COMPONENTS_PRIVACY_DUMB_PRIVACY_GUARD_SERVICE_FACTORY_H_
+#ifndef DUMB_BRWOSER_PRIVACY_GUARD_BROWSER_DUMB_PRIVACY_GUARD_SERVICE_FACTORY_H_
+#define DUMB_BRWOSER_PRIVACY_GUARD_BROWSER_DUMB_PRIVACY_GUARD_SERVICE_FACTORY_H_
 
 #include "base/no_destructor.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
@@ -49,4 +49,4 @@ public:
   DISALLOW_COPY_AND_ASSIGN(DumbPrivacyGuardServiceFactory);
 };
 
-#endif // DUMB_COMPONENTS_PRIVACY_DUMB_PRIVACY_GUARD_SERVICE_FACTORY_H_
+#endif // DUMB_BRWOSER_PRIVACY_GUARD_BROWSER_DUMB_PRIVACY_GUARD_SERVICE_FACTORY_H_

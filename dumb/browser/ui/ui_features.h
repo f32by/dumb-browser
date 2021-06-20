@@ -25,6 +25,9 @@
 
 namespace features {
 
+extern const base::Feature kTabHoverCards;
+extern const char kTabHoverCardsFeatureParameterName[];
+
 extern const base::Feature kExtensionsToolbarMenu;
 
 extern const base::Feature kTabSearch;

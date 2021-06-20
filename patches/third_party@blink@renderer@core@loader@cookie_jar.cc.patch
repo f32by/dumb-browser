@@ -1,0 +1,42 @@
+diff --git a/third_party/blink/renderer/core/loader/cookie_jar.cc b/third_party/blink/renderer/core/loader/cookie_jar.cc
+index 801d5afb2bf59..0b29b4a37f921 100644
+--- a/third_party/blink/renderer/core/loader/cookie_jar.cc
++++ b/third_party/blink/renderer/core/loader/cookie_jar.cc
+@@ -4,6 +4,7 @@
+ 
+ #include "third_party/blink/renderer/core/loader/cookie_jar.h"
+ 
++#include "dumb/components/contextual_identity/context_id.h"
+ #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
+ #include "third_party/blink/renderer/core/dom/document.h"
+ #include "third_party/blink/renderer/core/execution_context/execution_context.h"
+@@ -28,7 +29,8 @@ void CookieJar::SetCookie(const String& value) {
+     return;
+ 
+   RequestRestrictedCookieManagerIfNeeded();
+-  backend_->SetCookieFromString(cookie_url, document_->SiteForCookies(),
++  backend_->SetCookieFromString(contextual_identity::kDefaultContextId,
++                                cookie_url, document_->SiteForCookies(),
+                                 document_->TopFrameOrigin(), value);
+ }
+ 
+@@ -39,7 +41,8 @@ String CookieJar::Cookies() {
+ 
+   RequestRestrictedCookieManagerIfNeeded();
+   String value;
+-  backend_->GetCookiesString(cookie_url, document_->SiteForCookies(),
++  backend_->GetCookiesString(contextual_identity::kDefaultContextId,
++                             cookie_url, document_->SiteForCookies(),
+                              document_->TopFrameOrigin(), &value);
+   return value;
+ }
+@@ -51,7 +54,8 @@ bool CookieJar::CookiesEnabled() {
+ 
+   RequestRestrictedCookieManagerIfNeeded();
+   bool cookies_enabled = false;
+-  backend_->CookiesEnabledFor(cookie_url, document_->SiteForCookies(),
++  backend_->CookiesEnabledFor(contextual_identity::kDefaultContextId,
++                              cookie_url, document_->SiteForCookies(),
+                               document_->TopFrameOrigin(), &cookies_enabled);
+   return cookies_enabled;
+ }

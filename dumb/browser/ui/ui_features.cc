@@ -17,6 +17,15 @@
 
 namespace features {
 
+// Enables popup cards containing tab information when hovering over a tab.
+// https://crbug.com/910739
+const base::Feature kTabHoverCards{"TabHoverCards",
+                                   base::FEATURE_ENABLED_BY_DEFAULT};
+
+// Parameter name used for tab hover cards user study.
+// TODO(corising): Removed this after tab hover cards user study.
+const char kTabHoverCardsFeatureParameterName[] = "setting";
+
 const base::Feature kExtensionsToolbarMenu{"ExtensionsToolbarMenu",
                                            base::FEATURE_ENABLED_BY_DEFAULT};
 

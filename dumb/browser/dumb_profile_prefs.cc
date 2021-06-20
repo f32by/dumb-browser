@@ -16,7 +16,7 @@
 #include "dumb/browser/dumb_profile_prefs.h"
 
 #include "components/pref_registry/pref_registry_syncable.h"
-#include "dumb/components/privacy_guard/dumb_privacy_guard_service.h"
+#include "dumb/components/privacy_guard/browser/dumb_privacy_guard_service.h"
 
 namespace dumb {
 

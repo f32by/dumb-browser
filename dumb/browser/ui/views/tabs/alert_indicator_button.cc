@@ -13,9 +13,8 @@
 #include "chrome/browser/ui/tabs/tab_utils.h"
 #include "chrome/browser/ui/views/tabs/tab.h"
 #include "chrome/browser/ui/views/tabs/tab_controller.h"
-#include "chrome/common/chrome_switches.h"
 #include "components/vector_icons/vector_icons.h"
-#include "dumb/browser/ui/ui_features.h"
+#include "dumb/common/dumb_switches.h"
 #include "ui/base/pointer/touch_ui_controller.h"
 #include "ui/gfx/animation/multi_animation.h"
 #include "ui/gfx/canvas.h"
@@ -200,8 +199,8 @@ gfx::Image GetTabAlertIndicatorAffordanceImage(TabAlertState alert_state,
 }
 
 bool AreExperimentalMuteControlsEnabled() {
-  return true;
-  // return base::IsFeatureEnabled(features::kTabAudioMuting);
+  const auto* cl = base::CommandLine::ForCurrentProcess();
+  return cl->HasSwitch(switches::kTabAudioMuting);
 }
 
 }  // namespace

@@ -21,6 +21,7 @@
 #include "components/flags_ui/feature_entry_macros.h"
 #include "dumb/browser/flag_descriptions.h"
 #include "dumb/browser/ui/ui_features.h"
+#include "dumb/common/dumb_switches.h"
 #include "dumb/components/dumb/switches.h"
 
 using flags_ui::FeatureEntry;
@@ -37,12 +38,27 @@ namespace {
 const unsigned kOsAll = kOsMac | kOsWin | kOsLinux | kOsCrOS | kOsAndroid;
 const unsigned kOsDesktop = kOsMac | kOsWin | kOsLinux | kOsCrOS;
 
+// The "Enabled" state for this feature is "0" and representing setting A.
+const FeatureEntry::FeatureParam kTabHoverCardsSettingB[] = {
+    {features::kTabHoverCardsFeatureParameterName, "1"}};
+const FeatureEntry::FeatureParam kTabHoverCardsSettingC[] = {
+    {features::kTabHoverCardsFeatureParameterName, "2"}};
+
+const FeatureEntry::FeatureVariation kTabHoverCardsFeatureVariations[] = {
+    {"B", kTabHoverCardsSettingB, base::size(kTabHoverCardsSettingB), nullptr},
+    {"C", kTabHoverCardsSettingC, base::size(kTabHoverCardsSettingC), nullptr}};
+
 }
 
 namespace about_flags {
 
 const FeatureEntry kDumbFeatureEntries[] = {
   // UI flags.
+  {"tab-hover-cards", flag_descriptions::kTabHoverCardsName,
+     flag_descriptions::kTabHoverCardsDescription, kOsDesktop,
+     FEATURE_WITH_PARAMS_VALUE_TYPE(features::kTabHoverCards,
+                                    kTabHoverCardsFeatureVariations,
+                                    "TabHoverCards")},
   {flag_descriptions::kExtensionsToolbarMenuId,
    flag_descriptions::kExtensionsToolbarMenuName,
    flag_descriptions::kExtensionsToolbarMenuDescription, kOsDesktop,
@@ -54,7 +70,7 @@ const FeatureEntry kDumbFeatureEntries[] = {
   {flag_descriptions::kTabAudioMutingFlagId,
    flag_descriptions::kTabAudioMutingName,
    flag_descriptions::kTabAudioMutingDescription, kOsDesktop,
-   FEATURE_VALUE_TYPE(features::kTabAudioMuting)},
+   SINGLE_VALUE_TYPE(switches::kTabAudioMuting)},
   // Privacy flags.
   {flag_descriptions::kFingerprintingClientRectsNoiseId,
    flag_descriptions::kFingerprintingClientRectsNoiseName,

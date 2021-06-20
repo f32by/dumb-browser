@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/extensions/browser_context_keyed_service_factories.cc b/chrome/browser/extensions/browser_context_keyed_service_factories.cc
-index fd8e4aecb4279..da53d54624c7f 100644
+index fd8e4aecb4279..83b414b2fa9a9 100644
 --- a/chrome/browser/extensions/browser_context_keyed_service_factories.cc
 +++ b/chrome/browser/extensions/browser_context_keyed_service_factories.cc
-@@ -121,7 +121,6 @@ void EnsureBrowserContextKeyedServiceFactoriesBuilt() {
+@@ -26,7 +26,6 @@
+ #include "chrome/browser/extensions/api/passwords_private/passwords_private_event_router_factory.h"
+ #include "chrome/browser/extensions/api/preference/preference_api.h"
+ #include "chrome/browser/extensions/api/processes/processes_api.h"
+-#include "chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router_factory.h"
+ #include "chrome/browser/extensions/api/sessions/sessions_api.h"
+ #include "chrome/browser/extensions/api/settings_overrides/settings_overrides_api.h"
+ #include "chrome/browser/extensions/api/settings_private/settings_private_event_router_factory.h"
+@@ -121,7 +120,6 @@ void EnsureBrowserContextKeyedServiceFactoriesBuilt() {
  #endif
    extensions::PreferenceAPI::GetFactoryInstance();
    extensions::ProcessesAPI::GetFactoryInstance();

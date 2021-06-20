@@ -1,11 +1,13 @@
 diff --git a/chrome/browser/download/chrome_download_manager_delegate.cc b/chrome/browser/download/chrome_download_manager_delegate.cc
-index 48e40037fa945..01cc2e4b16730 100644
+index 48e40037fa945..b7a7261712d39 100644
 --- a/chrome/browser/download/chrome_download_manager_delegate.cc
 +++ b/chrome/browser/download/chrome_download_manager_delegate.cc
-@@ -43,13 +43,8 @@
+@@ -41,15 +41,8 @@
+ #include "chrome/browser/download/download_target_determiner.h"
+ #include "chrome/browser/download/mixed_content_download_blocking.h"
  #include "chrome/browser/download/save_package_file_picker.h"
- #include "chrome/browser/enterprise/connectors/common.h"
- #include "chrome/browser/enterprise/connectors/file_system/rename_handler.h"
+-#include "chrome/browser/enterprise/connectors/common.h"
+-#include "chrome/browser/enterprise/connectors/file_system/rename_handler.h"
 -#include "chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router.h"
 -#include "chrome/browser/extensions/api/safe_browsing_private/safe_browsing_private_event_router_factory.h"
  #include "chrome/browser/platform_util.h"
@@ -16,7 +18,7 @@ index 48e40037fa945..01cc2e4b16730 100644
  #include "chrome/browser/ui/chrome_pages.h"
  #include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
  #include "chrome/common/buildflags.h"
-@@ -69,9 +64,6 @@
+@@ -69,9 +62,6 @@
  #include "components/prefs/pref_member.h"
  #include "components/prefs/pref_service.h"
  #include "components/safe_browsing/buildflags.h"
@@ -26,7 +28,7 @@ index 48e40037fa945..01cc2e4b16730 100644
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/download_item_utils.h"
-@@ -128,8 +120,6 @@ using content::DownloadManager;
+@@ -128,8 +118,6 @@ using content::DownloadManager;
  using download::DownloadItem;
  using download::DownloadPathReservationTracker;
  using download::PathValidationResult;
@@ -35,6 +37,22 @@ index 48e40037fa945..01cc2e4b16730 100644
  using ConnectionType = net::NetworkChangeNotifier::ConnectionType;
  
  namespace {
+@@ -350,6 +338,7 @@ void MaybeReportDangerousDownloadBlocked(
+   if (!profile)
+     return;
+ 
++#if 0
+   // If |download| has a deep scanning malware verdict, then it means the
+   // dangerous file has already been reported.
+   auto* scan_result = static_cast<enterprise_connectors::ScanResult*>(
+@@ -358,6 +347,7 @@ void MaybeReportDangerousDownloadBlocked(
+       enterprise_connectors::ContainsMalwareVerdict(scan_result->response)) {
+     return;
+   }
++#endif
+ 
+   auto* router =
+       extensions::SafeBrowsingPrivateEventRouterFactory::GetForProfile(profile);
 @@ -392,13 +382,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
  
  void ChromeDownloadManagerDelegate::SetDownloadManager(DownloadManager* dm) {
@@ -93,7 +111,7 @@ index 48e40037fa945..01cc2e4b16730 100644
    }
    if (ShouldBlockFile(target_info->danger_type, item)) {
      MaybeReportDangerousDownloadBlocked(
-@@ -1619,22 +1590,18 @@ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
+@@ -1619,15 +1590,18 @@ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
  #endif
  }
  
@@ -108,17 +126,20 @@ index 48e40037fa945..01cc2e4b16730 100644
  std::unique_ptr<download::DownloadItemRenameHandler>
  ChromeDownloadManagerDelegate::GetRenameHandlerForDownload(
      download::DownloadItem* download_item) {
--#if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS) || \
--    defined(OS_MAC)
--  return enterprise_connectors::FileSystemRenameHandler::CreateIfNeeded(
--      download_item);
--#else
++#if 0
+ #if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS) || \
+     defined(OS_MAC)
+   return enterprise_connectors::FileSystemRenameHandler::CreateIfNeeded(
+@@ -1635,6 +1609,8 @@ ChromeDownloadManagerDelegate::GetRenameHandlerForDownload(
+ #else
    return nullptr;
--#endif
+ #endif
++#endif
++  return nullptr;
  }
  
  void ChromeDownloadManagerDelegate::OnCheckDownloadAllowedComplete(
-@@ -1666,6 +1633,7 @@ ChromeDownloadManagerDelegate::GetWeakPtr() {
+@@ -1666,6 +1642,7 @@ ChromeDownloadManagerDelegate::GetWeakPtr() {
    return weak_ptr_factory_.GetWeakPtr();
  }
  
@@ -126,7 +147,7 @@ index 48e40037fa945..01cc2e4b16730 100644
  // static
  void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
      mojo::PendingReceiver<quarantine::mojom::Quarantine> receiver) {
-@@ -1682,3 +1650,9 @@ void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
+@@ -1682,3 +1659,9 @@ void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
    mojo::MakeSelfOwnedReceiver(std::make_unique<quarantine::QuarantineImpl>(),
                                std::move(receiver));
  }

@@ -13,9 +13,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DUMB_COMMON_NETWORK_CONSTANTS_H_
-#define DUMB_COMMON_NETWORK_CONSTANTS_H_
+#ifndef DUMB_BROWSER_COMMON_NETWORK_CONSTANTS_H_
+#define DUMB_BROWSER_COMMON_NETWORK_CONSTANTS_H_
 
 extern const char kEmptyDataURI[];
 
-#endif  // DUMB_COMMON_NETWORK_CONSTANTS_H_
+#endif  // DUMB_BROWSER_COMMON_NETWORK_CONSTANTS_H_

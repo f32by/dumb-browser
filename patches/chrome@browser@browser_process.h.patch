@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/browser_process.h b/chrome/browser/browser_process.h
-index 3d634db18900a..3451a8b166415 100644
+index 3d634db18900a..cfae1af31a707 100644
 --- a/chrome/browser/browser_process.h
 +++ b/chrome/browser/browser_process.h
-@@ -50,18 +50,6 @@ class NetworkQualityTracker;
+@@ -25,7 +25,6 @@
+ 
+ class BackgroundModeManager;
+ class BrowserProcessPlatformPart;
+-class BuildState;
+ class DownloadRequestLimiter;
+ class DownloadStatusUpdater;
+ class GpuModeManager;
+@@ -50,18 +49,6 @@ class NetworkQualityTracker;
  class SharedURLLoaderFactory;
  }
  
@@ -21,7 +29,7 @@ index 3d634db18900a..3451a8b166415 100644
  namespace variations {
  class VariationsService;
  }
-@@ -157,9 +145,6 @@ class BrowserProcess {
+@@ -157,9 +144,6 @@ class BrowserProcess {
    // network quality change events.
    virtual network::NetworkQualityTracker* network_quality_tracker() = 0;
  
@@ -31,7 +39,7 @@ index 3d634db18900a..3451a8b166415 100644
    // Starts and manages the policy system.
    virtual policy::ChromeBrowserPolicyConnector* browser_policy_connector() = 0;
  
-@@ -209,19 +194,6 @@ class BrowserProcess {
+@@ -209,19 +193,6 @@ class BrowserProcess {
    // on this platform (or this is a unit test).
    virtual StatusTray* status_tray() = 0;
  
@@ -51,7 +59,7 @@ index 3d634db18900a..3451a8b166415 100644
    // Returns the StartupData which owns any pre-created objects in //chrome
    // before the full browser starts.
    virtual StartupData* startup_data() = 0;
-@@ -260,8 +232,6 @@ class BrowserProcess {
+@@ -260,8 +231,6 @@ class BrowserProcess {
    virtual resource_coordinator::ResourceCoordinatorParts*
    resource_coordinator_parts() = 0;
  

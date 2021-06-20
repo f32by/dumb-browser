@@ -18,6 +18,10 @@
 
 namespace flag_descriptions {
 
+extern const char kTabHoverCardsId[];
+extern const char kTabHoverCardsName[];
+extern const char kTabHoverCardsDescription[];
+
 extern const char kExtensionsToolbarMenuId[];
 extern const char kExtensionsToolbarMenuName[];
 extern const char kExtensionsToolbarMenuDescription[];

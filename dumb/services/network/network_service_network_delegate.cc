@@ -10,7 +10,7 @@
 #include "base/debug/dump_without_crashing.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
-#include "dumb/services/network/url_purify/url_purify_delegate.h"
+#include "dumb/services/network/privacy_guard/url_purify_delegate.h"
 #include "net/base/features.h"
 #include "net/base/isolation_info.h"
 #include "net/base/load_flags.h"

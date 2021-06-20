@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/extensions/api/cookies/cookies_api.cc b/chrome/browser/extensions/api/cookies/cookies_api.cc
+index 6870bbe3d5399..ba38ee71c9a1b 100644
+--- a/chrome/browser/extensions/api/cookies/cookies_api.cc
++++ b/chrome/browser/extensions/api/cookies/cookies_api.cc
+@@ -27,6 +27,7 @@
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/notification_service.h"
+ #include "content/public/browser/storage_partition.h"
++#include "dumb/components/contextual_identity/context_id.h"
+ #include "extensions/browser/event_router.h"
+ #include "extensions/common/error_utils.h"
+ #include "extensions/common/extension.h"
+@@ -432,7 +433,8 @@ ExtensionFunction::ResponseAction CookiesSetFunction::Run() {
+               false,
+           same_site,
+           net::COOKIE_PRIORITY_DEFAULT,
+-          /*same_party=*/false));
++          /*same_party=*/false,
++          contextual_identity::kDefaultContextId));
+   // clang-format on
+   if (!cc) {
+     // Return error through callbacks so that the proper error message

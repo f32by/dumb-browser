@@ -1,0 +1,64 @@
+diff --git a/net/cookies/canonical_cookie.h b/net/cookies/canonical_cookie.h
+index 38808e473f778..b7434d781e806 100644
+--- a/net/cookies/canonical_cookie.h
++++ b/net/cookies/canonical_cookie.h
+@@ -13,6 +13,7 @@
+ #include "base/gtest_prod_util.h"
+ #include "base/optional.h"
+ #include "base/time/time.h"
++#include "dumb/components/contextual_identity/context_id.h"
+ #include "net/base/net_export.h"
+ #include "net/cookies/cookie_access_result.h"
+ #include "net/cookies/cookie_constants.h"
+@@ -22,6 +23,8 @@
+ 
+ class GURL;
+ 
++using contextual_identity::ContextId;
++
+ namespace net {
+ 
+ class ParsedCookie;
+@@ -104,7 +107,8 @@ class NET_EXPORT CanonicalCookie {
+       bool http_only,
+       CookieSameSite same_site,
+       CookiePriority priority,
+-      bool same_party);
++      bool same_party,
++      const std::string& context_id);
+ 
+   // FromStorage is a factory method which is meant for creating a new
+   // CanonicalCookie using properties of a previously existing cookie
+@@ -126,6 +130,7 @@ class NET_EXPORT CanonicalCookie {
+       CookieSameSite same_site,
+       CookiePriority priority,
+       bool same_party,
++      const std::string& context_id,
+       CookieSourceScheme source_scheme,
+       int source_port);
+ 
+@@ -144,6 +149,7 @@ class NET_EXPORT CanonicalCookie {
+       CookieSameSite same_site,
+       CookiePriority priority,
+       bool same_party,
++      const std::string& context_id,
+       CookieSourceScheme scheme_secure = CookieSourceScheme::kUnset,
+       int source_port = url::PORT_UNSPECIFIED);
+ 
+@@ -368,6 +374,7 @@ class NET_EXPORT CanonicalCookie {
+                   CookieSameSite same_site,
+                   CookiePriority priority,
+                   bool same_party,
++                  const std::string& context_id,
+                   CookieSourceScheme scheme_secure = CookieSourceScheme::kUnset,
+                   int source_port = url::PORT_UNSPECIFIED);
+ 
+@@ -443,6 +450,8 @@ class NET_EXPORT CanonicalCookie {
+   // store prior to this change and therefore their port is unknown.
+   // PORT_INVALID is an error for when an out of range port is provided.
+   int source_port_{url::PORT_UNSPECIFIED};
++
++  ContextId context_id_;
+ };
+ 
+ // Used to pass excluded cookie information when it's possible that the

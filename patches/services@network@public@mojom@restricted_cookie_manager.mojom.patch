@@ -1,0 +1,58 @@
+diff --git a/services/network/public/mojom/restricted_cookie_manager.mojom b/services/network/public/mojom/restricted_cookie_manager.mojom
+index 8e3f19826866e..40d2290199e21 100644
+--- a/services/network/public/mojom/restricted_cookie_manager.mojom
++++ b/services/network/public/mojom/restricted_cookie_manager.mojom
+@@ -68,12 +68,14 @@ interface RestrictedCookieManager {
+   // as part of CookieAccessResult in the included cookies may be passed to an
+   // untrusted renderer.
+   GetAllForUrl(
++      string context_id,
+       url.mojom.Url url, SiteForCookies site_for_cookies,
+       url.mojom.Origin top_frame_origin,
+       CookieManagerGetOptions options) => (
+       array<CookieWithAccessResult> cookies);
+ 
+-  SetCanonicalCookie(CanonicalCookie cookie,
++  SetCanonicalCookie(string context_id,
++                     CanonicalCookie cookie,
+                      url.mojom.Url url,
+                      SiteForCookies site_for_cookies,
+                      url.mojom.Origin top_frame_origin) => (bool success);
+@@ -81,7 +83,8 @@ interface RestrictedCookieManager {
+   // Subscribes to changes in the cookies transmitted in a request to an URL.
+   //
+   // The subscription is canceled by closing the pipe.
+-  AddChangeListener(url.mojom.Url url, SiteForCookies site_for_cookies,
++  AddChangeListener(string context_id,
++                    url.mojom.Url url, SiteForCookies site_for_cookies,
+                     url.mojom.Origin top_frame_origin,
+                     pending_remote<CookieChangeListener> listener) => ();
+ 
+@@ -94,7 +97,8 @@ interface RestrictedCookieManager {
+   // The implementation may block, e.g. while cookies are still being loaded, or
+   // to serialize with other operations.
+   [Sync]
+-  SetCookieFromString(url.mojom.Url url, SiteForCookies site_for_cookies,
++  SetCookieFromString(string context_id,
++                      url.mojom.Url url, SiteForCookies site_for_cookies,
+                       url.mojom.Origin top_frame_origin,
+                       string cookie) => ();
+ 
+@@ -106,7 +110,8 @@ interface RestrictedCookieManager {
+   // Passing in |url| that does not match the origin RestrictedCookieManager
+   // is bounded to will be treated as the renderer violating security rules.
+   [Sync]
+-  GetCookiesString(url.mojom.Url url,
++  GetCookiesString(string context_id,
++                   url.mojom.Url url,
+                    SiteForCookies site_for_cookies,
+                    url.mojom.Origin top_frame_origin) => (string cookies);
+ 
+@@ -117,6 +122,7 @@ interface RestrictedCookieManager {
+   // is bounded to will be treated as the renderer violating security rules.
+   [Sync]
+   CookiesEnabledFor(
++      string context_id,
+       url.mojom.Url url,
+       SiteForCookies site_for_cookies,
+       url.mojom.Origin top_frame_origin) => (bool cookies_enabled);

@@ -1,0 +1,24 @@
+diff --git a/services/network/public/cpp/cookie_manager_mojom_traits.cc b/services/network/public/cpp/cookie_manager_mojom_traits.cc
+index da8102781ae7c..011a90e861755 100644
+--- a/services/network/public/cpp/cookie_manager_mojom_traits.cc
++++ b/services/network/public/cpp/cookie_manager_mojom_traits.cc
+@@ -4,6 +4,7 @@
+ 
+ #include "services/network/public/cpp/cookie_manager_mojom_traits.h"
+ 
++#include "dumb/components/contextual_identity/context_id.h"
+ #include "mojo/public/cpp/base/time_mojom_traits.h"
+ 
+ namespace mojo {
+@@ -435,7 +436,10 @@ bool StructTraits<
+   auto cc = net::CanonicalCookie::FromStorage(
+       name, value, domain, path, creation_time, expiry_time, last_access_time,
+       cookie.secure(), cookie.httponly(), site_restrictions, priority,
+-      cookie.same_party(), source_scheme, cookie.source_port());
++      cookie.same_party(),
++      // TODO:
++      contextual_identity::kDefaultContextId,
++      source_scheme, cookie.source_port());
+   if (!cc)
+     return false;
+   *out = *cc;

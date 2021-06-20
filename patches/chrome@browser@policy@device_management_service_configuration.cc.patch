@@ -1,25 +1,34 @@
 diff --git a/chrome/browser/policy/device_management_service_configuration.cc b/chrome/browser/policy/device_management_service_configuration.cc
-index ce90fd83712a2..2e7d99fbd71dd 100644
+index ce90fd83712a2..0307e368c785d 100644
 --- a/chrome/browser/policy/device_management_service_configuration.cc
 +++ b/chrome/browser/policy/device_management_service_configuration.cc
-@@ -97,20 +97,7 @@ DeviceManagementServiceConfiguration::GetEncryptedReportingServerUrl() {
+@@ -19,12 +19,6 @@
+ #include "chromeos/system/statistics_provider.h"
+ #endif
+ 
+-#if defined(OS_WIN) || defined(OS_MAC) || \
+-    ((defined(OS_LINUX) || defined(OS_CHROMEOS)) && !defined(OS_ANDROID))
+-#include "chrome/browser/enterprise/connectors/common.h"
+-#include "chrome/browser/enterprise/connectors/connectors_service.h"
+-#endif
+-
+ namespace policy {
+ 
+ DeviceManagementServiceConfiguration::DeviceManagementServiceConfiguration(
+@@ -97,6 +91,7 @@ DeviceManagementServiceConfiguration::GetEncryptedReportingServerUrl() {
  std::string
  DeviceManagementServiceConfiguration::GetReportingConnectorServerUrl(
      content::BrowserContext* context) {
--#if defined(OS_WIN) || defined(OS_MAC) || \
--    ((defined(OS_LINUX) || defined(OS_CHROMEOS)) && !defined(OS_ANDROID))
--  auto* service =
--      enterprise_connectors::ConnectorsServiceFactory::GetForBrowserContext(
--          context);
--  if (!service)
--    return std::string();
--
--  auto settings = service->GetReportingSettings(
--      enterprise_connectors::ReportingConnector::SECURITY_EVENT);
--  return settings ? settings->reporting_url.spec() : std::string();
--#else
++#if 0
+ #if defined(OS_WIN) || defined(OS_MAC) || \
+     ((defined(OS_LINUX) || defined(OS_CHROMEOS)) && !defined(OS_ANDROID))
+   auto* service =
+@@ -111,6 +106,8 @@ DeviceManagementServiceConfiguration::GetReportingConnectorServerUrl(
+ #else
    return std::string();
--#endif
+ #endif
++#endif
++  return std::string();
  }
  
  }  // namespace policy

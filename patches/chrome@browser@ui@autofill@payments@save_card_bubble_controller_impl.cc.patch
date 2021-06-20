@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
-index e918a8142dfbb..992d67ec2ca48 100644
+index 946add931b84f..c5b9bd0ac7c4b 100644
 --- a/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
 +++ b/chrome/browser/ui/autofill/payments/save_card_bubble_controller_impl.cc
 @@ -29,7 +29,6 @@
@@ -10,7 +10,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
  #include "components/autofill/core/browser/personal_data_manager.h"
  #include "components/autofill/core/common/autofill_clock.h"
  #include "components/autofill/core/common/autofill_constants.h"
-@@ -272,11 +271,6 @@ void SaveCardBubbleControllerImpl::OnSaveButton(
+@@ -270,11 +269,6 @@ void SaveCardBubbleControllerImpl::OnSaveButton(
  
        std::u16string name_provided_by_user;
        if (!user_provided_card_details.cardholder_name.empty()) {
@@ -22,7 +22,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
          // Trim the cardholder name provided by the user and send it in the
          // callback so it can be included in the final request.
          DCHECK(ShouldRequestNameFromUser());
-@@ -295,8 +289,6 @@ void SaveCardBubbleControllerImpl::OnSaveButton(
+@@ -293,8 +287,6 @@ void SaveCardBubbleControllerImpl::OnSaveButton(
        std::move(local_save_card_prompt_callback_).Run(AutofillClient::ACCEPTED);
        break;
      case BubbleType::MANAGE_CARDS:
@@ -31,7 +31,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
        return;
      case BubbleType::UPLOAD_IN_PROGRESS:
      case BubbleType::FAILURE:
-@@ -316,15 +308,11 @@ void SaveCardBubbleControllerImpl::OnCancelButton() {
+@@ -314,15 +306,11 @@ void SaveCardBubbleControllerImpl::OnCancelButton() {
  
  void SaveCardBubbleControllerImpl::OnLegalMessageLinkClicked(const GURL& url) {
    OpenUrl(url);
@@ -47,7 +47,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
    ShowPaymentsSettingsPage();
  }
  
-@@ -338,43 +326,6 @@ void SaveCardBubbleControllerImpl::OnBubbleClosed(
+@@ -336,43 +324,6 @@ void SaveCardBubbleControllerImpl::OnBubbleClosed(
      PaymentsBubbleClosedReason closed_reason) {
    set_bubble_view(nullptr);
  
@@ -91,7 +91,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
    // Handles |current_bubble_type_| change according to its current type and the
    // |closed_reason|.
    if (closed_reason == PaymentsBubbleClosedReason::kAccepted) {
-@@ -387,14 +338,6 @@ void SaveCardBubbleControllerImpl::OnBubbleClosed(
+@@ -385,14 +336,6 @@ void SaveCardBubbleControllerImpl::OnBubbleClosed(
        if (base::FeatureList::IsEnabled(
                features::kAutofillCreditCardUploadFeedback)) {
          current_bubble_type_ = BubbleType::UPLOAD_IN_PROGRESS;
@@ -106,7 +106,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
        } else {
          current_bubble_type_ = BubbleType::INACTIVE;
        }
-@@ -496,20 +439,10 @@ void SaveCardBubbleControllerImpl::DoShowBubble() {
+@@ -494,20 +437,10 @@ void SaveCardBubbleControllerImpl::DoShowBubble() {
    switch (current_bubble_type_) {
      case BubbleType::UPLOAD_SAVE:
      case BubbleType::LOCAL_SAVE:
@@ -127,7 +127,7 @@ index e918a8142dfbb..992d67ec2ca48 100644
        break;
      case BubbleType::UPLOAD_IN_PROGRESS:
      case BubbleType::INACTIVE:
-@@ -567,16 +500,8 @@ void SaveCardBubbleControllerImpl::ShowIconOnly() {
+@@ -565,16 +498,8 @@ void SaveCardBubbleControllerImpl::ShowIconOnly() {
    switch (current_bubble_type_) {
      case BubbleType::UPLOAD_SAVE:
      case BubbleType::LOCAL_SAVE:

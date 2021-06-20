@@ -1,0 +1,37 @@
+diff --git a/chrome/browser/memory/chrome_browser_main_extra_parts_memory.cc b/chrome/browser/memory/chrome_browser_main_extra_parts_memory.cc
+index 9988d5561602d..39dac65dd45d8 100644
+--- a/chrome/browser/memory/chrome_browser_main_extra_parts_memory.cc
++++ b/chrome/browser/memory/chrome_browser_main_extra_parts_memory.cc
+@@ -8,7 +8,6 @@
+ #include "build/build_config.h"
+ #include "build/chromeos_buildflags.h"
+ #include "chrome/browser/browser_process.h"
+-#include "chrome/browser/memory/enterprise_memory_limit_pref_observer.h"
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+ #include "base/logging.h"
+@@ -22,6 +21,7 @@ ChromeBrowserMainExtraPartsMemory::~ChromeBrowserMainExtraPartsMemory() =
+     default;
+ 
+ void ChromeBrowserMainExtraPartsMemory::PostBrowserStart() {
++#if 0
+   // The MemoryPressureMonitor might not be available in some tests.
+   if (base::MemoryPressureMonitor::Get()) {
+     if (memory::EnterpriseMemoryLimitPrefObserver::PlatformIsSupported()) {
+@@ -40,13 +40,16 @@ void ChromeBrowserMainExtraPartsMemory::PostBrowserStart() {
+     }
+ #endif
+   }
++#endif
+ }
+ 
+ void ChromeBrowserMainExtraPartsMemory::PostMainMessageLoopRun() {
++#if 0
+   // |memory_limit_pref_observer_| must be destroyed before its |pref_service_|
+   // is destroyed, as the observer's PrefChangeRegistrar's destructor uses the
+   // pref_service.
+   memory_limit_pref_observer_.reset();
++#endif
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+   cros_evaluator_.reset();

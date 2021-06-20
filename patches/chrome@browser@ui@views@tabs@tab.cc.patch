@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/tabs/tab.cc b/chrome/browser/ui/views/tabs/tab.cc
-index 010f5a6a44312..14009e9c56cce 100644
+index 010f5a6a44312..0d1d7858164b8 100644
 --- a/chrome/browser/ui/views/tabs/tab.cc
 +++ b/chrome/browser/ui/views/tabs/tab.cc
 @@ -34,7 +34,7 @@
@@ -83,7 +83,23 @@ index 010f5a6a44312..14009e9c56cce 100644
      }
      ui::MouseEvent cloned_event(event_in_parent, parent(),
                                  static_cast<View*>(this));
-@@ -781,7 +791,7 @@ bool Tab::IsActive() const {
+@@ -643,8 +653,13 @@ void Tab::OnGestureEvent(ui::GestureEvent* event) {
+ }
+ 
+ std::u16string Tab::GetTooltipText(const gfx::Point& p) const {
+-  // Tab hover cards replace tooltips for tabs.
+-  return std::u16string();
++  // Tab hover cards replace tooltips.
++  if (base::FeatureList::IsEnabled(features::kTabHoverCards))
++    return std::u16string();
++
++  // Note: Anything that affects the tooltip text should be accounted for when
++  // calling TooltipTextChanged() from Tab::SetData().
++  return GetTooltipText(data_.title, GetAlertStateToShow(data_.alert_state));
+ }
+ 
+ void Tab::GetAccessibleNodeData(ui::AXNodeData* node_data) {
+@@ -781,7 +796,7 @@ bool Tab::IsActive() const {
  void Tab::ActiveStateChanged() {
    UpdateTabIconNeedsAttentionBlocked();
    UpdateForegroundColors();
@@ -92,7 +108,7 @@ index 010f5a6a44312..14009e9c56cce 100644
    title_->SetFontList(tab_style_->GetFontList());
    Layout();
  }
-@@ -831,7 +841,7 @@ void Tab::SetData(TabRendererData data) {
+@@ -831,7 +846,7 @@ void Tab::SetData(TabRendererData data) {
    const auto new_alert_state = GetAlertStateToShow(data_.alert_state);
    const auto old_alert_state = GetAlertStateToShow(old.alert_state);
    if (new_alert_state != old_alert_state)
@@ -101,7 +117,7 @@ index 010f5a6a44312..14009e9c56cce 100644
    if (old.pinned != data_.pinned)
      showing_alert_indicator_ = false;
    if (!data_.pinned && old.pinned) {
-@@ -938,7 +948,7 @@ void Tab::UpdateIconVisibility() {
+@@ -938,7 +953,7 @@ void Tab::UpdateIconVisibility() {
  
    const bool has_favicon = data().show_icon;
    const bool has_alert_icon =
@@ -110,7 +126,7 @@ index 010f5a6a44312..14009e9c56cce 100644
                          : GetAlertStateToShow(data().alert_state))
            .has_value();
  
-@@ -963,7 +973,7 @@ void Tab::UpdateIconVisibility() {
+@@ -963,7 +978,7 @@ void Tab::UpdateIconVisibility() {
  
    const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
    const int favicon_width = gfx::kFaviconSize;
@@ -119,7 +135,7 @@ index 010f5a6a44312..14009e9c56cce 100644
    // In case of touch optimized UI, the close button has an extra padding on the
    // left that needs to be considered.
    const int close_button_width =
-@@ -1056,21 +1066,13 @@ void Tab::UpdateForegroundColors() {
+@@ -1056,21 +1071,13 @@ void Tab::UpdateForegroundColors() {
  
    if (foreground_color_ != colors.foreground_color) {
      foreground_color_ = colors.foreground_color;

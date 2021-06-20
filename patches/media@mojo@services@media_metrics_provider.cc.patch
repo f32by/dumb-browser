@@ -1,0 +1,30 @@
+diff --git a/media/mojo/services/media_metrics_provider.cc b/media/mojo/services/media_metrics_provider.cc
+index 1798f0dd51880..ab1b93169d740 100644
+--- a/media/mojo/services/media_metrics_provider.cc
++++ b/media/mojo/services/media_metrics_provider.cc
+@@ -16,8 +16,6 @@
+ #include "media/mojo/services/video_decode_stats_recorder.h"
+ #include "media/mojo/services/watch_time_recorder.h"
+ #include "mojo/public/cpp/bindings/self_owned_receiver.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ 
+ #if !defined(OS_ANDROID)
+ #include "media/filters/decrypting_video_decoder.h"
+@@ -59,7 +57,7 @@ MediaMetricsProvider::~MediaMetricsProvider() {
+   // These UKM and UMA metrics do not apply to MediaStreams.
+   if (media_stream_type_ != mojom::MediaStreamType::kNone)
+     return;
+-
++#if 0
+   // UKM may be unavailable in content_shell or other non-chrome/ builds; it
+   // may also be unavailable if browser shutdown has started; so this may be a
+   // nullptr. If it's unavailable, UKM reporting will be skipped.
+@@ -88,6 +86,7 @@ MediaMetricsProvider::~MediaMetricsProvider() {
+ 
+   builder.Record(ukm_recorder);
+   ReportPipelineUMA();
++#endif
+ }
+ 
+ std::string MediaMetricsProvider::GetUMANameForAVStream(

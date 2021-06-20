@@ -1,0 +1,16 @@
+diff --git a/services/network/public/mojom/BUILD.gn b/services/network/public/mojom/BUILD.gn
+index 7b6c0b22ac475..960780f020e67 100644
+--- a/services/network/public/mojom/BUILD.gn
++++ b/services/network/public/mojom/BUILD.gn
+@@ -734,7 +734,10 @@ mojom("cookies_mojom") {
+           [ "//services/network/public/cpp/cookie_manager_mojom_traits.h" ]
+       traits_sources =
+           [ "//services/network/public/cpp/cookie_manager_mojom_traits.cc" ]
+-      traits_public_deps = [ "//net" ]
++      traits_public_deps =
++          [ "//net",
++            "//dumb/components/contextual_identity",
++          ]
+     },
+   ]
+   cpp_typemaps += shared_cpp_typemaps

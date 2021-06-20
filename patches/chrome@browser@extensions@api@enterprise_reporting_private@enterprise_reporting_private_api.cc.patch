@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/extensions/api/enterprise_reporting_private/enterprise_reporting_private_api.cc b/chrome/browser/extensions/api/enterprise_reporting_private/enterprise_reporting_private_api.cc
+index 78d787cb2070f..659a0ab21958c 100644
+--- a/chrome/browser/extensions/api/enterprise_reporting_private/enterprise_reporting_private_api.cc
++++ b/chrome/browser/extensions/api/enterprise_reporting_private/enterprise_reporting_private_api.cc
+@@ -69,17 +69,6 @@ api::enterprise_reporting_private::ContextInfo ToContextInfo(
+   info.on_file_downloaded_providers = signals.on_file_downloaded_providers;
+   info.on_bulk_data_entry_providers = signals.on_bulk_data_entry_providers;
+   info.on_security_event_providers = signals.on_security_event_providers;
+-  switch (signals.realtime_url_check_mode) {
+-    case safe_browsing::REAL_TIME_CHECK_DISABLED:
+-      info.realtime_url_check_mode = extensions::api::
+-          enterprise_reporting_private::REALTIME_URL_CHECK_MODE_DISABLED;
+-      break;
+-    case safe_browsing::REAL_TIME_CHECK_FOR_MAINFRAME_ENABLED:
+-      info.realtime_url_check_mode =
+-          extensions::api::enterprise_reporting_private::
+-              REALTIME_URL_CHECK_MODE_ENABLED_MAIN_FRAME;
+-      break;
+-  }
+   info.browser_version = signals.browser_version;
+ 
+   return info;

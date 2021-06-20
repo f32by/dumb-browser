@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index 038944fa1d042..e50a6a6870676 100644
+index 038944fa1d042..7497207f90dc9 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
-@@ -54,9 +54,6 @@
+@@ -54,35 +54,25 @@
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
  #include "chrome/browser/custom_handlers/protocol_handler_registry.h"
  #include "chrome/browser/custom_handlers/protocol_handler_registry_factory.h"
@@ -12,8 +12,9 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "chrome/browser/defaults.h"
  #include "chrome/browser/device_api/device_service_impl.h"
  #include "chrome/browser/device_api/managed_configuration_service.h"
-@@ -65,24 +62,18 @@
- #include "chrome/browser/enterprise/connectors/connectors_service.h"
+ #include "chrome/browser/download/chrome_download_manager_delegate.h"
+ #include "chrome/browser/download/download_prefs.h"
+-#include "chrome/browser/enterprise/connectors/connectors_service.h"
  #include "chrome/browser/extensions/chrome_extension_cookies.h"
  #include "chrome/browser/external_protocol/external_protocol_handler.h"
 -#include "chrome/browser/federated_learning/floc_eligibility_observer.h"
@@ -37,7 +38,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "chrome/browser/metrics/chrome_feature_list_creator.h"
  #include "chrome/browser/nacl_host/nacl_browser_delegate_impl.h"
  #include "chrome/browser/net/chrome_network_delegate.h"
-@@ -126,15 +117,6 @@
+@@ -126,15 +116,6 @@
  #include "chrome/browser/renderer_host/pepper/chrome_browser_pepper_host_factory.h"
  #include "chrome/browser/renderer_preferences_util.h"
  #include "chrome/browser/resource_coordinator/background_tab_navigation_throttle.h"
@@ -53,7 +54,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "chrome/browser/search/search.h"
  #include "chrome/browser/sharing/sms/sms_remote_fetcher.h"
  #include "chrome/browser/signin/chrome_signin_proxying_url_loader_factory.h"
-@@ -143,9 +125,6 @@
+@@ -143,9 +124,6 @@
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/speech/chrome_speech_recognition_manager_delegate.h"
  #include "chrome/browser/ssl/chrome_security_blocking_page_factory.h"
@@ -63,7 +64,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "chrome/browser/ssl/ssl_client_certificate_selector.h"
  #include "chrome/browser/ssl/typed_navigation_upgrade_throttle.h"
  #include "chrome/browser/sync_file_system/local/sync_file_system_backend.h"
-@@ -214,10 +193,6 @@
+@@ -214,10 +192,6 @@
  #include "components/content_settings/core/common/content_settings_types.h"
  #include "components/content_settings/core/common/content_settings_utils.h"
  #include "components/content_settings/core/common/pref_names.h"
@@ -74,7 +75,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "components/dom_distiller/core/dom_distiller_switches.h"
  #include "components/dom_distiller/core/url_constants.h"
  #include "components/dom_distiller/core/url_utils.h"
-@@ -244,8 +219,6 @@
+@@ -244,8 +218,6 @@
  #include "components/no_state_prefetch/common/prerender_url_loader_throttle.h"
  #include "components/no_state_prefetch/common/prerender_util.h"
  #include "components/omnibox/common/omnibox_features.h"
@@ -83,7 +84,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "components/payments/content/payment_handler_navigation_throttle.h"
  #include "components/payments/content/payment_request_display_manager.h"
  #include "components/performance_manager/embedder/performance_manager_registry.h"
-@@ -261,17 +234,8 @@
+@@ -261,17 +233,8 @@
  #include "components/prefs/pref_service.h"
  #include "components/prefs/scoped_user_pref_update.h"
  #include "components/safe_browsing/buildflags.h"
@@ -101,7 +102,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "components/security_interstitials/content/ssl_error_handler.h"
  #include "components/security_interstitials/content/ssl_error_navigation_throttle.h"
  #include "components/signin/public/identity_manager/identity_manager.h"
-@@ -279,7 +243,6 @@
+@@ -279,7 +242,6 @@
  #include "components/site_isolation/pref_names.h"
  #include "components/site_isolation/preloaded_isolated_origins.h"
  #include "components/site_isolation/site_isolation_policy.h"
@@ -109,7 +110,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "components/translate/core/common/translate_switches.h"
  #include "components/ukm/content/source_url_recorder.h"
  #include "components/url_formatter/url_fixer.h"
-@@ -332,6 +295,8 @@
+@@ -332,6 +294,8 @@
  #include "content/public/common/user_agent.h"
  #include "content/public/common/window_container_type.mojom-shared.h"
  #include "device/vr/buildflags/buildflags.h"
@@ -118,7 +119,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "extensions/buildflags/buildflags.h"
  #include "google_apis/gaia/gaia_urls.h"
  #include "google_apis/google_api_keys.h"
-@@ -372,11 +337,11 @@
+@@ -372,11 +336,11 @@
  #include "third_party/blink/public/common/navigation/navigation_policy.h"
  #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
  #include "third_party/blink/public/common/switches.h"
@@ -131,7 +132,20 @@ index 038944fa1d042..e50a6a6870676 100644
  #include "third_party/blink/public/public_buildflags.h"
  #include "third_party/skia/include/core/SkColor.h"
  #include "third_party/widevine/cdm/buildflags.h"
-@@ -767,7 +732,6 @@ void HandleSSLErrorWrapper(
+@@ -524,12 +488,6 @@
+ #include "components/crash/content/browser/crash_handler_host_linux.h"
+ #endif
+ 
+-// TODO(crbug/1169547) Remove `BUILDFLAG(IS_CHROMEOS_LACROS)` once the
+-// migration is complete.
+-#if defined(OS_LINUX) || defined(OS_MAC) || defined(OS_WIN)
+-#include "chrome/browser/enterprise/connectors/device_trust/navigation_throttle.h"
+-#endif  // defined(OS_LINUX) || defined(OS_MAC) || defined(OS_WIN)
+-
+ // TODO(crbug.com/939205):  Once the upcoming App Service is available, use a
+ // single navigation throttle to display the intent picker on all platforms.
+ #if !defined(OS_ANDROID)
+@@ -767,7 +725,6 @@ void HandleSSLErrorWrapper(
      int cert_error,
      const net::SSLInfo& ssl_info,
      const GURL& request_url,
@@ -139,7 +153,7 @@ index 038944fa1d042..e50a6a6870676 100644
      SSLErrorHandler::BlockingPageReadyCallback blocking_page_ready_callback) {
    Profile* profile =
        Profile::FromBrowserContext(web_contents->GetBrowserContext());
-@@ -782,7 +746,7 @@ void HandleSSLErrorWrapper(
+@@ -782,7 +739,7 @@ void HandleSSLErrorWrapper(
  
    SSLErrorHandler::HandleSSLError(
        web_contents, cert_error, ssl_info, request_url,
@@ -148,7 +162,7 @@ index 038944fa1d042..e50a6a6870676 100644
        g_browser_process->network_time_tracker(), captive_portal_service,
        std::make_unique<ChromeSecurityBlockingPageFactory>(),
        IsSSLErrorOverrideAllowedForOrigin(request_url, profile->GetPrefs()));
-@@ -1011,30 +975,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
+@@ -1011,30 +968,6 @@ void SetApplicationLocaleOnIOThread(const std::string& locale) {
    GetIOThreadApplicationLocale() = locale;
  }
  
@@ -179,7 +193,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #if BUILDFLAG(ENABLE_EXTENSIONS)
  
  AppLoadedInTabSource ClassifyAppLoadedInTabSource(
-@@ -1404,6 +1344,9 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
+@@ -1404,6 +1337,9 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
    if (add_profiles_extra_parts)
      chrome::AddProfilesExtraParts(main_parts.get());
  
@@ -189,7 +203,7 @@ index 038944fa1d042..e50a6a6870676 100644
      // Construct additional browser parts. Stages are called in the order in
      // which they are added.
  #if defined(TOOLKIT_VIEWS)
-@@ -1444,7 +1387,6 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
+@@ -1444,7 +1380,6 @@ ChromeContentBrowserClient::CreateBrowserMainParts(
  
    main_parts->AddParts(std::make_unique<ChromeBrowserMainExtraPartsMemory>());
  
@@ -197,7 +211,7 @@ index 038944fa1d042..e50a6a6870676 100644
  
    // Always add ChromeBrowserMainExtraPartsGpu last to make sure
    // GpuDataManager initialization could pick up about:flags settings.
-@@ -1462,7 +1404,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
+@@ -1462,7 +1397,6 @@ void ChromeContentBrowserClient::PostAfterStartupTask(
    InitNetworkContextsParentDirectory();
  
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
@@ -205,7 +219,7 @@ index 038944fa1d042..e50a6a6870676 100644
  }
  
  bool ChromeContentBrowserClient::IsBrowserStartupComplete() {
-@@ -1571,11 +1512,6 @@ void ChromeContentBrowserClient::RenderProcessWillLaunch(
+@@ -1571,11 +1505,6 @@ void ChromeContentBrowserClient::RenderProcessWillLaunch(
    // Data cannot be persisted if the profile is off the record.
    host->AddFilter(
        new cdm::CdmMessageFilterAndroid(!profile->IsOffTheRecord(), false));
@@ -217,7 +231,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #endif
  
    Profile* original_profile = profile->GetOriginalProfile();
-@@ -2507,11 +2443,13 @@ ChromeContentBrowserClient::GetApplicationClientGUIDForQuarantineCheck() {
+@@ -2507,11 +2436,13 @@ ChromeContentBrowserClient::GetApplicationClientGUIDForQuarantineCheck() {
    return std::string(chrome::kApplicationClientIDStringForAVScanning);
  }
  
@@ -231,7 +245,7 @@ index 038944fa1d042..e50a6a6870676 100644
  
  std::string ChromeContentBrowserClient::GetApplicationLocale() {
    if (BrowserThread::CurrentlyOn(BrowserThread::IO))
-@@ -2532,13 +2470,7 @@ gfx::ImageSkia ChromeContentBrowserClient::GetDefaultFavicon() {
+@@ -2532,13 +2463,7 @@ gfx::ImageSkia ChromeContentBrowserClient::GetDefaultFavicon() {
  
  bool ChromeContentBrowserClient::IsDataSaverEnabled(
      content::BrowserContext* browser_context) {
@@ -246,7 +260,7 @@ index 038944fa1d042..e50a6a6870676 100644
  }
  
  void ChromeContentBrowserClient::UpdateRendererPreferencesForWorker(
-@@ -3154,14 +3086,12 @@ base::OnceClosure ChromeContentBrowserClient::SelectClientCertificate(
+@@ -3154,14 +3079,12 @@ base::OnceClosure ChromeContentBrowserClient::SelectClientCertificate(
          base::BindOnce(
              &content::ClientCertificateDelegate::ContinueWithCertificate,
              std::move(delegate), std::move(cert)));
@@ -261,7 +275,7 @@ index 038944fa1d042..e50a6a6870676 100644
      // Continue without client certificate. We do this to mimic the case of no
      // client certificate being present in the profile's certificate store.
      delegate->ContinueWithCertificate(nullptr, nullptr);
-@@ -3817,7 +3747,7 @@ void ChromeContentBrowserClient::GetAdditionalFileSystemBackends(
+@@ -3817,7 +3740,7 @@ void ChromeContentBrowserClient::GetAdditionalFileSystemBackends(
    for (size_t i = 0; i < extra_parts_.size(); ++i) {
      extra_parts_[i]->GetAdditionalFileSystemBackends(
          browser_context, storage_partition_path,
@@ -270,7 +284,7 @@ index 038944fa1d042..e50a6a6870676 100644
    }
  }
  
-@@ -4054,16 +3984,6 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4054,16 +3977,6 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
      content::NavigationHandle* handle) {
    std::vector<std::unique_ptr<content::NavigationThrottle>> throttles;
  
@@ -287,7 +301,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
    MaybeAddThrottle(
        chromeos::WebTimeLimitNavigationThrottle::MaybeCreateThrottleFor(handle),
-@@ -4148,13 +4068,6 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4148,13 +4061,6 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
        &throttles);
  #endif
  
@@ -301,7 +315,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #if !defined(OS_ANDROID)
    // BackgroundTabNavigationThrottle is used by TabManager, which is only
    // enabled on non-Android platforms.
-@@ -4168,15 +4081,9 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4168,15 +4074,9 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
                     &throttles);
  #endif
  
@@ -317,7 +331,7 @@ index 038944fa1d042..e50a6a6870676 100644
    MaybeAddThrottle(
        WellKnownChangePasswordNavigationThrottle::MaybeCreateThrottleFor(handle),
        &throttles);
-@@ -4192,11 +4099,8 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4192,11 +4092,8 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
  
    // Before setting up SSL error detection, configure SSLErrorHandler to invoke
    // the relevant extension API whenever an SSL interstitial is shown.
@@ -329,7 +343,20 @@ index 038944fa1d042..e50a6a6870676 100644
        base::BindOnce(&HandleSSLErrorWrapper), base::BindOnce(&IsInHostedApp),
        base::BindOnce(
            &TypedNavigationUpgradeThrottle::
-@@ -4224,14 +4128,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+@@ -4210,12 +4107,6 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
+         &throttles);
+   }
+ 
+-#if defined(OS_LINUX) || defined(OS_MAC) || defined(OS_WIN)
+-  MaybeAddThrottle(enterprise_connectors::DeviceTrustNavigationThrottle::
+-                       MaybeCreateThrottleFor(handle),
+-                   &throttles);
+-#endif  // defined(OS_LINUX) || defined(OS_MAC) || defined(OS_WIN)
+-
+ #if !defined(OS_ANDROID)
+   MaybeAddThrottle(DevToolsWindow::MaybeCreateNavigationThrottle(handle),
+                    &throttles);
+@@ -4224,14 +4115,13 @@ ChromeContentBrowserClient::CreateThrottlesForNavigation(
                     &throttles);
  #endif
  
@@ -346,7 +373,7 @@ index 038944fa1d042..e50a6a6870676 100644
  
  // TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
  // of lacros-chrome is complete.
-@@ -4930,6 +4833,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
+@@ -4930,6 +4820,11 @@ bool ChromeContentBrowserClient::WillCreateURLLoaderFactory(
      network::mojom::URLLoaderFactoryOverridePtr* factory_override) {
    bool use_proxy = false;
  
@@ -358,7 +385,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #if BUILDFLAG(ENABLE_EXTENSIONS)
    auto* web_request_api =
        extensions::BrowserContextKeyedAPIFactory<extensions::WebRequestAPI>::Get(
-@@ -5106,9 +5014,6 @@ void ChromeContentBrowserClient::OnNetworkServiceCreated(
+@@ -5106,9 +5001,6 @@ void ChromeContentBrowserClient::OnNetworkServiceCreated(
      local_state = startup_data_.chrome_feature_list_creator()->local_state();
    }
  
@@ -368,7 +395,7 @@ index 038944fa1d042..e50a6a6870676 100644
    // Create SystemNetworkContextManager if it has not been created yet. We need
    // to set up global NetworkService state before anything else uses it and this
    // is the first opportunity to initialize SystemNetworkContextManager with the
-@@ -5455,61 +5360,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
+@@ -5455,61 +5347,6 @@ const ui::NativeTheme* ChromeContentBrowserClient::GetWebTheme() const {
    return ui::NativeTheme::GetInstanceForWeb();
  }
  
@@ -430,7 +457,7 @@ index 038944fa1d042..e50a6a6870676 100644
  base::Optional<std::string>
  ChromeContentBrowserClient::GetOriginPolicyErrorPage(
      network::OriginPolicyState error_reason,
-@@ -5531,11 +5381,6 @@ void ChromeContentBrowserClient::OnNetworkServiceDataUseUpdate(
+@@ -5531,11 +5368,6 @@ void ChromeContentBrowserClient::OnNetworkServiceDataUseUpdate(
      int32_t network_traffic_annotation_id_hash,
      int64_t recv_bytes,
      int64_t sent_bytes) {
@@ -442,7 +469,7 @@ index 038944fa1d042..e50a6a6870676 100644
  #if !defined(OS_ANDROID)
    task_manager::TaskManagerInterface::UpdateAccumulatedStatsNetworkForRoute(
        process_id, routing_id, recv_bytes, sent_bytes);
-@@ -5557,9 +5402,6 @@ void ChromeContentBrowserClient::LogWebFeatureForCurrentPage(
+@@ -5557,9 +5389,6 @@ void ChromeContentBrowserClient::LogWebFeatureForCurrentPage(
      content::RenderFrameHost* render_frame_host,
      blink::mojom::WebFeature feature) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);
@@ -452,7 +479,7 @@ index 038944fa1d042..e50a6a6870676 100644
  
    // For the SameSite-by-default-cookies related features, log
    // the site engagement score for the site whose cookie was blocked. This is to
-@@ -5654,41 +5496,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
+@@ -5654,41 +5483,6 @@ void ChromeContentBrowserClient::AugmentNavigationDownloadPolicy(
      content::RenderFrameHost* frame_host,
      bool user_gesture,
      blink::NavigationDownloadPolicy* download_policy) {
@@ -494,7 +521,7 @@ index 038944fa1d042..e50a6a6870676 100644
  }
  
  bool ChromeContentBrowserClient::IsBluetoothScanningBlocked(
-@@ -5921,10 +5728,6 @@ bool ChromeContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+@@ -5921,10 +5715,6 @@ bool ChromeContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
        HostContentSettingsMapFactory::GetForProfile(browser_context), origin);
  }
  

@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/ui/webui/policy/policy_ui_handler.cc b/chrome/browser/ui/webui/policy/policy_ui_handler.cc
+index 160edc514605d..f226580938804 100644
+--- a/chrome/browser/ui/webui/policy/policy_ui_handler.cc
++++ b/chrome/browser/ui/webui/policy/policy_ui_handler.cc
+@@ -30,7 +30,6 @@
+ #include "build/chromeos_buildflags.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/download/download_prefs.h"
+-#include "chrome/browser/enterprise/util/affiliation.h"
+ #include "chrome/browser/policy/chrome_browser_policy_connector.h"
+ #include "chrome/browser/policy/chrome_policy_conversions_client.h"
+ #include "chrome/browser/policy/profile_policy_connector.h"
+@@ -236,8 +235,7 @@ void GetUserAffiliationStatus(base::DictionaryValue* dict, Profile* profile) {
+   if (!policy::BrowserDMTokenStorage::Get()->RetrieveDMToken().is_valid())
+     return;
+ 
+-  dict->SetBoolean("isAffiliated",
+-                   chrome::enterprise_util::IsProfileAffiliated(profile));
++  dict->SetBoolean("isAffiliated", false);
+ #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+ }
+ 

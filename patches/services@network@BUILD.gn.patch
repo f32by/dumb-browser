@@ -1,8 +1,16 @@
 diff --git a/services/network/BUILD.gn b/services/network/BUILD.gn
-index 48943a0d9559f..505dc7ce55bad 100644
+index 48943a0d9559f..529c511b8ef9f 100644
 --- a/services/network/BUILD.gn
 +++ b/services/network/BUILD.gn
-@@ -70,8 +70,6 @@ component("network_service") {
+@@ -3,6 +3,7 @@
+ # found in the LICENSE file.
+ 
+ import("//build/config/chromeos/ui_mode.gni")
++import("//dumb/services/network/sources.gni")
+ import("//mojo/public/tools/bindings/mojom.gni")
+ import("//net/features.gni")
+ import("//services/network/public/cpp/features.gni")
+@@ -70,8 +71,6 @@ component("network_service") {
      "network_quality_estimator_manager.h",
      "network_service.cc",
      "network_service.h",
@@ -11,7 +19,7 @@ index 48943a0d9559f..505dc7ce55bad 100644
      "network_service_proxy_delegate.cc",
      "network_service_proxy_delegate.h",
      "origin_policy/origin_policy_constants.h",
-@@ -225,7 +223,6 @@ component("network_service") {
+@@ -225,7 +224,6 @@ component("network_service") {
      "//build:chromeos_buildflags",
      "//components/content_settings/core/common",
      "//components/cookie_config",
@@ -19,11 +27,11 @@ index 48943a0d9559f..505dc7ce55bad 100644
      "//components/network_session_configurator/browser",
      "//components/network_session_configurator/common",
      "//components/os_crypt",
-@@ -253,6 +250,8 @@ component("network_service") {
+@@ -253,6 +251,8 @@ component("network_service") {
      deps += [ ":network_sandbox_hook" ]
    }
  
-+  deps += [ "//dumb/services/network" ]
++  deps += dumb_services_network_deps
 +
    public_deps = [ "//services/network/public/cpp:buildflags" ]
  

@@ -1,40 +1,22 @@
 diff --git a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
-index 68effcc7c276b..d96f5ebd2b066 100644
+index 68effcc7c276b..ce4e8d1b7f9d2 100644
 --- a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
 +++ b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
-@@ -14,7 +14,6 @@
- #include "base/memory/weak_ptr.h"
- #include "base/observer_list.h"
- #include "base/time/time.h"
--#include "components/enterprise/browser/reporting/reporting_delegate_factory.h"
- #include "components/policy/core/common/cloud/cloud_policy_client.h"
- 
- class PrefService;
-@@ -24,10 +23,6 @@ class NetworkConnectionTracker;
- class SharedURLLoaderFactory;
- }  // namespace network
- 
--namespace enterprise_reporting {
--class ReportScheduler;
--}
--
- namespace policy {
- class ChromeBrowserCloudManagementRegistrar;
- class ConfigurationPolicyProvider;
-@@ -120,12 +115,6 @@ class ChromeBrowserCloudManagementController
+@@ -120,11 +120,13 @@ class ChromeBrowserCloudManagementController
      virtual scoped_refptr<network::SharedURLLoaderFactory>
      GetSharedURLLoaderFactory() = 0;
  
--    // Creates and returns a ReportScheduler for enterprise reporting. Delegates
--    // must pass the platform-specific factory that should be used to
--    // instantiate the delegates for the reporting objects.
--    virtual std::unique_ptr<enterprise_reporting::ReportScheduler>
--    CreateReportScheduler(CloudPolicyClient* client) = 0;
--
++#if 0
+     // Creates and returns a ReportScheduler for enterprise reporting. Delegates
+     // must pass the platform-specific factory that should be used to
+     // instantiate the delegates for the reporting objects.
+     virtual std::unique_ptr<enterprise_reporting::ReportScheduler>
+     CreateReportScheduler(CloudPolicyClient* client) = 0;
++#endif
+ 
      // Returns a BestEffort Task Runner, bound to the UI thread like the rest of
      // this class, that is meant to be used to schedule asynchronous tasks
-     // during startup.
-@@ -212,8 +201,6 @@ class ChromeBrowserCloudManagementController
+@@ -212,8 +214,6 @@ class ChromeBrowserCloudManagementController
    void InvalidatePolicies();
    void InvalidateDMTokenCallback(bool success);
  
@@ -43,12 +25,3 @@ index 68effcc7c276b..d96f5ebd2b066 100644
    base::ObserverList<Observer, true>::Unchecked observers_;
  
    std::unique_ptr<Delegate> delegate_;
-@@ -225,8 +212,6 @@ class ChromeBrowserCloudManagementController
-   // Time at which the enrollment process was started.  Used to log UMA metric.
-   base::Time enrollment_start_time_;
- 
--  std::unique_ptr<enterprise_reporting::ReportScheduler> report_scheduler_;
--
-   std::unique_ptr<policy::CloudPolicyClient> cloud_policy_client_;
- 
-   base::WeakPtrFactory<ChromeBrowserCloudManagementController> weak_factory_{

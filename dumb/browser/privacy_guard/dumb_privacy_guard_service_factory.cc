@@ -19,7 +19,7 @@
 #include "chrome/browser/profiles/incognito_helpers.h"
 #include "chrome/browser/profiles/profile.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
-#include "dumb/components/privacy_guard/dumb_privacy_guard_service.h"
+#include "dumb/components/privacy_guard/browser/dumb_privacy_guard_service.h"
 
 // static
 DumbPrivacyGuardService* DumbPrivacyGuardServiceFactory::GetForBrowserContext(

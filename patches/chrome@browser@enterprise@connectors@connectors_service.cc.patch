@@ -1,15 +1,8 @@
 diff --git a/chrome/browser/enterprise/connectors/connectors_service.cc b/chrome/browser/enterprise/connectors/connectors_service.cc
-index a682d6a5cde8f..9c227b28d5dee 100644
+index a682d6a5cde8f..06c1b6e9bc8cb 100644
 --- a/chrome/browser/enterprise/connectors/connectors_service.cc
 +++ b/chrome/browser/enterprise/connectors/connectors_service.cc
-@@ -24,14 +24,12 @@
- #include "chrome/browser/signin/identity_manager_factory.h"
- #include "components/embedder_support/user_agent_utils.h"
- #include "components/enterprise/browser/controller/browser_dm_token_storage.h"
--#include "components/enterprise/common/proto/connectors.pb.h"
- #include "components/keyed_service/content/browser_context_dependency_manager.h"
- #include "components/policy/core/common/cloud/cloud_policy_util.h"
- #include "components/policy/core/common/cloud/dm_token.h"
+@@ -31,7 +31,6 @@
  #include "components/policy/core/common/cloud/machine_level_user_cloud_policy_manager.h"
  #include "components/policy/core/common/cloud/user_cloud_policy_manager.h"
  #include "components/policy/core/common/policy_types.h"
@@ -17,140 +10,31 @@ index a682d6a5cde8f..9c227b28d5dee 100644
  #include "components/signin/public/identity_manager/consent_level.h"
  #include "components/signin/public/identity_manager/identity_manager.h"
  #include "components/user_prefs/user_prefs.h"
-@@ -45,6 +43,7 @@
+@@ -345,6 +344,7 @@ std::vector<std::string> ConnectorsService::GetAnalysisServiceProviderNames(
  
- namespace enterprise_connectors {
- 
-+#if 0
- namespace {
- 
- const enterprise_management::PolicyData* GetProfilePolicyData(
-@@ -122,6 +121,7 @@ void PopulateProfileMetadata(const ReportingSettings& reporting_settings,
- }
- 
- }  // namespace
-+#endif
- 
- const base::Feature kEnterpriseConnectorsEnabled{
-     "EnterpriseConnectorsEnabled", base::FEATURE_ENABLED_BY_DEFAULT};
-@@ -234,6 +234,7 @@ ConnectorsService::ConnectorsService(content::BrowserContext* context,
- 
- ConnectorsService::~ConnectorsService() = default;
- 
-+#if 0
- base::Optional<ReportingSettings> ConnectorsService::GetReportingSettings(
-     ReportingConnector connector) {
-   if (!ConnectorsEnabled())
-@@ -277,6 +278,7 @@ base::Optional<AnalysisSettings> ConnectorsService::GetAnalysisSettings(
- 
-   return settings;
- }
-+#endif
- 
- base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
-     const GURL& url,
-@@ -292,20 +294,6 @@ base::Optional<FileSystemSettings> ConnectorsService::GetFileSystemSettings(
-   return settings;
- }
- 
--bool ConnectorsService::IsConnectorEnabled(AnalysisConnector connector) const {
--  if (!ConnectorsEnabled())
--    return false;
--
--  return connectors_manager_->IsConnectorEnabled(connector);
--}
--
--bool ConnectorsService::IsConnectorEnabled(ReportingConnector connector) const {
--  if (!ConnectorsEnabled())
--    return false;
--
--  return connectors_manager_->IsConnectorEnabled(connector);
--}
--
- bool ConnectorsService::IsConnectorEnabled(
-     FileSystemConnector connector) const {
-   if (!ConnectorsEnabled())
-@@ -314,67 +302,14 @@ bool ConnectorsService::IsConnectorEnabled(
-   return connectors_manager_->IsConnectorEnabled(connector);
- }
- 
--std::vector<std::string> ConnectorsService::GetReportingServiceProviderNames(
--    ReportingConnector connector) {
--  if (!ConnectorsEnabled())
--    return {};
--
--  if (!GetDmToken(ConnectorScopePref(connector)).has_value())
--    return {};
--
--  return connectors_manager_->GetReportingServiceProviderNames(connector);
--}
--
--bool ConnectorsService::DelayUntilVerdict(AnalysisConnector connector) {
--  if (!ConnectorsEnabled())
--    return false;
--
--  return connectors_manager_->DelayUntilVerdict(connector);
--}
--
--std::vector<std::string> ConnectorsService::GetAnalysisServiceProviderNames(
--    AnalysisConnector connector) {
--  if (!ConnectorsEnabled())
--    return {};
--
--  if (!GetDmToken(ConnectorScopePref(connector)).has_value())
--    return {};
--
--  return connectors_manager_->GetAnalysisServiceProviderNames(connector);
--}
--
  base::Optional<std::string> ConnectorsService::GetDMTokenForRealTimeUrlCheck()
      const {
++#if 0
    if (!ConnectorsEnabled())
      return base::nullopt;
  
--  if (Profile::FromBrowserContext(context_)->GetPrefs()->GetInteger(
--          prefs::kSafeBrowsingEnterpriseRealTimeUrlCheckMode) ==
--      safe_browsing::REAL_TIME_CHECK_DISABLED) {
--    return base::nullopt;
--  }
--
--  base::Optional<DmToken> dm_token =
--      GetDmToken(prefs::kSafeBrowsingEnterpriseRealTimeUrlCheckScope);
--
--  if (dm_token.has_value())
--    return dm_token.value().value;
+@@ -359,9 +359,11 @@ base::Optional<std::string> ConnectorsService::GetDMTokenForRealTimeUrlCheck()
+ 
+   if (dm_token.has_value())
+     return dm_token.value().value;
++#endif
    return base::nullopt;
  }
  
--safe_browsing::EnterpriseRealTimeUrlCheckMode
--ConnectorsService::GetAppliedRealTimeUrlCheck() const {
--  if (!ConnectorsEnabled() ||
--      !GetDmToken(prefs::kSafeBrowsingEnterpriseRealTimeUrlCheckScope)
--           .has_value()) {
--    return safe_browsing::REAL_TIME_CHECK_DISABLED;
--  }
--
--  return static_cast<safe_browsing::EnterpriseRealTimeUrlCheckMode>(
--      Profile::FromBrowserContext(context_)->GetPrefs()->GetInteger(
--          prefs::kSafeBrowsingEnterpriseRealTimeUrlCheckMode));
--}
--
- ConnectorsManager* ConnectorsService::ConnectorsManagerForTesting() {
-   return connectors_manager_.get();
- }
-@@ -454,6 +389,7 @@ bool ConnectorsService::ConnectorsEnabled() const {
-   return !Profile::FromBrowserContext(context_)->IsOffTheRecord();
- }
- 
 +#if 0
- std::unique_ptr<ClientMetadata> ConnectorsService::BuildClientMetadata() {
-   // Check the reporting policy value to check if the analysis should include
-   // browser/device/profile information.
-@@ -476,6 +412,7 @@ std::unique_ptr<ClientMetadata> ConnectorsService::BuildClientMetadata() {
- 
-   return metadata;
+ safe_browsing::EnterpriseRealTimeUrlCheckMode
+ ConnectorsService::GetAppliedRealTimeUrlCheck() const {
+   if (!ConnectorsEnabled() ||
+@@ -374,6 +376,7 @@ ConnectorsService::GetAppliedRealTimeUrlCheck() const {
+       Profile::FromBrowserContext(context_)->GetPrefs()->GetInteger(
+           prefs::kSafeBrowsingEnterpriseRealTimeUrlCheckMode));
  }
 +#endif
  
- // ---------------------------------------
- // ConnectorsServiceFactory implementation
+ ConnectorsManager* ConnectorsService::ConnectorsManagerForTesting() {
+   return connectors_manager_.get();
