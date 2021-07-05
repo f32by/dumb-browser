@@ -38,27 +38,16 @@ namespace {
 const unsigned kOsAll = kOsMac | kOsWin | kOsLinux | kOsCrOS | kOsAndroid;
 const unsigned kOsDesktop = kOsMac | kOsWin | kOsLinux | kOsCrOS;
 
-// The "Enabled" state for this feature is "0" and representing setting A.
-const FeatureEntry::FeatureParam kTabHoverCardsSettingB[] = {
-    {features::kTabHoverCardsFeatureParameterName, "1"}};
-const FeatureEntry::FeatureParam kTabHoverCardsSettingC[] = {
-    {features::kTabHoverCardsFeatureParameterName, "2"}};
-
-const FeatureEntry::FeatureVariation kTabHoverCardsFeatureVariations[] = {
-    {"B", kTabHoverCardsSettingB, base::size(kTabHoverCardsSettingB), nullptr},
-    {"C", kTabHoverCardsSettingC, base::size(kTabHoverCardsSettingC), nullptr}};
-
 }
 
 namespace about_flags {
 
 const FeatureEntry kDumbFeatureEntries[] = {
   // UI flags.
-  {"tab-hover-cards", flag_descriptions::kTabHoverCardsName,
-     flag_descriptions::kTabHoverCardsDescription, kOsDesktop,
-     FEATURE_WITH_PARAMS_VALUE_TYPE(features::kTabHoverCards,
-                                    kTabHoverCardsFeatureVariations,
-                                    "TabHoverCards")},
+  {flag_descriptions::kTabHoverCardsId,
+   flag_descriptions::kTabHoverCardsName,
+   flag_descriptions::kTabHoverCardsDescription, kOsDesktop,
+   FEATURE_VALUE_TYPE(features::kTabHoverCards)},
   {flag_descriptions::kExtensionsToolbarMenuId,
    flag_descriptions::kExtensionsToolbarMenuName,
    flag_descriptions::kExtensionsToolbarMenuDescription, kOsDesktop,
