@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/performance_manager/observers/metrics_collector.cc b/chrome/browser/performance_manager/observers/metrics_collector.cc
-index 545f731915b22..4042fc8124ae2 100644
+index a6bf31f968b36..51f442800ac78 100644
 --- a/chrome/browser/performance_manager/observers/metrics_collector.cc
 +++ b/chrome/browser/performance_manager/observers/metrics_collector.cc
-@@ -112,13 +112,6 @@ MetricsCollector::MetricsReportRecord* MetricsCollector::GetMetricsReportRecord(
+@@ -129,13 +129,6 @@ MetricsCollector::MetricsReportRecord* MetricsCollector::GetMetricsReportRecord(
    return &holder->metrics_report_record;
  }
  
@@ -16,7 +16,7 @@ index 545f731915b22..4042fc8124ae2 100644
  void MetricsCollector::RegisterObservers(Graph* graph) {
    graph->AddFrameNodeObserver(this);
    graph->AddPageNodeObserver(this);
-@@ -137,13 +130,9 @@ bool MetricsCollector::ShouldReportMetrics(const PageNode* page_node) {
+@@ -154,13 +147,9 @@ bool MetricsCollector::ShouldReportMetrics(const PageNode* page_node) {
  
  void MetricsCollector::UpdateUkmSourceIdForPage(const PageNode* page_node,
                                                  ukm::SourceId ukm_source_id) {

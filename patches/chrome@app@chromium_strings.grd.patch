@@ -1,5 +1,5 @@
 diff --git a/chrome/app/chromium_strings.grd b/chrome/app/chromium_strings.grd
-index 24e4e0bd57bde..1d39270c92d58 100644
+index 9a8d8d7bcb181..f8bdbff2df01b 100644
 --- a/chrome/app/chromium_strings.grd
 +++ b/chrome/app/chromium_strings.grd
 @@ -191,10 +191,10 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
@@ -15,7 +15,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
        </message>
        <if expr="is_win">
          <message name="IDS_SXS_SHORTCUT_NAME" desc="Unused in Chromium builds" translateable="false">
-@@ -204,10 +204,10 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+@@ -204,15 +204,15 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
          <message name="IDS_SHORTCUT_NAME_DEV" desc="Unused in Chromium builds" translateable="false">
          </message>
          <message name="IDS_PRODUCT_DESCRIPTION" desc="Browser description">
@@ -27,8 +27,14 @@ index 24e4e0bd57bde..1d39270c92d58 100644
 +          Welcome to Dumb Browser; new browser window opened
          </message>
        </if>
+       <if expr="is_macosx or is_linux">
+         <message name="IDS_FIRST_RUN_DIALOG_WINDOW_TITLE" desc="Window title of First Run dialog on Mac and Linux, displayed in title bar">
+-          Welcome to Chromium
++          Welcome to Dumb Browser
+         </message>
+       </if>
        <if expr="chromeos">
-@@ -232,34 +232,34 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+@@ -237,34 +237,34 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
        </if>
        <if expr="not is_macosx and not chromeos">
          <message name="IDS_TASK_MANAGER_TITLE" desc="The title of the Task Manager window">
@@ -69,7 +75,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
        <if expr="is_macosx">
-@@ -271,22 +271,22 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+@@ -276,22 +276,22 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
        <!-- Accessible window title format - includes the channel, and the same
             on all browser platforms rather than different on Chrome OS. -->
        <message name="IDS_ACCESSIBLE_BROWSER_WINDOW_TITLE_FORMAT" desc="The format for the accessible name of a tabbed browser window">
@@ -98,7 +104,23 @@ index 24e4e0bd57bde..1d39270c92d58 100644
        </message>
        <if expr="chromeos">
          <message name="IDS_ABOUT_CROS_VERSION_LICENSE" desc="Additional text displayed beneath the Chromium open source URLs for Chrome OS.">
-@@ -309,42 +309,42 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+@@ -301,55 +301,55 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+           Chromium OS is made possible by additional <ph name="BEGIN_LINK_CROS_OSS">&lt;a target="_blank" href="$1"&gt;</ph>open source software<ph name="END_LINK_CROS_OSS">&lt;/a&gt;</ph>, as is <ph name="BEGIN_LINK_LINUX_OSS">&lt;a target="_blank" href="$2"&gt;</ph>Linux development environment<ph name="END_LINK_LINUX_OSS">&lt;/a&gt;</ph>.
+         </message>
+         <message name="IDS_ABOUT_SAFETY_INFORMATION" desc="The safety label in the About box." translateable="false">
+-          Not used in Chromium. Placeholder to keep resource maps in sync.
++          Not used in Dumb Browser. Placeholder to keep resource maps in sync.
+         </message>
+       </if>
+       <message name="IDS_ABOUT_TERMS_OF_SERVICE" desc="The terms of service label in the About box." translateable="false">
+-        Not used in Chromium. Placeholder to keep resource maps in sync.
++        Not used in Dumb Browser. Placeholder to keep resource maps in sync.
+       </message>
+       <if expr="is_macosx">
+         <message name="IDS_MAC_10_10_OBSOLETE_SOON" desc="A message displayed on an at-launch infobar and About (Help) page warning the user that the OS version they are using will soon be or is already unsupported.">
+-          To get future Chromium updates, you'll need OS X 10.11 or later. This computer is using OS X 10.10.
++          To get future Dumb Browser updates, you'll need OS X 10.11 or later. This computer is using OS X 10.10.
+         </message>
        </if>
        <if expr="is_win">
          <message name="IDS_WIN_XP_VISTA_OBSOLETE" desc="A message displayed on an at-launch infobar and about:help warning the user that the computer they are using is no longer supported.">
@@ -151,7 +173,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
        </message>
        <if expr="chromeos">
          <message name="IDS_EXTERNAL_PROTOCOL_NO_HANDLER_TITLE" desc="External Protocol Dialog Title">
-@@ -353,16 +353,16 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
+@@ -358,16 +358,16 @@ If you update this file, be sure also to update google_chrome_strings.grd. -->
        </if>
        <if expr="use_titlecase">
          <message name="IDS_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND" desc="In Title Case: The checkbox in the status tray context menu that controls whether chrome keeps running in the background after the last window is closed">
@@ -171,7 +193,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
  
  <ph name="USER_DATA_DIRECTORY">$1<ex>C:\Documents and Settings\devint\Local Settings\Application Data\Google\Chrome</ex></ph>
        </message>
-@@ -372,9 +372,9 @@ Chromium cannot read and write to its data directory:
+@@ -377,9 +377,9 @@ Chromium cannot read and write to its data directory:
          </message>
        </if>
        <message name="IDS_PROFILE_TOO_NEW_ERROR" desc="Error displayed on startup when the profile is from a newer version of the product and can not be read">
@@ -183,7 +205,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
        </message>
        <message name="IDS_PREFERENCES_UNREADABLE_ERROR" desc="Error displayed on startup when user preferences file can not be read">
  Your preferences can not be read.
-@@ -384,90 +384,90 @@ Some features may be unavailable and changes to preferences won't be saved.
+@@ -389,90 +389,90 @@ Some features may be unavailable and changes to preferences won't be saved.
        <message name="IDS_PREFERENCES_CORRUPT_ERROR" desc="Error displayed on startup when user preferences file can not be read">
  Your preferences file is corrupt or invalid.
  
@@ -298,7 +320,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
        <!-- Options Dialog -->
-@@ -486,152 +486,152 @@ Chromium is unable to recover your settings.
+@@ -491,163 +491,163 @@ Chromium is unable to recover your settings.
          </message>
        </if>
        <message name="IDS_DEFAULT_BROWSER_INFOBAR_TEXT" desc="Text to show in an infobar when Chromium is not the current default browser.">
@@ -369,6 +391,12 @@ index 24e4e0bd57bde..1d39270c92d58 100644
 +        This file may be dangerous, so Dumb Browser has blocked it.
        </message>
  
+       <message name="IDS_PROMPT_CONFIRM_DANGEROUS_DOWNLOAD_ACCOUNT_COMPROMISE_BODY"
+         desc="Body prompt text for the confirmation dialog asking whether the user really meant to keep a download deemed to be associated with account compromise by safebrowsing">
+-        Chromium recommends that you don't download or open this file.
++        Dumb Browser recommends that you don't download or open this file.
+       </message>
+ 
        <!-- Abandon in-progress downloads confirmation dialog -->
        <if expr="not is_macosx">
          <message name="IDS_ABANDON_DOWNLOAD_DIALOG_BROWSER_MESSAGE" desc="Message on a dialog shown when the user closes the browser while one or more downloads are in progress. This string is shown on Windows, Chrome OS, and Linux, which all use 'Exit' to refer to closing a browser.">
@@ -412,9 +440,9 @@ index 24e4e0bd57bde..1d39270c92d58 100644
        </if>
  
        <!-- chrome://settings/extensions page -->
-       <message name="IDS_EXTENSIONS_INCOGNITO_WARNING" desc="Warns the user that Chromium cannot prevent extensions from recording history in incognito mode. Displayed in extensions management UI after an extension is selected to be run in incognito mode.">
--        Warning: Chromium cannot prevent extensions from recording your browsing history. To disable this extension in incognito mode, unselect this option.
-+        Warning: Dumb Browser cannot prevent extensions from recording your browsing history. To disable this extension in incognito mode, unselect this option.
+       <message name="IDS_EXTENSIONS_INCOGNITO_WARNING" desc="Warns the user that Chromium cannot prevent extensions from recording history in Incognito mode. Displayed in extensions management UI after an extension is selected to be run in Incognito mode.">
+-        Warning: Chromium cannot prevent extensions from recording your browsing history. To disable this extension in Incognito mode, unselect this option.
++        Warning: Dumb Browser cannot prevent extensions from recording your browsing history. To disable this extension in Incognito mode, unselect this option.
        </message>
        <message name="IDS_EXTENSIONS_UNINSTALL" desc="The link for uninstalling extensions.">
 -        Remove from Chromium...
@@ -466,6 +494,10 @@ index 24e4e0bd57bde..1d39270c92d58 100644
 -          Update &amp;Chromium
 +          Update &amp;Dumb Browser
          </message>
+         <message name="IDS_RELAUNCH_TO_UPDATE" desc="In Title Case: The text label of the Update Chrome menu item, when relaunch to update experiment is enabled">
+-          Relaunch to Update &amp;Chromium
++          Relaunch to Update &amp;Dumb Browser
+         </message>
        </if>
        <if expr="not use_titlecase and not chromeos">
          <message name="IDS_ABOUT" desc="The text label of the About Chrome menu item">
@@ -476,6 +508,10 @@ index 24e4e0bd57bde..1d39270c92d58 100644
 -          Update &amp;Chromium
 +          Update &amp;Dumb Browser
          </message>
+         <message name="IDS_RELAUNCH_TO_UPDATE" desc="The text label of the Update Chrome menu item, when relaunch to update experiment is enabled">
+-          Relaunch to update &amp;Chromium
++          Relaunch to update &amp;Dumb Browser
+         </message>
        </if>
        <if expr="chromeos">
          <message name="IDS_ABOUT" desc="The text label of the About Chrome menu item">
@@ -484,7 +520,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
          <message name="IDS_UPDATE_NOW" desc="The text label of the Update Chrome OS Now menu item">
            Update &amp;Chromium OS
-@@ -640,53 +640,53 @@ Chromium is unable to recover your settings.
+@@ -659,53 +659,53 @@ Chromium is unable to recover your settings.
  
        <if expr="is_macosx">
          <message name="IDS_APP_MENU_PRODUCT_NAME" desc="The application's short name, used for the Mac's application menu, activity monitor, etc. This should be less than 16 characters. Example: Chrome, not Google Chrome.">
@@ -549,7 +585,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
          <message name="IDS_ENTERPRISE_SIGNIN_WORK_PROFILE_TITLE" desc="The title of the dialog to confirm adding a new work profile with the signed-in enterprise account">
            Add Work Profile to this browser
-@@ -698,62 +698,62 @@ Chromium is unable to recover your settings.
+@@ -717,62 +717,62 @@ Chromium is unable to recover your settings.
            This work profile is completely separate from your personal profile.
          </message>
          <message name="IDS_ENTERPRISE_SIGNIN_WORK_PROFILE_EXPLANATION" desc="The warning message displayed to an enterprise user about to link their profile to their Google account. This message is followed by a 'Learn more' link.">
@@ -626,7 +662,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
  
-@@ -762,20 +762,20 @@ Chromium is unable to recover your settings.
+@@ -781,20 +781,20 @@ Chromium is unable to recover your settings.
                   omitting them brings up a hash collision error. -->
        <if expr="is_win">
          <message name="IDS_CHROME_CLEANUP_PROMPT_EXPLANATION" desc="Description in the Chrome Cleanup dialog that Chromium browser shows when unwanted software, like ad injectors or software that changes the user's settings without their knowledge, is found on the user's computer. Appears under the title asking 'Remove harmful software?' Actor is Chromium; we are asking, Do you want Chromium to remove harmful software? 'it' is harmful software. User has the option of clicking 'Remove' to proceed with a cleanup, or 'Details' to see more details. The description is also shown on the Chrome Cleanup section of the Settings page, under 'Remove harmful software' title. Preferrably, the translation for this string should parallel IDS_SETTINGS_RESET_CLEANUP_EXPLANATION_CURRENTLY_REMOVING.">
@@ -651,7 +687,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
        <if expr="chromeos">
-@@ -796,16 +796,16 @@ Chromium is unable to recover your settings.
+@@ -815,16 +815,16 @@ Chromium is unable to recover your settings.
        <!-- App list -->
        <if expr="chromeos">
          <message name="IDS_APP_LIST_EXTENSIONS_UNINSTALL" desc="Title text for the context menu item of a non-platform-app app list item that removes the app.">
@@ -671,7 +707,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
        </message>
        <if expr="is_win">
          <message name="IDS_APP_SHORTCUTS_SUBDIR_NAME_BETA" desc="Unused in Chromium builds" translateable="false">
-@@ -817,32 +817,32 @@ Chromium is unable to recover your settings.
+@@ -836,32 +836,32 @@ Chromium is unable to recover your settings.
        <!-- Chrome OS OOBE Terms of Service screen-->
        <if expr="chromeos">
          <message name="IDS_TERMS_OF_SERVICE_SCREEN_SUBHEADING" desc="Subheading at the top of the Terms of Service screen. MANAGER can be a domain or an email address.">
@@ -710,7 +746,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
  
-@@ -850,62 +850,62 @@ Chromium is unable to recover your settings.
+@@ -869,62 +869,62 @@ Chromium is unable to recover your settings.
        <if expr="not is_android and not chromeos">
          <!-- User pod remove sync warning text -->
          <message name="IDS_LOGIN_POD_USER_REMOVE_WARNING_SYNC" desc="Main text shown as a warning when attempting to remove an user.">
@@ -789,7 +825,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
          <message name="IDS_INBOUND_MDNS_RULE_NAME_BETA" desc="Unused in Chromium builds" translateable="false">
          </message>
-@@ -914,7 +914,7 @@ Chromium is unable to recover your settings.
+@@ -933,7 +933,7 @@ Chromium is unable to recover your settings.
          <message name="IDS_INBOUND_MDNS_RULE_NAME_DEV" desc="Unused in Chromium builds" translateable="false">
          </message>
          <message name="IDS_INBOUND_MDNS_RULE_DESCRIPTION" desc="The description of the firewall rule allowing inbound mDNS traffic.">
@@ -798,7 +834,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
          <message name="IDS_INBOUND_MDNS_RULE_DESCRIPTION_BETA" desc="Unused in Chromium builds" translateable="false">
          </message>
-@@ -926,28 +926,28 @@ Chromium is unable to recover your settings.
+@@ -945,28 +945,28 @@ Chromium is unable to recover your settings.
  
        <if expr="not is_android">
          <message name="IDS_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_BUBBLE_TEXT" desc="The text of a bubble that confirms users allows integrating the accessibility labels service of Google to Chromium.">
@@ -817,7 +853,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
 -            Open link in new Chromium &amp;tab
 +            Open link in new Dumb Browser &amp;tab
            </message>
-           <message name="IDS_CONTENT_CONTEXT_OPENLINKOFFTHERECORD_INAPP" desc="The name of the command to open a link in an incognito browser window when the user is in an app window">
+           <message name="IDS_CONTENT_CONTEXT_OPENLINKOFFTHERECORD_INAPP" desc="The name of the command to open a link in an Incognito browser window when the user is in an app window">
 -            Open link in Chromium inco&amp;gnito window
 +            Open link in Dumb Browser inco&amp;gnito window
            </message>
@@ -827,20 +863,20 @@ index 24e4e0bd57bde..1d39270c92d58 100644
 -            Open Link in New Chromium &amp;tab
 +            Open Link in New Dumb Browser &amp;tab
            </message>
-           <message name="IDS_CONTENT_CONTEXT_OPENLINKOFFTHERECORD_INAPP" desc="In Title Case: The name of the command to open a link in an incognito browser window when the user is in an app window">
+           <message name="IDS_CONTENT_CONTEXT_OPENLINKOFFTHERECORD_INAPP" desc="In Title Case: The name of the command to open a link in an Incognito browser window when the user is in an app window">
 -            Open Link in Chromium Inco&amp;gnito Window
 +            Open Link in Dumb Browser Inco&amp;gnito Window
            </message>
          </if>
        </if>
-@@ -955,13 +955,13 @@ Chromium is unable to recover your settings.
+@@ -974,13 +974,13 @@ Chromium is unable to recover your settings.
        <!-- Update Recommended dialog -->
        <if expr="not chromeos">
          <message name="IDS_UPDATE_RECOMMENDED_DIALOG_TITLE" desc="The window title for the Update Recommended dialog.">
 -          Relaunch Chromium
 +          Relaunch Dumb Browser
          </message>
-         <message name="IDS_UPDATE_RECOMMENDED" desc="The main text of the Update Recommended dialog with a count of open incognito windows.">
+         <message name="IDS_UPDATE_RECOMMENDED" desc="The main text of the Update Recommended dialog with a count of open Incognito windows.">
            {COUNT, plural,
 -          =0 {A new update for Chromium is available and will be applied as soon as you relaunch.}
 -          =1 {A new update for Chromium is available and will be applied as soon as you relaunch. Your Incognito window won't reopen.}
@@ -851,7 +887,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
          <message name="IDS_RELAUNCH_AND_UPDATE" desc="The button in the Update Recommended dialog which updates and relaunches Chrome.">
            Relaunch
-@@ -981,52 +981,52 @@ Chromium is unable to recover your settings.
+@@ -1000,52 +1000,52 @@ Chromium is unable to recover your settings.
  
        <!-- Update bubble -->
        <message name="IDS_REINSTALL_APP" desc="Text for the button the user clicks to reinstall the app.">
@@ -916,7 +952,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
        <message name="IDS_RECOVERY_BUBBLE_TEXT" desc="Text for the chrome recovery bubble view full description.">
-@@ -1036,53 +1036,53 @@ Chromium is unable to recover your settings.
+@@ -1055,53 +1055,53 @@ Chromium is unable to recover your settings.
        <!-- Critical Notification bubble -->
        <message name="IDS_CRITICAL_NOTIFICATION_TITLE" desc="The title for a bubble that appears when there is a critical update and Chromium must restart to install it. It counts down from # seconds and then Chromium automatically restarts.">
          {SECONDS, plural,
@@ -983,7 +1019,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
          <message name="IDS_EULA_SCREEN_ACCESSIBLE_TITLE" desc="Title to be spoken on opening the OOBE EULA screen">
            Chromium OS terms
-@@ -1092,14 +1092,14 @@ Chromium is unable to recover your settings.
+@@ -1118,14 +1118,14 @@ Chromium is unable to recover your settings.
        <!-- Welcome page (chrome://welcome) strings -->
        <if expr="not chromeos and not is_android">
          <message name="IDS_WELCOME_HEADER" desc="A message which will appear as the header on the Welcome UI if the user has never run Chromium before.">
@@ -1000,7 +1036,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
        <!-- Relaunch notification bubble and dialog. -->
-@@ -1107,73 +1107,73 @@ Chromium is unable to recover your settings.
+@@ -1133,73 +1133,73 @@ Chromium is unable to recover your settings.
          <if expr="not chromeos">
            <message name="IDS_RELAUNCH_RECOMMENDED_TITLE" desc="The title of a dialog that tells users that a browser relaunch is recommended for an update available for some number of days.">
              {0, plural,
@@ -1099,7 +1135,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
  
        </if>
-@@ -1181,45 +1181,45 @@ Chromium is unable to recover your settings.
+@@ -1207,45 +1207,45 @@ Chromium is unable to recover your settings.
        <if expr="not chromeos and not is_android">
          <!-- Profile Picker -->
          <message name="IDS_PROFILE_PICKER_MAIN_VIEW_TITLE" desc="Profile picker main view title">
@@ -1158,7 +1194,7 @@ index 24e4e0bd57bde..1d39270c92d58 100644
          </message>
        </if>
  
-@@ -1238,12 +1238,12 @@ Chromium is unable to recover your settings.
+@@ -1264,12 +1264,12 @@ Chromium is unable to recover your settings.
  
        <!-- ChromeLabs bubble -->
        <message name="IDS_CHROMELABS_RELAUNCH_FOOTER_MESSAGE" desc="Text that shows in the footer of the Chrome Labs bubble when relaunch is needed for changes to take effect.">

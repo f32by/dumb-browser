@@ -1,0 +1,34 @@
+diff --git a/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc b/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
+index f8fe22470f32c..d99c865f06b93 100644
+--- a/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
++++ b/third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
+@@ -15,11 +15,13 @@
+ 
+ namespace blink {
+ 
++#if 0
+ namespace {
+ 
+ const size_t kMaxTraceEventStringLength = 1000;
+ 
+ }  // namespace
++#endif
+ 
+ TextFragmentAnchorMetrics::TextFragmentAnchorMetrics(Document* document)
+     : document_(document), tick_clock_(base::DefaultTickClock::GetInstance()) {}
+@@ -83,6 +85,7 @@ void TextFragmentAnchorMetrics::DidScrollToTop() {
+ }
+ 
+ void TextFragmentAnchorMetrics::ReportMetrics() {
++#if 0
+ #ifndef NDEBUG
+   DCHECK(!metrics_reported_);
+ #endif
+@@ -205,6 +208,7 @@ void TextFragmentAnchorMetrics::ReportMetrics() {
+                                 has_search_engine_source_
+                                     ? TextFragmentLinkOpenSource::kSearchEngine
+                                     : TextFragmentLinkOpenSource::kUnknown);
++#endif
+ #ifndef NDEBUG
+   metrics_reported_ = true;
+ #endif

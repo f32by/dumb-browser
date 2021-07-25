@@ -1,8 +1,8 @@
 diff --git a/chrome/renderer/chrome_content_renderer_client.cc b/chrome/renderer/chrome_content_renderer_client.cc
-index ceb29f83a9dc1..1cf6bf3da996b 100644
+index 21bc479c64b31..d4cc8d478faa3 100644
 --- a/chrome/renderer/chrome_content_renderer_client.cc
 +++ b/chrome/renderer/chrome_content_renderer_client.cc
-@@ -35,7 +35,6 @@
+@@ -34,7 +34,6 @@
  #include "chrome/common/crash_keys.h"
  #include "chrome/common/pdf_util.h"
  #include "chrome/common/pepper_permission_util.h"
@@ -10,7 +10,7 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
  #include "chrome/common/profiler/thread_profiler.h"
  #include "chrome/common/secure_origin_allowlist.h"
  #include "chrome/common/url_constants.h"
-@@ -48,8 +47,6 @@
+@@ -47,8 +46,6 @@
  #include "chrome/renderer/chrome_content_settings_agent_delegate.h"
  #include "chrome/renderer/chrome_render_frame_observer.h"
  #include "chrome/renderer/chrome_render_thread_observer.h"
@@ -19,7 +19,7 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
  #include "chrome/renderer/loadtimes_extension_bindings.h"
  #include "chrome/renderer/media/flash_embed_rewrite.h"
  #include "chrome/renderer/media/webrtc_logging_agent_impl.h"
-@@ -59,10 +56,6 @@
+@@ -58,10 +55,6 @@
  #include "chrome/renderer/plugins/non_loadable_plugin_placeholder.h"
  #include "chrome/renderer/plugins/pdf_plugin_placeholder.h"
  #include "chrome/renderer/plugins/plugin_uma.h"
@@ -32,8 +32,8 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
  #include "chrome/renderer/v8_unwinder.h"
 @@ -92,16 +85,10 @@
  #include "components/no_state_prefetch/renderer/no_state_prefetch_helper.h"
+ #include "components/no_state_prefetch/renderer/no_state_prefetch_utils.h"
  #include "components/no_state_prefetch/renderer/prerender_render_frame_observer.h"
- #include "components/no_state_prefetch/renderer/prerender_utils.h"
 -#include "components/page_load_metrics/renderer/metrics_render_frame_observer.h"
  #include "components/paint_preview/buildflags/buildflags.h"
  #include "components/pdf/renderer/pepper_pdf_host.h"
@@ -55,7 +55,7 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
  #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
  #include "third_party/blink/public/mojom/page/page_visibility_state.mojom.h"
  #include "third_party/blink/public/platform/platform.h"
-@@ -371,11 +357,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -401,11 +387,7 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      InitSpellCheck();
  #endif
  
@@ -67,7 +67,7 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
  
    thread->RegisterExtension(extensions_v8::LoadTimesExtension::Get());
  
-@@ -450,10 +432,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
+@@ -480,10 +462,6 @@ void ChromeContentRendererClient::RenderThreadStarted() {
      mojo::PendingRemote<metrics::mojom::CallStackProfileCollector> collector;
      thread->BindHostReceiver(collector.InitWithNewPipeAndPassReceiver());
      ThreadProfiler::SetCollectorForChildProcess(std::move(collector));
@@ -78,7 +78,7 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
    }
  }
  
-@@ -596,6 +574,7 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -623,6 +601,7 @@ void ChromeContentRendererClient::RenderFrameCreated(
        render_frame->GetRoutingID()));
  #endif
  
@@ -86,7 +86,7 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
    // Owned by |render_frame|.
    page_load_metrics::MetricsRenderFrameObserver* metrics_render_frame_observer =
        new page_load_metrics::MetricsRenderFrameObserver(render_frame);
-@@ -627,6 +606,8 @@ void ChromeContentRendererClient::RenderFrameCreated(
+@@ -654,6 +633,8 @@ void ChromeContentRendererClient::RenderFrameCreated(
      new subresource_redirect::LoginRobotsDeciderAgent(associated_interfaces,
                                                        render_frame);
    }
@@ -95,10 +95,10 @@ index ceb29f83a9dc1..1cf6bf3da996b 100644
    if (translate::IsSubFrameTranslationEnabled()) {
      new translate::PerFrameTranslateAgent(
          render_frame, ISOLATED_WORLD_ID_TRANSLATE, associated_interfaces);
-@@ -1503,9 +1484,6 @@ void ChromeContentRendererClient::
-     defined(OS_ANDROID)
-     blink::WebRuntimeFeatures::EnableWebShare(true);
- #endif
+@@ -1525,9 +1506,6 @@ void ChromeContentRendererClient::
+   blink::WebRuntimeFeatures::EnablePerformanceManagerInstrumentation(true);
+ 
+   MaybeEnableWebShare();
 -
 -  if (base::FeatureList::IsEnabled(subresource_filter::kAdTagging))
 -    blink::WebRuntimeFeatures::EnableAdTagging(true);

@@ -1,14 +1,14 @@
 diff --git a/chrome/browser/predictors/loading_data_collector.cc b/chrome/browser/predictors/loading_data_collector.cc
-index b7d83a2b0d453..669c86f7440d2 100644
+index 6897abc4e2440..6a211deb7f08c 100644
 --- a/chrome/browser/predictors/loading_data_collector.cc
 +++ b/chrome/browser/predictors/loading_data_collector.cc
-@@ -93,8 +93,7 @@ OriginRequestSummary::OriginRequestSummary(const OriginRequestSummary& other) =
- OriginRequestSummary::~OriginRequestSummary() = default;
- 
- PageRequestSummary::PageRequestSummary(const NavigationID& navigation_id)
--    : ukm_source_id(navigation_id.ukm_source_id),
--      main_frame_url(navigation_id.main_frame_url),
-+    : main_frame_url(navigation_id.main_frame_url),
-       initial_url(navigation_id.main_frame_url),
-       navigation_started(navigation_id.creation_time),
+@@ -96,8 +96,7 @@ OriginRequestSummary::~OriginRequestSummary() = default;
+ PageRequestSummary::PageRequestSummary(ukm::SourceId ukm_source_id,
+                                        const GURL& main_frame_url,
+                                        base::TimeTicks creation_time)
+-    : ukm_source_id(ukm_source_id),
+-      main_frame_url(main_frame_url),
++    : main_frame_url(main_frame_url),
+       initial_url(main_frame_url),
+       navigation_started(creation_time),
        navigation_committed(base::TimeTicks::Max()),

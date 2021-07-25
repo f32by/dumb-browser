@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/core/frame/local_frame.cc b/third_party/blink/renderer/core/frame/local_frame.cc
-index a70c5d861a9ae..bb265b0e8607a 100644
+index fab2d2cbc446c..d58e748734498 100644
 --- a/third_party/blink/renderer/core/frame/local_frame.cc
 +++ b/third_party/blink/renderer/core/frame/local_frame.cc
-@@ -553,7 +553,9 @@ void LocalFrame::Trace(Visitor* visitor) const {
+@@ -630,7 +630,9 @@ void LocalFrame::Trace(Visitor* visitor) const {
    visitor->Trace(raw_system_clipboard_);
    visitor->Trace(virtual_keyboard_overlay_changed_observers_);
    visitor->Trace(pause_handle_receivers_);
@@ -12,7 +12,21 @@ index a70c5d861a9ae..bb265b0e8607a 100644
  #if defined(OS_MAC)
    visitor->Trace(text_input_host_);
  #endif
-@@ -2364,6 +2366,7 @@ const base::UnguessableToken& LocalFrame::GetAgentClusterId() const {
+@@ -2471,10 +2473,13 @@ SmoothScrollSequencer& LocalFrame::GetSmoothScrollSequencer() {
+ }
+ 
+ ukm::UkmRecorder* LocalFrame::GetUkmRecorder() {
++#if 0
+   Document* document = GetDocument();
+   if (!document)
+     return nullptr;
+   return document->UkmRecorder();
++#endif
++  return nullptr;
+ }
+ 
+ int64_t LocalFrame::GetUkmSourceId() {
+@@ -2500,6 +2505,7 @@ const base::UnguessableToken& LocalFrame::GetAgentClusterId() const {
    return base::UnguessableToken::Null();
  }
  
@@ -20,7 +34,7 @@ index a70c5d861a9ae..bb265b0e8607a 100644
  mojom::blink::ReportingServiceProxy* LocalFrame::GetReportingService() {
    if (!reporting_service_.is_bound()) {
      GetBrowserInterfaceBroker().GetInterface(
-@@ -2372,6 +2375,7 @@ mojom::blink::ReportingServiceProxy* LocalFrame::GetReportingService() {
+@@ -2508,6 +2514,7 @@ mojom::blink::ReportingServiceProxy* LocalFrame::GetReportingService() {
    }
    return reporting_service_.get();
  }

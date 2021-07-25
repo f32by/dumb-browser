@@ -1,35 +1,74 @@
 diff --git a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
-index 179e0886e1856..2dbc7208cc00f 100644
+index 770726b1b25cf..1eea202ca5730 100644
 --- a/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
 +++ b/components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
-@@ -163,6 +163,7 @@ void ChromeBrowserCloudManagementController::Init(
+@@ -166,6 +166,7 @@ void ChromeBrowserCloudManagementController::Init(
      delegate_->InitializeOAuthTokenFactory(url_loader_factory, local_state);
    }
  
 +#if 0
+ #if !defined(OS_ANDROID)
    // Post the task of CreateReportScheduler to run on best effort after launch
    // is completed.
-   delegate_->GetBestEffortTaskRunner()->PostTask(
-@@ -170,6 +171,7 @@ void ChromeBrowserCloudManagementController::Init(
+@@ -174,6 +175,7 @@ void ChromeBrowserCloudManagementController::Init(
        base::BindOnce(
            &ChromeBrowserCloudManagementController::CreateReportScheduler,
            weak_factory_.GetWeakPtr()));
 +#endif
+ #endif
  
    MachineLevelUserCloudPolicyManager* policy_manager =
-       delegate_->GetMachineLevelUserCloudPolicyManager();
-@@ -405,6 +407,7 @@ void ChromeBrowserCloudManagementController::
+@@ -277,12 +279,14 @@ void ChromeBrowserCloudManagementController::InvalidatePolicies() {
+     policy_fetcher_->Disconnect();
+   }
+ 
++#if 0
+ #if !defined(OS_ANDROID)
+   // This causes the scheduler to stop refreshing itself since the DM token is
+   // no longer valid.
+   if (report_scheduler_)
+     report_scheduler_->OnDMTokenUpdated();
+ #endif
++#endif
+ }
+ 
+ void ChromeBrowserCloudManagementController::InvalidateDMTokenCallback(
+@@ -325,10 +329,12 @@ void ChromeBrowserCloudManagementController::OnServiceAccountSet(
+ 
+ void ChromeBrowserCloudManagementController::ShutDown() {
+   delegate_->ShutDown();
++#if 0
+ #if !defined(OS_ANDROID)
+   if (report_scheduler_)
+     report_scheduler_.reset();
+ #endif
++#endif
+ }
+ 
+ void ChromeBrowserCloudManagementController::NotifyPolicyRegisterFinished(
+@@ -409,15 +415,18 @@ void ChromeBrowserCloudManagementController::
+   VLOG(1) << "Fetch policy after enrollment.";
+   policy_fetcher_->SetupRegistrationAndFetchPolicy(
+       BrowserDMTokenStorage::Get()->RetrieveDMToken(), client_id);
++#if 0
+ #if !defined(OS_ANDROID)
+   if (report_scheduler_) {
+     report_scheduler_->OnDMTokenUpdated();
+   }
++#endif
+ #endif
+ 
    NotifyPolicyRegisterFinished(true);
  }
  
 +#if 0
+ #if !defined(OS_ANDROID)
  void ChromeBrowserCloudManagementController::CreateReportScheduler() {
    cloud_policy_client_ = std::make_unique<policy::CloudPolicyClient>(
-       delegate_->GetDeviceManagementService(),
-@@ -416,6 +419,7 @@ void ChromeBrowserCloudManagementController::CreateReportScheduler() {
- 
+@@ -431,6 +440,7 @@ void ChromeBrowserCloudManagementController::CreateReportScheduler() {
    NotifyCloudReportingLaunched();
  }
+ #endif
 +#endif
  
  void ChromeBrowserCloudManagementController::SetGaiaURLLoaderFactory(

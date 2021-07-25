@@ -31,7 +31,7 @@
 
 namespace dumb {
 
-URLPurifyResult::URLPurifyResult(base::Optional<GURL> new_url, int count)
+URLPurifyResult::URLPurifyResult(absl::optional<GURL> new_url, int count)
     : new_url(new_url), count(count) {}
 
 URLPurifyResult::URLPurifyResult(const URLPurifyResult& other) = default;

@@ -1,18 +1,18 @@
 diff --git a/chrome/browser/ui/browser.cc b/chrome/browser/ui/browser.cc
-index 29d0321fae4ca..8a73eaa8a6b1e 100644
+index 268f6547ff84b..5a2e12762962e 100644
 --- a/chrome/browser/ui/browser.cc
 +++ b/chrome/browser/ui/browser.cc
-@@ -77,7 +77,6 @@
+@@ -76,7 +76,6 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
  #include "chrome/browser/profiles/profile_keep_alive_types.h"
  #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/profiles/profile_metrics.h"
  #include "chrome/browser/profiles/profiles_state.h"
+ #include "chrome/browser/profiles/scoped_profile_keep_alive.h"
  #include "chrome/browser/repost_form_warning_controller.h"
- #include "chrome/browser/resource_coordinator/tab_load_tracker.h"
-@@ -172,19 +171,15 @@
- #include "components/keep_alive_registry/keep_alive_types.h"
+@@ -175,19 +174,15 @@
  #include "components/keep_alive_registry/scoped_keep_alive.h"
+ #include "components/omnibox/browser/location_bar_model.h"
  #include "components/omnibox/browser/location_bar_model_impl.h"
 -#include "components/page_load_metrics/browser/metrics_web_contents_observer.h"
 -#include "components/page_load_metrics/common/page_load_metrics.mojom.h"
@@ -30,7 +30,7 @@ index 29d0321fae4ca..8a73eaa8a6b1e 100644
  #include "components/translate/core/browser/language_state.h"
  #include "components/user_manager/user_manager.h"
  #include "components/viz/common/surfaces/surface_id.h"
-@@ -509,8 +504,6 @@ Browser::Browser(const CreateParams& params)
+@@ -513,8 +508,6 @@ Browser::Browser(const CreateParams& params)
  
    UpdateBookmarkBarState(BOOKMARK_BAR_STATE_CHANGE_INIT);
  
@@ -39,7 +39,7 @@ index 29d0321fae4ca..8a73eaa8a6b1e 100644
    if (params.skip_window_init_for_testing)
      return;
  
-@@ -1443,18 +1436,10 @@ void Browser::OnDidBlockNavigation(
+@@ -1431,18 +1424,10 @@ void Browser::OnDidBlockNavigation(
      if (auto* framebust_helper =
              FramebustBlockTabHelper::FromWebContents(web_contents)) {
        auto on_click = [](const GURL& url, size_t index, size_t total_elements) {
@@ -58,7 +58,7 @@ index 29d0321fae4ca..8a73eaa8a6b1e 100644
  }
  
  content::PictureInPictureResult Browser::EnterPictureInPicture(
-@@ -1547,7 +1532,6 @@ void Browser::OnWindowDidShow() {
+@@ -1539,7 +1524,6 @@ void Browser::OnWindowDidShow() {
      return;
    window_has_shown_ = true;
  
@@ -66,26 +66,16 @@ index 29d0321fae4ca..8a73eaa8a6b1e 100644
  
    // Nothing to do for non-tabbed windows.
    if (!is_type_normal())
-@@ -1705,18 +1689,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
-   if (is_type_normal())
-     return;
+@@ -1707,8 +1691,6 @@ void Browser::SetContentsBounds(WebContents* source, const gfx::Rect& bounds) {
+         blink::mojom::WebFeature::kMovedOrResizedPopup2sAfterCreation);
+   }
  
--  page_load_metrics::mojom::PageLoadFeatures features;
--  features.features.push_back(blink::mojom::WebFeature::kMovedOrResizedPopup);
--  if (creation_timer_.Elapsed() > base::TimeDelta::FromSeconds(2)) {
--    // Additionally measure whether a popup was moved after creation, to
--    // distinguish between popups that reposition themselves after load and
--    // those which move popups continuously.
--    features.features.push_back(
--        blink::mojom::WebFeature::kMovedOrResizedPopup2sAfterCreation);
--  }
--
 -  page_load_metrics::MetricsWebContentsObserver::RecordFeatureUsage(
--      source->GetMainFrame(), features);
+-      source->GetMainFrame(), std::move(features));
    window_->SetBounds(bounds);
  }
  
-@@ -2328,12 +2300,6 @@ void Browser::OnTabClosing(WebContents* contents) {
+@@ -2320,12 +2302,6 @@ void Browser::OnTabClosing(WebContents* contents) {
    // associated with their tab is still valid.
    WebContentsModalDialogManager::FromWebContents(contents)->CloseAllDialogs();
  

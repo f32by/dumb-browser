@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser_ui_prefs.cc b/chrome/browser/ui/browser_ui_prefs.cc
-index 6c6152862a54e..2075c245c624d 100644
+index 50432efa24075..b41e0bcdfdf9f 100644
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
 @@ -10,7 +10,6 @@
@@ -10,20 +10,21 @@ index 6c6152862a54e..2075c245c624d 100644
  #include "chrome/common/buildflags.h"
  #include "chrome/common/pref_names.h"
  #include "components/pref_registry/pref_registry_syncable.h"
-@@ -45,12 +44,6 @@ void RegisterBrowserPrefs(PrefRegistrySimple* registry) {
-   registry->RegisterBooleanPref(prefs::kAllowFileSelectionDialogs, true);
+@@ -46,11 +45,13 @@ void RegisterBrowserPrefs(PrefRegistrySimple* registry) {
  
  #if !defined(OS_ANDROID)
--  registry->RegisterIntegerPref(prefs::kRelaunchNotification, 0);
--  registry->RegisterIntegerPref(
--      prefs::kRelaunchNotificationPeriod,
--      base::saturated_cast<int>(
--          UpgradeDetector::GetDefaultHighAnnoyanceThreshold()
--              .InMilliseconds()));
+   registry->RegisterIntegerPref(prefs::kRelaunchNotification, 0);
++#if 0
+   registry->RegisterIntegerPref(
+       prefs::kRelaunchNotificationPeriod,
+       base::saturated_cast<int>(
+           UpgradeDetector::GetDefaultHighAnnoyanceThreshold()
+               .InMilliseconds()));
++#endif
+   registry->RegisterDictionaryPref(prefs::kRelaunchWindow);
  #endif  // !defined(OS_ANDROID)
  }
- 
-@@ -80,7 +73,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+@@ -81,7 +82,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
    registry->RegisterDictionaryPref(prefs::kBrowserWindowPlacementPopup);
    registry->RegisterDictionaryPref(prefs::kAppWindowPlacement);
    registry->RegisterBooleanPref(
@@ -32,7 +33,7 @@ index 6c6152862a54e..2075c245c624d 100644
        user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
  #if !BUILDFLAG(IS_CHROMEOS_ASH) && !defined(OS_ANDROID)
    registry->RegisterBooleanPref(prefs::kPrintPreviewUseSystemDefaultPrinter,
-@@ -120,7 +113,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+@@ -121,7 +122,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
    // late: we need the pref to be already initialized. Doing it here also saves
    // us from having to hard-code pref registration in the several unit tests
    // that use this preference.

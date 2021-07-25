@@ -1,8 +1,8 @@
 diff --git a/content/public/browser/content_browser_client.cc b/content/public/browser/content_browser_client.cc
-index 97c47faadb922..ddce5fe9a9efd 100644
+index e51417f75154b..138554f2787bb 100644
 --- a/content/public/browser/content_browser_client.cc
 +++ b/content/public/browser/content_browser_client.cc
-@@ -60,7 +60,6 @@
+@@ -61,7 +61,6 @@
  #include "third_party/blink/public/common/loader/url_loader_throttle.h"
  #include "third_party/blink/public/common/renderer_preferences/renderer_preferences.h"
  #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
@@ -23,21 +23,22 @@ index 97c47faadb922..ddce5fe9a9efd 100644
  
  std::string ContentBrowserClient::GetApplicationLocale() {
    return "en-US";
-@@ -1094,13 +1095,6 @@ void ContentBrowserClient::AugmentNavigationDownloadPolicy(
+@@ -1100,12 +1101,14 @@ void ContentBrowserClient::AugmentNavigationDownloadPolicy(
      bool user_gesture,
      blink::NavigationDownloadPolicy* download_policy) {}
  
--blink::mojom::InterestCohortPtr ContentBrowserClient::GetInterestCohortForJsApi(
--    WebContents* web_contents,
--    const GURL& url,
--    const base::Optional<url::Origin>& top_frame_origin) {
--  return blink::mojom::InterestCohort::New();
--}
--
++#if 0
+ blink::mojom::InterestCohortPtr ContentBrowserClient::GetInterestCohortForJsApi(
+     WebContents* web_contents,
+     const GURL& url,
+     const absl::optional<url::Origin>& top_frame_origin) {
+   return blink::mojom::InterestCohort::New();
+ }
++#endif
+ 
  bool ContentBrowserClient::IsBluetoothScanningBlocked(
      content::BrowserContext* browser_context,
-     const url::Origin& requesting_origin,
-@@ -1190,10 +1184,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
+@@ -1196,10 +1199,6 @@ bool ContentBrowserClient::ShouldAllowInsecurePrivateNetworkRequests(
    return false;
  }
  

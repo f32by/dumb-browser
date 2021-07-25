@@ -1,8 +1,8 @@
 diff --git a/components/download/public/common/download_item_impl_delegate.h b/components/download/public/common/download_item_impl_delegate.h
-index 538dfac4b83c7..657a582ffe09f 100644
+index bbbc5d1279715..e3f4c7acf30c6 100644
 --- a/components/download/public/common/download_item_impl_delegate.h
 +++ b/components/download/public/common/download_item_impl_delegate.h
-@@ -18,8 +18,6 @@
+@@ -17,8 +17,6 @@
  #include "components/download/public/common/download_item_rename_handler.h"
  #include "components/download/public/common/download_schedule.h"
  #include "components/download/public/common/download_url_parameters.h"
@@ -10,7 +10,7 @@ index 538dfac4b83c7..657a582ffe09f 100644
 -#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "services/device/public/mojom/wake_lock_provider.mojom.h"
- 
+ #include "third_party/abseil-cpp/absl/types/optional.h"
 @@ -124,8 +122,10 @@ class COMPONENTS_DOWNLOAD_EXPORT DownloadItemImplDelegate {
    virtual void BindWakeLockProvider(
        mojo::PendingReceiver<device::mojom::WakeLockProvider> receiver);

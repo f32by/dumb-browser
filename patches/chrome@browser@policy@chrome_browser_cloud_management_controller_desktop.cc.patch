@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.cc b/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.cc
-index a36968894166a..852c6d7365ff2 100644
+index f4f4b5165bcbf..6ed52c02e7f4a 100644
 --- a/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.cc
 +++ b/chrome/browser/policy/chrome_browser_cloud_management_controller_desktop.cc
 @@ -193,6 +193,7 @@ ChromeBrowserCloudManagementControllerDesktop::GetSharedURLLoaderFactory() {
@@ -10,15 +10,15 @@ index a36968894166a..852c6d7365ff2 100644
  std::unique_ptr<enterprise_reporting::ReportScheduler>
  ChromeBrowserCloudManagementControllerDesktop::CreateReportScheduler(
      CloudPolicyClient* client) {
-@@ -201,6 +202,7 @@ ChromeBrowserCloudManagementControllerDesktop::CreateReportScheduler(
-   return std::make_unique<enterprise_reporting::ReportScheduler>(
-       client, std::move(generator), &reporting_delegate_factory_);
+@@ -205,6 +206,7 @@ ChromeBrowserCloudManagementControllerDesktop::CreateReportScheduler(
+       client, std::move(generator), std::move(real_time_generator),
+       &reporting_delegate_factory_);
  }
 +#endif
  
  scoped_refptr<base::SingleThreadTaskRunner>
  ChromeBrowserCloudManagementControllerDesktop::GetBestEffortTaskRunner() {
-@@ -254,6 +256,7 @@ void ChromeBrowserCloudManagementControllerDesktop::StartInvalidations() {
+@@ -258,6 +260,7 @@ void ChromeBrowserCloudManagementControllerDesktop::StartInvalidations() {
        0 /* highest_handled_invalidation_version */);
    policy_invalidator_->Initialize(invalidation_service_.get());
  
@@ -26,7 +26,7 @@ index a36968894166a..852c6d7365ff2 100644
    if (base::FeatureList::IsEnabled(policy::features::kCBCMRemoteCommands)) {
      g_browser_process->browser_policy_connector()
          ->machine_level_user_cloud_policy_manager()
-@@ -269,6 +272,7 @@ void ChromeBrowserCloudManagementControllerDesktop::StartInvalidations() {
+@@ -273,6 +276,7 @@ void ChromeBrowserCloudManagementControllerDesktop::StartInvalidations() {
          base::DefaultClock::GetInstance(), PolicyInvalidationScope::kCBCM);
      commands_invalidator_->Initialize(invalidation_service_.get());
    }

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
-index ef6d0d7ccec01..65caa2c0ff9a5 100644
+index 26e69a005ab91..d83014af62b75 100644
 --- a/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
 +++ b/chrome/browser/extensions/api/webstore_private/webstore_private_api.cc
 @@ -33,10 +33,6 @@
@@ -46,7 +46,7 @@ index ef6d0d7ccec01..65caa2c0ff9a5 100644
  }
  
  void WebstorePrivateBeginInstallWithManifest3Function::OnInstallPromptDone(
-@@ -1180,6 +1177,7 @@ WebstorePrivateGetReferrerChainFunction::
+@@ -1176,6 +1173,7 @@ WebstorePrivateGetReferrerChainFunction::
  
  ExtensionFunction::ResponseAction
  WebstorePrivateGetReferrerChainFunction::Run() {
@@ -54,7 +54,7 @@ index ef6d0d7ccec01..65caa2c0ff9a5 100644
    Profile* profile = Profile::FromBrowserContext(browser_context());
    if (!SafeBrowsingNavigationObserverManager::IsEnabledAndReady(profile))
      return RespondNow(ArgumentList(
-@@ -1222,9 +1220,10 @@ WebstorePrivateGetReferrerChainFunction::Run() {
+@@ -1218,9 +1216,10 @@ WebstorePrivateGetReferrerChainFunction::Run() {
    // Base64 encode the proto to avoid issues with base::Value rejecting strings
    // which are not valid UTF8.
    base::Base64Encode(serialized_referrer_proto, &serialized_referrer_proto);

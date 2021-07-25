@@ -1,8 +1,8 @@
 diff --git a/content/browser/renderer_host/pepper/pepper_file_io_host.cc b/content/browser/renderer_host/pepper/pepper_file_io_host.cc
-index a4fa31676bd28..0317526f94f6a 100644
+index f0b57618b37c6..c1b682653d87b 100644
 --- a/content/browser/renderer_host/pepper/pepper_file_io_host.cc
 +++ b/content/browser/renderer_host/pepper/pepper_file_io_host.cc
-@@ -438,6 +438,7 @@ void PepperFileIOHost::OnLocalFileOpened(
+@@ -480,6 +480,7 @@ void PepperFileIOHost::OnLocalFileOpened(
      ppapi::host::ReplyMessageContext reply_context,
      const base::FilePath& path,
      base::File::Error error_code) {
@@ -10,7 +10,7 @@ index a4fa31676bd28..0317526f94f6a 100644
  #if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS)
    // Quarantining a file before its contents are available is only supported on
    // Windows and Linux.
-@@ -468,10 +469,12 @@ void PepperFileIOHost::OnLocalFileOpened(
+@@ -510,10 +511,12 @@ void PepperFileIOHost::OnLocalFileOpened(
      SendFileOpenReply(reply_context, error_code);
    }
  #else
@@ -24,7 +24,7 @@ index a4fa31676bd28..0317526f94f6a 100644
  #if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS)
  void PepperFileIOHost::OnLocalFileQuarantined(
      ppapi::host::ReplyMessageContext reply_context,
-@@ -487,6 +490,7 @@ void PepperFileIOHost::OnLocalFileQuarantined(
+@@ -529,6 +532,7 @@ void PepperFileIOHost::OnLocalFileQuarantined(
    SendFileOpenReply(reply_context, file_error);
  }
  #endif

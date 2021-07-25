@@ -1,9 +1,12 @@
 diff --git a/chrome/browser/net/system_network_context_manager.cc b/chrome/browser/net/system_network_context_manager.cc
-index 5cdfeec7a24cf..2a0d6badf1ab2 100644
+index ef9b742df0c07..e12876b6b9b1d 100644
 --- a/chrome/browser/net/system_network_context_manager.cc
 +++ b/chrome/browser/net/system_network_context_manager.cc
-@@ -25,8 +25,6 @@
- #include "chrome/browser/component_updater/first_party_sets_component_installer.h"
+@@ -22,11 +22,8 @@
+ #include "build/chromeos_buildflags.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/component_updater/crl_set_component_installer.h"
+-#include "chrome/browser/component_updater/first_party_sets_component_installer.h"
  #include "chrome/browser/net/chrome_mojo_proxy_resolver_factory.h"
  #include "chrome/browser/net/convert_explicitly_allowed_network_ports_pref.h"
 -#include "chrome/browser/safe_browsing/safe_browsing_service.h"
@@ -11,13 +14,22 @@ index 5cdfeec7a24cf..2a0d6badf1ab2 100644
  #include "chrome/browser/ssl/ssl_config_service_manager.h"
  #include "chrome/common/channel_info.h"
  #include "chrome/common/chrome_features.h"
-@@ -547,9 +545,6 @@ void SystemNetworkContextManager::OnNetworkServiceCreated(
+@@ -547,9 +544,7 @@ void SystemNetworkContextManager::OnNetworkServiceCreated(
    // Asynchronously reapply the most recently received CRLSet (if any).
    component_updater::CRLSetPolicy::ReconfigureAfterNetworkRestart();
  
 -  // Configure SCT Auditing in the NetworkService.
 -  SCTReportingService::ReconfigureAfterNetworkRestart();
 -
++#if 0
    if (net::cookie_util::IsFirstPartySetsEnabled()) {
      component_updater::FirstPartySetsComponentInstallerPolicy::
          ReconfigureAfterNetworkRestart(
+@@ -563,6 +558,7 @@ void SystemNetworkContextManager::OnNetworkServiceCreated(
+               network_service->SetFirstPartySets(raw_sets);
+             }));
+   }
++#endif
+ 
+   UpdateExplicitlyAllowedNetworkPorts();
+ }

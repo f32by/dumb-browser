@@ -1,0 +1,95 @@
+diff --git a/third_party/blink/renderer/core/html/parser/html_document_parser.cc b/third_party/blink/renderer/core/html/parser/html_document_parser.cc
+index 97df3a9628df8..a85edf010577b 100644
+--- a/third_party/blink/renderer/core/html/parser/html_document_parser.cc
++++ b/third_party/blink/renderer/core/html/parser/html_document_parser.cc
+@@ -447,8 +447,6 @@ HTMLDocumentParser::HTMLDocumentParser(Document& document,
+        sync_policy == kAllowDeferredParsing) &&
+       document.GetFrame() && document.GetFrame()->IsMainFrame() &&
+       base::TimeTicks::IsHighResolution()) {
+-    metrics_reporter_ = std::make_unique<HTMLParserMetrics>(
+-        document.UkmSourceID(), document.UkmRecorder());
+   }
+ 
+   max_tokenization_budget_ = GetMaxTokenizationBudget();
+@@ -590,9 +588,6 @@ void HTMLDocumentParser::DeferredPumpTokenizerIfPossible() {
+   // This method is called when the post task is executed, marking the end of
+   // a yield. Report the yielded time.
+   DCHECK(yield_timer_);
+-  if (metrics_reporter_) {
+-    metrics_reporter_->AddYieldInterval(yield_timer_->Elapsed());
+-  }
+   yield_timer_.reset();
+ 
+   bool should_call_delay_end =
+@@ -630,15 +625,11 @@ void HTMLDocumentParser::PumpTokenizerIfPossible() {
+   } else if (task_runner_state_->ShouldAttemptToEndOnEOF()) {
+     // Fall into this branch if ::Finish has been previously called and we've
+     // just finished asynchronously parsing everything.
+-    if (metrics_reporter_)
+-      metrics_reporter_->ReportMetricsAtParseEnd(false);
+     AttemptToEnd();
+   } else if (task_runner_state_->ShouldEndIfDelayed()) {
+     // If we did not exceed the budget or parsed everything there was to
+     // parse, check if we should complete the document.
+     if (task_runner_state_->ShouldComplete() || IsStopped() || IsStopping()) {
+-      if (metrics_reporter_)
+-        metrics_reporter_->ReportMetricsAtParseEnd(false);
+       EndIfDelayed();
+     } else {
+       ScheduleEndIfDelayed();
+@@ -656,8 +647,6 @@ void HTMLDocumentParser::ResumeParsingAfterYield() {
+   DCHECK(have_background_parser_);
+   DCHECK(!RuntimeEnabledFeatures::ForceSynchronousHTMLParsingEnabled());
+ 
+-  ScopedYieldTimer timer(&yield_timer_, metrics_reporter_.get());
+-
+   CheckIfBlockingStylesheetAdded();
+   if (IsStopped() || IsPaused())
+     return;
+@@ -995,13 +984,6 @@ void HTMLDocumentParser::PumpPendingSpeculations() {
+             session, speculations_.front()->starting_script))
+       break;
+   }
+-
+-  if (metrics_reporter_) {
+-    metrics_reporter_->AddChunk(session.ElapsedTime(),
+-                                session.ProcessedElementTokens());
+-    if (reached_end_of_file)
+-      metrics_reporter_->ReportMetricsAtParseEnd(true);
+-  }
+ }
+ 
+ void HTMLDocumentParser::ForcePlaintextForTextDocument() {
+@@ -1106,10 +1088,6 @@ bool HTMLDocumentParser::PumpTokenizer() {
+   }
+ 
+   if (IsStopped()) {
+-    if (metrics_reporter_ && tokens_parsed) {
+-      metrics_reporter_->AddChunk(chunk_parsing_timer_.Elapsed(),
+-                                  tokens_parsed);
+-    }
+     return false;
+   }
+ 
+@@ -1131,10 +1109,6 @@ bool HTMLDocumentParser::PumpTokenizer() {
+     }
+   }
+ 
+-  if (metrics_reporter_ && tokens_parsed) {
+-    metrics_reporter_->AddChunk(chunk_parsing_timer_.Elapsed(), tokens_parsed);
+-  }
+-
+   // should_run_until_completion implies that we should not yield
+   CHECK(!should_run_until_completion || !should_yield);
+   return should_yield;
+@@ -1387,10 +1361,6 @@ void HTMLDocumentParser::Append(const String& input_source) {
+   input_.AppendToEnd(source);
+   task_runner_state_->SetHaveSeenFirstByte();
+ 
+-  // Add input_source.length() to "file size" metric.
+-  if (metrics_reporter_)
+-    metrics_reporter_->AddInput(input_source.length());
+-
+   if (InPumpSession()) {
+     // We've gotten data off the network in a nested write. We don't want to
+     // consume any more of the input stream now.  Do not worry.  We'll consume

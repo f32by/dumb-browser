@@ -1,17 +1,17 @@
 diff --git a/chrome/browser/ui/webui/signin/profile_picker_handler.cc b/chrome/browser/ui/webui/signin/profile_picker_handler.cc
-index f6cebb0516895..8c6bb1e502349 100644
+index 500d8302043c4..1c8cc07d845ad 100644
 --- a/chrome/browser/ui/webui/signin/profile_picker_handler.cc
 +++ b/chrome/browser/ui/webui/signin/profile_picker_handler.cc
-@@ -452,8 +452,6 @@ void ProfilePickerHandler::HandleCreateProfile(const base::ListValue* args) {
+@@ -489,8 +489,6 @@ void ProfilePickerHandler::HandleCreateProfile(const base::ListValue* args) {
    DCHECK(profiles::IsDefaultAvatarIconIndex(avatar_index));
  #endif
  
 -  ProfileMetrics::LogProfileAddNewUser(
 -      ProfileMetrics::ADD_NEW_PROFILE_PICKER_LOCAL);
    ProfileManager::CreateMultiProfileAsync(
-       profile_name, avatar_index,
+       profile_name, avatar_index, /*is_hidden=*/false,
        base::BindRepeating(&ProfilePickerHandler::OnProfileCreated,
-@@ -614,8 +612,7 @@ void ProfilePickerHandler::HandleRemoveProfile(const base::ListValue* args) {
+@@ -651,8 +649,7 @@ void ProfilePickerHandler::HandleRemoveProfile(const base::ListValue* args) {
      return;
    }
    RecordProfilePickerAction(ProfilePickerAction::kDeleteProfile);
@@ -21,7 +21,7 @@ index f6cebb0516895..8c6bb1e502349 100644
  }
  
  void ProfilePickerHandler::HandleGetProfileStatistics(
-@@ -891,9 +888,6 @@ void ProfilePickerHandler::DidFirstVisuallyNonEmptyPaint() {
+@@ -924,9 +921,6 @@ void ProfilePickerHandler::DidFirstVisuallyNonEmptyPaint() {
    auto now = base::TimeTicks::Now();
    base::UmaHistogramTimes("ProfilePicker.StartupTime.FirstPaint",
                            now - creation_time_on_startup_);

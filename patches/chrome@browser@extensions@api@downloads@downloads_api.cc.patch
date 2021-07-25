@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/extensions/api/downloads/downloads_api.cc b/chrome/browser/extensions/api/downloads/downloads_api.cc
-index 67e29a26213b0..fffb2a2dd1635 100644
+index e000564a3fb8b..23bf739fba1d7 100644
 --- a/chrome/browser/extensions/api/downloads/downloads_api.cc
 +++ b/chrome/browser/extensions/api/downloads/downloads_api.cc
 @@ -36,13 +36,11 @@
@@ -16,36 +16,36 @@ index 67e29a26213b0..fffb2a2dd1635 100644
  #include "chrome/browser/extensions/chrome_extension_function_details.h"
  #include "chrome/browser/icon_loader.h"
  #include "chrome/browser/icon_manager.h"
-@@ -493,12 +491,6 @@ enum DownloadsFunctionName {
+@@ -500,10 +498,12 @@ enum DownloadsFunctionName {
    DOWNLOADS_FUNCTION_LAST
  };
  
--void RecordApiFunctions(DownloadsFunctionName function) {
--  UMA_HISTOGRAM_ENUMERATION("Download.ApiFunctions",
--                            function,
--                            DOWNLOADS_FUNCTION_LAST);
--}
--
- void CompileDownloadQueryOrderBy(
-     const std::vector<std::string>& order_by_strs,
-     std::string* error,
-@@ -1088,7 +1080,6 @@ ExtensionFunction::ResponseAction DownloadsDownloadFunction::Run() {
-       BrowserContext::GetDownloadManager(browser_context());
++#if 0
+ void RecordApiFunctions(DownloadsFunctionName function) {
+   UMA_HISTOGRAM_ENUMERATION("Download.ApiFunctions", function,
+                             DOWNLOADS_FUNCTION_LAST);
+ }
++#endif
  
+ void CompileDownloadQueryOrderBy(const std::vector<std::string>& order_by_strs,
+                                  std::string* error,
+@@ -1060,7 +1060,6 @@ ExtensionFunction::ResponseAction DownloadsDownloadFunction::Run() {
+ 
+   DownloadManager* manager = browser_context()->GetDownloadManager();
    manager->DownloadUrl(std::move(download_params));
 -  RecordApiFunctions(DOWNLOADS_FUNCTION_DOWNLOAD);
    return RespondLater();
  }
  
-@@ -1165,7 +1156,6 @@ ExtensionFunction::ResponseAction DownloadsSearchFunction::Run() {
-                                            : profile->GetOriginalProfile()));
+@@ -1138,7 +1137,6 @@ ExtensionFunction::ResponseAction DownloadsSearchFunction::Run() {
+                  : profile->GetOriginalProfile()));
      json_results->Append(std::move(json_item));
    }
 -  RecordApiFunctions(DOWNLOADS_FUNCTION_SEARCH);
    return RespondNow(
        OneArgument(base::Value::FromUniquePtrValue(std::move(json_results))));
  }
-@@ -1189,7 +1179,6 @@ ExtensionFunction::ResponseAction DownloadsPauseFunction::Run() {
+@@ -1162,7 +1160,6 @@ ExtensionFunction::ResponseAction DownloadsPauseFunction::Run() {
    // If the item is already paused, this is a no-op and the operation will
    // silently succeed.
    download_item->Pause();
@@ -53,7 +53,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondNow(NoArguments());
  }
  
-@@ -1212,7 +1201,6 @@ ExtensionFunction::ResponseAction DownloadsResumeFunction::Run() {
+@@ -1185,7 +1182,6 @@ ExtensionFunction::ResponseAction DownloadsResumeFunction::Run() {
    // Note that if the item isn't paused, this will be a no-op, and the extension
    // call will seem successful.
    download_item->Resume(user_gesture());
@@ -61,7 +61,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondNow(NoArguments());
  }
  
-@@ -1231,7 +1219,6 @@ ExtensionFunction::ResponseAction DownloadsCancelFunction::Run() {
+@@ -1203,7 +1199,6 @@ ExtensionFunction::ResponseAction DownloadsCancelFunction::Run() {
      download_item->Cancel(true);
    // |download_item| can be NULL if the download ID was invalid or if the
    // download is not currently active.  Either way, it's not a failure.
@@ -69,7 +69,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondNow(NoArguments());
  }
  
-@@ -1258,7 +1245,6 @@ ExtensionFunction::ResponseAction DownloadsEraseFunction::Run() {
+@@ -1230,7 +1225,6 @@ ExtensionFunction::ResponseAction DownloadsEraseFunction::Run() {
      json_results->AppendInteger(static_cast<int>((*it)->GetId()));
      (*it)->Remove();
    }
@@ -77,7 +77,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondNow(
        OneArgument(base::Value::FromUniquePtrValue(std::move(json_results))));
  }
-@@ -1282,7 +1268,6 @@ ExtensionFunction::ResponseAction DownloadsRemoveFileFunction::Run() {
+@@ -1252,7 +1246,6 @@ ExtensionFunction::ResponseAction DownloadsRemoveFileFunction::Run() {
        Fault(download_item->GetFileExternallyRemoved(),
              download_extension_errors::kFileAlreadyDeleted, &error))
      return RespondNow(Error(std::move(error)));
@@ -85,7 +85,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    download_item->DeleteFile(
        base::BindOnce(&DownloadsRemoveFileFunction::Done, this));
    return RespondLater();
-@@ -1301,9 +1286,6 @@ DownloadsAcceptDangerFunction::DownloadsAcceptDangerFunction() {}
+@@ -1271,9 +1264,6 @@ DownloadsAcceptDangerFunction::DownloadsAcceptDangerFunction() {}
  
  DownloadsAcceptDangerFunction::~DownloadsAcceptDangerFunction() {}
  
@@ -95,51 +95,34 @@ index 67e29a26213b0..fffb2a2dd1635 100644
  ExtensionFunction::ResponseAction DownloadsAcceptDangerFunction::Run() {
    std::unique_ptr<downloads::AcceptDanger::Params> params(
        downloads::AcceptDanger::Params::Create(*args_));
-@@ -1340,42 +1322,7 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
+@@ -1310,6 +1300,7 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
      Respond(Error(download_extension_errors::kInvisibleContext));
      return;
    }
--  RecordApiFunctions(DOWNLOADS_FUNCTION_ACCEPT_DANGER);
--  // DownloadDangerPrompt displays a modal dialog using native widgets that the
--  // user must either accept or cancel. It cannot be scripted.
--  DownloadDangerPrompt* prompt = DownloadDangerPrompt::Create(
--      download_item, web_contents, true,
--      base::BindOnce(&DownloadsAcceptDangerFunction::DangerPromptCallback, this,
--                     download_id));
--  // DownloadDangerPrompt deletes itself
--  if (on_prompt_created_ && !on_prompt_created_->is_null())
--    std::move(*on_prompt_created_).Run(prompt);
--  // Function finishes in DangerPromptCallback().
--}
--
--void DownloadsAcceptDangerFunction::DangerPromptCallback(
--    int download_id, DownloadDangerPrompt::Action action) {
--  DCHECK_CURRENTLY_ON(BrowserThread::UI);
--  DownloadItem* download_item = GetDownload(
--      browser_context(), include_incognito_information(), download_id);
--  std::string error;
--  if (InvalidId(download_item, &error) ||
--      Fault(download_item->GetState() != DownloadItem::IN_PROGRESS,
--            download_extension_errors::kNotInProgress, &error)) {
--    Respond(Error(std::move(error)));
--    return;
--  }
--  switch (action) {
--    case DownloadDangerPrompt::ACCEPT:
--      download_item->ValidateDangerousDownload();
--      break;
--    case DownloadDangerPrompt::CANCEL:
--      download_item->Remove();
--      break;
--    case DownloadDangerPrompt::DISMISS:
--      break;
--  }
--  Respond(NoArguments());
-+  download_item->ValidateDangerousDownload();
++#if 0
+   RecordApiFunctions(DOWNLOADS_FUNCTION_ACCEPT_DANGER);
+   // DownloadDangerPrompt displays a modal dialog using native widgets that the
+   // user must either accept or cancel. It cannot be scripted.
+@@ -1321,8 +1312,10 @@ void DownloadsAcceptDangerFunction::PromptOrWait(int download_id, int retries) {
+   if (on_prompt_created_ && !on_prompt_created_->is_null())
+     std::move(*on_prompt_created_).Run(prompt);
+   // Function finishes in DangerPromptCallback().
++#endif
  }
  
++#if 0
+ void DownloadsAcceptDangerFunction::DangerPromptCallback(
+     int download_id,
+     DownloadDangerPrompt::Action action) {
+@@ -1348,6 +1341,7 @@ void DownloadsAcceptDangerFunction::DangerPromptCallback(
+   }
+   Respond(NoArguments());
+ }
++#endif
+ 
  DownloadsShowFunction::DownloadsShowFunction() {}
-@@ -1392,7 +1339,6 @@ ExtensionFunction::ResponseAction DownloadsShowFunction::Run() {
+ 
+@@ -1363,7 +1357,6 @@ ExtensionFunction::ResponseAction DownloadsShowFunction::Run() {
    if (InvalidId(download_item, &error))
      return RespondNow(Error(std::move(error)));
    download_item->ShowDownloadInShell();
@@ -147,7 +130,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondNow(NoArguments());
  }
  
-@@ -1409,7 +1355,6 @@ ExtensionFunction::ResponseAction DownloadsShowDefaultFolderFunction::Run() {
+@@ -1380,7 +1373,6 @@ ExtensionFunction::ResponseAction DownloadsShowDefaultFolderFunction::Run() {
        Profile::FromBrowserContext(browser_context()),
        DownloadPrefs::FromDownloadManager(manager)->DownloadPath(),
        platform_util::OPEN_FOLDER, platform_util::OpenOperationCallback());
@@ -155,7 +138,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondNow(NoArguments());
  }
  
-@@ -1464,7 +1409,6 @@ ExtensionFunction::ResponseAction DownloadsOpenFunction::Run() {
+@@ -1435,7 +1427,6 @@ ExtensionFunction::ResponseAction DownloadsOpenFunction::Run() {
                           params->download_id));
    if (on_prompt_created_cb_)
      std::move(*on_prompt_created_cb_).Run(download_open_prompt);
@@ -163,7 +146,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    return RespondLater();
  }
  
-@@ -1500,7 +1444,6 @@ ExtensionFunction::ResponseAction DownloadsSetShelfEnabledFunction::Run() {
+@@ -1471,7 +1462,6 @@ ExtensionFunction::ResponseAction DownloadsSetShelfEnabledFunction::Run() {
      return RespondNow(Error(download_extension_errors::kShelfPermission));
    }
  
@@ -171,7 +154,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    DownloadManager* manager = NULL;
    DownloadManager* incognito_manager = NULL;
    GetManagers(browser_context(), include_incognito_information(), &manager,
-@@ -1595,7 +1538,6 @@ void DownloadsGetFileIconFunction::OnIconURLExtracted(const std::string& url) {
+@@ -1563,7 +1553,6 @@ void DownloadsGetFileIconFunction::OnIconURLExtracted(const std::string& url) {
      Respond(Error(std::move(error)));
      return;
    }
@@ -179,7 +162,7 @@ index 67e29a26213b0..fffb2a2dd1635 100644
    Respond(OneArgument(base::Value(url)));
  }
  
-@@ -1744,7 +1686,6 @@ bool ExtensionDownloadsEventRouter::DetermineFilename(
+@@ -1708,7 +1697,6 @@ bool ExtensionDownloadsEventRouter::DetermineFilename(
      downloads::FilenameConflictAction conflict_action,
      std::string* error) {
    DCHECK_CURRENTLY_ON(BrowserThread::UI);

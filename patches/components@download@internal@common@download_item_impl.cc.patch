@@ -1,5 +1,5 @@
 diff --git a/components/download/internal/common/download_item_impl.cc b/components/download/internal/common/download_item_impl.cc
-index f557ef87951a2..2bf1e2bdcf9a3 100644
+index 2d56947d14938..c75c43cf2ef31 100644
 --- a/components/download/internal/common/download_item_impl.cc
 +++ b/components/download/internal/common/download_item_impl.cc
 @@ -51,9 +51,7 @@
@@ -12,7 +12,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  #include "components/download/public/common/download_url_parameters.h"
  #include "components/download/public/common/download_utils.h"
  #include "net/base/network_change_notifier.h"
-@@ -362,13 +360,9 @@ DownloadItemImpl::DownloadItemImpl(
+@@ -365,13 +363,9 @@ DownloadItemImpl::DownloadItemImpl(
    DCHECK(base::IsValidGUID(guid_));
  
    if (download_entry) {
@@ -26,7 +26,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    }
    Init(false /* not actively downloading */, TYPE_HISTORY_IMPORT);
  }
-@@ -410,8 +404,7 @@ DownloadItemImpl::DownloadItemImpl(DownloadItemImplDelegate* delegate,
+@@ -413,8 +407,7 @@ DownloadItemImpl::DownloadItemImpl(DownloadItemImplDelegate* delegate,
        etag_(info.etag),
        is_updating_observers_(false),
        fetch_error_body_(info.fetch_error_body),
@@ -36,7 +36,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    delegate_->Attach();
    Init(true /* actively downloading */, TYPE_ACTIVE_DOWNLOAD);
    allow_metered_ |= delegate_->IsActiveNetworkMetered();
-@@ -494,8 +487,6 @@ void DownloadItemImpl::ValidateDangerousDownload() {
+@@ -497,8 +490,6 @@ void DownloadItemImpl::ValidateDangerousDownload() {
    if (IsDone() || !IsDangerous())
      return;
  
@@ -45,7 +45,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    danger_type_ = DOWNLOAD_DANGER_TYPE_USER_VALIDATED;
  
    TRACE_EVENT_INSTANT1("download", "DownloadItemSaftyStateUpdated",
-@@ -593,7 +584,6 @@ void DownloadItemImpl::Pause() {
+@@ -596,7 +587,6 @@ void DownloadItemImpl::Pause() {
  void DownloadItemImpl::Resume(bool user_resume) {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
    DVLOG(20) << __func__ << "() download = " << DebugString(true);
@@ -53,7 +53,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  
    switch (state_) {
      case CANCELLED_INTERNAL:  // Nothing to resume.
-@@ -620,7 +610,6 @@ void DownloadItemImpl::Resume(bool user_resume) {
+@@ -623,7 +613,6 @@ void DownloadItemImpl::Resume(bool user_resume) {
        UpdateResumptionInfo(paused_ || user_resume);
        paused_ = false;
        if (auto_resume_count_ >= kMaxAutoResumeAttempts) {
@@ -61,15 +61,15 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
          UpdateObservers();
          return;
        }
-@@ -645,7 +634,6 @@ void DownloadItemImpl::UpdateResumptionInfo(bool user_resume) {
+@@ -648,7 +637,6 @@ void DownloadItemImpl::UpdateResumptionInfo(bool user_resume) {
  
    auto_resume_count_ = user_resume ? 0 : ++auto_resume_count_;
-   download_schedule_ = base::nullopt;
+   download_schedule_ = absl::nullopt;
 -  RecordDownloadLaterEvent(DownloadLaterEvent::kScheduleRemoved);
  }
  
  void DownloadItemImpl::Cancel(bool user_cancel) {
-@@ -1170,8 +1158,6 @@ void DownloadItemImpl::OnDownloadScheduleChanged(
+@@ -1174,8 +1162,6 @@ void DownloadItemImpl::OnDownloadScheduleChanged(
      return;
    }
  
@@ -78,7 +78,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    SwapDownloadSchedule(std::move(schedule));
  
    // Need to start later, don't proceed and ping observers.
-@@ -1370,19 +1356,6 @@ void DownloadItemImpl::OnAllDataSaved(
+@@ -1374,19 +1360,6 @@ void DownloadItemImpl::OnAllDataSaved(
                          // the download and don't expect to receive any more
                          // data.
  
@@ -98,7 +98,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    DVLOG(20) << __func__ << "() download=" << DebugString(true);
    UpdateObservers();
  }
-@@ -1508,7 +1481,6 @@ void DownloadItemImpl::Init(bool active,
+@@ -1512,7 +1485,6 @@ void DownloadItemImpl::Init(bool active,
    if (active) {
      TRACE_EVENT_ASYNC_BEGIN1("download", "DownloadItemActive", download_id_,
                               "download_item", std::move(active_data));
@@ -106,7 +106,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    } else {
      TRACE_EVENT_INSTANT1("download", "DownloadItemActive",
                           TRACE_EVENT_SCOPE_THREAD, "download_item",
-@@ -1530,7 +1502,6 @@ void DownloadItemImpl::Start(
+@@ -1534,7 +1506,6 @@ void DownloadItemImpl::Start(
                           << DownloadInterruptReasonToString(last_reason_)
                           << ", state: " << DebugDownloadStateString(state_);
    DVLOG(20) << __func__ << "() this=" << DebugString(true);
@@ -114,7 +114,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  
    download_file_ = std::move(file);
    job_ = DownloadJobFactory::CreateJob(
-@@ -1538,9 +1509,6 @@ void DownloadItemImpl::Start(
+@@ -1542,9 +1513,6 @@ void DownloadItemImpl::Start(
        std::move(url_loader_factory_provider),
        base::BindRepeating(&DownloadItemImpl::BindWakeLockProvider,
                            weak_ptr_factory_.GetWeakPtr()));
@@ -124,7 +124,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  
    deferred_interrupt_reason_ = DOWNLOAD_INTERRUPT_REASON_NONE;
  
-@@ -1585,32 +1553,6 @@ void DownloadItemImpl::Start(
+@@ -1594,32 +1562,6 @@ void DownloadItemImpl::Start(
      return;
    }
  
@@ -157,7 +157,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    // Successful download start.
    DCHECK(download_file_);
    DCHECK(job_);
-@@ -1661,8 +1603,6 @@ void DownloadItemImpl::DetermineDownloadTarget() {
+@@ -1670,8 +1612,6 @@ void DownloadItemImpl::DetermineDownloadTarget() {
    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
    DVLOG(20) << __func__ << "() " << DebugString(true);
  
@@ -165,8 +165,8 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
 -                                download_source_);
    delegate_->DetermineDownloadTarget(
        this, base::BindOnce(&DownloadItemImpl::OnDownloadTargetDetermined,
-                        weak_ptr_factory_.GetWeakPtr()));
-@@ -1690,16 +1630,11 @@ void DownloadItemImpl::OnDownloadTargetDetermined(
+                            weak_ptr_factory_.GetWeakPtr()));
+@@ -1699,16 +1639,11 @@ void DownloadItemImpl::OnDownloadTargetDetermined(
              << DownloadInterruptReasonToString(interrupt_reason)
              << " this:" << DebugString(true);
  
@@ -183,7 +183,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    SwapDownloadSchedule(std::move(download_schedule));
  
    // There were no other pending errors, and we just failed to determined the
-@@ -1962,10 +1897,12 @@ void DownloadItemImpl::OnDownloadCompleting() {
+@@ -1971,10 +1906,12 @@ void DownloadItemImpl::OnDownloadCompleting() {
    }
  #endif  // defined(OS_ANDROID)
  
@@ -196,7 +196,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  
    GetDownloadTaskRunner()->PostTask(
        FROM_HERE,
-@@ -1975,7 +1912,7 @@ void DownloadItemImpl::OnDownloadCompleting() {
+@@ -1984,7 +1921,7 @@ void DownloadItemImpl::OnDownloadCompleting() {
                       delegate_->GetApplicationClientIdForFileScanning(),
                       delegate_->IsOffTheRecord() ? GURL() : GetURL(),
                       delegate_->IsOffTheRecord() ? GURL() : GetReferrerUrl(),
@@ -205,7 +205,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  }
  
  void DownloadItemImpl::OnDownloadRenamedToFinalName(
-@@ -2028,6 +1965,12 @@ void DownloadItemImpl::OnDownloadRenamedToFinalName(
+@@ -2037,6 +1974,12 @@ void DownloadItemImpl::OnDownloadRenamedToFinalName(
      delegate_delayed_complete_ = true;
      UpdateObservers();
    }
@@ -218,7 +218,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
  }
  
  void DownloadItemImpl::DelayedDownloadOpened(bool auto_opened) {
-@@ -2047,16 +1990,7 @@ void DownloadItemImpl::Completed() {
+@@ -2056,16 +1999,7 @@ void DownloadItemImpl::Completed() {
    TransitionTo(COMPLETE_INTERNAL);
  
    bool is_parallelizable = job_ && job_->IsParallelizable();
@@ -235,7 +235,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
      int64_t content_length = -1;
      if (response_headers_->response_code() != net::HTTP_PARTIAL_CONTENT) {
        content_length = response_headers_->GetContentLength();
-@@ -2081,14 +2015,6 @@ void DownloadItemImpl::Completed() {
+@@ -2090,14 +2024,6 @@ void DownloadItemImpl::Completed() {
      auto_opened_ = true;
    }
  
@@ -250,7 +250,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    // After all of the records are done, then update the observers.
    UpdateObservers();
  }
-@@ -2207,30 +2133,17 @@ void DownloadItemImpl::InterruptWithPartialState(
+@@ -2216,30 +2142,17 @@ void DownloadItemImpl::InterruptWithPartialState(
      job_->Cancel(false);
  
    if (IsCancellation(reason)) {
@@ -270,7 +270,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
 -
 -  base::TimeDelta time_since_start = base::Time::Now() - GetStartTime();
    int resulting_file_size = GetReceivedBytes();
-   base::Optional<int> change_in_file_size;
+   absl::optional<int> change_in_file_size;
    if (total_bytes_ >= 0) {
      change_in_file_size = total_bytes_ - resulting_file_size;
    }
@@ -281,7 +281,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
    if (reason == DOWNLOAD_INTERRUPT_REASON_SERVER_CONTENT_LENGTH_MISMATCH) {
      received_bytes_at_length_mismatch_ = GetReceivedBytes();
    }
-@@ -2520,9 +2433,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
+@@ -2529,9 +2442,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
        mode == ResumeMode::USER_RESTART) {
      LOG_IF(ERROR, !GetFullPath().empty())
          << "Download full path should be empty before resumption";
@@ -291,7 +291,7 @@ index f557ef87951a2..2bf1e2bdcf9a3 100644
      destination_info_.received_bytes = 0;
      last_modified_time_.clear();
      etag_.clear();
-@@ -2612,14 +2522,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
+@@ -2621,14 +2531,6 @@ void DownloadItemImpl::ResumeInterruptedDownload(
        network::mojom::RedirectMode::kError);
  
    TransitionTo(RESUMING_INTERNAL);

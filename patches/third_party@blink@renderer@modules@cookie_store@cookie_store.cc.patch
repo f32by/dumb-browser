@@ -1,16 +1,16 @@
 diff --git a/third_party/blink/renderer/modules/cookie_store/cookie_store.cc b/third_party/blink/renderer/modules/cookie_store/cookie_store.cc
-index 05d3cfc4fae1a..59bc44c816a13 100644
+index 73c8f6578d730..48a243bae7fdb 100644
 --- a/third_party/blink/renderer/modules/cookie_store/cookie_store.cc
 +++ b/third_party/blink/renderer/modules/cookie_store/cookie_store.cc
 @@ -7,6 +7,7 @@
  #include <utility>
  
- #include "base/optional.h"
+ #include "base/containers/contains.h"
 +#include "dumb/components/contextual_identity/context_id.h"
  #include "net/cookies/canonical_cookie.h"
+ #include "services/network/public/cpp/is_potentially_trustworthy.h"
  #include "services/network/public/mojom/restricted_cookie_manager.mojom-blink.h"
- #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
-@@ -152,7 +153,8 @@ std::unique_ptr<net::CanonicalCookie> ToCanonicalCookie(
+@@ -155,7 +156,8 @@ std::unique_ptr<net::CanonicalCookie> ToCanonicalCookie(
        cookie_url, name.Utf8(), value.Utf8(), domain.Utf8(), path.Utf8(),
        base::Time() /*creation*/, expires, base::Time() /*last_access*/,
        true /*secure*/, false /*http_only*/, same_site,
@@ -20,7 +20,7 @@ index 05d3cfc4fae1a..59bc44c816a13 100644
  }
  
  const KURL DefaultCookieURL(ExecutionContext* execution_context) {
-@@ -408,6 +410,7 @@ ScriptPromise CookieStore::DoRead(
+@@ -411,6 +413,7 @@ ScriptPromise CookieStore::DoRead(
  
    auto* resolver = MakeGarbageCollected<ScriptPromiseResolver>(script_state);
    backend_->GetAllForUrl(
@@ -28,7 +28,7 @@ index 05d3cfc4fae1a..59bc44c816a13 100644
        cookie_url, default_site_for_cookies_, default_top_frame_origin_,
        std::move(backend_options),
        WTF::Bind(backend_result_converter, WrapPersistent(resolver)));
-@@ -484,6 +487,7 @@ ScriptPromise CookieStore::DoWrite(ScriptState* script_state,
+@@ -487,6 +490,7 @@ ScriptPromise CookieStore::DoWrite(ScriptState* script_state,
  
    auto* resolver = MakeGarbageCollected<ScriptPromiseResolver>(script_state);
    backend_->SetCanonicalCookie(
@@ -36,7 +36,7 @@ index 05d3cfc4fae1a..59bc44c816a13 100644
        *std::move(canonical_cookie), default_cookie_url_,
        default_site_for_cookies_, default_top_frame_origin_,
        WTF::Bind(&CookieStore::OnSetCanonicalCookieResult,
-@@ -516,6 +520,7 @@ void CookieStore::StartObserving() {
+@@ -519,6 +523,7 @@ void CookieStore::StartObserving() {
    auto task_runner =
        GetExecutionContext()->GetTaskRunner(TaskType::kDOMManipulation);
    backend_->AddChangeListener(

@@ -1,8 +1,8 @@
 diff --git a/content/browser/service_worker/service_worker_context_wrapper.cc b/content/browser/service_worker/service_worker_context_wrapper.cc
-index 2014f0575d68c..99861391ba1a0 100644
+index be235f0db131d..2c2f303b27502 100644
 --- a/content/browser/service_worker/service_worker_context_wrapper.cc
 +++ b/content/browser/service_worker/service_worker_context_wrapper.cc
-@@ -50,7 +50,6 @@
+@@ -51,7 +51,6 @@
  #include "storage/browser/quota/quota_client_type.h"
  #include "storage/browser/quota/quota_manager_proxy.h"
  #include "storage/browser/quota/special_storage_policy.h"
@@ -10,7 +10,7 @@ index 2014f0575d68c..99861391ba1a0 100644
  #include "third_party/blink/public/common/service_worker/service_worker_scope_match.h"
  #include "third_party/blink/public/common/service_worker/service_worker_status_code.h"
  #include "third_party/blink/public/mojom/service_worker/service_worker_registration.mojom.h"
-@@ -210,12 +209,6 @@ ServiceWorkerContextWrapper::ServiceWorkerContextWrapper(
+@@ -211,12 +210,6 @@ ServiceWorkerContextWrapper::ServiceWorkerContextWrapper(
    // Add this object as an observer of the wrapped |context_core_|. This lets us
    // forward observer methods to observers outside of content.
    core_observer_list_->AddObserver(this);
@@ -23,7 +23,7 @@ index 2014f0575d68c..99861391ba1a0 100644
  }
  
  void ServiceWorkerContextWrapper::Init(
-@@ -1368,8 +1361,6 @@ ServiceWorkerContextWrapper::~ServiceWorkerContextWrapper() {
+@@ -1397,8 +1390,6 @@ ServiceWorkerContextWrapper::~ServiceWorkerContextWrapper() {
    // tests where this object is not guaranteed to outlive the
    // ServiceWorkerContextCore it wraps.
    core_observer_list_->RemoveObserver(this);

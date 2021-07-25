@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/ui/cocoa/first_run_dialog_cocoa.mm b/chrome/browser/ui/cocoa/first_run_dialog_cocoa.mm
+index 7c5afbc720ff0..efb7d326584c5 100644
+--- a/chrome/browser/ui/cocoa/first_run_dialog_cocoa.mm
++++ b/chrome/browser/ui/cocoa/first_run_dialog_cocoa.mm
+@@ -67,10 +67,12 @@ void ShowFirstRunModal(Profile* profile) {
+ 
+   [dialog.get() showWindow:nil];
+ 
++#if 0
+   // If the dialog asked the user to opt-in for stats and crash reporting,
+   // record the decision and enable the crash reporter if appropriate.
+   bool consent_given = [dialog.get() isStatsReportingEnabled];
+   ChangeMetricsReportingState(consent_given);
++#endif
+ 
+   // If selected, set as default browser. Skip in automated tests so that an OS
+   // dialog confirming the default browser choice isn't left on screen.

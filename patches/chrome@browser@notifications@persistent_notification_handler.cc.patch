@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/notifications/persistent_notification_handler.cc b/chrome/browser/notifications/persistent_notification_handler.cc
-index fceb89e639059..138c62e3a2f2c 100644
+index 93cfd94b6799a..f4df5aa9e64a0 100644
 --- a/chrome/browser/notifications/persistent_notification_handler.cc
 +++ b/chrome/browser/notifications/persistent_notification_handler.cc
 @@ -8,8 +8,6 @@
@@ -35,7 +35,7 @@ index fceb89e639059..138c62e3a2f2c 100644
  #if BUILDFLAG(ENABLE_BACKGROUND_MODE)
    // Ensure the browser and Profile stay alive while the event is processed. The
    // keep alives will be reset when all click events have been acknowledged.
-@@ -116,18 +104,11 @@ void PersistentNotificationHandler::OnClick(
+@@ -115,18 +103,11 @@ void PersistentNotificationHandler::OnClick(
    // Don't process click events when the |origin| doesn't have permission. This
    // can't be a DCHECK because of potential races with native notifications.
    if (permission_status != blink::mojom::PermissionStatus::GRANTED) {
@@ -54,7 +54,7 @@ index fceb89e639059..138c62e3a2f2c 100644
    // Notification clicks are considered a form of engagement with the |origin|,
    // thus we log the interaction with the Site Engagement service.
    site_engagement::SiteEngagementService::Get(profile)
-@@ -181,10 +162,6 @@ void PersistentNotificationHandler::OnClickCompleted(
+@@ -180,10 +161,6 @@ void PersistentNotificationHandler::OnClickCompleted(
  
  void PersistentNotificationHandler::DisableNotifications(Profile* profile,
                                                           const GURL& origin) {

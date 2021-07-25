@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
-index a87fd21ab0e6f..685844bdd11a5 100644
+index 3512d605b5902..2bfcb755e9c75 100644
 --- a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
 +++ b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.cc
-@@ -46,7 +46,6 @@
+@@ -49,7 +49,6 @@
  #include "components/prefs/pref_service.h"
  #include "components/signin/public/identity_manager/identity_manager.h"
  #include "components/sync/driver/sync_service.h"
@@ -10,7 +10,7 @@ index a87fd21ab0e6f..685844bdd11a5 100644
  #include "content/public/browser/navigation_entry.h"
  #include "content/public/browser/notification_service.h"
  #include "content/public/browser/service_worker_context.h"
-@@ -72,7 +71,6 @@
+@@ -75,7 +74,6 @@
  #include "chrome/browser/ui/browser.h"
  #include "chrome/browser/ui/browser_list.h"
  #include "chrome/browser/ui/tabs/tab_strip_model.h"
@@ -18,7 +18,7 @@ index a87fd21ab0e6f..685844bdd11a5 100644
  #endif
  
  #if defined(OS_ANDROID)
-@@ -185,10 +183,6 @@ ChromeAutocompleteProviderClient::ChromeAutocompleteProviderClient(
+@@ -188,10 +186,6 @@ ChromeAutocompleteProviderClient::ChromeAutocompleteProviderClient(
      Profile* profile)
      : profile_(profile),
        scheme_classifier_(profile),
@@ -29,7 +29,7 @@ index a87fd21ab0e6f..685844bdd11a5 100644
        storage_partition_(nullptr),
        omnibox_triggered_feature_service_(
            std::make_unique<OmniboxTriggeredFeatureService>()) {
-@@ -384,7 +378,7 @@ bool ChromeAutocompleteProviderClient::SearchSuggestEnabled() const {
+@@ -398,7 +392,7 @@ bool ChromeAutocompleteProviderClient::SearchSuggestEnabled() const {
  
  bool ChromeAutocompleteProviderClient::IsPersonalizedUrlDataCollectionActive()
      const {

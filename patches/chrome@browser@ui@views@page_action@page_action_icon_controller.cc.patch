@@ -1,20 +1,20 @@
 diff --git a/chrome/browser/ui/views/page_action/page_action_icon_controller.cc b/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
-index 135bb8fba3abf..747481b5f418e 100644
+index 59936ed9d754f..a227e53b20d34 100644
 --- a/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
 +++ b/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
-@@ -64,6 +64,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
-         page_action_icons_.push_back(bookmark_star_icon_);
+@@ -85,6 +85,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
+                                        params.page_action_icon_delegate));
          break;
        case PageActionIconType::kClickToCall:
-+#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
-         click_to_call_icon_ = new SharingIconView(
-             params.icon_label_bubble_delegate, params.page_action_icon_delegate,
-             base::BindRepeating([](content::WebContents* contents) {
-@@ -73,6 +74,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
-             }),
-             base::BindRepeating(SharingDialogView::GetAsBubbleForClickToCall));
-         page_action_icons_.push_back(click_to_call_icon_);
++#if 0
+         add_page_action_icon(
+             type, std::make_unique<SharingIconView>(
+                       params.icon_label_bubble_delegate,
+@@ -96,6 +97,7 @@ void PageActionIconController::Init(const PageActionIconParams& params,
+                       }),
+                       base::BindRepeating(
+                           SharingDialogView::GetAsBubbleForClickToCall)));
 +#endif
          break;
        case PageActionIconType::kCookieControls:
-         cookie_controls_icon_ =
+         add_page_action_icon(type, std::make_unique<CookieControlsIconView>(

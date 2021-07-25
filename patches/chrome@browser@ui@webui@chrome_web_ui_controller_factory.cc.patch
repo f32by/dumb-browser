@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc b/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
-index a42d0369f38f8..08bef6a60de22 100644
+index d16b800449453..0c2792d755750 100644
 --- a/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
 +++ b/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
-@@ -32,7 +32,6 @@
+@@ -33,7 +33,6 @@
  #include "chrome/browser/ui/webui/constrained_web_dialog_ui.h"
  #include "chrome/browser/ui/webui/crashes_ui.h"
  #include "chrome/browser/ui/webui/device_log_ui.h"
@@ -10,16 +10,16 @@ index a42d0369f38f8..08bef6a60de22 100644
  #include "chrome/browser/ui/webui/download_internals/download_internals_ui.h"
  #include "chrome/browser/ui/webui/engagement/site_engagement_ui.h"
  #include "chrome/browser/ui/webui/flags/flags_ui.h"
-@@ -75,8 +74,6 @@
+@@ -76,8 +75,6 @@
  #include "components/prefs/pref_service.h"
  #include "components/reading_list/features/reading_list_switches.h"
  #include "components/safe_browsing/buildflags.h"
 -#include "components/safe_browsing/content/web_ui/safe_browsing_ui.h"
 -#include "components/safe_browsing/core/web_ui/constants.h"
- #include "components/search/ntp_features.h"
  #include "components/security_interstitials/content/connection_help_ui.h"
  #include "components/security_interstitials/content/known_interception_disclosure_ui.h"
-@@ -123,7 +120,6 @@
+ #include "components/security_interstitials/content/urls.h"
+@@ -124,7 +121,6 @@
  #include "chrome/browser/ui/webui/devtools_ui.h"
  #include "chrome/browser/ui/webui/download_shelf/download_shelf_ui.h"
  #include "chrome/browser/ui/webui/downloads/downloads_ui.h"
@@ -27,7 +27,7 @@ index a42d0369f38f8..08bef6a60de22 100644
  #include "chrome/browser/ui/webui/history/history_ui.h"
  #include "chrome/browser/ui/webui/identity_internals_ui.h"
  #include "chrome/browser/ui/webui/inspect_ui.h"
-@@ -549,8 +545,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+@@ -576,8 +572,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
      return &NewWebUI<CrashesUI>;
    if (url.host_piece() == chrome::kChromeUIDeviceLogHost)
      return &NewWebUI<chromeos::DeviceLogUI>;
@@ -36,7 +36,7 @@ index a42d0369f38f8..08bef6a60de22 100644
    if (url.host_piece() == chrome::kChromeUIDownloadInternalsHost)
      return &NewWebUI<DownloadInternalsUI>;
    if (url.host_piece() == chrome::kChromeUIFlagsHost &&
-@@ -588,8 +582,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+@@ -615,8 +609,6 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
      return &NewWebUI<PredictorsUI>;
    if (url.host_piece() == chrome::kChromeUIQuotaInternalsHost)
      return &NewWebUI<QuotaInternalsUI>;
@@ -45,7 +45,7 @@ index a42d0369f38f8..08bef6a60de22 100644
    if (url.host_piece() == chrome::kChromeUISignInInternalsHost)
      return &NewWebUI<SignInInternalsUI>;
    if (url.host_piece() == chrome::kChromeUISuggestionsHost)
-@@ -653,10 +645,12 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+@@ -680,10 +672,12 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
      return &NewWebUI<NewTabPageUI>;
    if (url.host_piece() == chrome::kChromeUINewTabPageThirdPartyHost)
      return &NewWebUI<NewTabPageThirdPartyUI>;
@@ -55,10 +55,10 @@ index a42d0369f38f8..08bef6a60de22 100644
        return &NewWebUI<FeedbackUI>;
    }
 +#endif
-   if (base::FeatureList::IsEnabled(memories::kMemories)) {
+   if (base::FeatureList::IsEnabled(history_clusters::kMemories)) {
      if (url.host_piece() == chrome::kChromeUIMemoriesHost)
        return &NewWebUI<MemoriesUI>;
-@@ -668,8 +662,10 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
+@@ -695,8 +689,10 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
    // Settings are implemented with native UI elements on Android.
    if (url.host_piece() == chrome::kChromeUISettingsHost)
      return &NewWebUI<settings::SettingsUI>;
@@ -70,7 +70,7 @@ index a42d0369f38f8..08bef6a60de22 100644
    if (url.host_piece() == chrome::kChromeUIExtensionsHost)
      return &NewWebUI<extensions::ExtensionsUI>;
    if (url.host_piece() == chrome::kChromeUIHistoryHost)
-@@ -1214,9 +1210,6 @@ base::RefCountedMemory* ChromeWebUIControllerFactory::GetFaviconResourceBytes(
+@@ -1257,9 +1253,6 @@ base::RefCountedMemory* ChromeWebUIControllerFactory::GetFaviconResourceBytes(
      return settings_utils::GetFaviconResourceBytes(scale_factor);
    }
  

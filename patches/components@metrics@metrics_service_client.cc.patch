@@ -1,57 +1,34 @@
 diff --git a/components/metrics/metrics_service_client.cc b/components/metrics/metrics_service_client.cc
-index 9ad8361748c2d..3ffb7bdba7179 100644
+index 5054743529dcf..3fb6b1dfbab02 100644
 --- a/components/metrics/metrics_service_client.cc
 +++ b/components/metrics/metrics_service_client.cc
-@@ -16,48 +16,10 @@
+@@ -17,6 +17,7 @@
  
  namespace metrics {
  
--namespace {
--
--// The minimum time in seconds between consecutive metrics report uploads.
--constexpr int kMetricsUploadIntervalSecMinimum = 20;
--
--// If a metrics log upload fails, and the transmission is over this byte count,
--// then we will discard the log, and not try to retransmit it. We also don't
--// persist the log to the prefs for transmission during the next chrome session
--// if this limit is exceeded.
--constexpr size_t kMaxOngoingLogSize = 100 * 1024;  // 100 KiB
--
--// The number of bytes of logs to save of each type (initial/ongoing). This
--// ensures that a reasonable amount of history will be stored even if there is a
--// long series of very small logs.
--constexpr size_t kMinLogQueueSize = 300 * 1024;  // 300 KiB
--
--// The minimum number of "initial" logs to save, and hope to send during a
--// future Chrome session. Initial logs contain crash stats, and are pretty
--// small.
--constexpr size_t kMinInitialLogQueueCount = 20;
--
--// The minimum number of ongoing logs to save persistently, and hope to send
--// during a this or future sessions. Note that each log may be pretty large, as
--// presumably the related "initial" log wasn't sent (probably nothing was, as
--// the user was probably off-line). As a result, the log probably kept
--// accumulating while the "initial" log was stalled, and couldn't be sent. As a
--// result, we don't want to save too many of these mega-logs. A "standard
--// shutdown" will create a small log, including just the data that was not yet
--// been transmitted, and that is normal (to have exactly one ongoing_log_ at
--// startup).
--constexpr size_t kMinOngoingLogQueueCount = 8;
--
--}  // namespace
--
++#if 0
+ namespace {
+ 
+ // The minimum time in seconds between consecutive metrics report uploads.
+@@ -55,14 +56,17 @@ constexpr size_t kMinInitialLogQueueCount = 20;
+ constexpr size_t kMinOngoingLogQueueCount = 8;
+ 
+ }  // namespace
++#endif
+ 
  MetricsServiceClient::MetricsServiceClient() {}
  
  MetricsServiceClient::~MetricsServiceClient() {}
  
--ukm::UkmService* MetricsServiceClient::GetUkmService() {
--  return nullptr;
--}
--
- GURL MetricsServiceClient::GetMetricsServerUrl() {
-   return GURL(kNewMetricsServerUrl);
++#if 0
+ ukm::UkmService* MetricsServiceClient::GetUkmService() {
+   return nullptr;
  }
-@@ -66,92 +28,21 @@ GURL MetricsServiceClient::GetInsecureMetricsServerUrl() {
++#endif
+ 
+ bool MetricsServiceClient::ShouldUploadMetricsForUserId(
+     const uint64_t user_id) {
+@@ -77,92 +81,21 @@ GURL MetricsServiceClient::GetInsecureMetricsServerUrl() {
    return GURL(kNewMetricsServerUrlInsecure);
  }
  

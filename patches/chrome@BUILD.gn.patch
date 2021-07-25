@@ -1,8 +1,8 @@
 diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
-index 4573bd4fa051a..0f52916fd931f 100644
+index ec09d0836a976..b480e0d101ef7 100644
 --- a/chrome/BUILD.gn
 +++ b/chrome/BUILD.gn
-@@ -125,7 +125,7 @@ if (!is_android && !is_mac) {
+@@ -126,7 +126,7 @@ if (!is_android && !is_mac) {
      # the output name for that platform.
      # See crbug.com/1146571.
      if (is_win) {
@@ -11,7 +11,7 @@ index 4573bd4fa051a..0f52916fd931f 100644
        data_deps += [ ":reorder_imports" ]
      }
    }
-@@ -1305,11 +1305,8 @@ group("browser_dependencies") {
+@@ -1338,11 +1338,8 @@ group("browser_dependencies") {
      "//chrome/common",
      "//components/crash/core/app",
      "//components/gwp_asan/buildflags",
@@ -23,7 +23,7 @@ index 4573bd4fa051a..0f52916fd931f 100644
      "//services/tracing/public/cpp",
    ]
    if (enable_plugins) {
-@@ -1375,7 +1372,6 @@ group("child_dependencies") {
+@@ -1408,7 +1405,6 @@ group("child_dependencies") {
      "//chrome/renderer",
      "//chrome/utility",
      "//components/gwp_asan/buildflags",
@@ -31,7 +31,7 @@ index 4573bd4fa051a..0f52916fd931f 100644
      "//content/public/child",
      "//pdf",
      "//pdf:pdf_ppapi",
-@@ -1404,7 +1400,7 @@ group("child_dependencies") {
+@@ -1437,7 +1433,7 @@ group("child_dependencies") {
  
  if (is_win) {
    process_version_rc_template("chrome_exe_version") {
@@ -40,7 +40,7 @@ index 4573bd4fa051a..0f52916fd931f 100644
      output = "$target_gen_dir/chrome_exe_version.rc"
    }
  
-@@ -1619,12 +1615,8 @@ if (is_android) {
+@@ -1651,12 +1647,8 @@ if (is_android) {
        "//chrome/gpu",
        "//chrome/renderer",
        "//components/gwp_asan/buildflags",

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/extension_tab_util.cc b/chrome/browser/extensions/extension_tab_util.cc
-index ab9704b8d0836..51d524b85fae4 100644
+index 5bc2d640f26bc..f33caf6e88f1e 100644
 --- a/chrome/browser/extensions/extension_tab_util.cc
 +++ b/chrome/browser/extensions/extension_tab_util.cc
-@@ -566,11 +566,12 @@ ExtensionTabUtil::CreateWindowValueForExtension(
+@@ -568,11 +568,12 @@ ExtensionTabUtil::CreateWindowValueForExtension(
  std::unique_ptr<api::tabs::MutedInfo> ExtensionTabUtil::CreateMutedInfo(
      content::WebContents* contents) {
    DCHECK(contents);
@@ -15,4 +15,4 @@ index ab9704b8d0836..51d524b85fae4 100644
 +    case TabMutedReason::AUDIO_INDICATOR:
      case TabMutedReason::CONTENT_SETTING:
      case TabMutedReason::CONTENT_SETTING_CHROME:
-     case TabMutedReason::CONTEXT_MENU:
+       info->reason = api::tabs::MUTED_INFO_REASON_USER;

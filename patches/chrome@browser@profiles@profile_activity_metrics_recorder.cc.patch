@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_activity_metrics_recorder.cc b/chrome/browser/profiles/profile_activity_metrics_recorder.cc
-index 4cb3145e4ebe1..bdcdf5016657f 100644
+index 00cbd4abf2835..ae5ad70576a69 100644
 --- a/chrome/browser/profiles/profile_activity_metrics_recorder.cc
 +++ b/chrome/browser/profiles/profile_activity_metrics_recorder.cc
-@@ -209,7 +209,6 @@ void ProfileActivityMetricsRecorder::OnProfileWillBeDestroyed(
+@@ -211,7 +211,6 @@ void ProfileActivityMetricsRecorder::OnProfileWillBeDestroyed(
  
  ProfileActivityMetricsRecorder::ProfileActivityMetricsRecorder() {
    BrowserList::AddObserver(this);
@@ -10,7 +10,7 @@ index 4cb3145e4ebe1..bdcdf5016657f 100644
    action_callback_ = base::BindRepeating(
        &ProfileActivityMetricsRecorder::OnUserAction, base::Unretained(this));
    base::AddActionCallback(action_callback_);
-@@ -217,7 +216,6 @@ ProfileActivityMetricsRecorder::ProfileActivityMetricsRecorder() {
+@@ -219,7 +218,6 @@ ProfileActivityMetricsRecorder::ProfileActivityMetricsRecorder() {
  
  ProfileActivityMetricsRecorder::~ProfileActivityMetricsRecorder() {
    BrowserList::RemoveObserver(this);

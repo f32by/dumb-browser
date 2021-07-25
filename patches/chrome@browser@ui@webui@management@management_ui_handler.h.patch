@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/ui/webui/management/management_ui_handler.h b/chrome/browser/ui/webui/management/management_ui_handler.h
+index 9748c22e2f7dd..59fc9b488459e 100644
+--- a/chrome/browser/ui/webui/management/management_ui_handler.h
++++ b/chrome/browser/ui/webui/management/management_ui_handler.h
+@@ -141,7 +141,9 @@ class ManagementUIHandler : public content::WebUIMessageHandler,
+   void AddReportingInfo(base::Value* report_sources);
+ 
+   base::Value GetContextualManagedData(Profile* profile);
++#if 0
+   base::Value GetThreatProtectionInfo(Profile* profile);
++#endif
+   base::Value GetManagedWebsitesInfo(Profile* profile) const;
+   virtual policy::PolicyService* GetPolicyService();
+ 
+@@ -178,7 +180,9 @@ class ManagementUIHandler : public content::WebUIMessageHandler,
+ 
+   void HandleGetExtensions(const base::ListValue* args);
+   void HandleGetContextualManagedData(const base::ListValue* args);
++#if 0
+   void HandleGetThreatProtectionInfo(const base::ListValue* args);
++#endif
+   void HandleGetManagedWebsites(const base::ListValue* args);
+   void HandleInitBrowserReportingInfo(const base::ListValue* args);
+ 

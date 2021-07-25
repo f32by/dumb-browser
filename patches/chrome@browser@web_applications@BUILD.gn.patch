@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/web_applications/BUILD.gn b/chrome/browser/web_applications/BUILD.gn
-index c0b171f8245a9..c7e0314102ff7 100644
+index 88ee85c704fdb..2660f48170d74 100644
 --- a/chrome/browser/web_applications/BUILD.gn
 +++ b/chrome/browser/web_applications/BUILD.gn
 @@ -13,8 +13,6 @@ group("web_app_test_group") {
@@ -9,17 +9,17 @@ index c0b171f8245a9..c7e0314102ff7 100644
 -    "daily_metrics_helper.cc",
 -    "daily_metrics_helper.h",
      "extension_status_utils.h",
-     "external_web_app_manager.cc",
-     "external_web_app_manager.h",
+     "externally_managed_app_install_task.cc",
+     "externally_managed_app_install_task.h",
 @@ -101,7 +99,6 @@ source_set("web_applications") {
      "//components/user_manager",
      "//components/webapps/browser",
      "//content/public/browser",
 -    "//services/metrics/public/cpp:ukm_builders",
      "//skia",
+     "//ui/base/idle",
    ]
- 
-@@ -258,7 +255,6 @@ source_set("web_applications_unit_tests") {
+@@ -290,7 +287,6 @@ source_set("web_applications_unit_tests") {
      "//components/webapps/browser",
      "//content/public/browser",
      "//content/test:test_support",

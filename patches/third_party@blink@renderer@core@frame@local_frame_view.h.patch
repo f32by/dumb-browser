@@ -1,0 +1,15 @@
+diff --git a/third_party/blink/renderer/core/frame/local_frame_view.h b/third_party/blink/renderer/core/frame/local_frame_view.h
+index 5836ce195ef9d..bb7514e9c25c2 100644
+--- a/third_party/blink/renderer/core/frame/local_frame_view.h
++++ b/third_party/blink/renderer/core/frame/local_frame_view.h
+@@ -691,8 +691,10 @@ class CORE_EXPORT LocalFrameView final
+   }
+   void DidChangeMobileFriendliness(const MobileFriendliness& mf);
+ 
++#if 0
+   // Return the UKM aggregator for this frame, creating it if necessary.
+   LocalFrameUkmAggregator& EnsureUkmAggregator();
++#endif
+ 
+   // Report the First Contentful Paint signal to the LocalFrameView.
+   // This causes Deferred Commits to be restarted and tells the UKM

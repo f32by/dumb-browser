@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/profiles/profile_picker_view.cc b/chrome/browser/ui/views/profiles/profile_picker_view.cc
-index 6a80666e06b33..7d8d50482f13b 100644
+index 015ac6d2e468c..6f773af1c863a 100644
 --- a/chrome/browser/ui/views/profiles/profile_picker_view.cc
 +++ b/chrome/browser/ui/views/profiles/profile_picker_view.cc
-@@ -543,9 +543,6 @@ void ProfilePickerView::Display(ProfilePicker::EntryPoint entry_point) {
+@@ -497,9 +497,6 @@ void ProfilePickerView::Display(ProfilePicker::EntryPoint entry_point) {
      DCHECK(creation_time_on_startup_.is_null());
      // Display() is called right after the creation of this object.
      creation_time_on_startup_ = base::TimeTicks::Now();
@@ -12,12 +12,3 @@ index 6a80666e06b33..7d8d50482f13b 100644
    }
  
    if (state_ == kNotStarted) {
-@@ -1260,8 +1257,6 @@ void ProfilePickerView::FinishSignedInCreationFlowImpl(
-   }
-   entry->SetLocalProfileName(sign_in_->name_for_signed_in_profile,
-                              /*is_default_name=*/false);
--  ProfileMetrics::LogProfileAddNewUser(
--      ProfileMetrics::ADD_NEW_PROFILE_PICKER_SIGNED_IN);
- 
-   // If sync is not enabled (and will not likely be enabled with an enterprise
-   // consent), apply a new color to the profile (otherwise, a more complicated

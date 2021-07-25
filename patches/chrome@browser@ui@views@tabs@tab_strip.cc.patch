@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/tabs/tab_strip.cc b/chrome/browser/ui/views/tabs/tab_strip.cc
-index ed035e1b362eb..25331928261f1 100644
+index e8b72e3357f05..35cfc9676fcdc 100644
 --- a/chrome/browser/ui/views/tabs/tab_strip.cc
 +++ b/chrome/browser/ui/views/tabs/tab_strip.cc
-@@ -2119,6 +2119,8 @@ void TabStrip::OnMouseEventInTab(views::View* source,
+@@ -2128,6 +2128,8 @@ void TabStrip::OnMouseEventInTab(views::View* source,
  }
  
  void TabStrip::UpdateHoverCard(Tab* tab, HoverCardUpdateType update_type) {
@@ -11,7 +11,7 @@ index ed035e1b362eb..25331928261f1 100644
    // We don't want to show a hover card while the tabstrip is animating.
    if (bounds_animator_.IsAnimating()) {
      // Once we're animating the hover card should already be hidden.
-@@ -2142,6 +2144,8 @@ bool TabStrip::ShowDomainInHoverCards() const {
+@@ -2151,6 +2153,8 @@ bool TabStrip::ShowDomainInHoverCards() const {
  }
  
  bool TabStrip::HoverCardIsShowingForTab(Tab* tab) {
@@ -20,7 +20,7 @@ index ed035e1b362eb..25331928261f1 100644
    return hover_card_controller_ &&
           hover_card_controller_->IsHoverCardShowingForTab(tab);
  }
-@@ -3035,6 +3039,12 @@ void TabStrip::CloseTabInternal(int model_index, CloseTabSource source) {
+@@ -3046,6 +3050,12 @@ void TabStrip::CloseTabInternal(int model_index, CloseTabSource source) {
    controller_->CloseTab(model_index);
  }
  

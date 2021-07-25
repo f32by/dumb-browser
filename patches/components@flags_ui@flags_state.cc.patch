@@ -1,8 +1,8 @@
 diff --git a/components/flags_ui/flags_state.cc b/components/flags_ui/flags_state.cc
-index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
+index 4a1e03257df73..05d196552f3d8 100644
 --- a/components/flags_ui/flags_state.cc
 +++ b/components/flags_ui/flags_state.cc
-@@ -295,8 +295,10 @@ FlagsState::Delegate::Delegate() = default;
+@@ -293,8 +293,10 @@ FlagsState::Delegate::Delegate() = default;
  FlagsState::Delegate::~Delegate() = default;
  
  FlagsState::FlagsState(base::span<const FeatureEntry> feature_entries,
@@ -13,7 +13,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
        needs_restart_(false),
        delegate_(delegate) {}
  
-@@ -500,8 +502,11 @@ std::vector<std::string> FlagsState::RegisterAllFeatureVariationParameters(
+@@ -498,8 +500,11 @@ std::vector<std::string> FlagsState::RegisterAllFeatureVariationParameters(
    std::map<std::string, std::map<std::string, std::string>>
        params_by_trial_name;
  
@@ -27,7 +27,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
      if (entry.type == FeatureEntry::FEATURE_WITH_PARAMS_VALUE) {
        for (int j = 0; j < entry.NumOptions(); ++j) {
          if (entry.StateForOption(j) == FeatureEntry::FeatureState::ENABLED &&
-@@ -532,6 +537,16 @@ std::vector<std::string> FlagsState::RegisterAllFeatureVariationParameters(
+@@ -530,6 +535,16 @@ std::vector<std::string> FlagsState::RegisterAllFeatureVariationParameters(
          }
        }
      }
@@ -44,7 +44,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
    }
  
    // Now create the trials and associate the features to them.
-@@ -567,9 +582,15 @@ void FlagsState::GetFlagFeatureEntries(
+@@ -565,9 +580,15 @@ void FlagsState::GetFlagFeatureEntries(
  
    int current_platform = GetCurrentPlatform();
  
@@ -62,7 +62,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
  
      std::unique_ptr<base::DictionaryValue> data(new base::DictionaryValue());
      data->SetString("internal_name", entry.internal_name);
-@@ -620,6 +641,14 @@ void FlagsState::GetFlagFeatureEntries(
+@@ -618,6 +639,14 @@ void FlagsState::GetFlagFeatureEntries(
        supported_entries->Append(std::move(data));
      else
        unsupported_entries->Append(std::move(data));
@@ -77,7 +77,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
    }
  }
  
-@@ -791,7 +820,8 @@ void FlagsState::GenerateFlagsToSwitchesMapping(
+@@ -789,7 +818,8 @@ void FlagsState::GenerateFlagsToSwitchesMapping(
      std::map<std::string, SwitchEntry>* name_to_switch_map) const {
    GetSanitizedEnabledFlagsForCurrentPlatform(flags_storage, enabled_entries);
  
@@ -87,7 +87,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
      switch (entry.type) {
        case FeatureEntry::SINGLE_VALUE:
        case FeatureEntry::SINGLE_DISABLE_VALUE:
-@@ -867,6 +897,14 @@ void FlagsState::GenerateFlagsToSwitchesMapping(
+@@ -865,6 +895,14 @@ void FlagsState::GenerateFlagsToSwitchesMapping(
          }
          break;
      }
@@ -102,7 +102,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
    }
  }
  
-@@ -876,6 +914,10 @@ const FeatureEntry* FlagsState::FindFeatureEntryByName(
+@@ -874,6 +912,10 @@ const FeatureEntry* FlagsState::FindFeatureEntryByName(
      if (entry.internal_name == internal_name)
        return &entry;
    }
@@ -113,7 +113,7 @@ index 2cfa74e9fb17a..0d3bd8f33ebf4 100644
    return nullptr;
  }
  
-@@ -892,6 +934,16 @@ bool FlagsState::IsSupportedFeature(const FlagsStorage* storage,
+@@ -890,6 +932,16 @@ bool FlagsState::IsSupportedFeature(const FlagsStorage* storage,
        continue;
      return true;
    }

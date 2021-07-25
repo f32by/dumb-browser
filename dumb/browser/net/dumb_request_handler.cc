@@ -17,6 +17,7 @@
 #include "content/public/common/url_constants.h"
 #include "dumb/browser/net/dumb_stp_util.h"
 #include "extensions/common/constants.h"
+#include "net/base/net_errors.h"
 
 static bool IsInternalScheme(std::shared_ptr<dumb::DumbRequestInfo> ctx) {
   DCHECK(ctx);
@@ -33,7 +34,7 @@ DumbRequestHandler::~DumbRequestHandler() = default;
 
 void DumbRequestHandler::SetupCallbacks() {
   // dumb::OnBeforeURLRequestCallback callback =
-  //     base::Bind(dumb::OnBeforeURLRequest_URLPurifyWork);
+  //     base::BindRepeating(dumb::OnBeforeURLRequest_URLPurifyWork);
   // before_url_request_callbacks_.push_back(callback);
 }
 
@@ -135,7 +136,7 @@ void DumbRequestHandler::RunNextCallback(
            ctx->next_url_request_index) {
       dumb::OnBeforeURLRequestCallback callback =
           before_url_request_callbacks_[ctx->next_url_request_index++];
-      dumb::ResponseCallback next_callback = base::Bind(
+      dumb::ResponseCallback next_callback = base::BindRepeating(
           &DumbRequestHandler::RunNextCallback,
           weak_factory_.GetWeakPtr(),
           ctx);

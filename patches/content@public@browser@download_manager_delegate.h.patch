@@ -1,8 +1,8 @@
 diff --git a/content/public/browser/download_manager_delegate.h b/content/public/browser/download_manager_delegate.h
-index 1c43cb6a53242..e6466f481b463 100644
+index 35e0aeb7f54ec..fb631179ad751 100644
 --- a/content/public/browser/download_manager_delegate.h
 +++ b/content/public/browser/download_manager_delegate.h
-@@ -16,7 +16,6 @@
+@@ -14,7 +14,6 @@
  #include "components/download/public/common/download_item_rename_handler.h"
  #include "components/download/public/common/download_schedule.h"
  #include "components/download/public/common/download_url_parameters.h"
@@ -10,7 +10,7 @@ index 1c43cb6a53242..e6466f481b463 100644
  #include "content/common/content_export.h"
  #include "content/public/browser/save_page_type.h"
  #include "content/public/browser/web_contents.h"
-@@ -208,13 +207,15 @@ class CONTENT_EXPORT DownloadManagerDelegate {
+@@ -207,10 +206,12 @@ class CONTENT_EXPORT DownloadManagerDelegate {
        bool content_initiated,
        CheckDownloadAllowedCallback check_download_allowed_cb);
  
@@ -22,12 +22,8 @@ index 1c43cb6a53242..e6466f481b463 100644
 +#endif
  
    // Gets a handler to perform the rename for a download item.  If no special
--  // rename handling is required, don’t override this, as the default
-+  // rename handling is required, donï¿½t override this, as the default
-   // implementation returns null, which indicates that the default rename
-   // handling should be performed.
-   virtual std::unique_ptr<download::DownloadItemRenameHandler>
-@@ -223,6 +224,8 @@ class CONTENT_EXPORT DownloadManagerDelegate {
+   // rename handling is required, don't override this, as the default
+@@ -222,6 +223,8 @@ class CONTENT_EXPORT DownloadManagerDelegate {
    // Gets a |DownloadItem| from the GUID, or null if no such GUID is available.
    virtual download::DownloadItem* GetDownloadByGuid(const std::string& guid);
  

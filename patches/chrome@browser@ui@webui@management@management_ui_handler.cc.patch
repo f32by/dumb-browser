@@ -1,0 +1,85 @@
+diff --git a/chrome/browser/ui/webui/management/management_ui_handler.cc b/chrome/browser/ui/webui/management/management_ui_handler.cc
+index c7bb05d785544..0e004df5a3df7 100644
+--- a/chrome/browser/ui/webui/management/management_ui_handler.cc
++++ b/chrome/browser/ui/webui/management/management_ui_handler.cc
+@@ -23,8 +23,6 @@
+ #include "chrome/browser/browser_process_platform_part.h"
+ #include "chrome/browser/device_api/managed_configuration_api.h"
+ #include "chrome/browser/device_api/managed_configuration_api_factory.h"
+-#include "chrome/browser/enterprise/connectors/common.h"
+-#include "chrome/browser/enterprise/connectors/connectors_service.h"
+ #include "chrome/browser/policy/chrome_browser_policy_connector.h"
+ #include "chrome/browser/policy/profile_policy_connector.h"
+ #include "chrome/browser/profiles/profile.h"
+@@ -334,6 +332,7 @@ const char* GetReportingTypeValue(ReportingType reportingType) {
+   }
+ }
+ 
++#if 0
+ void AddThreatProtectionPermission(const char* title,
+                                    const char* permission,
+                                    base::Value* info) {
+@@ -342,6 +341,7 @@ void AddThreatProtectionPermission(const char* title,
+   value.SetStringKey("permission", permission);
+   info->Append(std::move(value));
+ }
++#endif
+ 
+ }  // namespace
+ 
+@@ -404,10 +404,12 @@ void ManagementUIHandler::RegisterMessages() {
+           &ManagementUIHandler::HandleGetPluginVmDataCollectionStatus,
+           base::Unretained(this)));
+ #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
++#if 0
+   web_ui()->RegisterMessageCallback(
+       "getThreatProtectionInfo",
+       base::BindRepeating(&ManagementUIHandler::HandleGetThreatProtectionInfo,
+                           base::Unretained(this)));
++#endif
+   web_ui()->RegisterMessageCallback(
+       "getManagedWebsites",
+       base::BindRepeating(&ManagementUIHandler::HandleGetManagedWebsites,
+@@ -767,6 +769,7 @@ base::Value ManagementUIHandler::GetContextualManagedData(Profile* profile) {
+   return response;
+ }
+ 
++#if 0
+ base::Value ManagementUIHandler::GetThreatProtectionInfo(Profile* profile) {
+   base::Value info(base::Value::Type::LIST);
+ 
+@@ -826,6 +829,7 @@ base::Value ManagementUIHandler::GetThreatProtectionInfo(Profile* profile) {
+   result.SetKey("info", std::move(info));
+   return result;
+ }
++#endif
+ 
+ base::Value ManagementUIHandler::GetManagedWebsitesInfo(
+     Profile* profile) const {
+@@ -1032,6 +1036,7 @@ void ManagementUIHandler::HandleGetContextualManagedData(
+                             std::move(result));
+ }
+ 
++#if 0
+ void ManagementUIHandler::HandleGetThreatProtectionInfo(
+     const base::ListValue* args) {
+   AllowJavascript();
+@@ -1039,6 +1044,7 @@ void ManagementUIHandler::HandleGetThreatProtectionInfo(
+       args->GetList()[0] /* callback_id */,
+       GetThreatProtectionInfo(Profile::FromWebUI(web_ui())));
+ }
++#endif
+ 
+ void ManagementUIHandler::HandleGetManagedWebsites(
+     const base::ListValue* args) {
+@@ -1074,8 +1080,10 @@ void ManagementUIHandler::NotifyPluginVmDataCollectionUpdated() {
+ #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+ 
+ void ManagementUIHandler::NotifyThreatProtectionInfoUpdated() {
++#if 0
+   FireWebUIListener("threat-protection-info-updated",
+                     GetThreatProtectionInfo(Profile::FromWebUI(web_ui())));
++#endif
+ }
+ 
+ void ManagementUIHandler::OnExtensionLoaded(

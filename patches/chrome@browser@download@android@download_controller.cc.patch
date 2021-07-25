@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/android/download_controller.cc b/chrome/browser/download/android/download_controller.cc
-index 7962928862e21..d6fd04b43c67a 100644
+index bae8f9c28cb2a..3cbc1742b67fd 100644
 --- a/chrome/browser/download/android/download_controller.cc
 +++ b/chrome/browser/download/android/download_controller.cc
 @@ -27,7 +27,6 @@
@@ -8,8 +8,8 @@ index 7962928862e21..d6fd04b43c67a 100644
  #include "chrome/browser/download/download_offline_content_provider_factory.h"
 -#include "chrome/browser/download/download_stats.h"
  #include "chrome/browser/flags/android/chrome_feature_list.h"
- #include "chrome/browser/infobars/infobar_service.h"
  #include "chrome/browser/offline_pages/android/offline_page_bridge.h"
+ #include "chrome/browser/permissions/permission_update_infobar_delegate_android.h"
 @@ -75,13 +74,9 @@ void CreateContextMenuDownloadInternal(
      return;
  
@@ -50,9 +50,9 @@ index 7962928862e21..d6fd04b43c67a 100644
 -}
 -
  // static
- void DownloadController::CloseTabIfEmpty(content::WebContents* web_contents) {
-   if (!web_contents || !web_contents->GetController().IsInitialNavigation())
-@@ -239,10 +220,6 @@ void DownloadController::AcquireFileAccessPermission(
+ void DownloadController::CloseTabIfEmpty(content::WebContents* web_contents,
+                                          download::DownloadItem* download) {
+@@ -247,10 +228,6 @@ void DownloadController::AcquireFileAccessPermission(
    WebContents* web_contents = web_contents_getter.Run();
  
    if (HasFileAccessPermission()) {
@@ -63,7 +63,7 @@ index 7962928862e21..d6fd04b43c67a 100644
      content::GetUIThreadTaskRunner({})->PostTask(
          FROM_HERE, base::BindOnce(std::move(cb), true));
      return;
-@@ -254,7 +231,6 @@ void DownloadController::AcquireFileAccessPermission(
+@@ -262,7 +239,6 @@ void DownloadController::AcquireFileAccessPermission(
      return;
    }
  

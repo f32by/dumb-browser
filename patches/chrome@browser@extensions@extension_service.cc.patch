@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/extension_service.cc b/chrome/browser/extensions/extension_service.cc
-index f320b9bad7a26..56b0e6f730e5b 100644
+index 0f4970587efa1..88006d6424dbc 100644
 --- a/chrome/browser/extensions/extension_service.cc
 +++ b/chrome/browser/extensions/extension_service.cc
-@@ -64,7 +64,6 @@
+@@ -66,7 +66,6 @@
  #include "chrome/browser/ui/webui/extensions/extension_icon_source.h"
  #include "chrome/browser/ui/webui/favicon_source.h"
  #include "chrome/browser/ui/webui/theme_source.h"
@@ -10,17 +10,17 @@ index f320b9bad7a26..56b0e6f730e5b 100644
  #include "chrome/browser/web_applications/components/externally_installed_web_app_prefs.h"
  #include "chrome/common/buildflags.h"
  #include "chrome/common/chrome_switches.h"
-@@ -408,9 +407,6 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -373,9 +372,6 @@ ExtensionService::ExtensionService(Profile* profile,
        extension_prefs_(extension_prefs),
        blocklist_(blocklist),
        allowlist_(profile_, extension_prefs, this),
 -      safe_browsing_verdict_handler_(extension_prefs,
 -                                     ExtensionRegistry::Get(profile),
 -                                     this),
+       omaha_attributes_handler_(extension_prefs, this),
        registry_(ExtensionRegistry::Get(profile)),
        pending_extension_manager_(profile),
-       install_directory_(install_directory),
-@@ -418,8 +414,7 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -384,8 +380,7 @@ ExtensionService::ExtensionService(Profile* profile,
        ready_(ready),
        shared_module_service_(new SharedModuleService(profile_)),
        extension_registrar_(profile_, this),
@@ -30,7 +30,7 @@ index f320b9bad7a26..56b0e6f730e5b 100644
    CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
    TRACE_EVENT0("browser,startup", "ExtensionService::ExtensionService::ctor");
  
-@@ -438,8 +433,6 @@ ExtensionService::ExtensionService(Profile* profile,
+@@ -404,8 +399,6 @@ ExtensionService::ExtensionService(Profile* profile,
    if (g_browser_process->profile_manager())
      profile_manager_observation_.Observe(g_browser_process->profile_manager());
  
@@ -39,7 +39,7 @@ index f320b9bad7a26..56b0e6f730e5b 100644
    ExtensionManagementFactory::GetForBrowserContext(profile_)->AddObserver(this);
  
    // Set up the ExtensionUpdater.
-@@ -481,7 +474,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
+@@ -447,7 +440,6 @@ PendingExtensionManager* ExtensionService::pending_extension_manager() {
  }
  
  ExtensionService::~ExtensionService() {
@@ -47,7 +47,7 @@ index f320b9bad7a26..56b0e6f730e5b 100644
    // No need to unload extensions here because they are profile-scoped, and the
    // profile is in the process of being deleted.
    for (const auto& provider : external_extension_providers_)
-@@ -539,8 +531,6 @@ void ExtensionService::Init() {
+@@ -505,8 +497,6 @@ void ExtensionService::Init() {
    // rather than running immediately at startup.
    CheckForExternalUpdates();
  
@@ -55,8 +55,8 @@ index f320b9bad7a26..56b0e6f730e5b 100644
 -
    // Must be called after extensions are loaded.
    allowlist_.Init();
- }
-@@ -2239,7 +2229,6 @@ void ExtensionService::ManageBlocklist(
+ 
+@@ -2268,7 +2258,6 @@ void ExtensionService::ManageBlocklist(
    }
  
    UpdateBlocklistedExtensions(blocklisted, unchanged);
@@ -64,7 +64,7 @@ index f320b9bad7a26..56b0e6f730e5b 100644
  
    error_controller_->ShowErrorIfNeeded();
  }
-@@ -2247,6 +2236,7 @@ void ExtensionService::ManageBlocklist(
+@@ -2276,6 +2265,7 @@ void ExtensionService::ManageBlocklist(
  void ExtensionService::UpdateBlocklistedExtensions(
      const ExtensionIdSet& blocklisted,
      const ExtensionIdSet& unchanged) {
@@ -72,7 +72,7 @@ index f320b9bad7a26..56b0e6f730e5b 100644
    ExtensionIdSet not_yet_blocked, no_longer_blocked;
    SafeBrowsingVerdictHandler::Partition(
        registry_->blocklisted_extensions().GetIDs(), blocklisted, unchanged,
-@@ -2284,6 +2274,7 @@ void ExtensionService::UpdateBlocklistedExtensions(
+@@ -2313,6 +2303,7 @@ void ExtensionService::UpdateBlocklistedExtensions(
      UMA_HISTOGRAM_ENUMERATION("ExtensionBlacklist.BlacklistInstalled",
                                extension->location());
    }

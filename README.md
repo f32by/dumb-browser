@@ -1,7 +1,7 @@
 # Dumb Browser
 A custom Chromium build inspired by ungoogled-chromium and Brave.
 
-Current version: `91.0.4472.164`.
+Current version: `92.0.4515.107`.
 
 # Features
 
@@ -40,9 +40,9 @@ Other changes:
 
 Tested on following OS:
 
-1. macOS Big Sur 11.4 (20F71) x86_64
+1. macOS Big Sur 11.5 (20G71) x86_64
 2. Ubuntu 20.04.2 LTS x86_64
-3. Windows 10 20H2 (19042.985) x86_64
+3. Windows 10 21H1 x86_64
 
 *Other OS/architecture has not been tested yet and build may fail.*
 

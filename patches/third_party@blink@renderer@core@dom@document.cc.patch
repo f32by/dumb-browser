@@ -1,24 +1,25 @@
 diff --git a/third_party/blink/renderer/core/dom/document.cc b/third_party/blink/renderer/core/dom/document.cc
-index ef5f685998311..faf84f893ebcb 100644
+index 4eebb1d70cafc..45341445cec58 100644
 --- a/third_party/blink/renderer/core/dom/document.cc
 +++ b/third_party/blink/renderer/core/dom/document.cc
-@@ -43,6 +43,7 @@
+@@ -43,15 +43,13 @@
+ #include "base/debug/dump_without_crashing.h"
  #include "base/macros.h"
  #include "base/metrics/histogram_functions.h"
- #include "base/optional.h"
 +#include "base/rand_util.h"
  #include "base/time/time.h"
  #include "cc/input/overscroll_behavior.h"
  #include "cc/input/scroll_snap_data.h"
-@@ -51,7 +52,6 @@
+ #include "mojo/public/cpp/bindings/pending_remote.h"
+ #include "mojo/public/cpp/bindings/remote.h"
  #include "mojo/public/mojom/base/text_direction.mojom-blink.h"
- #include "services/metrics/public/cpp/metrics_utils.h"
- #include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+-#include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
 -#include "services/metrics/public/cpp/ukm_builders.h"
  #include "services/metrics/public/cpp/ukm_source_id.h"
  #include "services/network/public/cpp/web_sandbox_flags.h"
  #include "services/network/public/mojom/ip_address_space.mojom-blink.h"
-@@ -60,8 +60,6 @@
+@@ -61,8 +59,6 @@
  #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
  #include "third_party/blink/public/common/features.h"
  #include "third_party/blink/public/common/permissions_policy/document_policy_features.h"
@@ -27,15 +28,15 @@ index ef5f685998311..faf84f893ebcb 100644
  #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
  #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom-blink-forward.h"
  #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
-@@ -81,7 +79,6 @@
+@@ -82,7 +78,6 @@
  #include "third_party/blink/renderer/bindings/core/v8/string_or_element_creation_options.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_element_creation_options.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_element_registration_options.h"
 -#include "third_party/blink/renderer/bindings/core/v8/v8_interest_cohort.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_throw_dom_exception.h"
- #include "third_party/blink/renderer/bindings/core/v8/window_proxy.h"
- #include "third_party/blink/renderer/core/accessibility/ax_context.h"
-@@ -311,7 +308,6 @@
+ #include "third_party/blink/renderer/bindings/core/v8/v8_union_elementcreationoptions_string.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_union_htmlscriptelement_svgscriptelement.h"
+@@ -311,7 +306,6 @@
  #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
  #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
  #include "third_party/blink/renderer/platform/bindings/v8_per_isolate_data.h"
@@ -43,7 +44,7 @@ index ef5f685998311..faf84f893ebcb 100644
  #include "third_party/blink/renderer/platform/geometry/length_functions.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/instrumentation/histogram.h"
-@@ -751,9 +747,7 @@ Document::Document(const DocumentInit& initializer,
+@@ -750,9 +744,7 @@ Document::Document(const DocumentInit& initializer,
        // to SVGImage which does not have an associated RenderFrameHost. No URLs
        // will be associated to this source id. No DocumentCreated events will be
        // created either.
@@ -54,7 +55,7 @@ index ef5f685998311..faf84f893ebcb 100644
        viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
        is_for_external_handler_(initializer.IsForExternalHandler()),
        fragment_directive_(MakeGarbageCollected<FragmentDirective>()),
-@@ -2398,6 +2392,16 @@ void Document::UpdateStyleAndLayoutTreeForThisDocument() {
+@@ -2157,6 +2149,16 @@ void Document::UpdateStyleAndLayoutTreeForThisDocument() {
  #if DCHECK_IS_ON()
    AssertLayoutTreeUpdated(*this);
  #endif
@@ -71,7 +72,7 @@ index ef5f685998311..faf84f893ebcb 100644
  }
  
  void Document::InvalidateStyleAndLayoutForFontUpdates() {
-@@ -2637,12 +2641,6 @@ void Document::MarkHasFindInPageRequest() {
+@@ -2391,12 +2393,6 @@ void Document::MarkHasFindInPageRequest() {
    if (had_find_in_page_request_)
      return;
  
@@ -84,7 +85,7 @@ index ef5f685998311..faf84f893ebcb 100644
    had_find_in_page_request_ = true;
  }
  
-@@ -2651,13 +2649,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
+@@ -2405,13 +2401,6 @@ void Document::MarkHasFindInPageContentVisibilityActiveMatch() {
    if (had_find_in_page_render_subtree_active_match_)
      return;
  
@@ -98,7 +99,7 @@ index ef5f685998311..faf84f893ebcb 100644
    had_find_in_page_render_subtree_active_match_ = true;
  }
  
-@@ -2666,12 +2657,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
+@@ -2420,12 +2409,6 @@ void Document::MarkHasFindInPageBeforematchExpandedHiddenMatchable() {
    if (had_find_in_page_beforematch_expanded_hidden_matchable_)
      return;
  
@@ -111,7 +112,7 @@ index ef5f685998311..faf84f893ebcb 100644
    had_find_in_page_beforematch_expanded_hidden_matchable_ = true;
  }
  
-@@ -2992,8 +2977,6 @@ void Document::Shutdown() {
+@@ -2747,8 +2730,6 @@ void Document::Shutdown() {
    if (num_canvases_ > 0)
      UMA_HISTOGRAM_COUNTS_100("Blink.Canvas.NumCanvasesPerPage", num_canvases_);
  
@@ -120,7 +121,7 @@ index ef5f685998311..faf84f893ebcb 100644
    GetViewportData().Shutdown();
  
    View()->Dispose();
-@@ -3101,12 +3084,6 @@ void Document::Shutdown() {
+@@ -2849,12 +2830,6 @@ void Document::Shutdown() {
    lifecycle_.AdvanceTo(DocumentLifecycle::kStopped);
    DCHECK(!View()->IsAttached());
  
@@ -133,7 +134,7 @@ index ef5f685998311..faf84f893ebcb 100644
    mime_handler_view_before_unload_event_listener_ = nullptr;
  
    resource_coordinator_.reset();
-@@ -6231,16 +6208,7 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
+@@ -5965,16 +5940,7 @@ ScriptPromise Document::hasTrustToken(ScriptState* script_state,
    return promise;
  }
  
@@ -151,7 +152,7 @@ index ef5f685998311..faf84f893ebcb 100644
  ScriptPromise Document::interestCohort(ScriptState* script_state,
                                         ExceptionState& exception_state) {
    if (!GetFrame()) {
-@@ -6292,6 +6260,7 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
+@@ -6026,6 +5992,7 @@ ScriptPromise Document::interestCohort(ScriptState* script_state,
  
    return promise;
  }
@@ -159,7 +160,7 @@ index ef5f685998311..faf84f893ebcb 100644
  
  void Document::HasTrustTokensAnswererConnectionError() {
    data_->has_trust_tokens_answerer_.reset();
-@@ -6764,6 +6733,7 @@ DOMWindow* Document::defaultView() const {
+@@ -6514,6 +6481,7 @@ DOMWindow* Document::defaultView() const {
  }
  
  void Document::RecordAsyncScriptCount() {
@@ -167,7 +168,7 @@ index ef5f685998311..faf84f893ebcb 100644
    UMA_HISTOGRAM_COUNTS_100("Blink.Script.AsyncScriptCount",
                             async_script_count_);
  
-@@ -6778,6 +6748,7 @@ void Document::RecordAsyncScriptCount() {
+@@ -6528,6 +6496,7 @@ void Document::RecordAsyncScriptCount() {
        .SetAsyncScriptCount(
            ukm::GetExponentialBucketMin(async_script_count_, 1.3))
        .Record(recorder);
@@ -175,19 +176,21 @@ index ef5f685998311..faf84f893ebcb 100644
  }
  
  void Document::MaybeExecuteDelayedAsyncScripts() {
-@@ -7146,10 +7117,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
+@@ -6895,6 +6864,7 @@ bool Document::AllowedToUseDynamicMarkUpInsertion(
+   return false;
+ }
+ 
++#if 0
+ ukm::UkmRecorder* Document::UkmRecorder() {
    if (ukm_recorder_)
      return ukm_recorder_.get();
- 
--  mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
--  Platform::Current()->GetBrowserInterfaceBroker()->GetInterface(
--      recorder.InitWithNewPipeAndPassReceiver());
--  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
-+  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>();
+@@ -6906,20 +6876,12 @@ ukm::UkmRecorder* Document::UkmRecorder() {
  
    return ukm_recorder_.get();
  }
-@@ -7158,15 +7126,6 @@ ukm::SourceId Document::UkmSourceID() const {
++#endif
+ 
+ ukm::SourceId Document::UkmSourceID() const {
    return ukm_source_id_;
  }
  
@@ -203,7 +206,7 @@ index ef5f685998311..faf84f893ebcb 100644
  bool Document::AllowInlineEventHandler(Node* node,
                                         EventListener* listener,
                                         const String& context_url,
-@@ -8485,6 +8444,14 @@ Document::PendingJavascriptUrl::~PendingJavascriptUrl() = default;
+@@ -8257,6 +8219,14 @@ Document::PendingJavascriptUrl::~PendingJavascriptUrl() = default;
  
  template class CORE_TEMPLATE_EXPORT Supplement<Document>;
  

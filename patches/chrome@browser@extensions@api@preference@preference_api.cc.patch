@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/preference/preference_api.cc b/chrome/browser/extensions/api/preference/preference_api.cc
-index 7d382ba94acdf..892c89ea7ec77 100644
+index a5d62888282ab..4843b8409efad 100644
 --- a/chrome/browser/extensions/api/preference/preference_api.cc
 +++ b/chrome/browser/extensions/api/preference/preference_api.cc
-@@ -34,7 +34,6 @@
+@@ -35,7 +35,6 @@
  #include "components/prefs/pref_service.h"
  #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
  #include "components/proxy_config/proxy_config_pref_names.h"
@@ -10,7 +10,7 @@ index 7d382ba94acdf..892c89ea7ec77 100644
  #include "components/spellcheck/browser/pref_names.h"
  #include "components/translate/core/browser/translate_pref_names.h"
  #include "extensions/browser/extension_pref_value_map.h"
-@@ -108,11 +107,6 @@ const PrefMappingEntry kPrefMapping[] = {
+@@ -109,11 +108,6 @@ const PrefMappingEntry kPrefMapping[] = {
       APIPermissionID::kPrivacy},
      {"doNotTrackEnabled", prefs::kEnableDoNotTrack, APIPermissionID::kPrivacy,
       APIPermissionID::kPrivacy},
@@ -22,7 +22,7 @@ index 7d382ba94acdf..892c89ea7ec77 100644
      {"searchSuggestEnabled", prefs::kSearchSuggestEnabled,
       APIPermissionID::kPrivacy, APIPermissionID::kPrivacy},
      {"spellingServiceEnabled", spellcheck::prefs::kSpellCheckUseSpellingService,
-@@ -813,18 +807,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
+@@ -842,18 +836,6 @@ ExtensionFunction::ResponseAction SetPreferenceFunction::Run() {
          base::Value(browser_pref_value->GetBool()));
    }
  
@@ -41,7 +41,7 @@ index 7d382ba94acdf..892c89ea7ec77 100644
    preference_api->SetExtensionControlledPref(
        extension_id(), browser_pref, scope,
        base::Value::FromUniquePtrValue(std::move(browser_pref_value)));
-@@ -878,18 +860,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
+@@ -907,18 +889,6 @@ ExtensionFunction::ResponseAction ClearPreferenceFunction::Run() {
    PreferenceAPI::Get(browser_context())
        ->RemoveExtensionControlledPref(extension_id(), browser_pref, scope);
  

@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/extensions/api/image_writer_private/xz_extractor.h b/chrome/browser/extensions/api/image_writer_private/xz_extractor.h
+index edde3f6932e18..0dfb0fda0b929 100644
+--- a/chrome/browser/extensions/api/image_writer_private/xz_extractor.h
++++ b/chrome/browser/extensions/api/image_writer_private/xz_extractor.h
+@@ -10,7 +10,6 @@
+ #include "base/files/file.h"
+ #include "chrome/browser/extensions/api/image_writer_private/extraction_properties.h"
+ #include "chrome/browser/extensions/api/image_writer_private/single_file_tar_reader.h"
+-#include "chrome/services/file_util/public/mojom/file_util_service.mojom.h"
+ #include "chrome/services/file_util/public/mojom/xz_file_extractor.mojom.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+ 
+@@ -57,7 +56,6 @@ class XzExtractor : public SingleFileTarReader::Delegate {
+                      int size,
+                      std::string* error_id) override;
+ 
+-  mojo::Remote<chrome::mojom::FileUtilService> service_;
+   mojo::Remote<chrome::mojom::XzFileExtractor> remote_xz_file_extractor_;
+ 
+   SingleFileTarReader tar_reader_;

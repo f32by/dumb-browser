@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/about_handler.cc b/chrome/browser/ui/webui/settings/about_handler.cc
-index 8f73464b90f12..501967083d9e5 100644
+index 748b410d0a618..ac0aa69df4675 100644
 --- a/chrome/browser/ui/webui/settings/about_handler.cc
 +++ b/chrome/browser/ui/webui/settings/about_handler.cc
 @@ -34,7 +34,6 @@
@@ -10,7 +10,7 @@ index 8f73464b90f12..501967083d9e5 100644
  #include "chrome/common/pref_names.h"
  #include "chrome/common/url_constants.h"
  #include "chrome/grit/chromium_strings.h"
-@@ -256,11 +255,9 @@ AboutHandler::AboutHandler(Profile* profile)
+@@ -262,11 +261,9 @@ AboutHandler::AboutHandler(Profile* profile)
      : profile_(profile),
        apply_changes_from_upgrade_observer_(false),
        clock_(base::DefaultClock::GetInstance()) {
@@ -22,7 +22,7 @@ index 8f73464b90f12..501967083d9e5 100644
  }
  
  void AboutHandler::RegisterMessages() {
-@@ -271,10 +268,6 @@ void AboutHandler::RegisterMessages() {
+@@ -277,10 +274,6 @@ void AboutHandler::RegisterMessages() {
        "refreshUpdateStatus",
        base::BindRepeating(&AboutHandler::HandleRefreshUpdateStatus,
                            base::Unretained(this)));
@@ -33,11 +33,10 @@ index 8f73464b90f12..501967083d9e5 100644
    web_ui()->RegisterMessageCallback(
        "openHelpPage", base::BindRepeating(&AboutHandler::HandleOpenHelpPage,
                                            base::Unretained(this)));
-@@ -411,11 +404,6 @@ void AboutHandler::PromoteUpdater(const base::ListValue* args) {
- #endif
+@@ -418,10 +411,6 @@ void AboutHandler::PromoteUpdater(const base::ListValue* args) {
  
  void AboutHandler::HandleOpenFeedbackDialog(const base::ListValue* args) {
--  DCHECK(args->empty());
+   DCHECK(args->GetList().empty());
 -  Browser* browser =
 -      chrome::FindBrowserWithWebContents(web_ui()->GetWebContents());
 -  chrome::OpenFeedbackDialog(browser,

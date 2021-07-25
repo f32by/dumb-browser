@@ -1,0 +1,36 @@
+diff --git a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
+index 155a1f4055266..96d44b4073f88 100644
+--- a/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
++++ b/third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
+@@ -38,7 +38,6 @@
+ #include "components/viz/common/frame_sinks/begin_frame_args.h"
+ #include "components/viz/common/frame_sinks/begin_frame_source.h"
+ #include "components/viz/common/quads/compositor_frame_metadata.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+ #include "third_party/blink/public/common/thread_safe_browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/platform/platform.h"
+ #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
+@@ -53,6 +52,7 @@ class Layer;
+ 
+ namespace blink {
+ 
++#if 0
+ namespace {
+ // This factory is used to defer binding of the InterfacePtr to the compositor
+ // thread.
+@@ -73,6 +73,7 @@ class UkmRecorderFactoryImpl : public cc::UkmRecorderFactory {
+ };
+ 
+ }  // namespace
++#endif
+ 
+ LayerTreeView::LayerTreeView(LayerTreeViewDelegate* delegate,
+                              scheduler::WebThreadScheduler* scheduler)
+@@ -102,7 +103,6 @@ void LayerTreeView::Initialize(
+   params.main_task_runner = std::move(main_thread);
+   params.mutator_host = animation_host_.get();
+   params.dark_mode_filter = dark_mode_filter_.get();
+-  params.ukm_recorder_factory = std::make_unique<UkmRecorderFactoryImpl>();
+   params.main_thread_pipeline = main_thread_pipeline;
+   params.compositor_thread_pipeline = compositor_thread_pipeline;
+   if (base::ThreadPoolInstance::Get()) {

@@ -1,5 +1,5 @@
 diff --git a/components/metrics/metrics_state_manager.h b/components/metrics/metrics_state_manager.h
-index 0ae78a31c0604..ed73ea815fb2c 100644
+index f9c98c4644a0d..93d2f684968f0 100644
 --- a/components/metrics/metrics_state_manager.h
 +++ b/components/metrics/metrics_state_manager.h
 @@ -12,7 +12,6 @@
@@ -10,21 +10,22 @@ index 0ae78a31c0604..ed73ea815fb2c 100644
  #include "components/metrics/client_info.h"
  #include "components/metrics/cloned_install_detector.h"
  #include "components/metrics/entropy_state.h"
-@@ -59,13 +58,6 @@ class MetricsStateManager final {
+@@ -59,12 +58,14 @@ class MetricsStateManager final {
    // Returns the low entropy source for this client.
    int GetLowEntropySource();
  
--  // The CleanExitBeacon, used to determine whether the previous Chrome browser
--  // session terminated gracefully.
--  CleanExitBeacon* clean_exit_beacon() { return &clean_exit_beacon_; }
--  const CleanExitBeacon* clean_exit_beacon() const {
--    return &clean_exit_beacon_;
--  }
--
-   // Forces the client ID to be generated. This is useful in case it's needed
-   // before recording.
-   void ForceClientIdCreation();
-@@ -196,10 +188,6 @@ class MetricsStateManager final {
++#if 0
+   // The CleanExitBeacon, used to determine whether the previous Chrome browser
+   // session terminated gracefully.
+   CleanExitBeacon* clean_exit_beacon() { return &clean_exit_beacon_; }
+   const CleanExitBeacon* clean_exit_beacon() const {
+     return &clean_exit_beacon_;
+   }
++#endif
+ 
+   // Signals whether the session has shutdown cleanly. Passing `false` means
+   // that Chrome has launched and has not yet shut down safely. Passing `true`
+@@ -205,10 +206,6 @@ class MetricsStateManager final {
    // its typical location and wants to attempt loading it from this backup.
    const LoadClientInfoCallback load_client_info_;
  

@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/accessibility/accessibility_ui.cc b/chrome/browser/accessibility/accessibility_ui.cc
-index dff59cf394e29..516359ebfaa54 100644
+index 8905cd790b7d4..7a09c88f8df9e 100644
 --- a/chrome/browser/accessibility/accessibility_ui.cc
 +++ b/chrome/browser/accessibility/accessibility_ui.cc
-@@ -721,7 +721,6 @@ void AccessibilityUIMessageHandler::Callback(const std::string& str) {
+@@ -722,7 +722,6 @@ void AccessibilityUIMessageHandler::Callback(const std::string& str) {
  
  void AccessibilityUIMessageHandler::StopRecording(
      content::WebContents* web_contents) {
--  web_contents->RecordAccessibilityEvents(false, base::nullopt);
+-  web_contents->RecordAccessibilityEvents(false, absl::nullopt);
    observer_.reset(nullptr);
  }
  
-@@ -749,9 +748,6 @@ void AccessibilityUIMessageHandler::RequestAccessibilityEvents(
+@@ -750,9 +749,6 @@ void AccessibilityUIMessageHandler::RequestAccessibilityEvents(
      if (observer_) {
        return;
      }

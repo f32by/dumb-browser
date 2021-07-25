@@ -1,17 +1,17 @@
 diff --git a/third_party/blink/renderer/modules/background_fetch/background_fetch_registration.cc b/third_party/blink/renderer/modules/background_fetch/background_fetch_registration.cc
-index 4565c87c9c46c..ee0fb920156b9 100644
+index 1f13a4316d6ed..723caf131dce8 100644
 --- a/third_party/blink/renderer/modules/background_fetch/background_fetch_registration.cc
 +++ b/third_party/blink/renderer/modules/background_fetch/background_fetch_registration.cc
 @@ -8,8 +8,6 @@
  
  #include "base/metrics/histogram_macros.h"
- #include "base/optional.h"
+ #include "third_party/abseil-cpp/absl/types/optional.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiable_surface.h"
  #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-blink.h"
- #include "third_party/blink/renderer/bindings/modules/v8/v8_cache_query_options.h"
- #include "third_party/blink/renderer/bindings/modules/v8/v8_image_resource.h"
-@@ -338,15 +336,6 @@ const String BackgroundFetchRegistration::result() const {
+ #include "third_party/blink/public/mojom/web_feature/web_feature.mojom-blink.h"
+ #include "third_party/blink/renderer/bindings/core/v8/v8_union_request_usvstring.h"
+@@ -390,15 +388,6 @@ const String BackgroundFetchRegistration::result() const {
  }
  
  const String BackgroundFetchRegistration::failureReason() const {

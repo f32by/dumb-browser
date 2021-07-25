@@ -1,16 +1,16 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 106e853ef8179..d6e0b4ac22e20 100644
+index 19aee8c70e7a6..1a57b322dbf70 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -160,7 +160,6 @@ group("gn_all") {
+@@ -169,7 +169,6 @@ group("gn_all") {
        "//third_party/vulkan-deps/spirv-tools/src/test/fuzzers",
        "//tools/perf/clear_system_cache",
        "//tools/polymer:polymer_tools_python_unittests",
 -      "//tools/privacy_budget:privacy_budget_tools",
-       "//ui/accessibility:accessibility_perftests",
-       "//ui/accessibility:accessibility_unittests",
-       "//ui/accessibility/extensions:extension_tests",
-@@ -459,14 +458,6 @@ group("gn_all") {
+     ]
+   }
+ 
+@@ -473,14 +472,6 @@ group("gn_all") {
      deps += [ "//chromeos:chromeos_unittests" ]
    }
  
@@ -25,7 +25,7 @@ index 106e853ef8179..d6e0b4ac22e20 100644
    if (is_linux || is_chromeos) {
      # The following are definitely linux-only.
      deps += [
-@@ -640,7 +631,6 @@ group("gn_all") {
+@@ -654,7 +645,6 @@ group("gn_all") {
    if (is_win) {
      deps += [
        "//base:pe_image_test",
@@ -33,7 +33,7 @@ index 106e853ef8179..d6e0b4ac22e20 100644
        "//chrome/chrome_elf:chrome_elf_unittests",
        "//chrome/chrome_elf:dll_hash_main",
        "//chrome/elevation_service:elevation_service_unittests",
-@@ -856,10 +846,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
+@@ -872,10 +862,6 @@ if ((is_linux || is_chromeos || is_win) && enable_remoting &&
        "//remoting/host:host",
        "//tools/traffic_annotation/summary:annotations_xml",
      ]

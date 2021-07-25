@@ -1,16 +1,16 @@
 diff --git a/components/download/public/common/download_create_info.h b/components/download/public/common/download_create_info.h
-index b8c6e21b1b787..7e1f9d9d86289 100644
+index 37dc268c0ecd5..433d922693447 100644
 --- a/components/download/public/common/download_create_info.h
 +++ b/components/download/public/common/download_create_info.h
-@@ -24,7 +24,6 @@
+@@ -21,7 +21,6 @@
  #include "components/download/public/common/download_url_parameters.h"
  #include "net/http/http_response_info.h"
  #include "net/url_request/referrer_policy.h"
 -#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/abseil-cpp/absl/types/optional.h"
  #include "ui/base/page_transition_types.h"
  #include "url/gurl.h"
- #include "url/origin.h"
-@@ -163,9 +162,6 @@ struct COMPONENTS_DOWNLOAD_EXPORT DownloadCreateInfo {
+@@ -161,9 +160,6 @@ struct COMPONENTS_DOWNLOAD_EXPORT DownloadCreateInfo {
    // The request headers that has been sent in the download request.
    DownloadUrlParameters::RequestHeadersType request_headers;
  

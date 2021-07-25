@@ -1,0 +1,18 @@
+diff --git a/chrome/browser/ui/webui/downloads/downloads_list_tracker.cc b/chrome/browser/ui/webui/downloads/downloads_list_tracker.cc
+index f962631ff3756..649ca3a8ef446 100644
+--- a/chrome/browser/ui/webui/downloads/downloads_list_tracker.cc
++++ b/chrome/browser/ui/webui/downloads/downloads_list_tracker.cc
+@@ -81,10 +81,13 @@ const char* GetDangerTypeString(download::DownloadDangerType danger_type) {
+     case download::DOWNLOAD_DANGER_TYPE_BLOCKED_UNSUPPORTED_FILETYPE:
+       return "BLOCKED_UNSUPPORTED_FILE_TYPE";
+     case download::DOWNLOAD_DANGER_TYPE_DANGEROUS_ACCOUNT_COMPROMISE:
++#if 0
+       return base::FeatureList::IsEnabled(
+                  safe_browsing::kSafeBrowsingCTDownloadWarning)
+                  ? "DANGEROUS_ACCOUNT_COMPROMISE"
+                  : "DANGEROUS_CONTENT";
++#endif
++      return "DANGEROUS_CONTENT";
+     case download::DOWNLOAD_DANGER_TYPE_PROMPT_FOR_SCANNING:
+     case download::DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS:
+     case download::DOWNLOAD_DANGER_TYPE_MAYBE_DANGEROUS_CONTENT:

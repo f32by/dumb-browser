@@ -1,18 +1,18 @@
 diff --git a/chrome/browser/touch_to_fill/touch_to_fill_controller.h b/chrome/browser/touch_to_fill/touch_to_fill_controller.h
-index 28cdb6542aeeb..b58ca0b8538f5 100644
+index 723988a2fe3f5..d80bdf9aabade 100644
 --- a/chrome/browser/touch_to_fill/touch_to_fill_controller.h
 +++ b/chrome/browser/touch_to_fill/touch_to_fill_controller.h
-@@ -14,7 +14,6 @@
- #include "base/types/pass_key.h"
+@@ -16,7 +16,6 @@
  #include "chrome/browser/touch_to_fill/touch_to_fill_view.h"
  #include "chrome/browser/touch_to_fill/touch_to_fill_view_factory.h"
+ #include "components/password_manager/core/browser/biometric_authenticator.h"
 -#include "services/metrics/public/cpp/ukm_source_id.h"
  #include "ui/gfx/native_widget_types.h"
  
  namespace password_manager {
-@@ -82,8 +81,6 @@ class TouchToFillController {
-   // OnCredentialSelected() or OnDismissed() gets called.
-   base::WeakPtr<password_manager::PasswordManagerDriver> driver_;
+@@ -98,8 +97,6 @@ class TouchToFillController {
+   // Authenticator used to trigger a biometric auth before filling.
+   scoped_refptr<password_manager::BiometricAuthenticator> authenticator_;
  
 -  ukm::SourceId source_id_ = ukm::kInvalidSourceId;
 -

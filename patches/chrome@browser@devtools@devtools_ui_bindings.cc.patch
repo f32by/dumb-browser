@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/devtools/devtools_ui_bindings.cc b/chrome/browser/devtools/devtools_ui_bindings.cc
-index 0f447f838c4c9..5bcbed866ea3f 100644
+index c344493808f59..c62b7ab96b194 100644
 --- a/chrome/browser/devtools/devtools_ui_bindings.cc
 +++ b/chrome/browser/devtools/devtools_ui_bindings.cc
-@@ -40,8 +40,6 @@
+@@ -39,8 +39,6 @@
  #include "chrome/browser/ui/browser.h"
  #include "chrome/browser/ui/browser_list.h"
  #include "chrome/browser/ui/browser_window.h"
@@ -11,7 +11,7 @@ index 0f447f838c4c9..5bcbed866ea3f 100644
  #include "chrome/browser/ui/tabs/tab_strip_model.h"
  #include "chrome/common/chrome_switches.h"
  #include "chrome/common/extensions/chrome_manifest_url_handlers.h"
-@@ -1552,6 +1550,7 @@ void DevToolsUIBindings::RegisterExtensionsAPI(const std::string& origin,
+@@ -1557,6 +1555,7 @@ void DevToolsUIBindings::RegisterExtensionsAPI(const std::string& origin,
    extensions_api_[origin + "/"] = script;
  }
  
@@ -19,7 +19,7 @@ index 0f447f838c4c9..5bcbed866ea3f 100644
  namespace {
  
  void ShowSurveyCallback(DevToolsUIBindings::DispatchCallback callback,
-@@ -1588,6 +1587,7 @@ void DevToolsUIBindings::CanShowSurvey(DispatchCallback callback,
+@@ -1593,6 +1592,7 @@ void DevToolsUIBindings::CanShowSurvey(DispatchCallback callback,
    response.SetBoolean("canShowSurvey", can_show);
    std::move(callback).Run(&response);
  }

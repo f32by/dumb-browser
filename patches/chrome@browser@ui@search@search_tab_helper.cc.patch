@@ -1,38 +1,20 @@
 diff --git a/chrome/browser/ui/search/search_tab_helper.cc b/chrome/browser/ui/search/search_tab_helper.cc
-index 37100f6cba47f..829f2d0055e53 100644
+index d3370d3171528..c33d91d7d1c37 100644
 --- a/chrome/browser/ui/search/search_tab_helper.cc
 +++ b/chrome/browser/ui/search/search_tab_helper.cc
-@@ -26,7 +26,6 @@
- #include "chrome/browser/predictors/autocomplete_action_predictor.h"
- #include "chrome/browser/predictors/autocomplete_action_predictor_factory.h"
- #include "chrome/browser/profiles/profile.h"
--#include "chrome/browser/profiles/profile_metrics.h"
- #include "chrome/browser/search/chrome_colors/chrome_colors_factory.h"
- #include "chrome/browser/search/instant_service.h"
- #include "chrome/browser/search/instant_service_factory.h"
-@@ -785,16 +784,6 @@ void SearchTabHelper::LogCharTypedToRepaintLatency(uint32_t latency_ms) {
-                       base::TimeDelta::FromMillisecondsD(latency_ms));
+@@ -493,6 +493,7 @@ void SearchTabHelper::OnConfirmThemeChanges() {
+   }
  }
  
--void SearchTabHelper::BlocklistPromo(const std::string& promo_id) {
--  auto* promo_service = PromoServiceFactory::GetForProfile(profile());
--  if (!promo_service) {
--    NOTREACHED();
--    return;
--  }
--
--  promo_service->BlocklistPromo(promo_id);
--}
--
++#if 0
+ void SearchTabHelper::BlocklistPromo(const std::string& promo_id) {
+   auto* promo_service = PromoServiceFactory::GetForProfile(profile());
+   if (!promo_service) {
+@@ -502,6 +503,7 @@ void SearchTabHelper::BlocklistPromo(const std::string& promo_id) {
+ 
+   promo_service->BlocklistPromo(promo_id);
+ }
++#endif
+ 
  void SearchTabHelper::OpenExtensionsPage(double button,
                                           bool alt_key,
-                                          bool ctrl_key,
-@@ -884,8 +873,6 @@ void SearchTabHelper::OpenAutocompleteMatch(
- 
-   auto* bookmark_model = BookmarkModelFactory::GetForBrowserContext(profile());
-   if (bookmark_model->IsBookmarked(match.destination_url)) {
--    RecordBookmarkLaunch(BOOKMARK_LAUNCH_LOCATION_OMNIBOX,
--                         ProfileMetrics::GetBrowserProfileType(profile()));
-   }
- 
-   const AutocompleteInput& input = autocomplete_controller_->input();

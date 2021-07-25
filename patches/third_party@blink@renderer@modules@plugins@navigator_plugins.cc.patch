@@ -1,14 +1,15 @@
 diff --git a/third_party/blink/renderer/modules/plugins/navigator_plugins.cc b/third_party/blink/renderer/modules/plugins/navigator_plugins.cc
-index f154e3588e878..6fbad8857f9bf 100644
+index 290d152edd23b..8c0b536eb1b50 100644
 --- a/third_party/blink/renderer/modules/plugins/navigator_plugins.cc
 +++ b/third_party/blink/renderer/modules/plugins/navigator_plugins.cc
-@@ -4,15 +4,11 @@
+@@ -4,16 +4,12 @@
  
  #include "third_party/blink/renderer/modules/plugins/navigator_plugins.h"
  
 -#include "third_party/blink/public/common/privacy_budget/identifiability_metric_builder.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiability_study_settings.h"
 -#include "third_party/blink/public/common/privacy_budget/identifiable_token_builder.h"
+ #include "third_party/blink/public/mojom/web_feature/web_feature.mojom-blink.h"
  #include "third_party/blink/renderer/core/frame/local_dom_window.h"
  #include "third_party/blink/renderer/core/frame/navigator.h"
  #include "third_party/blink/renderer/modules/plugins/dom_mime_type.h"
@@ -18,7 +19,7 @@ index f154e3588e878..6fbad8857f9bf 100644
  
  namespace blink {
  
-@@ -52,73 +48,17 @@ bool NavigatorPlugins::javaEnabled(Navigator& navigator) {
+@@ -53,73 +49,17 @@ bool NavigatorPlugins::javaEnabled(Navigator& navigator) {
    return false;
  }
  

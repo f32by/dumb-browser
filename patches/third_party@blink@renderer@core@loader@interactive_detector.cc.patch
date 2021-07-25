@@ -1,0 +1,28 @@
+diff --git a/third_party/blink/renderer/core/loader/interactive_detector.cc b/third_party/blink/renderer/core/loader/interactive_detector.cc
+index caf19913b4600..bab79878e3018 100644
+--- a/third_party/blink/renderer/core/loader/interactive_detector.cc
++++ b/third_party/blink/renderer/core/loader/interactive_detector.cc
+@@ -75,8 +75,7 @@ InteractiveDetector::InteractiveDetector(
+           document.GetTaskRunner(TaskType::kInternalDefault),
+           this,
+           &InteractiveDetector::TimeToInteractiveTimerFired),
+-      initially_hidden_(document.hidden()),
+-      ukm_recorder_(document.UkmRecorder()) {}
++      initially_hidden_(document.hidden()) {}
+ 
+ void InteractiveDetector::SetNavigationStartTime(
+     base::TimeTicks navigation_start_time) {
+@@ -626,12 +625,11 @@ void InteractiveDetector::SetTaskRunnerForTesting(
+ }
+ 
+ ukm::UkmRecorder* InteractiveDetector::GetUkmRecorder() const {
+-  return ukm_recorder_;
++  return nullptr;
+ }
+ 
+ void InteractiveDetector::SetUkmRecorderForTesting(
+     ukm::UkmRecorder* test_ukm_recorder) {
+-  ukm_recorder_ = test_ukm_recorder;
+ }
+ 
+ void InteractiveDetector::RecordInputEventTimingUKM(

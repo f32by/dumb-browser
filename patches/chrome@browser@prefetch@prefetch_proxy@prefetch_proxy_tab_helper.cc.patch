@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-index 41117398f2b75..e8ed1994548c7 100644
+index 2710f1920a608..f6ea9abee881e 100644
 --- a/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
 +++ b/chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.cc
-@@ -36,8 +36,6 @@
+@@ -35,8 +35,6 @@
  #include "components/google/core/common/google_util.h"
  #include "components/language/core/browser/pref_names.h"
  #include "components/no_state_prefetch/browser/no_state_prefetch_manager.h"
@@ -11,7 +11,7 @@ index 41117398f2b75..e8ed1994548c7 100644
  #include "components/prefs/pref_service.h"
  #include "components/search_engines/template_url_service.h"
  #include "components/version_info/version_info.h"
-@@ -98,17 +96,6 @@ base::Optional<base::TimeDelta> GetPrefetchConnectTime(
+@@ -98,17 +96,6 @@ absl::optional<base::TimeDelta> GetPrefetchConnectTime(
    return end - start;
  }
  
@@ -98,7 +98,7 @@ index 41117398f2b75..e8ed1994548c7 100644
    manager->SetCreateIsolatedLoaderFactoryCallback(
        base::BindRepeating(&PrefetchProxyTabHelper::CreateNewURLLoaderFactory,
                            weak_factory_.GetWeakPtr()));
-@@ -1227,6 +1196,7 @@ void PrefetchProxyTabHelper::PrefetchUrls(
+@@ -1237,12 +1206,14 @@ void PrefetchProxyTabHelper::PrefetchUrls(
      return;
    }
  
@@ -106,15 +106,25 @@ index 41117398f2b75..e8ed1994548c7 100644
    if (!page_->prefetch_metrics_collector_) {
      page_->prefetch_metrics_collector_ =
          base::MakeRefCounted<PrefetchProxyPrefetchMetricsCollector>(
-@@ -1237,6 +1207,7 @@ void PrefetchProxyTabHelper::PrefetchUrls(
-   // It's very likely we'll prefetch something at this point, so inform PLM to
-   // start tracking metrics.
-   InformPLMOfLikelyPrefetching(web_contents());
+             page_->navigation_start_,
+             web_contents()->GetMainFrame()->GetPageUkmSourceId());
+   }
 +#endif
  
-   page_->srp_metrics_->predicted_urls_count_ += prefetch_targets.size();
+   // Remove duplicate prefetches, but allow |allowed_to_prefetch_subresources|
+   // to be set for any upgraded prefetches.
+@@ -1254,10 +1225,6 @@ void PrefetchProxyTabHelper::PrefetchUrls(
+     }
+   }
  
-@@ -1395,11 +1366,6 @@ void PrefetchProxyTabHelper::OnGotEligibilityResult(
+-  // It's very likely we'll prefetch something at this point, so inform PLM to
+-  // start tracking metrics.
+-  InformPLMOfLikelyPrefetching(web_contents());
+-
+   page_->srp_metrics_->predicted_urls_count_ += new_targets.size();
+ 
+   // It is possible, since it is not stipulated by the API contract, that the
+@@ -1413,11 +1380,6 @@ void PrefetchProxyTabHelper::OnGotEligibilityResult(
    if (!eligible) {
      if (status) {
        OnPrefetchStatusUpdate(url, *status);
@@ -126,7 +136,7 @@ index 41117398f2b75..e8ed1994548c7 100644
  
        // Consider whether to send a decoy request to mask any user state (i.e.:
        // cookies), and if so randomly decide whether to send a decoy request.
-@@ -1596,7 +1562,6 @@ void PrefetchProxyTabHelper::CreateIsolatedURLLoaderFactory() {
+@@ -1614,7 +1576,6 @@ void PrefetchProxyTabHelper::CreateIsolatedURLLoaderFactory() {
    // leak.
    context_params->enable_certificate_reporting = false;
    context_params->enable_expect_ct_reporting = false;

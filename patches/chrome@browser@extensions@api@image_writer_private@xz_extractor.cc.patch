@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/extensions/api/image_writer_private/xz_extractor.cc b/chrome/browser/extensions/api/image_writer_private/xz_extractor.cc
+index 4219c13a37eaa..44158f34fa153 100644
+--- a/chrome/browser/extensions/api/image_writer_private/xz_extractor.cc
++++ b/chrome/browser/extensions/api/image_writer_private/xz_extractor.cc
+@@ -69,10 +69,6 @@ XzExtractor::XzExtractor(ExtractionProperties properties)
+ XzExtractor::~XzExtractor() = default;
+ 
+ void XzExtractor::ExtractImpl() {
+-  service_.Bind(LaunchFileUtilService());
+-  service_->BindXzFileExtractor(
+-      remote_xz_file_extractor_.BindNewPipeAndPassReceiver());
+-
+   mojo::ScopedDataPipeConsumerHandle xz_consumer;
+   mojo::ScopedDataPipeProducerHandle tar_producer;
+ 

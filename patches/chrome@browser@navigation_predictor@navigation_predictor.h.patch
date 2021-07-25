@@ -1,33 +1,19 @@
 diff --git a/chrome/browser/navigation_predictor/navigation_predictor.h b/chrome/browser/navigation_predictor/navigation_predictor.h
-index d54c85777f68c..5395041e02899 100644
+index 0e056e2093efc..a67fe3bfa3080 100644
 --- a/chrome/browser/navigation_predictor/navigation_predictor.h
 +++ b/chrome/browser/navigation_predictor/navigation_predictor.h
-@@ -19,8 +19,6 @@
+@@ -15,8 +15,6 @@
+ #include "content/public/browser/frame_service_base.h"
  #include "content/public/browser/visibility.h"
- #include "content/public/browser/web_contents_observer.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
 -#include "services/metrics/public/cpp/ukm_recorder.h"
 -#include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/abseil-cpp/absl/types/optional.h"
  #include "third_party/blink/public/mojom/loader/navigation_predictor.mojom.h"
  #include "ui/gfx/geometry/size.h"
- #include "url/origin.h"
-@@ -183,13 +181,6 @@ class NavigationPredictor : public blink::mojom::AnchorElementMetricsHost,
-   // Records metrics on which action the predictor is taking.
-   void RecordAction(Action log_action);
- 
--  // Sends metrics to the UKM id at |ukm_source_id_|.
--  void MaybeSendMetricsToUkm() const;
--
--  // After an in-page click, sends the index of the url that was clicked to the
--  // UKM id at |ukm_source_id_|.
--  void MaybeSendClickMetricsToUkm(const std::string& clicked_url) const;
--
-   // Returns the minimum of the bucket that |value| belongs in, for page-wide
-   // metrics, excluding |median_link_location_|.
-   int GetBucketMinForPageMetrics(int value) const;
-@@ -309,12 +300,6 @@ class NavigationPredictor : public blink::mojom::AnchorElementMetricsHost,
-   // next navigation.
-   std::set<GURL> partial_prerfetches_;
+@@ -88,12 +86,6 @@ class NavigationPredictor
+   // URLs that were sent to the prediction service.
+   std::set<GURL> predicted_urls_;
  
 -  // UKM ID for navigation
 -  ukm::SourceId ukm_source_id_;
@@ -35,6 +21,6 @@ index d54c85777f68c..5395041e02899 100644
 -  // UKM recorder
 -  ukm::UkmRecorder* ukm_recorder_ = nullptr;
 -
-   // The URL of the current page.
-   GURL document_url_;
+   // The time at which the navigation started.
+   base::TimeTicks navigation_start_;
  

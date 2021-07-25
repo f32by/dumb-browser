@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/privacy_page/privacy_page.js b/chrome/browser/resources/settings/privacy_page/privacy_page.js
-index 62c3879ca2e2e..7f1577b31d19c 100644
+index a9d1f77376620..e3e25ef9a438e 100644
 --- a/chrome/browser/resources/settings/privacy_page/privacy_page.js
 +++ b/chrome/browser/resources/settings/privacy_page/privacy_page.js
 @@ -25,7 +25,6 @@ import {I18nBehavior} from 'chrome://resources/js/i18n_behavior.m.js';
@@ -25,7 +25,7 @@ index 62c3879ca2e2e..7f1577b31d19c 100644
      /** @private */
      cookieSettingDescription_: String,
  
-@@ -284,15 +275,11 @@ Polymer({
+@@ -268,15 +259,11 @@ Polymer({
  
    /** @private */
    onClearBrowsingDataTap_() {
@@ -41,7 +41,7 @@ index 62c3879ca2e2e..7f1577b31d19c 100644
      Router.getInstance().navigateTo(routes.COOKIES);
    },
  
-@@ -308,14 +295,11 @@ Polymer({
+@@ -292,14 +279,11 @@ Polymer({
  
    /** @private */
    onPermissionsPageClick_() {
@@ -56,8 +56,8 @@ index 62c3879ca2e2e..7f1577b31d19c 100644
      this.metricsBrowserProxy_.recordAction(
          'SafeBrowsing.Settings.ShowedFromParentSettings');
      Router.getInstance().navigateTo(routes.SECURITY);
-@@ -341,11 +325,6 @@ Polymer({
-                    this.i18n('siteSettingsBlocked');
+@@ -319,11 +303,6 @@ Polymer({
+                    this.i18n('siteSettingsProtectedContentBlocked');
    },
  
 -  /** @private */

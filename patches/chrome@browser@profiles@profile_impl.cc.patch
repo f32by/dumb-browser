@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_impl.cc b/chrome/browser/profiles/profile_impl.cc
-index 14417b3a65486..5a2c531caf726 100644
+index 0f051ffa90eb2..1cfed53601164 100644
 --- a/chrome/browser/profiles/profile_impl.cc
 +++ b/chrome/browser/profiles/profile_impl.cc
-@@ -55,18 +55,13 @@
+@@ -54,18 +54,13 @@
  #include "chrome/browser/content_index/content_index_provider_impl.h"
  #include "chrome/browser/content_settings/cookie_settings_factory.h"
  #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -21,7 +21,7 @@ index 14417b3a65486..5a2c531caf726 100644
  #include "chrome/browser/media/media_device_id_salt.h"
  #include "chrome/browser/permissions/permission_manager_factory.h"
  #include "chrome/browser/policy/chrome_browser_policy_connector.h"
-@@ -88,10 +83,8 @@
+@@ -87,10 +82,8 @@
  #include "chrome/browser/profiles/profile_destroyer.h"
  #include "chrome/browser/profiles/profile_key.h"
  #include "chrome/browser/profiles/profile_manager.h"
@@ -32,7 +32,7 @@ index 14417b3a65486..5a2c531caf726 100644
  #include "chrome/browser/sharing/sharing_service_factory.h"
  #include "chrome/browser/signin/identity_manager_factory.h"
  #include "chrome/browser/signin/signin_ui_util.h"
-@@ -118,9 +111,6 @@
+@@ -121,9 +114,6 @@
  #include "components/content_settings/core/browser/cookie_settings.h"
  #include "components/content_settings/core/browser/host_content_settings_map.h"
  #include "components/content_settings/core/common/pref_names.h"
@@ -42,7 +42,7 @@ index 14417b3a65486..5a2c531caf726 100644
  #include "components/history/core/common/pref_names.h"
  #include "components/keyed_service/content/browser_context_dependency_manager.h"
  #include "components/keyed_service/core/simple_dependency_manager.h"
-@@ -161,7 +151,6 @@
+@@ -166,7 +156,6 @@
  #include "printing/buildflags/buildflags.h"
  #include "services/data_decoder/public/cpp/data_decoder.h"
  #include "services/preferences/public/mojom/preferences.mojom.h"
@@ -50,7 +50,7 @@ index 14417b3a65486..5a2c531caf726 100644
  #include "services/service_manager/public/cpp/service.h"
  #include "ui/base/l10n/l10n_util.h"
  
-@@ -450,7 +439,7 @@ void ProfileImpl::RegisterProfilePrefs(
+@@ -456,7 +445,7 @@ void ProfileImpl::RegisterProfilePrefs(
  #endif
  
    registry->RegisterBooleanPref(prefs::kForceEphemeralProfiles, false);
@@ -59,7 +59,7 @@ index 14417b3a65486..5a2c531caf726 100644
  #if !defined(OS_ANDROID)
    registry->RegisterBooleanPref(prefs::kShowCastIconInToolbar, false);
  #endif  // !defined(OS_ANDROID)
-@@ -648,25 +637,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
+@@ -650,25 +639,11 @@ void ProfileImpl::LoadPrefsForNormalStartup(bool async_prefs) {
                           g_browser_process->GetApplicationLocale(),
                           pref_registry_.get());
  
@@ -86,7 +86,7 @@ index 14417b3a65486..5a2c531caf726 100644
                          key_.get(), path_, async_prefs);
    key_->SetPrefs(prefs_.get());
  }
-@@ -780,8 +755,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -781,8 +756,6 @@ void ProfileImpl::DoFinalInit() {
    model->AddObserver(new BookmarkModelLoadedObserver(this));
  #endif
  
@@ -95,7 +95,7 @@ index 14417b3a65486..5a2c531caf726 100644
    PushMessagingServiceImpl::InitializeForProfile(this);
  
  #if !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -790,8 +763,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -791,8 +764,6 @@ void ProfileImpl::DoFinalInit() {
  
    site_isolation::SiteIsolationPolicy::ApplyPersistedIsolatedOrigins(this);
  
@@ -104,7 +104,7 @@ index 14417b3a65486..5a2c531caf726 100644
    content::URLDataSource::Add(this,
                                std::make_unique<PrefsInternalsSource>(this));
  
-@@ -812,10 +783,6 @@ void ProfileImpl::DoFinalInit() {
+@@ -813,10 +784,6 @@ void ProfileImpl::DoFinalInit() {
  
    SharingServiceFactory::GetForBrowserContext(this);
  
@@ -115,7 +115,7 @@ index 14417b3a65486..5a2c531caf726 100644
    AnnouncementNotificationServiceFactory::GetForProfile(this)
        ->MaybeShowNotification();
  }
-@@ -1590,14 +1557,3 @@ void ProfileImpl::UpdateIsEphemeralInStorage() {
+@@ -1575,14 +1542,3 @@ void ProfileImpl::UpdateIsEphemeralInStorage() {
          GetPrefs()->GetBoolean(prefs::kForceEphemeralProfiles));
    }
  }

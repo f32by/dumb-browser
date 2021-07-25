@@ -1,8 +1,8 @@
 diff --git a/components/performance_manager/performance_manager_tab_helper.h b/components/performance_manager/performance_manager_tab_helper.h
-index 8ffb2c7e9ae49..891ccb26c4ff5 100644
+index 6ded9dfde1dc2..c8de8dc8c4014 100644
 --- a/components/performance_manager/performance_manager_tab_helper.h
 +++ b/components/performance_manager/performance_manager_tab_helper.h
-@@ -17,7 +17,6 @@
+@@ -16,7 +16,6 @@
  #include "components/performance_manager/web_contents_proxy_impl.h"
  #include "content/public/browser/web_contents_observer.h"
  #include "content/public/browser/web_contents_user_data.h"
@@ -10,7 +10,7 @@ index 8ffb2c7e9ae49..891ccb26c4ff5 100644
  #include "third_party/blink/public/mojom/favicon/favicon_url.mojom-forward.h"
  
  namespace performance_manager {
-@@ -88,8 +87,6 @@ class PerformanceManagerTabHelper
+@@ -87,8 +86,6 @@ class PerformanceManagerTabHelper
        content::RenderFrameHost* render_frame_host,
        mojo::PendingReceiver<mojom::DocumentCoordinationUnit> receiver);
  
@@ -19,7 +19,7 @@ index 8ffb2c7e9ae49..891ccb26c4ff5 100644
    // Retrieves the frame node associated with |render_frame_host|. Returns
    // nullptr if none exist for that frame.
    FrameNodeImpl* GetFrameNode(content::RenderFrameHost* render_frame_host);
-@@ -120,7 +117,6 @@ class PerformanceManagerTabHelper
+@@ -119,7 +116,6 @@ class PerformanceManagerTabHelper
    void OnMainFrameNavigation(int64_t navigation_id, bool same_doc);
  
    std::unique_ptr<PageNodeImpl> page_node_;

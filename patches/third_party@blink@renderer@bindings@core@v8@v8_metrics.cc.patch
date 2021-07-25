@@ -1,0 +1,87 @@
+diff --git a/third_party/blink/renderer/bindings/core/v8/v8_metrics.cc b/third_party/blink/renderer/bindings/core/v8/v8_metrics.cc
+index 185025ed05952..649339cea9c53 100644
+--- a/third_party/blink/renderer/bindings/core/v8/v8_metrics.cc
++++ b/third_party/blink/renderer/bindings/core/v8/v8_metrics.cc
+@@ -5,7 +5,6 @@
+ #include "third_party/blink/renderer/bindings/core/v8/v8_metrics.h"
+ 
+ #include "services/metrics/public/cpp/metrics_utils.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/renderer/core/dom/document.h"
+ #include "third_party/blink/renderer/core/frame/frame.h"
+ #include "third_party/blink/renderer/core/frame/local_dom_window.h"
+@@ -17,6 +16,7 @@ namespace blink {
+ void V8MetricsRecorder::AddMainThreadEvent(
+     const v8::metrics::WasmModuleDecoded& event,
+     v8::metrics::Recorder::ContextId context_id) {
++#if 0
+   auto ukm = GetUkmRecorderAndSourceId(context_id);
+   if (!ukm)
+     return;
+@@ -28,11 +28,13 @@ void V8MetricsRecorder::AddMainThreadEvent(
+       .SetFunctionCount(event.function_count)
+       .SetWallClockDuration(event.wall_clock_duration_in_us)
+       .Record(ukm->recorder);
++#endif
+ }
+ 
+ void V8MetricsRecorder::AddMainThreadEvent(
+     const v8::metrics::WasmModuleCompiled& event,
+     v8::metrics::Recorder::ContextId context_id) {
++#if 0
+   auto ukm = GetUkmRecorderAndSourceId(context_id);
+   if (!ukm)
+     return;
+@@ -48,11 +50,13 @@ void V8MetricsRecorder::AddMainThreadEvent(
+       .SetLiftoffBailoutCount(event.liftoff_bailout_count)
+       .SetWallClockDuration(event.wall_clock_duration_in_us)
+       .Record(ukm->recorder);
++#endif
+ }
+ 
+ void V8MetricsRecorder::AddMainThreadEvent(
+     const v8::metrics::WasmModuleInstantiated& event,
+     v8::metrics::Recorder::ContextId context_id) {
++#if 0
+   auto ukm = GetUkmRecorderAndSourceId(context_id);
+   if (!ukm)
+     return;
+@@ -61,11 +65,13 @@ void V8MetricsRecorder::AddMainThreadEvent(
+       .SetImportedFunctionCount(event.imported_function_count)
+       .SetWallClockDuration(event.wall_clock_duration_in_us)
+       .Record(ukm->recorder);
++#endif
+ }
+ 
+ void V8MetricsRecorder::AddMainThreadEvent(
+     const v8::metrics::WasmModuleTieredUp& event,
+     v8::metrics::Recorder::ContextId context_id) {
++#if 0
+   auto ukm = GetUkmRecorderAndSourceId(context_id);
+   if (!ukm)
+     return;
+@@ -75,6 +81,7 @@ void V8MetricsRecorder::AddMainThreadEvent(
+           ukm::GetExponentialBucketMinForBytes(event.code_size_in_bytes))
+       .SetWallClockDuration(event.wall_clock_duration_in_us)
+       .Record(ukm->recorder);
++#endif
+ }
+ 
+ void V8MetricsRecorder::NotifyIsolateDisposal() {
+@@ -99,6 +106,7 @@ Document* V8MetricsRecorder::GetDocument(
+ absl::optional<V8MetricsRecorder::UkmRecorderAndSourceId>
+ V8MetricsRecorder::GetUkmRecorderAndSourceId(
+     v8::metrics::Recorder::ContextId context_id) {
++#if 0
+   DCHECK(IsMainThread());
+   if (!isolate_)
+     return absl::optional<UkmRecorderAndSourceId>();
+@@ -110,6 +118,8 @@ V8MetricsRecorder::GetUkmRecorderAndSourceId(
+     return absl::optional<UkmRecorderAndSourceId>();
+   return absl::optional<UkmRecorderAndSourceId>(absl::in_place, ukm_recorder,
+                                                 document->UkmSourceID());
++#endif
++  return absl::nullopt;
+ }
+ 
+ }  // namespace blink

@@ -10,7 +10,11 @@
 #include <set>
 #include <string>
 
-#include "net/url_request/url_request.h"
+#include "net/base/network_isolation_key.h"
+#include "net/http/http_request_headers.h"
+#include "net/http/http_response_headers.h"
+#include "net/url_request/referrer_policy.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/blink/public/mojom/loader/resource_load_info.mojom-shared.h"
 #include "url/gurl.h"
 
@@ -26,7 +30,7 @@ struct ResourceRequest;
 
 namespace dumb {
 struct DumbRequestInfo;
-using ResponseCallback = base::Callback<void()>;
+using ResponseCallback = base::RepeatingCallback<void()>;
 }  // namespace dumb
 
 namespace dumb {
@@ -126,13 +130,13 @@ struct DumbRequestInfo {
 
 // ResponseListener
 using OnBeforeURLRequestCallback =
-    base::Callback<int(const ResponseCallback& next_callback,
-                       std::shared_ptr<DumbRequestInfo> ctx)>;
+    base::RepeatingCallback<int(const ResponseCallback& next_callback,
+                                std::shared_ptr<DumbRequestInfo> ctx)>;
 using OnBeforeStartTransactionCallback =
-    base::Callback<int(net::HttpRequestHeaders* headers,
-                       const ResponseCallback& next_callback,
-                       std::shared_ptr<DumbRequestInfo> ctx)>;
-using OnHeadersReceivedCallback = base::Callback<int(
+    base::RepeatingCallback<int(net::HttpRequestHeaders* headers,
+                                const ResponseCallback& next_callback,
+                                std::shared_ptr<DumbRequestInfo> ctx)>;
+using OnHeadersReceivedCallback = base::RepeatingCallback<int(
     const net::HttpResponseHeaders* original_response_headers,
     scoped_refptr<net::HttpResponseHeaders>* override_response_headers,
     GURL* allowed_unsafe_redirect_url,

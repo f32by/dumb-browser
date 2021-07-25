@@ -1,0 +1,28 @@
+diff --git a/third_party/blink/renderer/core/page/scrolling/text_fragment_selector_generator.cc b/third_party/blink/renderer/core/page/scrolling/text_fragment_selector_generator.cc
+index 3c38e5fbcc205..7f9feeaf6232d 100644
+--- a/third_party/blink/renderer/core/page/scrolling/text_fragment_selector_generator.cc
++++ b/third_party/blink/renderer/core/page/scrolling/text_fragment_selector_generator.cc
+@@ -180,7 +180,6 @@ constexpr int kExactTextMaxChars = 300;
+ constexpr int kNoContextMinChars = 20;
+ constexpr int kMaxContextWords = 10;
+ constexpr int kMaxRangeWords = 10;
+-constexpr int kMaxIterationCountToRecord = 10;
+ constexpr int kMinWordCount_ = 3;
+ 
+ TextFragmentSelectorGenerator::TextFragmentSelectorGenerator(
+@@ -670,6 +669,7 @@ void TextFragmentSelectorGenerator::Reset() {
+ 
+ void TextFragmentSelectorGenerator::RecordAllMetrics(
+     const TextFragmentSelector& selector) {
++#if 0
+   UMA_HISTOGRAM_BOOLEAN(
+       "SharedHighlights.LinkGenerated",
+       selector.Type() != TextFragmentSelector::SelectorType::kInvalid);
+@@ -705,6 +705,7 @@ void TextFragmentSelectorGenerator::RecordAllMetrics(
+     shared_highlighting::LogLinkGeneratedErrorUkmEvent(recorder, source_id,
+                                                        error);
+   }
++#endif
+ }
+ 
+ void TextFragmentSelectorGenerator::RecordPreemptiveGenerationMetrics(

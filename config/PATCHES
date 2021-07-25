@@ -1,5 +1,4 @@
 BUILD.gn
-ash/media/media_notification_controller_impl.h
 base/metrics/histogram.cc
 base/metrics/histogram_base.cc
 base/metrics/histogram_functions.cc
@@ -84,7 +83,6 @@ chrome/browser/download/mixed_content_download_blocking.cc
 chrome/browser/download/notification/download_item_notification.cc
 chrome/browser/download/save_package_file_picker.cc
 chrome/browser/enterprise/connectors/connectors_manager.cc
-chrome/browser/enterprise/connectors/connectors_service.cc
 chrome/browser/enterprise/connectors/connectors_service.h
 chrome/browser/enterprise/signals/context_info_fetcher.cc
 chrome/browser/enterprise/signals/context_info_fetcher.h
@@ -99,6 +97,8 @@ chrome/browser/extensions/api/cryptotoken_private/cryptotoken_private_api.cc
 chrome/browser/extensions/api/downloads/downloads_api.cc
 chrome/browser/extensions/api/downloads/downloads_api.h
 chrome/browser/extensions/api/enterprise_reporting_private/enterprise_reporting_private_api.cc
+chrome/browser/extensions/api/image_writer_private/xz_extractor.cc
+chrome/browser/extensions/api/image_writer_private/xz_extractor.h
 chrome/browser/extensions/api/passwords_private/passwords_private_delegate_factory.cc
 chrome/browser/extensions/api/preference/preference_api.cc
 chrome/browser/extensions/api/settings_private/generated_prefs.cc
@@ -120,10 +120,12 @@ chrome/browser/extensions/chrome_extensions_browser_client.h
 chrome/browser/extensions/crx_installer.cc
 chrome/browser/extensions/extension_allowlist.cc
 chrome/browser/extensions/extension_context_menu_model.cc
+chrome/browser/extensions/extension_management.cc
 chrome/browser/extensions/extension_service.cc
 chrome/browser/extensions/extension_service.h
 chrome/browser/extensions/extension_tab_util.cc
 chrome/browser/extensions/installed_loader.cc
+chrome/browser/extensions/omaha_attributes_handler.h
 chrome/browser/extensions/webstore_data_fetcher.cc
 chrome/browser/extensions/webstore_installer.cc
 chrome/browser/extensions/webstore_installer.h
@@ -210,8 +212,6 @@ chrome/browser/predictors/loading_predictor.h
 chrome/browser/predictors/loading_predictor_tab_helper.cc
 chrome/browser/predictors/loading_stats_collector.cc
 chrome/browser/predictors/loading_stats_collector.h
-chrome/browser/predictors/navigation_id.cc
-chrome/browser/predictors/navigation_id.h
 chrome/browser/preferences/BUILD.gn
 chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.cc
 chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_network_context_client.h
@@ -227,6 +227,8 @@ chrome/browser/prefs/chrome_pref_service_factory.h
 chrome/browser/prefs/pref_service_incognito_allowlist.cc
 chrome/browser/prefs/profile_pref_store_manager.cc
 chrome/browser/prefs/profile_pref_store_manager.h
+chrome/browser/privacy_sandbox/privacy_sandbox_settings.cc
+chrome/browser/privacy_sandbox/privacy_sandbox_settings.h
 chrome/browser/profile_resetter/reset_report_uploader.cc
 chrome/browser/profile_resetter/resettable_settings_snapshot.cc
 chrome/browser/profiles/BUILD.gn
@@ -286,7 +288,6 @@ chrome/browser/resources/new_tab_page/lazy_load.js
 chrome/browser/resources/settings/BUILD.gn
 chrome/browser/resources/settings/autofill_page/password_check_behavior.js
 chrome/browser/resources/settings/basic_page/BUILD.gn
-chrome/browser/resources/settings/basic_page/basic_page.html
 chrome/browser/resources/settings/basic_page/basic_page.js
 chrome/browser/resources/settings/downloads_page/downloads_page.html
 chrome/browser/resources/settings/hats_browser_proxy.js
@@ -315,7 +316,6 @@ chrome/browser/ssl/ssl_error_controller_client.cc
 chrome/browser/startup_data.cc
 chrome/browser/startup_data.h
 chrome/browser/sync/chrome_sync_client.cc
-chrome/browser/tab_contents/navigation_metrics_recorder.cc
 chrome/browser/touch_to_fill/touch_to_fill_controller.cc
 chrome/browser/touch_to_fill/touch_to_fill_controller.h
 chrome/browser/tracing/background_tracing_field_trial.cc
@@ -324,8 +324,6 @@ chrome/browser/tracing/chrome_tracing_delegate.h
 chrome/browser/ui/BUILD.gn
 chrome/browser/ui/app_list/search/search_result_ranker/app_launch_event_logger.cc
 chrome/browser/ui/ash/chrome_browser_main_extra_parts_ash.cc
-chrome/browser/ui/ash/login_screen_client.cc
-chrome/browser/ui/ash/system_tray_client.cc
 chrome/browser/ui/autofill/chrome_autofill_client.cc
 chrome/browser/ui/autofill/payments/credit_card_scanner_controller.cc
 chrome/browser/ui/autofill/payments/local_card_migration_bubble_controller_impl.cc
@@ -338,8 +336,7 @@ chrome/browser/ui/browser_commands.h
 chrome/browser/ui/browser_dialogs.h
 chrome/browser/ui/browser_ui_prefs.cc
 chrome/browser/ui/browser_window.h
-chrome/browser/ui/cocoa/bookmarks/bookmark_menu_cocoa_controller.mm
-chrome/browser/ui/cocoa/first_run_dialog.mm
+chrome/browser/ui/cocoa/first_run_dialog_cocoa.mm
 chrome/browser/ui/cocoa/profiles/profile_menu_controller.mm
 chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac.mm
 chrome/browser/ui/cocoa/simple_message_box_cocoa.mm
@@ -352,7 +349,6 @@ chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
 chrome/browser/ui/global_media_controls/media_session_notification_producer.h
 chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc
 chrome/browser/ui/login/login_handler.cc
-chrome/browser/ui/omnibox/chrome_omnibox_client.cc
 chrome/browser/ui/page_info/chrome_page_info_delegate.cc
 chrome/browser/ui/page_info/chrome_page_info_delegate.h
 chrome/browser/ui/passwords/bubble_controllers/auto_sign_in_bubble_controller.cc
@@ -381,7 +377,6 @@ chrome/browser/ui/search/search_tab_helper.cc
 chrome/browser/ui/search/search_tab_helper.h
 chrome/browser/ui/startup/bad_flags_prompt.cc
 chrome/browser/ui/startup/startup_browser_creator.cc
-chrome/browser/ui/startup/startup_browser_creator_impl.cc
 chrome/browser/ui/tab_contents/chrome_web_contents_view_handle_drop.cc
 chrome/browser/ui/tab_helpers.cc
 chrome/browser/ui/tabs/tab_utils.h
@@ -393,8 +388,6 @@ chrome/browser/ui/ui_features.h
 chrome/browser/ui/uma_browsing_activity_observer.cc
 chrome/browser/ui/views/autofill/payments/save_card_bubble_views.cc
 chrome/browser/ui/views/autofill/payments/save_card_offer_bubble_views.cc
-chrome/browser/ui/views/bookmarks/bookmark_bar_view.cc
-chrome/browser/ui/views/bookmarks/bookmark_menu_delegate.cc
 chrome/browser/ui/views/chrome_browser_main_extra_parts_views.cc
 chrome/browser/ui/views/chrome_browser_main_extra_parts_views.h
 chrome/browser/ui/views/critical_notification_bubble_view.cc
@@ -408,7 +401,6 @@ chrome/browser/ui/views/frame/dbus_appmenu.cc
 chrome/browser/ui/views/frame/tab_strip_region_view.cc
 chrome/browser/ui/views/frame/web_footer_experiment_view.cc
 chrome/browser/ui/views/intent_picker_bubble_view.cc
-chrome/browser/ui/views/location_bar/location_bar_view.cc
 chrome/browser/ui/views/login_handler_views.cc
 chrome/browser/ui/views/media_router/presentation_receiver_window_view.cc
 chrome/browser/ui/views/message_box_dialog.cc
@@ -443,9 +435,12 @@ chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
 chrome/browser/ui/webui/crashes_ui.cc
 chrome/browser/ui/webui/downloads/downloads_dom_handler.cc
 chrome/browser/ui/webui/downloads/downloads_dom_handler.h
+chrome/browser/ui/webui/downloads/downloads_list_tracker.cc
 chrome/browser/ui/webui/downloads/downloads_ui.cc
 chrome/browser/ui/webui/help/version_updater_basic.cc
 chrome/browser/ui/webui/interstitials/interstitial_ui.cc
+chrome/browser/ui/webui/management/management_ui_handler.cc
+chrome/browser/ui/webui/management/management_ui_handler.h
 chrome/browser/ui/webui/new_tab_page/new_tab_page.mojom
 chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
 chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
@@ -457,6 +452,7 @@ chrome/browser/ui/webui/reset_password/reset_password_ui.cc
 chrome/browser/ui/webui/settings/about_handler.cc
 chrome/browser/ui/webui/settings/chromeos/about_section.cc
 chrome/browser/ui/webui/settings/people_handler.cc
+chrome/browser/ui/webui/settings/privacy_sandbox_handler.cc
 chrome/browser/ui/webui/settings/reset_settings_handler.cc
 chrome/browser/ui/webui/settings/safety_check_handler.cc
 chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
@@ -523,8 +519,10 @@ chrome/renderer/url_loader_throttle_provider_impl.cc
 chrome/renderer/url_loader_throttle_provider_impl.h
 chrome/renderer/websocket_handshake_throttle_provider_impl.cc
 chrome/renderer/websocket_handshake_throttle_provider_impl.h
+chrome/services/file_util/public/mojom/BUILD.gn
 chrome/services/util_win/BUILD.gn
 chrome/services/util_win/public/mojom/BUILD.gn
+chrome/test/BUILD.gn
 chrome/test/data/webui/settings/BUILD.gn
 chrome/utility/BUILD.gn
 chrome/utility/services.cc
@@ -541,7 +539,7 @@ components/autofill_assistant/browser/website_login_manager_impl.cc
 components/background_sync/BUILD.gn
 components/background_sync/background_sync_controller_impl.cc
 components/background_sync/background_sync_controller_impl.h
-components/background_sync/background_sync_delegate.h
+components/background_sync/background_sync_metrics.cc
 components/blocked_content/BUILD.gn
 components/blocked_content/popup_blocker.cc
 components/blocked_content/popup_blocker_tab_helper.cc
@@ -590,6 +588,7 @@ components/download/public/common/download_item_impl_delegate.h
 components/download/public/common/download_response_handler.h
 components/download/public/common/in_progress_download_manager.h
 components/download/public/common/mock_download_file.h
+components/enterprise/BUILD.gn
 components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc
 components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h
 components/enterprise/common/proto/BUILD.gn
@@ -620,8 +619,6 @@ components/metrics_services_manager/metrics_services_manager.cc
 components/metrics_services_manager/metrics_services_manager.h
 components/network_time/network_time_tracker.cc
 components/no_state_prefetch/browser/BUILD.gn
-components/no_state_prefetch/browser/prerender_util.cc
-components/no_state_prefetch/browser/prerender_util.h
 components/ntp_snippets/BUILD.gn
 components/offline_pages/core/prefetch/BUILD.gn
 components/offline_pages/core/prefetch/prefetch_dispatcher_impl.cc
@@ -665,7 +662,6 @@ components/password_manager/core/browser/password_sync_util.cc
 components/password_manager/core/browser/password_ui_utils.cc
 components/password_manager/core/browser/stub_password_manager_client.h
 components/payments/content/BUILD.gn
-components/payments/content/android/BUILD.gn
 components/payments/content/payment_app.cc
 components/payments/content/payment_app.h
 components/payments/content/payment_request.cc
@@ -687,6 +683,8 @@ components/permissions/permission_manager.cc
 components/permissions/permission_request_manager.cc
 components/permissions/permission_uma_util.cc
 components/permissions/permissions_client.h
+components/policy/core/browser/BUILD.gn
+components/policy/core/common/BUILD.gn
 components/policy/core/common/policy_loader_common.cc
 components/renderer_context_menu/render_view_context_menu_base.cc
 components/renderer_context_menu/render_view_context_menu_base.h
@@ -726,6 +724,8 @@ components/ukm/content/source_url_recorder.cc
 components/unified_consent/unified_consent_service.cc
 components/variations/service/variations_service.cc
 components/viz/service/display/display.cc
+components/viz/service/main/viz_main_impl.cc
+components/viz/service/main/viz_main_impl.h
 content/browser/BUILD.gn
 content/browser/browser_child_process_host_impl_receiver_bindings.cc
 content/browser/browser_interface_binders.cc
@@ -760,11 +760,12 @@ content/public/browser/download_manager_delegate.h
 content/public/browser/file_system_access_permission_context.h
 content/public/browser/network_context_client_base.h
 content/public/browser/tracing_delegate.h
+content/renderer/accessibility/ax_image_annotator.cc
 content/renderer/accessibility/render_accessibility_impl.cc
+content/renderer/accessibility/render_accessibility_impl.h
 content/renderer/render_thread_impl.cc
 content/renderer/render_view_impl.cc
 device/vr/BUILD.gn
-extensions/browser/api/web_request/BUILD.gn
 extensions/browser/api/web_request/web_request_api.cc
 extensions/browser/extension_navigation_throttle.cc
 extensions/browser/extension_protocols.cc
@@ -809,8 +810,6 @@ services/network/restricted_cookie_manager.h
 services/preferences/public/mojom/preferences.mojom
 services/preferences/tracked/pref_hash_filter.cc
 services/preferences/tracked/pref_hash_filter.h
-services/preferences/tracked/segregated_pref_store.cc
-services/preferences/tracked/segregated_pref_store.h
 services/preferences/tracked/tracked_atomic_preference.cc
 services/preferences/tracked/tracked_atomic_preference.h
 services/preferences/tracked/tracked_persistent_pref_store_factory.cc
@@ -821,6 +820,7 @@ third_party/blink/public/BUILD.gn
 third_party/blink/public/common/BUILD.gn
 third_party/blink/public/mojom/BUILD.gn
 third_party/blink/public/platform/web_runtime_features.h
+third_party/blink/renderer/bindings/core/v8/v8_metrics.cc
 third_party/blink/renderer/bindings/generated_in_core.gni
 third_party/blink/renderer/bindings/idl_in_core.gni
 third_party/blink/renderer/bindings/scripts/bind_gen/interface.py
@@ -840,14 +840,19 @@ third_party/blink/renderer/core/dom/document_data.h
 third_party/blink/renderer/core/dom/element.cc
 third_party/blink/renderer/core/dom/range.cc
 third_party/blink/renderer/core/frame/build.gni
+third_party/blink/renderer/core/frame/local_dom_window.cc
+third_party/blink/renderer/core/frame/local_dom_window.h
 third_party/blink/renderer/core/frame/local_frame.cc
 third_party/blink/renderer/core/frame/local_frame.h
+third_party/blink/renderer/core/frame/local_frame_view.cc
+third_party/blink/renderer/core/frame/local_frame_view.h
 third_party/blink/renderer/core/frame/navigator_device_memory.cc
 third_party/blink/renderer/core/frame/navigator_ua.cc
 third_party/blink/renderer/core/frame/navigator_ua_data.cc
 third_party/blink/renderer/core/frame/reporting_context.cc
 third_party/blink/renderer/core/frame/reporting_context.h
 third_party/blink/renderer/core/frame/screen.cc
+third_party/blink/renderer/core/frame/web_frame_widget_impl.cc
 third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc
 third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.h
 third_party/blink/renderer/core/html/canvas/canvas_rendering_context.h
@@ -857,12 +862,25 @@ third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 third_party/blink/renderer/core/html/canvas/html_canvas_element.h
 third_party/blink/renderer/core/html/canvas/text_metrics.cc
 third_party/blink/renderer/core/html/canvas/text_metrics.h
+third_party/blink/renderer/core/html/media/autoplay_uma_helper.cc
 third_party/blink/renderer/core/html/media/html_media_element.cc
+third_party/blink/renderer/core/html/parser/html_document_parser.cc
+third_party/blink/renderer/core/html/parser/html_document_parser.h
+third_party/blink/renderer/core/intersection_observer/intersection_observer_controller.cc
+third_party/blink/renderer/core/intersection_observer/intersection_observer_controller.h
 third_party/blink/renderer/core/loader/cookie_jar.cc
 third_party/blink/renderer/core/loader/document_loader.cc
 third_party/blink/renderer/core/loader/document_loader.h
+third_party/blink/renderer/core/loader/frame_loader.cc
+third_party/blink/renderer/core/loader/frame_resource_fetcher_properties.cc
+third_party/blink/renderer/core/loader/interactive_detector.cc
+third_party/blink/renderer/core/loader/interactive_detector.h
 third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.cc
 third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.h
+third_party/blink/renderer/core/page/create_window.cc
+third_party/blink/renderer/core/page/scrolling/text_fragment_anchor_metrics.cc
+third_party/blink/renderer/core/page/scrolling/text_fragment_selector_generator.cc
+third_party/blink/renderer/core/workers/shared_worker_global_scope.cc
 third_party/blink/renderer/core/workers/worker_global_scope.cc
 third_party/blink/renderer/core/workers/worker_global_scope.h
 third_party/blink/renderer/core/workers/worklet_global_scope.cc
@@ -883,6 +901,7 @@ third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_ren
 third_party/blink/renderer/modules/cookie_store/cookie_store.cc
 third_party/blink/renderer/modules/encryptedmedia/content_decryption_module_result_promise.cc
 third_party/blink/renderer/modules/encryptedmedia/media_key_system_access.cc
+third_party/blink/renderer/modules/filesystem/dom_window_file_system.cc
 third_party/blink/renderer/modules/gamepad/navigator_gamepad.cc
 third_party/blink/renderer/modules/keyboard/keyboard_layout.cc
 third_party/blink/renderer/modules/media_capabilities/BUILD.gn
@@ -897,6 +916,7 @@ third_party/blink/renderer/modules/mediastream/navigator_media_stream.cc
 third_party/blink/renderer/modules/mediastream/user_media_request.cc
 third_party/blink/renderer/modules/mediastream/user_media_request.h
 third_party/blink/renderer/modules/peerconnection/BUILD.gn
+third_party/blink/renderer/modules/peerconnection/rtc_peer_connection_controller.cc
 third_party/blink/renderer/modules/peerconnection/rtc_rtp_receiver.cc
 third_party/blink/renderer/modules/peerconnection/rtc_rtp_sender.cc
 third_party/blink/renderer/modules/plugins/navigator_plugins.cc
@@ -904,6 +924,7 @@ third_party/blink/renderer/modules/screen_orientation/screen_orientation_control
 third_party/blink/renderer/modules/shapedetection/barcode_detector_statics.cc
 third_party/blink/renderer/modules/speech/speech_synthesis.cc
 third_party/blink/renderer/modules/speech/speech_synthesis.h
+third_party/blink/renderer/modules/webaudio/audio_context.cc
 third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.cc
 third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.h
 third_party/blink/renderer/modules/webgl/webgl_draw_instanced_base_vertex_base_instance.cc
@@ -929,6 +950,7 @@ third_party/blink/renderer/platform/loader/fetch/resource_loader.cc
 third_party/blink/renderer/platform/runtime_enabled_features.json5
 third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.cc
 third_party/blink/renderer/platform/scheduler/worker/worker_thread_scheduler.h
+third_party/blink/renderer/platform/widget/compositing/layer_tree_view.cc
 third_party/crashpad/crashpad/handler/BUILD.gn
 third_party/crashpad/crashpad/handler/handler_main.cc
 third_party/crashpad/crashpad/handler/linux/crash_report_exception_handler.cc

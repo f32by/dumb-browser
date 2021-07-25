@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/webui/settings/site_settings_handler.cc b/chrome/browser/ui/webui/settings/site_settings_handler.cc
-index 2050cc2c12a4a..2fc020c193c0c 100644
+index 918e662ffe108..5e4c3d96f8739 100644
 --- a/chrome/browser/ui/webui/settings/site_settings_handler.cc
 +++ b/chrome/browser/ui/webui/settings/site_settings_handler.cc
-@@ -52,7 +52,6 @@
- #include "components/crx_file/id_util.h"
- #include "components/permissions/chooser_context_base.h"
+@@ -53,7 +53,6 @@
+ #include "components/permissions/contexts/bluetooth_chooser_context.h"
+ #include "components/permissions/object_permission_context_base.h"
  #include "components/permissions/permission_decision_auto_blocker.h"
 -#include "components/permissions/permission_uma_util.h"
  #include "components/permissions/permission_util.h"
  #include "components/prefs/pref_change_registrar.h"
  #include "components/prefs/pref_service.h"
-@@ -1049,11 +1048,6 @@ void SiteSettingsHandler::HandleSetOriginPermissions(
+@@ -1041,11 +1040,6 @@ void SiteSettingsHandler::HandleSetOriginPermissions(
      HostContentSettingsMap* map =
          HostContentSettingsMapFactory::GetForProfile(profile_);
  
@@ -22,7 +22,7 @@ index 2050cc2c12a4a..2fc020c193c0c 100644
      // Clear any existing embargo status if the new setting isn't block.
      if (setting != CONTENT_SETTING_BLOCK) {
        PermissionDecisionAutoBlockerFactory::GetForProfile(profile_)
-@@ -1126,10 +1120,6 @@ void SiteSettingsHandler::HandleResetCategoryPermissionForPattern(
+@@ -1118,10 +1112,6 @@ void SiteSettingsHandler::HandleResetCategoryPermissionForPattern(
        secondary_pattern_string.empty()
            ? ContentSettingsPattern::Wildcard()
            : ContentSettingsPattern::FromString(secondary_pattern_string);
@@ -33,9 +33,9 @@ index 2050cc2c12a4a..2fc020c193c0c 100644
  
    map->SetContentSettingCustomScope(primary_pattern, secondary_pattern,
                                      content_type, CONTENT_SETTING_DEFAULT);
-@@ -1192,11 +1182,6 @@ void SiteSettingsHandler::HandleSetCategoryPermissionForPattern(
-           ? ContentSettingsPattern::Wildcard()
-           : ContentSettingsPattern::FromString(secondary_pattern_string);
+@@ -1196,11 +1186,6 @@ void SiteSettingsHandler::HandleSetCategoryPermissionForPattern(
+     }
+   }
  
 -  permissions::PermissionUmaUtil::ScopedRevocationReporter
 -      scoped_revocation_reporter(

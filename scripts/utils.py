@@ -67,7 +67,7 @@ def check_patch_consistency(treat_as_fatal=False):
     return True
 
 
-def apply_patches(stop_when_failed=False):
+def apply_patches():
     with open(PATCH_LIST_FILE, 'r') as f:
         patch_list = f.read().split('\n')
 
@@ -75,17 +75,12 @@ def apply_patches(stop_when_failed=False):
     for p in patch_list:
         patch_filename = os.path.join(PATCHES_DIR, get_patch_filename(p))
 
-        ret = run_command(['patch', '-p1',
-                           '-s',
-                           '-i', patch_filename,
-                           '-d', CHROMIUM_SRC_DIR,
-                           '--no-backup-if-mismatch',
-                           '--forward'])
-
-        if not ret:
-            print('Failed to patch file ', p)
-            if stop_when_failed:
-                return False
+        run_command(['patch', '-p1',
+                     '-s',
+                     '-i', patch_filename,
+                     '-d', CHROMIUM_SRC_DIR,
+                     '--no-backup-if-mismatch',
+                     '--forward'])
 
     print('Patches applied.')
     return True

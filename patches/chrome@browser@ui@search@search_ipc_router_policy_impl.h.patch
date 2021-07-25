@@ -1,12 +1,12 @@
 diff --git a/chrome/browser/ui/search/search_ipc_router_policy_impl.h b/chrome/browser/ui/search/search_ipc_router_policy_impl.h
-index b7a89d08473c1..c58069ee693b0 100644
+index 4a302f20f5e60..28ca6a2fa5ffe 100644
 --- a/chrome/browser/ui/search/search_ipc_router_policy_impl.h
 +++ b/chrome/browser/ui/search/search_ipc_router_policy_impl.h
-@@ -60,7 +60,6 @@ class SearchIPCRouterPolicyImpl : public SearchIPCRouter::Policy {
-   bool ShouldProcessQueryAutocomplete(bool is_active_tab) override;
-   bool ShouldProcessStopAutocomplete() override;
-   bool ShouldProcessLogCharTypedToRepaintLatency() override;
+@@ -53,7 +53,6 @@ class SearchIPCRouterPolicyImpl : public SearchIPCRouter::Policy {
+   bool ShouldProcessSearchSuggestionSelected() override;
+   bool ShouldProcessOptOutOfSearchSuggestions() override;
+   bool ShouldProcessThemeChangeMessages() override;
 -  bool ShouldProcessBlocklistPromo() override;
    bool ShouldProcessOpenExtensionsPage() override;
-   bool ShouldProcessOpenAutocompleteMatch(bool is_active_tab) override;
-   bool ShouldProcessDeleteAutocompleteMatch() override;
+ 
+   // Used by unit tests.

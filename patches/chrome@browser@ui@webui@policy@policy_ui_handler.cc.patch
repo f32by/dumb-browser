@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/webui/policy/policy_ui_handler.cc b/chrome/browser/ui/webui/policy/policy_ui_handler.cc
-index 160edc514605d..f226580938804 100644
+index ff36e58411837..a9c2afb515adb 100644
 --- a/chrome/browser/ui/webui/policy/policy_ui_handler.cc
 +++ b/chrome/browser/ui/webui/policy/policy_ui_handler.cc
-@@ -30,7 +30,6 @@
+@@ -31,7 +31,6 @@
  #include "build/chromeos_buildflags.h"
  #include "chrome/browser/browser_process.h"
  #include "chrome/browser/download/download_prefs.h"
@@ -10,7 +10,7 @@ index 160edc514605d..f226580938804 100644
  #include "chrome/browser/policy/chrome_browser_policy_connector.h"
  #include "chrome/browser/policy/chrome_policy_conversions_client.h"
  #include "chrome/browser/policy/profile_policy_connector.h"
-@@ -236,8 +235,7 @@ void GetUserAffiliationStatus(base::DictionaryValue* dict, Profile* profile) {
+@@ -147,8 +146,7 @@ void GetUserAffiliationStatus(base::DictionaryValue* dict, Profile* profile) {
    if (!policy::BrowserDMTokenStorage::Get()->RetrieveDMToken().is_valid())
      return;
  
@@ -20,3 +20,30 @@ index 160edc514605d..f226580938804 100644
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  }
  
+@@ -715,6 +713,7 @@ void PolicyUIHandler::RegisterMessages() {
+         policy::BrowserDMTokenStorage::Get();
+ 
+     base::Time lastCloudReportSent;
++#if 0
+     PrefService* prefService = g_browser_process->local_state();
+ 
+     if (prefService->HasPrefPath(
+@@ -722,6 +721,7 @@ void PolicyUIHandler::RegisterMessages() {
+       lastCloudReportSent = prefService->GetTime(
+           enterprise_reporting::kLastUploadSucceededTimestamp);
+     }
++#endif
+ 
+     machine_status_provider_ =
+         std::make_unique<policy::MachineLevelUserCloudPolicyStatusProvider>(
+@@ -755,8 +755,10 @@ void PolicyUIHandler::RegisterMessages() {
+ 
+   pref_change_registrar_ = std::make_unique<PrefChangeRegistrar>();
+   pref_change_registrar_->Init(g_browser_process->local_state());
++#if 0
+   pref_change_registrar_->Add(
+       enterprise_reporting::kLastUploadSucceededTimestamp, update_callback);
++#endif
+ 
+   GetPolicyService()->AddObserver(policy::POLICY_DOMAIN_CHROME, this);
+   GetPolicyService()->AddObserver(policy::POLICY_DOMAIN_EXTENSIONS, this);

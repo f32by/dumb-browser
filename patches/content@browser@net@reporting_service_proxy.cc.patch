@@ -1,9 +1,9 @@
 diff --git a/content/browser/net/reporting_service_proxy.cc b/content/browser/net/reporting_service_proxy.cc
-index 7394fc1a0c152..a50d2762c7aa7 100644
+index 74dd3068ca623..94033aa609c61 100644
 --- a/content/browser/net/reporting_service_proxy.cc
 +++ b/content/browser/net/reporting_service_proxy.cc
 @@ -51,16 +51,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
-                                const base::Optional<std::string>& source_file,
+                                const absl::optional<std::string>& source_file,
                                 int line_number,
                                 int column_number) override {
 -    auto body = std::make_unique<base::DictionaryValue>();
@@ -20,7 +20,7 @@ index 7394fc1a0c152..a50d2762c7aa7 100644
  
    void QueueDeprecationReport(const GURL& url,
 @@ -70,19 +60,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
-                               const base::Optional<std::string>& source_file,
+                               const absl::optional<std::string>& source_file,
                                int line_number,
                                int column_number) override {
 -    auto body = std::make_unique<base::DictionaryValue>();
@@ -66,7 +66,7 @@ index 7394fc1a0c152..a50d2762c7aa7 100644
  
    void QueuePermissionsPolicyViolationReport(
 @@ -127,19 +85,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
-       const base::Optional<std::string>& source_file,
+       const absl::optional<std::string>& source_file,
        int line_number,
        int column_number) override {
 -    auto body = std::make_unique<base::DictionaryValue>();
@@ -86,7 +86,7 @@ index 7394fc1a0c152..a50d2762c7aa7 100644
  
    void QueueDocumentPolicyViolationReport(
 @@ -151,18 +96,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
-       const base::Optional<std::string>& source_file,
+       const absl::optional<std::string>& source_file,
        int line_number,
        int column_number) override {
 -    auto body = std::make_unique<base::DictionaryValue>();
@@ -104,18 +104,19 @@ index 7394fc1a0c152..a50d2762c7aa7 100644
    }
  
    int render_process_id() const { return render_process_id_; }
-@@ -172,14 +105,6 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
+@@ -172,6 +105,7 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
                     const std::string& group,
                     const std::string& type,
                     std::unique_ptr<base::Value> body) {
--    auto* rph = RenderProcessHost::FromID(render_process_id_);
--    if (!rph)
--      return;
--
--    rph->GetStoragePartition()->GetNetworkContext()->QueueReport(
--        type, group, url, network_isolation_key_,
--        /*user_agent=*/base::nullopt,
--        base::Value::FromUniquePtrValue(std::move(body)));
++#if 0
+     auto* rph = RenderProcessHost::FromID(render_process_id_);
+     if (!rph)
+       return;
+@@ -180,6 +114,7 @@ class ReportingServiceProxyImpl : public blink::mojom::ReportingServiceProxy {
+         type, group, url, network_isolation_key_,
+         /*user_agent=*/absl::nullopt,
+         base::Value::FromUniquePtrValue(std::move(body)));
++#endif
    }
  
    const int render_process_id_;

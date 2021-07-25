@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.h b/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.h
-index 42c9ddcb80f50..7067f47b3d8bd 100644
+index 5a0a91fecbb02..d9d48e6646c60 100644
 --- a/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.h
 +++ b/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.h
-@@ -12,8 +12,6 @@
+@@ -13,8 +13,6 @@
  #include "third_party/blink/renderer/core/html/canvas/canvas_rendering_context.h"
  #include "third_party/blink/renderer/core/html/canvas/canvas_rendering_context_factory.h"
  #include "third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.h"
@@ -11,7 +11,7 @@ index 42c9ddcb80f50..7067f47b3d8bd 100644
  
  namespace blink {
  
-@@ -134,18 +132,6 @@ class MODULES_EXPORT OffscreenCanvasRenderingContext2D final
+@@ -140,18 +138,6 @@ class MODULES_EXPORT OffscreenCanvasRenderingContext2D final
  
    bool PushFrame() override;
  
@@ -28,5 +28,5 @@ index 42c9ddcb80f50..7067f47b3d8bd 100644
 -  }
 -
   protected:
-   CanvasColorParams GetCanvas2DColorParams() const override;
-   bool WritePixels(const SkImageInfo& orig_info,
+   // This reports CanvasColorParams to the CanvasRenderingContext interface.
+   CanvasColorParams CanvasRenderingContextColorParams() const override {

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view.cc b/chrome/browser/ui/views/frame/browser_view.cc
-index c33c4327974e7..6ff1b5654d284 100644
+index e852eb7d20ed6..0b1611f2405d1 100644
 --- a/chrome/browser/ui/views/frame/browser_view.cc
 +++ b/chrome/browser/ui/views/frame/browser_view.cc
-@@ -104,7 +104,6 @@
+@@ -105,7 +105,6 @@
  #include "chrome/browser/ui/views/frame/web_footer_experiment_view.h"
  #include "chrome/browser/ui/views/fullscreen_control/fullscreen_control_host.h"
  #include "chrome/browser/ui/views/global_media_controls/media_toolbar_button_view.h"
@@ -10,7 +10,7 @@ index c33c4327974e7..6ff1b5654d284 100644
  #include "chrome/browser/ui/views/infobars/infobar_container_view.h"
  #include "chrome/browser/ui/views/location_bar/intent_picker_view.h"
  #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
-@@ -155,7 +154,6 @@
+@@ -160,7 +159,6 @@
  #include "components/omnibox/browser/omnibox_view.h"
  #include "components/permissions/permission_request_manager.h"
  #include "components/prefs/pref_service.h"
@@ -18,7 +18,7 @@ index c33c4327974e7..6ff1b5654d284 100644
  #include "components/sessions/core/tab_restore_service.h"
  #include "components/startup_metric_utils/browser/startup_metric_utils.h"
  #include "components/translate/core/browser/language_state.h"
-@@ -3011,7 +3009,6 @@ void BrowserView::PaintChildren(const views::PaintInfo& paint_info) {
+@@ -3001,7 +2999,6 @@ void BrowserView::PaintChildren(const views::PaintInfo& paint_info) {
    static bool did_first_paint = false;
    if (!did_first_paint) {
      did_first_paint = true;
@@ -26,7 +26,7 @@ index c33c4327974e7..6ff1b5654d284 100644
    }
  }
  
-@@ -3449,63 +3446,6 @@ int BrowserView::GetCommandIDForAppCommandID(int app_command_id) const {
+@@ -3439,63 +3436,6 @@ int BrowserView::GetCommandIDForAppCommandID(int app_command_id) const {
  
  void BrowserView::UpdateAcceleratorMetrics(const ui::Accelerator& accelerator,
                                             int command_id) {
@@ -90,7 +90,7 @@ index c33c4327974e7..6ff1b5654d284 100644
  }
  
  void BrowserView::ShowAvatarBubbleFromAvatarButton(
-@@ -3543,6 +3483,7 @@ void BrowserView::MaybeShowProfileSwitchIPH() {
+@@ -3533,6 +3473,7 @@ void BrowserView::MaybeShowProfileSwitchIPH() {
      avatar_button->MaybeShowProfileSwitchIPH();
  }
  
@@ -98,7 +98,7 @@ index c33c4327974e7..6ff1b5654d284 100644
  void BrowserView::ShowHatsDialog(
      const std::string& site_id,
      base::OnceClosure success_callback,
-@@ -3554,6 +3495,7 @@ void BrowserView::ShowHatsDialog(
+@@ -3544,6 +3485,7 @@ void BrowserView::ShowHatsDialog(
  
    );
  }

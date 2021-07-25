@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-index 37097579608d2..aaac6022048f0 100644
+index 23f4131afbfec..776d28e29f192 100644
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -41,13 +41,13 @@
+@@ -43,13 +43,13 @@
  #include "components/prefs/pref_service.h"
  #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
  #include "components/proxy_config/proxy_config_pref_names.h"
@@ -17,7 +17,7 @@ index 37097579608d2..aaac6022048f0 100644
  #include "extensions/browser/extension_pref_value_map.h"
  #include "extensions/browser/extension_pref_value_map_factory.h"
  #include "extensions/browser/extension_registry.h"
-@@ -162,6 +162,8 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+@@ -165,6 +165,8 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
      return *s_allowlist;
    s_allowlist = new PrefsUtil::TypedPrefMap();
  
@@ -26,7 +26,7 @@ index 37097579608d2..aaac6022048f0 100644
    // Miscellaneous
    (*s_allowlist)[::embedder_support::kAlternateErrorPagesEnabled] =
        settings_api::PrefType::PREF_TYPE_BOOLEAN;
-@@ -282,24 +284,9 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+@@ -287,24 +289,9 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
          settings_api::PrefType::PREF_TYPE_BOOLEAN;
    }
  

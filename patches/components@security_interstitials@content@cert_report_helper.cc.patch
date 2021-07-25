@@ -1,8 +1,8 @@
 diff --git a/components/security_interstitials/content/cert_report_helper.cc b/components/security_interstitials/content/cert_report_helper.cc
-index 448759d7a69ea..cfad8c63398ec 100644
+index 798e94ef953e2..a7eaab348b49a 100644
 --- a/components/security_interstitials/content/cert_report_helper.cc
 +++ b/components/security_interstitials/content/cert_report_helper.cc
-@@ -15,7 +15,6 @@
+@@ -14,7 +14,6 @@
  #include "build/branding_buildflags.h"
  #include "build/build_config.h"
  #include "components/prefs/pref_service.h"
@@ -10,7 +10,7 @@ index 448759d7a69ea..cfad8c63398ec 100644
  #include "components/security_interstitials/content/ssl_cert_reporter.h"
  #include "components/security_interstitials/core/controller_client.h"
  #include "components/security_interstitials/core/metrics_helper.h"
-@@ -32,10 +31,6 @@ namespace {
+@@ -31,10 +30,6 @@ namespace {
  // set by tests.
  static bool g_is_fake_official_build_for_cert_report_testing = false;
  
@@ -21,7 +21,7 @@ index 448759d7a69ea..cfad8c63398ec 100644
  }  // namespace
  
  // Constants for the HTTPSErrorReporter Finch experiment
-@@ -60,12 +55,8 @@ CertReportHelper::CertReportHelper(
+@@ -59,12 +54,8 @@ CertReportHelper::CertReportHelper(
        web_contents_(web_contents),
        request_url_(request_url),
        ssl_info_(ssl_info),
@@ -35,7 +35,7 @@ index 448759d7a69ea..cfad8c63398ec 100644
  
  CertReportHelper::~CertReportHelper() = default;
  
-@@ -87,32 +78,13 @@ void CertReportHelper::PopulateExtendedReportingOption(
+@@ -86,32 +77,13 @@ void CertReportHelper::PopulateExtendedReportingOption(
      return;
  
    load_time_data->SetBoolean(
@@ -70,7 +70,7 @@ index 448759d7a69ea..cfad8c63398ec 100644
  }
  
  void CertReportHelper::SetSSLCertReporterForTesting(
-@@ -125,14 +97,8 @@ void CertReportHelper::HandleReportingCommands(
+@@ -124,14 +96,8 @@ void CertReportHelper::HandleReportingCommands(
      PrefService* pref_service) {
    switch (command) {
      case security_interstitials::CMD_DO_REPORT:
@@ -85,7 +85,7 @@ index 448759d7a69ea..cfad8c63398ec 100644
        break;
      case security_interstitials::CMD_PROCEED:
        user_action_ = CertificateErrorReport::USER_PROCEEDED;
-@@ -146,57 +112,10 @@ void CertReportHelper::HandleReportingCommands(
+@@ -145,57 +111,10 @@ void CertReportHelper::HandleReportingCommands(
    }
  }
  
@@ -145,7 +145,7 @@ index 448759d7a69ea..cfad8c63398ec 100644
  }
  
  bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
-@@ -211,21 +130,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
+@@ -210,21 +129,10 @@ bool CertReportHelper::ShouldShowEnhancedProtectionMessage() {
  
    const bool in_incognito =
        web_contents_->GetBrowserContext()->IsOffTheRecord();

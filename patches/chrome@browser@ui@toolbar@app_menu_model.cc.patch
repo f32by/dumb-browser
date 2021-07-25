@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/toolbar/app_menu_model.cc b/chrome/browser/ui/toolbar/app_menu_model.cc
-index d13e37a17913b..a88e79bbc3f92 100644
+index bb5c1fae5aed5..6fd752b132585 100644
 --- a/chrome/browser/ui/toolbar/app_menu_model.cc
 +++ b/chrome/browser/ui/toolbar/app_menu_model.cc
-@@ -47,7 +47,6 @@
+@@ -48,7 +48,6 @@
  #include "chrome/browser/ui/toolbar/recent_tabs_sub_menu_model.h"
  #include "chrome/browser/ui/ui_features.h"
  #include "chrome/browser/ui/web_applications/web_app_launch_utils.h"
@@ -10,7 +10,7 @@ index d13e37a17913b..a88e79bbc3f92 100644
  #include "chrome/browser/web_applications/web_app_provider.h"
  #include "chrome/common/chrome_features.h"
  #include "chrome/common/chrome_paths.h"
-@@ -113,6 +112,7 @@ namespace {
+@@ -114,6 +113,7 @@ namespace {
  
  constexpr size_t kMaxAppNameLength = 30;
  
@@ -18,15 +18,15 @@ index d13e37a17913b..a88e79bbc3f92 100644
  // Conditionally return the update app menu item title based on upgrade detector
  // state.
  std::u16string GetUpgradeDialogMenuItemName() {
-@@ -123,6 +123,7 @@ std::u16string GetUpgradeDialogMenuItemName() {
-     return l10n_util::GetStringUTF16(IDS_UPDATE_NOW);
+@@ -127,6 +127,7 @@ std::u16string GetUpgradeDialogMenuItemName() {
+             : IDS_UPDATE_NOW);
    }
  }
 +#endif
  
  // Returns the appropriate menu label for the IDC_INSTALL_PWA command if
  // available.
-@@ -331,8 +332,7 @@ std::u16string AppMenuModel::GetLabelForCommandId(int command_id) const {
+@@ -337,8 +338,7 @@ std::u16string AppMenuModel::GetLabelForCommandId(int command_id) const {
      case IDC_INSTALL_PWA:
        return GetInstallPWAAppMenuItemName(browser_).value();
      case IDC_UPGRADE_DIALOG:
@@ -36,7 +36,7 @@ index d13e37a17913b..a88e79bbc3f92 100644
      default:
        NOTREACHED();
        return std::u16string();
-@@ -780,8 +780,6 @@ void AppMenuModel::Build() {
+@@ -786,8 +786,6 @@ void AppMenuModel::Build() {
    // Build (and, by extension, Init) should only be called once.
    DCHECK_EQ(0, GetItemCount());
  

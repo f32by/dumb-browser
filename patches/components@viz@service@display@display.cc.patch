@@ -1,8 +1,8 @@
 diff --git a/components/viz/service/display/display.cc b/components/viz/service/display/display.cc
-index 67efacb47bcc3..e2c8789abcf5f 100644
+index f371b4fb8368a..624ef4d78b99b 100644
 --- a/components/viz/service/display/display.cc
 +++ b/components/viz/service/display/display.cc
-@@ -942,6 +942,7 @@ void Display::DidReceiveSwapBuffersAck(const gfx::SwapTimings& timings) {
+@@ -986,6 +986,7 @@ void Display::DidReceiveSwapBuffersAck(const gfx::SwapTimings& timings,
    // We should have at least one group that hasn't received a SwapBuffersAck
    DCHECK(!draw_start_timestamp.is_null());
  
@@ -10,7 +10,7 @@ index 67efacb47bcc3..e2c8789abcf5f 100644
    // Check that the swap timings correspond with the timestamp from when
    // the swap was triggered. Note that not all output surfaces provide timing
    // information, hence the check for a valid swap_start.
-@@ -979,6 +980,7 @@ void Display::DidReceiveSwapBuffersAck(const gfx::SwapTimings& timings) {
+@@ -1023,6 +1024,7 @@ void Display::DidReceiveSwapBuffersAck(const gfx::SwapTimings& timings,
          "Compositing.Display.VizDependencyResolvedToGpuStartedDrawUs",
          scheduling_delta, kDrawToSwapMin, kDrawToSwapMax, kDrawToSwapUsBuckets);
    }

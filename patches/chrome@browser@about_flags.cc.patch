@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
-index e064dbab99ac3..823b6f7ad3ffb 100644
+index cb59b01762087..2a50b599d2996 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -33,7 +33,6 @@
- #include "chrome/browser/browser_features.h"
+@@ -34,7 +34,6 @@
  #include "chrome/browser/chromeos/android_sms/android_sms_switches.h"
+ #include "chrome/browser/commerce/commerce_feature_list.h"
  #include "chrome/browser/flag_descriptions.h"
 -#include "chrome/browser/lite_video/lite_video_switches.h"
  #include "chrome/browser/login_detection/login_detection_util.h"
  #include "chrome/browser/navigation_predictor/navigation_predictor_features.h"
  #include "chrome/browser/navigation_predictor/search_engine_preconnector.h"
-@@ -58,7 +57,6 @@
+@@ -59,7 +58,6 @@
  #include "chrome/browser/ui/ui_features.h"
  #include "chrome/browser/unexpire_flags.h"
  #include "chrome/browser/unexpire_flags_gen.h"
@@ -18,7 +18,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
  #include "chrome/common/buildflags.h"
  #include "chrome/common/channel_info.h"
  #include "chrome/common/chrome_content_client.h"
-@@ -115,7 +113,6 @@
+@@ -116,7 +114,6 @@
  #include "components/policy/core/common/features.h"
  #include "components/query_tiles/switches.h"
  #include "components/reading_list/features/reading_list_switches.h"
@@ -26,7 +26,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
  #include "components/search/ntp_features.h"
  #include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
  #include "components/security_interstitials/core/features.h"
-@@ -148,6 +145,7 @@
+@@ -149,6 +146,7 @@
  #include "device/fido/features.h"
  #include "device/gamepad/public/cpp/gamepad_features.h"
  #include "device/vr/buildflags/buildflags.h"
@@ -103,7 +103,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
  #if defined(OS_WIN)
  const FeatureEntry::Choice kUseAngleChoices[] = {
      {flag_descriptions::kUseAngleDefault, "", ""},
-@@ -2472,25 +2408,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
+@@ -2525,25 +2461,6 @@ const FeatureEntry::FeatureVariation kMetricsSettingsAndroidVariations[] = {
  };
  #endif  // defined(OS_ANDROID)
  
@@ -129,7 +129,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
  const FeatureEntry::FeatureParam kCheckOfflineCapabilityWarnOnly[] = {
      {"check_mode", "warn_only"}};
  const FeatureEntry::FeatureParam kCheckOfflineCapabilityEnforce[] = {
-@@ -2503,27 +2420,6 @@ const FeatureEntry::FeatureVariation kCheckOfflineCapabilityVariations[] = {
+@@ -2556,27 +2473,6 @@ const FeatureEntry::FeatureVariation kCheckOfflineCapabilityVariations[] = {
       base::size(kCheckOfflineCapabilityEnforce), nullptr},
  };
  
@@ -157,7 +157,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
  #if BUILDFLAG(IS_CHROMEOS_ASH)
  const FeatureEntry::FeatureVariation
      kOmniboxRichEntitiesInLauncherVariations[] = {
-@@ -3426,24 +3322,10 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -3497,24 +3393,10 @@ const FeatureEntry kFeatureEntries[] = {
      {"enable-use-zoom-for-dsf", flag_descriptions::kEnableUseZoomForDsfName,
       flag_descriptions::kEnableUseZoomForDsfDescription, kOsAll,
       MULTI_VALUE_TYPE(kEnableUseZoomForDSFChoices)},
@@ -182,21 +182,22 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
      {"enable-navigation-predictor",
       flag_descriptions::kEnableNavigationPredictorName,
       flag_descriptions::kEnableNavigationPredictorDescription,
-@@ -5848,13 +5730,6 @@ const FeatureEntry kFeatureEntries[] = {
-      FEATURE_VALUE_TYPE(chrome::android::kEnhancedProtectionPromoCard)},
- #endif
+@@ -5066,12 +4948,14 @@ const FeatureEntry kFeatureEntries[] = {
+      kOsDesktop | kOsAndroid,
+      FEATURE_VALUE_TYPE(features::kTreatUnsafeDownloadsAsActive)},
  
--    {"safe-browsing-real-time-url-lookup-enterprise-ga-endpoint",
--     flag_descriptions::kSafeBrowsingRealTimeUrlLookupEnterpriseGaEndpointName,
--     flag_descriptions::
--         kSafeBrowsingRealTimeUrlLookupEnterpriseGaEndpointDescription,
--     kOsAll,
--     FEATURE_VALUE_TYPE(safe_browsing::kRealTimeUrlLookupEnterpriseGaEndpoint)},
--
++#if 0
+     {"detect-target-embedding-lookalikes",
+      flag_descriptions::kDetectTargetEmbeddingLookalikesName,
+      flag_descriptions::kDetectTargetEmbeddingLookalikesDescription,
+      kOsDesktop | kOsAndroid,
+      FEATURE_VALUE_TYPE(
+          lookalikes::features::kDetectTargetEmbeddingLookalikes)},
++#endif
+ 
  #if BUILDFLAG(IS_CHROMEOS_ASH)
-     {"gesture-properties-dbus-service",
-      flag_descriptions::kEnableGesturePropertiesDBusServiceName,
-@@ -6238,17 +6113,6 @@ const FeatureEntry kFeatureEntries[] = {
+     {"enable-app-data-search", flag_descriptions::kEnableAppDataSearchName,
+@@ -6205,17 +6089,6 @@ const FeatureEntry kFeatureEntries[] = {
       MULTI_VALUE_TYPE(kEnableCrOSActionRecorderChoices)},
  #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
  
@@ -214,7 +215,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
  #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
      {"enable-ftp", flag_descriptions::kEnableFtpName,
       flag_descriptions::kEnableFtpDescription, kOsAll,
-@@ -6681,20 +6545,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6643,20 +6516,6 @@ const FeatureEntry kFeatureEntries[] = {
       kOsMac,
       SINGLE_VALUE_TYPE(switches::kEnableBluetoothSerialPortProfileInSerialApi)},
  
@@ -235,7 +236,7 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
      {"edit-passwords-in-settings",
       flag_descriptions::kEditPasswordsInSettingsName,
       flag_descriptions::kEditPasswordsInSettingsDescription, kOsAll,
-@@ -6927,14 +6777,6 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -6903,14 +6762,6 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kAnimatedImageResumeDescription, kOsAll,
       FEATURE_VALUE_TYPE(features::kAnimatedImageResume)},
  
@@ -247,10 +248,10 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
 -                                    "SCTAuditingVariations")},
 -#endif  // !defined(OS_ANDROID)
 -
-     {"insert-key-toggle-mode", flag_descriptions::kInsertKeyToggleModeName,
-      flag_descriptions::kInsertKeyToggleModeDescription,
-      kOsWin | kOsLinux | kOsCrOS,
-@@ -7293,7 +7135,8 @@ class FlagsStateSingleton : public flags_ui::FlagsState::Delegate {
+ #if defined(OS_ANDROID)
+     {"enable-autofill-password-account-indicator-footer",
+      flag_descriptions::
+@@ -7379,7 +7230,8 @@ class FlagsStateSingleton : public flags_ui::FlagsState::Delegate {
   public:
    FlagsStateSingleton()
        : flags_state_(
@@ -260,13 +261,20 @@ index e064dbab99ac3..823b6f7ad3ffb 100644
    FlagsStateSingleton(const FlagsStateSingleton&) = delete;
    FlagsStateSingleton& operator=(const FlagsStateSingleton&) = delete;
    ~FlagsStateSingleton() override = default;
-@@ -7307,7 +7150,8 @@ class FlagsStateSingleton : public flags_ui::FlagsState::Delegate {
+@@ -7393,12 +7245,14 @@ class FlagsStateSingleton : public flags_ui::FlagsState::Delegate {
    }
  
    void RebuildState(const std::vector<flags_ui::FeatureEntry>& entries) {
 -    flags_state_ = std::make_unique<flags_ui::FlagsState>(entries, this);
 +    flags_state_ = std::make_unique<flags_ui::FlagsState>(
 +        entries, GetDumbFeatureEntries(), this);
+   }
+ 
+   void RestoreDefaultState() {
+     flags_state_ =
+-        std::make_unique<flags_ui::FlagsState>(kFeatureEntries, this);
++        std::make_unique<flags_ui::FlagsState>(
++            kFeatureEntries, GetDumbFeatureEntries(), this);
    }
  
   private:

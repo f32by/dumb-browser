@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.cc
-index 5931c21d719c7..f3c2a0925d1ba 100644
+index 05291896076ed..23747c7ad03ac 100644
 --- a/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.cc
 +++ b/third_party/blink/renderer/modules/canvas/offscreencanvas2d/offscreen_canvas_rendering_context_2d.cc
-@@ -387,8 +387,6 @@ String OffscreenCanvasRenderingContext2D::font() const {
+@@ -399,8 +399,6 @@ String OffscreenCanvasRenderingContext2D::font() const {
  void OffscreenCanvasRenderingContext2D::setFont(const String& new_font) {
    if (GetState().HasRealizedFont() && new_font == GetState().UnparsedFont())
      return;
@@ -11,7 +11,7 @@ index 5931c21d719c7..f3c2a0925d1ba 100644
  
    base::TimeTicks start_time = base::TimeTicks::Now();
    OffscreenFontCache& font_cache = GetOffscreenFontCache();
-@@ -635,14 +633,6 @@ void OffscreenCanvasRenderingContext2D::DrawTextInternal(
+@@ -651,14 +649,6 @@ void OffscreenCanvasRenderingContext2D::DrawTextInternal(
    if (max_width && (!std::isfinite(*max_width) || *max_width <= 0))
      return;
  

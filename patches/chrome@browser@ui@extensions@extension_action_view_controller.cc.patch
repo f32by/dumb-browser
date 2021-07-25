@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/extensions/extension_action_view_controller.cc b/chrome/browser/ui/extensions/extension_action_view_controller.cc
-index 730629846a523..303de7bc1ad35 100644
+index f15dba73a0b60..c52528221c329 100644
 --- a/chrome/browser/ui/extensions/extension_action_view_controller.cc
 +++ b/chrome/browser/ui/extensions/extension_action_view_controller.cc
 @@ -28,6 +28,7 @@
@@ -8,9 +8,9 @@ index 730629846a523..303de7bc1ad35 100644
  #include "components/sessions/content/session_tab_helper.h"
 +#include "dumb/browser/ui/ui_features.h"
  #include "extensions/browser/extension_action.h"
+ #include "extensions/browser/extension_action_manager.h"
  #include "extensions/browser/extension_registry.h"
- #include "extensions/common/api/extension_action/action_info.h"
-@@ -236,7 +237,8 @@ bool ExtensionActionViewController::ExecuteAction(PopupShowAction show_action,
+@@ -258,7 +259,8 @@ bool ExtensionActionViewController::ExecuteAction(PopupShowAction show_action,
    if (!action_runner)
      return false;
  

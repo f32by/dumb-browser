@@ -21,6 +21,7 @@
 #include "base/bind.h"
 #include "base/component_export.h"
 #include "base/containers/span.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "url/gurl.h"
 
 namespace net {
@@ -36,12 +37,12 @@ struct URLPurifyRule;
 namespace dumb {
 
 struct URLPurifyResult {
-  URLPurifyResult(base::Optional<GURL> new_url, int count);
+  URLPurifyResult(absl::optional<GURL> new_url, int count);
   ~URLPurifyResult();
 
   URLPurifyResult(const URLPurifyResult&);
 
-  base::Optional<GURL> new_url;
+  absl::optional<GURL> new_url;
   int count;
 };
 
@@ -59,7 +60,7 @@ public:
     return url_matcher_.get();
   }
 
-  const base::Optional<re2::RE2*>& url_exception_matcher() const {
+  const absl::optional<re2::RE2*>& url_exception_matcher() const {
     return url_exception_matcher_;
   }
 
@@ -70,7 +71,7 @@ public:
 private:
   std::string name_;
   std::unique_ptr<re2::RE2> url_matcher_;
-  base::Optional<re2::RE2*> url_exception_matcher_;
+  absl::optional<re2::RE2*> url_exception_matcher_;
   std::vector<std::unique_ptr<re2::RE2>> query_matchers_;
 };
 

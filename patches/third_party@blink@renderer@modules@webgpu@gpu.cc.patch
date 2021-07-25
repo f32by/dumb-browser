@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/webgpu/gpu.cc b/third_party/blink/renderer/modules/webgpu/gpu.cc
-index 1ed933f92c682..aa3e1f134f263 100644
+index e3be8df8fb637..d7a4132840e61 100644
 --- a/third_party/blink/renderer/modules/webgpu/gpu.cc
 +++ b/third_party/blink/renderer/modules/webgpu/gpu.cc
 @@ -7,9 +7,6 @@
@@ -12,15 +12,15 @@ index 1ed933f92c682..aa3e1f134f263 100644
  #include "third_party/blink/public/platform/platform.h"
  #include "third_party/blink/public/platform/web_graphics_context_3d_provider.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
-@@ -21,7 +18,6 @@
- #include "third_party/blink/renderer/modules/webgpu/gpu_adapter.h"
+@@ -23,7 +20,6 @@
  #include "third_party/blink/renderer/platform/graphics/gpu/dawn_control_client_holder.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
+ #include "third_party/blink/renderer/platform/instrumentation/use_counter.h"
 -#include "third_party/blink/renderer/platform/privacy_budget/identifiability_digest_helpers.h"
  #include "third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h"
  #include "third_party/blink/renderer/platform/scheduler/public/thread.h"
  #include "third_party/blink/renderer/platform/weborigin/kurl.h"
-@@ -131,43 +127,9 @@ void GPU::OnRequestAdapterCallback(ScriptState* script_state,
+@@ -133,10 +129,10 @@ void GPU::OnRequestAdapterCallback(ScriptState* script_state,
          mojom::blink::ConsoleMessageLevel::kWarning, error_message);
      execution_context->AddConsoleMessage(console_message);
    }
@@ -28,39 +28,15 @@ index 1ed933f92c682..aa3e1f134f263 100644
    resolver->Resolve(adapter);
  }
  
--void GPU::RecordAdapterForIdentifiability(
--    ScriptState* script_state,
--    const GPURequestAdapterOptions* options,
--    GPUAdapter* adapter) const {
--  constexpr IdentifiableSurface::Type type =
--      IdentifiableSurface::Type::kGPU_RequestAdapter;
--  if (!IdentifiabilityStudySettings::Get()->ShouldSample(type))
--    return;
--  ExecutionContext* context = GetExecutionContext();
--  if (!context)
--    return;
--
--  IdentifiableTokenBuilder input_builder;
--  if (options && options->hasPowerPreference()) {
--    input_builder.AddToken(
--        IdentifiabilityBenignStringToken(options->powerPreference()));
--  }
--  const auto surface =
--      IdentifiableSurface::FromTypeAndToken(type, input_builder.GetToken());
--
--  IdentifiableTokenBuilder output_builder;
--  if (adapter) {
--    output_builder.AddToken(IdentifiabilityBenignStringToken(adapter->name()));
--    for (const auto& feature : adapter->features()) {
--      output_builder.AddToken(IdentifiabilityBenignStringToken(feature));
--    }
--  }
--
--  IdentifiabilityMetricBuilder(context->UkmSourceID())
--      .Set(surface, output_builder.GetToken())
--      .Record(context->UkmRecorder());
--}
--
++#if 0
+ void GPU::RecordAdapterForIdentifiability(
+     ScriptState* script_state,
+     const GPURequestAdapterOptions* options,
+@@ -169,6 +165,7 @@ void GPU::RecordAdapterForIdentifiability(
+       .Set(surface, output_builder.GetToken())
+       .Record(context->UkmRecorder());
+ }
++#endif
+ 
  ScriptPromise GPU::requestAdapter(ScriptState* script_state,
                                    const GPURequestAdapterOptions* options) {
-   auto* resolver = MakeGarbageCollected<ScriptPromiseResolver>(script_state);

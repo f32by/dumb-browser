@@ -1,12 +1,13 @@
 diff --git a/components/autofill_assistant/browser/BUILD.gn b/components/autofill_assistant/browser/BUILD.gn
-index 228e0c03b7f54..9f635b89f9475 100644
+index 7498c5f33dde6..a32e99660139c 100644
 --- a/components/autofill_assistant/browser/BUILD.gn
 +++ b/components/autofill_assistant/browser/BUILD.gn
-@@ -270,13 +270,10 @@ static_library("browser") {
+@@ -282,14 +282,11 @@ static_library("browser") {
      "//components/password_manager/core/browser/form_parsing:form_parsing",
      "//components/signin/public/identity_manager",
      "//components/strings:components_strings_grit",
 -    "//components/ukm/content:content",
+     "//components/url_matcher",
      "//components/version_info",
      "//content/public/browser",
      "//google_apis",
@@ -16,12 +17,3 @@ index 228e0c03b7f54..9f635b89f9475 100644
      "//third_party/re2",
    ]
  }
-@@ -425,8 +422,6 @@ source_set("unit_tests") {
-     "//components/password_manager/core/browser:test_support",
-     "//components/password_manager/core/common",
-     "//components/strings:components_strings_grit",
--    "//components/ukm:test_support",
--    "//components/ukm/content:content",
-     "//components/version_info",
-     "//content/test:test_support",
-     "//services/network:test_support",

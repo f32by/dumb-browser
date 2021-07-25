@@ -1,11 +1,11 @@
 diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
-index cd02ccc12a9d0..df3a3b765f75d 100644
+index f6b6c8969b57b..3a513386c8ad0 100644
 --- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
 +++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.h
-@@ -17,18 +17,18 @@
+@@ -14,12 +14,11 @@
+ #include "base/time/time.h"
+ #include "chrome/browser/search/background/ntp_background_service_observer.h"
  #include "chrome/browser/search/instant_service_observer.h"
- #include "chrome/browser/search/one_google_bar/one_google_bar_service.h"
- #include "chrome/browser/search/one_google_bar/one_google_bar_service_observer.h"
 -#include "chrome/browser/search/promos/promo_service.h"
 -#include "chrome/browser/search/promos/promo_service_observer.h"
  #include "chrome/browser/ui/search/ntp_user_data_logger.h"
@@ -16,51 +16,52 @@ index cd02ccc12a9d0..df3a3b765f75d 100644
  #include "components/search_provider_logos/logo_common.h"
  #include "content/public/browser/web_contents_observer.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
- #include "mojo/public/cpp/bindings/pending_remote.h"
+@@ -27,6 +26,7 @@
  #include "mojo/public/cpp/bindings/receiver.h"
  #include "mojo/public/cpp/bindings/remote.h"
+ #include "third_party/abseil-cpp/absl/types/optional.h"
 +#include "services/network/public/cpp/simple_url_loader.h"
  #include "ui/shell_dialogs/select_file_dialog.h"
  
  class GURL;
-@@ -49,8 +49,7 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -46,8 +46,7 @@ class LogoService;
+ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
                            public InstantServiceObserver,
                            public NtpBackgroundServiceObserver,
-                           public OneGoogleBarServiceObserver,
 -                          public ui::SelectFileDialog::Listener,
 -                          public PromoServiceObserver {
 +                          public ui::SelectFileDialog::Listener {
   public:
    NewTabPageHandler(mojo::PendingReceiver<new_tab_page::mojom::PageHandler>
                          pending_page_handler,
-@@ -96,7 +95,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -91,7 +90,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+   void GetDoodle(GetDoodleCallback callback) override;
+   void ChooseLocalCustomBackground(
        ChooseLocalCustomBackgroundCallback callback) override;
-   void GetOneGoogleBarParts(const std::string& ogdeb_value,
-                             GetOneGoogleBarPartsCallback callback) override;
 -  void GetPromo(GetPromoCallback callback) override;
    void OnDismissModule(const std::string& module_id) override;
    void OnRestoreModule(const std::string& module_id) override;
    void SetModulesVisible(bool visible) override;
-@@ -108,8 +106,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -103,8 +101,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
        std::vector<new_tab_page::mojom::MostVisitedTilePtr> tiles,
        double time) override;
    void OnOneGoogleBarRendered(double time) override;
 -  void OnPromoRendered(double time,
--                       const base::Optional<GURL>& log_url) override;
+-                       const absl::optional<GURL>& log_url) override;
    void OnMostVisitedTileNavigation(new_tab_page::mojom::MostVisitedTilePtr tile,
                                     uint32_t index,
                                     uint8_t mouse_button,
-@@ -128,7 +124,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -123,7 +119,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
    void OnDoodleShared(new_tab_page::mojom::DoodleShareChannel channel,
                        const std::string& doodle_id,
-                       const base::Optional<std::string>& share_id) override;
+                       const absl::optional<std::string>& share_id) override;
 -  void OnPromoLinkClicked() override;
-   void OnVoiceSearchAction(
-       new_tab_page::mojom::VoiceSearchAction action) override;
-   void OnVoiceSearchError(new_tab_page::mojom::VoiceSearchError error) override;
-@@ -148,10 +143,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
-   void OnOneGoogleBarDataUpdated() override;
-   void OnOneGoogleBarServiceShuttingDown() override;
+ 
+  private:
+   // InstantServiceObserver:
+@@ -136,10 +131,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+   void OnNextCollectionImageAvailable() override;
+   void OnNtpBackgroundServiceShuttingDown() override;
  
 -  // PromoServiceObserver:
 -  void OnPromoDataUpdated() override;
@@ -69,7 +70,7 @@ index cd02ccc12a9d0..df3a3b765f75d 100644
    // SelectFileDialog::Listener:
    void FileSelected(const base::FilePath& path,
                      int index,
-@@ -199,11 +190,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
+@@ -183,11 +174,6 @@ class NewTabPageHandler : public new_tab_page::mojom::PageHandler,
    std::unordered_map<const network::SimpleURLLoader*,
                       std::unique_ptr<network::SimpleURLLoader>>
        loader_map_;
@@ -77,7 +78,7 @@ index cd02ccc12a9d0..df3a3b765f75d 100644
 -  PromoService* promo_service_;
 -  base::ScopedObservation<PromoService, PromoServiceObserver>
 -      promo_service_observation_{this};
--  base::Optional<base::TimeTicks> promo_load_start_time_;
+-  absl::optional<base::TimeTicks> promo_load_start_time_;
  
    // These are located at the end of the list of member variables to ensure the
    // WebUI page is disconnected before other members are destroyed.

@@ -1,15 +1,13 @@
 diff --git a/chrome/browser/download/download_item_model.cc b/chrome/browser/download/download_item_model.cc
-index c83a001251351..9c9deed2a86e4 100644
+index ae6e5b168807f..6bc82b4e861ee 100644
 --- a/chrome/browser/download/download_item_model.cc
 +++ b/chrome/browser/download/download_item_model.cc
-@@ -23,21 +23,16 @@
- #include "chrome/browser/download/download_crx_util.h"
- #include "chrome/browser/download/download_history.h"
+@@ -25,20 +25,13 @@
  #include "chrome/browser/download/download_prefs.h"
--#include "chrome/browser/download/download_stats.h"
+ #include "chrome/browser/download/download_stats.h"
  #include "chrome/browser/download/offline_item_utils.h"
- #include "chrome/browser/enterprise/connectors/common.h"
- #include "chrome/browser/enterprise/connectors/connectors_manager.h"
+-#include "chrome/browser/enterprise/connectors/common.h"
+-#include "chrome/browser/enterprise/connectors/connectors_manager.h"
  #include "chrome/browser/profiles/profile.h"
 -#include "chrome/browser/safe_browsing/download_protection/deep_scanning_request.h"
 -#include "chrome/browser/safe_browsing/download_protection/download_feedback_service.h"
@@ -19,12 +17,13 @@ index c83a001251351..9c9deed2a86e4 100644
  #include "components/download/public/common/download_interrupt_reasons.h"
  #include "components/download/public/common/download_item.h"
  #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/content/web_ui/safe_browsing_ui.h"
 -#include "components/safe_browsing/core/file_type_policies.h"
 -#include "components/safe_browsing/core/proto/download_file_types.pb.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/download_item_utils.h"
- #include "ui/base/l10n/l10n_util.h"
- #include "ui/base/l10n/time_format.h"
-@@ -50,7 +45,6 @@
+@@ -53,7 +46,6 @@
  using base::TimeDelta;
  using download::DownloadItem;
  using MixedContentStatus = download::DownloadItem::MixedContentStatus;
@@ -32,7 +31,7 @@ index c83a001251351..9c9deed2a86e4 100644
  
  namespace {
  
-@@ -80,10 +74,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
+@@ -83,10 +75,6 @@ class DownloadItemModelData : public base::SupportsUserData::Data {
    // for the file type.
    bool should_prefer_opening_in_browser_;
  
@@ -43,15 +42,15 @@ index c83a001251351..9c9deed2a86e4 100644
    // Whether the download is currently being revived.
    bool is_being_revived_;
  
-@@ -119,7 +109,6 @@ DownloadItemModelData::DownloadItemModelData()
+@@ -122,7 +110,6 @@ DownloadItemModelData::DownloadItemModelData()
      : should_show_in_shelf_(true),
        was_ui_notified_(false),
        should_prefer_opening_in_browser_(false),
 -      danger_level_(DownloadFileType::NOT_DANGEROUS),
        is_being_revived_(false) {}
  
- } // namespace
-@@ -268,14 +257,7 @@ bool DownloadItemModel::IsMixedContent() const {
+ }  // namespace
+@@ -272,14 +259,7 @@ bool DownloadItemModel::IsMixedContent() const {
  }
  
  bool DownloadItemModel::ShouldAllowDownloadFeedback() const {
@@ -66,7 +65,7 @@ index c83a001251351..9c9deed2a86e4 100644
  }
  
  bool DownloadItemModel::ShouldRemoveFromShelfWhenComplete() const {
-@@ -372,17 +354,6 @@ void DownloadItemModel::SetShouldPreferOpeningInBrowser(bool preference) {
+@@ -376,17 +356,6 @@ void DownloadItemModel::SetShouldPreferOpeningInBrowser(bool preference) {
    data->should_prefer_opening_in_browser_ = preference;
  }
  
@@ -84,7 +83,7 @@ index c83a001251351..9c9deed2a86e4 100644
  download::DownloadItem::MixedContentStatus
  DownloadItemModel::GetMixedContentStatus() const {
    return download_->GetMixedContentStatus();
-@@ -518,7 +489,6 @@ void DownloadItemModel::OpenUsingPlatformHandler() {
+@@ -526,7 +495,6 @@ void DownloadItemModel::OpenUsingPlatformHandler() {
    if (!delegate)
      return;
    delegate->OpenDownloadUsingPlatformHandler(download_);
@@ -92,7 +91,7 @@ index c83a001251351..9c9deed2a86e4 100644
  }
  
  #if !defined(OS_ANDROID)
-@@ -539,9 +509,6 @@ bool DownloadItemModel::IsCommandEnabled(
+@@ -547,9 +515,6 @@ bool DownloadItemModel::IsCommandEnabled(
        // filename. Don't base an "Always open" decision based on it. Also
        // exclude extensions.
        return download_->CanOpenDownload() &&
@@ -102,7 +101,7 @@ index c83a001251351..9c9deed2a86e4 100644
               !download_crx_util::IsExtensionDownload(*download_);
      case DownloadCommands::PAUSE:
        return !download_->IsSavePackageDownload() &&
-@@ -702,31 +669,6 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
+@@ -722,31 +687,6 @@ void DownloadItemModel::ExecuteCommand(DownloadCommands* download_commands,
        DownloadUIModel::ExecuteCommand(download_commands, command);
        break;
      case DownloadCommands::DEEP_SCAN:

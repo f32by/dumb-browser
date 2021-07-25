@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
-index 95402a4dbae0e..9530070926272 100644
+index 01097a03d3653..c636884c64ce6 100644
 --- a/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 +++ b/third_party/blink/renderer/core/html/canvas/html_canvas_element.cc
 @@ -41,10 +41,6 @@
@@ -48,23 +48,32 @@ index 95402a4dbae0e..9530070926272 100644
  CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
      const String& type,
      const CanvasContextCreationAttributesCore& attributes) {
-@@ -287,15 +262,6 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
+@@ -287,6 +262,7 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
    auto* result = GetCanvasRenderingContextInternal(type, attributes);
  
    Document& doc = GetDocument();
--  if (IdentifiabilityStudySettings::Get()->ShouldSample(
--          IdentifiableSurface::Type::kCanvasRenderingContext)) {
--    IdentifiabilityMetricBuilder(doc.UkmSourceID())
--        .Set(IdentifiableSurface::FromTypeAndToken(
--                 IdentifiableSurface::Type::kCanvasRenderingContext,
--                 CanvasRenderingContext::ContextTypeFromId(type)),
--             !!result)
--        .Record(doc.UkmRecorder());
--  }
++#if 0
+   if (IdentifiabilityStudySettings::Get()->ShouldSample(
+           IdentifiableSurface::Type::kCanvasRenderingContext)) {
+     IdentifiabilityMetricBuilder(doc.UkmSourceID())
+@@ -297,6 +273,7 @@ CanvasRenderingContext* HTMLCanvasElement::GetCanvasRenderingContext(
+              !!result)
+         .Record(doc.UkmRecorder());
+   }
++#endif
    if (attributes.color_space != kSRGBCanvasColorSpaceName ||
        attributes.pixel_format != kUint8CanvasPixelFormatName) {
      UseCounter::Count(doc, WebFeature::kCanvasUseColorSpace);
-@@ -967,7 +933,6 @@ String HTMLCanvasElement::ToDataURLInternal(
+@@ -849,7 +826,7 @@ bool HTMLCanvasElement::IsPrinting() const {
+ }
+ 
+ UkmParameters HTMLCanvasElement::GetUkmParameters() {
+-  return {GetDocument().UkmRecorder(), GetDocument().UkmSourceID()};
++  return {nullptr, ukm::kInvalidSourceId};
+ }
+ 
+ void HTMLCanvasElement::SetSurfaceSize(const IntSize& size) {
+@@ -955,7 +932,6 @@ String HTMLCanvasElement::ToDataURLInternal(
        // Currently we only support three encoding types.
        NOTREACHED();
      }
@@ -72,7 +81,7 @@ index 95402a4dbae0e..9530070926272 100644
      return data_url;
    }
  
-@@ -1033,11 +998,7 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
+@@ -1021,11 +997,7 @@ void HTMLCanvasElement::toBlob(V8BlobCallback* callback,
      async_creator = MakeGarbageCollected<CanvasAsyncBlobCreator>(
          image_bitmap, options,
          CanvasAsyncBlobCreator::kHTMLCanvasToBlobCallback, callback, start_time,

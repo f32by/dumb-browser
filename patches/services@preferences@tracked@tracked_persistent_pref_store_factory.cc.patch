@@ -1,50 +1,43 @@
 diff --git a/services/preferences/tracked/tracked_persistent_pref_store_factory.cc b/services/preferences/tracked/tracked_persistent_pref_store_factory.cc
-index 4d1357299bc99..f45522ebe12c3 100644
+index 2f4cf305c0ba1..31ac0004cf9c3 100644
 --- a/services/preferences/tracked/tracked_persistent_pref_store_factory.cc
 +++ b/services/preferences/tracked/tracked_persistent_pref_store_factory.cc
-@@ -14,7 +14,6 @@
- #include "components/prefs/json_pref_store.h"
+@@ -15,7 +15,6 @@
  #include "components/prefs/pref_filter.h"
+ #include "components/prefs/segregated_pref_store.h"
  #include "mojo/public/cpp/bindings/remote.h"
 -#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
  #include "services/preferences/tracked/pref_hash_filter.h"
  #include "services/preferences/tracked/pref_hash_store_impl.h"
- #include "services/preferences/tracked/segregated_pref_store.h"
-@@ -100,22 +99,18 @@ PersistentPrefStore* CreateTrackedPersistentPrefStore(
+ #include "services/preferences/tracked/temp_scoped_dir_cleaner.h"
+@@ -100,24 +99,18 @@ PersistentPrefStore* CreateTrackedPersistentPrefStore(
    }
  #endif
  
 -  mojo::Remote<prefs::mojom::TrackedPreferenceValidationDelegate>
 -      validation_delegate;
 -  validation_delegate.Bind(std::move(config->validation_delegate));
+-  auto validation_delegate_ref = base::MakeRefCounted<base::RefCountedData<
+-      mojo::Remote<prefs::mojom::TrackedPreferenceValidationDelegate>>>(
+-      std::move(validation_delegate));
    std::unique_ptr<PrefHashFilter> unprotected_pref_hash_filter(
        new PrefHashFilter(CreatePrefHashStore(*config, false),
                           GetExternalVerificationPrefHashStorePair(
                               *config, temp_scoped_dir_cleaner),
                           unprotected_configuration, mojo::NullRemote(),
--                         validation_delegate.get(),
-                          config->reporting_ids_count));
+-                         validation_delegate_ref, config->reporting_ids_count));
++                         config->reporting_ids_count));
    std::unique_ptr<PrefHashFilter> protected_pref_hash_filter(new PrefHashFilter(
        CreatePrefHashStore(*config, true),
        GetExternalVerificationPrefHashStorePair(*config,
                                                 temp_scoped_dir_cleaner),
        protected_configuration, std::move(config->reset_on_load_observer),
--      validation_delegate.get(), config->reporting_ids_count));
+-      validation_delegate_ref, config->reporting_ids_count));
 +      config->reporting_ids_count));
  
    PrefHashFilter* raw_unprotected_pref_hash_filter =
        unprotected_pref_hash_filter.get();
-@@ -143,8 +138,7 @@ PersistentPrefStore* CreateTrackedPersistentPrefStore(
-       raw_unprotected_pref_hash_filter, raw_protected_pref_hash_filter);
- 
-   return new SegregatedPrefStore(unprotected_pref_store, protected_pref_store,
--                                 protected_pref_names,
--                                 std::move(validation_delegate));
-+                                 protected_pref_names);
- }
- 
- void InitializeMasterPrefsTracking(
-@@ -153,7 +147,7 @@ void InitializeMasterPrefsTracking(
+@@ -155,7 +148,7 @@ void InitializeMasterPrefsTracking(
    PrefHashFilter(
        CreatePrefHashStore(*configuration, false),
        GetExternalVerificationPrefHashStorePair(*configuration, nullptr),

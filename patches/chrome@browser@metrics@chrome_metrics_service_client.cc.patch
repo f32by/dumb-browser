@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.cc b/chrome/browser/metrics/chrome_metrics_service_client.cc
-index 52c6a8e9b1a73..19760f0a3dd97 100644
+index 77169b176b457..18cc939f9458a 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.cc
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.cc
-@@ -41,21 +41,10 @@
+@@ -41,22 +41,10 @@
  #include "chrome/browser/chrome_notification_types.h"
  #include "chrome/browser/google/google_brand.h"
  #include "chrome/browser/history/history_service_factory.h"
@@ -21,10 +21,11 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
 -#include "chrome/browser/privacy_budget/privacy_budget_ukm_entry_filter.h"
  #include "chrome/browser/profiles/profile_manager.h"
 -#include "chrome/browser/safe_browsing/certificate_reporting_metrics_provider.h"
+-#include "chrome/browser/safe_browsing/metrics/safe_browsing_metrics_provider.h"
  #include "chrome/browser/sync/device_info_sync_service_factory.h"
  #include "chrome/browser/sync/profile_sync_service_factory.h"
  #include "chrome/browser/tracing/background_tracing_metrics_provider.h"
-@@ -69,41 +58,17 @@
+@@ -70,41 +58,17 @@
  #include "chrome/common/pref_names.h"
  #include "components/crash/core/common/crash_keys.h"
  #include "components/history/core/browser/history_service.h"
@@ -66,7 +67,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  #include "components/version_info/version_info.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
-@@ -120,7 +85,6 @@
+@@ -121,7 +85,6 @@
  #include "chrome/browser/metrics/page_load_metrics_provider.h"
  #include "components/metrics/android_metrics_provider.h"
  #else
@@ -74,7 +75,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  #endif
  
  #if defined(OS_POSIX)
-@@ -138,10 +102,6 @@
+@@ -139,10 +102,6 @@
  #include "extensions/common/extension.h"
  #endif
  
@@ -85,7 +86,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  #if BUILDFLAG(IS_CHROMEOS_LACROS)
  #include "chrome/browser/metrics/lacros_metrics_provider.h"
  #endif
-@@ -189,6 +149,7 @@
+@@ -190,6 +149,7 @@
  #include "chrome/browser/metrics/power/power_metrics_provider_mac.h"
  #endif
  
@@ -93,7 +94,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  namespace {
  
  #if defined(OS_ANDROID) || BUILDFLAG(IS_CHROMEOS_ASH)
-@@ -438,15 +399,18 @@ MakeDemographicMetricsProvider(
+@@ -439,15 +399,18 @@ MakeDemographicMetricsProvider(
  }
  
  }  // namespace
@@ -112,7 +113,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  }
  
  ChromeMetricsServiceClient::~ChromeMetricsServiceClient() {
-@@ -468,6 +432,7 @@ std::unique_ptr<ChromeMetricsServiceClient> ChromeMetricsServiceClient::Create(
+@@ -469,6 +432,7 @@ std::unique_ptr<ChromeMetricsServiceClient> ChromeMetricsServiceClient::Create(
  // static
  void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
    metrics::MetricsService::RegisterPrefs(registry);
@@ -120,7 +121,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
    ukm::UkmService::RegisterPrefs(registry);
    metrics::StabilityMetricsHelper::RegisterPrefs(registry);
    prefs::RegisterPrivacyBudgetPrefs(registry);
-@@ -483,15 +448,18 @@ void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
+@@ -484,15 +448,18 @@ void ChromeMetricsServiceClient::RegisterPrefs(PrefRegistrySimple* registry) {
  #if BUILDFLAG(ENABLE_PLUGINS)
    PluginMetricsProvider::RegisterPrefs(registry);
  #endif  // BUILDFLAG(ENABLE_PLUGINS)
@@ -137,9 +138,9 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  }
 +#endif
  
- void ChromeMetricsServiceClient::SetMetricsClientId(
-     const std::string& client_id) {
-@@ -522,6 +490,7 @@ std::string ChromeMetricsServiceClient::GetVersionString() {
+ bool ChromeMetricsServiceClient::ShouldUploadMetricsForUserId(
+     const uint64_t user_id) {
+@@ -528,6 +495,7 @@ std::string ChromeMetricsServiceClient::GetVersionString() {
    return metrics::GetVersionString();
  }
  
@@ -147,7 +148,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  void ChromeMetricsServiceClient::OnEnvironmentUpdate(std::string* environment) {
  #if defined(OS_WIN) || defined(OS_MAC) || defined(OS_ANDROID)
    DCHECK(environment);
-@@ -589,6 +558,7 @@ ChromeMetricsServiceClient::GetMetricsReportingDefaultState() {
+@@ -595,6 +563,7 @@ ChromeMetricsServiceClient::GetMetricsReportingDefaultState() {
    return metrics::GetMetricsReportingDefaultState(
        g_browser_process->local_state());
  }
@@ -155,7 +156,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  
  void ChromeMetricsServiceClient::Initialize() {
    PrefService* local_state = g_browser_process->local_state();
-@@ -596,6 +566,7 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -602,6 +571,7 @@ void ChromeMetricsServiceClient::Initialize() {
    metrics_service_ = std::make_unique<metrics::MetricsService>(
        metrics_state_manager_, this, local_state);
  
@@ -163,7 +164,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
    notification_listeners_active_ = RegisterForNotifications();
    RegisterMetricsServiceProviders();
  
-@@ -620,8 +591,10 @@ void ChromeMetricsServiceClient::Initialize() {
+@@ -626,8 +596,10 @@ void ChromeMetricsServiceClient::Initialize() {
    metrics::structured::Recorder::GetInstance()->SetUiTaskRunner(
        base::SequencedTaskRunnerHandle::Get());
  #endif
@@ -174,7 +175,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  void ChromeMetricsServiceClient::RegisterMetricsServiceProviders() {
    PrefService* local_state = g_browser_process->local_state();
  
-@@ -1025,6 +998,7 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
+@@ -1036,6 +1008,7 @@ bool ChromeMetricsServiceClient::RegisterForProfileEvents(Profile* profile) {
    StartObserving(sync, profile->GetPrefs());
    return true;
  }
@@ -182,7 +183,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  
  void ChromeMetricsServiceClient::Observe(
      int type,
-@@ -1037,10 +1011,10 @@ void ChromeMetricsServiceClient::Observe(
+@@ -1048,10 +1021,10 @@ void ChromeMetricsServiceClient::Observe(
      case content::NOTIFICATION_LOAD_START:
      case content::NOTIFICATION_RENDERER_PROCESS_CLOSED:
      case content::NOTIFICATION_RENDER_WIDGET_HOST_HANG:
@@ -194,7 +195,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
        bool success =
            RegisterForProfileEvents(content::Source<Profile>(source).ptr());
        // On failure, set |notification_listeners_active_| to false which will
-@@ -1049,6 +1023,7 @@ void ChromeMetricsServiceClient::Observe(
+@@ -1060,6 +1033,7 @@ void ChromeMetricsServiceClient::Observe(
          notification_listeners_active_ = false;
          UpdateRunningServices();
        }
@@ -202,7 +203,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
        break;
      }
  
-@@ -1057,6 +1032,7 @@ void ChromeMetricsServiceClient::Observe(
+@@ -1068,6 +1042,7 @@ void ChromeMetricsServiceClient::Observe(
    }
  }
  
@@ -210,7 +211,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  void ChromeMetricsServiceClient::OnURLOpenedFromOmnibox(OmniboxLog* log) {
    metrics_service_->OnApplicationNotIdle();
  }
-@@ -1145,6 +1121,7 @@ bool ChromeMetricsServiceClient::IsUkmAllowedForAllProfiles() {
+@@ -1156,6 +1131,7 @@ bool ChromeMetricsServiceClient::IsUkmAllowedForAllProfiles() {
  bool ChromeMetricsServiceClient::IsUkmAllowedWithExtensionsForAllProfiles() {
    return UkmConsentStateObserver::IsUkmAllowedWithExtensionsForAllProfiles();
  }
@@ -218,7 +219,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  
  bool g_notification_listeners_failed = false;
  void ChromeMetricsServiceClient::SetNotificationListenerSetupFailedForTesting(
-@@ -1152,6 +1129,7 @@ void ChromeMetricsServiceClient::SetNotificationListenerSetupFailedForTesting(
+@@ -1163,6 +1139,7 @@ void ChromeMetricsServiceClient::SetNotificationListenerSetupFailedForTesting(
    g_notification_listeners_failed = simulate_failure;
  }
  
@@ -226,7 +227,7 @@ index 52c6a8e9b1a73..19760f0a3dd97 100644
  bool ChromeMetricsServiceClient::
      AreNotificationListenersEnabledOnAllProfiles() {
    // For testing
-@@ -1159,17 +1137,20 @@ bool ChromeMetricsServiceClient::
+@@ -1170,17 +1147,20 @@ bool ChromeMetricsServiceClient::
      return false;
    return notification_listeners_active_;
  }

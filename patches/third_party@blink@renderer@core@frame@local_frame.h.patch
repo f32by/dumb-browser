@@ -1,16 +1,16 @@
 diff --git a/third_party/blink/renderer/core/frame/local_frame.h b/third_party/blink/renderer/core/frame/local_frame.h
-index 38ad1f729ffc7..82b86709a88d0 100644
+index 777647d822d32..60f81df2c6524 100644
 --- a/third_party/blink/renderer/core/frame/local_frame.h
 +++ b/third_party/blink/renderer/core/frame/local_frame.h
-@@ -38,6 +38,7 @@
+@@ -37,6 +37,7 @@
+ #include "build/build_config.h"
  #include "mojo/public/cpp/bindings/pending_associated_receiver.h"
  #include "mojo/public/cpp/bindings/pending_receiver.h"
- #include "mojo/public/cpp/bindings/unique_receiver_set.h"
 +#include "net/net_buildflags.h"
+ #include "third_party/blink/public/common/frame/frame_ad_evidence.h"
  #include "third_party/blink/public/common/frame/payment_request_token.h"
  #include "third_party/blink/public/common/frame/transient_allow_fullscreen.h"
- #include "third_party/blink/public/mojom/blob/blob_url_store.mojom-blink.h"
-@@ -538,7 +539,9 @@ class CORE_EXPORT LocalFrame final
+@@ -541,7 +542,9 @@ class CORE_EXPORT LocalFrame final
  
    SmoothScrollSequencer& GetSmoothScrollSequencer();
  
@@ -20,7 +20,7 @@ index 38ad1f729ffc7..82b86709a88d0 100644
  
    // Returns the frame host ptr. The interface returned is backed by an
    // associated interface with the legacy Chrome IPC channel.
-@@ -956,8 +959,10 @@ class CORE_EXPORT LocalFrame final
+@@ -1019,8 +1022,10 @@ class CORE_EXPORT LocalFrame final
    // const methods.
    //
    // LocalFrame can be reused by multiple ExecutionContext.

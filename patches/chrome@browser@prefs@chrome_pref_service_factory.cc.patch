@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/prefs/chrome_pref_service_factory.cc b/chrome/browser/prefs/chrome_pref_service_factory.cc
-index a2f062d51b6cd..6fccc4c06233c 100644
+index 13c1aaf3ce959..c5837aac6debf 100644
 --- a/chrome/browser/prefs/chrome_pref_service_factory.cc
 +++ b/chrome/browser/prefs/chrome_pref_service_factory.cc
 @@ -48,7 +48,6 @@
@@ -19,7 +19,7 @@ index a2f062d51b6cd..6fccc4c06233c 100644
  #if defined(OS_WIN)
      {19, prefs::kSwReporterPromptVersion, EnforcementLevel::ENFORCE_ON_LOAD,
       PrefTrackingStrategy::ATOMIC, ValueType::IMPERSONAL},
-@@ -383,8 +380,6 @@ std::unique_ptr<PrefService> CreateLocalState(
+@@ -382,8 +379,6 @@ std::unique_ptr<PrefService> CreateLocalState(
  
  std::unique_ptr<sync_preferences::PrefServiceSyncable> CreateProfilePrefs(
      const base::FilePath& profile_path,
@@ -28,7 +28,7 @@ index a2f062d51b6cd..6fccc4c06233c 100644
      policy::PolicyService* policy_service,
      SupervisedUserSettingsService* supervised_user_settings,
      scoped_refptr<PrefStore> extension_prefs,
-@@ -403,8 +398,7 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreateProfilePrefs(
+@@ -402,8 +397,7 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreateProfilePrefs(
        CreateProfilePrefStoreManager(profile_path)
            ->CreateProfilePrefStore(
                GetTrackingConfiguration(), kTrackedPrefsReportingIDsCount,

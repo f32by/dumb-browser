@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc b/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc
-index 8c1d65185e6f2..9b9a5908eac22 100644
+index d40f3005ab148..2163683b3a73a 100644
 --- a/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc
 +++ b/third_party/blink/renderer/modules/media_capabilities/media_capabilities.cc
-@@ -54,7 +54,6 @@
+@@ -55,7 +55,6 @@
  #include "third_party/blink/renderer/modules/encryptedmedia/media_key_system_access.h"
  #include "third_party/blink/renderer/modules/encryptedmedia/media_key_system_access_initializer_base.h"
  #include "third_party/blink/renderer/modules/encryptedmedia/media_keys_controller.h"
@@ -10,7 +10,7 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
  #include "third_party/blink/renderer/modules/media_capabilities_names.h"
  #include "third_party/blink/renderer/modules/mediarecorder/media_recorder_handler.h"
  #include "third_party/blink/renderer/platform/bindings/exception_state.h"
-@@ -149,8 +148,6 @@ ScriptPromise CreateResolvedPromiseToDecodingInfoWith(
+@@ -152,8 +151,6 @@ ScriptPromise CreateResolvedPromiseToDecodingInfoWith(
      ScriptState* script_state,
      const MediaDecodingConfiguration* config) {
    MediaCapabilitiesDecodingInfo* info = CreateDecodingInfoWith(value);
@@ -19,12 +19,12 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
    return ScriptPromise::Cast(script_state, ToV8(info, script_state));
  }
  
-@@ -647,12 +644,10 @@ void MediaCapabilities::Trace(blink::Visitor* visitor) const {
+@@ -667,12 +664,10 @@ void MediaCapabilities::Trace(blink::Visitor* visitor) const {
  MediaCapabilities::PendingCallbackState::PendingCallbackState(
      ScriptPromiseResolver* resolver,
      MediaKeySystemAccess* access,
 -    const base::TimeTicks& request_time,
--    base::Optional<IdentifiableToken> input_token)
+-    absl::optional<IdentifiableToken> input_token)
 +    const base::TimeTicks& request_time)
      : resolver(resolver),
        key_system_access(access),
@@ -34,7 +34,16 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
  
  void MediaCapabilities::PendingCallbackState::Trace(
      blink::Visitor* visitor) const {
-@@ -723,8 +718,6 @@ ScriptPromise MediaCapabilities::decodingInfo(
+@@ -736,7 +731,7 @@ ScriptPromise MediaCapabilities::decodingInfo(
+       pending_cb_map_.insert(
+           callback_id,
+           MakeGarbageCollected<MediaCapabilities::PendingCallbackState>(
+-              resolver, nullptr, request_time, absl::nullopt));
++              resolver, nullptr, request_time));
+ 
+       absl::optional<String> audio_mime_type =
+           config->hasAudio()
+@@ -797,8 +792,6 @@ ScriptPromise MediaCapabilities::decodingInfo(
        // MediaKeySystemAccess.
        MediaCapabilitiesDecodingInfo* info =
            CreateEncryptedDecodingInfoWith(false, nullptr);
@@ -43,7 +52,7 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
        return ScriptPromise::Cast(script_state, ToV8(info, script_state));
      }
    }
-@@ -1089,8 +1082,6 @@ void MediaCapabilities::GetPerfInfo(
+@@ -1163,8 +1156,6 @@ void MediaCapabilities::GetPerfInfo(
      // Audio-only is always smooth and power efficient.
      MediaCapabilitiesDecodingInfo* info = CreateDecodingInfoWith(true);
      info->setKeySystemAccess(access);
@@ -52,7 +61,7 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
      resolver->Resolve(info);
      return;
    }
-@@ -1106,8 +1097,6 @@ void MediaCapabilities::GetPerfInfo(
+@@ -1180,8 +1171,6 @@ void MediaCapabilities::GetPerfInfo(
  
    if (!EnsurePerfHistoryService(execution_context)) {
      MediaCapabilitiesDecodingInfo* info = CreateDecodingInfoWith(true);
@@ -61,7 +70,7 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
      resolver->Resolve(WrapPersistent(info));
      return;
    }
-@@ -1116,9 +1105,7 @@ void MediaCapabilities::GetPerfInfo(
+@@ -1190,9 +1179,7 @@ void MediaCapabilities::GetPerfInfo(
    pending_cb_map_.insert(
        callback_id,
        MakeGarbageCollected<MediaCapabilities::PendingCallbackState>(
@@ -72,7 +81,7 @@ index 8c1d65185e6f2..9b9a5908eac22 100644
  
    if (base::FeatureList::IsEnabled(media::kMediaLearningSmoothnessExperiment)) {
      GetPerfInfo_ML(execution_context, callback_id, video_codec, video_profile,
-@@ -1317,8 +1304,6 @@ void MediaCapabilities::ResolveCallbackIfReady(int callback_id) {
+@@ -1391,8 +1378,6 @@ void MediaCapabilities::ResolveCallbackIfReady(int callback_id) {
                          process_time);
    }
  

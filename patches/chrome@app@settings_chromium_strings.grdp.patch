@@ -1,5 +1,5 @@
 diff --git a/chrome/app/settings_chromium_strings.grdp b/chrome/app/settings_chromium_strings.grdp
-index 930da9f4afd64..7a80f3dd25837 100644
+index 010e70b5986f0..0ab11bc459298 100644
 --- a/chrome/app/settings_chromium_strings.grdp
 +++ b/chrome/app/settings_chromium_strings.grdp
 @@ -3,23 +3,23 @@
@@ -32,13 +32,7 @@ index 930da9f4afd64..7a80f3dd25837 100644
      </message>
    </if>
    <if expr="chromeos">
-@@ -39,59 +39,59 @@
- 
-   <!-- Cookie Settings Page -->
-   <message name="IDS_SETTINGS_SITE_SETTINGS_DELETE_DATA_POST_SESSION" desc="Label for the checkbox that allows the user to automatically delete their cookies and site data at the end of the browser session.">
--    Clear cookies and site data when you quit Chromium
-+    Clear cookies and site data when you quit Dumb Browser
-   </message>
+@@ -39,54 +39,54 @@
  
    <!-- Autofill Page -->
    <message name="IDS_SETTINGS_GOOGLE_PAYMENTS_CACHED" desc="Label that will be used to show that a credit card comes from Google Pay and is saved locally. This should follow the casing of the 'Google Pay' and 'Chrome' brands. 'Copied to Chromium' is short for 'The credit card is copied to Chromium'. 'Google Pay' should not be translated as it is the product name.">
@@ -109,7 +103,7 @@ index 930da9f4afd64..7a80f3dd25837 100644
      </message>
    </if>
  
-@@ -106,107 +106,107 @@
+@@ -101,41 +101,41 @@
  
    <!-- Privacy Page -->
    <message name="IDS_SETTINGS_SPELLING_PREF_DESC" desc="Description of using a web serviced to help resolve spelling errors. It is important to convey that what the user types will be sent to Google.">
@@ -146,7 +140,7 @@ index 930da9f4afd64..7a80f3dd25837 100644
    </message>
    <message name="IDS_SETTINGS_SAFETY_CHECK_UPDATES_FAILED" desc="This text describes that Chromium cannot update due to an unknown error.">
 -    Chromium didn't update, something went wrong. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Fix Chromium update problems and failed updates.<ph name="END_LINK">&lt;/a&gt;</ph>
-+    Dumb Browser didn't update, something went wrong. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Fix Dumb Browser update problems and failed updates.<ph name="END_LINK">&lt;/a&gt;</ph>
++    Dumb Browser didn't update, something went wrong. <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>Fix Chromium update problems and failed updates.<ph name="END_LINK">&lt;/a&gt;</ph>
    </message>
    <message name="IDS_SETTINGS_SAFETY_CHECK_UPDATES_UNKNOWN" desc="This text displays the installed version of Chromium when it is not possible to check for updates on non-Chrome branded browsers.">
 -    Chromium version <ph name="PRODUCT_VERSION">$1<ex>15.0.865.0</ex></ph> is installed
@@ -160,23 +154,9 @@ index 930da9f4afd64..7a80f3dd25837 100644
 -    Safe Browsing is off. Chromium recommends turning it on.
 +    Safe Browsing is off. Dumb Browser recommends turning it on.
    </message>
-   <message name="IDS_SETTINGS_SAFETY_CHECK_EXTENSIONS_ERROR" desc="This text describes that safety check could not check extensions for an unkown reason.">
--    Chromium can't check your extensions. Try again later.
-+    Dumb Browser can't check your extensions. Try again later.
-   </message>
  
    <!-- People Page -->
-   <message name="IDS_SETTINGS_SYNC_DISCONNECT_DELETE_PROFILE_WARNING_WITH_COUNTS_SINGULAR" desc="Warning message displayed in the Sign out of Chrome dialog that indicates profile browsing data will be removed from the device.">
--    This will delete 1 item from this device. To retrieve your data later, sign in to Chromium as <ph name="USER_EMAIL">$1<ex>foo@example.com</ex></ph>.
-+    This will delete 1 item from this device. To retrieve your data later, sign in to Dumb Browser as <ph name="USER_EMAIL">$1<ex>foo@example.com</ex></ph>.
-   </message>
-   <message name="IDS_SETTINGS_SYNC_DISCONNECT_DELETE_PROFILE_WARNING_WITH_COUNTS_PLURAL" desc="Warning message displayed in the Sign out of Chrome dialog that indicates profile browsing data will be removed from the device.">
--    This will delete <ph name="ITEMS_COUNT">$1<ex>66</ex></ph> items from this device. To retrieve your data later, sign in to Chromium as <ph name="USER_EMAIL">$2<ex>foo@example.com</ex></ph>.
-+    This will delete <ph name="ITEMS_COUNT">$1<ex>66</ex></ph> items from this device. To retrieve your data later, sign in to Dumb Browser as <ph name="USER_EMAIL">$2<ex>foo@example.com</ex></ph>.
-   </message>
-   <message name="IDS_SETTINGS_SYNC_DISCONNECT_DELETE_PROFILE_WARNING_WITHOUT_COUNTS" desc="Warning message displayed in the Sign out of Chrome dialog that indicates profile browsing data will be removed from the device.">
--    This will delete your browsing data from this device. To retrieve your data later, sign in to Chromium as <ph name="USER_EMAIL">$1<ex>foo@example.com</ex></ph>.
-+    This will delete your browsing data from this device. To retrieve your data later, sign in to Dumb Browser as <ph name="USER_EMAIL">$1<ex>foo@example.com</ex></ph>.
+@@ -150,14 +150,14 @@
    </message>
  <if expr="not chromeos">
    <message name="IDS_SETTINGS_CUSTOMIZE_YOUR_CHROME_PROFILE" desc="Label of the link that takes you to the page to customize your chrome profile.">
@@ -194,10 +174,7 @@ index 930da9f4afd64..7a80f3dd25837 100644
    </message>
  <if expr="chromeos">
    <message name="IDS_SETTINGS_ACCOUNT_MANAGER_DESCRIPTION_V2" desc="Description of the Account Manager Settings page. Shown just below the title of the page.">
--    This page allows you to manage your signed-in Google accounts. These accounts will be available in Chromium browser and Play Store apps, as well as services like Gmail, Drive, and YouTube. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
-+    This page allows you to manage your signed-in Google accounts. These accounts will be available in Dumb Browser browser and Play Store apps, as well as services like Gmail, Drive, and YouTube. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
-   </message>
- </if>
+@@ -167,37 +167,37 @@
  
    <!-- Sync Page -->
    <message name="IDS_SETTINGS_SYNC_DATA_ENCRYPTED_TEXT" desc="Text alerting the user that synced data is encrypted.">
@@ -218,8 +195,7 @@ index 930da9f4afd64..7a80f3dd25837 100644
    </message>
  
    <!-- Languages Page -->
-   <!-- Chrome OS string is in settings_strings.grdp. -->
-   <if expr="not chromeos">
+   <if expr="is_win">
      <message name="IDS_SETTINGS_LANGUAGES_IS_DISPLAYED_IN_THIS_LANGUAGE" desc="The label for a language that is currently used as the UI display language.">
 -      This language is used to display the Chromium UI
 +      This language is used to display the Dumb Browser UI

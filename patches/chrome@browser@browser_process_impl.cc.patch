@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/browser_process_impl.cc b/chrome/browser/browser_process_impl.cc
-index 89a682d5c9352..badc54583cab8 100644
+index a7eb216d72f42..027607e9b2063 100644
 --- a/chrome/browser/browser_process_impl.cc
 +++ b/chrome/browser/browser_process_impl.cc
 @@ -35,7 +35,6 @@
@@ -48,7 +48,7 @@ index 89a682d5c9352..badc54583cab8 100644
  #include "components/update_client/update_query_params.h"
  #include "components/variations/service/variations_service.h"
  #include "components/web_resource/web_resource_pref_names.h"
-@@ -311,13 +302,6 @@ void BrowserProcessImpl::Init() {
+@@ -310,13 +301,6 @@ void BrowserProcessImpl::Init() {
        base::BindRepeating(&BrowserProcessImpl::ApplyDefaultBrowserPolicy,
                            base::Unretained(this)));
  
@@ -62,7 +62,7 @@ index 89a682d5c9352..badc54583cab8 100644
    DCHECK(!webrtc_event_log_manager_);
    webrtc_event_log_manager_ = WebRtcEventLogManager::CreateSingletonInstance();
  
-@@ -367,8 +351,6 @@ void BrowserProcessImpl::StartTearDown() {
+@@ -366,8 +350,6 @@ void BrowserProcessImpl::StartTearDown() {
  
    metrics_services_manager_.reset();
    intranet_redirect_detector_.reset();
@@ -71,7 +71,7 @@ index 89a682d5c9352..badc54583cab8 100644
    network_time_tracker_.reset();
  #if BUILDFLAG(ENABLE_PLUGINS)
    plugins_resource_service_.reset();
-@@ -398,8 +380,6 @@ void BrowserProcessImpl::StartTearDown() {
+@@ -397,8 +379,6 @@ void BrowserProcessImpl::StartTearDown() {
    remote_debugging_server_.reset();
    devtools_auto_opener_.reset();
  
@@ -80,7 +80,7 @@ index 89a682d5c9352..badc54583cab8 100644
    // Need to clear profiles (download managers) before the IO thread.
    {
      TRACE_EVENT0("shutdown",
-@@ -441,9 +421,6 @@ void BrowserProcessImpl::StartTearDown() {
+@@ -440,9 +420,6 @@ void BrowserProcessImpl::StartTearDown() {
    if (gcm_driver_)
      gcm_driver_->Shutdown();
  
@@ -90,7 +90,7 @@ index 89a682d5c9352..badc54583cab8 100644
    platform_part()->StartTearDown();
  
    // Cancel any uploads to release the system url request context references.
-@@ -588,19 +565,6 @@ void BrowserProcessImpl::EndSession() {
+@@ -587,19 +564,6 @@ void BrowserProcessImpl::EndSession() {
      }
    }
  
@@ -110,7 +110,7 @@ index 89a682d5c9352..badc54583cab8 100644
    // This wait is legitimate and necessary on Windows, since the process will
    // be terminated soon.
    // http://crbug.com/125207
-@@ -672,14 +636,6 @@ network::NetworkQualityTracker* BrowserProcessImpl::network_quality_tracker() {
+@@ -671,14 +635,6 @@ network::NetworkQualityTracker* BrowserProcessImpl::network_quality_tracker() {
    return network_quality_tracker_.get();
  }
  
@@ -125,7 +125,7 @@ index 89a682d5c9352..badc54583cab8 100644
  ProfileManager* BrowserProcessImpl::profile_manager() {
    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
    if (!created_profile_manager_)
-@@ -900,16 +856,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
+@@ -899,16 +855,6 @@ BrowserProcessImpl::resource_coordinator_parts() {
    return resource_coordinator_parts_.get();
  }
  
@@ -142,7 +142,7 @@ index 89a682d5c9352..badc54583cab8 100644
  // static
  void BrowserProcessImpl::RegisterPrefs(PrefRegistrySimple* registry) {
    registry->RegisterBooleanPref(prefs::kDefaultBrowserSettingEnabled,
-@@ -972,30 +918,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
+@@ -971,30 +917,6 @@ StatusTray* BrowserProcessImpl::status_tray() {
    return status_tray_.get();
  }
  
@@ -173,7 +173,7 @@ index 89a682d5c9352..badc54583cab8 100644
  StartupData* BrowserProcessImpl::startup_data() {
    return startup_data_;
  }
-@@ -1056,18 +978,6 @@ void BrowserProcessImpl::CreateNetworkQualityObserver() {
+@@ -1046,18 +968,6 @@ void BrowserProcessImpl::CreateNetworkQualityObserver() {
  
  void BrowserProcessImpl::OnKeepAliveRestartStateChanged(bool can_restart) {}
  
@@ -184,7 +184,7 @@ index 89a682d5c9352..badc54583cab8 100644
 -  auto thread = std::make_unique<WatchDogThread>();
 -  base::Thread::Options options;
 -  options.timer_slack = base::TIMER_SLACK_MAXIMUM;
--  if (!thread->StartWithOptions(options))
+-  if (!thread->StartWithOptions(std::move(options)))
 -    return;
 -  watchdog_thread_.swap(thread);
 -}
@@ -192,7 +192,7 @@ index 89a682d5c9352..badc54583cab8 100644
  void BrowserProcessImpl::CreateProfileManager() {
    DCHECK(!created_profile_manager_ && !profile_manager_);
    created_profile_manager_ = true;
-@@ -1086,8 +996,6 @@ void BrowserProcessImpl::PreCreateThreads(
+@@ -1076,8 +986,6 @@ void BrowserProcessImpl::PreCreateThreads(
        extensions::kExtensionScheme, true);
  #endif
  
@@ -201,7 +201,7 @@ index 89a682d5c9352..badc54583cab8 100644
  #if defined(OS_ANDROID)
    app_state_listener_ = base::android::ApplicationStatusListener::New(
        base::BindRepeating([](base::android::ApplicationState state) {
-@@ -1128,14 +1036,6 @@ void BrowserProcessImpl::PreMainMessageLoopRun() {
+@@ -1118,14 +1026,6 @@ void BrowserProcessImpl::PreMainMessageLoopRun() {
    if (local_state_->IsManagedPreference(prefs::kDefaultBrowserSettingEnabled))
      ApplyDefaultBrowserPolicy();
  
@@ -216,7 +216,7 @@ index 89a682d5c9352..badc54583cab8 100644
  #if BUILDFLAG(ENABLE_PLUGINS)
    auto* plugin_service = content::PluginService::GetInstance();
    plugin_service->SetFilter(ChromePluginServiceFilter::GetInstance());
-@@ -1229,42 +1129,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
+@@ -1219,42 +1119,6 @@ void BrowserProcessImpl::CreateBackgroundPrintingManager() {
  #endif
  }
  

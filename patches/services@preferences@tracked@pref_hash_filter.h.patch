@@ -1,5 +1,5 @@
 diff --git a/services/preferences/tracked/pref_hash_filter.h b/services/preferences/tracked/pref_hash_filter.h
-index ae0cbd5df7d4f..294fa1acf4731 100644
+index c5d2d7aa64148..20790fcb79d06 100644
 --- a/services/preferences/tracked/pref_hash_filter.h
 +++ b/services/preferences/tracked/pref_hash_filter.h
 @@ -33,12 +33,6 @@ class DictionaryValue;
@@ -15,11 +15,23 @@ index ae0cbd5df7d4f..294fa1acf4731 100644
  namespace user_prefs {
  class PrefRegistrySyncable;
  }  // namespace user_prefs
-@@ -66,7 +60,6 @@ class PrefHashFilter : public InterceptablePrefFilter {
-                      tracked_preferences,
-                  mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
-                      reset_on_load_observer,
--                 prefs::mojom::TrackedPreferenceValidationDelegate* delegate,
-                  size_t reporting_ids_count);
+@@ -67,9 +61,6 @@ class PrefHashFilter : public InterceptablePrefFilter {
+           tracked_preferences,
+       mojo::PendingRemote<prefs::mojom::ResetOnLoadObserver>
+           reset_on_load_observer,
+-      scoped_refptr<base::RefCountedData<
+-          mojo::Remote<prefs::mojom::TrackedPreferenceValidationDelegate>>>
+-          delegate,
+       size_t reporting_ids_count);
  
    ~PrefHashFilter() override;
+@@ -146,9 +137,6 @@ class PrefHashFilter : public InterceptablePrefFilter {
+ 
+   // Notified if a reset occurs in a call to FilterOnLoad.
+   mojo::Remote<prefs::mojom::ResetOnLoadObserver> reset_on_load_observer_;
+-  scoped_refptr<base::RefCountedData<
+-      mojo::Remote<prefs::mojom::TrackedPreferenceValidationDelegate>>>
+-      delegate_;
+ 
+   TrackedPreferencesMap tracked_paths_;
+ 

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/dom/element.cc b/third_party/blink/renderer/core/dom/element.cc
-index df80e3760478d..42493e9b64341 100644
+index 68e84e3c75921..5727ca5e7815f 100644
 --- a/third_party/blink/renderer/core/dom/element.cc
 +++ b/third_party/blink/renderer/core/dom/element.cc
 @@ -33,8 +33,6 @@
@@ -11,7 +11,7 @@ index df80e3760478d..42493e9b64341 100644
  #include "third_party/blink/public/mojom/scroll/scroll_into_view_params.mojom-blink.h"
  #include "third_party/blink/renderer/bindings/core/v8/dictionary.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
-@@ -1319,64 +1317,6 @@ bool Element::IsViewportScrollElement() {
+@@ -1347,64 +1345,6 @@ bool Element::IsViewportScrollElement() {
  void Element::RecordScrollbarSizeForStudy(int measurement,
                                            bool is_width,
                                            bool is_offset) {
@@ -76,7 +76,7 @@ index df80e3760478d..42493e9b64341 100644
  }
  
  int Element::clientWidth() {
-@@ -2092,6 +2032,14 @@ DOMRectList* Element::getClientRects() {
+@@ -2120,6 +2060,14 @@ DOMRectList* Element::getClientRects() {
    DCHECK(element_layout_object);
    GetDocument().AdjustFloatQuadsForScrollAndAbsoluteZoom(
        quads, *element_layout_object);
@@ -91,7 +91,7 @@ index df80e3760478d..42493e9b64341 100644
    return MakeGarbageCollected<DOMRectList>(quads);
  }
  
-@@ -2109,6 +2057,12 @@ FloatRect Element::GetBoundingClientRectNoLifecycleUpdate() const {
+@@ -2137,6 +2085,12 @@ FloatRect Element::GetBoundingClientRectNoLifecycleUpdate() const {
    DCHECK(element_layout_object);
    GetDocument().AdjustFloatRectForScrollAndAbsoluteZoom(result,
                                                          *element_layout_object);

@@ -1,8 +1,8 @@
 diff --git a/content/public/browser/content_browser_client.h b/content/public/browser/content_browser_client.h
-index aac67f9733e5a..ab3142ed6bbe5 100644
+index a162964933327..dc2e9a618b185 100644
 --- a/content/public/browser/content_browser_client.h
 +++ b/content/public/browser/content_browser_client.h
-@@ -25,7 +25,6 @@
+@@ -24,7 +24,6 @@
  #include "base/types/strong_alias.h"
  #include "build/build_config.h"
  #include "build/chromeos_buildflags.h"
@@ -10,15 +10,15 @@ index aac67f9733e5a..ab3142ed6bbe5 100644
  #include "content/common/content_export.h"
  #include "content/public/browser/allow_service_worker_result.h"
  #include "content/public/browser/certificate_request_result_type.h"
-@@ -54,7 +53,6 @@
- #include "storage/browser/file_system/file_system_context.h"
+@@ -55,7 +54,6 @@
+ #include "third_party/abseil-cpp/absl/types/optional.h"
  #include "third_party/blink/public/common/loader/previews_state.h"
  #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
 -#include "third_party/blink/public/mojom/federated_learning/floc.mojom-forward.h"
  #include "ui/accessibility/ax_mode.h"
  #include "ui/base/page_transition_types.h"
  #include "ui/base/window_open_disposition.h"
-@@ -618,10 +616,12 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -629,10 +627,12 @@ class CONTENT_EXPORT ContentBrowserClient {
    // Returns a client GUID used for virus scanning.
    virtual std::string GetApplicationClientGUIDForQuarantineCheck();
  
@@ -31,21 +31,22 @@ index aac67f9733e5a..ab3142ed6bbe5 100644
  
    // Returns the locale used by the application.
    // This is called on the UI and IO threads.
-@@ -1889,13 +1889,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -1896,12 +1896,14 @@ class CONTENT_EXPORT ContentBrowserClient {
        bool user_gesture,
        blink::NavigationDownloadPolicy* download_policy);
  
--  // Returns the interest cohort associated with the browser context of
--  // |web_contents|.
--  virtual blink::mojom::InterestCohortPtr GetInterestCohortForJsApi(
--      WebContents* web_contents,
--      const GURL& url,
--      const base::Optional<url::Origin>& top_frame_origin);
--
++#if 0
+   // Returns the interest cohort associated with the browser context of
+   // |web_contents|.
+   virtual blink::mojom::InterestCohortPtr GetInterestCohortForJsApi(
+       WebContents* web_contents,
+       const GURL& url,
+       const absl::optional<url::Origin>& top_frame_origin);
++#endif
+ 
    // Returns whether a site is blocked to use Bluetooth scanning API.
    virtual bool IsBluetoothScanningBlocked(
-       content::BrowserContext* browser_context,
-@@ -2017,9 +2010,6 @@ class CONTENT_EXPORT ContentBrowserClient {
+@@ -2024,9 +2026,6 @@ class CONTENT_EXPORT ContentBrowserClient {
        BrowserContext* browser_context,
        const url::Origin& origin);
  

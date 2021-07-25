@@ -1,16 +1,8 @@
 diff --git a/chrome/browser/profiles/pref_service_builder_utils.cc b/chrome/browser/profiles/pref_service_builder_utils.cc
-index cbaad16f02dea..1cfb18c123058 100644
+index 081564a0a16a4..d4617521642f1 100644
 --- a/chrome/browser/profiles/pref_service_builder_utils.cc
 +++ b/chrome/browser/profiles/pref_service_builder_utils.cc
-@@ -12,6 +12,7 @@
- #include "base/files/file_util.h"
- #include "base/path_service.h"
- #include "base/sequenced_task_runner.h"
-+#include "base/strings/stringprintf.h"
- #include "base/threading/scoped_blocking_call.h"
- #include "build/chromeos_buildflags.h"
- #include "chrome/browser/browser_process.h"
-@@ -19,7 +20,6 @@
+@@ -20,7 +20,6 @@
  #include "chrome/browser/prefs/browser_prefs.h"
  #include "chrome/browser/prefs/chrome_pref_service_factory.h"
  #include "chrome/browser/prefs/profile_pref_store_manager.h"
@@ -18,15 +10,7 @@ index cbaad16f02dea..1cfb18c123058 100644
  #include "chrome/common/buildflags.h"
  #include "chrome/common/chrome_constants.h"
  #include "chrome/grit/chromium_strings.h"
-@@ -31,7 +31,6 @@
- #include "components/prefs/pref_value_store.h"
- #include "components/sync_preferences/pref_service_syncable.h"
- #include "content/public/browser/network_service_instance.h"
--#include "services/preferences/public/mojom/tracked_preference_validation_delegate.mojom.h"
- #include "ui/base/l10n/l10n_util.h"
- 
- #if BUILDFLAG(ENABLE_SUPERVISED_USERS)
-@@ -87,8 +86,6 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreatePrefService(
+@@ -88,8 +87,6 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreatePrefService(
      PrefStore* extension_pref_store,
      policy::PolicyService* policy_service,
      policy::ChromeBrowserPolicyConnector* browser_policy_connector,
@@ -35,7 +19,7 @@ index cbaad16f02dea..1cfb18c123058 100644
      scoped_refptr<base::SequencedTaskRunner> io_task_runner,
      SimpleFactoryKey* key,
      const base::FilePath& path,
-@@ -101,7 +98,7 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreatePrefService(
+@@ -102,7 +99,7 @@ std::unique_ptr<sync_preferences::PrefServiceSyncable> CreatePrefService(
  #endif
    {
      return chrome_prefs::CreateProfilePrefs(

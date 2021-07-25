@@ -1,0 +1,28 @@
+diff --git a/chrome/browser/privacy_sandbox/privacy_sandbox_settings.h b/chrome/browser/privacy_sandbox/privacy_sandbox_settings.h
+index 7a0b0d2caf3d9..2158f148c7560 100644
+--- a/chrome/browser/privacy_sandbox/privacy_sandbox_settings.h
++++ b/chrome/browser/privacy_sandbox/privacy_sandbox_settings.h
+@@ -9,7 +9,6 @@
+ #include "base/observer_list.h"
+ #include "base/scoped_observation.h"
+ #include "base/time/time.h"
+-#include "chrome/browser/federated_learning/floc_id_provider.h"
+ #include "components/content_settings/core/common/content_settings.h"
+ #include "components/keyed_service/core/keyed_service.h"
+ #include "components/policy/core/common/policy_service.h"
+@@ -89,6 +88,7 @@ class PrivacySandboxSettings : public KeyedService,
+   // not valid, the appropriate descriptive string is returned instead.
+   std::u16string GetFlocIdForDisplay() const;
+ 
++#if 0
+   // Returns when the user's current FLoC cohort identifier will next be updated
+   // in a string format suitable for direct display to the user. If no compute
+   // is scheduled, the appropriate descriptive string is returned instead.
+@@ -101,6 +101,7 @@ class PrivacySandboxSettings : public KeyedService,
+       federated_learning::FlocIdProvider* floc_id_provider,
+       PrefService* pref_service,
+       const base::Time& current_time);
++#endif
+ 
+   // Returns the display ready string explanaing what happens when the user
+   // resets the FLoC cohort identifier.

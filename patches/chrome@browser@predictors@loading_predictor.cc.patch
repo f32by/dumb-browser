@@ -1,17 +1,17 @@
 diff --git a/chrome/browser/predictors/loading_predictor.cc b/chrome/browser/predictors/loading_predictor.cc
-index f2fb8573f3e79..e8625ba88b551 100644
+index 9b0afcd76bba9..1db2a0e369c65 100644
 --- a/chrome/browser/predictors/loading_predictor.cc
 +++ b/chrome/browser/predictors/loading_predictor.cc
-@@ -8,8 +8,6 @@
- #include <vector>
+@@ -9,8 +9,6 @@
  
  #include "base/metrics/histogram_macros.h"
+ #include "build/build_config.h"
 -#include "chrome/browser/predictors/loading_data_collector.h"
 -#include "chrome/browser/predictors/loading_stats_collector.h"
- #include "chrome/browser/predictors/navigation_id.h"
  #include "chrome/browser/predictors/predictors_features.h"
  #include "chrome/browser/predictors/resource_prefetch_predictor.h"
-@@ -58,14 +56,7 @@ LoadingPredictor::LoadingPredictor(const LoadingPredictorConfig& config,
+ #include "content/public/browser/browser_thread.h"
+@@ -93,14 +91,7 @@ LoadingPredictor::LoadingPredictor(const LoadingPredictorConfig& config,
      : config_(config),
        profile_(profile),
        resource_prefetch_predictor_(
@@ -27,7 +27,7 @@ index f2fb8573f3e79..e8625ba88b551 100644
  
  LoadingPredictor::~LoadingPredictor() {
    DCHECK(shutdown_);
-@@ -133,10 +124,6 @@ void LoadingPredictor::StartInitialization() {
+@@ -168,10 +159,6 @@ void LoadingPredictor::StartInitialization() {
    resource_prefetch_predictor_->StartInitialization();
  }
  
@@ -38,24 +38,25 @@ index f2fb8573f3e79..e8625ba88b551 100644
  ResourcePrefetchPredictor* LoadingPredictor::resource_prefetch_predictor() {
    return resource_prefetch_predictor_.get();
  }
-@@ -178,7 +165,6 @@ bool LoadingPredictor::OnNavigationStarted(const NavigationID& navigation_id) {
+@@ -216,8 +203,6 @@ bool LoadingPredictor::OnNavigationStarted(NavigationId navigation_id,
    if (shutdown_)
      return true;
  
--  loading_data_collector()->RecordStartNavigation(navigation_id);
+-  loading_data_collector()->RecordStartNavigation(
+-      navigation_id, ukm_source_id, main_frame_url, creation_time);
    CleanupAbandonedHintsAndNavigations(navigation_id);
-   active_navigations_.emplace(navigation_id);
-   active_urls_to_navigations_[navigation_id.main_frame_url].insert(
-@@ -194,8 +180,6 @@ void LoadingPredictor::OnNavigationFinished(
+   active_navigations_.emplace(navigation_id,
+                               NavigationInfo{main_frame_url, creation_time});
+@@ -232,8 +217,6 @@ void LoadingPredictor::OnNavigationFinished(NavigationId navigation_id,
    if (shutdown_)
      return;
  
 -  loading_data_collector()->RecordFinishNavigation(
--      old_navigation_id, new_navigation_id, is_error_page);
-   if (active_urls_to_navigations_.find(old_navigation_id.main_frame_url) !=
+-      navigation_id, old_main_frame_url, new_main_frame_url, is_error_page);
+   if (active_urls_to_navigations_.find(old_main_frame_url) !=
        active_urls_to_navigations_.end()) {
-     active_urls_to_navigations_[old_navigation_id.main_frame_url].erase(
-@@ -304,9 +288,6 @@ void LoadingPredictor::PreconnectInitiated(const GURL& url,
+     active_urls_to_navigations_[old_main_frame_url].erase(navigation_id);
+@@ -348,9 +331,6 @@ void LoadingPredictor::PreconnectInitiated(const GURL& url,
    auto nav_id_set_it = active_urls_to_navigations_.find(url);
    if (nav_id_set_it == active_urls_to_navigations_.end())
      return;
@@ -65,7 +66,7 @@ index f2fb8573f3e79..e8625ba88b551 100644
  }
  
  void LoadingPredictor::PreconnectFinished(
-@@ -317,7 +298,6 @@ void LoadingPredictor::PreconnectFinished(
+@@ -361,7 +341,6 @@ void LoadingPredictor::PreconnectFinished(
  
    DCHECK(stats);
    active_hints_.erase(stats->url);
@@ -73,7 +74,7 @@ index f2fb8573f3e79..e8625ba88b551 100644
  }
  
  void LoadingPredictor::PrefetchInitiated(const GURL& url,
-@@ -329,9 +309,6 @@ void LoadingPredictor::PrefetchInitiated(const GURL& url,
+@@ -373,9 +352,6 @@ void LoadingPredictor::PrefetchInitiated(const GURL& url,
    auto nav_id_set_it = active_urls_to_navigations_.find(url);
    if (nav_id_set_it == active_urls_to_navigations_.end())
      return;

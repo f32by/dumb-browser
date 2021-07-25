@@ -1,9 +1,9 @@
 diff --git a/chrome/browser/chrome_content_browser_client.h b/chrome/browser/chrome_content_browser_client.h
-index c3ae215e9ed55..5f4c38adaa072 100644
+index 758a9e09992d0..9eb91c0d2dc31 100644
 --- a/chrome/browser/chrome_content_browser_client.h
 +++ b/chrome/browser/chrome_content_browser_client.h
-@@ -59,12 +59,6 @@ class QuotaPermissionContext;
- enum class SmsFetchFailureType;
+@@ -62,12 +62,6 @@ enum class SmsFetchFailureType;
+ struct ServiceWorkerVersionBaseInfo;
  }  // namespace content
  
 -namespace safe_browsing {
@@ -15,7 +15,7 @@ index c3ae215e9ed55..5f4c38adaa072 100644
  namespace sandbox {
  class SeatbeltExecClient;
  }  // namespace sandbox
-@@ -220,8 +214,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -231,8 +225,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
                                        int child_process_id) override;
    std::string GetApplicationClientGUIDForQuarantineCheck() override;
@@ -24,19 +24,20 @@ index c3ae215e9ed55..5f4c38adaa072 100644
    std::string GetApplicationLocale() override;
    std::string GetAcceptLangs(content::BrowserContext* context) override;
    gfx::ImageSkia GetDefaultFavicon() override;
-@@ -638,11 +630,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -647,10 +639,12 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool user_gesture,
        blink::NavigationDownloadPolicy* download_policy) override;
  
--  blink::mojom::InterestCohortPtr GetInterestCohortForJsApi(
--      content::WebContents* web_contents,
--      const GURL& url,
--      const base::Optional<url::Origin>& top_frame_origin) override;
--
++#if 0
+   blink::mojom::InterestCohortPtr GetInterestCohortForJsApi(
+       content::WebContents* web_contents,
+       const GURL& url,
+       const absl::optional<url::Origin>& top_frame_origin) override;
++#endif
+ 
    bool IsBluetoothScanningBlocked(content::BrowserContext* browser_context,
                                    const url::Origin& requesting_origin,
-                                   const url::Origin& embedding_origin) override;
-@@ -697,7 +684,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -706,7 +700,6 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    bool ShouldAllowInsecurePrivateNetworkRequests(
        content::BrowserContext* browser_context,
        const url::Origin& origin) override;
@@ -44,7 +45,7 @@ index c3ae215e9ed55..5f4c38adaa072 100644
  
    void OnKeepaliveRequestStarted(
        content::BrowserContext* browser_context) override;
-@@ -764,6 +750,7 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -776,6 +769,7 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        bool allow);
  #endif
  
@@ -52,15 +53,15 @@ index c3ae215e9ed55..5f4c38adaa072 100644
    // Returns the existing UrlCheckerDelegate object if it is already created.
    // Otherwise, creates a new one and returns it. Updates the
    // |allowlist_domains| in the UrlCheckerDelegate object before returning. It
-@@ -786,6 +773,7 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+@@ -798,6 +792,7 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
        content::BrowserContext* browser_context,
        bool is_enterprise_lookup_enabled,
        bool is_consumer_lookup_enabled);
 +#endif
  
- #if !defined(OS_ANDROID)
-   void OnKeepaliveTimerFired(
-@@ -796,9 +784,11 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
+   void SafeBrowsingWebApiHandshakeChecked(
+       std::unique_ptr<safe_browsing::WebApiHandshakeChecker> checker,
+@@ -813,9 +808,11 @@ class ChromeContentBrowserClient : public content::ContentBrowserClient {
    // Parts are deleted in the reverse order they are added.
    std::vector<ChromeContentBrowserClientParts*> extra_parts_;
  

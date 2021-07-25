@@ -1,5 +1,5 @@
 diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
-index b19ef9e10b9ff..73d3156834e62 100644
+index 621f9405e1a92..3f8314c148c90 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
 @@ -166,6 +166,7 @@
@@ -18,10 +18,10 @@ index b19ef9e10b9ff..73d3156834e62 100644
 -#include "services/metrics/public/mojom/ukm_interface.mojom.h"
 -#include "services/metrics/ukm_recorder_interface.h"
  #include "services/network/public/cpp/network_switches.h"
+ #include "services/network/public/mojom/mdns_responder.mojom.h"
  #include "services/network/public/mojom/network_service.mojom.h"
- #include "services/resource_coordinator/public/mojom/memory_instrumentation/memory_instrumentation.mojom.h"
-@@ -1361,12 +1359,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
-       }
+@@ -1485,12 +1483,6 @@ class RenderProcessHostImpl::IOThreadHostImpl : public mojom::ChildProcessHost {
+       return;
      }
  
 -    if (auto r = receiver.As<ukm::mojom::UkmRecorderInterface>()) {
@@ -33,7 +33,7 @@ index b19ef9e10b9ff..73d3156834e62 100644
      std::string interface_name = *receiver.interface_name();
      mojo::ScopedMessagePipeHandle pipe = receiver.PassPipe();
      if (binders_->TryBindInterface(interface_name, &pipe))
-@@ -3173,6 +3165,11 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+@@ -3291,6 +3283,11 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
    // Propagate the following switches to the renderer command line (along
    // with any associated values) if present in the browser command line.
    static const char* const kSwitchNames[] = {

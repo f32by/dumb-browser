@@ -1,0 +1,39 @@
+diff --git a/third_party/blink/renderer/core/frame/local_dom_window.h b/third_party/blink/renderer/core/frame/local_dom_window.h
+index 32a0a0568a50d..38a13b52959fa 100644
+--- a/third_party/blink/renderer/core/frame/local_dom_window.h
++++ b/third_party/blink/renderer/core/frame/local_dom_window.h
+@@ -29,7 +29,6 @@
+ 
+ #include <memory>
+ 
+-#include "services/metrics/public/cpp/ukm_recorder.h"
+ #include "services/metrics/public/cpp/ukm_source_id.h"
+ #include "third_party/blink/public/common/tokens/tokens.h"
+ #include "third_party/blink/renderer/bindings/core/v8/script_value.h"
+@@ -427,9 +426,11 @@ class CORE_EXPORT LocalDOMWindow final : public DOMWindow,
+   bool CrossOriginIsolatedCapability() const override;
+   bool DirectSocketCapability() const override;
+ 
++#if 0
+   // These delegate to the document_.
+   ukm::UkmRecorder* UkmRecorder() override;
+   ukm::SourceId UkmSourceID() const override;
++#endif
+ 
+  protected:
+   // EventTarget overrides.
+@@ -542,12 +543,14 @@ class CORE_EXPORT LocalDOMWindow final : public DOMWindow,
+   // from |DocumentPolicyViolationReport::MatchId()|.
+   mutable HashSet<unsigned> document_policy_violation_reports_sent_;
+ 
++#if 0
+   // A list of the most recently recorded source frame UKM source IDs for the
+   // PostMessage.Incoming.Frame UKM event, in order to partially deduplicate
+   // logged events. Its size is limited to 20. See SchedulePostMessage() where
+   // this UKM is logged.
+   // TODO(crbug.com/1112491): Remove when no longer needed.
+   Deque<ukm::SourceId> post_message_ukm_recorded_source_ids_;
++#endif
+ };
+ 
+ template <>

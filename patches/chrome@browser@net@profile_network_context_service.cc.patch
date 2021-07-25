@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/net/profile_network_context_service.cc b/chrome/browser/net/profile_network_context_service.cc
-index b41fe282dea38..3afc85536783b 100644
+index 99455d0c26355..86406349e8c96 100644
 --- a/chrome/browser/net/profile_network_context_service.cc
 +++ b/chrome/browser/net/profile_network_context_service.cc
 @@ -24,7 +24,6 @@
@@ -22,7 +22,7 @@ index b41fe282dea38..3afc85536783b 100644
  #include "content/public/browser/browser_context.h"
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/network_service_instance.h"
-@@ -758,10 +755,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+@@ -744,10 +741,7 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
  
    // Initialize the network context to do SCT auditing only if the current
    // profile is opted in to Safe Browsing Extended Reporting.
@@ -34,7 +34,7 @@ index b41fe282dea38..3afc85536783b 100644
  
    network_context_params->ct_policy = GetCTPolicy();
  
-@@ -803,19 +797,6 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
+@@ -789,19 +783,6 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
    }
  #endif
  

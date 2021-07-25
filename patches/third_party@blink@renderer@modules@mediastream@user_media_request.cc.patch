@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/mediastream/user_media_request.cc b/third_party/blink/renderer/modules/mediastream/user_media_request.cc
-index c0da974bc988a..b8b41ee2985d6 100644
+index fc892213f5ae5..bb044c2986a26 100644
 --- a/third_party/blink/renderer/modules/mediastream/user_media_request.cc
 +++ b/third_party/blink/renderer/modules/mediastream/user_media_request.cc
 @@ -35,7 +35,6 @@
@@ -10,7 +10,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
  #include "third_party/blink/public/mojom/permissions_policy/permissions_policy.mojom-blink.h"
  #include "third_party/blink/public/platform/modules/webrtc/webrtc_logging.h"
  #include "third_party/blink/renderer/bindings/core/v8/dictionary.h"
-@@ -45,7 +44,6 @@
+@@ -46,7 +45,6 @@
  #include "third_party/blink/renderer/core/dom/space_split_string.h"
  #include "third_party/blink/renderer/core/frame/deprecation.h"
  #include "third_party/blink/renderer/core/frame/local_dom_window.h"
@@ -18,7 +18,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
  #include "third_party/blink/renderer/modules/mediastream/media_constraints_impl.h"
  #include "third_party/blink/renderer/modules/mediastream/media_stream.h"
  #include "third_party/blink/renderer/modules/mediastream/overconstrained_error.h"
-@@ -53,7 +51,6 @@
+@@ -54,7 +52,6 @@
  #include "third_party/blink/renderer/platform/bindings/exception_state.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/mediastream/media_stream_descriptor.h"
@@ -26,7 +26,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
  #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
  
  namespace blink {
-@@ -333,8 +330,7 @@ UserMediaRequest* UserMediaRequest::Create(
+@@ -341,8 +338,7 @@ UserMediaRequest* UserMediaRequest::Create(
      UserMediaRequest::MediaType media_type,
      const MediaStreamConstraints* options,
      Callbacks* callbacks,
@@ -36,7 +36,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
    MediaConstraints audio = ParseOptions(context, options->audio(), error_state);
    if (error_state.HadException())
      return nullptr;
-@@ -415,7 +411,7 @@ UserMediaRequest* UserMediaRequest::Create(
+@@ -423,7 +419,7 @@ UserMediaRequest* UserMediaRequest::Create(
      CountVideoConstraintUses(context, video);
  
    return MakeGarbageCollected<UserMediaRequest>(
@@ -45,7 +45,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
  }
  
  UserMediaRequest* UserMediaRequest::Create(
-@@ -424,12 +420,11 @@ UserMediaRequest* UserMediaRequest::Create(
+@@ -432,12 +428,11 @@ UserMediaRequest* UserMediaRequest::Create(
      const MediaStreamConstraints* options,
      V8NavigatorUserMediaSuccessCallback* success_callback,
      V8NavigatorUserMediaErrorCallback* error_callback,
@@ -60,7 +60,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
  }
  
  UserMediaRequest* UserMediaRequest::CreateForTesting(
-@@ -437,7 +432,7 @@ UserMediaRequest* UserMediaRequest::CreateForTesting(
+@@ -445,7 +440,7 @@ UserMediaRequest* UserMediaRequest::CreateForTesting(
      const MediaConstraints& video) {
    return MakeGarbageCollected<UserMediaRequest>(
        nullptr, nullptr, UserMediaRequest::MediaType::kUserMedia, audio, video,
@@ -69,7 +69,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
  }
  
  UserMediaRequest::UserMediaRequest(ExecutionContext* context,
-@@ -445,8 +440,7 @@ UserMediaRequest::UserMediaRequest(ExecutionContext* context,
+@@ -453,8 +448,7 @@ UserMediaRequest::UserMediaRequest(ExecutionContext* context,
                                     UserMediaRequest::MediaType media_type,
                                     MediaConstraints audio,
                                     MediaConstraints video,
@@ -79,7 +79,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
      : ExecutionContextLifecycleObserver(context),
        media_type_(media_type),
        audio_(audio),
-@@ -455,8 +449,7 @@ UserMediaRequest::UserMediaRequest(ExecutionContext* context,
+@@ -463,8 +457,7 @@ UserMediaRequest::UserMediaRequest(ExecutionContext* context,
            RuntimeEnabledFeatures::DisableHardwareNoiseSuppressionEnabled(
                context)),
        controller_(controller),
@@ -89,7 +89,7 @@ index c0da974bc988a..b8b41ee2985d6 100644
    if (should_disable_hardware_noise_suppression_) {
      UseCounter::Count(context,
                        WebFeature::kUserMediaDisableHardwareNoiseSuppression);
-@@ -557,8 +550,6 @@ void UserMediaRequest::OnMediaStreamInitialized(MediaStream* stream) {
+@@ -565,8 +558,6 @@ void UserMediaRequest::OnMediaStreamInitialized(MediaStream* stream) {
    for (const auto& video_track : video_tracks)
      video_track->SetConstraints(video_);
  
@@ -98,21 +98,21 @@ index c0da974bc988a..b8b41ee2985d6 100644
    // After this call, the execution context may be invalid.
    callbacks_->OnSuccess(nullptr, stream);
    is_resolved_ = true;
-@@ -570,8 +561,6 @@ void UserMediaRequest::FailConstraint(const String& constraint_name,
+@@ -578,8 +569,6 @@ void UserMediaRequest::FailConstraint(const String& constraint_name,
    DCHECK(!is_resolved_);
    if (!GetExecutionContext())
      return;
 -  RecordIdentifiabilityMetric(surface_, GetExecutionContext(),
 -                              IdentifiabilityBenignStringToken(message));
    // After this call, the execution context may be invalid.
+ #if defined(USE_BLINK_V8_BINDING_NEW_IDL_UNION)
    callbacks_->OnError(
-       nullptr, DOMExceptionOrOverconstrainedError::FromOverconstrainedError(
-@@ -614,8 +603,6 @@ void UserMediaRequest::Fail(Error name, const String& message) {
+@@ -628,8 +617,6 @@ void UserMediaRequest::Fail(Error name, const String& message) {
      default:
        NOTREACHED();
    }
 -  RecordIdentifiabilityMetric(surface_, GetExecutionContext(),
 -                              IdentifiabilityBenignStringToken(message));
    // After this call, the execution context may be invalid.
-   callbacks_->OnError(
-       nullptr,
+ #if defined(USE_BLINK_V8_BINDING_NEW_IDL_UNION)
+   callbacks_->OnError(nullptr, MakeGarbageCollected<V8MediaStreamError>(

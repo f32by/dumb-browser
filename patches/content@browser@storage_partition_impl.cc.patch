@@ -1,8 +1,8 @@
 diff --git a/content/browser/storage_partition_impl.cc b/content/browser/storage_partition_impl.cc
-index 7ffcbd0ac2216..59499e7792676 100644
+index 4bb577abb154e..10be118288b3d 100644
 --- a/content/browser/storage_partition_impl.cc
 +++ b/content/browser/storage_partition_impl.cc
-@@ -1852,6 +1852,7 @@ void StoragePartitionImpl::OnCanSendReportingReports(
+@@ -1862,6 +1862,7 @@ void StoragePartitionImpl::OnCanSendReportingReports(
    std::move(callback).Run(origins_out);
  }
  
@@ -10,7 +10,7 @@ index 7ffcbd0ac2216..59499e7792676 100644
  void StoragePartitionImpl::OnCanSendDomainReliabilityUpload(
      const GURL& origin,
      OnCanSendDomainReliabilityUploadCallback callback) {
-@@ -1863,6 +1864,7 @@ void StoragePartitionImpl::OnCanSendDomainReliabilityUpload(
+@@ -1873,6 +1874,7 @@ void StoragePartitionImpl::OnCanSendDomainReliabilityUpload(
            content::PermissionType::BACKGROUND_SYNC, origin, origin) ==
        blink::mojom::PermissionStatus::GRANTED);
  }

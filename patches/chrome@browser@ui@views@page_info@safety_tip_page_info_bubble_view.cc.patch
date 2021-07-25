@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc b/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
-index a0b3b0db747f1..06a98e1d35ecf 100644
+index fbfb79a207d04..20b1bfcbffa14 100644
 --- a/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
 +++ b/chrome/browser/ui/views/page_info/safety_tip_page_info_bubble_view.cc
 @@ -6,8 +6,6 @@
@@ -51,7 +51,7 @@ index a0b3b0db747f1..06a98e1d35ecf 100644
 -
    ChromeLayoutProvider* layout_provider = ChromeLayoutProvider::Get();
  
-   gfx::Insets insets =
+   gfx::Insets insets = layout_provider->GetDialogInsetsForContentType(
 @@ -142,15 +140,6 @@ SafetyTipPageInfoBubbleView::SafetyTipPageInfoBubbleView(
        layout_provider->GetDistanceMetric(DISTANCE_CONTROL_LIST_VERTICAL);
    bottom_layout->StartRowWithPadding(views::GridLayout::kFixedSize, kColumnId,
@@ -68,7 +68,7 @@ index a0b3b0db747f1..06a98e1d35ecf 100644
  
    MaybeAddButtons(safety_tip_status, bottom_layout, spacing, kColumnId, insets);
  
-@@ -195,16 +184,10 @@ void SafetyTipPageInfoBubbleView::OnWidgetDestroying(views::Widget* widget) {
+@@ -196,16 +185,10 @@ void SafetyTipPageInfoBubbleView::OnWidgetDestroying(views::Widget* widget) {
  
  void SafetyTipPageInfoBubbleView::ExecuteLeaveCommand() {
    action_taken_ = SafetyTipInteraction::kLeaveSite;
@@ -85,7 +85,7 @@ index a0b3b0db747f1..06a98e1d35ecf 100644
  }
  
  void SafetyTipPageInfoBubbleView::RenderFrameDeleted(
-@@ -303,8 +286,7 @@ void SafetyTipPageInfoBubbleView::MaybeAddButtons(
+@@ -304,8 +287,7 @@ void SafetyTipPageInfoBubbleView::MaybeAddButtons(
            [](SafetyTipPageInfoBubbleView* view) {
              view->ExecuteLeaveCommand();
            },

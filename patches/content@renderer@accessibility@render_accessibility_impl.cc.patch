@@ -1,8 +1,30 @@
 diff --git a/content/renderer/accessibility/render_accessibility_impl.cc b/content/renderer/accessibility/render_accessibility_impl.cc
-index 2c8c55118f736..e19bbd3427adb 100644
+index 6c902e051d062..dfbd563e31e32 100644
 --- a/content/renderer/accessibility/render_accessibility_impl.cc
 +++ b/content/renderer/accessibility/render_accessibility_impl.cc
-@@ -106,10 +106,7 @@ RenderAccessibilityImpl::RenderAccessibilityImpl(
+@@ -36,8 +36,6 @@
+ #include "content/renderer/render_frame_proxy.h"
+ #include "content/renderer/render_view_impl.h"
+ #include "services/image_annotation/public/mojom/image_annotation.mojom.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/platform/task_type.h"
+ #include "third_party/blink/public/web/web_disallow_transition_scope.h"
+ #include "third_party/blink/public/web/web_document.h"
+@@ -63,10 +61,12 @@ using blink::WebView;
+ 
+ namespace {
+ 
++#if 0
+ // The minimum amount of time that should be spent in serializing code in order
+ // to report the elapsed time as a URL-keyed metric.
+ constexpr base::TimeDelta kMinSerializationTimeToSend =
+     base::TimeDelta::FromMilliseconds(100);
++#endif
+ 
+ // When URL-keyed metrics for the amount of time spent in serializing code
+ // are sent, the minimum amount of time to wait, in seconds, before
+@@ -107,10 +107,6 @@ RenderAccessibilityImpl::RenderAccessibilityImpl(
        reset_token_(0),
        ukm_timer_(std::make_unique<base::ElapsedTimer>()),
        last_ukm_source_id_(ukm::kInvalidSourceId) {
@@ -10,7 +32,22 @@ index 2c8c55118f736..e19bbd3427adb 100644
 -  content::RenderThread::Get()->BindHostReceiver(
 -      recorder.InitWithNewPipeAndPassReceiver());
 -  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
-+  ukm_recorder_ = std::make_unique<ukm::MojoUkmRecorder>();
-   WebView* web_view = render_frame_->GetRenderView()->GetWebView();
+   WebView* web_view = render_frame_->GetWebView();
    WebSettings* settings = web_view->GetSettings();
  
+@@ -1428,6 +1424,7 @@ void RenderAccessibilityImpl::CancelScheduledEvents() {
+ }
+ 
+ void RenderAccessibilityImpl::MaybeSendUKM() {
++#if 0
+   if (slowest_serialization_time_ < kMinSerializationTimeToSend)
+     return;
+ 
+@@ -1436,6 +1433,7 @@ void RenderAccessibilityImpl::MaybeSendUKM() {
+           slowest_serialization_time_.InMilliseconds())
+       .Record(ukm_recorder_.get());
+   ResetUKMData();
++#endif
+ }
+ 
+ void RenderAccessibilityImpl::ResetUKMData() {

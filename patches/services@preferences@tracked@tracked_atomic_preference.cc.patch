@@ -1,5 +1,5 @@
 diff --git a/services/preferences/tracked/tracked_atomic_preference.cc b/services/preferences/tracked/tracked_atomic_preference.cc
-index c4f820af7009c..59c7a9d564e74 100644
+index f7252f30f7cb3..ba72dc5b21a9f 100644
 --- a/services/preferences/tracked/tracked_atomic_preference.cc
 +++ b/services/preferences/tracked/tracked_atomic_preference.cc
 @@ -16,15 +16,13 @@ TrackedAtomicPreference::TrackedAtomicPreference(
@@ -20,15 +20,17 @@ index c4f820af7009c..59c7a9d564e74 100644
  
  TrackedPreferenceType TrackedAtomicPreference::GetType() const {
    return TrackedPreferenceType::ATOMIC;
-@@ -54,11 +52,6 @@ bool TrackedAtomicPreference::EnforceAndReport(
+@@ -54,11 +52,13 @@ bool TrackedAtomicPreference::EnforceAndReport(
          external_validation_transaction->GetStoreUMASuffix());
    }
  
--  if (delegate_) {
--    delegate_->OnAtomicPreferenceValidation(
--        pref_path_, value ? base::make_optional(value->Clone()) : base::nullopt,
--        value_state, external_validation_value_state, helper_.IsPersonal());
--  }
++#if 0
+   if (delegate_) {
+     delegate_->OnAtomicPreferenceValidation(
+         pref_path_, value ? absl::make_optional(value->Clone()) : absl::nullopt,
+         value_state, external_validation_value_state, helper_.IsPersonal());
+   }
++#endif
    TrackedPreferenceHelper::ResetAction reset_action =
        helper_.GetAction(value_state);
    helper_.ReportAction(reset_action);

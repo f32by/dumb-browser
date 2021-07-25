@@ -1,8 +1,8 @@
 diff --git a/content/browser/download/download_manager_impl.cc b/content/browser/download/download_manager_impl.cc
-index 26d995b3ea90b..f6b9da6c4bde6 100644
+index d62a36a287c09..fb33ce5eedf10 100644
 --- a/content/browser/download/download_manager_impl.cc
 +++ b/content/browser/download/download_manager_impl.cc
-@@ -674,6 +674,7 @@ void DownloadManagerImpl::BindWakeLockProvider(
+@@ -672,6 +672,7 @@ void DownloadManagerImpl::BindWakeLockProvider(
    GetDeviceService().BindWakeLockProvider(std::move(receiver));
  }
  
@@ -10,7 +10,7 @@ index 26d995b3ea90b..f6b9da6c4bde6 100644
  download::QuarantineConnectionCallback
  DownloadManagerImpl::GetQuarantineConnectionCallback() {
    if (!delegate_)
-@@ -681,6 +682,7 @@ DownloadManagerImpl::GetQuarantineConnectionCallback() {
+@@ -679,6 +680,7 @@ DownloadManagerImpl::GetQuarantineConnectionCallback() {
  
    return delegate_->GetQuarantineConnectionCallback();
  }
@@ -18,7 +18,7 @@ index 26d995b3ea90b..f6b9da6c4bde6 100644
  
  std::unique_ptr<download::DownloadItemRenameHandler>
  DownloadManagerImpl::GetRenameHandlerForDownload(
-@@ -1455,4 +1457,10 @@ DownloadManagerImpl::RetrieveInProgressDownload(uint32_t id) {
+@@ -1454,4 +1456,10 @@ DownloadManagerImpl::RetrieveInProgressDownload(uint32_t id) {
    return nullptr;
  }
  

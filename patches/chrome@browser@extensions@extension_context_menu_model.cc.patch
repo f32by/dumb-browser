@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/extensions/extension_context_menu_model.cc b/chrome/browser/extensions/extension_context_menu_model.cc
-index 00c1021e6ad6f..b8471030a0ab9 100644
+index 2cc0cf303b47a..fe2eefd713739 100644
 --- a/chrome/browser/extensions/extension_context_menu_model.cc
 +++ b/chrome/browser/extensions/extension_context_menu_model.cc
-@@ -39,6 +39,7 @@
+@@ -40,6 +40,7 @@
  #include "components/vector_icons/vector_icons.h"
  #include "content/public/browser/context_menu_params.h"
  #include "content/public/browser/web_contents.h"
@@ -10,7 +10,7 @@ index 00c1021e6ad6f..b8471030a0ab9 100644
  #include "extensions/browser/extension_action.h"
  #include "extensions/browser/extension_action_manager.h"
  #include "extensions/browser/extension_registry.h"
-@@ -98,6 +99,11 @@ int GetVisibilityStringId(
+@@ -99,6 +100,11 @@ int GetVisibilityStringId(
      Profile* profile,
      const Extension* extension,
      ExtensionContextMenuModel::ButtonVisibility button_visibility) {
@@ -22,7 +22,7 @@ index 00c1021e6ad6f..b8471030a0ab9 100644
    if (IsExtensionForcePinned(*extension, profile))
      return IDS_EXTENSIONS_PINNED_BY_ADMIN;
    if (button_visibility == ExtensionContextMenuModel::PINNED)
-@@ -287,8 +293,10 @@ bool ExtensionContextMenuModel::IsCommandIdEnabled(int command_id) const {
+@@ -288,8 +294,10 @@ bool ExtensionContextMenuModel::IsCommandIdEnabled(int command_id) const {
      // Extension pinning/unpinning is not available for Incognito as this leaves
      // a trace of user activity.
      case TOGGLE_VISIBILITY:

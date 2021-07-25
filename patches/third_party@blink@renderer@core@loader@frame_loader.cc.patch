@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/renderer/core/loader/frame_loader.cc b/third_party/blink/renderer/core/loader/frame_loader.cc
+index b483cd489120a..8c57aea8f8f29 100644
+--- a/third_party/blink/renderer/core/loader/frame_loader.cc
++++ b/third_party/blink/renderer/core/loader/frame_loader.cc
+@@ -1598,6 +1598,7 @@ void FrameLoader::ReportLegacyTLSVersion(const KURL& url,
+                  : WebFeature::kLegacyTLSVersionInMainFrameResource),
+       frame_.Get());
+ 
++#if 0
+   // For non-main-frame loads, we have to use the main frame's document for
+   // the UKM recorder and source ID.
+   auto& root = frame_->LocalFrameRoot();
+@@ -1606,6 +1607,7 @@ void FrameLoader::ReportLegacyTLSVersion(const KURL& url,
+       .SetIsSubresource(is_subresource)
+       .SetIsAdResource(is_ad_resource)
+       .Record(root.GetDocument()->UkmRecorder());
++#endif
+ 
+   String origin = SecurityOrigin::Create(url)->ToString();
+   // To prevent log spam, only log the message once per origin.

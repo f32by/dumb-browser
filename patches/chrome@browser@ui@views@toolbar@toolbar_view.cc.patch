@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.cc b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-index 5f6e182d017d9..5419a563399ab 100644
+index 650fb98f63b0b..7b11e155651b2 100644
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.cc
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-@@ -61,7 +61,6 @@
+@@ -63,7 +63,6 @@
  #include "chrome/browser/ui/views/toolbar/toolbar_account_icon_container_view.h"
  #include "chrome/browser/ui/views/toolbar/toolbar_button.h"
  #include "chrome/browser/ui/web_applications/app_browser_controller.h"
@@ -10,7 +10,7 @@ index 5f6e182d017d9..5419a563399ab 100644
  #include "chrome/common/chrome_features.h"
  #include "chrome/common/pref_names.h"
  #include "chrome/grit/chromium_strings.h"
-@@ -107,7 +106,6 @@
+@@ -111,7 +110,6 @@
  #else
  #include "chrome/browser/signin/signin_global_error_factory.h"
  #include "chrome/browser/ui/bookmarks/bookmark_bubble_sign_in_delegate.h"
@@ -18,7 +18,7 @@ index 5f6e182d017d9..5419a563399ab 100644
  #endif
  
  #if BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
-@@ -164,7 +162,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
+@@ -168,7 +166,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
        display_mode_(GetDisplayMode(browser)) {
    SetID(VIEW_ID_TOOLBAR);
  
@@ -26,7 +26,7 @@ index 5f6e182d017d9..5419a563399ab 100644
  
    if (display_mode_ == DisplayMode::NORMAL) {
      SetBackground(std::make_unique<TopContainerBackground>(browser_view));
-@@ -175,7 +172,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
+@@ -179,7 +176,6 @@ ToolbarView::ToolbarView(Browser* browser, BrowserView* browser_view)
  }
  
  ToolbarView::~ToolbarView() {
@@ -34,7 +34,7 @@ index 5f6e182d017d9..5419a563399ab 100644
  
    if (display_mode_ != DisplayMode::NORMAL)
      return;
-@@ -520,19 +516,6 @@ void ToolbarView::EnabledStateChangedForCommand(int id, bool enabled) {
+@@ -542,19 +538,6 @@ void ToolbarView::EnabledStateChangedForCommand(int id, bool enabled) {
    button->SetEnabled(enabled);
  }
  
@@ -54,7 +54,7 @@ index 5f6e182d017d9..5419a563399ab 100644
  
  ////////////////////////////////////////////////////////////////////////////////
  // ToolbarView, ui::AcceleratorProvider implementation:
-@@ -896,10 +879,6 @@ void ToolbarView::ShowCriticalNotification() {
+@@ -917,10 +900,6 @@ void ToolbarView::ShowCriticalNotification() {
  }
  
  void ToolbarView::ShowOutdatedInstallNotification(bool auto_update_enabled) {

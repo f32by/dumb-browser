@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc b/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
-index 740069f0b0fa1..b50e1144b028a 100644
+index b85e3cea9a751..f0e22eadd01d0 100644
 --- a/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
 +++ b/chrome/browser/ui/global_media_controls/media_session_notification_producer.cc
-@@ -24,8 +24,10 @@
+@@ -25,8 +25,10 @@
  
  namespace {
  
@@ -13,7 +13,7 @@ index 740069f0b0fa1..b50e1144b028a 100644
  
  constexpr int kAutoDismissTimerInMinutesDefault = 60;  // minutes
  
-@@ -40,6 +42,7 @@ enum class MediaNotificationClickSource {
+@@ -41,6 +43,7 @@ enum class MediaNotificationClickSource {
    kMaxValue = kMediaFling
  };
  
@@ -21,7 +21,7 @@ index 740069f0b0fa1..b50e1144b028a 100644
  // Here we check to see if the WebContents is focused. Note that since Session
  // is a WebContentsObserver, we could in theory listen for
  // |OnWebContentsFocused()| and |OnWebContentsLostFocus()|. However, this won't
-@@ -59,6 +62,7 @@ bool IsWebContentsFocused(content::WebContents* web_contents) {
+@@ -60,6 +63,7 @@ bool IsWebContentsFocused(content::WebContents* web_contents) {
  
    return browser->tab_strip_model()->GetActiveWebContents() == web_contents;
  }

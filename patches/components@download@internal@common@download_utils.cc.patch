@@ -1,5 +1,5 @@
 diff --git a/components/download/internal/common/download_utils.cc b/components/download/internal/common/download_utils.cc
-index 6ad1043959eb6..4ddc3c80a10a3 100644
+index 46f111b676f4e..0ad66b6527c10 100644
 --- a/components/download/internal/common/download_utils.cc
 +++ b/components/download/internal/common/download_utils.cc
 @@ -20,7 +20,6 @@
@@ -21,9 +21,9 @@ index 6ad1043959eb6..4ddc3c80a10a3 100644
  }
 @@ -454,14 +451,12 @@ std::unique_ptr<DownloadEntry> CreateDownloadEntryFromDownloadDBEntry(
  
-   base::Optional<InProgressInfo> in_progress_info =
+   absl::optional<InProgressInfo> in_progress_info =
        entry->download_info->in_progress_info;
--  base::Optional<UkmInfo> ukm_info = entry->download_info->ukm_info;
+-  absl::optional<UkmInfo> ukm_info = entry->download_info->ukm_info;
 -  if (!ukm_info || !in_progress_info)
 +  if (!in_progress_info)
      return nullptr;

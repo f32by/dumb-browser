@@ -1,8 +1,8 @@
 diff --git a/content/child/runtime_features.cc b/content/child/runtime_features.cc
-index 39cef2472289b..385c2bbba9e3c 100644
+index 3211041d6814e..1681052908b09 100644
 --- a/content/child/runtime_features.cc
 +++ b/content/child/runtime_features.cc
-@@ -21,6 +21,7 @@
+@@ -22,6 +22,7 @@
  #include "content/public/common/content_switches.h"
  #include "device/fido/features.h"
  #include "device/gamepad/public/cpp/gamepad_features.h"
@@ -10,7 +10,7 @@ index 39cef2472289b..385c2bbba9e3c 100644
  #include "gpu/config/gpu_switches.h"
  #include "media/base/media_switches.h"
  #include "net/base/features.h"
-@@ -366,8 +367,6 @@ void SetRuntimeFeaturesFromChromiumFeatures() {
+@@ -369,8 +370,6 @@ void SetRuntimeFeaturesFromChromiumFeatures() {
             blink::features::kForceSynchronousHTMLParsing},
            {"IgnoreCrossOriginWindowWhenNamedAccessOnWindow",
             blink::features::kIgnoreCrossOriginWindowWhenNamedAccessOnWindow},
@@ -19,8 +19,8 @@ index 39cef2472289b..385c2bbba9e3c 100644
            {"LangClientHintHeader", features::kLangClientHintHeader},
            {"LayoutNG", blink::features::kLayoutNG},
            {"LayoutNGTable", blink::features::kLayoutNGTable},
-@@ -418,6 +417,14 @@ void SetRuntimeFeaturesFromCommandLine(const base::CommandLine& command_line) {
-   // https://chromium.googlesource.com/chromium/src/+/refs/heads/master/docs/configuration.md#switches
+@@ -430,6 +429,14 @@ void SetRuntimeFeaturesFromCommandLine(const base::CommandLine& command_line) {
+   // https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/configuration.md#switches
    using wrf = WebRuntimeFeatures;
    const SwitchToFeatureMap switchToFeatureMapping[] = {
 +      // Dumb Browser

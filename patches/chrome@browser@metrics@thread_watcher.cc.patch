@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/metrics/thread_watcher.cc b/chrome/browser/metrics/thread_watcher.cc
-index 26fe5411db86b..404e986c03668 100644
+index 494a63e5f7cea..ac9c83a412f3d 100644
 --- a/chrome/browser/metrics/thread_watcher.cc
 +++ b/chrome/browser/metrics/thread_watcher.cc
-@@ -27,7 +27,6 @@
+@@ -28,7 +28,6 @@
  #include "chrome/common/channel_info.h"
  #include "chrome/common/chrome_switches.h"
  #include "chrome/common/logging_chrome.h"
@@ -10,7 +10,7 @@ index 26fe5411db86b..404e986c03668 100644
  #include "components/metrics/call_stack_profile_metrics_provider.h"
  #include "components/omnibox/browser/omnibox_event_global_tracker.h"
  #include "components/version_info/version_info.h"
-@@ -37,10 +36,6 @@
+@@ -38,10 +37,6 @@
  #include "content/public/browser/notification_registrar.h"
  #include "content/public/browser/notification_service.h"
  
@@ -21,7 +21,7 @@ index 26fe5411db86b..404e986c03668 100644
  using content::BrowserThread;
  
  namespace {
-@@ -69,10 +64,6 @@ class ThreadWatcherObserver : public content::NotificationObserver {
+@@ -70,10 +65,6 @@ class ThreadWatcherObserver : public content::NotificationObserver {
    // Called when user activity is detected.
    void OnUserActivityDetected();
  
@@ -32,7 +32,7 @@ index 26fe5411db86b..404e986c03668 100644
    content::NotificationRegistrar registrar_;
  
    // This is the last time when woke all thread watchers up.
-@@ -97,12 +88,6 @@ ThreadWatcherObserver::ThreadWatcherObserver(
+@@ -98,12 +89,6 @@ ThreadWatcherObserver::ThreadWatcherObserver(
    DCHECK(!g_thread_watcher_observer_);
    g_thread_watcher_observer_ = this;
  
@@ -45,7 +45,7 @@ index 26fe5411db86b..404e986c03668 100644
    registrar_.Add(this, content::NOTIFICATION_LOAD_START,
                   content::NotificationService::AllSources());
    registrar_.Add(this, content::NOTIFICATION_LOAD_STOP,
-@@ -432,11 +417,6 @@ void ThreadWatcher::GotNoResponse() {
+@@ -433,11 +418,6 @@ void ThreadWatcher::GotNoResponse() {
      if (!crashed_once) {
        crashed_once = true;
  
@@ -57,7 +57,7 @@ index 26fe5411db86b..404e986c03668 100644
        // Simulate a crash.ou
        metrics::CrashBecauseThreadWasUnresponsive(thread_id_);
      }
-@@ -445,29 +425,6 @@ void ThreadWatcher::GotNoResponse() {
+@@ -446,29 +426,6 @@ void ThreadWatcher::GotNoResponse() {
    hung_processing_complete_ = true;
  }
  

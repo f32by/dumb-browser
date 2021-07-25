@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/download_prefs.cc b/chrome/browser/download/download_prefs.cc
-index a95103026c8c3..e05526b55e220 100644
+index f5ce4b6b6649f..ee2a72f1e7209 100644
 --- a/chrome/browser/download/download_prefs.cc
 +++ b/chrome/browser/download/download_prefs.cc
 @@ -29,7 +29,6 @@
@@ -91,7 +91,7 @@ index a95103026c8c3..e05526b55e220 100644
  
    const base::FilePath& default_download_path = GetDefaultDownloadDirectory();
    registry->RegisterFilePathPref(prefs::kDownloadDefaultDirectory,
-@@ -473,10 +461,6 @@ bool DownloadPrefs::IsAutoOpenByPolicy(const GURL& url,
+@@ -480,10 +468,6 @@ bool DownloadPrefs::IsAutoOpenByPolicy(const GURL& url,
  bool DownloadPrefs::EnableAutoOpenByUserBasedOnExtension(
      const base::FilePath& file_name) {
    base::FilePath::StringType extension = file_name.Extension();
@@ -102,7 +102,7 @@ index a95103026c8c3..e05526b55e220 100644
  
    DCHECK(extension[0] == base::FilePath::kExtensionSeparator);
    extension.erase(0, 1);
-@@ -675,3 +659,7 @@ bool DownloadPrefs::AutoOpenCompareFunctor::operator()(
+@@ -682,3 +666,7 @@ bool DownloadPrefs::AutoOpenCompareFunctor::operator()(
      const base::FilePath::StringType& b) const {
    return base::FilePath::CompareLessIgnoreCase(a, b);
  }

@@ -1,8 +1,8 @@
 diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-index 8f024bcdf7440..d0f43816c5ba5 100644
+index aa17d476ab01c..2f7fa73cdaddf 100644
 --- a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
 +++ b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-@@ -21,6 +21,7 @@
+@@ -24,6 +24,7 @@
  #include "third_party/blink/renderer/platform/geometry/float_quad.h"
  #include "third_party/blink/renderer/platform/graphics/bitmap_image.h"
  #include "third_party/blink/renderer/platform/graphics/skia/skia_utils.h"
@@ -10,38 +10,55 @@ index 8f024bcdf7440..d0f43816c5ba5 100644
  #include "third_party/blink/renderer/platform/graphics/stroke_data.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  
-@@ -203,20 +204,6 @@ static inline void ConvertCanvasStyleToUnionType(
-   return_value.SetString(style->GetColor());
+@@ -203,6 +204,7 @@ static inline void ConvertCanvasStyleToUnionType(
  }
+ #endif  // defined(USE_BLINK_V8_BINDING_NEW_IDL_UNION)
  
--void BaseRenderingContext2D::IdentifiabilityMaybeUpdateForStyleUnion(
--    const StringOrCanvasGradientOrCanvasPattern& style) {
--  if (style.IsString()) {
--    identifiability_study_helper_.MaybeUpdateBuilder(
--        IdentifiabilityBenignStringToken(style.GetAsString()));
--  } else if (style.IsCanvasPattern()) {
--    identifiability_study_helper_.MaybeUpdateBuilder(
--        style.GetAsCanvasPattern()->GetIdentifiableToken());
--  } else if (style.IsCanvasGradient()) {
--    identifiability_study_helper_.MaybeUpdateBuilder(
--        style.GetAsCanvasGradient()->GetIdentifiableToken());
--  }
--}
--
++#if 0
+ #if defined(USE_BLINK_V8_BINDING_NEW_IDL_UNION)
+ void BaseRenderingContext2D::IdentifiabilityMaybeUpdateForStyleUnion(
+     const V8UnionCSSColorValueOrCanvasGradientOrCanvasPatternOrString* style) {
+@@ -242,6 +244,7 @@ void BaseRenderingContext2D::IdentifiabilityMaybeUpdateForStyleUnion(
+   }
+ }
+ #endif  // defined(USE_BLINK_V8_BINDING_NEW_IDL_UNION)
++#endif
+ 
  RespectImageOrientationEnum
  BaseRenderingContext2D::RespectImageOrientationInternal(
-     CanvasImageSource* image_source) {
-@@ -234,8 +221,6 @@ void BaseRenderingContext2D::strokeStyle(
+@@ -263,8 +266,10 @@ void BaseRenderingContext2D::setStrokeStyle(
+     const V8UnionCSSColorValueOrCanvasGradientOrCanvasPatternOrString* style) {
+   DCHECK(style);
+ 
++#if 0
+   identifiability_study_helper_.MaybeUpdateBuilder(CanvasOps::kSetStrokeStyle);
+   IdentifiabilityMaybeUpdateForStyleUnion(style);
++#endif
+ 
+   String color_string;
+   CanvasStyle* canvas_style = nullptr;
+@@ -322,8 +327,6 @@ void BaseRenderingContext2D::strokeStyle(
  void BaseRenderingContext2D::setStrokeStyle(
-     const StringOrCanvasGradientOrCanvasPattern& style) {
+     const StringOrCanvasGradientOrCanvasPatternOrCSSColorValue& style) {
    DCHECK(!style.IsNull());
 -  identifiability_study_helper_.MaybeUpdateBuilder(CanvasOps::kSetStrokeStyle);
 -  IdentifiabilityMaybeUpdateForStyleUnion(style);
  
    String color_string;
    CanvasStyle* canvas_style = nullptr;
-@@ -279,8 +264,6 @@ void BaseRenderingContext2D::setFillStyle(
-     const StringOrCanvasGradientOrCanvasPattern& style) {
+@@ -378,8 +381,10 @@ void BaseRenderingContext2D::setFillStyle(
+   DCHECK(style);
+ 
+   ValidateStateStack();
++#if 0
+   identifiability_study_helper_.MaybeUpdateBuilder(CanvasOps::kSetFillStyle);
+   IdentifiabilityMaybeUpdateForStyleUnion(style);
++#endif
+ 
+   String color_string;
+   CanvasStyle* canvas_style = nullptr;
+@@ -438,8 +443,6 @@ void BaseRenderingContext2D::setFillStyle(
+     const StringOrCanvasGradientOrCanvasPatternOrCSSColorValue& style) {
    DCHECK(!style.IsNull());
    ValidateStateStack();
 -  identifiability_study_helper_.MaybeUpdateBuilder(CanvasOps::kSetFillStyle);
@@ -49,22 +66,22 @@ index 8f024bcdf7440..d0f43816c5ba5 100644
  
    String color_string;
    CanvasStyle* canvas_style = nullptr;
-@@ -2005,6 +1988,14 @@ ImageData* BaseRenderingContext2D::getImageDataInternal(
+@@ -2180,6 +2183,14 @@ ImageData* BaseRenderingContext2D::getImageDataInternal(
            snapshot->PaintImageForCurrentFrame().GetSkImageInfo().bounds();
        DCHECK(!bounds.intersect(SkIRect::MakeXYWH(sx, sy, sw, sh)));
      }
-+    if (read_pixels_successful &&
-+        RuntimeEnabledFeatures::FingerprintingCanvasImageDataNoiseEnabled()) {
-+      base::span<uint8_t> dst =
-+          base::span<uint8_t>(reinterpret_cast<uint8_t*>(contents.Data()),
-+              contents.DataLength());
-+      StaticBitmapImage::ShuffleSubchannelColorData(dst.data(),
-+          image_info, sx, sy);
-+    }
++    // if (read_pixels_successful &&
++    //     RuntimeEnabledFeatures::FingerprintingCanvasImageDataNoiseEnabled()) {
++    //   base::span<uint8_t> dst =
++    //       base::span<uint8_t>(reinterpret_cast<uint8_t*>(contents.Data()),
++    //           contents.DataLength());
++    //   StaticBitmapImage::ShuffleSubchannelColorData(dst.data(),
++    //       image_info, sx, sy);
++    // }
    }
  
-   // Wrap |contents| in an ImageData.
-@@ -2339,8 +2330,6 @@ String BaseRenderingContext2D::textAlign() const {
+   if (!IsPaint2D()) {
+@@ -2485,8 +2496,6 @@ String BaseRenderingContext2D::textAlign() const {
  }
  
  void BaseRenderingContext2D::setTextAlign(const String& s) {
@@ -73,7 +90,7 @@ index 8f024bcdf7440..d0f43816c5ba5 100644
    TextAlign align;
    if (!ParseTextAlign(s, align))
      return;
-@@ -2354,8 +2343,6 @@ String BaseRenderingContext2D::textBaseline() const {
+@@ -2500,8 +2509,6 @@ String BaseRenderingContext2D::textBaseline() const {
  }
  
  void BaseRenderingContext2D::setTextBaseline(const String& s) {

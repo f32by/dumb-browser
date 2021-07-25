@@ -1,5 +1,5 @@
 diff --git a/components/metrics/metrics_state_manager.cc b/components/metrics/metrics_state_manager.cc
-index 44f3df50adff8..3f3f7c395851d 100644
+index 77a708d3c76c6..f3b9a7fa85a38 100644
 --- a/components/metrics/metrics_state_manager.cc
 +++ b/components/metrics/metrics_state_manager.cc
 @@ -23,7 +23,6 @@
@@ -27,3 +27,11 @@ index 44f3df50adff8..3f3f7c395851d 100644
        entropy_state_(local_state),
        entropy_source_returned_(ENTROPY_SOURCE_NONE),
        metrics_ids_were_reset_(false) {
+@@ -223,7 +221,6 @@ int MetricsStateManager::GetLowEntropySource() {
+ 
+ void MetricsStateManager::LogHasSessionShutdownCleanly(
+     bool has_session_shutdown_cleanly) {
+-  clean_exit_beacon_.WriteBeaconValue(has_session_shutdown_cleanly);
+ }
+ 
+ void MetricsStateManager::ForceClientIdCreation() {

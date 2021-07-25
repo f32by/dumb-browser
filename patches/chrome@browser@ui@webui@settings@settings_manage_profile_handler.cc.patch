@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc b/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc
-index 753ca0a5e91be..fa04f7470a54a 100644
+index 70fe089c2839a..f589ff1a29583 100644
 --- a/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc
 +++ b/chrome/browser/ui/webui/settings/settings_manage_profile_handler.cc
 @@ -18,7 +18,6 @@
@@ -10,7 +10,7 @@ index 753ca0a5e91be..fa04f7470a54a 100644
  #include "chrome/browser/profiles/profile_shortcut_manager.h"
  #include "chrome/browser/profiles/profile_window.h"
  #include "chrome/browser/profiles/profiles_state.h"
-@@ -188,13 +187,7 @@ void ManageProfileHandler::HandleSetProfileIconToGaiaAvatar(
+@@ -192,13 +191,7 @@ void ManageProfileHandler::HandleSetProfileIconToGaiaAvatar(
    pref_service->SetBoolean(prefs::kProfileUsingDefaultAvatar, false);
    pref_service->SetBoolean(prefs::kProfileUsingGAIAAvatar, true);
    if (!previously_using_gaia_icon) {
@@ -24,7 +24,7 @@ index 753ca0a5e91be..fa04f7470a54a 100644
  }
  
  void ManageProfileHandler::HandleSetProfileIconToDefaultAvatar(
-@@ -213,9 +206,6 @@ void ManageProfileHandler::HandleSetProfileIconToDefaultAvatar(
+@@ -217,9 +210,6 @@ void ManageProfileHandler::HandleSetProfileIconToDefaultAvatar(
        prefs::kProfileUsingDefaultAvatar,
        new_icon_index == profiles::GetPlaceholderAvatarIndex());
    pref_service->SetBoolean(prefs::kProfileUsingGAIAAvatar, false);
@@ -34,7 +34,7 @@ index 753ca0a5e91be..fa04f7470a54a 100644
  }
  
  void ManageProfileHandler::HandleSetProfileName(const base::ListValue* args) {
-@@ -229,8 +219,6 @@ void ManageProfileHandler::HandleSetProfileName(const base::ListValue* args) {
+@@ -233,8 +223,6 @@ void ManageProfileHandler::HandleSetProfileName(const base::ListValue* args) {
    base::TrimWhitespace(new_profile_name, base::TRIM_ALL, &new_profile_name);
    CHECK(!new_profile_name.empty());
    profiles::UpdateProfileName(profile_, new_profile_name);

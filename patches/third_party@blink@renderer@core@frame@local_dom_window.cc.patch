@@ -1,0 +1,59 @@
+diff --git a/third_party/blink/renderer/core/frame/local_dom_window.cc b/third_party/blink/renderer/core/frame/local_dom_window.cc
+index 06983193aa144..f0d1e43fb9a74 100644
+--- a/third_party/blink/renderer/core/frame/local_dom_window.cc
++++ b/third_party/blink/renderer/core/frame/local_dom_window.cc
+@@ -35,7 +35,6 @@
+ #include "build/build_config.h"
+ #include "cc/input/snap_selection_strategy.h"
+ #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+-#include "services/metrics/public/cpp/ukm_builders.h"
+ #include "third_party/blink/public/common/action_after_pagehide.h"
+ #include "third_party/blink/public/common/browser_interface_broker_proxy.h"
+ #include "third_party/blink/public/common/widget/screen_info.h"
+@@ -140,6 +139,7 @@
+ 
+ namespace blink {
+ 
++#if 0
+ namespace {
+ 
+ constexpr size_t kMaxPostMessageUkmRecordedSourceIdsSize = 20;
+@@ -164,6 +164,7 @@ bool ShouldRecordPostMessageIncomingFrameUkmEvent(
+ }
+ 
+ }  // namespace
++#endif
+ 
+ LocalDOMWindow::LocalDOMWindow(LocalFrame& frame, WindowAgent* agent)
+     : DOMWindow(frame),
+@@ -975,6 +976,7 @@ void LocalDOMWindow::SchedulePostMessage(
+     MessageEvent* event,
+     scoped_refptr<const SecurityOrigin> target,
+     LocalDOMWindow* source) {
++#if 0
+   // Record UKM metrics for postMessage event.
+   ukm::SourceId source_frame_ukm_source_id = source->UkmSourceID();
+   if (ShouldRecordPostMessageIncomingFrameUkmEvent(
+@@ -983,6 +985,7 @@ void LocalDOMWindow::SchedulePostMessage(
+         .SetSourceFrameSourceId(source_frame_ukm_source_id)
+         .Record(UkmRecorder());
+   }
++#endif
+ 
+   // Allowing unbounded amounts of messages to build up for a suspended context
+   // is problematic; consider imposing a limit or other restriction if this
+@@ -2103,6 +2106,7 @@ bool LocalDOMWindow::DirectSocketCapability() const {
+              mojom::blink::PermissionsPolicyFeature::kDirectSockets);
+ }
+ 
++#if 0
+ ukm::UkmRecorder* LocalDOMWindow::UkmRecorder() {
+   DCHECK(document_);
+   return document_->UkmRecorder();
+@@ -2112,5 +2116,6 @@ ukm::SourceId LocalDOMWindow::UkmSourceID() const {
+   DCHECK(document_);
+   return document_->UkmSourceID();
+ }
++#endif
+ 
+ }  // namespace blink

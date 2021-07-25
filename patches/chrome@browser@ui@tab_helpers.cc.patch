@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/tab_helpers.cc b/chrome/browser/ui/tab_helpers.cc
-index 8710eb9a58e53..083e371915768 100644
+index 23b9226c943ab..74ceadae11eb7 100644
 --- a/chrome/browser/ui/tab_helpers.cc
 +++ b/chrome/browser/ui/tab_helpers.cc
 @@ -23,7 +23,6 @@
@@ -10,10 +10,10 @@ index 8710eb9a58e53..083e371915768 100644
  #include "chrome/browser/engagement/site_engagement_helper.h"
  #include "chrome/browser/external_protocol/external_protocol_observer.h"
  #include "chrome/browser/favicon/favicon_utils.h"
-@@ -33,19 +32,14 @@
+@@ -32,19 +31,14 @@
+ #include "chrome/browser/history/history_tab_helper.h"
  #include "chrome/browser/history/top_sites_factory.h"
  #include "chrome/browser/history_clusters/history_clusters_tab_helper.h"
- #include "chrome/browser/infobars/infobar_service.h"
 -#include "chrome/browser/lite_video/lite_video_observer.h"
  #include "chrome/browser/login_detection/login_detection_tab_helper.h"
  #include "chrome/browser/media/history/media_history_contents_observer.h"
@@ -30,7 +30,7 @@ index 8710eb9a58e53..083e371915768 100644
  #include "chrome/browser/password_manager/chrome_password_manager_client.h"
  #include "chrome/browser/performance_hints/performance_hints_features.h"
  #include "chrome/browser/performance_hints/performance_hints_observer.h"
-@@ -56,21 +50,14 @@
+@@ -55,21 +49,14 @@
  #include "chrome/browser/prefetch/prefetch_proxy/prefetch_proxy_tab_helper.h"
  #include "chrome/browser/profiles/profile.h"
  #include "chrome/browser/profiles/profile_key.h"
@@ -43,7 +43,7 @@ index 8710eb9a58e53..083e371915768 100644
  #include "chrome/browser/ssl/chrome_security_blocking_page_factory.h"
  #include "chrome/browser/ssl/connection_help_tab_helper.h"
  #include "chrome/browser/ssl/security_state_tab_helper.h"
--#include "chrome/browser/subresource_filter/chrome_subresource_filter_client.h"
+-#include "chrome/browser/subresource_filter/chrome_content_subresource_filter_throttle_manager_factory.h"
 -#include "chrome/browser/subresource_redirect/subresource_redirect_observer.h"
  #include "chrome/browser/sync/sessions/sync_sessions_router_tab_helper.h"
  #include "chrome/browser/sync/sessions/sync_sessions_web_contents_router_factory.h"
@@ -52,7 +52,7 @@ index 8710eb9a58e53..083e371915768 100644
  #include "chrome/browser/translate/chrome_translate_client.h"
  #include "chrome/browser/ui/autofill/chrome_autofill_client.h"
  #include "chrome/browser/ui/find_bar/find_bar_state.h"
-@@ -153,7 +140,6 @@
+@@ -158,7 +145,6 @@
  #if defined(OS_WIN) || defined(OS_MAC) || defined(OS_LINUX) || \
      defined(OS_CHROMEOS)
  #include "chrome/browser/ui/blocked_content/framebust_block_tab_helper.h"
@@ -60,7 +60,7 @@ index 8710eb9a58e53..083e371915768 100644
  #endif
  
  #if defined(OS_MAC)
-@@ -168,8 +154,6 @@
+@@ -173,8 +159,6 @@
  #include "chrome/browser/extensions/api/web_navigation/web_navigation_api.h"
  #include "chrome/browser/extensions/chrome_extension_web_contents_observer.h"
  #include "chrome/browser/extensions/tab_helper.h"
@@ -69,12 +69,22 @@ index 8710eb9a58e53..083e371915768 100644
  #include "chrome/browser/web_applications/components/web_app_utils.h"
  #include "chrome/browser/web_applications/web_app_tab_helper.h"
  #include "extensions/browser/view_type_utils.h"
-@@ -243,12 +227,9 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -233,10 +217,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+   zoom::ZoomController::CreateForWebContents(web_contents);
+ #endif
+ 
+-  // infobars::ContentInfoBarManager comes before common tab helpers since
+-  // ChromeSubresourceFilterClient has it as a dependency.
+-  infobars::ContentInfoBarManager::CreateForWebContents(web_contents);
+-
+   Profile* profile =
+       Profile::FromBrowserContext(web_contents->GetBrowserContext());
+ 
+@@ -252,11 +232,9 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    ChromePasswordManagerClient::CreateForWebContentsWithAutofillClient(
        web_contents,
        autofill::ChromeAutofillClient::FromWebContents(web_contents));
--  ChromeSubresourceFilterClient::CreateThrottleManagerWithClientForWebContents(
--      web_contents);
+-  CreateSubresourceFilterThrottleManagerForWebContents(web_contents);
    ChromeTranslateClient::CreateForWebContents(web_contents);
    ConnectionHelpTabHelper::CreateForWebContents(web_contents);
    CoreTabHelper::CreateForWebContents(web_contents);
@@ -82,8 +92,8 @@ index 8710eb9a58e53..083e371915768 100644
    ExternalProtocolObserver::CreateForWebContents(web_contents);
    favicon::CreateContentFaviconDriverForWebContents(web_contents);
    FileSystemAccessPermissionRequestManager::CreateForWebContents(web_contents);
-@@ -264,17 +245,13 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
-   InfoBarService::CreateForWebContents(web_contents);
+@@ -271,17 +249,13 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+   HistoryClustersTabHelper::CreateForWebContents(web_contents);
    webapps::InstallableManager::CreateForWebContents(web_contents);
    PrefetchProxyTabHelper::CreateForWebContents(web_contents);
 -  LiteVideoObserver::MaybeCreateForWebContents(web_contents);
@@ -100,7 +110,7 @@ index 8710eb9a58e53..083e371915768 100644
    NavigationPredictorPreconnectClient::CreateForWebContents(web_contents);
    if (optimization_guide::features::IsOptimizationHintsEnabled()) {
      optimization_guide::BlinkOptimizationGuideWebContentsObserver::
-@@ -288,8 +265,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -295,8 +269,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
      optimization_guide::PageContentAnnotationsWebContentsHelper::
          CreateForWebContents(web_contents, page_content_annotations_service);
    }
@@ -109,7 +119,7 @@ index 8710eb9a58e53..083e371915768 100644
    if (performance_manager::PerformanceManager::IsAvailable())
      performance_manager::TabPropertiesDecorator::SetIsTab(web_contents, true);
    permissions::PermissionRequestManager::CreateForWebContents(web_contents);
-@@ -308,21 +283,9 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -315,21 +287,9 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    //     See https://crbug.com/910288.
    resource_coordinator::ResourceCoordinatorTabHelper::CreateForWebContents(
        web_contents);
@@ -131,7 +141,7 @@ index 8710eb9a58e53..083e371915768 100644
    sync_sessions::SyncSessionsRouterTabHelper::CreateForWebContents(
        web_contents,
        sync_sessions::SyncSessionsWebContentsRouterFactory::GetForProfile(
-@@ -333,7 +296,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -340,7 +300,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
            web_contents));
    TabUIHelper::CreateForWebContents(web_contents);
    tasks::TaskTabHelper::CreateForWebContents(web_contents);
@@ -139,15 +149,15 @@ index 8710eb9a58e53..083e371915768 100644
    vr::VrTabHelper::CreateForWebContents(web_contents);
  
    // NO! Do not just add your tab helper here. This is a large alphabetized
-@@ -411,6 +373,7 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
-   policy::DlpContentTabHelper::CreateForWebContents(web_contents);
+@@ -420,6 +379,7 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+   WebContentsCanGoBackObserver::CreateForWebContents(web_contents);
  #endif
  
 +#if 0
  // TODO(crbug.com/1052397): Revisit the macro expression once build flag switch
  // of lacros-chrome is complete.
  #if defined(OS_WIN) || defined(OS_MAC) || \
-@@ -424,6 +387,7 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -433,6 +393,7 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
            features::kHappinessTrackingSurveysForDesktopDemo)) {
      HatsHelper::CreateForWebContents(web_contents);
    }
@@ -155,7 +165,7 @@ index 8710eb9a58e53..083e371915768 100644
  #endif
  
    // --- Section 3: Feature tab helpers behind BUILDFLAGs ---
-@@ -447,9 +411,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
+@@ -456,9 +417,6 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
    extensions::WebNavigationTabObserver::CreateForWebContents(web_contents);
    if (web_app::AreWebAppsEnabled(profile))
      web_app::WebAppTabHelper::CreateForWebContents(web_contents);

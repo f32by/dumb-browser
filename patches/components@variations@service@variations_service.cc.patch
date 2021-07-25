@@ -1,5 +1,5 @@
 diff --git a/components/variations/service/variations_service.cc b/components/variations/service/variations_service.cc
-index d4611738efd32..76931bca70a18 100644
+index e7bf9b17b8e10..ad98130cfab60 100644
 --- a/components/variations/service/variations_service.cc
 +++ b/components/variations/service/variations_service.cc
 @@ -35,7 +35,6 @@
@@ -10,13 +10,3 @@ index d4611738efd32..76931bca70a18 100644
  #include "components/metrics/metrics_state_manager.h"
  #include "components/network_time/network_time_tracker.h"
  #include "components/pref_registry/pref_registry_syncable.h"
-@@ -359,8 +358,7 @@ VariationsService::VariationsService(
-       disable_deltas_for_next_request_(false),
-       resource_request_allowed_notifier_(std::move(notifier)),
-       request_count_(0),
--      safe_seed_manager_(state_manager->clean_exit_beacon()->exited_cleanly(),
--                         local_state),
-+      safe_seed_manager_(true, local_state),
-       field_trial_creator_(local_state,
-                            client_.get(),
-                            std::make_unique<VariationsSeedStore>(

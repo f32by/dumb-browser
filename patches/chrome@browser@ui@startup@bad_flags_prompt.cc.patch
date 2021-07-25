@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/startup/bad_flags_prompt.cc b/chrome/browser/ui/startup/bad_flags_prompt.cc
-index 49e94378e13de..c23ace127eaae 100644
+index d27d0eaa766ae..6a5ac04460ac4 100644
 --- a/chrome/browser/ui/startup/bad_flags_prompt.cc
 +++ b/chrome/browser/ui/startup/bad_flags_prompt.cc
 @@ -22,13 +22,11 @@
@@ -7,8 +7,8 @@ index 49e94378e13de..c23ace127eaae 100644
  #include "chrome/grit/generated_resources.h"
  #include "components/autofill/core/common/autofill_switches.h"
 -#include "components/data_reduction_proxy/core/common/data_reduction_proxy_switches.h"
+ #include "components/infobars/content/content_infobar_manager.h"
  #include "components/infobars/core/infobar_delegate.h"
- #include "components/infobars/core/simple_alert_infobar_delegate.h"
  #include "components/nacl/common/buildflags.h"
  #include "components/nacl/common/nacl_switches.h"
  #include "components/network_session_configurator/common/network_switches.h"
@@ -27,7 +27,7 @@ index 49e94378e13de..c23ace127eaae 100644
      // GPU sanboxing isn't implemented for the Web GPU API yet meaning it would
      // be possible to read GPU data for other Chromium processes.
      switches::kEnableUnsafeWebGPU,
-@@ -214,7 +208,6 @@ void MaybeShowInvalidUserDataDirWarningDialog() {
+@@ -215,7 +209,6 @@ void MaybeShowInvalidUserDataDirWarningDialog() {
    if (user_data_dir.empty())
      return;
  

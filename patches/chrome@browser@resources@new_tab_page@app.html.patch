@@ -1,16 +1,17 @@
 diff --git a/chrome/browser/resources/new_tab_page/app.html b/chrome/browser/resources/new_tab_page/app.html
-index 8f0bef21a652b..efd0965e8723e 100644
+index e424c5fa097f5..15b0c67e8943b 100644
 --- a/chrome/browser/resources/new_tab_page/app.html
 +++ b/chrome/browser/resources/new_tab_page/app.html
-@@ -277,11 +277,6 @@
+@@ -258,12 +258,6 @@
              use-title-pill$="[[theme_.shortcutUseTitlePill]]">
          </ntp-most-visited>
        </template>
 -      <template is="dom-if" if="[[middleSlotPromoEnabled_]]">
 -        <ntp-middle-slot-promo
--            on-ntp-middle-slot-promo-loaded="onMiddleSlotPromoLoaded_">
+-            on-ntp-middle-slot-promo-loaded="onMiddleSlotPromoLoaded_"
+-            hidden="[[!promoAndModulesLoaded_]]">
 -        </ntp-middle-slot-promo>
 -      </template>
-       <template is="dom-repeat" items="[[moduleDescriptors_]]" id="modules"
-           on-dom-change="onModulesLoaded_">
-         <ntp-module-wrapper descriptor="[[item]]"
+       <template is="dom-if" if="[[modulesEnabled_]]" >
+         <ntp-modules id="modules"
+             on-modules-loaded="onModulesLoaded_"

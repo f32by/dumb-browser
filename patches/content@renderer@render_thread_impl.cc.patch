@@ -1,15 +1,20 @@
 diff --git a/content/renderer/render_thread_impl.cc b/content/renderer/render_thread_impl.cc
-index ed9d15a2832c8..68ea7af55cf58 100644
+index 5bb7fec55d93e..319f36894dfa3 100644
 --- a/content/renderer/render_thread_impl.cc
 +++ b/content/renderer/render_thread_impl.cc
-@@ -359,9 +359,7 @@ class UkmRecorderFactoryImpl : public cc::UkmRecorderFactory {
-   ~UkmRecorderFactoryImpl() override = default;
- 
-   std::unique_ptr<ukm::UkmRecorder> CreateRecorder() override {
--    mojo::PendingRemote<ukm::mojom::UkmRecorderInterface> recorder;
--    process_host_->BindHostReceiver(recorder.InitWithNewPipeAndPassReceiver());
--    return std::make_unique<ukm::MojoUkmRecorder>(std::move(recorder));
-+    return std::make_unique<ukm::MojoUkmRecorder>();
-   }
- 
-  private:
+@@ -55,7 +55,6 @@
+ #include "cc/raster/task_graph_runner.h"
+ #include "cc/trees/layer_tree_frame_sink.h"
+ #include "cc/trees/layer_tree_settings.h"
+-#include "cc/trees/ukm_manager.h"
+ #include "components/discardable_memory/client/client_discardable_shared_memory_manager.h"
+ #include "components/metrics/public/mojom/single_sample_metrics.mojom.h"
+ #include "components/metrics/single_sample_metrics.h"
+@@ -121,7 +120,6 @@
+ #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+ #include "net/base/url_util.h"
+ #include "ppapi/buildflags/buildflags.h"
+-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+ #include "services/network/public/cpp/network_switches.h"
+ #include "services/service_manager/public/cpp/interface_provider.h"
+ #include "services/viz/public/cpp/gpu/context_provider_command_buffer.h"

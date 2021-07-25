@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/chrome_download_manager_delegate.cc b/chrome/browser/download/chrome_download_manager_delegate.cc
-index 48e40037fa945..b7a7261712d39 100644
+index 404b30e4c927a..ee4c3506a17ab 100644
 --- a/chrome/browser/download/chrome_download_manager_delegate.cc
 +++ b/chrome/browser/download/chrome_download_manager_delegate.cc
 @@ -41,15 +41,8 @@
@@ -18,17 +18,18 @@ index 48e40037fa945..b7a7261712d39 100644
  #include "chrome/browser/ui/chrome_pages.h"
  #include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
  #include "chrome/common/buildflags.h"
-@@ -69,9 +62,6 @@
+@@ -69,10 +62,6 @@
  #include "components/prefs/pref_member.h"
  #include "components/prefs/pref_service.h"
  #include "components/safe_browsing/buildflags.h"
+-#include "components/safe_browsing/core/browser/download/download_stats.h"
 -#include "components/safe_browsing/core/file_type_policies.h"
 -#include "components/services/quarantine/public/mojom/quarantine.mojom.h"
 -#include "components/services/quarantine/quarantine_impl.h"
  #include "content/public/browser/browser_task_traits.h"
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/download_item_utils.h"
-@@ -128,8 +118,6 @@ using content::DownloadManager;
+@@ -129,8 +118,6 @@ using content::DownloadManager;
  using download::DownloadItem;
  using download::DownloadPathReservationTracker;
  using download::PathValidationResult;
@@ -37,7 +38,7 @@ index 48e40037fa945..b7a7261712d39 100644
  using ConnectionType = net::NetworkChangeNotifier::ConnectionType;
  
  namespace {
-@@ -350,6 +338,7 @@ void MaybeReportDangerousDownloadBlocked(
+@@ -351,6 +338,7 @@ void MaybeReportDangerousDownloadBlocked(
    if (!profile)
      return;
  
@@ -45,7 +46,7 @@ index 48e40037fa945..b7a7261712d39 100644
    // If |download| has a deep scanning malware verdict, then it means the
    // dangerous file has already been reported.
    auto* scan_result = static_cast<enterprise_connectors::ScanResult*>(
-@@ -358,6 +347,7 @@ void MaybeReportDangerousDownloadBlocked(
+@@ -359,6 +347,7 @@ void MaybeReportDangerousDownloadBlocked(
        enterprise_connectors::ContainsMalwareVerdict(scan_result->response)) {
      return;
    }
@@ -53,7 +54,7 @@ index 48e40037fa945..b7a7261712d39 100644
  
    auto* router =
        extensions::SafeBrowsingPrivateEventRouterFactory::GetForProfile(profile);
-@@ -392,13 +382,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
+@@ -393,13 +382,6 @@ ChromeDownloadManagerDelegate::~ChromeDownloadManagerDelegate() {
  
  void ChromeDownloadManagerDelegate::SetDownloadManager(DownloadManager* dm) {
    download_manager_ = dm;
@@ -67,7 +68,7 @@ index 48e40037fa945..b7a7261712d39 100644
  }
  
  #if defined(OS_ANDROID)
-@@ -746,6 +729,7 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
+@@ -746,6 +728,7 @@ void ChromeDownloadManagerDelegate::ChooseSavePath(
  
  void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
      base::FilePath* filename) {
@@ -75,7 +76,7 @@ index 48e40037fa945..b7a7261712d39 100644
    safe_browsing::FileTypePolicies* file_type_policies =
        safe_browsing::FileTypePolicies::GetInstance();
  
-@@ -756,6 +740,7 @@ void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
+@@ -756,6 +739,7 @@ void ChromeDownloadManagerDelegate::SanitizeSavePackageResourceName(
    base::FilePath default_filename = base::FilePath::FromUTF8Unsafe(
        l10n_util::GetStringUTF8(IDS_DEFAULT_DOWNLOAD_FILENAME));
    *filename = filename->AddExtension(default_filename.BaseName().value());
@@ -83,27 +84,23 @@ index 48e40037fa945..b7a7261712d39 100644
  }
  
  void ChromeDownloadManagerDelegate::SanitizeDownloadParameters(
-@@ -883,19 +868,6 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
+@@ -882,6 +866,7 @@ ChromeDownloadManagerDelegate::ApplicationClientIdForFileScanning() {
    return std::string(chrome::kApplicationClientIDStringForAVScanning);
  }
  
--DownloadProtectionService*
--    ChromeDownloadManagerDelegate::GetDownloadProtectionService() {
--  DCHECK_CURRENTLY_ON(BrowserThread::UI);
--#if BUILDFLAG(FULL_SAFE_BROWSING)
--  safe_browsing::SafeBrowsingService* sb_service =
--      g_browser_process->safe_browsing_service();
--  if (sb_service && sb_service->download_protection_service()) {
--    return sb_service->download_protection_service();
--  }
--#endif
--  return nullptr;
--}
--
++#if 0
+ DownloadProtectionService*
+ ChromeDownloadManagerDelegate::GetDownloadProtectionService() {
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+@@ -894,6 +879,7 @@ ChromeDownloadManagerDelegate::GetDownloadProtectionService() {
+ #endif
+   return nullptr;
+ }
++#endif
+ 
  void ChromeDownloadManagerDelegate::GetMixedContentStatus(
      download::DownloadItem* download,
-     const base::FilePath& virtual_path,
-@@ -1441,7 +1413,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
+@@ -1444,7 +1430,6 @@ void ChromeDownloadManagerDelegate::OnDownloadTargetDetermined(
        DownloadItemModel(item).SetShouldPreferOpeningInBrowser(true);
  #endif
  
@@ -111,7 +108,19 @@ index 48e40037fa945..b7a7261712d39 100644
    }
    if (ShouldBlockFile(target_info->danger_type, item)) {
      MaybeReportDangerousDownloadBlocked(
-@@ -1619,15 +1590,18 @@ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
+@@ -1583,10 +1568,10 @@ void ChromeDownloadManagerDelegate::MaybeSendDangerousDownloadOpenedReport(
+     service->MaybeSendDangerousDownloadOpenedReport(download,
+                                                     show_download_in_folder);
+   }
+-#endif
+   safe_browsing::RecordDownloadOpened(download->GetDangerType(),
+                                       base::Time::Now(), download->GetEndTime(),
+                                       show_download_in_folder);
++#endif
+ }
+ 
+ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
+@@ -1631,15 +1616,18 @@ void ChromeDownloadManagerDelegate::CheckDownloadAllowed(
  #endif
  }
  
@@ -130,7 +139,7 @@ index 48e40037fa945..b7a7261712d39 100644
  #if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_CHROMEOS) || \
      defined(OS_MAC)
    return enterprise_connectors::FileSystemRenameHandler::CreateIfNeeded(
-@@ -1635,6 +1609,8 @@ ChromeDownloadManagerDelegate::GetRenameHandlerForDownload(
+@@ -1647,6 +1635,8 @@ ChromeDownloadManagerDelegate::GetRenameHandlerForDownload(
  #else
    return nullptr;
  #endif
@@ -139,7 +148,7 @@ index 48e40037fa945..b7a7261712d39 100644
  }
  
  void ChromeDownloadManagerDelegate::OnCheckDownloadAllowedComplete(
-@@ -1666,6 +1642,7 @@ ChromeDownloadManagerDelegate::GetWeakPtr() {
+@@ -1678,6 +1668,7 @@ ChromeDownloadManagerDelegate::GetWeakPtr() {
    return weak_ptr_factory_.GetWeakPtr();
  }
  
@@ -147,7 +156,7 @@ index 48e40037fa945..b7a7261712d39 100644
  // static
  void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
      mojo::PendingReceiver<quarantine::mojom::Quarantine> receiver) {
-@@ -1682,3 +1659,9 @@ void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
+@@ -1694,3 +1685,9 @@ void ChromeDownloadManagerDelegate::ConnectToQuarantineService(
    mojo::MakeSelfOwnedReceiver(std::make_unique<quarantine::QuarantineImpl>(),
                                std::move(receiver));
  }

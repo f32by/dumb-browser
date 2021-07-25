@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/renderer/core/page/create_window.cc b/third_party/blink/renderer/core/page/create_window.cc
+index 21c38947006e0..7317ff0e4d583 100644
+--- a/third_party/blink/renderer/core/page/create_window.cc
++++ b/third_party/blink/renderer/core/page/create_window.cc
+@@ -229,6 +229,7 @@ WebWindowFeatures GetWindowFeaturesFromString(const String& feature_string,
+ }
+ 
+ static void MaybeLogWindowOpen(LocalFrame& opener_frame) {
++#if 0
+   AdTracker* ad_tracker = opener_frame.GetAdTracker();
+   if (!ad_tracker)
+     return;
+@@ -251,6 +252,7 @@ static void MaybeLogWindowOpen(LocalFrame& opener_frame) {
+         .SetFromAdScript(is_ad_script_in_stack)
+         .Record(ukm_recorder);
+   }
++#endif
+ }
+ 
+ Frame* CreateNewWindow(LocalFrame& opener_frame,

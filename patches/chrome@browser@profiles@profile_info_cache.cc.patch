@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/profiles/profile_info_cache.cc b/chrome/browser/profiles/profile_info_cache.cc
-index 306c8101c6929..3e993d6ea1cef 100644
+index dcc2d9eb1bf2d..2ac3729ab38cd 100644
 --- a/chrome/browser/profiles/profile_info_cache.cc
 +++ b/chrome/browser/profiles/profile_info_cache.cc
-@@ -119,11 +119,6 @@ ProfileInfoCache::ProfileInfoCache(PrefService* prefs,
+@@ -122,11 +122,6 @@ ProfileInfoCache::ProfileInfoCache(PrefService* prefs,
      MigrateLegacyProfileNamesAndRecomputeIfNeeded();
      prefs_->SetBoolean(kLegacyProfileNameMigrated, true);
    }
@@ -14,7 +14,7 @@ index 306c8101c6929..3e993d6ea1cef 100644
  #endif  // !defined(OS_ANDROID) && !BUILDFLAG(IS_CHROMEOS_ASH)
  }
  
-@@ -183,9 +178,6 @@ void ProfileInfoCache::AddProfileToCache(const base::FilePath& profile_path,
+@@ -183,9 +178,6 @@ void ProfileInfoCache::AddProfileToCache(ProfileAttributesInitParams params) {
  }
  
  void ProfileInfoCache::DisableProfileMetricsForTesting() {

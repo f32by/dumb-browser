@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/login_detection/login_detection_tab_helper.cc b/chrome/browser/login_detection/login_detection_tab_helper.cc
-index c5a202967a369..ffd5012cfdee0 100644
+index 696952084f88f..4629184cb3480 100644
 --- a/chrome/browser/login_detection/login_detection_tab_helper.cc
 +++ b/chrome/browser/login_detection/login_detection_tab_helper.cc
-@@ -18,10 +18,6 @@
+@@ -19,10 +19,6 @@
  #include "content/public/browser/navigation_handle.h"
  #include "content/public/browser/web_contents.h"
  #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
@@ -13,7 +13,7 @@ index c5a202967a369..ffd5012cfdee0 100644
  
  namespace login_detection {
  
-@@ -34,10 +30,6 @@ PrefService* GetPrefs(content::WebContents* web_contents) {
+@@ -35,10 +31,6 @@ PrefService* GetPrefs(content::WebContents* web_contents) {
  
  void RecordLoginDetectionMetrics(LoginDetectionType type,
                                   ukm::SourceId ukm_source_id) {
@@ -24,13 +24,3 @@ index c5a202967a369..ffd5012cfdee0 100644
  }
  
  }  // namespace
-@@ -130,9 +122,6 @@ void LoginDetectionTabHelper::DidOpenAsPopUp(
- 
- void LoginDetectionTabHelper::WebContentsDestroyed() {
-   if (auto signedin_site = oauth_login_detector_->GetPopUpLoginFlowSite()) {
--    RecordLoginDetectionMetrics(
--        LoginDetectionType::kOauthPopUpFirstTimeLoginFlow,
--        ukm::GetSourceIdForWebContentsDocument(web_contents()));
-     prefs::SaveSiteToOAuthSignedInList(GetPrefs(web_contents()),
-                                        *signedin_site);
-   }

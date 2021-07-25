@@ -1,8 +1,8 @@
 diff --git a/components/permissions/permission_request_manager.cc b/components/permissions/permission_request_manager.cc
-index c4c308f0349ea..66b56a4a0a998 100644
+index fbf3992d6b601..5730f2888921c 100644
 --- a/components/permissions/permission_request_manager.cc
 +++ b/components/permissions/permission_request_manager.cc
-@@ -624,11 +624,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
+@@ -627,11 +627,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
        permission_action != PermissionAction::IGNORED) {
      time_to_decision = base::Time::Now() - current_request_first_display_time_;
    }
@@ -14,7 +14,7 @@ index c4c308f0349ea..66b56a4a0a998 100644
  
    content::BrowserContext* browser_context =
        web_contents()->GetBrowserContext();
-@@ -666,7 +661,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
+@@ -669,7 +664,6 @@ void PermissionRequestManager::FinalizeCurrentRequests(
          embargo_status = PermissionEmbargoStatus::REPEATED_IGNORES;
        }
      }

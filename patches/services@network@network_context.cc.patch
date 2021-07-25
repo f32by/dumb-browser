@@ -1,8 +1,8 @@
 diff --git a/services/network/network_context.cc b/services/network/network_context.cc
-index 1532b031db2cc..ef5b4af5f7588 100644
+index e606e81f99451..df3635dd9bfa4 100644
 --- a/services/network/network_context.cc
 +++ b/services/network/network_context.cc
-@@ -33,8 +33,6 @@
+@@ -32,8 +32,6 @@
  #include "build/chromecast_buildflags.h"
  #include "build/chromeos_buildflags.h"
  #include "components/cookie_config/cookie_store_util.h"
@@ -11,7 +11,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
  #include "components/network_session_configurator/browser/network_session_configurator.h"
  #include "components/network_session_configurator/common/network_switches.h"
  #include "components/prefs/json_pref_store.h"
-@@ -42,6 +40,7 @@
+@@ -41,6 +39,7 @@
  #include "components/prefs/pref_service.h"
  #include "components/prefs/pref_service_factory.h"
  #include "crypto/sha2.h"
@@ -19,7 +19,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
  #include "mojo/public/cpp/bindings/pending_receiver.h"
  #include "net/base/features.h"
  #include "net/base/load_flags.h"
-@@ -82,7 +81,6 @@
+@@ -81,7 +80,6 @@
  #include "services/network/ignore_errors_cert_verifier.h"
  #include "services/network/net_log_exporter.h"
  #include "services/network/network_service.h"
@@ -100,7 +100,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
  void NetworkContext::CloseAllConnections(CloseAllConnectionsCallback callback) {
    net::HttpNetworkSession* http_session =
        url_request_context_->http_transaction_factory()->GetSession();
-@@ -1693,26 +1650,6 @@ void NetworkContext::CreateMdnsResponder(
+@@ -1695,26 +1652,6 @@ void NetworkContext::CreateMdnsResponder(
  #endif  // BUILDFLAG(ENABLE_MDNS)
  }
  
@@ -127,7 +127,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
  void NetworkContext::SetSplitAuthCacheByNetworkIsolationKey(
      bool split_auth_cache_by_network_isolation_key) {
    url_request_context_->http_transaction_factory()
-@@ -2220,10 +2157,7 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
+@@ -2222,10 +2159,7 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
        base::FeatureList::IsEnabled(
            net::features::kPartitionNelAndReportingByNetworkIsolationKey) &&
        base::FeatureList::IsEnabled(
@@ -139,7 +139,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
      result.url_request_context->set_require_network_isolation_key(true);
    }
  
-@@ -2292,18 +2226,6 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
+@@ -2294,18 +2228,6 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
    }
  #endif  // BUILDFLAG(IS_CT_SUPPORTED)
  
@@ -158,7 +158,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
    if (proxy_delegate_) {
      proxy_delegate_->SetProxyResolutionService(
          result.url_request_context->proxy_resolution_service());
-@@ -2406,6 +2328,7 @@ void NetworkContext::DestroySocketManager(P2PSocketManager* socket_manager) {
+@@ -2408,6 +2330,7 @@ void NetworkContext::DestroySocketManager(P2PSocketManager* socket_manager) {
    socket_managers_.erase(iter);
  }
  
@@ -166,7 +166,7 @@ index 1532b031db2cc..ef5b4af5f7588 100644
  void NetworkContext::CanUploadDomainReliability(
      const GURL& origin,
      base::OnceCallback<void(bool)> callback) {
-@@ -2415,6 +2338,7 @@ void NetworkContext::CanUploadDomainReliability(
+@@ -2417,6 +2340,7 @@ void NetworkContext::CanUploadDomainReliability(
                          bool allowed) { std::move(callback).Run(allowed); },
                       std::move(callback)));
  }

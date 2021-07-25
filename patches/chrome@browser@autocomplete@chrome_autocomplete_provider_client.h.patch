@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
-index d174cd16246d1..aee280e54a4f0 100644
+index 01b59b5757e99..4e14f7008a85c 100644
 --- a/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
 +++ b/chrome/browser/autocomplete/chrome_autocomplete_provider_client.h
 @@ -26,10 +26,6 @@ class StoragePartition;
@@ -13,12 +13,12 @@ index d174cd16246d1..aee280e54a4f0 100644
  class ChromeAutocompleteProviderClient : public AutocompleteProviderClient {
   public:
    explicit ChromeAutocompleteProviderClient(Profile* profile);
-@@ -120,8 +116,6 @@ class ChromeAutocompleteProviderClient : public AutocompleteProviderClient {
+@@ -123,8 +119,6 @@ class ChromeAutocompleteProviderClient : public AutocompleteProviderClient {
    Profile* profile_;
    ChromeAutocompleteSchemeClassifier scheme_classifier_;
    std::unique_ptr<OmniboxPedalProvider> pedal_provider_;
 -  std::unique_ptr<unified_consent::UrlKeyedDataCollectionConsentHelper>
 -      url_consent_helper_;
  
-   // Injectable storage partitiion, used for testing.
-   content::StoragePartition* storage_partition_;
+   // The |most_visited_sites_| is created upon request. It is created at
+   // most once by requesting in MostVisitedSitesProvider when the page

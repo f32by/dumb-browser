@@ -1,20 +1,19 @@
 diff --git a/chrome/browser/ui/webui/downloads/downloads_ui.cc b/chrome/browser/ui/webui/downloads/downloads_ui.cc
-index e545f734772c4..27ee4745a961f 100644
+index 280b85627ac54..5d6f2a7725de2 100644
 --- a/chrome/browser/ui/webui/downloads/downloads_ui.cc
 +++ b/chrome/browser/ui/webui/downloads/downloads_ui.cc
-@@ -15,11 +15,8 @@
+@@ -15,10 +15,7 @@
  #include "base/threading/thread.h"
  #include "base/values.h"
  #include "chrome/browser/defaults.h"
 -#include "chrome/browser/enterprise/connectors/connectors_service.h"
  #include "chrome/browser/profiles/profile.h"
- #include "chrome/browser/profiles/profile_metrics.h"
 -#include "chrome/browser/safe_browsing/advanced_protection_status_manager.h"
 -#include "chrome/browser/safe_browsing/advanced_protection_status_manager_factory.h"
  #include "chrome/browser/ui/webui/downloads/downloads.mojom.h"
  #include "chrome/browser/ui/webui/downloads/downloads_dom_handler.h"
  #include "chrome/browser/ui/webui/managed_ui_handler.h"
-@@ -37,6 +34,7 @@
+@@ -36,6 +33,7 @@
  #include "chrome/grit/theme_resources.h"
  #include "components/prefs/pref_service.h"
  #include "components/profile_metrics/browser_profile_type.h"
@@ -22,7 +21,7 @@ index e545f734772c4..27ee4745a961f 100644
  #include "content/public/browser/download_manager.h"
  #include "content/public/browser/url_data_source.h"
  #include "content/public/browser/web_contents.h"
-@@ -63,11 +61,7 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
+@@ -62,11 +60,7 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
        source, base::make_span(kDownloadsResources, kDownloadsResourcesSize),
        IDR_DOWNLOADS_DOWNLOADS_HTML);
  
@@ -35,7 +34,7 @@ index e545f734772c4..27ee4745a961f 100644
  
    static constexpr webui::LocalizedString kStrings[] = {
        {"title", IDS_DOWNLOAD_TITLE},
-@@ -124,11 +118,8 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
+@@ -123,11 +117,8 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
  
    source->AddLocalizedString("dangerDownloadDesc",
                               IDS_BLOCK_REASON_DANGEROUS_DOWNLOAD);
@@ -49,7 +48,7 @@ index e545f734772c4..27ee4745a961f 100644
    source->AddLocalizedString("dangerSettingsDesc",
                               IDS_BLOCK_REASON_UNWANTED_DOWNLOAD);
    source->AddLocalizedString("mixedContentDownloadDesc",
-@@ -156,10 +147,7 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
+@@ -157,10 +148,7 @@ content::WebUIDataSource* CreateDownloadsUIHTMLSource(Profile* profile) {
  
    source->AddBoolean(
        "allowOpenNow",

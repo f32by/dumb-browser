@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/graphics/canvas_resource_provider.h b/third_party/blink/renderer/platform/graphics/canvas_resource_provider.h
-index 7d5a91d9537c8..f2df005dbcfcb 100644
+index 3043630b791bf..d4265622763c7 100644
 --- a/third_party/blink/renderer/platform/graphics/canvas_resource_provider.h
 +++ b/third_party/blink/renderer/platform/graphics/canvas_resource_provider.h
 @@ -9,7 +9,6 @@
@@ -10,23 +10,23 @@ index 7d5a91d9537c8..f2df005dbcfcb 100644
  #include "third_party/blink/renderer/platform/graphics/image_orientation.h"
  #include "third_party/blink/renderer/platform/graphics/memory_managed_paint_recorder.h"
  #include "third_party/blink/renderer/platform/graphics/paint/paint_recorder.h"
-@@ -230,15 +229,6 @@ class PLATFORM_EXPORT CanvasResourceProvider
+@@ -228,6 +227,7 @@ class PLATFORM_EXPORT CanvasResourceProvider
  
    void OnDestroyResource();
  
--  // Gets an immutable reference to the IdentifiabilityPaintOpDigest, which
--  // contains the current PaintOp digest, and taint bits (encountered
--  // partially-digested images, encountered skipped ops).
--  //
--  // The digest is updated based on the results of every FlushCanvas(); this
--  // method also calls FlushCanvas() to ensure that all operations are accounted
--  // for in the digest.
--  const IdentifiabilityPaintOpDigest& GetIdentifiablityPaintOpDigest();
--
-  protected:
-   class CanvasImageProvider;
- 
-@@ -340,10 +330,6 @@ class PLATFORM_EXPORT CanvasResourceProvider
++#if 0
+   // Gets an immutable reference to the IdentifiabilityPaintOpDigest, which
+   // contains the current PaintOp digest, and taint bits (encountered
+   // partially-digested images, encountered skipped ops).
+@@ -236,6 +236,7 @@ class PLATFORM_EXPORT CanvasResourceProvider
+   // method also calls FlushCanvas() to ensure that all operations are accounted
+   // for in the digest.
+   const IdentifiabilityPaintOpDigest& GetIdentifiablityPaintOpDigest();
++#endif
+   virtual void OnAcquireRecyclableCanvasResource() {}
+   virtual void OnDestroyRecyclableCanvasResource(
+       const gpu::SyncToken& sync_token) {}
+@@ -346,10 +347,6 @@ class PLATFORM_EXPORT CanvasResourceProvider
  
    RestoreMatrixClipStackCb restore_clip_stack_callback_;
  

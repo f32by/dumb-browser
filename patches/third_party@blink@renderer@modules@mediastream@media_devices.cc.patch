@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/mediastream/media_devices.cc b/third_party/blink/renderer/modules/mediastream/media_devices.cc
-index ff0c464ba4df2..7d293ff93f3ec 100644
+index 9d389a970e4fd..3765b8a895e40 100644
 --- a/third_party/blink/renderer/modules/mediastream/media_devices.cc
 +++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc
 @@ -8,9 +8,6 @@
@@ -12,23 +12,23 @@ index ff0c464ba4df2..7d293ff93f3ec 100644
  #include "third_party/blink/public/platform/task_type.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise.h"
  #include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
-@@ -22,7 +19,6 @@
- #include "third_party/blink/renderer/core/frame/local_dom_window.h"
+@@ -24,7 +21,6 @@
  #include "third_party/blink/renderer/core/frame/local_frame.h"
  #include "third_party/blink/renderer/core/frame/navigator.h"
+ #include "third_party/blink/renderer/modules/mediastream/capture_handle_config.h"
 -#include "third_party/blink/renderer/modules/mediastream/identifiability_metrics.h"
  #include "third_party/blink/renderer/modules/mediastream/input_device_info.h"
  #include "third_party/blink/renderer/modules/mediastream/media_error_state.h"
  #include "third_party/blink/renderer/modules/mediastream/media_stream.h"
-@@ -32,7 +28,6 @@
+@@ -34,7 +30,6 @@
  #include "third_party/blink/renderer/platform/bindings/script_state.h"
  #include "third_party/blink/renderer/platform/heap/heap.h"
  #include "third_party/blink/renderer/platform/mediastream/webrtc_uma_histograms.h"
 -#include "third_party/blink/renderer/platform/privacy_budget/identifiability_digest_helpers.h"
+ #include "third_party/blink/renderer/platform/weborigin/security_origin.h"
  #include "third_party/blink/renderer/platform/wtf/functional.h"
  
- namespace blink {
-@@ -141,16 +136,9 @@ ScriptPromise MediaDevices::SendUserMediaRequest(
+@@ -151,16 +146,9 @@ ScriptPromise MediaDevices::SendUserMediaRequest(
  
    LocalDOMWindow* window = LocalDOMWindow::From(script_state);
    UserMediaController* user_media = UserMediaController::From(window);
@@ -46,7 +46,7 @@ index ff0c464ba4df2..7d293ff93f3ec 100644
    if (!request) {
      DCHECK(error_state.HadException());
      if (error_state.CanGenerateException()) {
-@@ -158,9 +146,6 @@ ScriptPromise MediaDevices::SendUserMediaRequest(
+@@ -168,9 +156,6 @@ ScriptPromise MediaDevices::SendUserMediaRequest(
        return ScriptPromise();
      }
      ScriptPromise rejected_promise = resolver->Promise();
@@ -56,7 +56,7 @@ index ff0c464ba4df2..7d293ff93f3ec 100644
      resolver->Reject(error_state.CreateError());
      return rejected_promise;
    }
-@@ -316,32 +301,6 @@ void MediaDevices::StopObserving() {
+@@ -387,32 +372,6 @@ void MediaDevices::StopObserving() {
    receiver_.reset();
  }
  
@@ -89,7 +89,7 @@ index ff0c464ba4df2..7d293ff93f3ec 100644
  void MediaDevices::DevicesEnumerated(
      ScriptPromiseResolver* resolver,
      const Vector<Vector<WebMediaDeviceInfo>>& enumeration,
-@@ -414,8 +373,6 @@ void MediaDevices::DevicesEnumerated(
+@@ -485,8 +444,6 @@ void MediaDevices::DevicesEnumerated(
      }
    }
  

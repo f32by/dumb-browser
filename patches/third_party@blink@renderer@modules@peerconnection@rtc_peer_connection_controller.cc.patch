@@ -1,0 +1,17 @@
+diff --git a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection_controller.cc b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection_controller.cc
+index 9f292d6c75357..c288affa1f672 100644
+--- a/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection_controller.cc
++++ b/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection_controller.cc
+@@ -35,10 +35,12 @@ void RTCPeerConnectionController::MaybeReportComplexSdp(
+   // Report only the first observation for the document and ignore all others.
+   // This provides a good balance between privacy and meaningful metrics.
+   has_reported_ukm_ = true;
++#if 0
+   ukm::SourceId source_id = GetSupplementable()->UkmSourceID();
+   ukm::builders::WebRTC_ComplexSdp(source_id)
+       .SetCategory(static_cast<int64_t>(complex_sdp_category))
+       .Record(GetSupplementable()->UkmRecorder());
++#endif
+ }
+ 
+ void RTCPeerConnectionController::Trace(Visitor* visitor) const {

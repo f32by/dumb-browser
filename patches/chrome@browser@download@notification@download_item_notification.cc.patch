@@ -1,8 +1,12 @@
 diff --git a/chrome/browser/download/notification/download_item_notification.cc b/chrome/browser/download/notification/download_item_notification.cc
-index d5f82e86a929c..2062f1e16e9c2 100644
+index 5fed4b0a74cb0..ea0c46f95808e 100644
 --- a/chrome/browser/download/notification/download_item_notification.cc
 +++ b/chrome/browser/download/notification/download_item_notification.cc
-@@ -28,8 +28,6 @@
+@@ -26,12 +26,9 @@
+ #include "chrome/browser/download/download_crx_util.h"
+ #include "chrome/browser/download/download_item_model.h"
+ #include "chrome/browser/download/notification/download_notification_manager.h"
+-#include "chrome/browser/enterprise/connectors/connectors_service.h"
  #include "chrome/browser/notifications/notification_display_service.h"
  #include "chrome/browser/notifications/notification_display_service_factory.h"
  #include "chrome/browser/notifications/notification_handler.h"
@@ -11,7 +15,7 @@ index d5f82e86a929c..2062f1e16e9c2 100644
  #include "chrome/browser/ui/chrome_pages.h"
  #include "chrome/browser/ui/scoped_tabbed_browser_displayer.h"
  #include "chrome/common/url_constants.h"
-@@ -39,8 +37,6 @@
+@@ -41,8 +38,6 @@
  #include "components/download/public/common/download_interrupt_reasons.h"
  #include "components/download/public/common/download_item.h"
  #include "components/prefs/pref_service.h"
@@ -20,7 +24,7 @@ index d5f82e86a929c..2062f1e16e9c2 100644
  #include "components/strings/grit/components_strings.h"
  #include "components/url_formatter/elide_url.h"
  #include "content/public/browser/browser_context.h"
-@@ -89,7 +85,7 @@ std::string ReadNotificationImage(const base::FilePath& file_path) {
+@@ -91,7 +86,7 @@ std::string ReadNotificationImage(const base::FilePath& file_path) {
  }
  
  bool IsPromptEsbForDeepScanningEnabled() {
@@ -29,7 +33,7 @@ index d5f82e86a929c..2062f1e16e9c2 100644
  }
  
  SkBitmap CropImage(const SkBitmap& original_bitmap) {
-@@ -317,12 +313,6 @@ void DownloadItemNotification::Click(
+@@ -319,12 +314,6 @@ void DownloadItemNotification::Click(
      DownloadCommands::Command command = button_actions_->at(*button_index);
      RecordButtonClickAction(command);
  
@@ -42,8 +46,8 @@ index d5f82e86a929c..2062f1e16e9c2 100644
      DownloadCommands(item_.get()).ExecuteCommand(command);
  
      // ExecuteCommand() might cause |item_| to be destroyed.
-@@ -859,15 +849,8 @@ std::u16string DownloadItemNotification::GetWarningStatusString() const {
-                                         elided_filename);
+@@ -870,15 +859,8 @@ std::u16string DownloadItemNotification::GetWarningStatusString() const {
+                        IDS_PROMPT_MALICIOUS_DOWNLOAD_CONTENT, elided_filename);
      }
      case download::DOWNLOAD_DANGER_TYPE_UNCOMMON_CONTENT: {
 -      bool requests_ap_verdicts =

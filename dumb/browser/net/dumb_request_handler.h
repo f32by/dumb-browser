@@ -15,13 +15,15 @@
 #include "content/public/browser/browser_thread.h"
 #include "net/base/completion_once_callback.h"
 
+
 class PrefChangeRegistrar;
 
 // Contains different network stack hooks (similar to capabilities of WebRequest
 // API).
 class DumbRequestHandler {
  public:
-  using ResponseCallback = base::Callback<void(const base::DictionaryValue&)>;
+  using ResponseCallback =
+      base::RepeatingCallback<void(const base::DictionaryValue&)>;
 
   DumbRequestHandler();
   ~DumbRequestHandler();

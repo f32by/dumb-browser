@@ -1,0 +1,128 @@
+diff --git a/components/background_sync/background_sync_metrics.cc b/components/background_sync/background_sync_metrics.cc
+index 7771cf3d703c1..e52460cbed2c0 100644
+--- a/components/background_sync/background_sync_metrics.cc
++++ b/components/background_sync/background_sync_metrics.cc
+@@ -23,6 +23,7 @@ void BackgroundSyncMetrics::MaybeRecordOneShotSyncRegistrationEvent(
+     const url::Origin& origin,
+     bool can_fire,
+     bool is_reregistered) {
++#if 0
+   DCHECK(delegate_);
+   delegate_->GetUkmSourceId(
+       origin,
+@@ -32,12 +33,14 @@ void BackgroundSyncMetrics::MaybeRecordOneShotSyncRegistrationEvent(
+           base::BindOnce(
+               &BackgroundSyncMetrics::RecordOneShotSyncRegistrationEvent,
+               weak_ptr_factory_.GetWeakPtr(), can_fire, is_reregistered)));
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::MaybeRecordPeriodicSyncRegistrationEvent(
+     const url::Origin& origin,
+     int min_interval,
+     bool is_reregistered) {
++#if 0
+   DCHECK(delegate_);
+   delegate_->GetUkmSourceId(
+       origin,
+@@ -47,6 +50,7 @@ void BackgroundSyncMetrics::MaybeRecordPeriodicSyncRegistrationEvent(
+           base::BindOnce(
+               &BackgroundSyncMetrics::RecordPeriodicSyncRegistrationEvent,
+               weak_ptr_factory_.GetWeakPtr(), min_interval, is_reregistered)));
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::MaybeRecordOneShotSyncCompletionEvent(
+@@ -54,6 +58,7 @@ void BackgroundSyncMetrics::MaybeRecordOneShotSyncCompletionEvent(
+     blink::ServiceWorkerStatusCode status_code,
+     int num_attempts,
+     int max_attempts) {
++#if 0
+   DCHECK(delegate_);
+   delegate_->GetUkmSourceId(
+       origin, base::BindOnce(
+@@ -63,6 +68,7 @@ void BackgroundSyncMetrics::MaybeRecordOneShotSyncCompletionEvent(
+                       &BackgroundSyncMetrics::RecordOneShotSyncCompletionEvent,
+                       weak_ptr_factory_.GetWeakPtr(), status_code, num_attempts,
+                       max_attempts)));
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::MaybeRecordPeriodicSyncEventCompletion(
+@@ -70,6 +76,7 @@ void BackgroundSyncMetrics::MaybeRecordPeriodicSyncEventCompletion(
+     blink::ServiceWorkerStatusCode status_code,
+     int num_attempts,
+     int max_attempts) {
++#if 0
+   DCHECK(delegate_);
+   delegate_->GetUkmSourceId(
+       origin, base::BindOnce(
+@@ -79,6 +86,7 @@ void BackgroundSyncMetrics::MaybeRecordPeriodicSyncEventCompletion(
+                       &BackgroundSyncMetrics::RecordPeriodicSyncEventCompletion,
+                       weak_ptr_factory_.GetWeakPtr(), status_code, num_attempts,
+                       max_attempts)));
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::DidGetBackgroundSourceId(
+@@ -97,6 +105,7 @@ void BackgroundSyncMetrics::RecordOneShotSyncRegistrationEvent(
+     bool can_fire,
+     bool is_reregistered,
+     ukm::SourceId source_id) {
++#if 0
+   ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
+   DCHECK(recorder);
+ 
+@@ -104,12 +113,14 @@ void BackgroundSyncMetrics::RecordOneShotSyncRegistrationEvent(
+       .SetCanFire(can_fire)
+       .SetIsReregistered(is_reregistered)
+       .Record(recorder);
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::RecordPeriodicSyncRegistrationEvent(
+     int min_interval,
+     bool is_reregistered,
+     ukm::SourceId source_id) {
++#if 0
+   ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
+   DCHECK(recorder);
+ 
+@@ -118,6 +129,7 @@ void BackgroundSyncMetrics::RecordPeriodicSyncRegistrationEvent(
+           min_interval, kUkmEventDataBucketSpacing))
+       .SetIsReregistered(is_reregistered)
+       .Record(recorder);
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::RecordOneShotSyncCompletionEvent(
+@@ -125,6 +137,7 @@ void BackgroundSyncMetrics::RecordOneShotSyncCompletionEvent(
+     int num_attempts,
+     int max_attempts,
+     ukm::SourceId source_id) {
++#if 0
+   ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
+   DCHECK(recorder);
+ 
+@@ -133,6 +146,7 @@ void BackgroundSyncMetrics::RecordOneShotSyncCompletionEvent(
+       .SetNumAttempts(num_attempts)
+       .SetMaxAttempts(max_attempts)
+       .Record(recorder);
++#endif
+ }
+ 
+ void BackgroundSyncMetrics::RecordPeriodicSyncEventCompletion(
+@@ -140,6 +154,7 @@ void BackgroundSyncMetrics::RecordPeriodicSyncEventCompletion(
+     int num_attempts,
+     int max_attempts,
+     ukm::SourceId source_id) {
++#if 0
+   ukm::UkmRecorder* recorder = ukm::UkmRecorder::Get();
+   DCHECK(recorder);
+ 
+@@ -148,4 +163,5 @@ void BackgroundSyncMetrics::RecordPeriodicSyncEventCompletion(
+       .SetNumAttempts(num_attempts)
+       .SetMaxAttempts(max_attempts)
+       .Record(recorder);
++#endif
+ }

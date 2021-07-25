@@ -1,17 +1,19 @@
 diff --git a/chrome/browser/resources/settings/settings_menu/settings_menu.html b/chrome/browser/resources/settings/settings_menu/settings_menu.html
-index 2ecb987937072..d456b1db2c1d2 100644
+index eace8e275d62a..d456b1db2c1d2 100644
 --- a/chrome/browser/resources/settings/settings_menu/settings_menu.html
 +++ b/chrome/browser/resources/settings/settings_menu/settings_menu.html
-@@ -111,12 +111,6 @@
+@@ -111,14 +111,6 @@
              <iron-icon icon="settings:assignment"></iron-icon>
              $i18n{autofillPageTitle}
            </a>
--          <a role="menuitem" href="/safetyCheck"
--              hidden="[[!pageVisibility.safetyCheck]]"
--              id="safetyCheck">
--            <iron-icon icon="settings20:safety-check"></iron-icon>
--            $i18n{safetyCheckSectionTitle}
--          </a>
+-          <template is="dom-if" if="[[!enableLandingPageRedesign_]]">
+-            <a role="menuitem" href="/safetyCheck"
+-                hidden="[[!pageVisibility.safetyCheck]]"
+-                id="safetyCheck">
+-              <iron-icon icon="settings20:safety-check"></iron-icon>
+-              $i18n{safetyCheckSectionTitle}
+-            </a>
+-          </template>
            <a role="menuitem" href="/privacy"
                hidden="[[!pageVisibility.privacy]]">
              <iron-icon icon="cr:security"></iron-icon>

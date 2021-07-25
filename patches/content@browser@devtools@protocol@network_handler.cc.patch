@@ -1,8 +1,8 @@
 diff --git a/content/browser/devtools/protocol/network_handler.cc b/content/browser/devtools/protocol/network_handler.cc
-index 33907f5922a62..fad5ab71e7820 100644
+index 54b80ef80f263..71c6b2a54ac40 100644
 --- a/content/browser/devtools/protocol/network_handler.cc
 +++ b/content/browser/devtools/protocol/network_handler.cc
-@@ -61,6 +61,7 @@
+@@ -60,6 +60,7 @@
  #include "content/public/browser/web_contents.h"
  #include "content/public/common/content_client.h"
  #include "content/public/common/content_features.h"
@@ -10,7 +10,7 @@ index 33907f5922a62..fad5ab71e7820 100644
  #include "mojo/public/cpp/bindings/pending_remote.h"
  #include "net/base/host_port_pair.h"
  #include "net/base/ip_endpoint.h"
-@@ -377,7 +378,8 @@ MakeCookieFromProtocolValues(const std::string& name,
+@@ -376,7 +377,8 @@ MakeCookieFromProtocolValues(const std::string& name,
        net::CanonicalCookie::CreateSanitizedCookie(
            url, name, value, normalized_domain, path, base::Time(),
            expiration_date, base::Time(), secure, http_only, css, cp,

@@ -1,48 +1,16 @@
 diff --git a/content/browser/field_trial_synchronizer.cc b/content/browser/field_trial_synchronizer.cc
-index 98643ff59892c..2dff1c08bcc9a 100644
+index 0af9ed306e689..98ee88e790267 100644
 --- a/content/browser/field_trial_synchronizer.cc
 +++ b/content/browser/field_trial_synchronizer.cc
-@@ -7,7 +7,6 @@
- #include "base/bind.h"
- #include "base/check_op.h"
- #include "base/threading/thread.h"
--#include "components/metrics/persistent_system_profile.h"
- #include "components/variations/variations_client.h"
- #include "content/common/renderer_variations_configuration.mojom.h"
- #include "content/public/browser/browser_context.h"
-@@ -18,18 +17,6 @@
+@@ -30,11 +30,6 @@ void NotifyAllRenderersOfFieldTrial(const std::string& field_trial_name,
+   // need to be on the UI thread.
+   DCHECK_CURRENTLY_ON(BrowserThread::UI);
  
- namespace content {
- 
--namespace {
--
--void AddFieldTrialToPersistentSystemProfile(const std::string& field_trial_name,
--                                            const std::string& group_name) {
 -  // Note this in the persistent profile as it will take a while for a new
 -  // "complete" profile to be generated.
 -  metrics::GlobalPersistentSystemProfile::GetInstance()->AddFieldTrial(
 -      field_trial_name, group_name);
--}
--
--}  // namespace
--
- FieldTrialSynchronizer::FieldTrialSynchronizer() {
-   bool success = base::FieldTrialList::AddObserver(this);
-   // Ensure the observer was actually registered.
-@@ -46,8 +33,6 @@ void FieldTrialSynchronizer::NotifyAllRenderersOfFieldTrial(
-   // need to be on the UI thread.
-   DCHECK_CURRENTLY_ON(BrowserThread::UI);
- 
--  AddFieldTrialToPersistentSystemProfile(field_trial_name, group_name);
 -
    for (RenderProcessHost::iterator it(RenderProcessHost::AllHostsIterator());
         !it.IsAtEnd(); it.Advance()) {
      auto* host = it.GetCurrentValue();
-@@ -72,7 +57,6 @@ void FieldTrialSynchronizer::OnFieldTrialGroupFinalized(
-   // persistent system profile, thus the histogram data recorded in the reduced
-   // mode will be tagged to its corresponding field trial experiment.
-   if (!BrowserThread::IsThreadInitialized(BrowserThread::UI)) {
--    AddFieldTrialToPersistentSystemProfile(field_trial_name, group_name);
-     return;
-   }
- 

@@ -1,10 +1,10 @@
 diff --git a/services/network/network_service.h b/services/network/network_service.h
-index 26ec6fea93187..5b35261901508 100644
+index 3342648f245e7..84adbc228f682 100644
 --- a/services/network/network_service.h
 +++ b/services/network/network_service.h
 @@ -47,6 +47,10 @@
- #include "services/network/trust_tokens/trust_token_key_commitments.h"
  #include "services/service_manager/public/cpp/binder_registry.h"
+ #include "third_party/abseil-cpp/absl/types/optional.h"
  
 +namespace dumb {
 +class URLPurifyDelegate;
@@ -13,7 +13,7 @@ index 26ec6fea93187..5b35261901508 100644
  namespace net {
  class FileNetLogObserver;
  class HostResolverManager;
-@@ -256,6 +260,15 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkService
+@@ -257,6 +261,15 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkService
  
    static NetworkService* GetNetworkServiceForTesting();
  
@@ -29,7 +29,7 @@ index 26ec6fea93187..5b35261901508 100644
   private:
    class DelayedDohProbeActivator;
  
-@@ -358,6 +371,8 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkService
+@@ -359,6 +372,8 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkService
    // requests should have their initiator origin within the set stored here).
    std::map<int, std::set<url::Origin>> plugin_origins_;
  

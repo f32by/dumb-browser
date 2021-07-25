@@ -1,5 +1,5 @@
 diff --git a/components/background_sync/background_sync_controller_impl.cc b/components/background_sync/background_sync_controller_impl.cc
-index 6516787d2ee6d..e9c556ff0a689 100644
+index b7ec44cbca6db..4a6560df798c4 100644
 --- a/components/background_sync/background_sync_controller_impl.cc
 +++ b/components/background_sync/background_sync_controller_impl.cc
 @@ -55,8 +55,6 @@ BackgroundSyncControllerImpl::BackgroundSyncControllerImpl(
@@ -11,7 +11,7 @@ index 6516787d2ee6d..e9c556ff0a689 100644
    delegate_->GetHostContentSettingsMap()->AddObserver(this);
  }
  
-@@ -208,20 +206,12 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncRegistered(
+@@ -207,20 +205,12 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncRegistered(
      const url::Origin& origin,
      bool can_fire,
      bool is_reregistered) {
@@ -32,7 +32,7 @@ index 6516787d2ee6d..e9c556ff0a689 100644
  }
  
  void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
-@@ -229,10 +219,6 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
+@@ -228,10 +218,6 @@ void BackgroundSyncControllerImpl::NotifyOneShotBackgroundSyncCompleted(
      blink::ServiceWorkerStatusCode status_code,
      int num_attempts,
      int max_attempts) {
@@ -43,7 +43,7 @@ index 6516787d2ee6d..e9c556ff0a689 100644
  }
  
  void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
-@@ -240,10 +226,6 @@ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
+@@ -239,10 +225,6 @@ void BackgroundSyncControllerImpl::NotifyPeriodicBackgroundSyncCompleted(
      blink::ServiceWorkerStatusCode status_code,
      int num_attempts,
      int max_attempts) {

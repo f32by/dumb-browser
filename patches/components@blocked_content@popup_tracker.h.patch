@@ -1,9 +1,9 @@
 diff --git a/components/blocked_content/popup_tracker.h b/components/blocked_content/popup_tracker.h
-index 2321b3baa9f26..8c89ba7ec8dd3 100644
+index 182a2fa5cd785..ff29777df5f55 100644
 --- a/components/blocked_content/popup_tracker.h
 +++ b/components/blocked_content/popup_tracker.h
-@@ -9,8 +9,6 @@
- #include "base/optional.h"
+@@ -8,8 +8,6 @@
+ #include "base/macros.h"
  #include "base/scoped_observation.h"
  #include "base/time/time.h"
 -#include "components/subresource_filter/content/browser/subresource_filter_observer.h"
@@ -38,7 +38,7 @@ index 2321b3baa9f26..8c89ba7ec8dd3 100644
 -
    // Will be unset until the first navigation commits. Will be set to the total
    // time the contents was visible at commit time.
-   base::Optional<base::TimeDelta> first_load_visible_time_start_;
+   absl::optional<base::TimeDelta> first_load_visible_time_start_;
 @@ -92,18 +78,8 @@ class PopupTracker : public content::WebContentsObserver,
    int num_redirects_ = 0;
    bool first_navigation_committed_ = false;

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/predictors/loading_predictor_tab_helper.cc b/chrome/browser/predictors/loading_predictor_tab_helper.cc
-index cf3c4e4cc66e8..575fc492e8f03 100644
+index 67f842d7c7978..22dfc90904ddd 100644
 --- a/chrome/browser/predictors/loading_predictor_tab_helper.cc
 +++ b/chrome/browser/predictors/loading_predictor_tab_helper.cc
-@@ -25,7 +25,6 @@
+@@ -26,7 +26,6 @@
  #include "content/public/browser/browser_thread.h"
  #include "content/public/browser/navigation_handle.h"
  #include "content/public/browser/render_frame_host.h"
@@ -10,65 +10,53 @@ index cf3c4e4cc66e8..575fc492e8f03 100644
  #include "services/network/public/mojom/fetch_api.mojom.h"
  #include "third_party/blink/public/mojom/loader/resource_load_info.mojom.h"
  
-@@ -176,8 +175,6 @@ void LoadingPredictorTabHelper::DidStartNavigation(
- 
-   auto navigation_id = NavigationID(
-       web_contents(),
--      ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
--                             ukm::SourceIdType::NAVIGATION_ID),
-       navigation_handle->GetURL(), navigation_handle->NavigationStart());
-   if (!navigation_id.is_valid())
-     return;
-@@ -221,8 +218,6 @@ void LoadingPredictorTabHelper::DidRedirectNavigation(
- 
-   auto navigation_id = NavigationID(
-       web_contents(),
--      ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
--                             ukm::SourceIdType::NAVIGATION_ID),
-       navigation_handle->GetURL(), navigation_handle->NavigationStart());
-   if (!navigation_id.is_valid())
-     return;
-@@ -262,14 +257,10 @@ void LoadingPredictorTabHelper::DidFinishNavigation(
- 
-   auto old_navigation_id =
-       NavigationID(web_contents(),
--                   ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
--                                          ukm::SourceIdType::NAVIGATION_ID),
-                    navigation_handle->GetRedirectChain().front(),
-                    navigation_handle->NavigationStart());
-   auto new_navigation_id = NavigationID(
-       web_contents(),
--      ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
--                             ukm::SourceIdType::NAVIGATION_ID),
-       navigation_handle->GetURL(), navigation_handle->NavigationStart());
-   if (!old_navigation_id.is_valid() || !new_navigation_id.is_valid())
-     return;
-@@ -293,9 +284,6 @@ void LoadingPredictorTabHelper::ResourceLoadComplete(
-   auto navigation_id = NavigationID(web_contents());
-   if (!navigation_id.is_valid())
+@@ -251,8 +250,7 @@ void LoadingPredictorTabHelper::DidStartNavigation(
+   page_data.has_local_preconnect_predictions_for_current_navigation_ =
+       predictor_->OnNavigationStarted(
+           page_data.navigation_id_,
+-          ukm::ConvertToSourceId(navigation_handle->GetNavigationId(),
+-                                 ukm::SourceIdType::NAVIGATION_ID),
++          ukm::kInvalidSourceId,
+           navigation_handle->GetURL(), navigation_handle->NavigationStart());
+   if (page_data.has_local_preconnect_predictions_for_current_navigation_ &&
+       !features::ShouldAlwaysRetrieveOptimizationGuidePredictions()) {
+@@ -363,9 +361,6 @@ void LoadingPredictorTabHelper::ResourceLoadComplete(
+   auto* page_data = PageData::GetForDocument(*render_frame_host);
+   if (!page_data)
      return;
 -
 -  predictor_->loading_data_collector()->RecordResourceLoadComplete(
--      navigation_id, resource_load_info);
+-      page_data->navigation_id_, resource_load_info);
  }
  
  void LoadingPredictorTabHelper::DidLoadResourceFromMemoryCache(
-@@ -320,8 +308,6 @@ void LoadingPredictorTabHelper::DidLoadResourceFromMemoryCache(
+@@ -391,8 +386,6 @@ void LoadingPredictorTabHelper::DidLoadResourceFromMemoryCache(
        GetRequestPriority(resource_load_info.request_destination);
    resource_load_info.network_info =
-       blink::mojom::CommonNetworkInfo::New(false, false, base::nullopt);
+       blink::mojom::CommonNetworkInfo::New(false, false, absl::nullopt);
 -  predictor_->loading_data_collector()->RecordResourceLoadComplete(
--      navigation_id, resource_load_info);
+-      page_data->navigation_id_, resource_load_info);
  }
  
  void LoadingPredictorTabHelper::DocumentOnLoadCompletedInMainFrame(
-@@ -334,9 +320,6 @@ void LoadingPredictorTabHelper::DocumentOnLoadCompletedInMainFrame(
-   if (!navigation_id.is_valid())
+@@ -405,10 +398,6 @@ void LoadingPredictorTabHelper::DocumentOnLoadCompletedInMainFrame(
+   if (!page_data)
      return;
  
 -  predictor_->loading_data_collector()->RecordMainFrameLoadComplete(
--      navigation_id, last_optimization_guide_prediction_);
+-      page_data->navigation_id_,
+-      page_data->last_optimization_guide_prediction_);
 -
    // Clear out Optimization Guide Prediction, as it is no longer needed.
-   last_optimization_guide_prediction_ = base::nullopt;
+   page_data->last_optimization_guide_prediction_ = absl::nullopt;
  }
+@@ -423,9 +412,6 @@ void LoadingPredictorTabHelper::RecordFirstContentfulPaint(
+   auto* page_data = PageData::GetForDocument(*render_frame_host);
+   if (!page_data)
+     return;
+-
+-  predictor_->loading_data_collector()->RecordFirstContentfulPaint(
+-      page_data->navigation_id_, first_contentful_paint);
+ }
+ 
+ void LoadingPredictorTabHelper::OnOptimizationGuideDecision(

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.cc b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-index 13ad2a7529bb1..9b78a638b5882 100644
+index b590b86c8d776..1e3e43e789467 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.cc
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.cc
-@@ -41,7 +41,6 @@
+@@ -40,7 +40,6 @@
  #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings.h"
  #include "chrome/browser/data_reduction_proxy/data_reduction_proxy_chrome_settings_factory.h"
  #include "chrome/browser/devtools/devtools_window.h"
@@ -10,7 +10,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  #include "chrome/browser/language/language_model_manager_factory.h"
  #include "chrome/browser/media/router/media_router_feature.h"
  #include "chrome/browser/password_manager/chrome_password_manager_client.h"
-@@ -254,6 +253,7 @@ base::OnceCallback<void(RenderViewContextMenu*)>* GetMenuShownCallback() {
+@@ -264,6 +263,7 @@ base::OnceCallback<void(RenderViewContextMenu*)>* GetMenuShownCallback() {
    return callback.get();
  }
  
@@ -18,7 +18,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  enum class UmaEnumIdLookupType {
    GeneralEnumId,
    ContextSpecificEnumId,
-@@ -480,6 +480,7 @@ bool IsCommandForOpenLink(int id) {
+@@ -490,6 +490,7 @@ bool IsCommandForOpenLink(int id) {
           (id >= IDC_OPEN_LINK_IN_PROFILE_FIRST &&
            id <= IDC_OPEN_LINK_IN_PROFILE_LAST);
  }
@@ -26,7 +26,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  
  // Returns the preference of the profile represented by the |context|.
  PrefService* GetPrefs(content::BrowserContext* context) {
-@@ -979,6 +980,7 @@ Profile* RenderViewContextMenu::GetProfile() const {
+@@ -990,6 +991,7 @@ Profile* RenderViewContextMenu::GetProfile() const {
    return Profile::FromBrowserContext(browser_context_);
  }
  
@@ -34,7 +34,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  void RenderViewContextMenu::RecordUsedItem(int id) {
    // Log general ID.
  
-@@ -1084,6 +1086,7 @@ void RenderViewContextMenu::RecordShownItem(int id) {
+@@ -1096,6 +1098,7 @@ void RenderViewContextMenu::RecordShownItem(int id) {
      DLOG(ERROR) << "Update kUmaEnumToControlId. Unhanded IDC: " << id;
    }
  }
@@ -42,7 +42,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  
  bool RenderViewContextMenu::IsHTML5Fullscreen() const {
    Browser* browser = chrome::FindBrowserWithWebContents(embedder_web_contents_);
-@@ -1306,7 +1309,9 @@ void RenderViewContextMenu::AppendLinkItems() {
+@@ -1321,7 +1324,9 @@ void RenderViewContextMenu::AppendLinkItems() {
        }
      }
  
@@ -52,7 +52,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  
      menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
      menu_model_.AddItemWithStringId(IDC_CONTENT_CONTEXT_SAVELINKAS,
-@@ -1892,7 +1897,9 @@ void RenderViewContextMenu::AppendSharingItems() {
+@@ -1920,7 +1925,9 @@ void RenderViewContextMenu::AppendSharingItems() {
    int items_before_sharing = menu_model_.GetItemCount();
    bool starting_separator_added = items_before_sharing > items_initial;
  
@@ -62,15 +62,15 @@ index 13ad2a7529bb1..9b78a638b5882 100644
    AppendSharedClipboardItem();
  
    // Add an ending separator if there are sharing items, otherwise remove the
-@@ -1904,6 +1911,7 @@ void RenderViewContextMenu::AppendSharingItems() {
+@@ -1932,6 +1939,7 @@ void RenderViewContextMenu::AppendSharingItems() {
      menu_model_.RemoveItemAt(items_initial);
  }
  
 +#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
  void RenderViewContextMenu::AppendClickToCallItem() {
    SharingClickToCallEntryPoint entry_point;
-   base::Optional<std::string> phone_number;
-@@ -1930,6 +1938,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
+   absl::optional<std::string> phone_number;
+@@ -1958,6 +1966,7 @@ void RenderViewContextMenu::AppendClickToCallItem() {
    click_to_call_context_menu_observer_->BuildMenu(*phone_number, selection_text,
                                                    entry_point);
  }
@@ -78,24 +78,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
  
  void RenderViewContextMenu::AppendSharedClipboardItem() {
    if (!ShouldOfferSharedClipboard(browser_context_, params_.selection_text))
-@@ -2371,16 +2380,12 @@ void RenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
-     case IDC_SEND_TAB_TO_SELF_SINGLE_TARGET:
-       send_tab_to_self::ShareToSingleTarget(
-           GetBrowser()->tab_strip_model()->GetActiveWebContents());
--      send_tab_to_self::RecordSendTabToSelfClickResult(
--          send_tab_to_self::kContentMenu, SendTabToSelfClickResult::kClickItem);
-       break;
- 
-     case IDC_CONTENT_LINK_SEND_TAB_TO_SELF_SINGLE_TARGET:
-       send_tab_to_self::ShareToSingleTarget(
-           GetBrowser()->tab_strip_model()->GetActiveWebContents(),
-           params_.link_url);
--      send_tab_to_self::RecordSendTabToSelfClickResult(
--          send_tab_to_self::kLinkMenu, SendTabToSelfClickResult::kClickItem);
-       break;
- 
-     case IDC_CONTENT_CONTEXT_GENERATE_QR_CODE: {
-@@ -2942,8 +2947,6 @@ void RenderViewContextMenu::ExecSaveLinkAs() {
+@@ -2999,8 +3008,6 @@ void RenderViewContextMenu::ExecSaveLinkAs() {
    if (!render_frame_host)
      return;
  
@@ -104,7 +87,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
    const GURL& url = params_.link_url;
  
    net::NetworkTrafficAnnotationTag traffic_annotation =
-@@ -2993,7 +2996,6 @@ void RenderViewContextMenu::ExecSaveAs() {
+@@ -3049,7 +3056,6 @@ void RenderViewContextMenu::ExecSaveAs() {
      if (frame_host)
        frame_host->SaveImageAt(params_.x, params_.y);
    } else {
@@ -112,7 +95,7 @@ index 13ad2a7529bb1..9b78a638b5882 100644
      const GURL& url = params_.src_url;
      content::Referrer referrer = CreateReferrer(url, params_);
      std::string headers;
-@@ -3168,8 +3170,6 @@ void RenderViewContextMenu::ExecRouteMedia() {
+@@ -3221,8 +3227,6 @@ void RenderViewContextMenu::ExecRouteMedia() {
  
    dialog_controller->ShowMediaRouterDialog(
        media_router::MediaRouterDialogOpenOrigin::CONTEXTUAL_MENU);

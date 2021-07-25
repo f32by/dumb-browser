@@ -1,25 +1,30 @@
 diff --git a/chrome/browser/extensions/extension_service.h b/chrome/browser/extensions/extension_service.h
-index dee8ffd694ae7..eedab19313454 100644
+index 376fb4111ba8e..8d57af19204d8 100644
 --- a/chrome/browser/extensions/extension_service.h
 +++ b/chrome/browser/extensions/extension_service.h
-@@ -23,7 +23,6 @@
+@@ -22,12 +22,10 @@
  #include "chrome/browser/extensions/blocklist.h"
  #include "chrome/browser/extensions/extension_allowlist.h"
  #include "chrome/browser/extensions/extension_management.h"
 -#include "chrome/browser/extensions/forced_extensions/force_installed_metrics.h"
  #include "chrome/browser/extensions/forced_extensions/force_installed_tracker.h"
  #include "chrome/browser/extensions/install_gate.h"
+ #include "chrome/browser/extensions/omaha_attributes_handler.h"
  #include "chrome/browser/extensions/pending_extension_manager.h"
-@@ -629,8 +628,6 @@ class ExtensionService : public ExtensionServiceInterface,
+-#include "chrome/browser/extensions/safe_browsing_verdict_handler.h"
+ #include "chrome/browser/profiles/profile_manager.h"
+ #include "chrome/browser/profiles/profile_manager_observer.h"
+ #include "chrome/browser/upgrade_detector/upgrade_observer.h"
+@@ -626,8 +624,6 @@ class ExtensionService : public ExtensionServiceInterface,
  
    ExtensionAllowlist allowlist_;
  
 -  SafeBrowsingVerdictHandler safe_browsing_verdict_handler_;
 -
-   // Sets of enabled/disabled/terminated/blocklisted extensions. Not owned.
-   ExtensionRegistry* registry_ = nullptr;
+   OmahaAttributesHandler omaha_attributes_handler_;
  
-@@ -716,8 +713,10 @@ class ExtensionService : public ExtensionServiceInterface,
+   // Sets of enabled/disabled/terminated/blocklisted extensions. Not owned.
+@@ -715,8 +711,10 @@ class ExtensionService : public ExtensionServiceInterface,
    // Tracker of enterprise policy forced installation.
    ForceInstalledTracker force_installed_tracker_;
  
@@ -30,18 +35,3 @@ index dee8ffd694ae7..eedab19313454 100644
  
    base::ScopedObservation<ProfileManager, ProfileManagerObserver>
        profile_manager_observation_{this};
-@@ -751,14 +750,6 @@ class ExtensionService : public ExtensionServiceInterface,
-                            ExtensionsNotAllowlistedThenBlocklisted);
-   FRIEND_TEST_ALL_PREFIXES(ExtensionAllowlistUnitTest,
-                            ExtensionsBlocklistedThenNotAllowlisted);
--  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
--                           GreylistedExtensionDisabled);
--  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
--                           GreylistDontEnableManuallyDisabled);
--  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
--                           GreylistUnknownDontChange);
--  FRIEND_TEST_ALL_PREFIXES(SafeBrowsingVerdictHandlerUnitTest,
--                           UnblocklistedExtensionStillGreylisted);
-   friend class ::BlocklistedExtensionSyncServiceTest;
- 
-   DISALLOW_COPY_AND_ASSIGN(ExtensionService);

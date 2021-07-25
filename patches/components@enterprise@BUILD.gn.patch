@@ -1,0 +1,29 @@
+diff --git a/components/enterprise/BUILD.gn b/components/enterprise/BUILD.gn
+index 6488945e2423f..eb6370887c711 100644
+--- a/components/enterprise/BUILD.gn
++++ b/components/enterprise/BUILD.gn
+@@ -12,8 +12,6 @@ static_library("enterprise") {
+     "browser/controller/chrome_browser_cloud_management_helper.h",
+     "browser/enterprise_switches.cc",
+     "browser/enterprise_switches.h",
+-    "browser/reporting/common_pref_names.cc",
+-    "browser/reporting/common_pref_names.h",
+   ]
+ 
+   deps = [
+@@ -25,6 +23,7 @@ static_library("enterprise") {
+     "//services/network/public/cpp",
+   ]
+ 
++if (false) {
+   if (!is_android) {
+     sources += [
+       "browser/reporting/browser_report_generator.cc",
+@@ -59,6 +58,7 @@ static_library("enterprise") {
+       "//net",
+     ]
+   }
++}
+ 
+   if (!is_chromeos_ash) {
+     sources += [

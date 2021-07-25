@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/optimization_guide/optimization_guide_navigation_data.cc b/chrome/browser/optimization_guide/optimization_guide_navigation_data.cc
-index bc1af3ab035d0..e4b46af1768b3 100644
+index c61a6a7c34694..3c22ef42dc8c9 100644
 --- a/chrome/browser/optimization_guide/optimization_guide_navigation_data.cc
 +++ b/chrome/browser/optimization_guide/optimization_guide_navigation_data.cc
-@@ -12,17 +12,12 @@
+@@ -11,17 +11,12 @@
  #include "components/optimization_guide/core/hints_processing_util.h"
  #include "content/public/browser/navigation_handle.h"
  #include "net/nqe/effective_connection_type.h"
@@ -20,7 +20,7 @@ index bc1af3ab035d0..e4b46af1768b3 100644
  }
  
  // static
-@@ -39,6 +34,7 @@ OptimizationGuideNavigationData::GetFromNavigationHandle(
+@@ -38,6 +33,7 @@ OptimizationGuideNavigationData::GetFromNavigationHandle(
        ->GetOrCreateOptimizationGuideNavigationData(navigation_handle);
  }
  
@@ -28,11 +28,11 @@ index bc1af3ab035d0..e4b46af1768b3 100644
  void OptimizationGuideNavigationData::RecordMetrics() const {
    RecordOptimizationGuideUKM();
  }
-@@ -87,6 +83,7 @@ void OptimizationGuideNavigationData::RecordOptimizationGuideUKM() const {
+@@ -86,6 +82,7 @@ void OptimizationGuideNavigationData::RecordOptimizationGuideUKM() const {
    if (did_record_metric)
      builder.Record(ukm::UkmRecorder::Get());
  }
 +#endif
  
- base::Optional<base::TimeDelta>
+ absl::optional<base::TimeDelta>
  OptimizationGuideNavigationData::hints_fetch_latency() const {

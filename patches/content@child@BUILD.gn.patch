@@ -1,5 +1,5 @@
 diff --git a/content/child/BUILD.gn b/content/child/BUILD.gn
-index bdcf5f62e2677..d5849baf79196 100644
+index 4b49a079d7038..e6fb1aa0c8e61 100644
 --- a/content/child/BUILD.gn
 +++ b/content/child/BUILD.gn
 @@ -4,6 +4,7 @@
@@ -10,12 +10,12 @@ index bdcf5f62e2677..d5849baf79196 100644
  import("//ppapi/buildflags/buildflags.gni")
  import("//third_party/blink/public/public_features.gni")
  if (is_android) {
-@@ -116,6 +117,8 @@ target(link_target_type, "child") {
+@@ -114,6 +115,8 @@ target(link_target_type, "child") {
      "//v8",
    ]
  
 +  deps += dumb_content_child_deps
 +
-   if (is_android) {
-     deps += [ "//third_party/android_ndk:cpu_features" ]
+   if (is_linux || is_chromeos) {
      sources += [
+       "child_process_sandbox_support_impl_linux.cc",

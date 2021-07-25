@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/media_capabilities/media_capabilities.h b/third_party/blink/renderer/modules/media_capabilities/media_capabilities.h
-index 8216f30443c69..4f77d299040e6 100644
+index babd98de2602c..8d0070aaabb6b 100644
 --- a/third_party/blink/renderer/modules/media_capabilities/media_capabilities.h
 +++ b/third_party/blink/renderer/modules/media_capabilities/media_capabilities.h
 @@ -9,7 +9,6 @@
@@ -15,16 +15,16 @@ index 8216f30443c69..4f77d299040e6 100644
      PendingCallbackState(ScriptPromiseResolver* resolver,
                           MediaKeySystemAccess* access,
 -                         const base::TimeTicks& request_time,
--                         base::Optional<IdentifiableToken> input_token);
+-                         absl::optional<IdentifiableToken> input_token);
 +                         const base::TimeTicks& request_time);
      virtual void Trace(blink::Visitor* visitor) const;
  
      Member<ScriptPromiseResolver> resolver;
-@@ -73,7 +71,6 @@ class MODULES_EXPORT MediaCapabilities final
-     base::Optional<bool> db_is_power_efficient;
-     base::Optional<bool> is_gpu_factories_supported;
+@@ -74,7 +72,6 @@ class MODULES_EXPORT MediaCapabilities final
+     absl::optional<bool> db_is_power_efficient;
+     absl::optional<bool> is_gpu_factories_supported;
      base::TimeTicks request_time;
--    base::Optional<IdentifiableToken> input_token;
+-    absl::optional<IdentifiableToken> input_token;
    };
  
    // Lazily binds remote LearningTaskControllers for ML smoothness predictions

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/metrics/chrome_metrics_service_client.h b/chrome/browser/metrics/chrome_metrics_service_client.h
-index 650ea5ecdff2e..63c931da4fedb 100644
+index 43a79bf24e974..989af5fd86d4f 100644
 --- a/chrome/browser/metrics/chrome_metrics_service_client.h
 +++ b/chrome/browser/metrics/chrome_metrics_service_client.h
 @@ -17,21 +17,13 @@
@@ -40,10 +40,10 @@ index 650ea5ecdff2e..63c931da4fedb 100644
    // metrics::MetricsServiceClient:
    metrics::MetricsService* GetMetricsService() override;
 -  ukm::UkmService* GetUkmService() override;
+   bool ShouldUploadMetricsForUserId(const uint64_t user_id) override;
    void SetMetricsClientId(const std::string& client_id) override;
    int32_t GetProduct() override;
-   std::string GetApplicationLocale() override;
-@@ -67,6 +56,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -68,6 +57,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    metrics::SystemProfileProto::Channel GetChannel() override;
    bool IsExtendedStableChannel() override;
    std::string GetVersionString() override;
@@ -51,7 +51,7 @@ index 650ea5ecdff2e..63c931da4fedb 100644
    void OnEnvironmentUpdate(std::string* serialized_environment) override;
    void CollectFinalMetricsForLog(base::OnceClosure done_callback) override;
    std::unique_ptr<metrics::MetricsLogUploader> CreateUploader(
-@@ -84,12 +74,13 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -85,12 +75,13 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    bool IsUkmAllowedForAllProfiles() override;
    bool IsUkmAllowedWithExtensionsForAllProfiles() override;
    bool AreNotificationListenersEnabledOnAllProfiles() override;
@@ -66,7 +66,7 @@ index 650ea5ecdff2e..63c931da4fedb 100644
    // ukm::HistoryDeleteObserver:
    void OnHistoryDeleted() override;
  
-@@ -101,6 +92,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -102,6 +93,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    static metrics::FileMetricsProvider::FilterAction FilterBrowserMetricsFiles(
        const base::FilePath& path);
    static void SetIsProcessRunningForTesting(IsProcessRunningFunction func);
@@ -74,7 +74,7 @@ index 650ea5ecdff2e..63c931da4fedb 100644
  
   private:
    FRIEND_TEST_ALL_PREFIXES(ChromeMetricsServiceClientTest, IsWebstoreExtension);
-@@ -111,6 +103,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -112,6 +104,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    // Completes the two-phase initialization of ChromeMetricsServiceClient.
    void Initialize();
  
@@ -82,7 +82,7 @@ index 650ea5ecdff2e..63c931da4fedb 100644
    // Registers providers to the MetricsService. These provide data from
    // alternate sources.
    void RegisterMetricsServiceProviders();
-@@ -143,12 +136,14 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -144,12 +137,14 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
    // Call to listen for events on the selected profile's services.
    // Returns true if we registered for all notifications we wanted successfully.
    bool RegisterForProfileEvents(Profile* profile);
@@ -97,7 +97,7 @@ index 650ea5ecdff2e..63c931da4fedb 100644
    // Called when a URL is opened from the Omnibox.
    void OnURLOpenedFromOmnibox(OmniboxLog* log);
  
-@@ -160,23 +155,19 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -161,23 +156,19 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
  
    // Check if an extension is installed via the Web Store.
    static bool IsWebstoreExtension(base::StringPiece id);
@@ -123,7 +123,7 @@ index 650ea5ecdff2e..63c931da4fedb 100644
    // Listener for changes in incognito activity.
    std::unique_ptr<IncognitoObserver> incognito_observer_;
  
-@@ -204,6 +195,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
+@@ -205,6 +196,7 @@ class ChromeMetricsServiceClient : public metrics::MetricsServiceClient,
  
  #if !defined(OS_ANDROID)
    std::unique_ptr<BrowserActivityWatcher> browser_activity_watcher_;

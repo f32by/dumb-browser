@@ -1,8 +1,8 @@
 diff --git a/components/autofill/core/browser/autofill_metrics.cc b/components/autofill/core/browser/autofill_metrics.cc
-index 0aa01bd33cb72..39238728b98d0 100644
+index c71ef671bb2cf..edc1175fe1495 100644
 --- a/components/autofill/core/browser/autofill_metrics.cc
 +++ b/components/autofill/core/browser/autofill_metrics.cc
-@@ -786,13 +786,6 @@ void AutofillMetrics::LogSaveCardCardholderNameWasEdited(bool edited) {
+@@ -866,13 +866,6 @@ void AutofillMetrics::LogSaveCardCardholderNameWasEdited(bool edited) {
  // static
  void AutofillMetrics::LogCardUploadDecisionMetrics(
      int upload_decision_metrics) {
@@ -16,7 +16,7 @@ index 0aa01bd33cb72..39238728b98d0 100644
  }
  
  // static
-@@ -2155,10 +2148,6 @@ const char* AutofillMetrics::SubmissionSourceToUploadEventMetric(
+@@ -2248,10 +2241,6 @@ const char* AutofillMetrics::SubmissionSourceToUploadEventMetric(
  // static
  void AutofillMetrics::LogUploadEvent(SubmissionSource submission_source,
                                       bool was_sent) {
@@ -27,7 +27,7 @@ index 0aa01bd33cb72..39238728b98d0 100644
  }
  
  // static
-@@ -2166,13 +2155,6 @@ void AutofillMetrics::LogCardUploadDecisionsUkm(ukm::UkmRecorder* ukm_recorder,
+@@ -2259,13 +2248,6 @@ void AutofillMetrics::LogCardUploadDecisionsUkm(ukm::UkmRecorder* ukm_recorder,
                                                  ukm::SourceId source_id,
                                                  const GURL& url,
                                                  int upload_decision_metrics) {
@@ -41,7 +41,7 @@ index 0aa01bd33cb72..39238728b98d0 100644
  }
  
  // static
-@@ -2184,18 +2166,6 @@ void AutofillMetrics::LogDeveloperEngagementUkm(
+@@ -2277,18 +2259,6 @@ void AutofillMetrics::LogDeveloperEngagementUkm(
      DenseSet<FormType> form_types,
      int developer_engagement_metrics,
      FormSignature form_signature) {

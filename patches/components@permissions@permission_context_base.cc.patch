@@ -1,8 +1,8 @@
 diff --git a/components/permissions/permission_context_base.cc b/components/permissions/permission_context_base.cc
-index 8a762896902bc..594ddddd39d23 100644
+index d98bac37cb4d0..aa1b9e243b017 100644
 --- a/components/permissions/permission_context_base.cc
 +++ b/components/permissions/permission_context_base.cc
-@@ -182,7 +182,6 @@ void PermissionContextBase::RequestPermission(
+@@ -183,7 +183,6 @@ void PermissionContextBase::RequestPermission(
  
      // If we are under embargo, record the embargo reason for which we have
      // suppressed the prompt.
@@ -10,7 +10,7 @@ index 8a762896902bc..594ddddd39d23 100644
      NotifyPermissionSet(id, requesting_origin, embedding_origin,
                          std::move(callback), /*persist=*/false,
                          result.content_setting, /*is_one_time=*/false);
-@@ -202,12 +201,6 @@ void PermissionContextBase::RequestPermission(
+@@ -203,12 +202,6 @@ void PermissionContextBase::RequestPermission(
      return;
    }
  

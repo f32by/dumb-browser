@@ -1,31 +1,20 @@
 diff --git a/chrome/browser/ui/ui_features.cc b/chrome/browser/ui/ui_features.cc
-index 09189740085da..2a28d9d65f142 100644
+index abb8120729fec..beab8ce34fc7e 100644
 --- a/chrome/browser/ui/ui_features.cc
 +++ b/chrome/browser/ui/ui_features.cc
-@@ -30,10 +30,6 @@ const base::Feature kChromeTipsInMainMenuNewBadge{
- const base::Feature kEvDetailsInPageInfo{"EvDetailsInPageInfo",
-                                          base::FEATURE_ENABLED_BY_DEFAULT};
+@@ -117,6 +117,7 @@ const base::Feature kTabGroupsFeedback{"TabGroupsFeedback",
+ const base::Feature kTabGroupsNewBadgePromo{"TabGroupsNewBadgePromo",
+                                             base::FEATURE_DISABLED_BY_DEFAULT};
  
--// Enables an extension menu in the toolbar. See https://crbug.com/943702
--const base::Feature kExtensionsToolbarMenu{"ExtensionsToolbarMenu",
--                                           base::FEATURE_ENABLED_BY_DEFAULT};
--
- // Enables the new profile picker.
- // https:://crbug.com/1063856
- const base::Feature kNewProfilePicker{"NewProfilePicker",
-@@ -107,12 +103,12 @@ const base::Feature kTabGroupsNewBadgePromo{"TabGroupsNewBadgePromo",
- 
++#if 0
  // Enables popup cards containing tab information when hovering over a tab.
  // https://crbug.com/910739
--const base::Feature kTabHoverCards{"TabHoverCards",
--                                   base::FEATURE_ENABLED_BY_DEFAULT};
-+// const base::Feature kTabHoverCards{"TabHoverCards",
-+//                                    base::FEATURE_ENABLED_BY_DEFAULT};
- 
+ const base::Feature kTabHoverCards{"TabHoverCards",
+@@ -125,6 +126,7 @@ const base::Feature kTabHoverCards{"TabHoverCards",
  // Parameter name used for tab hover cards user study.
  // TODO(corising): Removed this after tab hover cards user study.
--const char kTabHoverCardsFeatureParameterName[] = "setting";
-+// const char kTabHoverCardsFeatureParameterName[] = "setting";
+ const char kTabHoverCardsFeatureParameterName[] = "setting";
++#endif
  
  // Enables preview images in hover cards. See kTabHoverCards.
  // https://crbug.com/928954

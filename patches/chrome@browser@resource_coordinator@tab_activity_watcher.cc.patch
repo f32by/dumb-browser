@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resource_coordinator/tab_activity_watcher.cc b/chrome/browser/resource_coordinator/tab_activity_watcher.cc
-index 019c4d41615ed..eeec8038c78de 100644
+index 547989e76e7a5..9adf1fe4af668 100644
 --- a/chrome/browser/resource_coordinator/tab_activity_watcher.cc
 +++ b/chrome/browser/resource_coordinator/tab_activity_watcher.cc
 @@ -22,7 +22,6 @@
@@ -50,43 +50,23 @@ index 019c4d41615ed..eeec8038c78de 100644
      // Copy the replaced label_id_.
      label_id_ = replaced_tab.label_id_;
  
-@@ -146,35 +126,6 @@ class TabActivityWatcher::WebContentsData
+@@ -146,6 +126,7 @@ class TabActivityWatcher::WebContentsData
      }
    }
  
--  // Logs TabMetrics for the tab if it is considered to be backgrounded.
--  void LogTabIfBackgrounded() {
--    if (backgrounded_time_.is_null() || DisableBackgroundLogWithTabRanker())
--      return;
--
--    base::Optional<TabFeatures> tab = GetTabFeatures();
--    if (tab.has_value()) {
--      // Background time logging always logged with label_id == 0, since we
--      // only use label_id for query time logging for now.
--      TabActivityWatcher::GetInstance()->tab_metrics_logger_->LogTabMetrics(
--          ukm_source_id_, tab.value(), web_contents(), 0);
--    }
--  }
--
--  // Logs current TabFeatures; skips if current tab is null.
--  void LogCurrentTabFeatures(const base::Optional<TabFeatures>& tab) {
--    if (!tab.has_value())
--      return;
--    // Update label_id_: a new label_id is generated for this query if the
--    // label_id_ is 0; otherwise the old label_id_ is incremented. This allows
--    // us to better pairing TabMetrics with ForegroundedOrClosed events offline.
--    // The same label_id_ will be logged with ForegroundedOrClosed event later
--    // on so that TabFeatures can be paired with ForegroundedOrClosed.
--    label_id_ = label_id_ ? label_id_ + 1 : NewInt64ForLabelIdOrQueryId();
--
--    TabActivityWatcher::GetInstance()->tab_metrics_logger_->LogTabMetrics(
--        ukm_source_id_, tab.value(), web_contents(), label_id_);
--  }
--
++#if 0
+   // Logs TabMetrics for the tab if it is considered to be backgrounded.
+   void LogTabIfBackgrounded() {
+     if (backgrounded_time_.is_null() || DisableBackgroundLogWithTabRanker())
+@@ -174,6 +155,7 @@ class TabActivityWatcher::WebContentsData
+     TabActivityWatcher::GetInstance()->tab_metrics_logger_->LogTabMetrics(
+         ukm_source_id_, tab.value(), web_contents(), label_id_);
+   }
++#endif
+ 
    // Sets foregrounded_time_ to NowTicks() so this becomes the
    // most-recently-used tab.
-   void TabWindowActivated() { foregrounded_time_ = NowTicks(); }
-@@ -203,9 +154,6 @@ class TabActivityWatcher::WebContentsData
+@@ -203,9 +185,6 @@ class TabActivityWatcher::WebContentsData
  
      creation_time_ = NowTicks();
  
@@ -96,7 +76,7 @@ index 019c4d41615ed..eeec8038c78de 100644
      // When a tab is discarded, a new null_web_contents will be created (with
      // WasDiscarded set as true) applied as a replacement of the discarded tab.
      // We want to record this discarded state for later logging.
-@@ -233,7 +181,6 @@ class TabActivityWatcher::WebContentsData
+@@ -233,7 +212,6 @@ class TabActivityWatcher::WebContentsData
  
      backgrounded_time_ = NowTicks();
      discarded_since_backgrounded_ = false;
@@ -104,7 +84,7 @@ index 019c4d41615ed..eeec8038c78de 100644
    }
  
    void WasShown() {
-@@ -246,13 +193,8 @@ class TabActivityWatcher::WebContentsData
+@@ -246,13 +224,8 @@ class TabActivityWatcher::WebContentsData
      if (browser && browser->tab_strip_model()->closing_all())
        return;
  
@@ -118,7 +98,7 @@ index 019c4d41615ed..eeec8038c78de 100644
    }
  
    // content::WebContentsObserver:
-@@ -270,29 +212,12 @@ class TabActivityWatcher::WebContentsData
+@@ -270,29 +243,12 @@ class TabActivityWatcher::WebContentsData
          navigation_handle->IsSameDocument()) {
        return;
      }
@@ -148,7 +128,7 @@ index 019c4d41615ed..eeec8038c78de 100644
    }
  
    void OnVisibilityChanged(content::Visibility visibility) override {
-@@ -317,12 +242,6 @@ class TabActivityWatcher::WebContentsData
+@@ -317,12 +273,6 @@ class TabActivityWatcher::WebContentsData
  
    // content::RenderWidgetHost::InputEventObserver:
    void OnInputEvent(const blink::WebInputEvent& event) override {
@@ -161,64 +141,37 @@ index 019c4d41615ed..eeec8038c78de 100644
    }
  
    // Iterates through tabstrips to determine the index of |contents| in
-@@ -373,55 +292,7 @@ class TabActivityWatcher::WebContentsData
+@@ -373,6 +323,7 @@ class TabActivityWatcher::WebContentsData
    // TODO(charleszhao): refactor TabMetricsLogger::GetTabFeatures to return a
    // full TabFeatures instead of a partial TabFeatures.
-   base::Optional<TabFeatures> GetTabFeatures() {
--    if (web_contents()->IsBeingDestroyed() || backgrounded_time_.is_null())
--      return base::nullopt;
--    // For tab features.
--    base::Optional<TabFeatures> tab =
--        TabMetricsLogger::GetTabFeatures(page_metrics_, web_contents());
--    if (!tab.has_value())
--      return tab;
--
--    tab->time_from_backgrounded =
--        backgrounded_time_.is_null()
--            ? 0
--            : (NowTicks() - backgrounded_time_).InMilliseconds();
--
--    // For mru features.
--    const tab_ranker::MRUFeatures& mru = GetMRUFeatures();
--    tab->mru_index = mru.index;
--    tab->total_tab_count = mru.total;
--
--    // For frecency_score;
--    tab->frecency_score = GetFrecencyScore();
--
--    return tab;
--  }
--
--  // Collect current ForegroundedOrClosedMetrics and send to ukm.
--  void LogForegroundedOrClosedMetrics(bool is_foregrounded) {
--    // If background time logging is disabled, then we only log the case where
--    // the label_id_ != 0 (a feature is logged and a label has not been logged).
--    if (DisableBackgroundLogWithTabRanker() && label_id_ == 0)
--      return;
--
--    TabMetricsLogger::ForegroundedOrClosedMetrics metrics;
--    metrics.is_foregrounded = is_foregrounded;
--    metrics.is_discarded = discarded_since_backgrounded_;
--    metrics.time_from_backgrounded =
--        (NowTicks() - backgrounded_time_).InMilliseconds();
--    metrics.label_id = label_id_;
--
--    TabActivityWatcher::GetInstance()
--        ->tab_metrics_logger_->LogForegroundedOrClosedMetrics(ukm_source_id_,
--                                                              metrics);
--    // label_id_ is reset whenever a label is logged.
--    // A new label_id_ is generated when a query happens inside
--    // CalculateReactivationScore, after that this ForegroundedOrClosed logging
--    // can happen many times (tabs may get backgrounded and reactivated several
--    // times). In such cases, we only count the first time as the true label,
--    // the rest are considered to be query time logging irrelevant, for which we
--    // log with label_id == 0.
--    label_id_ = 0;
-+    return base::nullopt;
+   absl::optional<TabFeatures> GetTabFeatures() {
++#if 0
+     if (web_contents()->IsBeingDestroyed() || backgrounded_time_.is_null())
+       return absl::nullopt;
+     // For tab features.
+@@ -395,10 +346,13 @@ class TabActivityWatcher::WebContentsData
+     tab->frecency_score = GetFrecencyScore();
+ 
+     return tab;
++#endif
++    return absl::nullopt;
+   }
+ 
+   // Collect current ForegroundedOrClosedMetrics and send to ukm.
+   void LogForegroundedOrClosedMetrics(bool is_foregrounded) {
++#if 0
+     // If background time logging is disabled, then we only log the case where
+     // the label_id_ != 0 (a feature is logged and a label has not been logged).
+     if (DisableBackgroundLogWithTabRanker() && label_id_ == 0)
+@@ -422,6 +376,7 @@ class TabActivityWatcher::WebContentsData
+     // the rest are considered to be query time logging irrelevant, for which we
+     // log with label_id == 0.
+     label_id_ = 0;
++#endif
    }
  
    // Returns frecency score of this tab.
-@@ -446,9 +317,6 @@ class TabActivityWatcher::WebContentsData
+@@ -446,9 +401,6 @@ class TabActivityWatcher::WebContentsData
      frecency_score_.score = GetFrecencyScore() + 1.0f - kFrecencyScoreDecay;
    }
  
@@ -228,7 +181,7 @@ index 019c4d41615ed..eeec8038c78de 100644
    // When the tab was created.
    base::TimeTicks creation_time_;
  
-@@ -461,9 +329,6 @@ class TabActivityWatcher::WebContentsData
+@@ -461,9 +413,6 @@ class TabActivityWatcher::WebContentsData
    // is activated.
    base::TimeTicks foregrounded_time_;
  
@@ -238,7 +191,7 @@ index 019c4d41615ed..eeec8038c78de 100644
    // Set to true when the WebContents has been detached from its tab.
    bool is_detached_ = false;
  
-@@ -491,8 +356,7 @@ class TabActivityWatcher::WebContentsData
+@@ -491,8 +440,7 @@ class TabActivityWatcher::WebContentsData
  WEB_CONTENTS_USER_DATA_KEY_IMPL(TabActivityWatcher::WebContentsData)
  
  TabActivityWatcher::TabActivityWatcher()
@@ -248,7 +201,7 @@ index 019c4d41615ed..eeec8038c78de 100644
        predictor_(std::make_unique<tab_ranker::TabScorePredictor>()) {
    BrowserList::AddObserver(this);
    browser_tab_strip_tracker_.Init();
-@@ -513,9 +377,6 @@ base::Optional<float> TabActivityWatcher::CalculateReactivationScore(
+@@ -513,9 +461,6 @@ absl::optional<float> TabActivityWatcher::CalculateReactivationScore(
  
  void TabActivityWatcher::LogAndMaybeSortLifecycleUnitWithTabRanker(
      std::vector<LifecycleUnit*>* tabs) {
@@ -258,15 +211,15 @@ index 019c4d41615ed..eeec8038c78de 100644
    const bool should_sort_tabs =
        base::FeatureList::IsEnabled(features::kTabRanker);
  
-@@ -541,7 +402,6 @@ void TabActivityWatcher::LogAndMaybeSortLifecycleUnitWithTabRanker(
+@@ -541,7 +486,6 @@ void TabActivityWatcher::LogAndMaybeSortLifecycleUnitWithTabRanker(
      }
  
-     const base::Optional<TabFeatures> tab = web_contents_data->GetTabFeatures();
+     const absl::optional<TabFeatures> tab = web_contents_data->GetTabFeatures();
 -    web_contents_data->LogCurrentTabFeatures(tab);
  
      // No reason to store TabFeatures if TabRanker is disabled.
      if (should_sort_tabs) {
-@@ -624,7 +484,6 @@ void TabActivityWatcher::OnTabStripModelChanged(
+@@ -624,7 +568,6 @@ void TabActivityWatcher::OnTabStripModelChanged(
  void TabActivityWatcher::TabPinnedStateChanged(TabStripModel* tab_strip_model,
                                                 content::WebContents* contents,
                                                 int index) {
@@ -274,7 +227,7 @@ index 019c4d41615ed..eeec8038c78de 100644
  }
  
  bool TabActivityWatcher::ShouldTrackBrowser(Browser* browser) {
-@@ -636,7 +495,6 @@ bool TabActivityWatcher::ShouldTrackBrowser(Browser* browser) {
+@@ -636,7 +579,6 @@ bool TabActivityWatcher::ShouldTrackBrowser(Browser* browser) {
  }
  
  void TabActivityWatcher::ResetForTesting() {
@@ -282,7 +235,7 @@ index 019c4d41615ed..eeec8038c78de 100644
    predictor_ = std::make_unique<tab_ranker::TabScorePredictor>();
    internal_id_for_logging = 0;
  }
-@@ -648,11 +506,6 @@ TabActivityWatcher* TabActivityWatcher::GetInstance() {
+@@ -648,11 +590,6 @@ TabActivityWatcher* TabActivityWatcher::GetInstance() {
  }
  
  void TabActivityWatcher::OnTabClosed(WebContentsData* web_contents_data) {

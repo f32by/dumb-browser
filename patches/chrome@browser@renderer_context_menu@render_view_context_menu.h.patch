@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/renderer_context_menu/render_view_context_menu.h b/chrome/browser/renderer_context_menu/render_view_context_menu.h
-index 5178db60ba644..cee57f9b393e8 100644
+index f4bc78469e2eb..411ebf14115ea 100644
 --- a/chrome/browser/renderer_context_menu/render_view_context_menu.h
 +++ b/chrome/browser/renderer_context_menu/render_view_context_menu.h
-@@ -107,7 +107,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -111,7 +111,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase,
  #if BUILDFLAG(ENABLE_EXTENSIONS)
    extensions::ContextMenuMatcher extension_items_;
  #endif
@@ -10,7 +10,7 @@ index 5178db60ba644..cee57f9b393e8 100644
  
    // Returns true if the browser is in HTML fullscreen mode, initiated by the
    // page (as opposed to the user). Used to determine which shortcut to display.
-@@ -143,7 +142,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
+@@ -147,7 +146,6 @@ class RenderViewContextMenu : public RenderViewContextMenuBase,
  
    // RenderViewContextMenuBase:
    void InitMenu() override;
@@ -18,25 +18,3 @@ index 5178db60ba644..cee57f9b393e8 100644
  #if BUILDFLAG(ENABLE_PLUGINS)
    void HandleAuthorizeAllPlugins() override;
  #endif
-@@ -194,7 +192,9 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
-   void AppendPasswordItems();
-   void AppendPictureInPictureItem();
-   void AppendSharingItems();
-+#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
-   void AppendClickToCallItem();
-+#endif
-   void AppendSharedClipboardItem();
-   void AppendQRCodeGeneratorItem(bool for_image, bool draw_icon);
- 
-@@ -306,9 +306,11 @@ class RenderViewContextMenu : public RenderViewContextMenuBase {
-   std::unique_ptr<send_tab_to_self::SendTabToSelfSubMenuModel>
-       send_tab_to_self_sub_menu_model_;
- 
-+#if BUILDFLAG(ENABLE_CLICK_TO_CALL)
-   // Click to call menu observer.
-   std::unique_ptr<ClickToCallContextMenuObserver>
-       click_to_call_context_menu_observer_;
-+#endif
- 
-   // Shared clipboard menu observer.
-   std::unique_ptr<SharedClipboardContextMenuObserver>

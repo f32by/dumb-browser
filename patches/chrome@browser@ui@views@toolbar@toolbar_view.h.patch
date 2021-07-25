@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.h b/chrome/browser/ui/views/toolbar/toolbar_view.h
-index 99358217419a6..c98f80e9d58df 100644
+index c232c1c703500..ac6072a81b235 100644
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.h
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.h
-@@ -23,7 +23,6 @@
+@@ -22,7 +22,6 @@
  #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
  #include "chrome/browser/ui/views/profiles/avatar_toolbar_button.h"
  #include "chrome/browser/ui/views/toolbar/chrome_labs_bubble_view_model.h"
 -#include "chrome/browser/upgrade_detector/upgrade_observer.h"
  #include "components/prefs/pref_member.h"
+ #include "third_party/abseil-cpp/absl/types/optional.h"
  #include "ui/base/accelerators/accelerator.h"
- #include "ui/base/pointer/touch_ui_controller.h"
-@@ -72,7 +71,6 @@ class ToolbarView : public views::AccessiblePaneView,
+@@ -76,7 +75,6 @@ class ToolbarView : public views::AccessiblePaneView,
                      public LocationBarView::Delegate,
                      public CommandObserver,
                      public AppMenuIconController::Delegate,
@@ -18,7 +18,7 @@ index 99358217419a6..c98f80e9d58df 100644
                      public ToolbarButtonProvider,
                      public BrowserRootView::DropTarget {
   public:
-@@ -169,10 +167,6 @@ class ToolbarView : public views::AccessiblePaneView,
+@@ -177,10 +175,6 @@ class ToolbarView : public views::AccessiblePaneView,
    // CommandObserver:
    void EnabledStateChangedForCommand(int id, bool enabled) override;
  

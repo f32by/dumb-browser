@@ -1,0 +1,20 @@
+diff --git a/third_party/blink/renderer/modules/webaudio/audio_context.cc b/third_party/blink/renderer/modules/webaudio/audio_context.cc
+index 7466cefbdc6a2..a360153830e99 100644
+--- a/third_party/blink/renderer/modules/webaudio/audio_context.cc
++++ b/third_party/blink/renderer/modules/webaudio/audio_context.cc
+@@ -580,6 +580,7 @@ bool AudioContext::IsAllowedToStart() const {
+ }
+ 
+ void AudioContext::RecordAutoplayMetrics() {
++#if 0
+   if (!autoplay_status_.has_value() || !GetDocument())
+     return;
+ 
+@@ -611,6 +612,7 @@ void AudioContext::RecordAutoplayMetrics() {
+ 
+     autoplay_unlock_type_.reset();
+   }
++#endif
+ }
+ 
+ void AudioContext::ContextDestroyed() {

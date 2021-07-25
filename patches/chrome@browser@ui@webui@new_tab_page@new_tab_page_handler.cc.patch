@@ -1,16 +1,16 @@
 diff --git a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
-index c8982ec659af1..24b11cf91a191 100644
+index 553401a85aa5e..a0110d62b7a78 100644
 --- a/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
 +++ b/chrome/browser/ui/webui/new_tab_page/new_tab_page_handler.cc
-@@ -26,7 +26,6 @@
+@@ -27,7 +27,6 @@
+ #include "chrome/browser/search/background/ntp_background_service.h"
  #include "chrome/browser/search/background/ntp_background_service_factory.h"
  #include "chrome/browser/search/instant_service.h"
- #include "chrome/browser/search/one_google_bar/one_google_bar_service_factory.h"
 -#include "chrome/browser/search/promos/promo_service_factory.h"
  #include "chrome/browser/search_engines/template_url_service_factory.h"
  #include "chrome/browser/search_provider_logos/logo_service_factory.h"
  #include "chrome/browser/ui/chrome_select_file_policy.h"
-@@ -241,76 +240,6 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
+@@ -242,76 +241,6 @@ new_tab_page::mojom::ImageDoodlePtr MakeImageDoodle(
    return doodle;
  }
  
@@ -87,7 +87,7 @@ index c8982ec659af1..24b11cf91a191 100644
  }  // namespace
  
  // static
-@@ -337,19 +266,16 @@ NewTabPageHandler::NewTabPageHandler(
+@@ -336,18 +265,15 @@ NewTabPageHandler::NewTabPageHandler(
        web_contents_(web_contents),
        ntp_navigation_start_time_(ntp_navigation_start_time),
        logger_(profile, GURL(chrome::kChromeUINewTabPageURL)),
@@ -97,18 +97,17 @@ index c8982ec659af1..24b11cf91a191 100644
    CHECK(instant_service_);
    CHECK(ntp_background_service_);
    CHECK(logo_service_);
-   CHECK(one_google_bar_service_);
 -  CHECK(promo_service_);
    CHECK(web_contents_);
    instant_service_->AddObserver(this);
    ntp_background_service_->AddObserver(this);
    instant_service_->UpdateNtpTheme();
 -  promo_service_observation_.Observe(promo_service_);
-   one_google_bar_service_observation_.Observe(one_google_bar_service_);
  }
  
-@@ -574,41 +500,6 @@ void NewTabPageHandler::GetOneGoogleBarParts(
-   one_google_bar_service_->Refresh();
+ NewTabPageHandler::~NewTabPageHandler() {
+@@ -558,41 +484,6 @@ void NewTabPageHandler::ChooseLocalCustomBackground(
+       nullptr);
  }
  
 -void NewTabPageHandler::GetPromo(GetPromoCallback callback) {
@@ -149,7 +148,7 @@ index c8982ec659af1..24b11cf91a191 100644
  void NewTabPageHandler::OnDismissModule(const std::string& module_id) {
    const std::string histogram_prefix(kModuleDismissedHistogram);
    base::UmaHistogramExactLinear(histogram_prefix, 1, 1);
-@@ -654,49 +545,13 @@ void NewTabPageHandler::UpdateDisabledModules() {
+@@ -640,13 +531,16 @@ void NewTabPageHandler::UpdateDisabledModules() {
  }
  
  void NewTabPageHandler::OnModulesLoadedWithData() {
@@ -159,72 +158,46 @@ index c8982ec659af1..24b11cf91a191 100644
    CHECK(hats_service);
    hats_service->LaunchDelayedSurveyForWebContents(kHatsSurveyTriggerNtpModules,
                                                    web_contents_, 0);
--}
--
--void NewTabPageHandler::OnPromoDataUpdated() {
--  if (promo_load_start_time_.has_value()) {
--    base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
--    UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2", duration);
--    if (promo_service_->promo_status() == PromoService::Status::OK_WITH_PROMO) {
--      UMA_HISTOGRAM_MEDIUM_TIMES(
--          "NewTabPage.Promos.RequestLatency2.SuccessWithPromo", duration);
--    } else if (promo_service_->promo_status() ==
--               PromoService::Status::OK_BUT_BLOCKED) {
--      UMA_HISTOGRAM_MEDIUM_TIMES(
--          "NewTabPage.Promos.RequestLatency2.SuccessButBlocked", duration);
--    } else if (promo_service_->promo_status() ==
--               PromoService::Status::OK_WITHOUT_PROMO) {
--      UMA_HISTOGRAM_MEDIUM_TIMES(
--          "NewTabPage.Promos.RequestLatency2.SuccessWithoutPromo", duration);
--    } else {
--      UMA_HISTOGRAM_MEDIUM_TIMES("NewTabPage.Promos.RequestLatency2.Failure",
--                                 duration);
--    }
--    promo_load_start_time_ = base::nullopt;
--  }
--
--  const auto& data = promo_service_->promo_data();
--  for (auto& callback : promo_callbacks_) {
--    if (data.has_value() && !data->promo_html.empty()) {
--      std::move(callback).Run(MakePromo(data.value()));
--    } else {
--      std::move(callback).Run(nullptr);
--    }
--  }
--  promo_callbacks_.clear();
--}
--
--void NewTabPageHandler::OnPromoServiceShuttingDown() {
--  promo_service_observation_.Reset();
--  promo_service_ = nullptr;
 +#endif
  }
  
++#if 0
+ void NewTabPageHandler::OnPromoDataUpdated() {
+   if (promo_load_start_time_.has_value()) {
+     base::TimeDelta duration = base::TimeTicks::Now() - *promo_load_start_time_;
+@@ -684,6 +578,7 @@ void NewTabPageHandler::OnPromoServiceShuttingDown() {
+   promo_service_observation_.Reset();
+   promo_service_ = nullptr;
+ }
++#endif
+ 
  void NewTabPageHandler::OnAppRendered(double time) {
-@@ -721,15 +576,6 @@ void NewTabPageHandler::OnOneGoogleBarRendered(double time) {
+   logger_.LogEvent(NTP_APP_RENDERED,
+@@ -707,6 +602,7 @@ void NewTabPageHandler::OnOneGoogleBarRendered(double time) {
                     base::Time::FromJsTime(time) - ntp_navigation_start_time_);
  }
  
--void NewTabPageHandler::OnPromoRendered(double time,
--                                        const base::Optional<GURL>& log_url) {
--  logger_.LogEvent(NTP_MIDDLE_SLOT_PROMO_SHOWN,
--                   base::Time::FromJsTime(time) - ntp_navigation_start_time_);
--  if (log_url.has_value() && log_url->is_valid()) {
--    Fetch(*log_url, base::BindOnce([](bool, std::unique_ptr<std::string>) {}));
--  }
--}
--
++#if 0
+ void NewTabPageHandler::OnPromoRendered(double time,
+                                         const absl::optional<GURL>& log_url) {
+   logger_.LogEvent(NTP_MIDDLE_SLOT_PROMO_SHOWN,
+@@ -715,6 +611,7 @@ void NewTabPageHandler::OnPromoRendered(double time,
+     Fetch(*log_url, base::BindOnce([](bool, std::unique_ptr<std::string>) {}));
+   }
+ }
++#endif
+ 
  void NewTabPageHandler::OnMostVisitedTileNavigation(
      new_tab_page::mojom::MostVisitedTilePtr tile,
-     uint32_t index,
-@@ -895,10 +741,6 @@ void NewTabPageHandler::OnDoodleShared(
+@@ -881,9 +778,11 @@ void NewTabPageHandler::OnDoodleShared(
    Fetch(url, base::BindOnce([](bool s, std::unique_ptr<std::string>) {}));
  }
  
--void NewTabPageHandler::OnPromoLinkClicked() {
--  LogEvent(NTP_MIDDLE_SLOT_PROMO_LINK_CLICKED);
--}
--
- void NewTabPageHandler::OnVoiceSearchAction(
-     new_tab_page::mojom::VoiceSearchAction action) {
-   NTPLoggingEventType event;
++#if 0
+ void NewTabPageHandler::OnPromoLinkClicked() {
+   LogEvent(NTP_MIDDLE_SLOT_PROMO_LINK_CLICKED);
+ }
++#endif
+ 
+ void NewTabPageHandler::NtpThemeChanged(const NtpTheme& ntp_theme) {
+   page_->SetTheme(MakeTheme(ntp_theme));

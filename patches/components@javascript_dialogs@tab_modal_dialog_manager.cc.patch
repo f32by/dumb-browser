@@ -1,5 +1,5 @@
 diff --git a/components/javascript_dialogs/tab_modal_dialog_manager.cc b/components/javascript_dialogs/tab_modal_dialog_manager.cc
-index 6890e2a7f65a2..6578218572095 100644
+index d47ce32f95e7c..aafed95bc9e71 100644
 --- a/components/javascript_dialogs/tab_modal_dialog_manager.cc
 +++ b/components/javascript_dialogs/tab_modal_dialog_manager.cc
 @@ -14,13 +14,9 @@
@@ -118,7 +118,7 @@ index 6890e2a7f65a2..6578218572095 100644
    // onbeforeunload dialogs are always handled with an app-modal dialog, because
    // - they are critical to the user not losing data
    // - they can be requested for tabs that are not foremost
-@@ -364,25 +279,6 @@ TabModalDialogManager::TabModalDialogManager(
+@@ -367,25 +282,6 @@ TabModalDialogManager::TabModalDialogManager(
      : content::WebContentsObserver(web_contents),
        delegate_(std::move(delegate)) {}
  
@@ -144,7 +144,7 @@ index 6890e2a7f65a2..6578218572095 100644
  void TabModalDialogManager::HandleTabSwitchAway(DismissalCause cause) {
    if (!dialog_ || content::DevToolsAgentHost::IsDebuggerAttached(
                        WebContentsObserver::web_contents())) {
-@@ -407,8 +303,6 @@ void TabModalDialogManager::CloseDialog(DismissalCause cause,
+@@ -410,8 +306,6 @@ void TabModalDialogManager::CloseDialog(DismissalCause cause,
    if (!dialog_ && !pending_dialog_)
      return;
  
